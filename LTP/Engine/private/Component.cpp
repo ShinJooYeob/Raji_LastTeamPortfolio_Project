@@ -1,0 +1,39 @@
+#include "..\Public\Component.h"
+
+
+
+CComponent::CComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+	: m_pDevice(pDevice)
+	, m_pDeviceContext(pDeviceContext)
+	, m_bIsClone(false)
+{
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
+}
+
+CComponent::CComponent(const CComponent & rhs)
+	:m_pDevice(rhs.m_pDevice),
+	m_pDeviceContext(rhs.m_pDeviceContext),
+	m_bIsClone(true),
+	m_bIsOwnerDead(false)
+{
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
+}
+
+HRESULT CComponent::Initialize_Prototype(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CComponent::Initialize_Clone(void * pArg)
+{
+	return S_OK;
+}
+
+void CComponent::Free()
+{
+	Safe_Release(m_pDeviceContext);
+	Safe_Release(m_pDevice);
+
+}

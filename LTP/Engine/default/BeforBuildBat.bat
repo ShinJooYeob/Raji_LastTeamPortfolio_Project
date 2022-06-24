@@ -1,0 +1,2 @@
+
+xcopy /y ..\ThirdPartyLib\"*.*" ..\default\
