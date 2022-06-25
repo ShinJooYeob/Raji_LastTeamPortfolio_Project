@@ -1,14 +1,5 @@
-﻿  Renderer.cpp
-  ObjectMgr.cpp
-  ObjectLayer.cpp
-  GameObject.cpp
-  GameInstance.cpp
-  CollisionMgr.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  Camera.cpp
-  코드를 생성하고 있습니다...
-  Engine.vcxproj -> C:\Users\tls63\Desktop\LTP\LTP\Engine\default\../bin/Engine.dll
+﻿  Model.cpp
+  Engine.vcxproj -> F:\Team_resource\Raji_Project\LTP\Engine\default\../bin/Engine.dll
   Engine.vcxproj -> ../bin/Engine.pdb (Partial PDB)
   ..\Public\AnimationClip.h
   ..\Public\Base.h
@@ -32,6 +23,7 @@
   ..\Public\Engine_Typedef.h
   ..\Public\ExternFont.h
   ..\Public\ExternFontMgr.h
+  ..\Public\FileInfoMgr.h
   ..\Public\fmod.cs
   ..\Public\fmod.h
   ..\Public\fmod.hpp
@@ -191,10 +183,12 @@
   ..\Public\DirectXTK\VertexTypes.h
   ..\Public\DirectXTK\WICTextureLoader.h
   ..\Public\DirectXTK\XboxDDSTextureLoader.h
-  181개 파일이 복사되었습니다.
+  182개 파일이 복사되었습니다.
   ..\Bin\Engine.lib
   1개 파일이 복사되었습니다.
   ..\Bin\ShaderFiles\Shader_Deferred.hlsl
+  1개 파일이 복사되었습니다.
+  ..\Bin\Engine.dll
   1개 파일이 복사되었습니다.
   ..\Bin\Engine.dll
   1개 파일이 복사되었습니다.
@@ -207,6 +201,11 @@
   ..\ThirdPartyLib\fmodL_vc.lib
   ..\ThirdPartyLib\fmod_vc.lib
   8개 파일이 복사되었습니다.
+  ..\ThirdPartyLib\assimp-vc140-mt.dll
+  ..\ThirdPartyLib\assimp-vc140-mtd.dll
+  ..\ThirdPartyLib\fmod.dll
+  ..\ThirdPartyLib\fmodL.dll
+  4개 파일이 복사되었습니다.
   ..\ThirdPartyLib\assimp-vc140-mt.dll
   ..\ThirdPartyLib\assimp-vc140-mtd.dll
   ..\ThirdPartyLib\fmod.dll

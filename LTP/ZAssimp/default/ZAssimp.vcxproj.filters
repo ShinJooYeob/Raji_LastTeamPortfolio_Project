@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Default">
+      <UniqueIdentifier>{135df1f5-a573-44c5-a0f7-4fac19d35c83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject">
+      <UniqueIdentifier>{1e3acef8-4f46-4ca4-ae1b-dc8708f5ddbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene">
+      <UniqueIdentifier>{b816fcff-1649-4a7b-9ecd-dff12335f742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager">
+      <UniqueIdentifier>{a66504a9-b99a-4e89-b239-17467ce19afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Define">
+      <UniqueIdentifier>{d2789a08-db15-4075-a655-8eabda3f8dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ShaderFiles">
+      <UniqueIdentifier>{05f24215-828c-4213-87c0-5a4e66108e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{a342b0a8-4c26-4623-bb9b-51c4f82116dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\01.UtilityMgr">
+      <UniqueIdentifier>{e722b673-155a-45d2-9460-2e002d140602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\02.ImguiMgr">
+      <UniqueIdentifier>{2be29c60-7260-4acd-9189-58ce27fa77aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\00.Camera">
+      <UniqueIdentifier>{679099b1-92a8-4926-bb1d-66b277cafb42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Scene_Loby">
+      <UniqueIdentifier>{ba7a4ca4-6126-4de3-a1bf-c9af0b593e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\02.Scene_Loading">
+      <UniqueIdentifier>{be1903d3-435f-4f2a-a696-c8aa1d0cead6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\03.Scene_StageSelect">
+      <UniqueIdentifier>{0ba78e62-3b38-471d-a07a-76cd29ea65d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame">
+      <UniqueIdentifier>{a60e6e62-7dea-4bbb-ab77-a674da6c854c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\01.Scene_Stage1">
+      <UniqueIdentifier>{858a1e4c-2cea-4b64-b9af-11938a26d161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\02.Scene_Stage2">
+      <UniqueIdentifier>{7edbd531-1185-4a14-b768-f416bd0575ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\03.Scene_Stage3">
+      <UniqueIdentifier>{9141316b-1148-45fd-9e7d-7af06b3e6308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\04.Scene_Stage4">
+      <UniqueIdentifier>{c1052080-9d38-4ad2-9190-7859e3d6ca8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\05.Scene_Stage5">
+      <UniqueIdentifier>{53798a59-85c9-465d-b0b6-ec166e71e28b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\06.Scene_Stage6">
+      <UniqueIdentifier>{f37de20d-6aa1-4ac1-981c-c47e05d1bc80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\07.Scene_Stage7">
+      <UniqueIdentifier>{c59b018b-582f-4ea6-94c5-66359db7c562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\99.Scene_Editor">
+      <UniqueIdentifier>{73c695e4-a782-4f00-8d05-3c94e0320868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\05.Scene_Boss">
+      <UniqueIdentifier>{f59a6bb4-3924-4375-ae48-b96d9deb0064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\02.ImguiMgr\00.Manager">
+      <UniqueIdentifier>{f3eee5d0-86b2-4d6e-a6c8-91d377b99850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\02.ImguiMgr\99.Default">
+      <UniqueIdentifier>{17ffe9ec-0c2e-4dae-b1a1-6b80f19037b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.AssimpModelTest">
+      <UniqueIdentifier>{a7b3c531-e407-40f9-a353-10b9cfcf15b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\03.AssimpMgr">
+      <UniqueIdentifier>{198508c1-98d7-4c79-a514-a8fe44cab236}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\public\Client_Enum.h">
+      <Filter>99.Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Client_Macro.h">
+      <Filter>99.Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Client_Struct.h">
+      <Filter>99.Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Client_Define.h">
+      <Filter>99.Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UtilityMgr.h">
+      <Filter>03.Manager\01.UtilityMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Loader.h">
+      <Filter>02.Scene\04.Scene_InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Loading.h">
+      <Filter>02.Scene\02.Scene_Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Loby.h">
+      <Filter>02.Scene\01.Scene_Loby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage3.h">
+      <Filter>02.Scene\04.Scene_InGame\03.Scene_Stage3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage2.h">
+      <Filter>02.Scene\04.Scene_InGame\02.Scene_Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage1.h">
+      <Filter>02.Scene\04.Scene_InGame\01.Scene_Stage1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage4.h">
+      <Filter>02.Scene\04.Scene_InGame\04.Scene_Stage4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage5.h">
+      <Filter>02.Scene\04.Scene_InGame\05.Scene_Stage5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage6.h">
+      <Filter>02.Scene\04.Scene_InGame\06.Scene_Stage6</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Stage7.h">
+      <Filter>02.Scene\04.Scene_InGame\07.Scene_Stage7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_StageSelect.h">
+      <Filter>02.Scene\03.Scene_StageSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Boss.h">
+      <Filter>02.Scene\05.Scene_Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Main.h">
+      <Filter>01.GameObject\00.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImguiMgr.h">
+      <Filter>03.Manager\02.ImguiMgr\00.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imconfig.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imgui.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imgui_impl_dx11.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imgui_impl_win32.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imgui_internal.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imstb_rectpack.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imstb_textedit.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestObject.h">
+      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestObject2.h">
+      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp">
+      <Filter>04.ShaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="ZAssimp_Main.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FIleIO\AssimpMgr.h">
+      <Filter>03.Manager\03.AssimpMgr</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UtilityMgr.cpp">
+      <Filter>03.Manager\01.UtilityMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Loader.cpp">
+      <Filter>02.Scene\04.Scene_InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Loading.cpp">
+      <Filter>02.Scene\02.Scene_Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Loby.cpp">
+      <Filter>02.Scene\01.Scene_Loby</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage3.cpp">
+      <Filter>02.Scene\04.Scene_InGame\03.Scene_Stage3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage2.cpp">
+      <Filter>02.Scene\04.Scene_InGame\02.Scene_Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage1.cpp">
+      <Filter>02.Scene\04.Scene_InGame\01.Scene_Stage1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage4.cpp">
+      <Filter>02.Scene\04.Scene_InGame\04.Scene_Stage4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage5.cpp">
+      <Filter>02.Scene\04.Scene_InGame\05.Scene_Stage5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage6.cpp">
+      <Filter>02.Scene\04.Scene_InGame\06.Scene_Stage6</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Stage7.cpp">
+      <Filter>02.Scene\04.Scene_InGame\07.Scene_Stage7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_StageSelect.cpp">
+      <Filter>02.Scene\03.Scene_StageSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Boss.cpp">
+      <Filter>02.Scene\05.Scene_Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Main.cpp">
+      <Filter>01.GameObject\00.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImguiMgr.cpp">
+      <Filter>03.Manager\02.ImguiMgr\00.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_demo.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_draw.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_impl_dx11.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_impl_win32.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_tables.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Imgui\imgui_widgets.cpp">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject.cpp">
+      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject2.cpp">
+      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    </ClCompile>
+    <ClCompile Include="ZAssimp_Main.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FIleIO\AssimpMgr.cpp">
+      <Filter>03.Manager\03.AssimpMgr</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\public\Imgui\imgui.natvis">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_AnimModel.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_Deferred.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_NonAnimModel.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ZAssimp.ico">
+      <Filter>Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ZAssimp.rc">
+      <Filter>Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>Default</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

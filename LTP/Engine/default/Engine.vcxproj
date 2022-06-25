@@ -214,6 +214,7 @@
     <ClInclude Include="..\public\Engine_Typedef.h" />
     <ClInclude Include="..\public\ExternFont.h" />
     <ClInclude Include="..\public\ExternFontMgr.h" />
+    <ClInclude Include="..\public\FileInfoMgr.h" />
     <ClInclude Include="..\public\FrustumMgr.h" />
     <ClInclude Include="..\public\GameInstance.h" />
     <ClInclude Include="..\public\GameObject.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="..\private\Engine_Struct.cpp" />
     <ClCompile Include="..\private\ExternFont.cpp" />
     <ClCompile Include="..\private\ExternFontMgr.cpp" />
+    <ClCompile Include="..\private\FileInfoMgr.cpp" />
     <ClCompile Include="..\private\FrustumMgr.cpp" />
     <ClCompile Include="..\private\GameInstance.cpp" />
     <ClCompile Include="..\private\GameObject.cpp" />

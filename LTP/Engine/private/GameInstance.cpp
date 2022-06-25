@@ -12,6 +12,8 @@
 #include "RenderTargetMgr.h"
 #include "ExternFontMgr.h"
 #include "SoundMgr.h"
+#include "FileInfoMgr.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -31,7 +33,9 @@ CGameInstance::CGameInstance()
 	m_pCollisionMgr(GetSingle(CCollisionMgr)),
 	m_pRenderTargetMgr(GetSingle(CRenderTargetMgr)),
 	m_pExternFontMgr(GetSingle(CExternFontMgr)),
-	m_pSoundMgr(GetSingle(CSoundMgr))
+	m_pSoundMgr(GetSingle(CSoundMgr)),
+	m_pFileIoMgr(GetSingle(CFileInfoMgr))
+	
 
 {
 
@@ -50,6 +54,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pRenderTargetMgr);
 	Safe_AddRef(m_pExternFontMgr);
 	Safe_AddRef(m_pSoundMgr);
+	Safe_AddRef(m_pFileIoMgr);
 }
 
 
@@ -676,6 +681,35 @@ HRESULT CGameInstance::End_MTV(const _tchar * pMRTTag)
 	return m_pRenderTargetMgr->End(pMRTTag);
 }
 
+HRESULT CGameInstance::FolderFinder(const wstring & FileFolder)
+{
+	NULL_CHECK_BREAK(m_pFileIoMgr);
+
+	return m_pFileIoMgr->FolderFinder(FileFolder);
+}
+
+void CGameInstance::SaveVectorToDat(wstring savetxtName, wstring ExtensionName)
+{
+	NULL_CHECK_BREAK(m_pFileIoMgr);
+	return m_pFileIoMgr->SaveVectorToDat(savetxtName,ExtensionName);
+
+}
+
+list<MYFILEPATH*> CGameInstance::Load_ExtensionList(wstring txtfilepath, string exe, bool bFlag)
+{
+	NULL_CHECK_BREAK(m_pFileIoMgr);
+
+	return m_pFileIoMgr->Load_ExtensionList(txtfilepath,exe,bFlag);
+}
+
+wstring CGameInstance::Get_PathData(wstring Fullpath)
+{
+	NULL_CHECK_BREAK(m_pFileIoMgr);
+
+
+	return m_pFileIoMgr->Get_PathData(Fullpath);
+}
+
 
 
 
@@ -728,6 +762,9 @@ void CGameInstance::Release_Engine()
 	if (0 != GetSingle(CRenderTargetMgr)->DestroyInstance())
 		MSGBOX("Failed to Release Com CRenderTargetMgr ");
 
+	if (0 != GetSingle(CFileInfoMgr)->DestroyInstance())
+		MSGBOX("Failed to Release Com CFileInfoMgr ");
+
 	if (0 != GetSingle(CGraphic_Device)->DestroyInstance())
 		MSGBOX("Failed to Release Com Graphic_Device ");
 
@@ -750,6 +787,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pCollisionMgr);
 	Safe_Release(m_pRenderTargetMgr);
 	Safe_Release(m_pExternFontMgr);
+	Safe_Release(m_pFileIoMgr);
 	
 	
 }

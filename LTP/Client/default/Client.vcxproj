@@ -196,6 +196,7 @@
     <ClInclude Include="..\public\Scene_Stage4.h" />
     <ClInclude Include="..\public\Scene_Stage3.h" />
     <ClInclude Include="..\public\TestObject.h" />
+    <ClInclude Include="..\public\TestObject2.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\private\Scene_Stage5.cpp" />
     <ClCompile Include="..\private\Scene_Stage4.cpp" />
     <ClCompile Include="..\private\Scene_Stage3.cpp" />
+    <ClCompile Include="..\private\TestObject2.cpp" />
     <ClCompile Include="..\private\UtilityMgr.cpp" />
     <ClCompile Include="..\public\Imgui\imgui.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_demo.cpp" />

@@ -6,6 +6,7 @@
 #include "ClipBone.h"
 
 
+_bool CModel::MODEL_TOOLPATH_FLAG = false;
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CComponent(pDevice, pDeviceContext)
@@ -79,7 +80,6 @@ CModel::CModel(const CModel & rhs)
 
 
 }
-
 HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFilePath, const char * pModelFileName, _fMatrix& DefaultPivotMatrix, _uint iAnimCount)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(nullptr));
@@ -89,8 +89,12 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 	m_eModelType = eModelType;
 	m_DefaultPivotMatrix = DefaultPivotMatrix;
 
-	char	szFullPath[MAX_PATH] = "../bin/Resources/Mesh/";
+	char	szFullPath[MAX_PATH] = "";
 	char	szFilePath[MAX_PATH] = "";
+
+	if (MODEL_TOOLPATH_FLAG == false)
+	{
+		strcpy_s(szFullPath, "../bin/Resources/Mesh/");
 
 	if (TYPE_NONANIM == m_eModelType)
 		strcat_s(szFullPath, "StaticMesh/");
@@ -102,7 +106,14 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 	strcat_s(szFullPath, "/");
 	strcpy_s(szFilePath, szFullPath);
 	strcat_s(szFullPath, pModelFileName);
+	}
 
+	else
+	{
+		strcpy_s(szFullPath, pModelFilePath);
+		strcpy_s(szFilePath, pModelFileName);
+
+	}
 
 	_uint		iFlag = 0;
 
@@ -177,6 +188,29 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 
 	}
 	
+	return S_OK;
+}
+
+HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMatrix & DefaultPivotMatrix)
+{
+	// DatFile로 데이터 로드 테스트
+	if (eModelType == CModel::TYPE_ANIM)
+		return E_FAIL;
+
+	FAILED_CHECK(__super::Initialize_Prototype(nullptr));
+
+//	ZeroMemory(&m_MeshMaterialDesc, sizeof(MESHMATERIALDESC));
+
+	m_eModelType = eModelType;
+	m_DefaultPivotMatrix = DefaultPivotMatrix;
+
+	m_pScene = nullptr;
+	m_pModelDesc = desc;
+
+	FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
+//	FAILED_CHECK(Ready_Materials(szFilePath));
+
+
 	return S_OK;
 }
 
@@ -828,43 +862,65 @@ HRESULT CModel::Ready_OffsetMatrices()
 		}
 	}
 
-
-
-
-
-
 	return S_OK;
 }
 
 HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 {
-
-	NULL_CHECK_RETURN(m_pScene, E_FAIL);
-
-	m_iNumMeshContainers = m_pScene->mNumMeshes;
-	m_iNumMaterials = m_pScene->mNumMaterials;
-
-	m_vecMeshContainerArr = new MESHCONTAINERS[m_iNumMaterials];
-
-	for (_uint i = 0; i < m_iNumMeshContainers; ++i)
+	if (m_pModelDesc)
 	{
-		CMeshContainer*		pMeshContainer = CMeshContainer::Create(m_pDevice, m_pDeviceContext, m_eModelType, m_pScene->mMeshes[i], TransformMatrix);
-		NULL_CHECK_RETURN(pMeshContainer, E_FAIL);
-		m_vecMeshContainerArr[m_pScene->mMeshes[i]->mMaterialIndex].push_back(pMeshContainer);
+
+		m_iNumMeshContainers = m_pModelDesc ->mNumMeshes;
+		m_iNumMaterials = 1;
+
+		m_vecMeshContainerArr = new MESHCONTAINERS[m_iNumMaterials];
+
+		for (_uint i = 0; i < m_iNumMeshContainers; ++i)
+		{
+			CMeshContainer*		pMeshContainer = CMeshContainer::Create(m_pDevice, m_pDeviceContext, m_eModelType, &m_pModelDesc->mMeshDesc[i], TransformMatrix);
+			NULL_CHECK_RETURN(pMeshContainer, E_FAIL);
+		//	m_vecMeshContainerArr[m_pModelDesc->mMeshDesc[i]->mMaterialIndex].push_back(pMeshContainer);
 
 #ifdef _DEBUG
-		//string Name = m_pScene->mMeshes[i]->mName.data;
-		//string ttszLog ="Meterial Index : "+ to_string(m_pScene->mMeshes[i]->mMaterialIndex) + "  MeshName: " + Name + " Affecting Bond Num : " + to_string(m_pScene->mMeshes[i]->mNumBones) + "\n";
-		//wstring ttDebugLog;
-		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+			//string Name = m_pScene->mMeshes[i]->mName.data;
+			//string ttszLog ="Meterial Index : "+ to_string(m_pScene->mMeshes[i]->mMaterialIndex) + "  MeshName: " + Name + " Affecting Bond Num : " + to_string(m_pScene->mMeshes[i]->mNumBones) + "\n";
+			//wstring ttDebugLog;
+			//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
 
-		//OutputDebugStringW(ttDebugLog.c_str());
+			//OutputDebugStringW(ttDebugLog.c_str());
 
 #endif
 
+		}
 	}
 
+	else
+	{
 
+		NULL_CHECK_RETURN(m_pScene, E_FAIL);
+
+		m_iNumMeshContainers = m_pScene->mNumMeshes;
+		m_iNumMaterials = m_pScene->mNumMaterials;
+
+		m_vecMeshContainerArr = new MESHCONTAINERS[m_iNumMaterials];
+
+		for (_uint i = 0; i < m_iNumMeshContainers; ++i)
+		{
+			CMeshContainer*		pMeshContainer = CMeshContainer::Create(m_pDevice, m_pDeviceContext, m_eModelType, m_pScene->mMeshes[i], TransformMatrix);
+			NULL_CHECK_RETURN(pMeshContainer, E_FAIL);
+			m_vecMeshContainerArr[m_pScene->mMeshes[i]->mMaterialIndex].push_back(pMeshContainer);
+
+#ifdef _DEBUG
+			//string Name = m_pScene->mMeshes[i]->mName.data;
+			//string ttszLog ="Meterial Index : "+ to_string(m_pScene->mMeshes[i]->mMaterialIndex) + "  MeshName: " + Name + " Affecting Bond Num : " + to_string(m_pScene->mMeshes[i]->mNumBones) + "\n";
+			//wstring ttDebugLog;
+			//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+
+			//OutputDebugStringW(ttDebugLog.c_str());
+
+#endif
+		}
+	}
 
 	return S_OK;
 }
@@ -1213,6 +1269,18 @@ CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceCon
 	return pInstance;
 }
 
+CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, MODELTYPE eModelType, MODELDESC * desc, _fMatrix & TransformMatrix, _uint iAnimCount)
+{
+	CModel*	pInstance = new CModel(pDevice, pDeviceContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eModelType, desc, TransformMatrix)))
+	{
+		MSGBOX("Failed to Created CModel");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
 CComponent * CModel::Clone(void * pArg)
 {
 	CModel*	pInstance = new CModel(*this);
@@ -1263,5 +1331,7 @@ void CModel::Free()
 		m_vecCurrentKeyFrameIndices[i].clear();
 	}
 	m_vecCurrentKeyFrameIndices.clear();
+
+	Safe_Delete(m_pModelDesc);
 
 }

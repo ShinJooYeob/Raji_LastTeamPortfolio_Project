@@ -45,10 +45,12 @@
 #define BEGIN(p)	namespace p {
 #define END			}
 
+
  
 
 #define MSGBOX(MESSAGE) MessageBox(0, TEXT(MESSAGE), TEXT("System Message"), MB_OK);
 
+#define  NEW new
 
 //싱글톤////////////////////////////////////////////////////////////////////////
 #define NO_COPY(CLASSNAME)								\
@@ -110,6 +112,8 @@
 // {__asm { int 3; }; 코드 레벨에서 Break 포인트 걸기 86비트 전용
 // __debugbreak(); 코드 레벨에서 Break 포인트 걸기 64비트 전용
 
+#define DEBUGBREAK __debugbreak()
+
 // NULL 체크1 / 기본 
 #define NULL_CHECK( _ptr) \
 if( _ptr == 0){__debugbreak(); return;}
@@ -167,5 +171,30 @@ return _return;}
 // HRESULT 오류체크5 / 리턴 메세지 수정
 #define FAILED_CHECK_RETURN_MSG( _hr, _return, _message) if( ((HRESULT)(_hr)) < 0 ) \
 { MessageBox(NULL, _message, L"System Message"sp,MB_OK); __debugbreak();return _return;}
+
+
+// 경로
+
+// FBX 경로
+#define  STR_FILEPATH_RESOURCE_L					L"..\\Bin\\Resources"
+#define  STR_FILEPATH_FBX_STATIC_L					L"..\\Bin\\Resources\\Model\\StaticModel"
+#define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"..\\Bin\\Resources\\Model\\DynamicModel"
+
+#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data"
+#define  STR_FILEPATH_RESOURCE_PATH_L				L"..\\Bin\\Resources\\PathTxT"
+
+// | 로 나눈 경로
+#define  STR_FILEPATH_RESOURCE_STATICDAT_L				L"..\\Bin\\Resources\\PathTxT\\3DPath_Static.txt"
+#define  STR_FILEPATH_RESOURCE_DYNAMICDAT_L				L"..\\Bin\\Resources\\PathTxT\\3DPath_Dynamic.txt"
+#define  STR_FILEPATH_RESOURCE_FBXDAT_L					L"..\\Bin\\Resources\\PathTxT\\FBX_Dat.txt"
+
+// TXT 파일 이름
+#define STR_FILENAME_3DSTATIC_TXT					L"3DPath_Static.txt"
+#define STR_FILENAME_3DDYNAMIC_TXT					L"3DPath_Dynamic.txt"
+#define STR_FILENAME_FBXDAT_TXT						L"FBX_Dat.txt"
+
+
+
+
 
 

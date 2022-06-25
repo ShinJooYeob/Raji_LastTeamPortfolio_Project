@@ -21,7 +21,7 @@ texture2D			g_DiffuseTexture;
 texture2D			g_SpecularTexture;
 //texture2D			g_AmbientTexture;
 //texture2D			g_EmissiveTexture;
-//texture2D			g_HeightTexture;
+texture2D			g_HeightTexture;
 texture2D			g_NormalTexture;
 //texture2D			g_ShininessTexture;
 texture2D			g_OpacityTexture;

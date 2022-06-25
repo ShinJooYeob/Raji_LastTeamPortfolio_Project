@@ -216,6 +216,9 @@
     <ClInclude Include="..\public\TestObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TestObject2.h">
+      <Filter>01.GameObject\97.TestObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -294,6 +297,9 @@
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestObject.cpp">
+      <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject2.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
   </ItemGroup>

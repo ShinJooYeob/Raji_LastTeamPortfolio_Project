@@ -47,6 +47,7 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_TestObject,
+	Prototype_TestObject2,
 
 	Object_Prototype_End
 };
@@ -94,7 +95,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_TestObject:
 		return TEXT("Prototype_TestObject");
-		break;
+
+	case Prototype_TestObject2:
+		return TEXT("Prototype_TestObject2");
 		
 	default:
 		MSGBOX("Wrong Type Object Prototype");

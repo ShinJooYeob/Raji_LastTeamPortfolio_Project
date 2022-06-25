@@ -38,6 +38,8 @@ public:
 
 	HRESULT Load_Scene_Edit(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
+	HRESULT Load_ModelDatFile();
+
 private:
 	//로딩이 끝낫음을 알려주는 변수
 	_bool m_bIsLoadingFinished = false;

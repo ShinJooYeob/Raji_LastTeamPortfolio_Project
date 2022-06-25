@@ -154,6 +154,9 @@
     <Filter Include="01.Utillity\09.LightMgr\00.Manager">
       <UniqueIdentifier>{987a842a-cfbc-4cab-97a6-f860c8cb740f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\13.FileIOMgr">
+      <UniqueIdentifier>{928cbff2-fa77-485f-9e5f-6f13765084c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -312,6 +315,9 @@
     <ClInclude Include="..\public\SoundMgr.h">
       <Filter>00.System\03.Sound_Device</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FileInfoMgr.h">
+      <Filter>01.Utillity\13.FileIOMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -451,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SoundMgr.cpp">
       <Filter>00.System\03.Sound_Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FileInfoMgr.cpp">
+      <Filter>01.Utillity\13.FileIOMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,6 @@ HRESULT CScene_Loby::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
@@ -150,11 +149,11 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 
 HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject2)));
 
 	return S_OK;
 }
-
 
 CScene_Loby * CScene_Loby::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {

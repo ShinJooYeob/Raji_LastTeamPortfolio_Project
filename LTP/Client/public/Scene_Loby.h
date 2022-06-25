@@ -24,6 +24,8 @@ private:
 
 	HRESULT Ready_TestObject(const _tchar* pLayerTag);
 
+	
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 public:
