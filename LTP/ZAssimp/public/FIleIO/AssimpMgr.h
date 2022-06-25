@@ -20,16 +20,19 @@ public:
 
 	HRESULT Save_MODELDESC(wstring FolderPath, wstring filename, MODELDESC* desc);
 
+private:
+	HRESULT CopyData_MODELDESC(wstring fbxFullpath, wstring namepath,class CModel* copymodel);
+
 
 
 private:
 	ID3D11Device*			mDevice = nullptr;
 	ID3D11DeviceContext*	mDeviceContext = nullptr;
 private:
-	map<string, class CModel*>		mMap_ComponentModel;
+//	map<string, class CModel*>		mMap_ComponentModel;
 
 	// 모델이름으로 저장
-	map<string, MODELDESC*>			mMap_ModelDesc;
+	map<wstring, MODELDESC*>			mMap_ModelDesc;
 
 	// CBase을(를) 통해 상속됨
 	virtual void Free() override;

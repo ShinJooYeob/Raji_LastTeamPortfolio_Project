@@ -208,7 +208,7 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 	m_pModelDesc = desc;
 
 	FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
-//	FAILED_CHECK(Ready_Materials(szFilePath));
+	FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
 
 
 	return S_OK;
@@ -870,8 +870,8 @@ HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 	if (m_pModelDesc)
 	{
 
-		m_iNumMeshContainers = m_pModelDesc ->mNumMeshes;
-		m_iNumMaterials = 1;
+		m_iNumMeshContainers = m_pModelDesc->mNumMeshes;
+		m_iNumMaterials = m_pModelDesc->mNumMaterials;;
 
 		m_vecMeshContainerArr = new MESHCONTAINERS[m_iNumMaterials];
 
@@ -879,7 +879,7 @@ HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 		{
 			CMeshContainer*		pMeshContainer = CMeshContainer::Create(m_pDevice, m_pDeviceContext, m_eModelType, &m_pModelDesc->mMeshDesc[i], TransformMatrix);
 			NULL_CHECK_RETURN(pMeshContainer, E_FAIL);
-		//	m_vecMeshContainerArr[m_pModelDesc->mMeshDesc[i]->mMaterialIndex].push_back(pMeshContainer);
+			m_vecMeshContainerArr[m_pModelDesc->mMeshDesc[i].mMaterialIndex].push_back(pMeshContainer);
 
 #ifdef _DEBUG
 			//string Name = m_pScene->mMeshes[i]->mName.data;
@@ -927,6 +927,7 @@ HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 
 HRESULT CModel::Ready_Materials(const char * pModelFilePath)
 {
+
 	NULL_CHECK_RETURN(m_pScene, E_FAIL);
 
 
@@ -971,9 +972,71 @@ HRESULT CModel::Ready_Materials(const char * pModelFilePath)
 			MultiByteToWideChar(CP_ACP, 0, szFullPath, (int)strlen(szFullPath), szTextureFullPath, MAX_PATH);
 
 			FAILED_CHECK(m_MeshMaterialDesc.pTexture->Insert_Texture_On_BindedLayer(j, szTextureFullPath));
-		
+
+
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Materials(const wchar_t * pModelFilePath)
+{
+	if (m_pModelDesc == nullptr)
+		return E_FAIL;
+
+	m_pScene = nullptr;
+
+	ZeroMemory(&m_MeshMaterialDesc, sizeof(MESHMATERIALDESC));
+	m_MeshMaterialDesc.pTexture = CTexture::Create(m_pDevice, m_pDeviceContext);
+	NULL_CHECK_RETURN(m_MeshMaterialDesc.pTexture, E_FAIL);
+
+	for (_uint i = 0; i < m_iNumMaterials; ++i)
+	{
+		FAILED_CHECK(m_MeshMaterialDesc.pTexture->Insert_Empty_TextureLayer((_tchar*)(to_wstring(i).c_str())));
+
+//		FAILED_CHECK(m_MeshMaterialDesc.pTexture->Insert_Empty_TextureLayer((_tchar*)(to_wstring(i).c_str())));
+
+		for (_uint j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
+		{
+			wstring		TexturePath;
+			TexturePath = m_pModelDesc->mMaterials[i].MatName[j];
+			string		TexturePathstr = CHelperClass::Convert_Wstr2str(TexturePath);
+		
+
+
+			// 모델과 같은 경로
+			char		szFullPath[MAX_PATH] = "";
+			char		szFileName[MAX_PATH] = "";
+			char		szExt[MAX_PATH] = "";
+
+			_splitpath_s(TexturePathstr.c_str(), nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
+
+
+			if (!strcmp(szExt, ".tga"))
+			{
+				ZeroMemory(szExt, sizeof(char)*MAX_PATH);
+				strcpy_s(szExt, ".png");
+			}
+
+			wstring wstr = pModelFilePath;
+			string fullpath = CHelperClass::Convert_Wstr2str(wstr);
+			strcpy_s(szFullPath, fullpath.c_str());
+			char		szFilePath[MAX_PATH] = "";
+
+			_splitpath_s(szFullPath, nullptr, 0, szFilePath, MAX_PATH, nullptr, 0, nullptr, 0);
+			strcat_s(szFilePath, szFileName);
+			strcat_s(szFilePath, szExt);
+
+
+
+			_tchar		szTextureFullPath[MAX_PATH] = TEXT("");
+			MultiByteToWideChar(CP_ACP, 0, szFilePath, (int)strlen(szFilePath), szTextureFullPath, MAX_PATH);
+			
+			FAILED_CHECK(m_MeshMaterialDesc.pTexture->Insert_Texture_On_BindedLayer(j, szTextureFullPath));
+		}
+	}
+
 	return S_OK;
 }
 

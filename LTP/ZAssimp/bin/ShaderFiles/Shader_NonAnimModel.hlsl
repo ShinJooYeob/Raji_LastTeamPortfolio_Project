@@ -91,7 +91,7 @@ VS_OUT VS_MAIN_ATTACHBONE(VS_IN In)
 
 	Out.vProjPos = Out.vPosition;
 
-	Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), WorldMatrix));
 	Out.vBinormal = normalize(vector(cross(Out.vNormal.xyz, Out.vTangent.xyz), 0.f));
 
 	return Out;
@@ -171,12 +171,13 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	return Out;
 }
 
-PS_OUT_NODEFERRED PS_MAIN_SKYBOX(PS_IN In)
+PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 {
-	PS_OUT_NODEFERRED		Out = (PS_OUT_NODEFERRED)0;
+	PS_OUT		Out = (PS_OUT)0;
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vDiffuse.a = 1;
+	Out.vEmissive = 1.f;
 
 	return Out;
 }

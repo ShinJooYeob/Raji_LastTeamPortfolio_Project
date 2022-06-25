@@ -108,6 +108,7 @@ private:
 
 	HRESULT Ready_MeshContainers(_fMatrix& TransformMatrix);
 	HRESULT Ready_Materials(const char* pModelFilePath);
+	HRESULT Ready_Materials(const wchar_t* pModelFilePath);
 	HRESULT Ready_Animation();
 	HRESULT Ready_MoreAnimation(const char* szFileFullPath, _uint iAnimCount, _uint iFlag = 0);
 

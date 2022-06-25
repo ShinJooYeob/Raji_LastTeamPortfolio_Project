@@ -157,7 +157,6 @@ HRESULT CTexture::Read_TextFile(const _tchar * szFilePath)
 	wifstream		fin;
 
 	_tchar FullFilePath[MAX_PATH] = L"../Bin/Resources/Data/TexturePath/";
-
 	lstrcat(FullFilePath, szFilePath);
 
 	fin.open(FullFilePath);

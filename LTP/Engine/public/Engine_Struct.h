@@ -245,17 +245,29 @@ namespace Engine
 
 	}MESHDESC;
 
+
+
+	typedef struct tag_MatDesc
+	{
+		wchar_t MatName[MAX_TEXTURE_TYPE][MAX_PATH] = { L"" };
+
+
+	}MATDESC;
+
+
 	typedef struct tag_ModelDesc
 	{
 		_uint mModelType = 0;
+		wchar_t mFBXFileName[MAX_PATH] = L"";
+		wchar_t mFBXFullPath[MAX_PATH] = L"";
 
 		// Ready_MeshContainers
 		_uint			mNumMeshes;
 		MESHDESC*		mMeshDesc;
 
 
-		//_uint			mNumMaterials;
-		// aiMaterial**	mMaterials;
+		_uint			mNumMaterials;
+		MATDESC*		mMaterials;
 
 		// m_iNumMeshContainers
 		// m_iNumMaterials
