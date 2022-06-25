@@ -2,9 +2,10 @@
 texture2D			g_TargetTexture;
 texture2D			g_DiffuseTexture;
 texture2D			g_NormalTexture;
+texture2D			g_SpecularTexture;
+texture2D			g_EmissiveTexture;
 texture2D			g_DepthTexture;
 texture2D			g_ShadeTexture;
-texture2D			g_SpecularTexture;
 
 cbuffer	RenderingPipeLine
 {
@@ -133,9 +134,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
 	PS_OUT_LIGHT	Out = (PS_OUT_LIGHT)0;
 
+	vector		vEmissiveDesc	= g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vNormalDesc		= g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vDepthDesc			= g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
-	vector		vMtrlSpecularMap	= g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		vMtrlSpecularMap = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	
 	float		fViewZ = vDepthDesc.x * 300.f;
 
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -171,6 +174,13 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (g_vLightSpecular * 1.f) * pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30);
 	Out.vSpecular.a = 0.f;
 
+	if (vEmissiveDesc.x > 0)
+	{
+		Out.vShade = 1.f;
+		Out.vSpecular = 0.f;
+
+	}
+
 	return Out;	
 }
 
@@ -178,6 +188,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
 	PS_OUT_LIGHT	Out = (PS_OUT_LIGHT)0;
 
+	vector		vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vMtrlSpecularMap = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
@@ -219,7 +230,11 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	//Out.vSpecular = (g_vLightSpecular * 1) * pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), pow(1 / vMtrlSpecularMap.g, 2)) * fAtt;
 	Out.vSpecular = (g_vLightSpecular * 1.f) * pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30) * fAtt;
 	Out.vSpecular.a = 0.f;
-
+	if (vEmissiveDesc.x > 0)
+	{
+		Out.vShade = 1.f;
+		Out.vSpecular = 0.f;
+	}
 	return Out;
 }
 PS_OUT_AfterDeferred PS_MAIN_EndDeferred(PS_IN In)

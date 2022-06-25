@@ -31,9 +31,8 @@ typedef struct tagObjectElement
 {
 	_tchar			ObjectID[128] = L"";
 	_tchar			MeshID[128] = L"";
-	_tchar			TexturePath[128] = L"";
-	_tchar			TextureKey[128] = L"";
 	_uint			PassIndex = 0;
+	_float			FrustumRange = 5;
 	_float4x4		matSRT;
 	_float4x4		matTransform;
 	CGameObject*	pObject = nullptr;

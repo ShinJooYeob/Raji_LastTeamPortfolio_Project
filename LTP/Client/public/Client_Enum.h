@@ -37,7 +37,6 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_UIImage,
 
-	Prototype_EditorCursor,
 	Prototype_Rect,
 	Prototype_Cube,
 	Prototype_Terrain,
@@ -47,6 +46,9 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_TestObject,
+	Prototype_EditorCursor,
+	Prototype_EditorTerrain,
+	Prototype_Camera_Editor,
 
 	Object_Prototype_End
 };
@@ -64,9 +66,6 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_SkyBox:
 		return TEXT("Prototype_SkyBox");
-		break;
-	case Prototype_EditorCursor:
-		return TEXT("Prototype_EditorCursor");
 		break;
 	case Prototype_UIImage:
 		return TEXT("Prototype_UI_Image");
@@ -95,7 +94,16 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_TestObject:
 		return TEXT("Prototype_TestObject");
 		break;
-		
+	case Prototype_EditorCursor:
+		return TEXT("Prototype_EditorCursor");
+		break;
+	case Prototype_EditorTerrain:
+		return TEXT("Prototype_EditorTerrain");
+		break;
+	case Prototype_Camera_Editor:
+		return TEXT("Prototype_Camera_Editor");
+		break;
+
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -397,22 +405,23 @@ enum COMPONENTPROTOTYPEID
 	Prototype_VIBuffer_Terrain_Edit,
 	Prototype_VIBuffer_Point_Instance,
 
-	//////StaticMesh////////////////////////////////////////////////////////////////////
-
+	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
+
+
+
 	Prototype_Mesh_AlgaeRock_Ledge,
-
-
-	//////다이나믹Mesh////////////////////////////////////////////////////////////////////
-
+	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
 
 
+
+
+
 	Prototype_Mesh_SkyBox,
-
-
 	Prototype_Mesh_TestObject,
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
+
 	Prototype_Texture_Player,
 	Prototype_Texture_SkyBox,
 	Prototype_Texture_EditScene,
@@ -749,64 +758,5 @@ static const char* Tag_ModelTextureType(_uint eTag)
 }
 
 #define  MODLETEXTYPE Tag_ModelTextureType
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//enum EasingTypeID
-//{
-//	TYPE_Linear = 0,
-//
-//	TYPE_QuadIn = 1,
-//	TYPE_QuadOut,
-//	TYPE_QuadInOut,
-//
-//	TYPE_CubicIn = 4,
-//	TYPE_CubicOut,
-//	TYPE_CubicInOut,
-//
-//	TYPE_QuarticIn = 7,
-//	TYPE_QuarticOut,
-//	TYPE_QuarticInOut,
-//
-//	TYPE_QuinticIn = 10,
-//	TYPE_QuinticOut,
-//	TYPE_QuinticInOut,
-//
-//	TYPE_SinIn = 13,
-//	TYPE_SinOut,
-//	TYPE_SinInOut,
-//
-//	TYPE_ExpoIn = 16,
-//	TYPE_ExpoOut,
-//	TYPE_ExpoInOut,
-//
-//	TYPE_CircularIn = 19,
-//	TYPE_CircularOut,
-//	TYPE_CircularInOut,
-//
-//	TYPE_ElasticIn = 22,
-//	TYPE_ElasticOut,
-//	TYPE_ElasticInOut,
-//
-//	TYPE_BounceIn = 25,
-//	TYPE_BounceOut,
-//
-//
-//	TYPE_End
-//};
 
 

@@ -22,6 +22,8 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	Safe_AddRef(m_pDeviceContext);
 
 
+
+
 	return S_OK;
 }
 

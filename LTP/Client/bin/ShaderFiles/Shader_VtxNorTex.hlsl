@@ -239,7 +239,7 @@ PS_OUT PS_MAIN_TERRAIN_WIRE(PS_IN In)
 
 		if (vTileKinds.r <= 0.f)// 1 못가는곳
 		{
-			Out.vDiffuse = vector(1, 0, 0, 1) + vBrushColor;
+			Out.vDiffuse = vector(0, 0.5f, 0, 1) + vBrushColor;
 		}
 		else if (vTileKinds.r <= 0.00785f) // 2 이하 특수타일
 		{
@@ -247,7 +247,7 @@ PS_OUT PS_MAIN_TERRAIN_WIRE(PS_IN In)
 		}
 		else if(vTileKinds.r <= 0.01177f) // 움직일수 있는곳
 		{
-			Out.vDiffuse = vector(0, 0.5f, 0, 1) + vBrushColor;
+			Out.vDiffuse = vector(1, 0, 0, 1) + vBrushColor;
 		}
 
 

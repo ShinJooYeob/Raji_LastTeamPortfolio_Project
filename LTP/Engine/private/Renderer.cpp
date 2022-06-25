@@ -92,6 +92,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 #ifdef _DEBUG
 
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_MtrlDiffuse"), 50, 50, 100, 100));
+	//FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_MtrlNormal"), 640, 360, 1280, 720));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_MtrlNormal"), 50, 150, 100, 100));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_Depth"), 50, 250, 100, 100));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_MtrlSpecular"), 50, 350, 100, 100));
@@ -190,20 +191,26 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 
 #ifdef _DEBUG
-	static bool DrawDebug = false;
+	static _uint DrawDebug = 0;
 	if (GetSingle(CInput_Device)->Get_DIKeyState(DIK_F1) &DIS_Down)
 	{
-		DrawDebug = !DrawDebug;
+		DrawDebug++;
+		if (DrawDebug > 3) DrawDebug = 0;
 	}
 
 	if (DrawDebug)
 	{
-		FAILED_CHECK(Render_Debug());
+		if (DrawDebug == 1 || DrawDebug == 3)
+			FAILED_CHECK(Render_Debug());
 
-		FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_Material")));
-		FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_LightAcc")));
-		FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_Defferred")));
+		if (DrawDebug >= 2)
+		{
 
+			FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_Material")));
+			FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_LightAcc")));
+			FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_Defferred")));
+
+		}
 		ID3D11ShaderResourceView* pSRV[8] = { nullptr };
 		m_pDeviceContext->PSSetShaderResources(0, 8, pSRV);
 	}

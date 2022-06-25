@@ -57,6 +57,8 @@ protected:
 	_float						m_fRenderSortValue = 0;
 	_bool						m_bIsOnScreen = false;
 
+
+	_float						m_fFrustumRadius = 1.f; 
 protected:
 	HRESULT Add_Component(_uint iScenenNum, const _tchar* tagPrototype,const _tchar* tagComponent, CComponent** ppOut , void* pArg =nullptr);
 	

@@ -29,8 +29,12 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 
+	_uint				m_iOldAnimIndex = INT_MAX;
+	_uint				m_iAdjMovedIndex = 0;
+
 private:
 	HRESULT SetUp_Components();
+	HRESULT Adjust_AnimMovedTransform(_double fDeltatime);
 
 public:
 	static CTestObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

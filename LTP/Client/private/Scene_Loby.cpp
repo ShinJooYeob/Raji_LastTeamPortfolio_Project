@@ -24,6 +24,7 @@ HRESULT CScene_Loby::Initialize()
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 		
 	return S_OK;
@@ -38,6 +39,11 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+	}
+	if (GetKeyState(VK_F2) & 0x8000)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_EDIT), SCENEID::SCENE_LOADING));
 	}
 
 
@@ -144,6 +150,13 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 
 	
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Loby::Ready_Layer_SkyBox(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_LOBY, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }

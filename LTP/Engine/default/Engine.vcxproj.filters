@@ -204,9 +204,6 @@
     <ClInclude Include="..\public\VIBuffer_Cube.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\02.Cube</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_DynamicTerrain.h">
-      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Point_Instance.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Point_Instance</Filter>
     </ClInclude>
@@ -312,6 +309,9 @@
     <ClInclude Include="..\public\SoundMgr.h">
       <Filter>00.System\03.Sound_Device</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_EditorTerrain.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -343,9 +343,6 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cube.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\02.Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_DynamicTerrain.cpp">
-      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Point_Instance.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Point_Instance</Filter>
@@ -451,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SoundMgr.cpp">
       <Filter>00.System\03.Sound_Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_EditorTerrain.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

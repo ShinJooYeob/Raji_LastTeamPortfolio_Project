@@ -16,7 +16,7 @@
 
 
 #ifdef USE_IMGUI
-//#include "Scene_Edit.h"
+ #include "Scene_Edit.h"
 #endif // USE_IMGUI
 
 
@@ -101,12 +101,12 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 //			break;
 //
 //
-//#ifdef USE_IMGUI
-//		case SCENEID::SCENE_EDIT:
-//			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Edit::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
-//			break;
-//#endif // USE_IMGUI
-//
+#ifdef USE_IMGUI
+		case SCENEID::SCENE_EDIT:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Edit::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
+#endif // USE_IMGUI
+
 		default:
 			MSGBOX("Failed to SceneChange");
 			break;

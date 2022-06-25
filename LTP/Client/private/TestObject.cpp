@@ -39,7 +39,12 @@ _int CTestObject::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
+
+	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
+	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
+
+
 
 	return _int();
 }
@@ -48,8 +53,10 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
+
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 	return _int();
 }
@@ -73,11 +80,7 @@ _int CTestObject::Render()
 	{
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-
-
 			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
-		
-
 	}
 
 
@@ -112,6 +115,44 @@ HRESULT CTestObject::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	return S_OK;
+}
+
+HRESULT CTestObject::Adjust_AnimMovedTransform(_double fDeltatime)
+{
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+	_double PlayRate = m_pModel->Get_PlayRate();
+
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+		m_iAdjMovedIndex = 0;
+
+
+	if (PlayRate <= 0.98)
+	{
+		switch (iNowAnimIndex)
+		{
+		case 1://애니메이션 인덱스마다 잡아주면 됨
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
+			{
+
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+			{
+
+
+				m_iAdjMovedIndex++;
+			}
+
+			break;
+		case 2:
+
+			break;
+		}
+	}
+
+
+	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 

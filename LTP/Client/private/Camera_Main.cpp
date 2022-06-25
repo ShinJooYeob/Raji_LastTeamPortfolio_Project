@@ -90,6 +90,29 @@ _int CCamera_Main::Update(_double fDeltaTime)
 	FAILED_CHECK(Update_CamAction(fDeltaTime));
 
 
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
+	{
+		m_pTransform->Move_Forward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
+	{
+		m_pTransform->Move_Backward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press)
+	{
+		m_pTransform->Move_Right(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
+	{
+		m_pTransform->Move_Left(fDeltaTime);
+	}
+
+
+
+
+
+
 	return _int();
 }
 

@@ -58,7 +58,7 @@ _int CScene_StageSelect::Render()
 
 #ifdef _DEBUG
 	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE3"));
+		SetWindowText(g_hWnd, TEXT("SCENE_STAGESELECT"));
 #endif // _DEBUG
 
 	return 0;
@@ -144,7 +144,7 @@ HRESULT CScene_StageSelect::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	else 
 	{
-		m_pMainCam->Set_NowSceneNum(SCENE_STAGE3);
+		m_pMainCam->Set_NowSceneNum(SCENE_STAGESELECT);
 	}
 	
 	return S_OK;
@@ -152,14 +152,14 @@ HRESULT CScene_StageSelect::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_StageSelect::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
 
 HRESULT CScene_StageSelect::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Terrain)));
 
 
 

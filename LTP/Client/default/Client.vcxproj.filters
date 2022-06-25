@@ -112,6 +112,15 @@
     <Filter Include="01.GameObject\97.TestObject">
       <UniqueIdentifier>{a7b3c531-e407-40f9-a353-10b9cfcf15b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\97.TestObject\00.For_EditorScene">
+      <UniqueIdentifier>{ff4047c5-d159-4854-b153-f03f045d7655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject">
+      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject">
+      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -216,6 +225,27 @@
     <ClInclude Include="..\public\TestObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SkyBox.h">
+      <Filter>01.GameObject\05.SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EditorTerrain.h">
+      <Filter>01.GameObject\06.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_Edit.h">
+      <Filter>02.Scene\99.Scene_Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Editor.h">
+      <Filter>01.GameObject\00.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ESCursor.h">
+      <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapObject.h">
+      <Filter>01.GameObject\07.MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticMapObject.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -295,6 +325,27 @@
     </ClCompile>
     <ClCompile Include="..\private\TestObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SkyBox.cpp">
+      <Filter>01.GameObject\05.SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EditorTerrain.cpp">
+      <Filter>01.GameObject\06.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Edit.cpp">
+      <Filter>02.Scene\99.Scene_Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Camera_Editor.cpp">
+      <Filter>01.GameObject\00.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ESCursor.cpp">
+      <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMapObject.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapObject.cpp">
+      <Filter>01.GameObject\07.MapObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

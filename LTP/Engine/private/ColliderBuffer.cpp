@@ -119,9 +119,11 @@ HRESULT CColliderBuffer::Initialize_Clone(COLLIDERDESC * pArg)
 		break;
 	case Engine::COLLIDER_OBB:
 	{
-		_float3 vExtents = _float3(XMLoadFloat3(&m_pOBB[BOUNDING_ORIGINAL]->Extents) * m_ColliderDesc.vScale.XMVector());
+		//_float3 vExtents = _float3(XMLoadFloat3(&m_pOBB[BOUNDING_ORIGINAL]->Extents) * m_ColliderDesc.vScale.XMVector());
+		//m_pOBB[BOUNDING_ORIGINAL]->Transform(*m_pOBB[BOUNDING_ORIGINAL], TransformMatrix);
+		//m_pOBB[BOUNDING_ORIGINAL]->Extents = vExtents;
+
 		m_pOBB[BOUNDING_ORIGINAL]->Transform(*m_pOBB[BOUNDING_ORIGINAL], TransformMatrix);
-		m_pOBB[BOUNDING_ORIGINAL]->Extents = vExtents;
 	}
 		break;
 	case Engine::COLLIDER_SPHERE:

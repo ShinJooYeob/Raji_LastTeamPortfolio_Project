@@ -32,6 +32,7 @@ HRESULT CLightMgr::Render(CShader * pShader, CVIBuffer_Rect * pViBuffer, MATRIXW
 
 	FAILED_CHECK(pShader->Set_Texture("g_NormalTexture", pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlNormal"))));
 	FAILED_CHECK(pShader->Set_Texture("g_SpecularTexture", pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlSpecular"))));
+	FAILED_CHECK(pShader->Set_Texture("g_EmissiveTexture", pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
 	FAILED_CHECK(pShader->Set_Texture("g_DepthTexture", pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
 	
 	FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &(pWVPMat->WorldMatrix), sizeof(_float4x4)));
