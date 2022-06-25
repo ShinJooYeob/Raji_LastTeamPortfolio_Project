@@ -159,9 +159,6 @@
     <ClInclude Include="..\public\UtilityMgr.h">
       <Filter>03.Manager\01.UtilityMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Loader.h">
-      <Filter>02.Scene\04.Scene_InGame</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Scene_Loading.h">
       <Filter>02.Scene\02.Scene_Loading</Filter>
     </ClInclude>
@@ -252,6 +249,9 @@
     <ClInclude Include="..\public\NaviPoint.h">
       <Filter>01.GameObject\96.NaviPoint</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Loader.h">
+      <Filter>02.Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -265,9 +265,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UtilityMgr.cpp">
       <Filter>03.Manager\01.UtilityMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Loader.cpp">
-      <Filter>02.Scene\04.Scene_InGame</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Scene_Loading.cpp">
       <Filter>02.Scene\02.Scene_Loading</Filter>
@@ -355,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="..\private\NaviPoint.cpp">
       <Filter>01.GameObject\96.NaviPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Loader.cpp">
+      <Filter>02.Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
