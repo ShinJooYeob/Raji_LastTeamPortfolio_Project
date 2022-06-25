@@ -80,3 +80,11 @@ cmake-build-*
 ## Unix executables from our example Makefiles
 
 LTP/ipch/**.*
+LTP/Client/bin/assimp-vc140-mt.dll
+LTP/Client/bin/assimp-vc140-mtd.dll
+LTP/Client/bin/Engine.dll
+LTP/Client/bin/fmod.dll
+LTP/Client/bin/fmodL.dll
+LTP/Engine/bin/Engine.dll
+LTP/Engine/bin/Engine.exp
+LTP/Engine/bin/Engine.lib
