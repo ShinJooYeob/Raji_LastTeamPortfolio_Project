@@ -1,7 +1,9 @@
 #pragma once
 #include "GameObject.h"
 
-
+BEGIN(Engine)
+class CNavigation;
+END
 
 BEGIN(Client)
 
@@ -27,6 +29,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CNavigation*		m_pNavigationCom = nullptr;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;

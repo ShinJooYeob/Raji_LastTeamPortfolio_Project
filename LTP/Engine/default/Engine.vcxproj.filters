@@ -154,6 +154,15 @@
     <Filter Include="01.Utillity\09.LightMgr\00.Manager">
       <UniqueIdentifier>{987a842a-cfbc-4cab-97a6-f860c8cb740f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\07.Navigation">
+      <UniqueIdentifier>{a0aa703b-41ec-4714-8cbb-217472acb0f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\07.Navigation\Cell">
+      <UniqueIdentifier>{c544fc6e-1431-40c8-8eb9-af8529f11e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle">
+      <UniqueIdentifier>{a6a49233-cd3c-4319-95d6-c42570a0cbab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -312,6 +321,15 @@
     <ClInclude Include="..\public\VIBuffer_EditorTerrain.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Navigation.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Cell.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Triangle.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -452,10 +470,22 @@
     <ClCompile Include="..\private\VIBuffer_EditorTerrain.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Navigation.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cell.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_Navigation.hlsl">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

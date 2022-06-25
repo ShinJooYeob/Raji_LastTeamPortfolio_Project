@@ -121,6 +121,9 @@
     <Filter Include="01.GameObject\07.MapObject\02.StaticObject">
       <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\96.NaviPoint">
+      <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -246,6 +249,9 @@
     <ClInclude Include="..\public\StaticMapObject.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NaviPoint.h">
+      <Filter>01.GameObject\96.NaviPoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -346,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MapObject.cpp">
       <Filter>01.GameObject\07.MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaviPoint.cpp">
+      <Filter>01.GameObject\96.NaviPoint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

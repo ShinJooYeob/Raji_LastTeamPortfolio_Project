@@ -83,7 +83,7 @@ private:
 	_bool		m_bIsBlockAnim = false;
 	_bool		m_bIsChagingAnim = false;
 	_uint		m_KindsOfAnimChange = 0;
-	_bool		m_bIsSwapFunctionCalled= false;
+	_bool		m_bIsSwapFunctionCalled= false;//블렌딩할때 꼬이지 않도록 하는 불값
 
 private:
 	MODELTYPE								m_eModelType = TYPE_END;

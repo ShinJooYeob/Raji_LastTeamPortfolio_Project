@@ -23,6 +23,7 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
+	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 	
 	
 	
@@ -58,7 +59,7 @@ _int CScene_Stage4::Render()
 
 #ifdef _DEBUG
 	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE3"));
+		SetWindowText(g_hWnd, TEXT("SCENE_STAGE4"));
 #endif // _DEBUG
 
 	return 0;
@@ -166,6 +167,14 @@ HRESULT CScene_Stage4::Ready_Layer_Terrain(const _tchar * pLayerTag)
 	return S_OK;
 }
 
+HRESULT CScene_Stage4::Ready_TestObject(const _tchar * pLayerTag)
+{
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject_Himeko)));
+
+	return S_OK;
+}
 
 
 CScene_Stage4 * CScene_Stage4::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)

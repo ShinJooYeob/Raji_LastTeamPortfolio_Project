@@ -189,6 +189,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
+    <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
     <ClInclude Include="..\public\Scene_Stage1.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
+    <ClCompile Include="..\private\NaviPoint.cpp" />
     <ClCompile Include="..\private\TestObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Scene_Loading.cpp" />

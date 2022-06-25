@@ -5,6 +5,7 @@
 #include "VIBuffer_Point_Instance.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Cube.h"
+#include "VIBuffer_Triangle.h"
 #include "Model.h"
 
 #include "Transform.h"
@@ -12,6 +13,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Collider.h"
+#include "Navigation.h"
 
 
 BEGIN(Engine)

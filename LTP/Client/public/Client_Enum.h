@@ -49,6 +49,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_EditorCursor,
 	Prototype_EditorTerrain,
 	Prototype_Camera_Editor,
+	Prototype_TestObject_Himeko,
 
 	Object_Prototype_End
 };
@@ -104,6 +105,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Camera_Editor");
 		break;
 
+		break;
+
+	case Prototype_TestObject_Himeko: 
+		return TEXT("Prototype_TestObject_Himeko");
+		break;
+		
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -385,11 +392,12 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 enum COMPONENTPROTOTYPEID
 {
-	/////////////////±‚∫ª ƒƒ∆˜≥Õ∆Æ
+	/////////////////Í∏∞Î≥∏ Ïª¥Ìè¨ÎÑåÌä∏
 	Prototype_Renderer,
 	Prototype_Transform,
 	Prototype_Collider,
 	Prototype_Trail,
+	Prototype_Navigation,
 	Prototype_Shader_VT,
 	Prototype_Shader_VCT,
 	Prototype_Shader_VNT,
@@ -398,20 +406,20 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Shader_VNAM,
 	Prototype_Shader_VTXPOINTINST,
 
-	//////////////πˆ∆€////////////////////////////////////////////////////////////
+	//////////////Î≤ÑÌçº////////////////////////////////////////////////////////////
 	Prototype_VIBuffer_Rect,
 	Prototype_VIBuffer_Cube,
 	Prototype_VIBuffer_Terrain,
 	Prototype_VIBuffer_Terrain_Edit,
 	Prototype_VIBuffer_Point_Instance,
 
-	//////StaticMesh//////////None«œ∞Ì æÀ∞‘∂Ù ∑π¡ˆ ªÁ¿Ãø°¥Ÿ∞°∏∏ ≥÷¿ª ∞Õ//////////////////////////////////////////////////////////
+	//////StaticMesh//////////NoneÌïòÍ≥† ÏïåÍ≤åÎùΩ Î†àÏßÄ ÏÇ¨Ïù¥ÏóêÎã§Í∞ÄÎßå ÎÑ£ÏùÑ Í≤É//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
 
 
 
 	Prototype_Mesh_AlgaeRock_Ledge,
-	//////¥Ÿ¿Ã≥™πÕMesh///////////////«√∑π¿ÃæÓ«œ∞Ì ≈◊Ω∫∆Æ ø¿∫Í¡ß∆Æ ªÁ¿Ãø°¥Ÿ∞°∏∏ ≥÷¿ª ∞Õ/////////////////////////////////////////////////////
+	//////Îã§Ïù¥ÎÇòÎØπMesh///////////////ÌîåÎ†àÏù¥Ïñ¥ÌïòÍ≥† ÌÖåÏä§Ìä∏ Ïò§Î∏åÏ†ùÌä∏ ÏÇ¨Ïù¥ÏóêÎã§Í∞ÄÎßå ÎÑ£ÏùÑ Í≤É/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
 
 
@@ -419,8 +427,9 @@ enum COMPONENTPROTOTYPEID
 
 
 	Prototype_Mesh_SkyBox,
+	Prototype_Mesh_TestObject_Himeko,
 	Prototype_Mesh_TestObject,
-	/////////≈ÿΩ∫√ƒ/////////////////////////////////////////////////////////////////
+	/////////ÌÖçÏä§Ï≥ê/////////////////////////////////////////////////////////////////
 
 	Prototype_Texture_Player,
 	Prototype_Texture_SkyBox,
@@ -459,6 +468,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_Trail");
 		break;
 
+	case Prototype_Navigation:
+		return TEXT("Prototype_Component_Navigation");
+		break;
+
 	case Prototype_Shader_VT:
 		return TEXT("Prototype_Component_Shader_VTXTEX");
 		break;
@@ -482,8 +495,6 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Shader_VTXPOINTINST:
 		return TEXT("Prototype_Component_Shader_VTXPOINTINST");
 		break;
-
-
 	case Prototype_VIBuffer_Rect:
 		return TEXT("Prototype_Component_VIBuffer_Rect");
 		break;
@@ -497,7 +508,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 		
 
-		//∏ﬁΩ¨////////////////////////////////////////////////////////////////////////
+		//Î©îÏâ¨////////////////////////////////////////////////////////////////////////
 
 	case Prototype_Mesh_None:
 		return TEXT("Prototype_Mesh_None");
@@ -529,12 +540,16 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_TestObject:
 		return TEXT("Prototype_Mesh_TestObject");
 		break;
+
+	case Prototype_Mesh_TestObject_Himeko:
+		return TEXT("Prototype_Mesh_TestObject_Himeko");
+		break;
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;
 
 
-		/////////////////≈ÿΩ∫√≥////////////////////////////////////////////////////////
+		/////////////////ÌÖçÏä§Ï≤ò////////////////////////////////////////////////////////
 
 
 	case Prototype_Texture_Player:
@@ -597,7 +612,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 			return TEXT("Prototype_Texture_PauseUI");
 			break;
 			
-				//∏ﬁΩ¨////////////////////////////////////////////////////////////////////////
+				//Î©îÏâ¨////////////////////////////////////////////////////////////////////////
 
 
 
@@ -641,7 +656,8 @@ enum COMPONENTID
 	Com_SubModel,
 	Com_Collider,
 	Com_SwordTrail,
-	Com_SubSwordTrail
+	Com_SubSwordTrail,
+	Com_Navaigation
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -688,6 +704,9 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 		break;
 	case Com_SubSwordTrail:
 		return TEXT("Com_SubSwordTrail");
+		break;
+	case Com_Navaigation:
+		return TEXT("Com_Navigation");
 		break;
 		
 		
