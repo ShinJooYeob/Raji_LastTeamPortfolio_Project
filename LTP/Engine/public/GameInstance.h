@@ -21,6 +21,7 @@ class CCollisionMgr;
 class CRenderTargetMgr;
 class CExternFontMgr;
 class CSoundMgr;
+class CFileInfoMgr;
 
 class ENGINE_DLL CGameInstance final :public CBase
 {
@@ -153,6 +154,14 @@ public:
 	HRESULT Begin_MTV_WithBackBuffer(const _tchar* pMRTTag);
 	HRESULT End_MTV(const _tchar* pMRTTag);
 
+public: /* CFileInfoMgr */
+	HRESULT FolderFinder(const wstring& FileFolder);
+	void SaveVectorToDat(wstring savetxtName, wstring ExtensionName = L"");
+	list<MYFILEPATH*> Load_ExtensionList(wstring txtfilepath, string exe, bool bFlag = true);
+	wstring Get_PathData(wstring Fullpath);
+
+
+
 private:
 	CGraphic_Device*	m_pGraphicDevice = nullptr;
 	CTimeMgr*			m_pTimerMgr = nullptr;
@@ -167,8 +176,10 @@ private:
 	CLightMgr*			m_pLightMgr = nullptr;
 	CCollisionMgr*		m_pCollisionMgr = nullptr;
 	CRenderTargetMgr*	m_pRenderTargetMgr = nullptr;
-	CExternFontMgr*			m_pExternFontMgr	= nullptr;
+	CExternFontMgr*		m_pExternFontMgr	= nullptr;
 	CSoundMgr*			m_pSoundMgr = nullptr;
+	CFileInfoMgr*		m_pFileIoMgr = nullptr;
+
 public:
 	static void Release_Engine();
 	virtual void Free() override;

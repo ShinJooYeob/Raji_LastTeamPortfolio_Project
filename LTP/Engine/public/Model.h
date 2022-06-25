@@ -16,6 +16,8 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype(MODELTYPE eModelType, const char * pModelFilePath, const char * pModelFileName, _fMatrix& DefaultPivotMatrix, _uint iAnimCount);
+	virtual HRESULT Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc,_fMatrix& DefaultPivotMatrix);
+
 	virtual HRESULT Initialize_Clone(void* pArg)override;
 
 
@@ -44,9 +46,17 @@ public:
 	ATTACHBONEMATRIX_PTR Find_AttachMatrix_InHirarchyNode(const char* pName);
 public:
 	_uint	Get_NumMaterial() { return m_iNumMaterials; };
+	const aiScene*	Get_AssimpScene() const
+	{
+		return m_pScene;
+	}
+	
+
 private:
 	const aiScene*				m_pScene = nullptr;
 	Importer					m_Importer;
+	MODELDESC*					m_pModelDesc = nullptr;
+
 
 private: /*매시 보관(영항 받는 머테리얼 기준으로 분류하여 저장)*/
 	_uint									m_iNumMeshContainers = 0;
@@ -85,6 +95,9 @@ private:
 	_uint		m_KindsOfAnimChange = 0;
 	_bool		m_bIsSwapFunctionCalled= false;//블렌딩할때 꼬이지 않도록 하는 불값
 
+public:
+	static _bool MODEL_TOOLPATH_FLAG; // Mesh 까지의 경로 비우기
+
 private:
 	MODELTYPE								m_eModelType = TYPE_END;
 	_float4x4								m_DefaultPivotMatrix;
@@ -104,6 +117,8 @@ private:
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext,
 		MODELTYPE eModelType, const char* pModelFilePath, const char* pModelFileName,_fMatrix& TransformMatrix = XMMatrixIdentity(), _uint iAnimCount = 1);
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext,
+		MODELTYPE eModelType, MODELDESC* desc, _fMatrix& TransformMatrix = XMMatrixIdentity(), _uint iAnimCount = 1);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

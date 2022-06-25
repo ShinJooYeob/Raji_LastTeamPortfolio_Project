@@ -208,4 +208,69 @@ namespace Engine
 	}MATRIXWVP;
 
 
+	typedef struct ENGINE_DLL tag_FilePath
+	{
+		wchar_t FullPath[260] = L"";
+		wchar_t FileName[256] = L"";
+		wchar_t Extension[32] = L"";
+		unsigned int FileCount = 0;
+	}MYFILEPATH;
+
+	typedef struct tag_MeshDesc
+	{
+		// 메시에 필요한 정보
+		_uint			mPrimitiveTypes;
+		_uint			mNumVertices;
+		_uint			mNumFaces;
+
+		_float3*		mVertices;
+		_float3*		mNormals;
+		_float3*		mTangents;
+		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+		FACEINDICES32*	mFaces;
+
+		//	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+		_uint			mMaterialIndex;
+
+		// C_STRUCT aiColor4D* mColors[AI_MAX_NUMBER_OF_COLOR_SETS];
+		// unsigned int mNumBones;
+		// C_STRUCT aiBone** mBones;
+		// C_STRUCT aiString mName;
+		// unsigned int mNumAnimMeshes;
+		// C_STRUCT aiAnimMesh** mAnimMeshes;
+		// unsigned int mMethod;
+		// C_STRUCT aiAABB mAABB;
+
+
+
+	}MESHDESC;
+
+	typedef struct tag_ModelDesc
+	{
+		_uint mModelType = 0;
+
+		// Ready_MeshContainers
+		_uint			mNumMeshes;
+		MESHDESC*		mMeshDesc;
+
+
+		//_uint			mNumMaterials;
+		// aiMaterial**	mMaterials;
+
+		// m_iNumMeshContainers
+		// m_iNumMaterials
+		// m_vecMeshContainerArr
+
+
+		// Ready_Materials
+
+		// MESHMATERIALDESC
+
+		// 애니메이션 // 일단 그냥 모델만 테스트
+
+
+	}MODELDESC;
+
+
+
 }

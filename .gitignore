@@ -25,6 +25,12 @@ LTP/Client/bin/Resources/**/**/**/**/**/**/*.*
 LTP/Client/bin/Resources/**/**/**/**/**/**/**/*.*
 LTP/Client/bin/Resources/**/**/**/**/**/**/**/**/*.*
 
+LTP/ZAssimp/bin/Resources
+LTP/ZAssimp/bin/Resources/**/*.*
+LTP/ZAssimp/bin/Resources/**/**/*.*
+LTP/ZAssimp/bin/Resources/**/**/**/*.*
+LTP/ZAssimp/bin/Resources/**/**/**/**/*.*
+
 \Engine
 
 ## Dear ImGui artifacts

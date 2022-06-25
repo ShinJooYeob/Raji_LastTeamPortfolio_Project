@@ -14,6 +14,7 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype(CModel::MODELTYPE eMeshtype, aiMesh* pAIMesh, _fMatrix& TransformMatrix);
+	virtual HRESULT Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDESC* pAIMesh, _fMatrix& TransformMatrix);
 	virtual HRESULT Initialize_Clone(void* pArg);
 
 	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix ,_float4x4* pBoneMatrices, const char* szBoneName, const vector<CHierarchyNode*>* pVecHierarchyNodes);
@@ -46,9 +47,17 @@ private:
 	HRESULT Ready_AnimMeshContainer(aiMesh* pAIMesh);
 	HRESULT Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL* pVertices);
 
+	HRESULT Ready_NonAnimMeshContainer(MESHDESC* pAIMesh, _fMatrix& TransformMatrix);
+	HRESULT Ready_AnimMeshContainer(MESHDESC* pAIMesh);
+	HRESULT Ready_SkinnedInfo(MESHDESC* pAIMesh, VTXANIMMODEL* pVertices);
+
 public:
 	static CMeshContainer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, 
 		CModel::MODELTYPE eMeshtype, aiMesh* pAIMesh, _fMatrix& TransformMatrix);
+
+	static CMeshContainer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext,
+		CModel::MODELTYPE eMeshtype, MESHDESC* meshdesc, _fMatrix& TransformMatrix);
+
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

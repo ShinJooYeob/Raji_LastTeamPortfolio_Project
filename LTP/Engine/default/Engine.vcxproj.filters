@@ -163,6 +163,9 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle">
       <UniqueIdentifier>{a6a49233-cd3c-4319-95d6-c42570a0cbab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\13.FileIOMgr">
+      <UniqueIdentifier>{928cbff2-fa77-485f-9e5f-6f13765084c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -330,6 +333,9 @@
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FileInfoMgr.h">
+      <Filter>01.Utillity\13.FileIOMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -478,6 +484,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\05.Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FileInfoMgr.cpp">
+      <Filter>01.Utillity\13.FileIOMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

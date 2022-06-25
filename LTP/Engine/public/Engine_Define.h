@@ -62,6 +62,7 @@ using namespace Assimp;
 #include <map>
 #include <queue>
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 

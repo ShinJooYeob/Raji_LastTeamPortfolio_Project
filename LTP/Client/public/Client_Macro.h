@@ -15,3 +15,9 @@
 #define PlayerGrinderCoolTime 2.5f
 
 #define MonsterDmgTime		1.5
+
+#define KEYUP(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Up
+#define KEYDOWN(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Down
+#define KEYPRESS(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Press
+#define KEYUP(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_DoubleDown
+
