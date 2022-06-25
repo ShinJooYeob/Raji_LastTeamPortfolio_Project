@@ -36,8 +36,22 @@ HRESULT CTestObject::Initialize_Clone(void * pArg)
 
 _int CTestObject::Update(_double fDeltaTime)
 {
-
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	if (m_eNowSceneNum == SCENE_STAGE4)
+	{
+		if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+		{
+			m_pModel->Change_AnimIndex(12);
+
+			if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Up)
+			{
+				m_pModel->Change_AnimIndex(11);
+			}
+		}
+	}
+
+
 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
 
@@ -48,7 +62,7 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this));
 
 
 	return _int();
@@ -80,13 +94,22 @@ _int CTestObject::Render()
 
 	}
 
+#ifdef _DEBUG
+	if (m_pNavigationCom != nullptr)
+	{
+		m_pNavigationCom->Render(m_pTransformCom);
+		//m_pNavigationCom->Render((CTransform*)pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), CGameObject::m_pTransformTag));
 
+	}
+
+#endif // _DEBUG
 
 	return _int();
 }
 
 _int CTestObject::LateRender()
 {
+
 	return _int();
 }
 
@@ -98,8 +121,16 @@ HRESULT CTestObject::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	if (m_eNowSceneNum == SCENE_STAGE4)
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject_Himeko), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(m_pModel->Change_AnimIndex(11));
+	}
+	else
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	}
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -112,6 +143,14 @@ HRESULT CTestObject::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	if (m_eNowSceneNum == SCENE_STAGE4)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC		NaviDesc;
+		NaviDesc.iCurrentIndex = -1;
+
+		FAILED_CHECK(Add_Component(SCENE_STAGE4, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc));
+	}
 	return S_OK;
 }
 
@@ -147,4 +186,5 @@ void CTestObject::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pNavigationCom);
 }

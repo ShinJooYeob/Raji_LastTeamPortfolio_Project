@@ -1,18 +1,12 @@
-﻿  Renderer.cpp
-  ObjectMgr.cpp
-  ObjectLayer.cpp
-  GameObject.cpp
-  GameInstance.cpp
-  CollisionMgr.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  Camera.cpp
-  코드를 생성하고 있습니다...
-  Engine.vcxproj -> C:\Users\tls63\Desktop\LTP\LTP\Engine\default\../bin/Engine.dll
+﻿  Navigation.cpp
+c:\users\1\desktop\ltp\ltp\engine\private\navigation.cpp(47): warning C4267: '인수': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\1\desktop\ltp\ltp\engine\private\navigation.cpp(117): warning C4101: 'SlidingVector' :참조되지 않은 지역 변수입니다.
+  Engine.vcxproj -> C:\Users\1\Desktop\LTP\LTP\Engine\default\../bin/Engine.dll
   Engine.vcxproj -> ../bin/Engine.pdb (Partial PDB)
   ..\Public\AnimationClip.h
   ..\Public\Base.h
   ..\Public\Camera.h
+  ..\Public\Cell.h
   ..\Public\ClipBone.h
   ..\Public\Collider.h
   ..\Public\ColliderBuffer.h
@@ -61,6 +55,7 @@
   ..\Public\LightMgr.h
   ..\Public\MeshContainer.h
   ..\Public\Model.h
+  ..\Public\Navigation.h
   ..\Public\ObjectLayer.h
   ..\Public\ObjectMgr.h
   ..\Public\PipeLineMgr.h
@@ -83,6 +78,7 @@
   ..\Public\VIBuffer_Point_Instance.h
   ..\Public\VIBuffer_Rect.h
   ..\Public\VIBuffer_Terrain.h
+  ..\Public\VIBuffer_Triangle.h
   ..\Public\assimp\.editorconfig
   ..\Public\assimp\aabb.h
   ..\Public\assimp\ai_assert.h
@@ -191,11 +187,12 @@
   ..\Public\DirectXTK\VertexTypes.h
   ..\Public\DirectXTK\WICTextureLoader.h
   ..\Public\DirectXTK\XboxDDSTextureLoader.h
-  181개 파일이 복사되었습니다.
+  184개 파일이 복사되었습니다.
   ..\Bin\Engine.lib
   1개 파일이 복사되었습니다.
   ..\Bin\ShaderFiles\Shader_Deferred.hlsl
-  1개 파일이 복사되었습니다.
+  ..\Bin\ShaderFiles\Shader_Navigation.hlsl
+  2개 파일이 복사되었습니다.
   ..\Bin\Engine.dll
   1개 파일이 복사되었습니다.
   ..\ThirdPartyLib\assimp-vc140-mt.lib

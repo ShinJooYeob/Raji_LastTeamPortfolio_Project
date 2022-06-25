@@ -47,6 +47,7 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_TestObject,
+	Prototype_TestObject_Himeko,
 
 	Object_Prototype_End
 };
@@ -94,6 +95,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_TestObject:
 		return TEXT("Prototype_TestObject");
+		break;
+
+	case Prototype_TestObject_Himeko: 
+		return TEXT("Prototype_TestObject_Himeko");
 		break;
 		
 	default:
@@ -382,6 +387,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Transform,
 	Prototype_Collider,
 	Prototype_Trail,
+	Prototype_Navigation,
 	Prototype_Shader_VT,
 	Prototype_Shader_VCT,
 	Prototype_Shader_VNT,
@@ -410,7 +416,7 @@ enum COMPONENTPROTOTYPEID
 
 	Prototype_Mesh_SkyBox,
 
-
+	Prototype_Mesh_TestObject_Himeko,
 	Prototype_Mesh_TestObject,
 	/////////ÅØ½ºÃÄ/////////////////////////////////////////////////////////////////
 	Prototype_Texture_Player,
@@ -450,6 +456,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_Trail");
 		break;
 
+	case Prototype_Navigation:
+		return TEXT("Prototype_Component_Navigation");
+		break;
+
 	case Prototype_Shader_VT:
 		return TEXT("Prototype_Component_Shader_VTXTEX");
 		break;
@@ -473,8 +483,6 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Shader_VTXPOINTINST:
 		return TEXT("Prototype_Component_Shader_VTXPOINTINST");
 		break;
-
-
 	case Prototype_VIBuffer_Rect:
 		return TEXT("Prototype_Component_VIBuffer_Rect");
 		break;
@@ -519,6 +527,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_TestObject:
 		return TEXT("Prototype_Mesh_TestObject");
+		break;
+
+	case Prototype_Mesh_TestObject_Himeko:
+		return TEXT("Prototype_Mesh_TestObject_Himeko");
 		break;
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
@@ -632,7 +644,8 @@ enum COMPONENTID
 	Com_SubModel,
 	Com_Collider,
 	Com_SwordTrail,
-	Com_SubSwordTrail
+	Com_SubSwordTrail,
+	Com_Navaigation
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -679,6 +692,9 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 		break;
 	case Com_SubSwordTrail:
 		return TEXT("Com_SubSwordTrail");
+		break;
+	case Com_Navaigation:
+		return TEXT("Com_Navigation");
 		break;
 		
 		

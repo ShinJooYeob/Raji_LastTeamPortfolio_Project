@@ -3,6 +3,8 @@
 
 ////·Îºñ¾À//////////////////////////////////////////////////////////////////////
 #include "TestObject.h"
+#include "AnimationClip.h"
+#include "Navigation.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -105,11 +107,17 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "TestObject", "Alice.FBX", TransformMatrix)));
 
+	//TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject_Himeko),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Himeko", "new_Himeko.fbx", TransformMatrix)));
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
+
+	//FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject_Himeko), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
 	
 #pragma endregion
@@ -262,9 +270,21 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma region PROTOTYPE_COMPONENT
 
 
+	_Matrix			TransformMatrix;
+	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_Mesh_TestObject_Himeko),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Himeko", "new_Himeko.fbx", TransformMatrix)));
+
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE4, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/data/NaviMesh/NaviData_Stage_2.dat")))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject_Himeko), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
