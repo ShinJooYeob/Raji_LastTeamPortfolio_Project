@@ -7,17 +7,15 @@
 
 ## 빌드 잔파일 무시
 ## LTP/Client/bin/**/*.* 
-LTP/Client/Default/x64/**/*.*
-LTP/Client/Default/x86/**/*.*
+LTP/Client/default/x64/**/*.*
+LTP/Client/default/x86/**/*.*
 
 ## LTP/Engine/bin/**/*.* 
-LTP/Engine/Default/x64/**/*.*
-LTP/Engine/Default/x86/**/*.*
-
-LTP/Tool/x64/**/*.*
-LTP/Tool/x86/**/*.*
+LTP/Engine/default/x64/**/*.*
+LTP/Engine/default/x86/**/*.*
 
 ## Resource ignore
+LTP/Client/bin/Resources
 LTP/Client/bin/Resources/**/*.*
 LTP/Client/bin/Resources/**/**/*.*
 LTP/Client/bin/Resources/**/**/**/*.*
@@ -33,26 +31,26 @@ LTP/Client/bin/Resources/**/**/**/**/**/**/**/**/*.*
 imgui.ini
 
 ## General build artifacts
-**.o
-**.obj
-**.exe
+*.o
+*.obj
+*.exe
 
 ## Visual Studio artifacts
 .vs
 ipch
-**.opensdf
-**.log
-**.pdb
-**.ilk
-**.user
-**.sdf
-**.suo
-**.VC.db
-**.VC.VC.opendb
-**.tlog
-**.pch
-**.orig
-**.cso
+*.opensdf
+*.log
+*.pdb
+*.ilk
+*.user
+*.sdf
+*.suo
+*.VC.db
+*.VC.VC.opendb
+*.tlog
+*.pch
+*.orig
+*.cso
 
 LTP/*.obj
 LTP/**/*.obj
