@@ -182,7 +182,7 @@ return _return;}
 #define  STR_FILEPATH_FBX_STATIC_L					L"..\\Bin\\Resources\\Mesh\\StaticMesh"
 #define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"..\\Bin\\Resources\\Mesh\\DynamicMesh"
 
-#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data"
+#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data\\Mesh"
 #define  STR_FILEPATH_RESOURCE_PATH_L				L"..\\Bin\\Resources\\PathTxT"
 
 // | ·Î ³ª´« °æ·Î
