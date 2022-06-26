@@ -280,9 +280,32 @@ namespace Engine
 
 	}BONEDESC;
 
+	typedef struct tag_AnimationBoneDesc
+	{
+		tag_AnimationBoneDesc() {}
+
+		tag_AnimationBoneDesc(const char* name, _uint keyframes, _int hierindex)
+		{
+			strcpy_s(mBoneName, name);
+			mNumKeyFrames = keyframes;
+			mHierarchyNodeIndex = hierindex;
+			mKeyFrames = new KEYFRAME[mNumKeyFrames];
+		}
+
+
+		char 		mBoneName[MAX_PATH] = "";
+		_int		mHierarchyNodeIndex = -1;
+		_uint		mNumKeyFrames = 0;
+		KEYFRAME*	mKeyFrames = nullptr;
+
+
+	}ANIBONES;
+
 	typedef struct tag_AnimationDesc
 	{
 		// 애니메이션 이름 / 시간 / 
+		tag_AnimationDesc() {}
+
 		tag_AnimationDesc(const char* name, double d, double t)
 		{
 			strcpy_s(mAniName, name);
@@ -295,8 +318,12 @@ namespace Engine
 		double		mDuration = 0;
 		double		mTicksPerSecond = 0;
 
-
+		_uint		mNumAniBones = 0;
+		ANIBONES*	mAniBones = nullptr;;
 	}ANIDESC;
+
+
+	
 
 	typedef struct tag_ModelDesc
 	{
@@ -306,15 +333,17 @@ namespace Engine
 
 		// Ready_MeshContainers
 		_uint			mNumMeshes;
-		MESHDESC*		mMeshDesc;
+		MESHDESC*		mMeshDesc = nullptr;;
 
 		_uint			mNumMaterials;
-		MATDESC*		mMaterials;
+		MATDESC*		mMaterials = nullptr;;
+
+		_uint			mNumBones;
+		BONEDESC*		mBones = nullptr;;
 
 		// Dynamic Mesh
 		_uint			mNumAnimations;
-		ANIDESC*		mAnimaions;
-
+		ANIDESC*		mAnimations = nullptr;;
 
 
 	}MODELDESC;

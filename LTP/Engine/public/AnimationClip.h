@@ -7,7 +7,7 @@ BEGIN(Engine)
 class CHierarchyNode;
 
 //하나의 애니메이션
-class CAnimationClip final : public CBase
+class ENGINE_DLL CAnimationClip final : public CBase
 {
 private:
 	CAnimationClip();
@@ -19,6 +19,11 @@ public:
 	void Add_ClipBone(class CClipBone* pClipBone) { m_vecClipBones.push_back(pClipBone); };
 
 	_uint Get_NumClipBone() { return m_iNumClipBones; };
+
+	const char* Get_Name();
+	_double Get_UpdatePerSecond();
+	_double Get_Duration();
+	const vector<class CClipBone*>& Get_VecClipBones() const {return m_vecClipBones; }
 
 public:
 	HRESULT Initialize_AnimationClip(const char* pName, _double Duration, _double UpdatePerSecond);

@@ -5,6 +5,21 @@ CAnimationClip::CAnimationClip()
 {
 }
 
+const char * CAnimationClip::Get_Name()
+{
+	return m_szAnimationClipName.c_str();
+}
+
+_double CAnimationClip::Get_UpdatePerSecond()
+{
+	return m_UpdatePerSecond;
+}
+
+_double CAnimationClip::Get_Duration()
+{
+	return m_Duration;
+}
+
 HRESULT CAnimationClip::Initialize_AnimationClip(const char * pName, _double Duration, _double UpdatePerSecond)
 {
 

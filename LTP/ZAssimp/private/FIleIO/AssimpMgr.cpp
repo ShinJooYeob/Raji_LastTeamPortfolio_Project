@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "FIleIO/AssimpMgr.h"
 #include "HierarchyNode.h"
+#include "AnimationClip.h"
+#include "ClipBone.h"
 
 
 IMPLEMENT_SINGLETON(CAssimpMgr);
@@ -294,22 +296,57 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		{
 			return pSour->mDepth < pDest->mDepth;
 		});
+		ModelDesc->mNumBones = VecBones.size();
 
 
 
 		// Ani 데이터 복사
 		auto VecAni = model->Get_VecAni();
-		int NumAnimations = VecAni.size();
+		int NumAnimations = ModelDesc->mNumAnimations = VecAni.size();
+		
+		ModelDesc->mAnimations =NEW ANIDESC[NumAnimations];
 
 		for (int i = 0; i < NumAnimations; ++i)
 		{
-			aiAnimation* aianimaion = Scene->mAnimations[i];
+			// 애니메이션 관련 정보 복사
+			CAnimationClip* ani = VecAni[i];
+
+			ANIDESC anidesc = ANIDESC(ani->Get_Name(),
+				ani->Get_Duration(),
+				ani->Get_UpdatePerSecond());
+			
+			ModelDesc->mAnimations[i] = anidesc;
+			anidesc.mNumAniBones = ani->Get_NumClipBone();
+			anidesc.mAniBones = NEW ANIBONES[anidesc.mNumAniBones];
+			for (_uint b = 0; b < anidesc.mNumAniBones;++b)
+			{
+				// 뼈 키프레임 복사
+				CClipBone* aniBone = ani->Get_VecClipBones()[b];
+
+				ANIBONES anibone = ANIBONES(aniBone->Get_Name(),
+					aniBone->Get_Frames(), aniBone->Get_HierNodeIndex());
+			
+			//	Get_KeyFrameContainor
+
+				anibone.mKeyFrames = NEW KEYFRAME[anibone.mNumAniBones];
+
+				//for (_uint b = 0; b < anibone.mKeyFrames; ++b)
+				//{
+				//	// 키 프레임 넣기
+				//	KEYFRAME keyframs;
+				//	keyframs.Time;
+				//	keyframs.vPosition;
+				//	keyframs.vRotation;
+				//	keyframs.vScale;
+				//}
 
 
-			// 애니메이션 삽입
+				//char 		mBoneName[MAX_PATH] = "";
+				//_uint		mNumAniBones = 0;
+				//_uint		mNodeIndex = 0;
+				//KEYFRAME*	mKeyFrames = nullptr;
 
-
-
+			}
 
 		}
 		

@@ -10,7 +10,7 @@ BEGIN(Engine)
 
 class CHierarchyNode;
 
-class CClipBone final : public CBase
+class ENGINE_DLL CClipBone final : public CBase
 {
 private:
 	CClipBone();
@@ -26,6 +26,12 @@ public:
 	//void Set_CurrentKeyFrame(_uint iKeyFrameIndex);
 
 	void Set_TransformationMatrix_ToHierarchyNode(_fMatrix& TransformationMatrix, const vector<CHierarchyNode*>* pVecHierarchyNodes);
+
+	const char* Get_Name() { return m_szClipBoneName.c_str(); }
+	_uint Get_Frames() { return m_iNumKeyFrames; };
+	_int Get_HierNodeIndex() { return m_iHierarchyNodeIndex; }
+
+
 
 public:
 	HRESULT Initialize_ClipBone(const char* pClipBoneName, _int HierarchyNodeIndex);
