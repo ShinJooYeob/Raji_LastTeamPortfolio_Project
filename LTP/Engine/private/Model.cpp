@@ -796,6 +796,47 @@ ATTACHBONEMATRIX_PTR CModel::Find_AttachMatrix_InHirarchyNode(const char * pName
 	return tReturn;
 }
 
+const CMeshContainer * CModel::Find_aiMesh(aiMesh * comparemesh) const
+{
+	if (m_pScene == nullptr)
+		return nullptr;
+
+	for (_uint i = 0; i < m_iNumMaterials; i++)
+	{
+		for (auto& pMeshContainer : m_vecMeshContainerArr[i])
+		{
+			aiMesh*		pAIMesh = pMeshContainer->Get_AiMesh();
+			if (comparemesh == pAIMesh)
+				return pMeshContainer;
+		}
+	}
+
+	return nullptr;
+}
+
+const vector<_uint>& CModel::Get_VecMeshes_AffectingBoneIndes(aiMesh * comparemesh) const
+{
+	auto mesh = Find_aiMesh(comparemesh);
+
+	if (mesh)
+		return mesh->Get_AffectingBoneIndes();
+
+	return vector<_uint>();
+
+}
+
+
+const vector<CHierarchyNode*>& CModel::Get_VecBones() const
+{
+	return m_vecHierarchyNode;
+}
+
+const vector<CAnimationClip*>& CModel::Get_VecAni() const
+{
+	return m_vecAnimator;
+}
+
+
 HRESULT CModel::Ready_HierarchyNodes(aiNode * pNode, CHierarchyNode * pParent, _uint iDepth)
 {
 	NULL_CHECK_RETURN(pNode, E_FAIL);
@@ -880,7 +921,6 @@ HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 			CMeshContainer*		pMeshContainer = CMeshContainer::Create(m_pDevice, m_pDeviceContext, m_eModelType, &m_pModelDesc->mMeshDesc[i], TransformMatrix);
 			NULL_CHECK_RETURN(pMeshContainer, E_FAIL);
 			m_vecMeshContainerArr[m_pModelDesc->mMeshDesc[i].mMaterialIndex].push_back(pMeshContainer);
-
 #ifdef _DEBUG
 			//string Name = m_pScene->mMeshes[i]->mName.data;
 			//string ttszLog ="Meterial Index : "+ to_string(m_pScene->mMeshes[i]->mMaterialIndex) + "  MeshName: " + Name + " Affecting Bond Num : " + to_string(m_pScene->mMeshes[i]->mNumBones) + "\n";

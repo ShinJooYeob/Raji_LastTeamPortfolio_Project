@@ -232,8 +232,10 @@ namespace Engine
 		//	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 		_uint			mMaterialIndex;
 
+		_uint			mNumAffectingBones = 0; // 영향주는 뼈정보
+		_uint*			mAffectingBones; // 영향주는 뼈정보 인데스
+
 		// C_STRUCT aiColor4D* mColors[AI_MAX_NUMBER_OF_COLOR_SETS];
-		// unsigned int mNumBones;
 		// C_STRUCT aiBone** mBones;
 		// C_STRUCT aiString mName;
 		// unsigned int mNumAnimMeshes;
@@ -251,9 +253,50 @@ namespace Engine
 	{
 		wchar_t MatName[MAX_TEXTURE_TYPE][MAX_PATH] = { L"" };
 
-
 	}MATDESC;
 
+	typedef struct tag_BoneDesc
+	{
+		tag_BoneDesc()
+		{
+			XMStoreFloat4x4(&mOffsetMat, XMMatrixIdentity());
+		}
+
+		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _float4x4 offsetmat, _uint depth)
+		{
+			strcpy_s(mParentBoneName, parentBoneName);
+			strcpy_s(mCurrentBoneName, CurrentBoneName);
+			mOffsetMat = offsetmat;
+			mDepth = depth;
+		}
+
+		// 부모뼈 현재뼈 offsetMat
+		char 		mParentBoneName[MAX_PATH] = "";
+		char		mCurrentBoneName[MAX_PATH] = "";
+		_float4x4	mOffsetMat;
+		// 영향을 주는 뼈 인덱스
+
+		_uint		mDepth = 0;
+
+	}BONEDESC;
+
+	typedef struct tag_AnimationDesc
+	{
+		// 애니메이션 이름 / 시간 / 
+		tag_AnimationDesc(const char* name, double d, double t)
+		{
+			strcpy_s(mAniName, name);
+			mDuration = d;
+			mTicksPerSecond = t;
+
+
+		}
+		char 		mAniName[MAX_PATH] = "";
+		double		mDuration = 0;
+		double		mTicksPerSecond = 0;
+
+
+	}ANIDESC;
 
 	typedef struct tag_ModelDesc
 	{
@@ -265,20 +308,13 @@ namespace Engine
 		_uint			mNumMeshes;
 		MESHDESC*		mMeshDesc;
 
-
 		_uint			mNumMaterials;
 		MATDESC*		mMaterials;
 
-		// m_iNumMeshContainers
-		// m_iNumMaterials
-		// m_vecMeshContainerArr
+		// Dynamic Mesh
+		_uint			mNumAnimations;
+		ANIDESC*		mAnimaions;
 
-
-		// Ready_Materials
-
-		// MESHMATERIALDESC
-
-		// 애니메이션 // 일단 그냥 모델만 테스트
 
 
 	}MODELDESC;

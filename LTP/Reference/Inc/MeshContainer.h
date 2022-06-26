@@ -28,6 +28,10 @@ public:
 	void		Set_TargetPararntNodeIndex(_uint iNodeIndex) { m_iParantHierarchyNodeIndex = iNodeIndex; }
 	//_uint		Get_TargetPararntNodeIndex() {return m_iParantHierarchyNodeIndex ; }
 
+	const vector<_uint>& Get_AffectingBoneIndes() const
+	{
+		return m_vecAffectingBoneIndex;
+	}
 private:
 	//이 매쉬가 사용하는 머테리얼의 인덱스
 	_uint		m_MaterialIndex = 0;

@@ -26,7 +26,7 @@ public:/*GetSet*/
 	void Set_Transformation(_fMatrix& matTransformation) { m_matTransformation = matTransformation; };
 	void Update_CombinedMatrix();
 
-	
+	const char*		Get_ParentName() const { if (m_pParent == nullptr)return nullptr; return m_pParent->Get_Name(); };
 
 	_float4x4	Get_OffsetMatrix() { return m_matOffset.TransposeXMatrix(); }
 private:
