@@ -120,6 +120,9 @@ private:
 	HRESULT Ready_Animation();
 	HRESULT Ready_MoreAnimation(const char* szFileFullPath, _uint iAnimCount, _uint iFlag = 0);
 
+	// Assimp X
+	HRESULT Ready_HierarchyNodes(MODELDESC* desc);
+
 private:
 	CHierarchyNode* Find_HierarchyNode(const char* pName, _uint* pNodeIndex = nullptr);
 

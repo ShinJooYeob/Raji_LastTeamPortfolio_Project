@@ -25,6 +25,12 @@ HRESULT CHierarchyNode::Initialize_HierarchyNode(CHierarchyNode* pParent, const 
 	return S_OK;
 }
 
+HRESULT CHierarchyNode::Initialize_HierarchyNode(BONEDESC * desc)
+{
+
+	return S_OK;
+}
+
 void CHierarchyNode::Update_CombinedMatrix()
 {
 	if (m_pParent == nullptr)
@@ -45,6 +51,17 @@ CHierarchyNode * CHierarchyNode::Create(CHierarchyNode* pParent, const char * pN
 	CHierarchyNode*	pInstance = new CHierarchyNode();
 
 	if (FAILED(pInstance->Initialize_HierarchyNode(pParent, pName,TransformationMatrix,iDepth)))
+	{
+		MSGBOX("Failed to Created CHierarchyNode");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+CHierarchyNode * CHierarchyNode::Create(BONEDESC* bonedesc)
+{
+	CHierarchyNode*	pInstance = new CHierarchyNode();
+
+	if (FAILED(pInstance->Initialize_HierarchyNode(bonedesc)))
 	{
 		MSGBOX("Failed to Created CHierarchyNode");
 		Safe_Release(pInstance);

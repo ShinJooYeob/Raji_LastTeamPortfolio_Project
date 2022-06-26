@@ -125,7 +125,7 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 
 	//	wstring ExeName = L".dat";
 	wstring path = L"";
-	if (modelDesc->mModelType == 1)
+	if (modelDesc->mModelType == CModel::TYPE_ANIM)
 		path = FolderPath + L"\\" + filename + L".dyn";
 	else
 		path = FolderPath + L"\\" + filename + L".stc";
@@ -142,6 +142,8 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		WriteFile(hFile, &modelDesc->mModelType, sizeof(_uint), &dwByte, nullptr);
 		WriteFile(hFile, &modelDesc->mNumMeshes, sizeof(_uint), &dwByte, nullptr);
 		WriteFile(hFile, &modelDesc->mNumMaterials, sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
 
 		// MESH
 		for (_uint i = 0; i < modelDesc->mNumMeshes; ++i)
@@ -192,7 +194,7 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			WriteFile(hFile, bonedesc.mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 			WriteFile(hFile, bonedesc.mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 			WriteFile(hFile, &bonedesc.mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
-			WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint)*MAX_PATH*AI_TEXTURE_TYPE_MAX, &dwByte, nullptr);
+			WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint), &dwByte, nullptr);
 		}
 
 
@@ -205,17 +207,21 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			WriteFile(hFile, &anidesc.mDuration, sizeof(double), &dwByte, nullptr);
 			WriteFile(hFile, &anidesc.mTicksPerSecond, sizeof(double), &dwByte, nullptr);
 			WriteFile(hFile, &anidesc.mNumAniBones, sizeof(_uint), &dwByte, nullptr);
-
-			for (_uint i = 0; i < anidesc.mNumAniBones; ++i)
+		}
+			
+		for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+		{
+			ANIDESC anidesc = modelDesc->mAnimations[i];
+			for (_uint j = 0; j < anidesc.mNumAniBones; ++j)
 			{
-				ANIBONES anibone = anidesc.mAniBones[i];
+				ANIBONES anibone = modelDesc->mAnimations[i].mAniBones[j];
 
 				WriteFile(hFile, anibone.mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 				WriteFile(hFile, &anibone.mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
 				WriteFile(hFile, &anibone.mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
 				WriteFile(hFile, anibone.mKeyFrames, sizeof(KEYFRAME)* anibone.mNumKeyFrames, &dwByte, nullptr);
-
 			}
+			
 
 
 		}

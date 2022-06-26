@@ -193,24 +193,47 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 
 HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMatrix & DefaultPivotMatrix)
 {
-	// DatFile로 데이터 로드 테스트
-	if (eModelType == CModel::TYPE_ANIM)
-		return E_FAIL;
-
 	FAILED_CHECK(__super::Initialize_Prototype(nullptr));
 
-//	ZeroMemory(&m_MeshMaterialDesc, sizeof(MESHMATERIALDESC));
 
-	m_eModelType = eModelType;
-	m_DefaultPivotMatrix = DefaultPivotMatrix;
+	// DatFile로 데이터 로드 테스트
+	if (eModelType == CModel::TYPE_ANIM)
+	{
+		m_eModelType = eModelType;
+		m_DefaultPivotMatrix = DefaultPivotMatrix;
 
-	m_pScene = nullptr;
-	m_pModelDesc = desc;
+		m_pScene = nullptr;
+		m_pModelDesc = desc; // 테스트용 인자로 받고 버릴 수 있음
 
-	FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
-	FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
+		
 
+		FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
+		FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
 
+		// 뼈 로드
+		FAILED_CHECK(Ready_HierarchyNodes(m_pModelDesc));
+		sort(m_vecHierarchyNode.begin(), m_vecHierarchyNode.end(), [](CHierarchyNode* pSour, CHierarchyNode* pDest)
+		{
+			return pSour->Get_Depth() < pDest->Get_Depth();
+
+		});
+		
+
+		
+		FAILED_CHECK(Ready_OffsetMatrices());
+		FAILED_CHECK(Ready_Animation());
+	}
+	else
+	{
+		m_eModelType = eModelType;
+		m_DefaultPivotMatrix = DefaultPivotMatrix;
+
+		m_pScene = nullptr;
+		m_pModelDesc = desc;
+
+		FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
+		FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
+	}
 	return S_OK;
 }
 
@@ -855,6 +878,19 @@ HRESULT CModel::Ready_HierarchyNodes(aiNode * pNode, CHierarchyNode * pParent, _
 
 	return S_OK;
 }
+HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
+{
+	for (int i = 0; i < desc->mNumBones; ++i)
+	{
+		desc->mBones[i];
+		CHierarchyNode*		pHierarchyNode = CHierarchyNode::Create(desc->mBones[i]);
+		NULL_CHECK_RETURN(pHierarchyNode, E_FAIL);
+	}
+
+//	m_vecHierarchyNode.push_back(pHierarchyNode);
+}
+
+
 
 HRESULT CModel::Ready_OffsetMatrices()
 {
