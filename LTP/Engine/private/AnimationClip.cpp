@@ -24,9 +24,21 @@ HRESULT CAnimationClip::Initialize_AnimationClip(const char * pName, _double Dur
 {
 
 	m_szAnimationClipName = pName;
-
 	m_Duration = Duration;
 	m_UpdatePerSecond = UpdatePerSecond;
+
+	// #TODO: 여기서부터 하세요
+	// 뼈정보 / 애니메이션 총 초기화??
+
+	return S_OK;
+}
+
+HRESULT CAnimationClip::Initialize_AnimationClip(ANIDESC * aniDesc)
+{
+
+	m_szAnimationClipName = aniDesc->mAniName;
+	m_Duration = aniDesc->mDuration;
+	m_UpdatePerSecond = aniDesc->mTicksPerSecond;
 
 	return S_OK;
 }
@@ -288,6 +300,18 @@ CAnimationClip * CAnimationClip::Create(const char * pAnimationClipName, _double
 	CAnimationClip*	pInstance = new CAnimationClip();
 
 	if (FAILED(pInstance->Initialize_AnimationClip(pAnimationClipName, Duration, UpdatePerSecond)))
+	{
+		MSGBOX("Failed to Created CAnimation");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CAnimationClip * CAnimationClip::Create(ANIDESC * desc)
+{
+	CAnimationClip*	pInstance = new CAnimationClip();
+
+	if (FAILED(pInstance->Initialize_AnimationClip(desc)))
 	{
 		MSGBOX("Failed to Created CAnimation");
 		Safe_Release(pInstance);

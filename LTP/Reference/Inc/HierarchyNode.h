@@ -13,6 +13,8 @@ private:
 
 public:
 	HRESULT Initialize_HierarchyNode(CHierarchyNode* pParent, const char* pName, _float4x4* TransformationMatrix, _uint iDepth);
+	HRESULT Initialize_HierarchyNode(BONEDESC* desc);
+
 
 public:/*GetSet*/
 	_uint			Get_Depth() const { return m_iDepth; };
@@ -32,6 +34,7 @@ public:/*GetSet*/
 private:
 	CHierarchyNode*				m_pParent = nullptr;
 	string						m_szName = "";
+	string						m_szParentName = ""; // For NoAssimp
 	_float4x4					m_matOffset;
 	_float4x4					m_matTransformation;
 	_float4x4					m_matCombinedTransformation;
@@ -41,6 +44,8 @@ private:
 	_uint						m_iDepth;
 public:
 	static CHierarchyNode* Create(CHierarchyNode* pParent, const char* pName, _float4x4* TransformationMatrix, _uint iDepth);
+	static CHierarchyNode* Create(BONEDESC* desc);
+
 	virtual void Free() override;
 };
 

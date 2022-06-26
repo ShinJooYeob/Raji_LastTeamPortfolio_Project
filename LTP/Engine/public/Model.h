@@ -122,6 +122,8 @@ private:
 
 	// Assimp X
 	HRESULT Ready_HierarchyNodes(MODELDESC* desc);
+	HRESULT Ready_Animation(MODELDESC* desc);
+	
 
 private:
 	CHierarchyNode* Find_HierarchyNode(const char* pName, _uint* pNodeIndex = nullptr);

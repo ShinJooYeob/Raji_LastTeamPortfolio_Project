@@ -27,6 +27,7 @@ public:
 
 public:
 	HRESULT Initialize_AnimationClip(const char* pName, _double Duration, _double UpdatePerSecond);
+	HRESULT Initialize_AnimationClip(ANIDESC* aniDesc);
 	HRESULT Update_TransformMatrices_byClipBones(_bool* bIsFinished,_double TimeDelta,_double* PlayTimeAcc,
 		const vector<CHierarchyNode*>* pVecHierarchyNodes, vector<_uint>* pVecCurrentKeyFrameIndex, _bool IsUpdateAll = true);
 
@@ -53,6 +54,8 @@ private:
 
 public:
 	static CAnimationClip* Create(const char* pAnimationClipName, _double Duration, _double UpdatePerSecond);
+	static CAnimationClip* Create(ANIDESC* desc);
+
 	virtual void Free() override;
 
 };

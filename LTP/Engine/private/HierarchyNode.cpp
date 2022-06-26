@@ -27,6 +27,15 @@ HRESULT CHierarchyNode::Initialize_HierarchyNode(CHierarchyNode* pParent, const 
 
 HRESULT CHierarchyNode::Initialize_HierarchyNode(BONEDESC * desc)
 {
+	if (desc == nullptr)
+		return E_FAIL;
+
+	m_iDepth = desc->mDepth;
+	m_szName = desc->mCurrentBoneName;
+	m_szParentName = desc->mParentBoneName;
+	m_matOffset = desc->mOffsetMat;
+	XMStoreFloat4x4(&m_matCombinedTransformation, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_matUpdatedTransform, XMMatrixIdentity());
 
 	return S_OK;
 }

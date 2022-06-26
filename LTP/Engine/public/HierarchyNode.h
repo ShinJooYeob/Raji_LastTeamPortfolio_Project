@@ -34,6 +34,7 @@ public:/*GetSet*/
 private:
 	CHierarchyNode*				m_pParent = nullptr;
 	string						m_szName = "";
+	string						m_szParentName = ""; // For NoAssimp
 	_float4x4					m_matOffset;
 	_float4x4					m_matTransformation;
 	_float4x4					m_matCombinedTransformation;
