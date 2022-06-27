@@ -49,8 +49,7 @@ _int CTestStaticObject::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-//	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
-
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 	return _int();
 }
 
@@ -60,16 +59,15 @@ _int CTestStaticObject::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-
-
 	if (KEYPRESS(DIK_W))
 	{
 		m_pTransformCom->Move_Down(fDeltaTime);
 	}
+
 	if (KEYPRESS(DIK_S))
 	{
 		m_pTransformCom->Move_Up(fDeltaTime);
-	}
+	}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 	if (KEYPRESS(DIK_A))
 	{
 		m_pTransformCom->Move_Left(fDeltaTime);
@@ -99,27 +97,23 @@ _int CTestStaticObject::LateUpdate(_double fDeltaTime)
 	//	AniIndex = 0;
 	//	FAILED_CHECK(m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 0));
 	//}
-
 	// Change_AnimIndex_UntilNReturn_Must
 	//if (KEYDOWN(DIK_E))
 	//{
 	//	// 강제 재생
 	//	FAILED_CHECK(m_pModel->Change_AnimIndex_UntilNReturn_Must(0, 2, 0));
 	//}
-
 	// Change_AnimIndex_UntilTo
 	//if (KEYDOWN(DIK_R))
 	//{
 	//	// A~B로 차례로 이동하는 애니메이션 / m_bIsBlockAnim는 애니메이션이 끝나는지 체크
 	//	m_pModel->Change_AnimIndex_UntilTo(2, 6);
 	//}
-
 	// Change_AnimIndex_ReturnTo
 	//if (KEYDOWN(DIK_T))
 	//{
 	//	m_pModel->Change_AnimIndex_UntilTo(0, 5);
 	//}
-
 	// Change_AnimIndex_ReturnTo_Must
 	//if (KEYDOWN(DIK_Y))
 	//{
@@ -166,21 +160,26 @@ HRESULT CTestStaticObject::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	static int ID = 0;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
 	
 
-	if (ID % 2 == 0)
-	{
+//	static int ID = 0;
+	//if (ID % 2 == 0)
+	//{
 
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
-	else
-	{
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
-	ID++;
+	//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	//}
+	//else
+	//{
+	//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	//}
+	//ID++;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+
 
 
 	CTransform::TRANSFORMDESC tDesc = {};

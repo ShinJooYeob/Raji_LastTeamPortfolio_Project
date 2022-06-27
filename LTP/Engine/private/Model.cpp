@@ -905,6 +905,16 @@ HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
 	}
 
 	// For. Search ParentBone
+
+	// ºÎ¸ð »À Ã£±â
+	for (auto& node : m_vecHierarchyNode)
+	{
+		_uint a = strlen(node->Get_AssimpParentName());
+
+		if (a > 2)
+			node->Set_Parent(Find_HierarchyNode(node->Get_AssimpParentName()));
+	}
+
 	return S_OK;
 }
 

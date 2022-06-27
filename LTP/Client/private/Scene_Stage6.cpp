@@ -54,7 +54,7 @@ _int CScene_Stage6::Render()
 
 #ifdef _DEBUG
 	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE3"));
+		SetWindowText(g_hWnd, TEXT("SCENE_STAGE6"));
 #endif // _DEBUG
 
 	return 0;
@@ -155,14 +155,16 @@ HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 HRESULT CScene_Stage6::Ready_Layer_Test(const _tchar * pLayerTag)
 {
 
+	// For.Test NoAssimp
+
 	// dynamic
-//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 	// static
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 	// assimp
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 }
 

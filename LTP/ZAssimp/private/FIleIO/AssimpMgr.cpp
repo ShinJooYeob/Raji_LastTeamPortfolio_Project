@@ -230,6 +230,7 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 				WriteFile(hFile, bonedesc.mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 				WriteFile(hFile, bonedesc.mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 				WriteFile(hFile, &bonedesc.mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc.mTransMat, sizeof(_float4x4), &dwByte, nullptr);
 				WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint), &dwByte, nullptr);
 			}
 
@@ -463,27 +464,28 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 	return S_OK;
 }
 
-HRESULT CAssimpMgr::Ready_HierarchyNodes(vector<BONEDESC*>& vec, aiNode * pNode, string parentBoneName, _uint iDepth)
-{
+//HRESULT CAssimpMgr::Ready_HierarchyNodes(vector<BONEDESC*>& vec, aiNode * pNode, string parentBoneName, _uint iDepth)
+//{
+//
+//	// 뼈 정보 생성
+//	NULL_CHECK_RETURN(pNode, E_FAIL);
+//
+//	BONEDESC* bone = NEW BONEDESC(parentBoneName.c_str(),pNode->mName.C_Str(), XMMatrixIdentity(),iDepth);
+//
+//	//bone->mParentBoneName;
+//	//bone->mCurrentBoneName;
+//	//bone->mOffsetMat;
+//	//bone->mDepth = iDepth;
+//
+//	vec.push_back(bone);
+//
+//	for (_uint i = 0; i < pNode->mNumChildren; ++i)
+//	{
+//		FAILED_CHECK(Ready_HierarchyNodes(vec, pNode->mChildren[i], pNode->mName.data, iDepth + 1));
+//	}
+//	return S_OK;
+//}
 
-	// 뼈 정보 생성
-	NULL_CHECK_RETURN(pNode, E_FAIL);
-
-	BONEDESC* bone = NEW BONEDESC(parentBoneName.c_str(),pNode->mName.C_Str(), XMMatrixIdentity(),iDepth);
-
-	//bone->mParentBoneName;
-	//bone->mCurrentBoneName;
-	//bone->mOffsetMat;
-	//bone->mDepth = iDepth;
-
-	vec.push_back(bone);
-
-	for (_uint i = 0; i < pNode->mNumChildren; ++i)
-	{
-		FAILED_CHECK(Ready_HierarchyNodes(vec, pNode->mChildren[i], pNode->mName.data, iDepth + 1));
-	}
-	return S_OK;
-}
 HRESULT CAssimpMgr::Ready_HierarchyNodes2(const vector<CHierarchyNode*>& VecHierNodes, vector<BONEDESC*>& vec)
 {
 	// 계층 정보 복사
@@ -495,7 +497,9 @@ HRESULT CAssimpMgr::Ready_HierarchyNodes2(const vector<CHierarchyNode*>& VecHier
 
 			
 		_float4x4 offsetMat = bone->Get_OffsetMatrix();
-		BONEDESC* boneDesc = NEW BONEDESC(ParentName, bone->Get_Name(), offsetMat, bone->Get_Depth());
+		_float4x4 transmat = bone->Get_Transformation();
+
+		BONEDESC* boneDesc = NEW BONEDESC(ParentName, bone->Get_Name(), offsetMat, transmat, bone->Get_Depth());
 		vec.push_back(boneDesc);
 
 	}

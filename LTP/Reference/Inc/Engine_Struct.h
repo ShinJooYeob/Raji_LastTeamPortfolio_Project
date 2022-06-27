@@ -218,7 +218,7 @@ namespace Engine
 
 	typedef struct tag_MeshBone
 	{
-		_uint mNumWeights=0;
+		_uint			mNumWeights = 0;
 		aiVertexWeight* mAiWeights = nullptr;
 	}MESHBONEDESC;
 
@@ -234,8 +234,8 @@ namespace Engine
 		_float3*		mNormals;
 		_float3*		mTangents;
 		_float2*		mUV;
-		
-	//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+
+		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 
 		FACEINDICES32*	mFaces;
 
@@ -255,8 +255,6 @@ namespace Engine
 
 	}MESHDESC;
 
-
-
 	typedef struct tag_MatDesc
 	{
 		wchar_t MatName[MAX_TEXTURE_TYPE][MAX_PATH] = { L"" };
@@ -270,11 +268,12 @@ namespace Engine
 			XMStoreFloat4x4(&mOffsetMat, XMMatrixIdentity());
 		}
 
-		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _float4x4 offsetmat, _uint depth)
+		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _float4x4 trnasmat, _float4x4 offsetmat, _uint depth)
 		{
 			strcpy_s(mParentBoneName, parentBoneName);
 			strcpy_s(mCurrentBoneName, CurrentBoneName);
 			mOffsetMat = offsetmat;
+			mTransMat = trnasmat;
 			mDepth = depth;
 		}
 
@@ -282,6 +281,7 @@ namespace Engine
 		char 		mParentBoneName[MAX_PATH] = "";
 		char		mCurrentBoneName[MAX_PATH] = "";
 		_float4x4	mOffsetMat;
+		_float4x4	mTransMat;
 
 		// ¿µÇâÀ» ÁÖ´Â »À ÀÎµ¦½º
 
@@ -332,7 +332,7 @@ namespace Engine
 	}ANIDESC;
 
 
-	
+
 
 	typedef struct tag_ModelDesc
 	{
@@ -357,7 +357,7 @@ namespace Engine
 		~tag_ModelDesc()
 		{
 			// ¼Ò¸êÀÚ ±¸Çö
-
+			int a = 5;
 		}
 
 	}MODELDESC;

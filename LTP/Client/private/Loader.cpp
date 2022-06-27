@@ -349,11 +349,15 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 	_Matrix			TransformMatrix;
-	TransformMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);// * XMMatrixRotationY(XMConvertToRadians(180));
+	TransformMatrix = XMMatrixScaling(1, 1, 1);// * XMMatrixRotationY(XMConvertToRadians(180));
 
-	// Assimp
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "city_gate", "city_gate.fbx", TransformMatrix)))
+	// Assimp static
+//	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject),
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "city_gate", "city_gate.fbx", TransformMatrix)))
+
+	// Assimp Dynamic
+//	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_Player),
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "crea_Snot_a", "crea_Snot_a.FBX", TransformMatrix)));
 
 	// NoAssimp
 	Load_Model_DatFile();
@@ -540,34 +544,33 @@ HRESULT CLoader::Load_Model_DatFile()
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1);
 
+	// ÆÄÀÏ °æ·Î
 	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
 	auto dynamic_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
 
 
 	// MODELDESC / LOAD ÇÔ¼ö
-
 	list<MODELDESC*> List_ModelCreateTest;
-	Load_Model(static_dat, List_ModelCreateTest);
-
-//	Load_Model(dynamic_dat, List_ModelCreateTest);
+//	Load_Model(static_dat, List_ModelCreateTest);
+	Load_Model(dynamic_dat, List_ModelCreateTest);
 
 	// ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
 	// For. Test
 
 	for (auto& modeldesc : List_ModelCreateTest)
 	{
-		//FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-		//	SCENEID::SCENE_LOBY,
-		//	TAG_CP(Prototype_Mesh_TestObject),
-		//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
+		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+			SCENEID::SCENE_STATIC,
+			TAG_CP(Prototype_Mesh_Player),
+			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
 
 		//CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
 
 
-		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-			SCENEID::SCENE_STATIC,
-			TAG_CP(Prototype_Mesh_TEST_STATIC),
-			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
+		//FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+		//	SCENEID::SCENE_STATIC,
+		//	TAG_CP(Prototype_Mesh_TEST_STATIC),
+		//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
 
 		// CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix);
 		int Debug = 5;
@@ -711,8 +714,8 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 						// »À Weight
 						for (int bone = 0; bone < NumAffectingBones; ++bone)
 						{
-							ReadFile(hFile, &meshdesc->mMeshBones->mNumWeights, sizeof(_uint), &dwByte, nullptr);
-							_uint NumWeight = meshdesc->mMeshBones->mNumWeights;
+							ReadFile(hFile, &meshdesc->mMeshBones[bone].mNumWeights, sizeof(_uint), &dwByte, nullptr);
+							_uint NumWeight = meshdesc->mMeshBones[bone].mNumWeights;
 							if (NumWeight == 0)
 								continue;
 
@@ -720,6 +723,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 							ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
 								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
+							int debug = 5;
 						}
 					}
 				}
@@ -741,6 +745,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					ReadFile(hFile, bonedesc->mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 					ReadFile(hFile, bonedesc->mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 					ReadFile(hFile, &bonedesc->mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+					ReadFile(hFile, &bonedesc->mTransMat, sizeof(_float4x4), &dwByte, nullptr);
 					ReadFile(hFile, &bonedesc->mDepth, sizeof(_uint), &dwByte, nullptr);
 				}
 

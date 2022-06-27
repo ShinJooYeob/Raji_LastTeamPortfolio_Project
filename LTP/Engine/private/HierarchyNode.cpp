@@ -34,6 +34,9 @@ HRESULT CHierarchyNode::Initialize_HierarchyNode(BONEDESC * desc)
 	m_szName = desc->mCurrentBoneName;
 	m_szParentName = desc->mParentBoneName;
 	m_matOffset = desc->mOffsetMat;
+	XMStoreFloat4x4(&m_matTransformation, XMMatrixIdentity());
+	m_matTransformation = desc->mTransMat;
+	
 	XMStoreFloat4x4(&m_matCombinedTransformation, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matUpdatedTransform, XMMatrixIdentity());
 
@@ -52,6 +55,7 @@ void CHierarchyNode::Update_CombinedMatrix()
 	}
 
 	m_matUpdatedTransform = m_matOffset.XMatrix() * m_matCombinedTransformation.XMatrix();
+	int debug = 5;
 }
 
 
