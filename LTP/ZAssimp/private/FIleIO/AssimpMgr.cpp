@@ -184,25 +184,23 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			if (modelDesc->mModelType == CModel::TYPE_ANIM)
 			{
 				_uint NumAffectingBones = meshdesc.mNumAffectingBones;
-				if(NumAffectingBones == 0)
-				{ }
-				else
+				if (NumAffectingBones != 0)
 				{
-						// ª¿ ¿Œµ¶Ω∫ ∏ÆΩ∫∆Æ
-						WriteFile(hFile, meshdesc.mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
-						
-						// ª¿ Weight
-						for (int bone = 0; bone < NumAffectingBones; ++bone)
-						{
-							_uint NumWeight = meshdesc.mMeshBones[bone].mNumWeights;
-							WriteFile(hFile, &NumWeight,sizeof(_uint), &dwByte, nullptr);
+					// ª¿ ¿Œµ¶Ω∫ ∏ÆΩ∫∆Æ
+					WriteFile(hFile, meshdesc.mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
 
-							if(NumWeight==0)
-								continue;
-							WriteFile(hFile, meshdesc.mMeshBones[bone].mAiWeights,
-								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
-						}
-				}
+					// ª¿ Weight
+					for (int bone = 0; bone < NumAffectingBones; ++bone)
+					{
+						_uint NumWeight = meshdesc.mMeshBones[bone].mNumWeights;
+						WriteFile(hFile, &NumWeight, sizeof(_uint), &dwByte, nullptr);
+
+						if (NumWeight == 0)
+							continue;
+						WriteFile(hFile, meshdesc.mMeshBones[bone].mAiWeights,
+							sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
+					}
+				}				
 			}
 		}
 

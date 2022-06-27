@@ -91,6 +91,9 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDE
 	else
 		hr = Ready_AnimMeshContainer(meshdesc);
 
+	if (hr == E_FAIL)
+		return E_FAIL;
+
 	m_MaterialIndex = meshdesc->mMaterialIndex;
 
 #pragma endregion
@@ -408,40 +411,40 @@ HRESULT CMeshContainer::Ready_SkinnedInfo(MESHDESC * meshdesc, VTXANIMMODEL * pV
 
 
 	//이 매쉬에 영향을 끼치는 모든 뼈들을 순차적으로 돌면서
-	//for (_uint i = 0; i < m_iNumAffectingBones; i++)
-	//{
-	//	meshdesc->mAffectingBones;
-	//	aiBone*	 pAffectingBone = pAIMesh->mBones[i];
+	for (_uint i = 0; i < m_iNumAffectingBones; i++)
+	{
+		
+		MESHBONEDESC* pAffectingBone = &meshdesc->mMeshBones[i];
 
-	//	//해당 뼈 하나가 영향을 끼치는 모든 정점들을 순회하면서 값을 채워줌
+		//해당 뼈 하나가 영향을 끼치는 모든 정점들을 순회하면서 값을 채워줌
 
-	//	for (_uint j = 0; j < pAffectingBone->mNumWeights; j++)
-	//	{
-	//		//이 뼈가 영향을 끼치는 j 번째 정점에게 얼마만큼의 영향을 주는지  -> pAffectingBone->mWeights[j].mWeight;
-	//		// j  번째 뼈는 이 매쉬의 몇번째 정점인지							->pAffectingBone->mWeights[j].mVertexId
+		for (_uint j = 0; j < pAffectingBone->mNumWeights; j++)
+		{
+			//이 뼈가 영향을 끼치는 j 번째 정점에게 얼마만큼의 영향을 주는지  -> pAffectingBone->mAiWeights[j].mWeight;
+			// j  번째 뼈는 이 매쉬의 몇번째 정점인지							->pAffectingBone->mAiWeights[j].mVertexId
 
-	//		if (0.0f == pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.x)
-	//		{
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendIndex.x = i;
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.x = pAffectingBone->mWeights[j].mWeight;
-	//		}
-	//		else if (0.0f == pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.y)
-	//		{
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendIndex.y = i;
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.y = pAffectingBone->mWeights[j].mWeight;
-	//		}
-	//		else if (0.0f == pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.z)
-	//		{
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendIndex.z = i;
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.z = pAffectingBone->mWeights[j].mWeight;
-	//		}
-	//		else if (0.0f == pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.w)
-	//		{
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendIndex.w = i;
-	//			pVertices[pAffectingBone->mWeights[j].mVertexId].vBlendWeight.w = pAffectingBone->mWeights[j].mWeight;
-	//		}
-	//	}
-	//}
+			if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.x)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.x = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.x = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.y)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.y = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.y = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.z)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.z = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.z = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.w)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.w = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.w = pAffectingBone->mAiWeights[j].mWeight;
+			}
+		}
+	}
 
 	return S_OK;
 }

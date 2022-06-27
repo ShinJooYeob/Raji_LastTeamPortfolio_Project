@@ -219,7 +219,7 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 		});
 
 		// 영향주는 뼈 리스트 
-		FAILED_CHECK(Ready_OffsetMatrices(m_pModelDesc));
+		//FAILED_CHECK(Ready_OffsetMatrices(m_pModelDesc));
 
 		// 애니메이션 초기화
 		FAILED_CHECK(Ready_Animation(m_pModelDesc));

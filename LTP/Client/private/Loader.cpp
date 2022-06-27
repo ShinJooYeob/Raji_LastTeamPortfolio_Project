@@ -125,7 +125,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-	Load_ModelDatFile();
+	Load_Model_Dynamic_DatFile();
 
 #pragma endregion
 
@@ -525,7 +525,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	return S_OK;
 }
 
-HRESULT CLoader::Load_ModelDatFile()
+HRESULT CLoader::Load_Model_Dynamic_DatFile()
 {
 	// #LOAD 클라이언트 로드 함수
 
@@ -534,6 +534,7 @@ HRESULT CLoader::Load_ModelDatFile()
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 //	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
+
 	auto dynamic_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
 
 
@@ -609,12 +610,41 @@ HRESULT CLoader::Load_ModelDatFile()
 				if (dwByte == 0)
 					return E_FAIL;
 
+				// UV 추가
+				
 				// INDEX
 				ReadFile(hFile, meshdesc->mFaces, sizeof(FACEINDICES32)*meshdesc->mNumFaces, &dwByte, nullptr);
 				if (dwByte == 0)
 					return E_FAIL;
 
+				// WEIGHT
 
+				if (modelDesc->mModelType == CModel::TYPE_ANIM)
+				{
+					_uint NumAffectingBones = meshdesc->mNumAffectingBones;
+					if (NumAffectingBones != 0)
+					{
+						// 뼈 인덱스 리스트
+						meshdesc->mAffectingBones = NEW _uint[NumAffectingBones];
+						meshdesc->mMeshBones = NEW MESHBONEDESC[NumAffectingBones];
+
+						ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
+						// 뼈 Weight
+						for (int bone = 0; bone < NumAffectingBones; ++bone)
+						{
+							ReadFile(hFile, &meshdesc->mMeshBones->mNumWeights, sizeof(_uint), &dwByte, nullptr);
+							_uint NumWeight = meshdesc->mMeshBones->mNumWeights;
+							if (NumWeight == 0)
+								continue;
+
+							meshdesc->mMeshBones[bone].mAiWeights = NEW aiVertexWeight[NumWeight];
+
+							ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
+								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
+							int debug = 5;
+						}
+					}
+				}
 			}
 
 			// MATERIAL
