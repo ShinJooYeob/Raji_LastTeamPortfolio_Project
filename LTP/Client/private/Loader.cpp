@@ -120,21 +120,14 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
 	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "TestObject", "Alice.FBX", TransformMatrix)));
 
-
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-	Load_Model_DatFile();
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-
-	// Dynamic
-	// FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
-	// Static
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestStaticObject::Create(m_pDevice, m_pDeviceContext)));
 
 	
 #pragma endregion
@@ -355,9 +348,19 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma region PROTOTYPE_COMPONENT
 
 
+	_Matrix			TransformMatrix;
+	TransformMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);// * XMMatrixRotationY(XMConvertToRadians(180));
+
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Mesh_TEST_STATIC),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "city_gate", "city_gate.fbx", TransformMatrix)))
+
+	Load_Model_DatFile();
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestStaticObject::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
@@ -529,11 +532,11 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 HRESULT CLoader::Load_Model_DatFile()
 {
-	// #LOAD 클라이언트 로드 함수
+	
 
 	// 데이터 파일로 assimp 없이 모델 초기화 / 데이터 초기화
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
-	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1);
 
 	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
 	auto dynamic_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
@@ -542,15 +545,12 @@ HRESULT CLoader::Load_Model_DatFile()
 	// MODELDESC / LOAD 함수
 
 	list<MODELDESC*> List_ModelCreateTest;
-
 	Load_Model(static_dat, List_ModelCreateTest);
+
 //	Load_Model(dynamic_dat, List_ModelCreateTest);
-	int k = List_ModelCreateTest.size();
 
 	// 모델 컴포넌트 생성
-
 	// For. Test
-	
 
 	for (auto& modeldesc : List_ModelCreateTest)
 	{
@@ -563,20 +563,22 @@ HRESULT CLoader::Load_Model_DatFile()
 
 
 		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-			SCENEID::SCENE_LOBY,
+			SCENEID::SCENE_STATIC,
 			TAG_CP(Prototype_Mesh_TEST_STATIC),
 			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
 
 		// CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix);
 		int Debug = 5;
-
 	}
+
 	return S_OK;
 
 }
 
 HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc)
 {
+	// #LOAD 클라이언트 로드 함수
+
 	_ulong			dwByte = 0;
 	for (auto& path : pathlist)
 	{
@@ -658,29 +660,29 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					return E_FAIL;
 
 				// UV 추가
-				for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
-				{
-					_float3* cash = NEW _float3[meshdesc->mNumVertices];
+				//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+				//{
+				//	_float3* cash = NEW _float3[meshdesc->mNumVertices];
 
 
-					ReadFile(hFile, cash, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
-					if (cash->x == 0)
-					{
-						meshdesc->mTextureCoords[j] = nullptr;
-						Safe_Delete_Array(cash);
-					}
-					else
-					{
-						meshdesc->mTextureCoords[j] = NEW _float3[meshdesc->mNumVertices];
-						for (_uint k = 0; k < meshdesc->mNumVertices; ++k)
-						{
-							meshdesc->mTextureCoords[j]->x = cash->x;
-							meshdesc->mTextureCoords[j]->y = cash->y;
-							meshdesc->mTextureCoords[j]->z = 0;
-						}
-						Safe_Delete_Array(cash);
-					}
-				}
+				//	ReadFile(hFile, cash, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
+				//	if (cash->x == 0)
+				//	{
+				//		meshdesc->mTextureCoords[j] = nullptr;
+				//		Safe_Delete_Array(cash);
+				//	}
+				//	else
+				//	{
+				//		meshdesc->mTextureCoords[j] = NEW _float3[meshdesc->mNumVertices];
+				//		for (_uint k = 0; k < meshdesc->mNumVertices; ++k)
+				//		{
+				//			meshdesc->mTextureCoords[j]->x = cash->x;
+				//			meshdesc->mTextureCoords[j]->y = cash->y;
+				//			meshdesc->mTextureCoords[j]->z = 0;
+				//		}
+				//		Safe_Delete_Array(cash);
+				//	}
+				//}
 
 				// INDEX
 				ReadFile(hFile, meshdesc->mFaces, sizeof(FACEINDICES32)*meshdesc->mNumFaces, &dwByte, nullptr);

@@ -41,8 +41,12 @@ _int CScene_Loby::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_EDIT), SCENEID::SCENE_LOADING));
 	}
 
+	if (GetKeyState(VK_F6) & 0x8000)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE6), SCENEID::SCENE_LOADING));
+	}
 
-	
 
 	return 0;
 }
@@ -158,13 +162,8 @@ HRESULT CScene_Loby::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 
 HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
 {
-	// dynamic
-//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
 
-	// static
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
 
-	
 	return S_OK;
 }
 

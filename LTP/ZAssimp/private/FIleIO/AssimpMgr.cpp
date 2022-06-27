@@ -68,8 +68,6 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 	auto Path_Static	= GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_STATICDAT_L, "fbx");
 	auto Path_Dynamic	= GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_DYNAMICDAT_L, "fbx");
 	
-
-
 	// 2. 모델 컴포넌트 생성
 	for (auto& path : Path_Static)
 	{
@@ -84,7 +82,6 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 		// 3. 로드된 Scene으로 필요 데이터 복사
 		CopyData_MODELDESC(wPath, wName, ModelCash, CModel::TYPE_NONANIM);
 		Safe_Release(ModelCash);
-
 	}
 
 	for (auto& path : Path_Dynamic)
@@ -179,10 +176,13 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 				return E_FAIL;
 
 			// UV
-			for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
-			{
-				WriteFile(hFile, meshdesc.mTextureCoords[j], sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
-			}
+			WriteFile(hFile, meshdesc.mUV, sizeof(_float2)*meshdesc.mNumVertices, &dwByte, nullptr);
+
+
+			//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+			//{
+			//	WriteFile(hFile, meshdesc.mTextureCoords[j], sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
+			//}
 
 			// INDEX
 			WriteFile(hFile, meshdesc.mFaces, sizeof(FACEINDICES32)*meshdesc.mNumFaces, &dwByte, nullptr);
@@ -301,26 +301,35 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		ModelDesc->mMeshDesc[i].mVertices = NEW _float3[NumVertices];
 		ModelDesc->mMeshDesc[i].mNormals = NEW _float3[NumVertices];
 		ModelDesc->mMeshDesc[i].mTangents = NEW _float3[NumVertices];
+		ModelDesc->mMeshDesc[i].mUV = NEW _float2[NumVertices];
 
-		for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
-		{
-			ModelDesc->mMeshDesc[i].mTextureCoords[j] = NEW _float3[NumVertices];
-		}
+		//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+		//{
+		//	ModelDesc->mMeshDesc[i].mTextureCoords[j] = NEW _float3[NumVertices];
+		//}
 
 
 		// VTX
 		memcpy(ModelDesc->mMeshDesc[i].mVertices, aimesh->mVertices, sizeof(_float3)*NumVertices);
 		memcpy(ModelDesc->mMeshDesc[i].mNormals, aimesh->mNormals, sizeof(_float3)*NumVertices);
 		memcpy(ModelDesc->mMeshDesc[i].mTangents, aimesh->mTangents, sizeof(_float3)*NumVertices);
-		
-
-		for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+		_float3* cash = NEW _float3[NumVertices];
+		memcpy(cash, aimesh->mTextureCoords[0], sizeof(_float3)*NumVertices);
+		for (_uint k=0; k< NumVertices;k++)
 		{
-			if (aimesh->mTextureCoords[j] != nullptr)
-			{
-				memcpy(ModelDesc->mMeshDesc[i].mTextureCoords[j], aimesh->mTextureCoords[j], sizeof(_float3)*NumVertices);
-			}
+			ModelDesc->mMeshDesc[i].mUV[k].x = cash[k].x;
+			ModelDesc->mMeshDesc[i].mUV[k].y = cash[k].y;
 		}
+		Safe_Delete_Array(cash);
+
+
+		//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+		//{
+		//	if (aimesh->mTextureCoords[j] != nullptr)
+		//	{
+		//		memcpy(ModelDesc->mMeshDesc[i].mTextureCoords[j], aimesh->mTextureCoords[j], sizeof(_float3)*NumVertices);
+		//	}
+		//}
 
 		ModelDesc->mMeshDesc[i].mFaces = NEW FACEINDICES32[NumFaces];
 

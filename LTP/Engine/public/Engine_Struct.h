@@ -233,8 +233,9 @@ namespace Engine
 		_float3*		mVertices;
 		_float3*		mNormals;
 		_float3*		mTangents;
-
-		_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+		_float2*		mUV;
+		
+	//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 
 		FACEINDICES32*	mFaces;
 

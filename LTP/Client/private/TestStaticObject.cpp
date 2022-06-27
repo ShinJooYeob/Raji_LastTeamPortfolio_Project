@@ -29,8 +29,8 @@ HRESULT CTestStaticObject::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
-	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
-	m_pTransformCom->Scaled_All(_float3(10, 10, 10));
+//	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
+	m_pTransformCom->Scaled_All(_float3(3, 3, 3));
 
 
 	return S_OK;
@@ -52,19 +52,19 @@ _int CTestStaticObject::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-	if (KEYPRESS(DIK_DOWNARROW))
+	if (KEYPRESS(DIK_W))
 	{
-		m_pTransformCom->Move_Backward(fDeltaTime);
+		m_pTransformCom->Move_Down(fDeltaTime);
 	}
-	if (KEYPRESS(DIK_UPARROW))
+	if (KEYPRESS(DIK_S))
 	{
-		m_pTransformCom->Move_Forward(fDeltaTime);
+		m_pTransformCom->Move_Up(fDeltaTime);
 	}
-	if (KEYPRESS(DIK_LEFT))
+	if (KEYPRESS(DIK_A))
 	{
 		m_pTransformCom->Move_Left(fDeltaTime);
 	}
-	if (KEYPRESS(DIK_RIGHT))
+	if (KEYPRESS(DIK_D))
 	{
 		m_pTransformCom->Move_Right(fDeltaTime);
 	}
@@ -158,7 +158,7 @@ HRESULT CTestStaticObject::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 //	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 

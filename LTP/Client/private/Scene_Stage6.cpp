@@ -3,14 +3,11 @@
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 
+// assimp Test Scene
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
 }
-
-
-
-
 
 HRESULT CScene_Stage6::Initialize()
 {
@@ -22,10 +19,9 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
+	FAILED_CHECK(Ready_Layer_Test(TAG_LAY(Layer_TeethObj)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
-	
-	
-	
+
 	return S_OK;
 }
 
@@ -114,7 +110,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 5.f, -10.f);
+	CameraDesc.vEye = _float3(0, 0, -15.f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -156,6 +152,18 @@ HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 
 	return S_OK;
 }
+HRESULT CScene_Stage6::Ready_Layer_Test(const _tchar * pLayerTag)
+{
+
+	// dynamic
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+
+	// static
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+
+
+}
+
 
 HRESULT CScene_Stage6::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {

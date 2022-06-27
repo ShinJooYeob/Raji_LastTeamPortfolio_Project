@@ -341,10 +341,8 @@ HRESULT CMeshContainer::Ready_NonAnimMeshContainer(MESHDESC * meshdesc, _fMatrix
 		memcpy(&pVertices[i].vNormal, &meshdesc->mNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), TransformMatrix));
 
+		memcpy(&pVertices[i].vTexUV, &meshdesc->mUV[i], sizeof(_float2));
 		memcpy(&pVertices[i].vTangent, &meshdesc->mTangents[i], sizeof(_float3));
-
-		// #TODO UV Ãß°¡
-		//memcpy(&pVertices[i].vTexUV, &meshdesc->mTextureCoords[0][i], sizeof(_float2));
 
 	}
 
@@ -378,7 +376,7 @@ HRESULT CMeshContainer::Ready_AnimMeshContainer(MESHDESC * meshdesc)
 		memcpy(&pVertices[i].vPosition, &meshdesc->mVertices[i], sizeof(_float3));
 		memcpy(&pVertices[i].vNormal, &meshdesc->mNormals[i], sizeof(_float3));
 		memcpy(&pVertices[i].vTangent, &meshdesc->mTangents[i], sizeof(_float3));
-		memcpy(&pVertices[i].vTexUV, &meshdesc->mTextureCoords[0][i], sizeof(_float2));
+		memcpy(&pVertices[i].vTexUV, &meshdesc->mUV[i], sizeof(_float2));
 
 
 	//	memcpy(&pVertices[i].vTexUV, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
