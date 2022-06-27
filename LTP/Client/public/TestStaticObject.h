@@ -29,6 +29,8 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 
+	static int OBJID;
+
 private:
 	HRESULT SetUp_Components();
 

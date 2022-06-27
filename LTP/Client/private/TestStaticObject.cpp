@@ -11,6 +11,7 @@ CTestStaticObject::CTestStaticObject(const CTestStaticObject & rhs)
 	: CGameObject(rhs)
 {
 }
+int CTestStaticObject::OBJID = 0;
 
 HRESULT CTestStaticObject::Initialize_Prototype(void * pArg)
 {
@@ -30,7 +31,14 @@ HRESULT CTestStaticObject::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 //	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
-	m_pTransformCom->Scaled_All(_float3(3, 3, 3));
+	m_pTransformCom->Scaled_All(_float3(1, 1, 1));
+
+	++OBJID;
+	if (OBJID == 1)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(3, 0, 0));
+
+	if (OBJID == 2)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(-3, 0, 0));
 
 
 	return S_OK;
@@ -51,6 +59,8 @@ _int CTestStaticObject::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+
+
 
 	if (KEYPRESS(DIK_W))
 	{
@@ -158,8 +168,19 @@ HRESULT CTestStaticObject::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-//	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	static int ID = 0;
+	
+
+	if (ID % 2 == 0)
+	{
+
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
+	else
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
+	ID++;
 
 
 	CTransform::TRANSFORMDESC tDesc = {};

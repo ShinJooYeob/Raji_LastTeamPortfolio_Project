@@ -351,9 +351,11 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);// * XMMatrixRotationY(XMConvertToRadians(180));
 
-	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Mesh_TEST_STATIC),
-	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "city_gate", "city_gate.fbx", TransformMatrix)))
+	// Assimp
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "city_gate", "city_gate.fbx", TransformMatrix)))
 
+	// NoAssimp
 	Load_Model_DatFile();
 
 #pragma endregion
@@ -644,6 +646,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				meshdesc->mVertices = NEW _float3[meshdesc->mNumVertices];
 				meshdesc->mNormals = NEW _float3[meshdesc->mNumVertices];
 				meshdesc->mTangents = NEW _float3[meshdesc->mNumVertices];
+				meshdesc->mUV = NEW _float2[meshdesc->mNumVertices];
 				meshdesc->mFaces = NEW FACEINDICES32[meshdesc->mNumFaces];
 
 				// VTX
@@ -660,6 +663,11 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					return E_FAIL;
 
 				// UV 추가
+				ReadFile(hFile, meshdesc->mUV, sizeof(_float2)*meshdesc->mNumVertices, &dwByte, nullptr);
+				if (dwByte == 0)
+					return E_FAIL;
+
+				// 여러개 UV 추가시 
 				//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
 				//{
 				//	_float3* cash = NEW _float3[meshdesc->mNumVertices];
