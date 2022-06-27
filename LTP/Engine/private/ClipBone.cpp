@@ -36,11 +36,39 @@ HRESULT CClipBone::Initialize_ClipBone(const char * pClipBoneName, _int Hierarch
 	return S_OK;
 }
 
+HRESULT CClipBone::Initialize_ClipBone(ANIBONES * bone)
+{
+	m_szClipBoneName = bone->mBoneName;
+	m_iHierarchyNodeIndex = bone->mHierarchyNodeIndex;
+	m_iNumKeyFrames = bone->mNumKeyFrames;
+
+	KEYFRAME*	KeyFrames = NEW KEYFRAME[m_iNumKeyFrames];
+	memcpy(KeyFrames, bone->mKeyFrames, sizeof(KEYFRAME)*m_iNumKeyFrames);
+
+	for (int i = 0; i < m_iNumKeyFrames; ++i)
+	{
+		Add_KeyFrame(&KeyFrames[i]);
+	}
+	return S_OK;
+}
+
 CClipBone * CClipBone::Create(const char * pClipBoneName, _int HierarchyNodeIndex)
 {
 	CClipBone*	pInstance = new CClipBone();
 
 	if (FAILED(pInstance->Initialize_ClipBone(pClipBoneName, HierarchyNodeIndex)))
+	{
+		MSGBOX("Failed to Created CClipBone");
+		Safe_Release(pInstance);
+	}
+	return pInstance;;
+}
+
+CClipBone * CClipBone::Create(ANIBONES * bone)
+{
+	CClipBone*	pInstance = new CClipBone();
+
+	if (FAILED(pInstance->Initialize_ClipBone(bone)))
 	{
 		MSGBOX("Failed to Created CClipBone");
 		Safe_Release(pInstance);

@@ -8,7 +8,7 @@
 //
 //HRESULT CObjectIO::SaverObject(E_OBJECT_TYPE type, wstring FolderPath, wstring filename, CGameObject_Base* obj)
 //{
-//	// #SAVE 오브젝트 저장
+//	//  오브젝트 저장
 //
 //	_ulong			dwByte = 0;
 //	wstring datPath = FolderPath + L"\\" + filename + L".dat";
@@ -99,7 +99,7 @@
 //// 2. 따로 저장/수정 가능하게 IMGUI 판다.
 //HRESULT CObjectIO::Save_DESC(E_DESC_DATA descid, wstring FolderPath, wstring filename, void* voidDesc)
 //{
-//	// #SAVE DESC 정보 저장
+//	//  DESC 정보 저장
 //	// 확장자로 나누기 // ㅇ 
 //	_ulong			dwByte = 0;
 //
@@ -151,7 +151,7 @@
 //
 //HRESULT CObjectIO::Load_DESC(E_DESC_DATA descid, wstring FolderPath, wstring filename, wstring Extension)
 //{
-//	// #LOADDESC 정보 로드 테스트 필요
+//	// 정보 로드 테스트 필요
 //	CGameObject_Creater* creater = GetSingle(CGameManager)->Get_CreaterManager();
 //
 //	_ulong			dwByte = 0;
@@ -246,7 +246,7 @@
 //
 //bool CObjectIO::Create_CreateMap_ProtoType(HANDLE& hFile, wstring keyname)
 //{
-//	// #LOADOBJECT 저장된 객체 프로토타입으로 저장.
+//	//  저장된 객체 프로토타입으로 저장.
 //
 //	CGameManager* GameInstance = GetSingle(CGameManager);
 //	CGameObject_Creater* creater =  GameInstance->Get_CreaterManager();

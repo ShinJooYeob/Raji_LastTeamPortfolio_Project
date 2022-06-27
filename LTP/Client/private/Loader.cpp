@@ -527,6 +527,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 HRESULT CLoader::Load_ModelDatFile()
 {
+	// #LOAD 클라이언트 로드 함수
+
 	// 데이터 파일로 assimp 없이 모델 초기화 / 데이터 초기화
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1) * XMMatrixRotationY(XMConvertToRadians(180.0f));

@@ -274,6 +274,7 @@ namespace Engine
 		char 		mParentBoneName[MAX_PATH] = "";
 		char		mCurrentBoneName[MAX_PATH] = "";
 		_float4x4	mOffsetMat;
+
 		// 영향을 주는 뼈 인덱스
 
 		_uint		mDepth = 0;

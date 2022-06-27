@@ -26,19 +26,28 @@ HRESULT CAnimationClip::Initialize_AnimationClip(const char * pName, _double Dur
 	m_szAnimationClipName = pName;
 	m_Duration = Duration;
 	m_UpdatePerSecond = UpdatePerSecond;
-
-	// #TODO: 여기서부터 하세요
-	// 뼈정보 / 애니메이션 총 초기화??
-
+	
 	return S_OK;
 }
 
 HRESULT CAnimationClip::Initialize_AnimationClip(ANIDESC * aniDesc)
 {
 
+	// ANIDESC INIT
 	m_szAnimationClipName = aniDesc->mAniName;
 	m_Duration = aniDesc->mDuration;
 	m_UpdatePerSecond = aniDesc->mTicksPerSecond;
+
+	// 각 애니메이션의 뼈의 키프레임 초기화
+	m_iNumClipBones = aniDesc->mNumAniBones;
+	Reserve(m_iNumClipBones);
+	for (_uint i = 0; i < m_iNumClipBones; ++i)
+	{
+		// 애니메이션 초기화
+		CClipBone* clipbone = CClipBone::Create(&aniDesc->mAniBones[i]);
+		NULL_CHECK_BREAK(clipbone);
+		m_vecClipBones.push_back(clipbone);
+	}
 
 	return S_OK;
 }

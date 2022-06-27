@@ -35,6 +35,7 @@ public:
 
 public:
 	HRESULT Initialize_ClipBone(const char* pClipBoneName, _int HierarchyNodeIndex);
+	HRESULT Initialize_ClipBone(ANIBONES* bone);
 
 
 private:
@@ -44,13 +45,15 @@ private:
 
 	_uint						m_iNumKeyFrames = 0;
 	vector<KEYFRAME*>			m_vecKeyFrames;
-	typedef vector<KEYFRAME*>	KEYFRAME;
+	typedef vector<KEYFRAME*>	KEYFRAMES;
 
 	_int					m_iHierarchyNodeIndex = -1;
 
 
 public:
 	static CClipBone* Create(const char* pClipBoneName, _int HierarchyNodeIndex);
+	static CClipBone* Create(ANIBONES* bone);
+
 	virtual void Free() override;
 };
 
