@@ -219,7 +219,7 @@ namespace Engine
 	typedef struct tag_MeshBone
 	{
 		_uint mNumWeights=0;
-		aiVertexWeight* mWeights = nullptr;
+		aiVertexWeight* mAiWeights = nullptr;
 	}MESHBONEDESC;
 
 

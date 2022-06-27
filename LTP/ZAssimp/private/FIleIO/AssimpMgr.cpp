@@ -116,7 +116,6 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 }
 
 
-// Model µ•¿Ã≈Õ ¿˙¿Â
 HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDESC* modelDesc)
 {
 	// #SAVE DESC ¡§∫∏ ¿˙¿Â
@@ -171,12 +170,40 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			if (dwByte == 0)
 				return E_FAIL;
 
+			// UV √ﬂ∞°«ÿæﬂµ 
+
+
+
 			// INDEX
 			WriteFile(hFile, meshdesc.mFaces, sizeof(FACEINDICES32)*meshdesc.mNumFaces, &dwByte, nullptr);
 			if (dwByte == 0)
 				return E_FAIL;
 
 
+			// WEIGHT
+			if (modelDesc->mModelType == CModel::TYPE_ANIM)
+			{
+				_uint NumAffectingBones = meshdesc.mNumAffectingBones;
+				if(NumAffectingBones == 0)
+				{ }
+				else
+				{
+						// ª¿ ¿Œµ¶Ω∫ ∏ÆΩ∫∆Æ
+						WriteFile(hFile, meshdesc.mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
+						
+						// ª¿ Weight
+						for (int bone = 0; bone < NumAffectingBones; ++bone)
+						{
+							_uint NumWeight = meshdesc.mMeshBones[bone].mNumWeights;
+							WriteFile(hFile, &NumWeight,sizeof(_uint), &dwByte, nullptr);
+
+							if(NumWeight==0)
+								continue;
+							WriteFile(hFile, meshdesc.mMeshBones[bone].mAiWeights,
+								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
+						}
+				}
+			}
 		}
 
 		// MATERIAL
@@ -187,7 +214,6 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		}
 
 		// BONE
-
 		for (_uint i = 0; i < modelDesc->mNumBones; ++i)
 		{
 			BONEDESC bonedesc = modelDesc->mBones[i];
@@ -236,6 +262,7 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 
 HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CModel * copymodel, _uint ModelType)
 {
+	// #COPY ModelCopy
 	CModel* model = copymodel;
 	auto Scene = model->Get_AssimpScene();
 	MODELDESC* ModelDesc = NEW MODELDESC();
@@ -256,7 +283,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 	{
 		aiMesh* aimesh = Scene->mMeshes[i];
 
-		
+
 		// UINT
 		ModelDesc->mMeshDesc[i].mPrimitiveTypes = aimesh->mPrimitiveTypes;
 		_uint NumVertices = ModelDesc->mMeshDesc[i].mNumVertices = aimesh->mNumVertices;
@@ -293,29 +320,28 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		{
 			ModelDesc->mMeshDesc[i].mAffectingBones = NEW _uint[NumAffectingBones];
 			ModelDesc->mMeshDesc[i].mMeshBones = NEW MESHBONEDESC[NumAffectingBones];
-			
-			aiBone*	 pAffectingBone = aimesh->mBones[i];
+
 
 			const vector<_uint>&  vecUint = model->Get_VecMeshes_AffectingBoneIndes(aimesh);
 			for (_uint j = 0; j < NumAffectingBones; ++j)
 			{
+				aiBone*	 pAffectingBone = aimesh->mBones[j];
+
 				// ª¿ ¿Œµ¶Ω∫ ∂ÛΩ∫∆Æ∫πªÁ
 				ModelDesc->mMeshDesc[i].mAffectingBones[j] = vecUint[j];
 
 				// ª¿ weight ∫πªÁ
 				_uint NumWeight = ModelDesc->mMeshDesc[i].mMeshBones[j].mNumWeights = pAffectingBone->mNumWeights;
-				ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights = new aiVertexWeight[NumWeight];
+				if (NumWeight == 0)
+					continue;
+				ModelDesc->mMeshDesc[i].mMeshBones[j].mAiWeights = new aiVertexWeight[NumWeight];
 
-				for (_uint k = 0; k < NumWeight; i++)
+				for (_uint k = 0; k < NumWeight; k++)
 				{
-					ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights[k].mVertexId = pAffectingBone->mWeights[k].mVertexId;
-					ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights[k].mWeight = pAffectingBone->mWeights[k].mWeight;
-					int debug = 5;
+					ModelDesc->mMeshDesc[i].mMeshBones[j].mAiWeights[k].mVertexId = pAffectingBone->mWeights[k].mVertexId;
+					ModelDesc->mMeshDesc[i].mMeshBones[j].mAiWeights[k].mWeight = pAffectingBone->mWeights[k].mWeight;
 				}
-
-
 			}
-
 		}
 	}
 
