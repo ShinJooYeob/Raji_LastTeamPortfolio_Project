@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "..\public\TestObject2.h"
+#include "..\public\TestStaticObject.h"
 
 
-CTestObject2::CTestObject2(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CTestStaticObject::CTestStaticObject(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
 }
 
-CTestObject2::CTestObject2(const CTestObject2 & rhs)
+CTestStaticObject::CTestStaticObject(const CTestStaticObject & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CTestObject2::Initialize_Prototype(void * pArg)
+HRESULT CTestStaticObject::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +20,7 @@ HRESULT CTestObject2::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CTestObject2::Initialize_Clone(void * pArg)
+HRESULT CTestStaticObject::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -36,7 +36,7 @@ HRESULT CTestObject2::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CTestObject2::Update(_double fDeltaTime)
+_int CTestStaticObject::Update(_double fDeltaTime)
 {
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
@@ -46,7 +46,7 @@ _int CTestObject2::Update(_double fDeltaTime)
 	return _int();
 }
 
-_int CTestObject2::LateUpdate(_double fDeltaTime)
+_int CTestStaticObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
@@ -60,18 +60,15 @@ _int CTestObject2::LateUpdate(_double fDeltaTime)
 	{
 		m_pTransformCom->Move_Forward(fDeltaTime);
 	}
-
-	// 애니메이션 테스트
-	// Change_AnimIndex
-
-	static int AniIndex = 0;
-
-	if (KEYDOWN(DIK_Q))
+	if (KEYPRESS(DIK_LEFT))
 	{
-		// 단순한 애니메이션 재생
-		AniIndex++;		
-		FAILED_CHECK(m_pModel->Change_AnimIndex(AniIndex));
+		m_pTransformCom->Move_Left(fDeltaTime);
 	}
+	if (KEYPRESS(DIK_RIGHT))
+	{
+		m_pTransformCom->Move_Right(fDeltaTime);
+	}
+
 
 	// Change_AnimIndex_UntilNReturn
 	//if (KEYDOWN(DIK_W))
@@ -111,7 +108,7 @@ _int CTestObject2::LateUpdate(_double fDeltaTime)
 	return _int();
 }
 
-_int CTestObject2::Render()
+_int CTestStaticObject::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -120,7 +117,6 @@ _int CTestObject2::Render()
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
@@ -131,10 +127,7 @@ _int CTestObject2::Render()
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-
-			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
-		
-
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
 	}
 
 
@@ -142,18 +135,18 @@ _int CTestObject2::Render()
 	return _int();
 }
 
-_int CTestObject2::LateRender()
+_int CTestStaticObject::LateRender()
 {
 	return _int();
 }
 
 
 
-HRESULT CTestObject2::SetUp_Components()
+HRESULT CTestStaticObject::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
@@ -172,9 +165,9 @@ HRESULT CTestObject2::SetUp_Components()
 	return S_OK;
 }
 
-CTestObject2 * CTestObject2::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CTestStaticObject * CTestStaticObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestObject2*	pInstance = new CTestObject2(pDevice, pDeviceContext);
+	CTestStaticObject*	pInstance = new CTestStaticObject(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -184,9 +177,9 @@ CTestObject2 * CTestObject2::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 	return pInstance;
 }
 
-CGameObject * CTestObject2::Clone(void * pArg)
+CGameObject * CTestStaticObject::Clone(void * pArg)
 {
-	CTestObject2*	pInstance = new CTestObject2(*this);
+	CTestStaticObject*	pInstance = new CTestStaticObject(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -196,7 +189,7 @@ CGameObject * CTestObject2::Clone(void * pArg)
 	return pInstance;
 }
 
-void CTestObject2::Free()
+void CTestStaticObject::Free()
 {
 	__super::Free();
 

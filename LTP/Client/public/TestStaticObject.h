@@ -5,12 +5,12 @@
 
 BEGIN(Client)
 
-class CTestObject2 final : public CGameObject
+class CTestStaticObject final : public CGameObject
 {
 private:
-	CTestObject2(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	CTestObject2(const CTestObject2& rhs);
-	virtual ~CTestObject2() = default;
+	CTestStaticObject(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	CTestStaticObject(const CTestStaticObject& rhs);
+	virtual ~CTestStaticObject() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -33,7 +33,7 @@ private:
 	HRESULT SetUp_Components();
 
 public:
-	static CTestObject2* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CTestStaticObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

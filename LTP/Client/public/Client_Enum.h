@@ -415,6 +415,7 @@ enum COMPONENTPROTOTYPEID
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
+	Prototype_Mesh_TEST_STATIC,
 
 
 
@@ -513,6 +514,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_None:
 		return TEXT("Prototype_Mesh_None");
 		break;
+		
+	case Prototype_Mesh_TEST_STATIC:
+		return TEXT("Prototype_Mesh_TEST_STATIC");
+
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");
 		break;

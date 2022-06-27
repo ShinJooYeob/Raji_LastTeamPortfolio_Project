@@ -81,8 +81,6 @@ _int CTestObject::Render()
 			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
 	}
 
-
-
 	return _int();
 }
 

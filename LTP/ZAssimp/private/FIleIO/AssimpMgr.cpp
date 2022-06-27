@@ -141,8 +141,12 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		WriteFile(hFile, &modelDesc->mModelType, sizeof(_uint), &dwByte, nullptr);
 		WriteFile(hFile, &modelDesc->mNumMeshes, sizeof(_uint), &dwByte, nullptr);
 		WriteFile(hFile, &modelDesc->mNumMaterials, sizeof(_uint), &dwByte, nullptr);
-		WriteFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
-		WriteFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
+
+		if (modelDesc->mModelType == CModel::TYPE_ANIM)
+		{
+			WriteFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
+			WriteFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
+		}
 
 		// MESH
 		for (_uint i = 0; i < modelDesc->mNumMeshes; ++i)
@@ -153,8 +157,12 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			WriteFile(hFile, &meshdesc.mPrimitiveTypes, sizeof(_uint), &dwByte, nullptr);
 			WriteFile(hFile, &meshdesc.mNumVertices, sizeof(_uint), &dwByte, nullptr);
 			WriteFile(hFile, &meshdesc.mNumFaces, sizeof(_uint), &dwByte, nullptr);
-			WriteFile(hFile, &meshdesc.mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
 			WriteFile(hFile, &meshdesc.mMaterialIndex, sizeof(_uint), &dwByte, nullptr);
+
+			if (modelDesc->mModelType == CModel::TYPE_ANIM)
+			{
+				WriteFile(hFile, &meshdesc.mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
+			}
 
 
 			// VTX
@@ -170,9 +178,11 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			if (dwByte == 0)
 				return E_FAIL;
 
-			// UV Ãß°¡ÇØ¾ßµÊ
-
-
+			// UV
+			for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+			{
+				WriteFile(hFile, meshdesc.mTextureCoords[j], sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
+			}
 
 			// INDEX
 			WriteFile(hFile, meshdesc.mFaces, sizeof(FACEINDICES32)*meshdesc.mNumFaces, &dwByte, nullptr);
@@ -200,7 +210,7 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 						WriteFile(hFile, meshdesc.mMeshBones[bone].mAiWeights,
 							sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
 					}
-				}				
+				}
 			}
 		}
 
@@ -212,46 +222,45 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		}
 
 		// BONE
-		for (_uint i = 0; i < modelDesc->mNumBones; ++i)
+		if (modelDesc->mModelType == CModel::TYPE_ANIM)
 		{
-			BONEDESC bonedesc = modelDesc->mBones[i];
-			WriteFile(hFile, bonedesc.mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-			WriteFile(hFile, bonedesc.mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-			WriteFile(hFile, &bonedesc.mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
-			WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint), &dwByte, nullptr);
-		}
-
-
-		// ANI
-
-		for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
-		{
-			ANIDESC anidesc = modelDesc->mAnimations[i];
-			WriteFile(hFile, anidesc.mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-			WriteFile(hFile, &anidesc.mDuration, sizeof(double), &dwByte, nullptr);
-			WriteFile(hFile, &anidesc.mTicksPerSecond, sizeof(double), &dwByte, nullptr);
-			WriteFile(hFile, &anidesc.mNumAniBones, sizeof(_uint), &dwByte, nullptr);
-		}
-			
-		for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
-		{
-			ANIDESC anidesc = modelDesc->mAnimations[i];
-			for (_uint j = 0; j < anidesc.mNumAniBones; ++j)
+			for (_uint i = 0; i < modelDesc->mNumBones; ++i)
 			{
-				ANIBONES anibone = modelDesc->mAnimations[i].mAniBones[j];
-
-				WriteFile(hFile, anibone.mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				WriteFile(hFile, &anibone.mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
-				WriteFile(hFile, &anibone.mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
-				WriteFile(hFile, anibone.mKeyFrames, sizeof(KEYFRAME)* anibone.mNumKeyFrames, &dwByte, nullptr);
+				BONEDESC bonedesc = modelDesc->mBones[i];
+				WriteFile(hFile, bonedesc.mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, bonedesc.mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc.mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint), &dwByte, nullptr);
 			}
 
+
+
+			// ANI
+			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+			{
+				ANIDESC anidesc = modelDesc->mAnimations[i];
+				WriteFile(hFile, anidesc.mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, &anidesc.mDuration, sizeof(double), &dwByte, nullptr);
+				WriteFile(hFile, &anidesc.mTicksPerSecond, sizeof(double), &dwByte, nullptr);
+				WriteFile(hFile, &anidesc.mNumAniBones, sizeof(_uint), &dwByte, nullptr);
+			}
+
+			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+			{
+				ANIDESC anidesc = modelDesc->mAnimations[i];
+				for (_uint j = 0; j < anidesc.mNumAniBones; ++j)
+				{
+					ANIBONES anibone = modelDesc->mAnimations[i].mAniBones[j];
+
+					WriteFile(hFile, anibone.mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					WriteFile(hFile, &anibone.mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
+					WriteFile(hFile, &anibone.mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
+					WriteFile(hFile, anibone.mKeyFrames, sizeof(KEYFRAME)* anibone.mNumKeyFrames, &dwByte, nullptr);
+				}
+
+			}
 		}
-
 	}
-
-
-
 
 	CloseHandle(hFile);
 
@@ -293,13 +302,24 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		ModelDesc->mMeshDesc[i].mNormals = NEW _float3[NumVertices];
 		ModelDesc->mMeshDesc[i].mTangents = NEW _float3[NumVertices];
 
-		// VTX
-		for (_uint v = 0; v < NumVertices; ++v)
+		for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
 		{
-			memcpy(&ModelDesc->mMeshDesc[i].mVertices[v], &aimesh->mVertices[v], sizeof(_float3));
-			memcpy(&ModelDesc->mMeshDesc[i].mNormals[v], &aimesh->mNormals[v], sizeof(_float3));
-			memcpy(&ModelDesc->mMeshDesc[i].mTangents[v], &aimesh->mTangents[v], sizeof(_float3));
+			ModelDesc->mMeshDesc[i].mTextureCoords[j] = NEW _float3[NumVertices];
+		}
 
+
+		// VTX
+		memcpy(ModelDesc->mMeshDesc[i].mVertices, aimesh->mVertices, sizeof(_float3)*NumVertices);
+		memcpy(ModelDesc->mMeshDesc[i].mNormals, aimesh->mNormals, sizeof(_float3)*NumVertices);
+		memcpy(ModelDesc->mMeshDesc[i].mTangents, aimesh->mTangents, sizeof(_float3)*NumVertices);
+		
+
+		for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+		{
+			if (aimesh->mTextureCoords[j] != nullptr)
+			{
+				memcpy(ModelDesc->mMeshDesc[i].mTextureCoords[j], aimesh->mTextureCoords[j], sizeof(_float3)*NumVertices);
+			}
 		}
 
 		ModelDesc->mMeshDesc[i].mFaces = NEW FACEINDICES32[NumFaces];

@@ -9,7 +9,7 @@
 #include "TestObject.h"
 #include "AnimationClip.h"
 #include "Navigation.h"
-#include "TestObject2.h"
+#include "TestStaticObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +125,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-	Load_Model_Dynamic_DatFile();
+	Load_Model_DatFile();
 
 #pragma endregion
 
@@ -525,7 +525,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	return S_OK;
 }
 
-HRESULT CLoader::Load_Model_Dynamic_DatFile()
+HRESULT CLoader::Load_Model_DatFile()
 {
 	// #LOAD 클라이언트 로드 함수
 
@@ -533,17 +533,43 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
-//	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
-
+	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
 	auto dynamic_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
 
 
 	// MODELDESC / LOAD 함수
-	_ulong			dwByte = 0;
 
 	list<MODELDESC*> List_ModelCreateTest;
 
-	for (auto& path : dynamic_dat)
+	Load_Model(static_dat, List_ModelCreateTest);
+	Load_Model(static_dat, List_ModelCreateTest);
+	int k = List_ModelCreateTest.size();
+
+	// 모델 컴포넌트 생성
+
+	// For. Test
+	
+
+	for (auto& modeldesc : List_ModelCreateTest)
+	{
+		//FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+		//	SCENEID::SCENE_LOBY,
+		//	TAG_CP(Prototype_Mesh_TestObject),
+		//CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
+		//
+	//	CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
+
+		int Debug = 5;
+
+	}
+	return S_OK;
+
+}
+
+HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc)
+{
+	_ulong			dwByte = 0;
+	for (auto& path : pathlist)
 	{
 
 		wstring fullpath = path->FullPath;
@@ -563,8 +589,14 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 			ReadFile(hFile, &modelDesc->mModelType, sizeof(_uint), &dwByte, nullptr);
 			ReadFile(hFile, &modelDesc->mNumMeshes, sizeof(_uint), &dwByte, nullptr);
 			ReadFile(hFile, &modelDesc->mNumMaterials, sizeof(_uint), &dwByte, nullptr);
-			ReadFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
-			ReadFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
+
+			if (modelDesc->mModelType == CModel::TYPE_ANIM)
+			{
+				ReadFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
+				ReadFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
+			}
+
+			CModel::MODELTYPE ModelType = (CModel::MODELTYPE)modelDesc->mModelType;
 
 			// 할당
 			if (modelDesc->mNumMeshes != 0)
@@ -573,12 +605,14 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 			if (modelDesc->mNumMaterials != 0)
 				modelDesc->mMaterials = NEW MATDESC[modelDesc->mNumMaterials];
 
-			if (modelDesc->mNumBones != 0)
-				modelDesc->mBones = NEW BONEDESC[modelDesc->mNumBones];
+			if (ModelType == CModel::TYPE_ANIM)
+			{
+				if (modelDesc->mNumBones != 0)
+					modelDesc->mBones = NEW BONEDESC[modelDesc->mNumBones];
 
-			if (modelDesc->mNumAnimations != 0)
-				modelDesc->mAnimations = NEW ANIDESC[modelDesc->mNumAnimations];
-
+				if (modelDesc->mNumAnimations != 0)
+					modelDesc->mAnimations = NEW ANIDESC[modelDesc->mNumAnimations];
+			}
 
 			// MESH
 			for (_uint i = 0; i < modelDesc->mNumMeshes; ++i)
@@ -589,8 +623,12 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 				ReadFile(hFile, &meshdesc->mPrimitiveTypes, sizeof(_uint), &dwByte, nullptr);
 				ReadFile(hFile, &meshdesc->mNumVertices, sizeof(_uint), &dwByte, nullptr);
 				ReadFile(hFile, &meshdesc->mNumFaces, sizeof(_uint), &dwByte, nullptr);
-				ReadFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
 				ReadFile(hFile, &meshdesc->mMaterialIndex, sizeof(_uint), &dwByte, nullptr);
+
+				if (ModelType == CModel::TYPE_ANIM)
+				{
+					ReadFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
+				}
 
 				meshdesc->mVertices = NEW _float3[meshdesc->mNumVertices];
 				meshdesc->mNormals = NEW _float3[meshdesc->mNumVertices];
@@ -611,14 +649,36 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 					return E_FAIL;
 
 				// UV 추가
-				
+				for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
+				{
+					_float3* cash = NEW _float3[meshdesc->mNumVertices];
+
+
+					ReadFile(hFile, cash, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
+					if (cash->x == 0)
+					{
+						meshdesc->mTextureCoords[j] = nullptr;
+						Safe_Delete_Array(cash);
+					}
+					else
+					{
+						meshdesc->mTextureCoords[j] = NEW _float3[meshdesc->mNumVertices];
+						for (_uint k = 0; k < meshdesc->mNumVertices; ++k)
+						{
+							meshdesc->mTextureCoords[j]->x = cash->x;
+							meshdesc->mTextureCoords[j]->y = cash->y;
+							meshdesc->mTextureCoords[j]->z = 0;
+						}
+						Safe_Delete_Array(cash);
+					}
+				}
+
 				// INDEX
 				ReadFile(hFile, meshdesc->mFaces, sizeof(FACEINDICES32)*meshdesc->mNumFaces, &dwByte, nullptr);
 				if (dwByte == 0)
 					return E_FAIL;
 
 				// WEIGHT
-
 				if (modelDesc->mModelType == CModel::TYPE_ANIM)
 				{
 					_uint NumAffectingBones = meshdesc->mNumAffectingBones;
@@ -641,7 +701,6 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 
 							ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
 								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
-							int debug = 5;
 						}
 					}
 				}
@@ -655,82 +714,57 @@ HRESULT CLoader::Load_Model_Dynamic_DatFile()
 			}
 
 			// BONE
-			for (_uint i = 0; i < modelDesc->mNumBones; ++i)
+			if (modelDesc->mModelType == CModel::TYPE_ANIM)
 			{
-				BONEDESC* bonedesc = &modelDesc->mBones[i];
-				ReadFile(hFile, bonedesc->mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				ReadFile(hFile, bonedesc->mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				ReadFile(hFile, &bonedesc->mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
-				ReadFile(hFile, &bonedesc->mDepth, sizeof(_uint), &dwByte, nullptr);
-			}
-
-
-			// ANI
-
-			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
-			{
-				ANIDESC* anidesc = &modelDesc->mAnimations[i];
-				ReadFile(hFile, anidesc->mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				ReadFile(hFile, &anidesc->mDuration, sizeof(double), &dwByte, nullptr);
-				ReadFile(hFile, &anidesc->mTicksPerSecond, sizeof(double), &dwByte, nullptr);
-				ReadFile(hFile, &anidesc->mNumAniBones, sizeof(_uint), &dwByte, nullptr);
-			}
-
-			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
-			{
-				ANIDESC* anidesc = &modelDesc->mAnimations[i];
-				anidesc->mAniBones = NEW ANIBONES[anidesc->mNumAniBones];
-				for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
+				for (_uint i = 0; i < modelDesc->mNumBones; ++i)
 				{
-					ANIBONES* anibone = &anidesc->mAniBones[j];
-					
-
-					ReadFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-					ReadFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
-					ReadFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
-					anibone->mKeyFrames = NEW KEYFRAME[anibone->mNumKeyFrames];
-					ReadFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
-
-					if (dwByte == 0)
-						return E_FAIL;
-
+					BONEDESC* bonedesc = &modelDesc->mBones[i];
+					ReadFile(hFile, bonedesc->mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					ReadFile(hFile, bonedesc->mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					ReadFile(hFile, &bonedesc->mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+					ReadFile(hFile, &bonedesc->mDepth, sizeof(_uint), &dwByte, nullptr);
 				}
 
+
+				// ANI
+				for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+				{
+					ANIDESC* anidesc = &modelDesc->mAnimations[i];
+					ReadFile(hFile, anidesc->mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					ReadFile(hFile, &anidesc->mDuration, sizeof(double), &dwByte, nullptr);
+					ReadFile(hFile, &anidesc->mTicksPerSecond, sizeof(double), &dwByte, nullptr);
+					ReadFile(hFile, &anidesc->mNumAniBones, sizeof(_uint), &dwByte, nullptr);
+				}
+
+				for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+				{
+					ANIDESC* anidesc = &modelDesc->mAnimations[i];
+					anidesc->mAniBones = NEW ANIBONES[anidesc->mNumAniBones];
+					for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
+					{
+						ANIBONES* anibone = &anidesc->mAniBones[j];
+
+
+						ReadFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+						ReadFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
+						ReadFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
+						anibone->mKeyFrames = NEW KEYFRAME[anibone->mNumKeyFrames];
+						ReadFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
+
+						if (dwByte == 0)
+							return E_FAIL;
+
+					}
+
+				}
 			}
-			List_ModelCreateTest.push_front(modelDesc);
+			List_Modeldesc.push_front(modelDesc);
 		}
 		CloseHandle(hFile);
 	}
 
-
-	// 모델 컴포넌트 생성
-	
-	
-//	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, FileName.c_str(),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modelDesc, TransformMatrix)));
-
-//	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, FileName.c_str(),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modelDesc, TransformMatrix)));
-	
-	// For. Test
-	for (auto& modeldesc : List_ModelCreateTest)
-	{
-		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-			SCENEID::SCENE_LOBY,
-			TAG_CP(Prototype_Mesh_TestObject),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
-
-		//CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
-
-		int Debug = 5;
-
-	}
-
-
 	return S_OK;
-
 }
-
 
 
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)

@@ -1539,6 +1539,8 @@ void CModel::Free()
 	{
 		m_Importer.FreeScene();
 		Safe_Delete_Array(m_vecMeshContainerArr);
+
+		Safe_Delete(m_pModelDesc);
 	}
 
 
@@ -1550,6 +1552,5 @@ void CModel::Free()
 	}
 	m_vecCurrentKeyFrameIndices.clear();
 
-	Safe_Delete(m_pModelDesc);
 
 }

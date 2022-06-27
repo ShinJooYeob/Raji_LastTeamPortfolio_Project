@@ -378,6 +378,9 @@ HRESULT CMeshContainer::Ready_AnimMeshContainer(MESHDESC * meshdesc)
 		memcpy(&pVertices[i].vPosition, &meshdesc->mVertices[i], sizeof(_float3));
 		memcpy(&pVertices[i].vNormal, &meshdesc->mNormals[i], sizeof(_float3));
 		memcpy(&pVertices[i].vTangent, &meshdesc->mTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexUV, &meshdesc->mTextureCoords[0][i], sizeof(_float2));
+
+
 	//	memcpy(&pVertices[i].vTexUV, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 	}
 

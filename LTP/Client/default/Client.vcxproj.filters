@@ -252,7 +252,7 @@
     <ClInclude Include="..\public\Loader.h">
       <Filter>02.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestObject2.h">
+    <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
   </ItemGroup>
@@ -359,7 +359,7 @@
     <ClCompile Include="..\private\Loader.cpp">
       <Filter>02.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TestObject2.cpp">
+    <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
   </ItemGroup>

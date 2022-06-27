@@ -28,7 +28,6 @@ private:
 	HRESULT Ready_HierarchyNodes(vector<BONEDESC*>& vec, aiNode * pNode, string parentBoneName="", _uint iDepth=0);
 	HRESULT Ready_HierarchyNodes2(const vector<CHierarchyNode*>& VecHierNodes, vector<BONEDESC*>& vec);
 
-
 	HRESULT Ready_OffsetMatrix(vector<BONEDESC*>& vec);
 
 
