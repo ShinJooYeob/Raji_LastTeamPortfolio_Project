@@ -27,7 +27,9 @@ CModel::CModel(const CModel & rhs)
 	m_iNumAnimationClip(rhs.m_iNumAnimationClip),
 	m_vecAnimator(rhs.m_vecAnimator),
 
-	m_DefaultPivotMatrix(rhs.m_DefaultPivotMatrix)
+	m_DefaultPivotMatrix(rhs.m_DefaultPivotMatrix),
+
+	m_pModelDesc(rhs.m_pModelDesc)
 {
 
 	//매쉬 컨테이너 얕은 복사
@@ -44,23 +46,33 @@ CModel::CModel(const CModel & rhs)
 	for (auto& pAnimationClip : m_vecAnimator)
 		Safe_AddRef(pAnimationClip);
 
-
-
 	
 	if (TYPE_ANIM == m_eModelType)
 	{
 		//애니메이션을 써야하는 모델들은 뼈구조를 받아와야함
-		if (FAILED(Ready_HierarchyNodes((rhs.m_pScene)->mRootNode)))
+		if (m_pModelDesc)
 		{
-			MSGBOX("Failed to Clone HierarchyNode");
-			__debugbreak();
+			FAILED_CHECK_NONERETURN(Ready_HierarchyNodes(m_pModelDesc));
+			sort(m_vecHierarchyNode.begin(), m_vecHierarchyNode.end(), [](CHierarchyNode* pSour, CHierarchyNode* pDest)
+			{
+				return pSour->Get_Depth() < pDest->Get_Depth();
+
+			});
 		}
 
-		sort(m_vecHierarchyNode.begin(), m_vecHierarchyNode.end(), [](CHierarchyNode* pSour, CHierarchyNode* pDest)
+		else
 		{
-			return pSour->Get_Depth() < pDest->Get_Depth();
-		});
+			if (FAILED(Ready_HierarchyNodes((rhs.m_pScene)->mRootNode)))
+			{
+				MSGBOX("Failed to Clone HierarchyNode");
+				__debugbreak();
+			}
 
+			sort(m_vecHierarchyNode.begin(), m_vecHierarchyNode.end(), [](CHierarchyNode* pSour, CHierarchyNode* pDest)
+			{
+				return pSour->Get_Depth() < pDest->Get_Depth();
+			});
+		}
 
 		_uint iNumHierarchyNodes = _uint(m_vecHierarchyNode.size());
 		for (_uint i = 0; i< iNumHierarchyNodes; i++)
@@ -902,8 +914,9 @@ HRESULT CModel::Ready_Animation(MODELDESC * desc)
 
 	//해당 모델에 존자해는 총 애니메이션의 갯수
 	m_iNumAnimationClip = desc->mNumAnimations;
-	m_vecAnimator.resize(m_iNumAnimationClip);
+	m_vecAnimator.reserve(m_iNumAnimationClip);
 	m_vecCurrentKeyFrameIndices.resize(m_iNumAnimationClip);
+
 
 	// 애니메이션 저장
 	for (_uint i = 0; i < m_iNumAnimationClip; ++i)

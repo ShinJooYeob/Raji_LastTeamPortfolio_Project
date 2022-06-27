@@ -352,6 +352,11 @@ namespace Engine
 		_uint			mNumAnimations;
 		ANIDESC*		mAnimations = nullptr;;
 
+		~tag_ModelDesc()
+		{
+			// 소멸자 구현
+
+		}
 
 	}MODELDESC;
 

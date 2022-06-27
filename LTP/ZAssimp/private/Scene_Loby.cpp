@@ -15,11 +15,10 @@ HRESULT CScene_Loby::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
-
 //	FAILED_CHECK(Ready_Light());
-	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 //	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+
+	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	
 	// 경로 / 저장위치 / 파일이름 / 확장자명
 	PathFinder_Text(STR_FILEPATH_FBX_STATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DSTATIC_TXT, L"fbx");
