@@ -207,8 +207,8 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 
 		
 		// 영향을 주는 뼈 업데이트
-		//FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
-		//FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
+		FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
+		FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
 
 		// 뼈 로드
 		FAILED_CHECK(Ready_HierarchyNodes(m_pModelDesc));
@@ -217,10 +217,11 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 			return pSour->Get_Depth() < pDest->Get_Depth();
 
 		});
-		
 
-		
-		FAILED_CHECK(Ready_OffsetMatrices());
+		// 영향주는 뼈 리스트 
+		FAILED_CHECK(Ready_OffsetMatrices(m_pModelDesc));
+
+		// 애니메이션 초기화
 		FAILED_CHECK(Ready_Animation(m_pModelDesc));
 
 
@@ -883,7 +884,7 @@ HRESULT CModel::Ready_HierarchyNodes(aiNode * pNode, CHierarchyNode * pParent, _
 }
 HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
 {
-	for (int i = 0; i < desc->mNumBones; ++i)
+	for (_uint i = 0; i < desc->mNumBones; ++i)
 	{
 		CHierarchyNode*		pHierarchyNode = CHierarchyNode::Create(&desc->mBones[i]);
 		NULL_CHECK_RETURN(pHierarchyNode, E_FAIL);
@@ -892,7 +893,7 @@ HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
 	}
 
 	// For. Search ParentBone
-
+	return S_OK;
 }
 
 HRESULT CModel::Ready_Animation(MODELDESC * desc)
@@ -905,7 +906,7 @@ HRESULT CModel::Ready_Animation(MODELDESC * desc)
 	m_vecCurrentKeyFrameIndices.resize(m_iNumAnimationClip);
 
 	// 애니메이션 저장
-	for (int i = 0; i < m_iNumAnimationClip; ++i)
+	for (_uint i = 0; i < m_iNumAnimationClip; ++i)
 	{
 		ANIDESC* anidesc = &desc->mAnimations[i];
 
@@ -926,7 +927,7 @@ HRESULT CModel::Ready_OffsetMatrices()
 	{
 		for (auto& pMeshContainer : m_vecMeshContainerArr[i])
 		{
-			_uint iNumAffectingBones = pMeshContainer->Get_NumAffectingBones();
+			_uint		iNumAffectingBones = pMeshContainer->Get_NumAffectingBones();
 			aiMesh*		pAIMesh = pMeshContainer->Get_AiMesh();
 
 			NULL_CHECK_RETURN(pAIMesh, E_FAIL);
@@ -968,6 +969,44 @@ HRESULT CModel::Ready_OffsetMatrices()
 
 	return S_OK;
 }
+HRESULT CModel::Ready_OffsetMatrices(MODELDESC* desc)
+{
+	NULL_CHECK_RETURN(desc, E_FAIL);
+
+	//for (_uint i = 0; i < m_iNumMaterials; i++)
+	//{
+	//	for (auto& pMeshContainer : m_vecMeshContainerArr[i])
+	//	{
+	//		_uint		iNumAffectingBones = pMeshContainer->Get_NumAffectingBones();
+	//		aiMesh*		pAIMesh = pMeshContainer->Get_AiMesh();
+
+	//		NULL_CHECK_RETURN(pAIMesh, E_FAIL);
+
+	//		//각각의 매쉬들이 영향을 받는 모든 뼈들을 순회하면서
+	//		for (_uint j = 0; j < iNumAffectingBones; j++)
+	//		{
+
+	//			//특정 매쉬가 영향을 받는 뼈들 중 j번째 뼈와 
+	//			//이름이 같은 뼈를 계층뼈에서 찾아서
+	//			_uint iNodeIndex = 0;
+	//			CHierarchyNode*		pHierarchyNode = Find_HierarchyNode(pAIMesh->mBones[j]->mName.data, &iNodeIndex);
+
+	//			NULL_CHECK_RETURN(pHierarchyNode, E_FAIL);
+
+	//			_float4x4		OffsetMatrix;
+	//			memcpy(&OffsetMatrix, &(pAIMesh->mBones[j]->mOffsetMatrix), sizeof(_float4x4));
+
+	//			//계층뼈에 오프셋 매트릭스를 저장하자
+	//			pHierarchyNode->Set_OffsetMatrix(&OffsetMatrix);
+	//			pMeshContainer->Add_AffectingBoneIndex(iNodeIndex);
+	//		}
+	//	}
+	//}
+
+	return E_FAIL;
+}
+
+
 
 HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 {
@@ -993,6 +1032,7 @@ HRESULT CModel::Ready_MeshContainers(_fMatrix& TransformMatrix)
 			//OutputDebugStringW(ttDebugLog.c_str());
 
 #endif
+			
 
 		}
 	}

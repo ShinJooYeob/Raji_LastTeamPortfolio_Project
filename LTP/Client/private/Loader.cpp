@@ -681,12 +681,15 @@ HRESULT CLoader::Load_ModelDatFile()
 
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, FileName.c_str(),
 //		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modelDesc, TransformMatrix)));
-	for (auto& obj: List_ModelCreateTest)
+	
+	// For. Test
+	for (auto& modeldesc : List_ModelCreateTest)
 	{
-		CModel* TestModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, obj, 
+		CModel* TestModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc,
 			TransformMatrix);
 		NULL_CHECK_BREAK(TestModel);
 	}
+
 	return S_OK;
 
 }

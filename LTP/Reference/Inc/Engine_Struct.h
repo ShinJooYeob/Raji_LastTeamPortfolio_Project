@@ -216,6 +216,13 @@ namespace Engine
 		unsigned int FileCount = 0;
 	}MYFILEPATH;
 
+	typedef struct tag_MeshBone
+	{
+		_uint mNumWeights=0;
+		aiVertexWeight* mWeights = nullptr;
+	}MESHBONEDESC;
+
+
 	typedef struct tag_MeshDesc
 	{
 		// 메시에 필요한 정보
@@ -227,13 +234,14 @@ namespace Engine
 		_float3*		mNormals;
 		_float3*		mTangents;
 		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+		//	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 		FACEINDICES32*	mFaces;
 
-		//	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 		_uint			mMaterialIndex;
 
 		_uint			mNumAffectingBones = 0; // 영향주는 뼈정보
-		_uint*			mAffectingBones; // 영향주는 뼈정보 인데스
+		_uint*			mAffectingBones;		// 영향주는 뼈정보 인데스
+		MESHBONEDESC*	mMeshBones;				// 영향주는 뼈정보
 
 		// C_STRUCT aiColor4D* mColors[AI_MAX_NUMBER_OF_COLOR_SETS];
 		// C_STRUCT aiBone** mBones;
@@ -242,8 +250,6 @@ namespace Engine
 		// C_STRUCT aiAnimMesh** mAnimMeshes;
 		// unsigned int mMethod;
 		// C_STRUCT aiAABB mAABB;
-
-
 
 	}MESHDESC;
 

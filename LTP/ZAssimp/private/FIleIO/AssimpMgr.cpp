@@ -221,8 +221,6 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 				WriteFile(hFile, &anibone.mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
 				WriteFile(hFile, anibone.mKeyFrames, sizeof(KEYFRAME)* anibone.mNumKeyFrames, &dwByte, nullptr);
 			}
-			
-
 
 		}
 
@@ -294,12 +292,30 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		if (CModel::TYPE_ANIM == ModelType)
 		{
 			ModelDesc->mMeshDesc[i].mAffectingBones = NEW _uint[NumAffectingBones];
-			const vector<_uint>&  vecUint = model->Get_VecMeshes_AffectingBoneIndes(aimesh);
+			ModelDesc->mMeshDesc[i].mMeshBones = NEW MESHBONEDESC[NumAffectingBones];
+			
+			aiBone*	 pAffectingBone = aimesh->mBones[i];
 
+			const vector<_uint>&  vecUint = model->Get_VecMeshes_AffectingBoneIndes(aimesh);
 			for (_uint j = 0; j < NumAffectingBones; ++j)
 			{
+				// »À ÀÎµ¦½º ¶ó½ºÆ®º¹»ç
 				ModelDesc->mMeshDesc[i].mAffectingBones[j] = vecUint[j];
+
+				// »À weight º¹»ç
+				_uint NumWeight = ModelDesc->mMeshDesc[i].mMeshBones[j].mNumWeights = pAffectingBone->mNumWeights;
+				ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights = new aiVertexWeight[NumWeight];
+
+				for (_uint k = 0; k < NumWeight; i++)
+				{
+					ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights[k].mVertexId = pAffectingBone->mWeights[k].mVertexId;
+					ModelDesc->mMeshDesc[i].mMeshBones[j].mWeights[k].mWeight = pAffectingBone->mWeights[k].mWeight;
+					int debug = 5;
+				}
+
+
 			}
+
 		}
 	}
 

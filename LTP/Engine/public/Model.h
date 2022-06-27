@@ -123,6 +123,7 @@ private:
 	// Assimp X
 	HRESULT Ready_HierarchyNodes(MODELDESC* desc);
 	HRESULT Ready_Animation(MODELDESC* desc);
+	HRESULT Ready_OffsetMatrices(MODELDESC* desc);
 	
 
 private:

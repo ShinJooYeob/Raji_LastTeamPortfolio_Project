@@ -51,9 +51,9 @@ private:
 	HRESULT Ready_AnimMeshContainer(aiMesh* pAIMesh);
 	HRESULT Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL* pVertices);
 
-	HRESULT Ready_NonAnimMeshContainer(MESHDESC* pAIMesh, _fMatrix& TransformMatrix);
-	HRESULT Ready_AnimMeshContainer(MESHDESC* pAIMesh);
-	HRESULT Ready_SkinnedInfo(MESHDESC* pAIMesh, VTXANIMMODEL* pVertices);
+	HRESULT Ready_NonAnimMeshContainer(MESHDESC* meshDesc, _fMatrix& TransformMatrix);
+	HRESULT Ready_AnimMeshContainer(MESHDESC* meshDesc);
+	HRESULT Ready_SkinnedInfo(MESHDESC* meshDesc, VTXANIMMODEL* pVertices);
 
 public:
 	static CMeshContainer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, 
