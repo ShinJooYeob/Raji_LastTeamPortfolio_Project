@@ -30,7 +30,7 @@ HRESULT CTestStaticObject::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
-//	m_pTransformCom->Scaled_All(_float3(0.5f, 0.5f, 0.5f));
+	m_pTransformCom->Scaled_All(_float3(10, 10, 10));
 
 
 	return S_OK;
@@ -41,7 +41,7 @@ _int CTestStaticObject::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
+//	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
 
 	return _int();
 }
@@ -67,6 +67,18 @@ _int CTestStaticObject::LateUpdate(_double fDeltaTime)
 	if (KEYPRESS(DIK_RIGHT))
 	{
 		m_pTransformCom->Move_Right(fDeltaTime);
+	}
+
+	_float3 up = _float3(0, 1, 0);
+	
+	if (KEYPRESS(DIK_E))
+	{
+		m_pTransformCom->Turn_CW(XMLoadFloat3(&up),fDeltaTime);
+	}
+
+	if (KEYPRESS(DIK_Q))
+	{
+		m_pTransformCom->Turn_CCW(XMLoadFloat3(&up), fDeltaTime);
 	}
 
 
@@ -130,8 +142,6 @@ _int CTestStaticObject::Render()
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
 	}
 
-
-
 	return _int();
 }
 
@@ -148,8 +158,8 @@ HRESULT CTestStaticObject::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TEST_STATIC), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+//	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
 	CTransform::TRANSFORMDESC tDesc = {};

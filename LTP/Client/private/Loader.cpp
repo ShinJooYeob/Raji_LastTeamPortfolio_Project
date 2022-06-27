@@ -131,8 +131,10 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
-//	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject2), CTestObject2::Create(m_pDevice, m_pDeviceContext)));
+	// Dynamic
+	// FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
+	// Static
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestStaticObject::Create(m_pDevice, m_pDeviceContext)));
 
 	
 #pragma endregion
@@ -542,7 +544,7 @@ HRESULT CLoader::Load_Model_DatFile()
 	list<MODELDESC*> List_ModelCreateTest;
 
 	Load_Model(static_dat, List_ModelCreateTest);
-	Load_Model(static_dat, List_ModelCreateTest);
+//	Load_Model(dynamic_dat, List_ModelCreateTest);
 	int k = List_ModelCreateTest.size();
 
 	// ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
@@ -555,10 +557,17 @@ HRESULT CLoader::Load_Model_DatFile()
 		//FAILED_CHECK(pGameInstance->Add_Component_Prototype(
 		//	SCENEID::SCENE_LOBY,
 		//	TAG_CP(Prototype_Mesh_TestObject),
-		//CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
-		//
-	//	CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
+		//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
 
+		//CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
+
+
+		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+			SCENEID::SCENE_LOBY,
+			TAG_CP(Prototype_Mesh_TEST_STATIC),
+			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
+
+		// CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix);
 		int Debug = 5;
 
 	}
