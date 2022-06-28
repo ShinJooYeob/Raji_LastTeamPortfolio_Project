@@ -124,6 +124,12 @@
     <Filter Include="01.GameObject\96.NaviPoint">
       <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster_Gadasura_Black">
+      <UniqueIdentifier>{4ab1db14-d94c-4f44-b9e5-57ce8ca39ace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster_Mahinasura_Minion">
+      <UniqueIdentifier>{e44b6061-5ccf-470f-9370-fcb137c48299}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -252,6 +258,18 @@
     <ClInclude Include="..\public\Loader.h">
       <Filter>02.Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster_Mahinasura.h">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster_Gadasura_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h">
+      <Filter>01.GameObject\02.Monster\Monster_Mahinasura_Minion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -355,6 +373,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Loader.cpp">
       <Filter>02.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Mahinasura.cpp">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster_Gadasura_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp">
+      <Filter>01.GameObject\02.Monster\Monster_Mahinasura_Minion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

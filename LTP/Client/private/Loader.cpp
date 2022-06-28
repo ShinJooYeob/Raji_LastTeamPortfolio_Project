@@ -21,6 +21,10 @@
 #include "StaticMapObject.h"
 
 
+////¸ó½ºÅÍ//////////////////////////////////////////////////////////////////////
+#include "Monster_Mahinasura_Minion.h"
+////////////////////////////////////////////////////////////////////////////////
+
 _uint CALLBACK LoadingThread(void* _Prameter)
 {
 	THREADARG tThreadArg{};
@@ -376,10 +380,21 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 #pragma region PROTOTYPE_COMPONENT
 
+	_Matrix			TransformMatrix;
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_Monster_Mahinasura_Minion),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.FBX", TransformMatrix)));
+
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Mahinasura_Minion), CMonster_Mahinasura_Minion::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 

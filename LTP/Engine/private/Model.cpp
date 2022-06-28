@@ -511,6 +511,7 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 					m_bIsUntill = false;
 					m_iNowAnimIndex = m_iNowAnimIndex;
 					m_TotalAnimExitTime = 0;
+					m_bIsBlockAnim = false;
 				}
 
 				m_AnimExitAcc = 0;

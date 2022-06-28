@@ -46,8 +46,15 @@ _int CScene_Loby::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_EDIT), SCENEID::SCENE_LOADING));
 	}
 
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	if (pGameInstance->Get_DIKeyState(DIK_T) & DIS_Down)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE7), SCENEID::SCENE_LOADING));
+	}
 	
+	RELEASE_INSTANCE(CGameInstance);
 
 	return 0;
 }

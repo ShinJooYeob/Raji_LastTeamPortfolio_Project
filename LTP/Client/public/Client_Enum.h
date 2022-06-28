@@ -51,6 +51,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_Camera_Editor,
 	Prototype_TestObject_Himeko,
 
+
+	Prototype_Object_Monster_Mahinasura_Minion,
+
 	Object_Prototype_End
 };
 
@@ -105,11 +108,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Camera_Editor");
 		break;
 
-		break;
-
 	case Prototype_TestObject_Himeko: 
 		return TEXT("Prototype_TestObject_Himeko");
 		break;
+
+	case Prototype_Object_Monster_Mahinasura_Minion:
+		return TEXT("Prototype_Object_Monster_Mahinasura_Minion");
 		
 	default:
 		MSGBOX("Wrong Type Object Prototype");
@@ -421,6 +425,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_AlgaeRock_Ledge,
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
+	Prototype_Mesh_Monster_Mahinasura_Minion,
 
 
 
@@ -535,6 +540,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Player:
 		return TEXT("Prototype_Mesh_Player");
+		break;
+
+	case Prototype_Mesh_Monster_Mahinasura_Minion:
+		return TEXT("Prototype_Mesh_Monster_Mahinasura_Minion");
 		break;
 
 	case Prototype_Mesh_TestObject:
