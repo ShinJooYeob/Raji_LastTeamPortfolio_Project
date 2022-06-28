@@ -521,6 +521,11 @@ _double CModel::Get_PlayRate()
 	return m_vecAnimator[m_iNowAnimIndex]->Get_PlayRate(m_NowPlayTimeAcc);
 }
 
+void CModel::Set_OldAnimIndex(_uint iAnimIndex)
+{
+	m_iOldAnimIndex = iAnimIndex;
+}
+
 HRESULT CModel::Remove_CertainKeyFrameIndex(_uint iAnimIndex)
 {
 	if (iAnimIndex >= m_vecAnimator.size())
@@ -574,6 +579,8 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 				m_iOldAnimIndex = m_iNowAnimIndex;
 
 				m_NowPlayTimeAcc = 0;
+
+		
 
 				if (m_iNowAnimIndex < m_iNextAnimIndex)
 				{
@@ -687,7 +694,7 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 					m_OldPlayTimeAcc = m_NowPlayTimeAcc;
 					m_iOldAnimIndex = m_iNowAnimIndex;
 					m_NowPlayTimeAcc = 0;
-					m_TotalAnimExitTime = 0.15;
+					m_TotalAnimExitTime = 0.15f;
 					m_iNowAnimIndex = m_iNextAnimIndex;
 					m_AnimExitAcc = 0;
 					m_KindsOfAnimChange = 0;
@@ -875,6 +882,18 @@ const vector<CHierarchyNode*>& CModel::Get_VecBones() const
 const vector<CAnimationClip*>& CModel::Get_VecAni() const
 {
 	return m_vecAnimator;
+}
+_fMatrix CModel::Get_BoneMatrix(const char * pBoneName)
+{
+	_Matrix BoneMatrix = XMMatrixIdentity();
+
+	CHierarchyNode*		pNode = Find_HierarchyNode(pBoneName);
+	if (nullptr == pNode)
+		return BoneMatrix;
+	
+	BoneMatrix = XMLoadFloat4x4(&pNode->Get_OffsetMatrix()) * pNode->Get_CombinedMatrix() * XMLoadFloat4x4(&m_DefaultPivotMatrix);
+
+	return BoneMatrix;
 }
 
 

@@ -192,6 +192,9 @@
     <ClInclude Include="..\public\FIleIO\AssimpMgr.h">
       <Filter>03.Manager\03.AssimpMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="..\private\FIleIO\AssimpMgr.cpp">
       <Filter>03.Manager\03.AssimpMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

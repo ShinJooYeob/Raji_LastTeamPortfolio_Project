@@ -2,6 +2,8 @@
 #include "..\Public\Scene_Stage5.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
+#include "Player.h"
+#include "MapObject.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -21,6 +23,7 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Light());
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	
@@ -58,7 +61,7 @@ _int CScene_Stage5::Render()
 
 #ifdef _DEBUG
 	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE3"));
+		SetWindowText(g_hWnd, TEXT("SCENE_STAGE5"));
 #endif // _DEBUG
 
 	return 0;
@@ -114,7 +117,7 @@ HRESULT CScene_Stage5::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 5.f, -10.f);
+	CameraDesc.vEye = _float3(0, 10.f, -5.f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -144,10 +147,43 @@ HRESULT CScene_Stage5::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	else 
 	{
-		m_pMainCam->Set_NowSceneNum(SCENE_STAGE3);
+		m_pMainCam->Set_NowSceneNum(SCENE_STAGE5);
 	}
 	
 	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player)));
+	
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+
+	m_pMainCam->Set_CameraMode(CCamera_Main::ECameraMode::CAM_MODE_NOMAL);
+	m_pMainCam->Set_FocusTarget(pPlayer);
+	m_pMainCam->Set_TargetArmLength(0.f);
+
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
+
+	pTransform->Set_Matrix(tt);
+
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_FrustumSize(99999999.f);
+
+	return S_OK;
+
 }
 
 HRESULT CScene_Stage5::Ready_Layer_SkyBox(const _tchar * pLayerTag)

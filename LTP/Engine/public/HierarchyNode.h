@@ -27,7 +27,7 @@ public:/*GetSet*/
 
 
 	_fMatrix Get_UpdatedMatrix() { return m_matUpdatedTransform.XMatrix(); };
-	//_fMatrix& Get_CombinedMatrix() { return m_matCombinedTransformation.XMatrix(); };
+	_fMatrix Get_CombinedMatrix() { return m_matCombinedTransformation.XMatrix(); };
 	_float4x4* Get_UpdatedTransformMat() { return &m_matUpdatedTransform; };
 	void Set_OffsetMatrix(_float4x4* matOffSet) { 	XMStoreFloat4x4(&m_matOffset, XMMatrixTranspose(XMLoadFloat4x4(matOffSet)));};
 	void Set_Transformation(_fMatrix& matTransformation) { m_matTransformation = matTransformation; };
@@ -36,6 +36,7 @@ public:/*GetSet*/
 
 	const char*		Get_ParentName() const { if (m_pParent == nullptr)return nullptr; return m_pParent->Get_Name(); };
 	_float4x4	Get_OffsetMatrix() { return m_matOffset.TransposeXMatrix(); }
+
 private:
 	CHierarchyNode*				m_pParent = nullptr;
 	string						m_szName = "";

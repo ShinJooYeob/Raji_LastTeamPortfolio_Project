@@ -82,13 +82,57 @@ _bool CCamera_Main::CamActionStart(CAMERAACTION Act)
 	return true;
 }
 
+_fVector CCamera_Main::Get_CameraState(CTransform::TransformState eState)
+{
+	return  m_pTransform->Get_MatrixState(eState);
+}
+
+_fVector CCamera_Main::Get_CameraState_Normalize(CTransform::TransformState eState)
+{
+	return  XMVector3Normalize(m_pTransform->Get_MatrixState(eState));
+}
+
+void CCamera_Main::Set_TargetArmLength(_float fTargetArmLength)
+{
+	m_fTargetArmLength = fTargetArmLength;
+}
+
+void CCamera_Main::Set_FocusTarget(CGameObject * pFocusTarget)
+{
+	m_pFocusTarget = pFocusTarget;
+}
+
+void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
+{
+	m_eCurCamMode = eCameraMode;
+}
+
+void CCamera_Main::LookAt_Target()
+{
+	CTransform* pTarget_TransformCom = static_cast<CTransform*>(m_pFocusTarget->Get_Component(Tag_Component(Com_Transform)));
+	_Vector vChasePos = pTarget_TransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_pTransform->LookAt(vChasePos);
+}
+
+_float CCamera_Main::Get_TargetArmLength()
+{
+	return m_fTargetArmLength;
+}
+
+void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
+{
+	CTransform* pTarget_TransformCom =  static_cast<CTransform*>(m_pFocusTarget->Get_Component(Tag_Component(Com_Transform)));
+	
+	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * 0.9f + m_pFocusTarget->Get_AttachCamPos() * 0.1f;
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+	m_pTransform->Turn_Dir(m_pFocusTarget->Get_AttachCamLook(), 0.9f);
+}
+
 _int CCamera_Main::Update(_double fDeltaTime)
 {
 	__super::Update(fDeltaTime);
 
-
 	FAILED_CHECK(Update_CamAction(fDeltaTime));
-
 
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
@@ -107,11 +151,22 @@ _int CCamera_Main::Update(_double fDeltaTime)
 	{
 		m_pTransform->Move_Left(fDeltaTime);
 	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_PGUP) & DIS_Press)
+	{
+		m_pTransform->MovetoDir(XMVectorSet(0,1,0,0),fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_PGDN) & DIS_Press)
+	{
+		m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
+	}
 
 
-
-
-
+	switch (m_eCurCamMode)
+	{
+	case ECameraMode::CAM_MODE_NOMAL:
+		Update_NormalMode(fDeltaTime);
+		break;
+	}
 
 	return _int();
 }
@@ -225,24 +280,40 @@ HRESULT CCamera_Main::Set_ViewMatrix()
 	pIsntance->Set_TargetPostion(PLV_CAMERA, *((_float4*)(m_pTransform->Get_WorldFloat4x4().m[3])));
 	pIsntance->Set_TargetPostion(PLV_CAMLOOK, *((_float4*)(m_pTransform->Get_WorldFloat4x4().m[2])));
 
-
 	m_vOldPos = m_pTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 	return S_OK;
 }
 
+_int CCamera_Main::Update_NormalMode(_double fDeltaTime)
+{
+	if (nullptr == m_pFocusTarget)
+		return 0;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) < 0)
+	{
+		m_fTargetArmLength -= 1.f;
+		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
+		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
+	}
+	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
+	{
+		m_fTargetArmLength += 1.f;
+		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
+		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
+	}
+
+	ChaseTarget_NormalMode(fDeltaTime);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return _int();
+}
+
 HRESULT CCamera_Main::SetUp_Components()
 {
-
-	//if (FAILED(__super::Add_Component(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_ComRenderer)))
-	//	return E_FAIL;
-
-	//if (FAILED(__super::Add_Component(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_Blank), TAG_COM(Com_Texture), (CComponent**)&m_ComTexture)))
-	//	return E_FAIL;
-
-	//if (FAILED(__super::Add_Component(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_ComVIBuffer)))
-	//	return E_FAIL;
-
-
 
 	return S_OK;
 }

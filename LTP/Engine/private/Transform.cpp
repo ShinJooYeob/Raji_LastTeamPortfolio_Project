@@ -1,6 +1,6 @@
 #include "..\Public\Transform.h"
 #include "Shader.h"
-
+#include "GameInstance.h"
 
 
 
@@ -221,6 +221,50 @@ void CTransform::Turn_CW(_fVector vAxis, _double fDeltaTime)
 void CTransform::Turn_CCW(_fVector vAxis, _double fDeltaTime)
 {
 	Turn_CW(vAxis, -fDeltaTime);
+}
+
+void CTransform::Turn_Direct(_fVector vAxis, _float fRadian)
+{
+	_Matrix matRUL = m_WorldMatrix.XMatrix();
+
+	_Matrix	RotationMatrix = XMMatrixRotationAxis(vAxis, fRadian);
+
+	matRUL.r[STATE_RIGHT] = XMVector4Transform(matRUL.r[STATE_RIGHT], RotationMatrix);
+	matRUL.r[STATE_UP] = XMVector4Transform(matRUL.r[STATE_UP], RotationMatrix);
+	matRUL.r[STATE_LOOK] = XMVector4Transform(matRUL.r[STATE_LOOK], RotationMatrix);
+
+	Set_Matrix(matRUL);
+}
+	
+
+void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight)
+{
+	if (0 > fWeight || 1 < fWeight)
+	{
+		__debugbreak();
+		MSGBOX("fWeight is Out of ranged");
+		return;
+	}
+
+	_Vector vRotDir, vMyLook = Get_MatrixState_Normalized(TransformState::STATE_LOOK);
+	
+	vRotDir = XMVector3Normalize(vTargetDir);
+	_Vector vDot = XMVector3Dot(vRotDir, vMyLook);
+	if (-0.8f > XMVectorGetX(vDot))
+	{
+		vRotDir = (Get_MatrixState_Normalized(TransformState::STATE_RIGHT) * (0.5f)) + vRotDir  * (0.5f);
+		XMVector3Normalize(vRotDir);
+	}
+
+	vRotDir = (vMyLook * fWeight) + vRotDir  * (1.f - fWeight);
+	XMVector3Normalize(vRotDir);
+	vRotDir = XMVectorSetW(vRotDir, 0.f);
+	LookDir(vRotDir);
+}
+
+void CTransform::Turn_Interp(_fVector vTargetDir, _float fWeight)
+{
+
 }
 
 void CTransform::Rotation_CW(_fVector vAxis, _float fRadian)
