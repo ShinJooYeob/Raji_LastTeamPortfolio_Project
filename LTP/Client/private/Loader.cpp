@@ -116,9 +116,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 #pragma region PROTOTYPE_COMPONENT
 
 	_Matrix			TransformMatrix;
-	//TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
-	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "TestObject", "Alice.FBX", TransformMatrix)));
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix)));
 
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
@@ -562,8 +562,8 @@ HRESULT CLoader::Load_Model_DatFile()
 	list<MODELDESC*> List_ModelStatic;
 	list<MODELDESC*> List_ModelDynamic;
 
-	Load_Model(static_dat, List_ModelStatic);
-	Load_Model(dynamic_dat, List_ModelDynamic);
+	FAILED_CHECK( Load_Model(static_dat, List_ModelStatic));
+	FAILED_CHECK(Load_Model(dynamic_dat, List_ModelDynamic));
 
 #pragma region TESTCODE
 
@@ -807,10 +807,6 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 						// #TEST
 						//Safe_Delete_Array(anibone->mKeyFrames);
-
-						if (dwByte == 0)
-							return E_FAIL;
-
 					}
 
 				}
