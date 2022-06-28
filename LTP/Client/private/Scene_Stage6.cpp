@@ -163,8 +163,6 @@ HRESULT CScene_Stage6::Ready_Layer_Test(const _tchar * pLayerTag)
 	// static
 //	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
 
-	// assimp
-//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 }
 

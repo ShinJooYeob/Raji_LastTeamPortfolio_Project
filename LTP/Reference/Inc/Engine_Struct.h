@@ -268,12 +268,12 @@ namespace Engine
 			XMStoreFloat4x4(&mOffsetMat, XMMatrixIdentity());
 		}
 
-		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _float4x4 trnasmat, _float4x4 offsetmat, _uint depth)
+		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _fMatrix trnasmat, _fMatrix offsetmat, _uint depth)
 		{
 			strcpy_s(mParentBoneName, parentBoneName);
 			strcpy_s(mCurrentBoneName, CurrentBoneName);
-			mOffsetMat = offsetmat;
-			mTransMat = trnasmat;
+			XMStoreFloat4x4(&mTransMat, trnasmat);
+			XMStoreFloat4x4(&mOffsetMat, offsetmat);
 			mDepth = depth;
 		}
 

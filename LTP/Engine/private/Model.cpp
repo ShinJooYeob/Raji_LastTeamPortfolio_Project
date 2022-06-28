@@ -75,7 +75,7 @@ CModel::CModel(const CModel & rhs)
 		}
 
 		_uint iNumHierarchyNodes = _uint(m_vecHierarchyNode.size());
-		for (_uint i = 0; i< iNumHierarchyNodes; i++)
+		for (_uint i = 0; i < iNumHierarchyNodes; i++)
 		{
 			_float4x4 matOffSet = (rhs.m_vecHierarchyNode[i])->Get_OffsetMatrix();
 			m_vecHierarchyNode[i]->Set_OffsetMatrix(&matOffSet);
@@ -901,7 +901,6 @@ HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
 		CHierarchyNode*		pHierarchyNode = CHierarchyNode::Create(&desc->mBones[i]);
 		NULL_CHECK_RETURN(pHierarchyNode, E_FAIL);
 		m_vecHierarchyNode.push_back(pHierarchyNode);
-
 	}
 
 	// For. Search ParentBone
@@ -909,10 +908,11 @@ HRESULT CModel::Ready_HierarchyNodes(MODELDESC* desc)
 	// 부모 뼈 찾기
 	for (auto& node : m_vecHierarchyNode)
 	{
-		_uint a = strlen(node->Get_AssimpParentName());
-
-		if (a > 2)
-			node->Set_Parent(Find_HierarchyNode(node->Get_AssimpParentName()));
+		CHierarchyNode* parentNode = Find_HierarchyNode(node->Get_AssimpParentName());
+		if(parentNode)
+			node->Set_Parent(parentNode);
+		else 
+			node->Set_Parent(nullptr);
 	}
 
 	return S_OK;
@@ -992,9 +992,11 @@ HRESULT CModel::Ready_OffsetMatrices()
 
 	return S_OK;
 }
-HRESULT CModel::Ready_OffsetMatrices(MODELDESC* desc)
+HRESULT CModel::Ready_OffsetMatrices(MODELDESC* modelDesc)
 {
-	NULL_CHECK_RETURN(desc, E_FAIL);
+	NULL_CHECK_RETURN(modelDesc, E_FAIL);
+
+	// modelDesc
 
 	//for (_uint i = 0; i < m_iNumMaterials; i++)
 	//{
@@ -1005,7 +1007,7 @@ HRESULT CModel::Ready_OffsetMatrices(MODELDESC* desc)
 
 	//		NULL_CHECK_RETURN(pAIMesh, E_FAIL);
 
-	//		//각각의 매쉬들이 영향을 받는 모든 뼈들을 순회하면서
+	//			//각각의 매쉬들이 영향을 받는 모든 뼈들을 순회하면서
 	//		for (_uint j = 0; j < iNumAffectingBones; j++)
 	//		{
 
@@ -1021,10 +1023,24 @@ HRESULT CModel::Ready_OffsetMatrices(MODELDESC* desc)
 
 	//			//계층뼈에 오프셋 매트릭스를 저장하자
 	//			pHierarchyNode->Set_OffsetMatrix(&OffsetMatrix);
+	//			//pMeshContainer->Set_OffSetMatrix(&OffsetMatrix);
 	//			pMeshContainer->Add_AffectingBoneIndex(iNodeIndex);
 	//		}
+
+	//		//}
 	//	}
 	//}
+
+	////// 영향을 주는 뼈 인덱스
+	////m_iNumAffectingBones = modelDesc->mNumAffectingBones;
+	////if (m_iNumAffectingBones == 0)
+	////	return E_FAIL;
+
+	////m_vecAffectingBoneIndex.reserve(m_iNumAffectingBones);
+	////for (_uint i = 0; i < m_iNumAffectingBones; ++i)
+	////{
+	////	m_vecAffectingBoneIndex.push_back(meshdesc->mAffectingBones[i]);
+	////}
 
 	return E_FAIL;
 }

@@ -340,7 +340,6 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 			ModelDesc->mMeshDesc[i].mFaces[index]._0 = aimesh->mFaces[index].mIndices[0];
 			ModelDesc->mMeshDesc[i].mFaces[index]._1 = aimesh->mFaces[index].mIndices[1];
 			ModelDesc->mMeshDesc[i].mFaces[index]._2 = aimesh->mFaces[index].mIndices[2];
-
 		}
 
 		// 영향주는 뼈 정보 복사
@@ -499,7 +498,7 @@ HRESULT CAssimpMgr::Ready_HierarchyNodes2(const vector<CHierarchyNode*>& VecHier
 		_float4x4 offsetMat = bone->Get_OffsetMatrix();
 		_float4x4 transmat = bone->Get_Transformation();
 
-		BONEDESC* boneDesc = NEW BONEDESC(ParentName, bone->Get_Name(), offsetMat, transmat, bone->Get_Depth());
+		BONEDESC* boneDesc = NEW BONEDESC(ParentName, bone->Get_Name(), transmat.XMatrix(), offsetMat.XMatrix(), bone->Get_Depth());
 		vec.push_back(boneDesc);
 
 	}

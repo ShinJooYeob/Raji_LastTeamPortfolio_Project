@@ -360,7 +360,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 //		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "crea_Snot_a", "crea_Snot_a.FBX", TransformMatrix)));
 
 	// NoAssimp
-	Load_Model_DatFile();
+	FAILED_CHECK(Load_Model_DatFile());
 
 #pragma endregion
 

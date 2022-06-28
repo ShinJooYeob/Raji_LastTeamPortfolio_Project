@@ -147,9 +147,6 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 
-	
-
-
 	return S_OK;
 }
 

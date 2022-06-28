@@ -153,11 +153,12 @@ HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix&
 	}
 	else
 	{
+		//#BUG asiimp와 UpdatedMatrix 값이 위치가 다름 
 		for (auto& iHierarchyIndex : m_vecAffectingBoneIndex)
 		{
 			_Matrix UpdatedMatrix = ((*pVecHierarchyNodes)[iHierarchyIndex])->Get_UpdatedMatrix();
-
 			XMStoreFloat4x4(&pBoneMatrices[iIndex++], XMMatrixTranspose(UpdatedMatrix * DefultPivotMatrix));
+
 			//XMStoreFloat4x4(&pBoneMatrices[iIndex++], XMMatrixTranspose(UpdatedMatrix));
 		}
 	}
@@ -316,8 +317,6 @@ HRESULT CMeshContainer::Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL * pVerti
 		}
 
 	}
-
-
 
 	return S_OK;
 }
