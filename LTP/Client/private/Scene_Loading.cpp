@@ -92,19 +92,21 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 		case SCENEID::SCENE_STAGE3:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage3::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
-
-		case SCENEID::SCENE_BOSS:
-			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Boss::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
-			break;
-
 		case SCENEID::SCENE_STAGE4:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage4::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
-
+		case SCENEID::SCENE_STAGE5:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage5::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
 		case SCENEID::SCENE_STAGE6:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage6::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
-
+		case SCENEID::SCENE_STAGE7:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage7::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
+		case SCENEID::SCENE_BOSS:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Boss::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
 //		case SCENEID::SCENE_ENDING:
 //			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Ending::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 //			break;
