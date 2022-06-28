@@ -4,6 +4,7 @@
 #include "ComponentMgr.h"
 #include "Input_Device.h"
 #include "EasingMgr.h"
+#include "CollisionMgr.h"
 
 BEGIN(Engine)
 
@@ -17,7 +18,7 @@ class CLayer;
 class CFrustumMgr;
 class CPipeLineMgr;
 class CLightMgr;
-class CCollisionMgr;
+//class CCollisionMgr;
 class CRenderTargetMgr;
 class CExternFontMgr;
 class CSoundMgr;
@@ -141,6 +142,10 @@ public:// LightMgr
 public: //CollisionMgr
 	HRESULT Add_CollisionGroup(CollisionTypeID eType, class CGameObject* pCollisionObject, class CCollider* pCollider);
 	void	Clear_CollisionGroup();
+
+	//Edit
+	HRESULT		 Add_NaviPointCollider(CCollisionMgr::EDITPOINTCOLLIDER Collider);
+	CGameObject* NaviPointCollision(_Vector pos, _Vector dir);
 
 
 public: /* For.FontMgr */

@@ -119,7 +119,7 @@ _float3 CEditorTerrain::Pick_OnTerrain(_bool * pbIsObTerrain, _fVector ObjectWor
 	if (XMVectorGetY(ObjectOldWorldPos) < XMVectorGetY(ObjectWorldPos))
 		return ObjectWorldPos;
 
-	_Matrix InverMat = m_InverseWorldMat.XMatrix();
+	_Matrix InverMat = m_pTransformCom->Get_InverseWorldMatrix();
 
 	_Vector CaculatedFloat3 = m_pVIBufferCom->Caculate_Terrain_Pick_byRay(pbIsObTerrain,
 		(XMVector3TransformCoord(ObjectWorldPos, InverMat)), (XMVector3TransformCoord(ObjectOldWorldPos, InverMat)), vOutPlaneNormalVec);

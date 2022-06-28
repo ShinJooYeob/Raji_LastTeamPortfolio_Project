@@ -29,6 +29,7 @@ class CScene_Edit final : public CScene
 		Data_CameraAction,
 		Data_HeightMap,
 		Data_FilterMap,
+		Data_Navigation,
 		Datatype_End
 	};
 
@@ -181,10 +182,52 @@ private:
 	_int		m_iMapSize[2];
 	class CEditorTerrain* m_pCreatedTerrain = nullptr;
 
+////////////////////////////////////////////////////////////////JJB
+	void Add_Vertex();
+	//시계방향정렬 함수
+	_int CCWClockSort();
+	HRESULT Ready_Layer_NaviPoint(_float3 Pos);
+	HRESULT Ready_Layer_LoadNaviPoint(_float3 Pos);
+
+	_int		m_iRadioNumMoving = 0;
+	_int		m_iPickingModeNumber = 0;
+	_int		m_iVertexAndCell = 0;
+	_float4		m_vTerrainPos;
+	_float4		m_vTerrainRotation;
+	_float		m_TerrainArrBuffer[4];
+	_float4x4	m_TerrainObjectSRT;
+
+	//네비메쉬
+	vector<char*>				m_vVertexs;//버틱스리스트
+	vector<char*>				m_vCellNames;//셀이름리스트
+	vector<class CNaviPoint*>	m_Points;
+	vector<class CCell*>		m_Cells;
+	CCell*						m_PreveCell = nullptr;
+
+	class CNaviPoint*			m_pPointObj = nullptr;
+
+	_float3						m_vVertexts[3];
+	_int						m_iVertexListCount = 0;
+	_int						m_iCellListCount = 0;
+	_float						m_VertexArrBuffer[4];
+	_int						m_iVertexIndex = 0;
+	_bool						m_bIsCellListClick = false;
+
+	_int						m_iVertexCount = 0;
+	_int						m_iCellCount = 0;
+
+	_bool						m_bIsCellOption = false;
+	_int						m_OptionNumber = 0;
+
+#ifdef _DEBUG
+private:
+	class CVIBuffer_Triangle*		m_pVIBuffer = nullptr;
+	class CShader*					m_pShader = nullptr;
+
+#endif // _DEBUG
+////////////////////////////////////////////////////////////////
+
 #pragma endregion HeightMap
-
-
-
 
 
 #endif // USE_IMGUI

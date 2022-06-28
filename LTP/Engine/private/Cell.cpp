@@ -10,6 +10,39 @@ CCell::CCell(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	Safe_AddRef(m_pDeviceContext);
 }
 
+void CCell::Set_ReLocation(_float3 PointPos, _float3 RePointPos)
+{
+	for (_int i = 0; i < POINT_END; ++i)
+	{
+		if (m_vPoints[i] == PointPos)
+			m_vPoints[i] = RePointPos;
+	}
+
+	XMStoreFloat3(&m_vLineDir[LINE_AB], XMLoadFloat3(&m_vPoints[POINT_B]) - XMLoadFloat3(&m_vPoints[POINT_A]));
+	XMStoreFloat3(&m_vLineDir[LINE_BC], XMLoadFloat3(&m_vPoints[POINT_C]) - XMLoadFloat3(&m_vPoints[POINT_B]));
+	XMStoreFloat3(&m_vLineDir[LINE_CA], XMLoadFloat3(&m_vPoints[POINT_A]) - XMLoadFloat3(&m_vPoints[POINT_C]));
+}
+
+void CCell::Set_CellOption(CELL_OPTION eCellOption)
+{
+	m_eCellOption = eCellOption;
+
+	switch (m_eCellOption)
+	{
+	case Engine::CCell::CELL_NOMAL:
+		m_vColor = _float4(1.f, 0.f, 0.f, 1.f);
+		break;
+	case Engine::CCell::CELL_DROP:
+		m_vColor = _float4(0.f, 0.f, 1.f, 1.f);
+		break;
+	}
+}
+
+void CCell::PrevOptionColor()
+{
+	Set_CellOption(m_eCellOption);
+}
+
 HRESULT CCell::NativeConstruct(const _float3 * pPoints, _uint iIndex)
 {
 	memcpy(m_vPoints, pPoints, sizeof(_float3) * POINT_END);
@@ -79,7 +112,7 @@ HRESULT CCell::Render(CVIBuffer_Triangle* pVIBuffer, CShader* pShader, _float4	v
 {
 	pVIBuffer->Update(m_vPoints);
 
-	pShader->Set_RawValue("g_vColor", &vColor, sizeof(_float4));
+	pShader->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4));
 
 	if (FAILED(pVIBuffer->Render(pShader, 0)))
 		return E_FAIL;

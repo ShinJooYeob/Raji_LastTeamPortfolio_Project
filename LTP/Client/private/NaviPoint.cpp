@@ -38,7 +38,7 @@ _int CNaviPoint::Update(_double TimeDelta)
 		return -1;
 
 	//m_pSphereCom->Update_Transform(m_pTransform->Get_WorldMatrix());
-	m_pSphereCom->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
+	m_pColliderCom->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
 
 	return _int();
 }
@@ -54,7 +54,7 @@ _int CNaviPoint::LateUpdate(_double TimeDelta)
 _int CNaviPoint::Render()
 {
 #ifdef _DEBUG
-	m_pSphereCom->Render();
+	m_pColliderCom->Render();
 #endif // _DEBUG
 
 	return _int();
@@ -69,6 +69,14 @@ void CNaviPoint::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflict
 {
 }
 
+void CNaviPoint::ReLocationCell(_float3 PointPos, _float3 RePointPos)
+{
+	for (_int i=0; i < m_vThisUsedCells.size(); ++i)
+	{
+		m_vThisUsedCells[i]->Set_ReLocation(PointPos, RePointPos);
+	}
+}
+
 HRESULT CNaviPoint::SetUp_Components()
 {
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -80,16 +88,16 @@ HRESULT CNaviPoint::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
 	/* For.Com_SPHERE */
 	COLLIDERDESC			ColliderDesc;
+
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-
-	//ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
-	//ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	//XMStoreFloat4(&ColliderDesc.vTranslation, m_pTransform->Get_State(CTransform::STATE_POSITION));
-
-	//if (FAILED(__super::Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"), (CComponent**)&m_pSphereCom, &ColliderDesc)))
-	//	return E_FAIL;
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	return S_OK;
 }
@@ -123,5 +131,5 @@ void CNaviPoint::Free()
 	__super::Free();
 
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pSphereCom);
+	Safe_Release(m_pColliderCom);
 }
