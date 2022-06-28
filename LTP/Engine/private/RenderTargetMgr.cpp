@@ -14,7 +14,10 @@ ID3D11ShaderResourceView * CRenderTargetMgr::Get_SRV(const _tchar * pTargetTag) 
 	auto	iter = find_if(m_mapRenderTarget.begin(), m_mapRenderTarget.end(), CTagFinder(pTargetTag));
 
 	if (iter == m_mapRenderTarget.end())
+	{
+		__debugbreak();
 		return nullptr;
+	}
 
 	return iter->second->Get_SRV();	
 }
@@ -176,6 +179,17 @@ HRESULT CRenderTargetMgr::Clear_All_RenderTargetColor()
 
 	for (auto& pRenderTarget : m_mapRenderTarget)
 		pRenderTarget.second->Clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderTargetMgr::Clear_SpecificMRT(const _tchar * pMRTTag)
+{
+	list<CRenderTargetLayer*>*	pMRTList = Find_MRT(pMRTTag);
+	NULL_CHECK_RETURN(pMRTList, E_FAIL);
+
+	for (auto& pRenderTarget : *pMRTList)
+		pRenderTarget->Clear();
 
 	return S_OK;
 }

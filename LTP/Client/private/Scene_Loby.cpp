@@ -3,6 +3,7 @@
 #include "Scene_Loading.h"
 
 #include "Camera_Main.h"
+#include "MapObject.h"
 
 
 
@@ -23,6 +24,7 @@ HRESULT CScene_Loby::Initialize()
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 		
@@ -105,7 +107,7 @@ HRESULT CScene_Loby::Ready_Light()
 		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		LightDesc.vAmbient = _float4(1.0f);
 		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = _float4(0, 256, -128, 0);
+		LightDesc.vVector = _float4(-64, 64, -64, 0);
 
 		g_pGameInstance->Add_Light(LightDesc);
 	}
@@ -167,6 +169,19 @@ HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject_Himeko)));
 
+	return S_OK;
+}
+
+HRESULT CScene_Loby::Ready_NonAnimObject(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+
+	CTransform* pObjectTransform =(CTransform*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag)->Get_Component(TAG_COM(Com_Transform));
+	
+	_Matrix WorldMat = XMMatrixScaling(10,  1, 10) * XMMatrixTranslation(5, -2, 5);
+	
+	pObjectTransform->Set_Matrix(WorldMat);
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag))->Set_FrustumSize(10000);
 	return S_OK;
 }
 

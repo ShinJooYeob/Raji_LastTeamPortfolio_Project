@@ -1,5 +1,6 @@
 #include "..\Public\GameObject.h"
 #include "GameInstance.h"
+#include "Shader.h"
 
 
 
@@ -46,6 +47,18 @@ _int CGameObject::LateUpdate(_double fDeltaTime)
 
 _int CGameObject::Render()
 {
+	if (!m_pEngineShader)
+	{
+		m_pEngineShader = (CShader*)(Get_Component(L"Com_Shader"));
+	}
+
+	if (m_pEngineShader)
+	{
+		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float3)));
+		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float)));
+	}
+
+
 	return _int();
 }
 
@@ -67,6 +80,12 @@ _float CGameObject::Compute_RenderSortValue()
 }
 
 
+
+void CGameObject::Set_LimLight_N_Emissive(_float3 vLimLight, _float fEmissive)
+{
+	m_vLimLight = vLimLight;
+	m_fEmissiveIntensive = fEmissive;
+}
 
 CComponent* CGameObject::Get_Component(const _tchar * tagComponent)
 {

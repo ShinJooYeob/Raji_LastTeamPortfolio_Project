@@ -30,7 +30,7 @@ HRESULT CStaticMapObject::Initialize_Clone(void * pArg)
 		_float3 vPos = *(_float3*)pArg;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPos);
 	}
-	
+	m_iPassIndex = 3;
 
 	return S_OK;
 
@@ -50,6 +50,12 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
+
+
+
+
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 
 	if (g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius))
 	{

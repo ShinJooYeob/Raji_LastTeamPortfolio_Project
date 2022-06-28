@@ -26,6 +26,7 @@ public:
 	HRESULT End(const _tchar* pMRTTag);
 
 	HRESULT Clear_All_RenderTargetColor();
+	HRESULT Clear_SpecificMRT(const _tchar* pMRTTag);
 
 #ifdef _DEBUG
 public:

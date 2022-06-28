@@ -76,7 +76,7 @@ _int CSkyBox::Render()
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
 		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, 1, MODLETEXTYPE(1)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 6, i));
 	}
 
 	return _int();

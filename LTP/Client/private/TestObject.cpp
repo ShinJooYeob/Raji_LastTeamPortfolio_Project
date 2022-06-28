@@ -31,6 +31,8 @@ HRESULT CTestObject::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
+	//Set_LimLight_N_Emissive(_float3(0.2f, 0.5f, 1.f ));
+
 	return S_OK;
 }
 
@@ -38,6 +40,30 @@ _int CTestObject::Update(_double fDeltaTime)
 {
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	//_float ttt = 15.f;
+	//wstring tt = L"Jangbin e hyung Dambea go?" + to_wstring(ttt) + L"\n";
+	//tt.substr(4, 10).c_str();
+	//OutputDebugStringW(tt.c_str());
+
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+	{
+		m_pTransformCom->Move_Forward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	{
+		m_pTransformCom->Move_Backward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+	{
+		m_pTransformCom->Move_Right(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
+	{
+		m_pTransformCom->Move_Left(fDeltaTime);
+	}
+
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -54,9 +80,10 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 
-
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	return _int();
 }
@@ -80,7 +107,7 @@ _int CTestObject::Render()
 	{
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
 
 

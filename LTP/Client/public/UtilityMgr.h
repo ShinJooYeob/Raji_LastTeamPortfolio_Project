@@ -25,6 +25,8 @@ public:
 	/*For SlowMotion*/
 	void SlowMotionStart(_float fTargetTime = 0.4f, _float TargetSpeed = 0.0f);
 
+
+
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);

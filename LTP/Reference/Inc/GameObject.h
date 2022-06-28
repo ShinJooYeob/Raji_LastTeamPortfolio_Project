@@ -15,12 +15,11 @@ public:
 
 	virtual _int Update(_double fDeltaTime);
 	virtual _int LateUpdate(_double fDeltaTime);
-	
 	virtual _int Render();
 	virtual _int LateRender();
 
 	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj,class CCollider* pConflictedCollider ,_uint iConflictedObjColliderIndex,CollisionTypeID eConflictedObjCollisionType) {};
-
+public:
 	virtual void Set_NowSceneNum(_uint eNowSceneNum) {	m_eNowSceneNum = eNowSceneNum; };
 
 	void Set_NameTag(const _tchar* szNameTag) {	m_szNameTag = szNameTag;};
@@ -32,6 +31,7 @@ public:
 	virtual void Set_IsDead() { m_bIsDead = true; }
 	_bool Get_IsDead() { return m_bIsDead; }
 
+	void Set_LimLight_N_Emissive(_float3 vLimLight = _float3(0), _float fEmissive = _float(0));
 
 	virtual HRESULT ReInitialize(void* pArg = nullptr) { return S_OK; };
 
@@ -57,8 +57,13 @@ protected:
 	_float						m_fRenderSortValue = 0;
 	_bool						m_bIsOnScreen = false;
 
-
+	_float3						m_vLimLight = _float3(0);
+	_float						m_fEmissiveIntensive = _float(0);
 	_float						m_fFrustumRadius = 1.f; 
+
+private:
+	class CShader*				m_pEngineShader = nullptr;
+
 protected:
 	HRESULT Add_Component(_uint iScenenNum, const _tchar* tagPrototype,const _tchar* tagComponent, CComponent** ppOut , void* pArg =nullptr);
 	

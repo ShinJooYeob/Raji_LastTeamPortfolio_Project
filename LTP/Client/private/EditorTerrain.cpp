@@ -81,22 +81,6 @@ _int CEditorTerrain::Render()
 	if (m_iPassIndex == 3)
 	{
 
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_CamPosition", &pInstance->Get_TargetPostion_float4(PLV_CAMERA), sizeof(_float4)));
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_CamLookDir", &pInstance->Get_TargetPostion_float4(PLV_CAMLOOK), sizeof(_float4)));
-
-	
-		//
-
-
-		//const LIGHTDESC* pLightDesc = pInstance->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
-		//NULL_CHECK_RETURN(pLightDesc, -1);
-
-		//
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLightVector", &(pLightDesc->vVector), sizeof(_float4)));
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4)));
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4)));
-		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4)));
-
 		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"Diffuse"));
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_SourDiffuseTexture", 0));
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DestDiffuseTexture1", 1));
@@ -112,8 +96,6 @@ _int CEditorTerrain::Render()
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMimMapSize", &fMinMap, sizeof(_float)));
 
 
-		//FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"Filter"));
-		//FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_FilterTexture", 0));
 
 	}
 	FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_iPassIndex));

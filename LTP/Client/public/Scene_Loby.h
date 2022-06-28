@@ -24,6 +24,7 @@ private:
 	HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
 
 	HRESULT Ready_TestObject(const _tchar* pLayerTag);
+	HRESULT Ready_NonAnimObject(const _tchar* pLayerTag);
 
 	
 
