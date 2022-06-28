@@ -24,36 +24,14 @@ HRESULT CAssimpMgr::Initialize(ID3D11Device* d, ID3D11DeviceContext* c)
 
 HRESULT CAssimpMgr::ReleaseMap()
 {
-	for (auto& model : mMap_ModelDesc)
+	for (auto& pair : mMap_ModelDesc)
 	{
-		for (_uint i =0; i<model.second->mNumMeshes;++i)
-		{
-			Safe_Delete_Array(model.second->mMeshDesc[i].mVertices);
-			Safe_Delete_Array(model.second->mMeshDesc[i].mNormals);
-			Safe_Delete_Array(model.second->mMeshDesc[i].mTangents);
-			Safe_Delete_Array(model.second->mMeshDesc[i].mFaces);
-		}
-
-		Safe_Delete_Array(model.second->mMeshDesc);
-
-
-	/*
-	for (int i = 0; i < model.second->mNumMaterials; ++i)
-	{
-		Safe_Delete_Array(model.second->mMaterials[i].MatName[1]);
+		Safe_Delete(pair.second);
+		
 	}
-	*/
 
-		Safe_Delete_Array(model.second->mMaterials);
-		Safe_Delete(model.second);
-
-		if (model.second != nullptr)
-		{
-			DEBUGBREAK;
-			return E_FAIL;
-		}
-	}
 	mMap_ModelDesc.clear();
+
 
 	return S_OK;
 }
@@ -105,10 +83,14 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 	for (auto& pair: mMap_ModelDesc)
 	{		
 		wstring name = pair.first;
-		int length = name.length();
+		_uint length = name.length();
 		wstring Name = name.substr(0, length - 4);
 		Save_MODELDESC(STR_FILEPATH_RESOURCE_DAT_L, Name, pair.second);
 	}
+
+	Safe_Delete_List(Path_Static);
+	Safe_Delete_List(Path_Dynamic);
+
 	return S_OK;
 }
 
@@ -148,44 +130,44 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		// MESH
 		for (_uint i = 0; i < modelDesc->mNumMeshes; ++i)
 		{
-			MESHDESC meshdesc = modelDesc->mMeshDesc[i];
+			MESHDESC* meshdesc = &modelDesc->mMeshDesc[i];
 
 			// uint
-			WriteFile(hFile, &meshdesc.mPrimitiveTypes, sizeof(_uint), &dwByte, nullptr);
-			WriteFile(hFile, &meshdesc.mNumVertices, sizeof(_uint), &dwByte, nullptr);
-			WriteFile(hFile, &meshdesc.mNumFaces, sizeof(_uint), &dwByte, nullptr);
-			WriteFile(hFile, &meshdesc.mMaterialIndex, sizeof(_uint), &dwByte, nullptr);
+			WriteFile(hFile, &meshdesc->mPrimitiveTypes, sizeof(_uint), &dwByte, nullptr);
+			WriteFile(hFile, &meshdesc->mNumVertices, sizeof(_uint), &dwByte, nullptr);
+			WriteFile(hFile, &meshdesc->mNumFaces, sizeof(_uint), &dwByte, nullptr);
+			WriteFile(hFile, &meshdesc->mMaterialIndex, sizeof(_uint), &dwByte, nullptr);
 
 			if (modelDesc->mModelType == CModel::TYPE_ANIM)
 			{
-				WriteFile(hFile, &meshdesc.mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
+				WriteFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
 			}
 
 
 			// VTX
-			WriteFile(hFile, meshdesc.mVertices, sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
+			WriteFile(hFile, meshdesc->mVertices, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
 			if (dwByte == 0)
 				return E_FAIL;
 
-			WriteFile(hFile, meshdesc.mNormals, sizeof(_float3) *meshdesc.mNumVertices, &dwByte, nullptr);
+			WriteFile(hFile, meshdesc->mNormals, sizeof(_float3) *meshdesc->mNumVertices, &dwByte, nullptr);
 			if (dwByte == 0)
 				return E_FAIL;
 
-			WriteFile(hFile, meshdesc.mTangents, sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
+			WriteFile(hFile, meshdesc->mTangents, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
 			if (dwByte == 0)
 				return E_FAIL;
 
 			// UV
-			WriteFile(hFile, meshdesc.mUV, sizeof(_float2)*meshdesc.mNumVertices, &dwByte, nullptr);
+			WriteFile(hFile, meshdesc->mUV, sizeof(_float2)*meshdesc->mNumVertices, &dwByte, nullptr);
 
 
 			//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
 			//{
-			//	WriteFile(hFile, meshdesc.mTextureCoords[j], sizeof(_float3)*meshdesc.mNumVertices, &dwByte, nullptr);
+			//	WriteFile(hFile, meshdesc->mTextureCoords[j], sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
 			//}
 
 			// INDEX
-			WriteFile(hFile, meshdesc.mFaces, sizeof(FACEINDICES32)*meshdesc.mNumFaces, &dwByte, nullptr);
+			WriteFile(hFile, meshdesc->mFaces, sizeof(FACEINDICES32)*meshdesc->mNumFaces, &dwByte, nullptr);
 			if (dwByte == 0)
 				return E_FAIL;
 
@@ -193,21 +175,21 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			// WEIGHT
 			if (modelDesc->mModelType == CModel::TYPE_ANIM)
 			{
-				_uint NumAffectingBones = meshdesc.mNumAffectingBones;
+				_uint NumAffectingBones = meshdesc->mNumAffectingBones;
 				if (NumAffectingBones != 0)
 				{
 					// 뼈 인덱스 리스트
-					WriteFile(hFile, meshdesc.mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
+					WriteFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
 
 					// 뼈 Weight
-					for (int bone = 0; bone < NumAffectingBones; ++bone)
+					for (_uint bone = 0; bone < NumAffectingBones; ++bone)
 					{
-						_uint NumWeight = meshdesc.mMeshBones[bone].mNumWeights;
+						_uint NumWeight = meshdesc->mMeshBones[bone].mNumWeights;
 						WriteFile(hFile, &NumWeight, sizeof(_uint), &dwByte, nullptr);
 
 						if (NumWeight == 0)
 							continue;
-						WriteFile(hFile, meshdesc.mMeshBones[bone].mAiWeights,
+						WriteFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
 							sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
 					}
 				}
@@ -217,8 +199,8 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		// MATERIAL
 		for (_uint i = 0; i < modelDesc->mNumMaterials; ++i)
 		{
-			MATDESC matdesc = modelDesc->mMaterials[i];
-			WriteFile(hFile, matdesc.MatName, sizeof(wchar_t)*MAX_PATH*AI_TEXTURE_TYPE_MAX, &dwByte, nullptr);
+			MATDESC* matdesc = &modelDesc->mMaterials[i];
+			WriteFile(hFile, matdesc->MatName, sizeof(wchar_t)*MAX_PATH*AI_TEXTURE_TYPE_MAX, &dwByte, nullptr);
 		}
 
 		// BONE
@@ -226,12 +208,12 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 		{
 			for (_uint i = 0; i < modelDesc->mNumBones; ++i)
 			{
-				BONEDESC bonedesc = modelDesc->mBones[i];
-				WriteFile(hFile, bonedesc.mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				WriteFile(hFile, bonedesc.mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				WriteFile(hFile, &bonedesc.mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
-				WriteFile(hFile, &bonedesc.mTransMat, sizeof(_float4x4), &dwByte, nullptr);
-				WriteFile(hFile, &bonedesc.mDepth, sizeof(_uint), &dwByte, nullptr);
+				BONEDESC* bonedesc = &modelDesc->mBones[i];
+				WriteFile(hFile, bonedesc->mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, bonedesc->mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc->mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc->mTransMat, sizeof(_float4x4), &dwByte, nullptr);
+				WriteFile(hFile, &bonedesc->mDepth, sizeof(_uint), &dwByte, nullptr);
 			}
 
 
@@ -239,24 +221,24 @@ HRESULT CAssimpMgr::Save_MODELDESC(wstring FolderPath, wstring filename, MODELDE
 			// ANI
 			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
 			{
-				ANIDESC anidesc = modelDesc->mAnimations[i];
-				WriteFile(hFile, anidesc.mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-				WriteFile(hFile, &anidesc.mDuration, sizeof(double), &dwByte, nullptr);
-				WriteFile(hFile, &anidesc.mTicksPerSecond, sizeof(double), &dwByte, nullptr);
-				WriteFile(hFile, &anidesc.mNumAniBones, sizeof(_uint), &dwByte, nullptr);
+				ANIDESC* anidesc = &modelDesc->mAnimations[i];
+				WriteFile(hFile, anidesc->mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				WriteFile(hFile, &anidesc->mDuration, sizeof(double), &dwByte, nullptr);
+				WriteFile(hFile, &anidesc->mTicksPerSecond, sizeof(double), &dwByte, nullptr);
+				WriteFile(hFile, &anidesc->mNumAniBones, sizeof(_uint), &dwByte, nullptr);
 			}
 
 			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
 			{
-				ANIDESC anidesc = modelDesc->mAnimations[i];
-				for (_uint j = 0; j < anidesc.mNumAniBones; ++j)
+				ANIDESC* anidesc = &modelDesc->mAnimations[i];
+				for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
 				{
-					ANIBONES anibone = modelDesc->mAnimations[i].mAniBones[j];
+					ANIBONES* anibone = &modelDesc->mAnimations[i].mAniBones[j];
 
-					WriteFile(hFile, anibone.mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
-					WriteFile(hFile, &anibone.mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
-					WriteFile(hFile, &anibone.mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
-					WriteFile(hFile, anibone.mKeyFrames, sizeof(KEYFRAME)* anibone.mNumKeyFrames, &dwByte, nullptr);
+					WriteFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					WriteFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
+					WriteFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
+					WriteFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
 				}
 
 			}
@@ -405,7 +387,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 		{
 			return pSour->mDepth < pDest->mDepth;
 		});
-		ModelDesc->mNumBones = VecBones.size();
+		ModelDesc->mNumBones = (_uint)VecBones.size();
 		ModelDesc->mBones = NEW BONEDESC[ModelDesc->mNumBones];
 		_uint boneindex = 0;
 		for (auto& a: VecBones)
@@ -413,14 +395,19 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 			ModelDesc->mBones[boneindex] = *a;
 			boneindex++;
 		}
+		
+		Safe_Delete_List(VecBones);
+
+
+
 
 		// Ani 데이터 복사
 		auto VecAni = model->Get_VecAni();
-		int NumAnimations = ModelDesc->mNumAnimations = VecAni.size();
+		_uint NumAnimations = ModelDesc->mNumAnimations = VecAni.size();
 		
 		ModelDesc->mAnimations =NEW ANIDESC[NumAnimations];
 
-		for (int i = 0; i < NumAnimations; ++i)
+		for (_uint i = 0; i < NumAnimations; ++i)
 		{
 			// 애니메이션 관련 정보 복사
 			CAnimationClip* ani = VecAni[i];
@@ -431,29 +418,30 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 
 			ModelDesc->mAnimations[i] = *anidesc;
 			anidesc->mNumAniBones = ani->Get_NumClipBone();
+
+			//////////////////////////////////////////////////////
 			anidesc->mAniBones = NEW ANIBONES[anidesc->mNumAniBones];
-			for (_uint b = 0; b < anidesc->mNumAniBones;++b)
+			for (_uint b = 0; b < anidesc->mNumAniBones; ++b)
 			{
 				// 뼈 키프레임 복사
 				CClipBone* aniBone = ani->Get_VecClipBones()[b];
 
-				ANIBONES anibone = ANIBONES(aniBone->Get_Name(),
+				ANIBONES* anibone = NEW ANIBONES(aniBone->Get_Name(),
 					aniBone->Get_Frames(), aniBone->Get_HierNodeIndex());
 				const vector<KEYFRAME*>* keycontainer = aniBone->Get_KeyFrameContainor();
 				_uint index = 0;
 				for (auto& key : *keycontainer)
 				{
-					anibone.mKeyFrames[index] = *key;
+					anibone->mKeyFrames[index] = *key;
 					index++;
-
-					//anibone.mKeyFrames[index].Time = key->Time;
-					//anibone.mKeyFrames[index].vPosition = key->vPosition;
-					//anibone.mKeyFrames[index].vRotation = key->vRotation;
-					//anibone.mKeyFrames[index].vScale = key->vScale;
 				}
-				anidesc->mAniBones[b] = anibone;
+
+				anidesc->mAniBones[b].SetData(*anibone);
+				Safe_Delete(anibone);
 
 			}
+			//////////////////////////////////////////////////////
+
 			ModelDesc->mAnimations[i] = *anidesc;
 		}
 	}

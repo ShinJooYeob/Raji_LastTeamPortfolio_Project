@@ -550,43 +550,50 @@ HRESULT CLoader::Load_Model_DatFile()
 
 
 	// MODELDESC / LOAD ÇÔ¼ö
-	list<MODELDESC*> List_ModelCreateTest;
-//	Load_Model(static_dat, List_ModelCreateTest);
-	Load_Model(dynamic_dat, List_ModelCreateTest);
+	list<MODELDESC*> List_ModelStatic;
+	list<MODELDESC*> List_ModelDynamic;
+
+	Load_Model(static_dat, List_ModelStatic);
+	Load_Model(dynamic_dat, List_ModelDynamic);
+
+#pragma region TESTCODE
 
 	// ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
 	// For. Test
-
-	auto iter = dynamic_dat.begin();
-
-
-
-	for (auto& modeldesc : List_ModelCreateTest)
+	auto dynamiciter = dynamic_dat.begin();
+	for (auto& modeldesc : List_ModelDynamic)
 	{
 		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
 			SCENEID::SCENE_STATIC,
-			(*iter)->FileName,
+			(*dynamiciter)->FileName,
 			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
 
-		iter++;
-		if (iter == dynamic_dat.end())
+		dynamiciter++;
+		if (dynamiciter == dynamic_dat.end())
 			break;
-
-		//CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
-
-
-		//FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-		//	SCENEID::SCENE_STATIC,
-		//	TAG_CP(Prototype_Mesh_TEST_STATIC),
-		//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
-
-		// CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix);
 	}
 
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(
-		SCENEID::SCENE_STATIC,
-		TAG_CP(Prototype_Mesh_Player),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, *List_ModelCreateTest.begin(), TransformMatrix)));
+	auto staticiter = static_dat.begin();
+	for (auto& modeldesc : List_ModelStatic)
+	{
+		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+			SCENEID::SCENE_STATIC,
+			(*staticiter)->FileName,
+			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
+
+		staticiter++;
+		if (staticiter == static_dat.end())
+			break;
+	}
+
+
+#pragma endregion TESTCODE
+	
+	Safe_Delete_List(static_dat);
+	Safe_Delete_List(dynamic_dat);
+
+//	Safe_Delete_List(List_ModelStatic);
+//	Safe_Delete_List(List_ModelDynamic);
 
 	return S_OK;
 
@@ -607,7 +614,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 			return E_FAIL;
 
 		{
-			modelDesc = NEW MODELDESC;
+			modelDesc = new MODELDESC;
 
 			// UINT
 			ReadFile(hFile, modelDesc->mFBXFullPath, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
@@ -627,18 +634,18 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 			// ÇÒ´ç
 			if (modelDesc->mNumMeshes != 0)
-				modelDesc->mMeshDesc = NEW MESHDESC[modelDesc->mNumMeshes];
+				modelDesc->mMeshDesc = new MESHDESC[modelDesc->mNumMeshes];
 
 			if (modelDesc->mNumMaterials != 0)
-				modelDesc->mMaterials = NEW MATDESC[modelDesc->mNumMaterials];
+				modelDesc->mMaterials = new MATDESC[modelDesc->mNumMaterials];
 
 			if (ModelType == CModel::TYPE_ANIM)
 			{
 				if (modelDesc->mNumBones != 0)
-					modelDesc->mBones = NEW BONEDESC[modelDesc->mNumBones];
+					modelDesc->mBones = new BONEDESC[modelDesc->mNumBones];
 
 				if (modelDesc->mNumAnimations != 0)
-					modelDesc->mAnimations = NEW ANIDESC[modelDesc->mNumAnimations];
+					modelDesc->mAnimations = new ANIDESC[modelDesc->mNumAnimations];
 			}
 
 			// MESH
@@ -657,11 +664,11 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					ReadFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
 				}
 
-				meshdesc->mVertices = NEW _float3[meshdesc->mNumVertices];
-				meshdesc->mNormals = NEW _float3[meshdesc->mNumVertices];
-				meshdesc->mTangents = NEW _float3[meshdesc->mNumVertices];
-				meshdesc->mUV = NEW _float2[meshdesc->mNumVertices];
-				meshdesc->mFaces = NEW FACEINDICES32[meshdesc->mNumFaces];
+				meshdesc->mVertices = new _float3[meshdesc->mNumVertices];
+				meshdesc->mNormals = new _float3[meshdesc->mNumVertices];
+				meshdesc->mTangents = new _float3[meshdesc->mNumVertices];
+				meshdesc->mUV = new _float2[meshdesc->mNumVertices];
+				meshdesc->mFaces = new FACEINDICES32[meshdesc->mNumFaces];
 
 				// VTX
 				ReadFile(hFile, meshdesc->mVertices, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
@@ -684,7 +691,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				// ¿©·¯°³ UV Ãß°¡½Ã 
 				//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
 				//{
-				//	_float3* cash = NEW _float3[meshdesc->mNumVertices];
+				//	_float3* cash = new _float3[meshdesc->mNumVertices];
 
 
 				//	ReadFile(hFile, cash, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
@@ -695,7 +702,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				//	}
 				//	else
 				//	{
-				//		meshdesc->mTextureCoords[j] = NEW _float3[meshdesc->mNumVertices];
+				//		meshdesc->mTextureCoords[j] = new _float3[meshdesc->mNumVertices];
 				//		for (_uint k = 0; k < meshdesc->mNumVertices; ++k)
 				//		{
 				//			meshdesc->mTextureCoords[j]->x = cash->x;
@@ -718,8 +725,8 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					if (NumAffectingBones != 0)
 					{
 						// »À ÀÎµ¦½º ¸®½ºÆ®
-						meshdesc->mAffectingBones = NEW _uint[NumAffectingBones];
-						meshdesc->mMeshBones = NEW MESHBONEDESC[NumAffectingBones];
+						meshdesc->mAffectingBones = new _uint[NumAffectingBones];
+						meshdesc->mMeshBones = new MESHBONEDESC[NumAffectingBones];
 
 						ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
 						// »À Weight
@@ -730,7 +737,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 							if (NumWeight == 0)
 								continue;
 
-							meshdesc->mMeshBones[bone].mAiWeights = NEW aiVertexWeight[NumWeight];
+							meshdesc->mMeshBones[bone].mAiWeights = new aiVertexWeight[NumWeight];
 
 							ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
 								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
@@ -774,7 +781,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
 				{
 					ANIDESC* anidesc = &modelDesc->mAnimations[i];
-					anidesc->mAniBones = NEW ANIBONES[anidesc->mNumAniBones];
+					anidesc->mAniBones = new ANIBONES[anidesc->mNumAniBones];
 					for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
 					{
 						ANIBONES* anibone = &anidesc->mAniBones[j];
@@ -783,8 +790,11 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 						ReadFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 						ReadFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
 						ReadFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
-						anibone->mKeyFrames = NEW KEYFRAME[anibone->mNumKeyFrames];
+						anibone->mKeyFrames = new KEYFRAME[anibone->mNumKeyFrames];
 						ReadFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
+
+						// #TEST
+						//Safe_Delete_Array(anibone->mKeyFrames);
 
 						if (dwByte == 0)
 							return E_FAIL;

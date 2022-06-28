@@ -220,6 +220,11 @@ namespace Engine
 	{
 		_uint			mNumWeights = 0;
 		aiVertexWeight* mAiWeights = nullptr;
+		~tag_MeshBone()
+		{
+			Safe_Delete_Array(mAiWeights);
+		}
+
 	}MESHBONEDESC;
 
 
@@ -230,20 +235,32 @@ namespace Engine
 		_uint			mNumVertices;
 		_uint			mNumFaces;
 
-		_float3*		mVertices;
-		_float3*		mNormals;
-		_float3*		mTangents;
-		_float2*		mUV;
+		_float3*		mVertices = nullptr;
+		_float3*		mNormals = nullptr;
+		_float3*		mTangents = nullptr;
+		_float2*		mUV = nullptr;
 
 		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 
-		FACEINDICES32*	mFaces;
+		FACEINDICES32*	mFaces = nullptr;
 
 		_uint			mMaterialIndex;
 
 		_uint			mNumAffectingBones = 0; // 영향주는 뼈정보
-		_uint*			mAffectingBones;		// 영향주는 뼈정보 인데스
-		MESHBONEDESC*	mMeshBones;				// 영향주는 뼈정보
+		_uint*			mAffectingBones = nullptr;		// 영향주는 뼈정보 인데스
+		MESHBONEDESC*	mMeshBones = nullptr;				// 영향주는 뼈정보
+
+		~tag_MeshDesc()
+		{
+			Safe_Delete_Array(mAffectingBones);
+			Safe_Delete_Array(mVertices);
+			Safe_Delete_Array(mNormals);
+			Safe_Delete_Array(mTangents);
+			Safe_Delete_Array(mUV);
+			Safe_Delete_Array(mFaces);
+			Safe_Delete_Array(mMeshBones);
+
+		}
 
 		// C_STRUCT aiColor4D* mColors[AI_MAX_NUMBER_OF_COLOR_SETS];
 		// C_STRUCT aiBone** mBones;
@@ -276,6 +293,10 @@ namespace Engine
 			XMStoreFloat4x4(&mOffsetMat, offsetmat);
 			mDepth = depth;
 		}
+		~tag_BoneDesc()
+		{
+
+		}
 
 		// 부모뼈 현재뼈 offsetMat
 		char 		mParentBoneName[MAX_PATH] = "";
@@ -301,11 +322,29 @@ namespace Engine
 			mKeyFrames = new KEYFRAME[mNumKeyFrames];
 		}
 
+	//	void clone(const tag_AnimationBoneDesc& rhs)
+	//	{
+	//		strcpy_s(mBoneName, rhs.mBoneName);
+	//		mNumKeyFrames = rhs.mNumKeyFrames;
+	//		mHierarchyNodeIndex = rhs.mHierarchyNodeIndex;
+	//		mKeyFrames = new KEYFRAME[mNumKeyFrames];
+	//		for (_uint i = 0; i < mNumKeyFrames; ++i)
+	//		{
+	//			mKeyFrames[i] = rhs.mKeyFrames[i];
+	//		}
+	//	}
+	//
+
 
 		char 		mBoneName[MAX_PATH] = "";
 		_int		mHierarchyNodeIndex = -1;
 		_uint		mNumKeyFrames = 0;
 		KEYFRAME*	mKeyFrames = nullptr;
+
+		~tag_AnimationBoneDesc()
+		{
+			Safe_Delete_Array(mKeyFrames);
+		}
 
 
 	}ANIBONES;
@@ -328,7 +367,13 @@ namespace Engine
 		double		mTicksPerSecond = 0;
 
 		_uint		mNumAniBones = 0;
-		ANIBONES*	mAniBones = nullptr;;
+		ANIBONES*	mAniBones = nullptr;
+
+		~tag_AnimationDesc()
+		{
+			Safe_Delete_Array(mAniBones);
+		}
+
 	}ANIDESC;
 
 
@@ -357,7 +402,14 @@ namespace Engine
 		~tag_ModelDesc()
 		{
 			// 소멸자 구현
-			int a = 5;
+			Safe_Delete_Array(mMeshDesc);
+			mMeshDesc = nullptr;
+			Safe_Delete_Array(mMaterials);
+			mMaterials = nullptr;
+			Safe_Delete_Array(mBones);
+			mBones = nullptr;
+			Safe_Delete_Array(mAnimations);
+			mAnimations = nullptr;
 		}
 
 	}MODELDESC;

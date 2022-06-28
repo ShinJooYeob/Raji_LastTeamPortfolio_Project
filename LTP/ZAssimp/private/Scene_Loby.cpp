@@ -19,16 +19,16 @@ HRESULT CScene_Loby::Initialize()
 //	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 
 
-	//	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
-	//	// 경로 / 저장위치 / 파일이름 / 확장자명
-	//	PathFinder_Text(STR_FILEPATH_FBX_STATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DSTATIC_TXT, L"fbx");
-	//	PathFinder_Text(STR_FILEPATH_FBX_DYNAMICSTATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DDYNAMIC_TXT, L"fbx");
-	//
-	//	GetSingle(CAssimpMgr)->Initialize_FbxSetting();
-	//
-	//	// Dat파일 경로 업데이트
-	//	PathFinder_Text(STR_FILEPATH_RESOURCE_DAT_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_FBXDAT_TXT, L"");
-	//
+	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
+	// 경로 / 저장위치 / 파일이름 / 확장자명
+	PathFinder_Text(STR_FILEPATH_FBX_STATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DSTATIC_TXT, L"fbx");
+	PathFinder_Text(STR_FILEPATH_FBX_DYNAMICSTATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DDYNAMIC_TXT, L"fbx");
+	
+	GetSingle(CAssimpMgr)->Initialize_FbxSetting();
+	
+	// Dat파일 경로 업데이트
+	PathFinder_Text(STR_FILEPATH_RESOURCE_DAT_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_FBXDAT_TXT, L"");
+	
 
 	return S_OK;
 }

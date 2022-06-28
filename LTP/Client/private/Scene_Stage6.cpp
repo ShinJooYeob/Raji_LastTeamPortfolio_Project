@@ -19,9 +19,9 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
-	FAILED_CHECK(Ready_Layer_Test(TAG_LAY(Layer_TeethObj)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 
+//	FAILED_CHECK(Ready_Layer_Test(TAG_LAY(Layer_TeethObj)));
 	return S_OK;
 }
 

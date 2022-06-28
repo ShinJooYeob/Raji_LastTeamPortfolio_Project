@@ -860,7 +860,8 @@ const vector<_uint>& CModel::Get_VecMeshes_AffectingBoneIndes(aiMesh * compareme
 	if (mesh)
 		return mesh->Get_AffectingBoneIndes();
 
-	return vector<_uint>();
+	vector<_uint> vectirint;
+	return vectirint;
 
 }
 

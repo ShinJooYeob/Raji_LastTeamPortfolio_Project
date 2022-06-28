@@ -42,13 +42,16 @@ HRESULT CClipBone::Initialize_ClipBone(ANIBONES * bone)
 	m_iHierarchyNodeIndex = bone->mHierarchyNodeIndex;
 	m_iNumKeyFrames = bone->mNumKeyFrames;
 
-	KEYFRAME*	KeyFrames = NEW KEYFRAME[m_iNumKeyFrames];
-	memcpy(KeyFrames, bone->mKeyFrames, sizeof(KEYFRAME)*m_iNumKeyFrames);
-
+	
+	// #BUG
 	for (int i = 0; i < m_iNumKeyFrames; ++i)
 	{
-		Add_KeyFrame(&KeyFrames[i]);
+		KEYFRAME*	KeyFrames = NEW KEYFRAME;
+		memcpy(KeyFrames, &bone->mKeyFrames[i], sizeof(KEYFRAME));
+		Add_KeyFrame(KeyFrames);
 	}
+
+
 	return S_OK;
 }
 
