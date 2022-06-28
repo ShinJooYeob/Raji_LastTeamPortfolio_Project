@@ -232,7 +232,7 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 {
 	if (m_pGameInstance == nullptr)
 		return E_FAIL;
-
+	
 
 	//렌더러 컴객체 프로토타입 생성
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Renderer), 
