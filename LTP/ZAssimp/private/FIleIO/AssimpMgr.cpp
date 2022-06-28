@@ -86,6 +86,7 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 		_uint length = name.length();
 		wstring Name = name.substr(0, length - 4);
 		Save_MODELDESC(STR_FILEPATH_RESOURCE_DAT_L, Name, pair.second);
+		Safe_Delete(pair.second);
 	}
 
 	Safe_Delete_List(Path_Static);
@@ -435,8 +436,6 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 					anibone->mKeyFrames[index] = *key;
 					index++;
 				}
-
-				anidesc->mAniBones[b].SetData(*anibone);
 				Safe_Delete(anibone);
 
 			}
