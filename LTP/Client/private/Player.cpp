@@ -96,7 +96,10 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 
+	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	return _int();
 }
@@ -121,7 +124,7 @@ _int CPlayer::Render()
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 
 	}
 
@@ -1125,6 +1128,7 @@ _fVector CPlayer::LookAt_MousePos()
 	vNewLook = XMVectorSetY(vNewLook, XMVectorGetY(vMyLook));
 	m_pTransformCom->Turn_Dir(vNewLook, 0.85f);
 
+	Safe_Delete_Array(ViewPortDesc);
 	return vResult;
 }
 

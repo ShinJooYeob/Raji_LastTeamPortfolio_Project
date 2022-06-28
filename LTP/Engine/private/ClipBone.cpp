@@ -44,7 +44,7 @@ HRESULT CClipBone::Initialize_ClipBone(ANIBONES * bone)
 
 	
 	// #BUG
-	for (int i = 0; i < m_iNumKeyFrames; ++i)
+	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 	{
 		KEYFRAME*	KeyFrames = NEW KEYFRAME;
 		memcpy(KeyFrames, &bone->mKeyFrames[i], sizeof(KEYFRAME));

@@ -94,5 +94,7 @@ LTP/Client/bin/fmodL.dll
 LTP/Engine/bin/Engine.dll
 LTP/Engine/bin/Engine.exp
 LTP/Engine/bin/Engine.lib
-LTP/Client/default/Client.vcxproj.filters
 LTP/Reference/bin/Engine.lib
+LTP/Reference/Inc/GameObject.h
+LTP/ZAssimp/bin/Engine.dll
+LTP/ZAssimp/default/x64/Debug/vc140.idb

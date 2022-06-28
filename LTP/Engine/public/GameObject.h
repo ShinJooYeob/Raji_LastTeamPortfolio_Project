@@ -61,8 +61,6 @@ protected:
 	_bool						m_bIsOnScreen = false;
 
 
-	_float						m_fFrustumRadius = 1.f;
-
 	_float3						m_fAttachCamPos = _float3(0, 0, 0);
 	_float3						m_fAttachCamPos_Offset = _float3(0, 0, 0);
 	_float3						m_fAttachCamLook = _float3(0, 0, 0);
