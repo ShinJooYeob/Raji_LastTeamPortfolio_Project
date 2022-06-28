@@ -7,7 +7,7 @@ BEGIN(Engine)
 class CHierarchyNode;
 
 //하나의 애니메이션
-class CAnimationClip final : public CBase
+class ENGINE_DLL CAnimationClip final : public CBase
 {
 private:
 	CAnimationClip();
@@ -20,8 +20,14 @@ public:
 
 	_uint Get_NumClipBone() { return m_iNumClipBones; };
 
+	const char* Get_Name();
+	_double Get_UpdatePerSecond();
+	_double Get_Duration();
+	const vector<class CClipBone*>& Get_VecClipBones() const {return m_vecClipBones; }
+
 public:
 	HRESULT Initialize_AnimationClip(const char* pName, _double Duration, _double UpdatePerSecond);
+	HRESULT Initialize_AnimationClip(ANIDESC* aniDesc);
 	HRESULT Update_TransformMatrices_byClipBones(_bool* bIsFinished,_double TimeDelta,_double* PlayTimeAcc,
 		const vector<CHierarchyNode*>* pVecHierarchyNodes, vector<_uint>* pVecCurrentKeyFrameIndex, _bool IsUpdateAll = true);
 
@@ -48,6 +54,8 @@ private:
 
 public:
 	static CAnimationClip* Create(const char* pAnimationClipName, _double Duration, _double UpdatePerSecond);
+	static CAnimationClip* Create(ANIDESC* desc);
+
 	virtual void Free() override;
 
 };

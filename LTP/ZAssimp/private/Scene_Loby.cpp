@@ -15,21 +15,22 @@ HRESULT CScene_Loby::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
-
 //	FAILED_CHECK(Ready_Light());
-	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 //	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	
+
+	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
+
+	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	// 경로 / 저장위치 / 파일이름 / 확장자명
 	PathFinder_Text(STR_FILEPATH_FBX_STATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DSTATIC_TXT, L"fbx");
 	PathFinder_Text(STR_FILEPATH_FBX_DYNAMICSTATIC_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_3DDYNAMIC_TXT, L"fbx");
-
+	
 	GetSingle(CAssimpMgr)->Initialize_FbxSetting();
-
+	
 	// Dat파일 경로 업데이트
 	PathFinder_Text(STR_FILEPATH_RESOURCE_DAT_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_FBXDAT_TXT, L"");
-
+	
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1,L"ASSIMP_TIME");
 
 	return S_OK;
 }
@@ -168,7 +169,7 @@ HRESULT CScene_Loby::PathFinder_Text(wstring path, wstring txtpath, wstring txtn
 
 CScene_Loby * CScene_Loby::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Loby* pTempLoby = new CScene_Loby(pDevice,pDeviceContext);
+	CScene_Loby* pTempLoby = NEW CScene_Loby(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

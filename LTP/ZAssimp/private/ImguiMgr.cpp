@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\ImguiMgr.h"
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 IMPLEMENT_SINGLETON(CImguiMgr)

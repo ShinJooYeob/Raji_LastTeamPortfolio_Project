@@ -2,7 +2,7 @@
 
 
 #ifdef _DEBUG
- #define USE_IMGUI
+ // #define USE_IMGUI
 #endif // _DEBUG
 
 #ifndef USE_IMGUI
@@ -17,6 +17,8 @@
 
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) 
 #define new DBG_NEW 
+//#define NEW new
+
 
 #endif
 

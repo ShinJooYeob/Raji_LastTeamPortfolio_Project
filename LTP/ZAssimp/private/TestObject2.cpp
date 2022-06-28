@@ -174,7 +174,7 @@ HRESULT CTestObject2::SetUp_Components()
 
 CTestObject2 * CTestObject2::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestObject2*	pInstance = new CTestObject2(pDevice, pDeviceContext);
+	CTestObject2*	pInstance = NEW CTestObject2(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -186,7 +186,7 @@ CTestObject2 * CTestObject2::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 CGameObject * CTestObject2::Clone(void * pArg)
 {
-	CTestObject2*	pInstance = new CTestObject2(*this);
+	CTestObject2*	pInstance = NEW CTestObject2(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

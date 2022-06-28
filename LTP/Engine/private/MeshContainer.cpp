@@ -76,6 +76,7 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, aiMesh
 
 HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDESC * meshdesc, _fMatrix & TransformMatrix)
 {
+	NULL_CHECK_BREAK(meshdesc);
 	m_pAIMesh = nullptr;
 
 #pragma region VERTICES
@@ -88,6 +89,9 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDE
 	if (CModel::TYPE_NONANIM == eMeshtype)
 		hr = Ready_NonAnimMeshContainer(meshdesc, TransformMatrix);
 	else
+		hr = Ready_AnimMeshContainer(meshdesc);
+
+	if (hr == E_FAIL)
 		return E_FAIL;
 
 	m_MaterialIndex = meshdesc->mMaterialIndex;
@@ -126,7 +130,7 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDE
 
 #pragma endregion
 
-
+	
 
 	return S_OK;
 }
@@ -149,11 +153,12 @@ HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix&
 	}
 	else
 	{
+		//#BUG asiimp와 UpdatedMatrix 값이 위치가 다름 
 		for (auto& iHierarchyIndex : m_vecAffectingBoneIndex)
 		{
 			_Matrix UpdatedMatrix = ((*pVecHierarchyNodes)[iHierarchyIndex])->Get_UpdatedMatrix();
-
 			XMStoreFloat4x4(&pBoneMatrices[iIndex++], XMMatrixTranspose(UpdatedMatrix * DefultPivotMatrix));
+
 			//XMStoreFloat4x4(&pBoneMatrices[iIndex++], XMMatrixTranspose(UpdatedMatrix));
 		}
 	}
@@ -272,10 +277,8 @@ HRESULT CMeshContainer::Ready_AnimMeshContainer(aiMesh * pAIMesh)
 HRESULT CMeshContainer::Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL * pVertices)
 {
 	NULL_CHECK_RETURN(pAIMesh, E_FAIL);
-
 	
 	m_iNumAffectingBones = pAIMesh->mNumBones;
-
 
 	//이 매쉬에 영향을 끼치는 모든 뼈들을 순차적으로 돌면서
 	for (_uint i = 0 ; i< m_iNumAffectingBones; i++)
@@ -315,12 +318,10 @@ HRESULT CMeshContainer::Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL * pVerti
 
 	}
 
-
-
 	return S_OK;
 }
 
-HRESULT CMeshContainer::Ready_NonAnimMeshContainer(MESHDESC * pAIMesh, _fMatrix & TransformMatrix)
+HRESULT CMeshContainer::Ready_NonAnimMeshContainer(MESHDESC * meshdesc, _fMatrix & TransformMatrix)
 {
 
 	m_VBDesc.ByteWidth = sizeof(VTXMODEL) * m_iNumVertices;
@@ -333,14 +334,15 @@ HRESULT CMeshContainer::Ready_NonAnimMeshContainer(MESHDESC * pAIMesh, _fMatrix 
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		memcpy(&pVertices[i].vPosition, &pAIMesh->mVertices[i], sizeof(_float3));
+		memcpy(&pVertices[i].vPosition, &meshdesc->mVertices[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), TransformMatrix));
 
-		memcpy(&pVertices[i].vNormal, &pAIMesh->mNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &meshdesc->mNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), TransformMatrix));
 
-		//memcpy(&pVertices[i].vTexUV, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
-		//memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexUV, &meshdesc->mUV[i], sizeof(_float2));
+		memcpy(&pVertices[i].vTangent, &meshdesc->mTangents[i], sizeof(_float3));
+
 	}
 
 	ZeroMemory(&m_VBSubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -354,13 +356,96 @@ HRESULT CMeshContainer::Ready_NonAnimMeshContainer(MESHDESC * pAIMesh, _fMatrix 
 	return S_OK;
 }
 
-HRESULT CMeshContainer::Ready_AnimMeshContainer(MESHDESC * pAIMesh)
+HRESULT CMeshContainer::Ready_AnimMeshContainer(MESHDESC * meshdesc)
 {
+	NULL_CHECK_BREAK(meshdesc);
+
+	ZeroMemory(&m_VBDesc, sizeof(D3D11_BUFFER_DESC));
+
+	m_VBDesc.ByteWidth = sizeof(VTXANIMMODEL) * m_iNumVertices;
+	m_VBDesc.StructureByteStride = sizeof(VTXANIMMODEL);
+	m_VBDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	m_VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	VTXANIMMODEL*	pVertices = new VTXANIMMODEL[m_iNumVertices];
+	ZeroMemory(pVertices, sizeof(VTXANIMMODEL) * m_iNumVertices);
+
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		memcpy(&pVertices[i].vPosition, &meshdesc->mVertices[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &meshdesc->mNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTangent, &meshdesc->mTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexUV, &meshdesc->mUV[i], sizeof(_float2));
+
+
+	//	memcpy(&pVertices[i].vTexUV, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+	}
+
+	FAILED_CHECK(Ready_SkinnedInfo(meshdesc, pVertices));
+
+	ZeroMemory(&m_VBSubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+	m_VBSubResourceData.pSysMem = pVertices;
+
+	FAILED_CHECK(Create_VertexBuffer());
+
+	Safe_Delete_Array(pVertices);
+
 	return S_OK;
 }
 
-HRESULT CMeshContainer::Ready_SkinnedInfo(MESHDESC * pAIMesh, VTXANIMMODEL * pVertices)
+HRESULT CMeshContainer::Ready_SkinnedInfo(MESHDESC * meshdesc, VTXANIMMODEL * pVertices)
 {
+
+	NULL_CHECK_RETURN(meshdesc, E_FAIL);
+
+	// 영향을 주는 뼈 인덱스
+	m_iNumAffectingBones = meshdesc->mNumAffectingBones;
+	if (m_iNumAffectingBones == 0)
+		return E_FAIL;
+
+	m_vecAffectingBoneIndex.reserve(m_iNumAffectingBones);
+	for (_uint i = 0; i < m_iNumAffectingBones; ++i)
+	{
+		m_vecAffectingBoneIndex.push_back(meshdesc->mAffectingBones[i]);
+	}
+
+
+	//이 매쉬에 영향을 끼치는 모든 뼈들을 순차적으로 돌면서
+	for (_uint i = 0; i < m_iNumAffectingBones; i++)
+	{
+		
+		MESHBONEDESC* pAffectingBone = &meshdesc->mMeshBones[i];
+
+		//해당 뼈 하나가 영향을 끼치는 모든 정점들을 순회하면서 값을 채워줌
+
+		for (_uint j = 0; j < pAffectingBone->mNumWeights; j++)
+		{
+			//이 뼈가 영향을 끼치는 j 번째 정점에게 얼마만큼의 영향을 주는지  -> pAffectingBone->mAiWeights[j].mWeight;
+			// j  번째 뼈는 이 매쉬의 몇번째 정점인지							->pAffectingBone->mAiWeights[j].mVertexId
+
+			if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.x)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.x = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.x = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.y)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.y = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.y = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.z)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.z = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.z = pAffectingBone->mAiWeights[j].mWeight;
+			}
+			else if (0.0f == pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.w)
+			{
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendIndex.w = i;
+				pVertices[pAffectingBone->mAiWeights[j].mVertexId].vBlendWeight.w = pAffectingBone->mAiWeights[j].mWeight;
+			}
+		}
+	}
+
 	return S_OK;
 }
 

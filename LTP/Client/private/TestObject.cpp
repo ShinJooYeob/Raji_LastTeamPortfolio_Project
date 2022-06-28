@@ -70,8 +70,6 @@ _int CTestObject::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
-
-
 	return _int();
 }
 
@@ -109,8 +107,6 @@ _int CTestObject::Render()
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
-
-
 
 	return _int();
 }

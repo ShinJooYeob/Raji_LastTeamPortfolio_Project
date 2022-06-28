@@ -170,7 +170,7 @@ HRESULT CScene_Boss::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 CScene_Boss * CScene_Boss::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Boss* pTempLoby = new CScene_Boss(pDevice,pDeviceContext);
+	CScene_Boss* pTempLoby = NEW CScene_Boss(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

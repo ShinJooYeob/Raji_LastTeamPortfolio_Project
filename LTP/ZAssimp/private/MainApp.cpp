@@ -5,15 +5,7 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "FIleIO/AssimpMgr.h"
-
-//#include "LoadingUI.h"
-
-
-
-#ifdef USE_IMGUI
 #include "ImguiMgr.h"
-#endif // USE_IMGUI
-//#include "UtilityMgr.h"
 
 CMainApp::CMainApp()
 	:m_pGameInstance(GetSingle(CGameInstance))
@@ -201,11 +193,11 @@ HRESULT CMainApp::Scene_Change(SCENEID eSceneID)
 HRESULT CMainApp::Ready_SingletonMgr()
 {
 
-#ifdef USE_IMGUI
-	FAILED_CHECK(GETIMGUI->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
-#endif // USE_IMGUI
+#ifdef _DEBUG
+	FAILED_CHECK(GetSingle(CImguiMgr)->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
+#endif // _DEBUG
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
+//	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr());
 	FAILED_CHECK(GetSingle(CAssimpMgr)->Initialize(m_pDevice,m_pDeviceContext));
 
 	
@@ -215,7 +207,7 @@ HRESULT CMainApp::Ready_SingletonMgr()
 HRESULT CMainApp::Free_SingletonMgr()
 {
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	if (0 != GetSingle(CImguiMgr)->DestroyInstance())
 	{
 		MSGBOX("Failed to Release CImguiMgr");
@@ -228,6 +220,11 @@ HRESULT CMainApp::Free_SingletonMgr()
 		MSGBOX("Failed to Release CUtilityMgr");
 		return E_FAIL;
 	}
+	if (0 != GetSingle(CAssimpMgr)->DestroyInstance())
+	{
+		MSGBOX("Failed to Release CUtilityMgr");
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -235,7 +232,7 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 {
 	if (m_pGameInstance == nullptr)
 		return E_FAIL;
-
+	
 
 	//렌더러 컴객체 프로토타입 생성
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Renderer), 
@@ -310,41 +307,17 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	CameraDesc.TransformDesc.fScalingPerSec = 1.f;
 
 
-
+	// Assimp의 메인입니다.
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Camera_Main), CCamera_Main::Create(m_pDevice, m_pDeviceContext, &CameraDesc)));
-
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UIImage), CUIImage::Create(m_pDevice, m_pDeviceContext)));
-
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
-
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_SkyBox), CSkyBox::Create(m_pDevice, m_pDeviceContext)));
+//	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_SkyBox), CSkyBox::Create(m_pDevice, m_pDeviceContext)));
 	
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Ball"), CParticleeObj_Ball::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Straight"), CParticleeObj_Straight::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Cone"), CParticleeObj_Cone::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Fixed"), CParticleeObj_Fixed::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Fixed_LookFree"), CParticleeObj_Fixed_LookFree::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Spread"), CParticleeObj_Spread::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Map"), CParticleeObj_MapParticle::Create(m_pDevice, m_pDeviceContext)));
-	//
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
 
-
-
-
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Terrain), CSkyBox::Create(m_pDevice, m_pDeviceContext)));
-
-
-	//if (FAILED(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UI_Common), CUI_Common::Create(m_pGraphicDevice, _float4(0, 0, 0, 0)))))
-	//	return E_FAIL;
 	return S_OK;
 }
 
 CMainApp * CMainApp::Create()
 {
-	CMainApp* pInstance = new CMainApp;
+	CMainApp* pInstance = NEW CMainApp;
 
 	if (FAILED(pInstance->Initialize()))
 	{

@@ -5,13 +5,49 @@ CAnimationClip::CAnimationClip()
 {
 }
 
+const char * CAnimationClip::Get_Name()
+{
+	return m_szAnimationClipName.c_str();
+}
+
+_double CAnimationClip::Get_UpdatePerSecond()
+{
+	return m_UpdatePerSecond;
+}
+
+_double CAnimationClip::Get_Duration()
+{
+	return m_Duration;
+}
+
 HRESULT CAnimationClip::Initialize_AnimationClip(const char * pName, _double Duration, _double UpdatePerSecond)
 {
 
 	m_szAnimationClipName = pName;
-
 	m_Duration = Duration;
 	m_UpdatePerSecond = UpdatePerSecond;
+	
+	return S_OK;
+}
+
+HRESULT CAnimationClip::Initialize_AnimationClip(ANIDESC * aniDesc)
+{
+
+	// ANIDESC INIT
+	m_szAnimationClipName = aniDesc->mAniName;
+	m_Duration = aniDesc->mDuration;
+	m_UpdatePerSecond = aniDesc->mTicksPerSecond;
+
+	// 각 애니메이션의 뼈의 키프레임 초기화
+	m_iNumClipBones = aniDesc->mNumAniBones;
+	Reserve(m_iNumClipBones);
+	for (_uint i = 0; i < m_iNumClipBones; ++i)
+	{
+		// 애니메이션 초기화
+		CClipBone* clipbone = CClipBone::Create(&aniDesc->mAniBones[i]);
+		NULL_CHECK_BREAK(clipbone);
+		m_vecClipBones.push_back(clipbone);
+	}
 
 	return S_OK;
 }
@@ -273,6 +309,18 @@ CAnimationClip * CAnimationClip::Create(const char * pAnimationClipName, _double
 	CAnimationClip*	pInstance = new CAnimationClip();
 
 	if (FAILED(pInstance->Initialize_AnimationClip(pAnimationClipName, Duration, UpdatePerSecond)))
+	{
+		MSGBOX("Failed to Created CAnimation");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CAnimationClip * CAnimationClip::Create(ANIDESC * desc)
+{
+	CAnimationClip*	pInstance = new CAnimationClip();
+
+	if (FAILED(pInstance->Initialize_AnimationClip(desc)))
 	{
 		MSGBOX("Failed to Created CAnimation");
 		Safe_Release(pInstance);

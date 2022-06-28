@@ -211,7 +211,7 @@ wstring CFileInfoMgr::Get_PathData(wstring Fullpath)
 	wstring returnPath = L"";
 	wstring::iterator endIter = Fullpath.end();
 	endIter--;
-	_uint cnt = Fullpath.length();
+	_uint cnt = (_uint)Fullpath.length();
 
 	for (; endIter != Fullpath.begin(); endIter--)
 	{

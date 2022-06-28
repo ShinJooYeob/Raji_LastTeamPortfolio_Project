@@ -170,7 +170,7 @@ HRESULT CScene_StageSelect::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 CScene_StageSelect * CScene_StageSelect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_StageSelect* pTempLoby = new CScene_StageSelect(pDevice,pDeviceContext);
+	CScene_StageSelect* pTempLoby = NEW CScene_StageSelect(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

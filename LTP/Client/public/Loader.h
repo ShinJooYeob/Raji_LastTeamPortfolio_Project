@@ -38,7 +38,8 @@ public:
 
 	HRESULT Load_Scene_Edit(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
-	HRESULT Load_ModelDatFile();
+	HRESULT Load_Model_DatFile();
+	HRESULT Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc);
 
 private:
 	//로딩이 끝낫음을 알려주는 변수

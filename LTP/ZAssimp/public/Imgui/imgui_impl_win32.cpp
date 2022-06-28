@@ -13,7 +13,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #include "stdafx.h"
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"

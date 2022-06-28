@@ -51,6 +51,14 @@ public:
 		return m_pScene;
 	}
 	
+	const	class CMeshContainer*	Find_aiMesh(aiMesh* comparemesh) const;
+	const	vector<_uint>& Get_VecMeshes_AffectingBoneIndes(aiMesh* comparemesh) const;
+	const	vector<class CHierarchyNode*>& Get_VecBones() const;
+	const	vector<class CAnimationClip*>& Get_VecAni() const;
+
+
+	
+	
 
 private:
 	const aiScene*				m_pScene = nullptr;
@@ -108,8 +116,15 @@ private:
 
 	HRESULT Ready_MeshContainers(_fMatrix& TransformMatrix);
 	HRESULT Ready_Materials(const char* pModelFilePath);
+	HRESULT Ready_Materials(const wchar_t* pModelFilePath);
 	HRESULT Ready_Animation();
 	HRESULT Ready_MoreAnimation(const char* szFileFullPath, _uint iAnimCount, _uint iFlag = 0);
+
+	// Assimp X
+	HRESULT Ready_HierarchyNodes(MODELDESC* desc);
+	HRESULT Ready_Animation(MODELDESC* desc);
+	HRESULT Ready_OffsetMatrices(MODELDESC* desc);
+	
 
 private:
 	CHierarchyNode* Find_HierarchyNode(const char* pName, _uint* pNodeIndex = nullptr);

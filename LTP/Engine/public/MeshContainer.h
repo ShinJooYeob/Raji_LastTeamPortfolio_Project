@@ -28,6 +28,10 @@ public:
 	void		Set_TargetPararntNodeIndex(_uint iNodeIndex) { m_iParantHierarchyNodeIndex = iNodeIndex; }
 	//_uint		Get_TargetPararntNodeIndex() {return m_iParantHierarchyNodeIndex ; }
 
+	const vector<_uint>& Get_AffectingBoneIndes() const
+	{
+		return m_vecAffectingBoneIndex;
+	}
 private:
 	//이 매쉬가 사용하는 머테리얼의 인덱스
 	_uint		m_MaterialIndex = 0;
@@ -47,9 +51,9 @@ private:
 	HRESULT Ready_AnimMeshContainer(aiMesh* pAIMesh);
 	HRESULT Ready_SkinnedInfo(aiMesh* pAIMesh, VTXANIMMODEL* pVertices);
 
-	HRESULT Ready_NonAnimMeshContainer(MESHDESC* pAIMesh, _fMatrix& TransformMatrix);
-	HRESULT Ready_AnimMeshContainer(MESHDESC* pAIMesh);
-	HRESULT Ready_SkinnedInfo(MESHDESC* pAIMesh, VTXANIMMODEL* pVertices);
+	HRESULT Ready_NonAnimMeshContainer(MESHDESC* meshDesc, _fMatrix& TransformMatrix);
+	HRESULT Ready_AnimMeshContainer(MESHDESC* meshDesc);
+	HRESULT Ready_SkinnedInfo(MESHDESC* meshDesc, VTXANIMMODEL* pVertices);
 
 public:
 	static CMeshContainer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, 

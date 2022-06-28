@@ -86,6 +86,30 @@ namespace Engine
 		return dwRefCnt;
 	}
 
+	template <typename LIST>
+	void Safe_Delete_List(LIST& List)
+	{
+		for (auto& obj : List)
+		{
+			Safe_Delete(obj);
+		}
+	}
+
+	//template <typename T>
+	//void Safe_Delete_Map(T Map)
+	//{
+	//	for (auto& obj : Map)
+	//	{
+	//		Safe_Delete(obj.second);
+	//	}
+	//	Map.clear();
+	//	Safe_Delete(Map);
+	//}
+
+
+	
+
+
 
 	class CHelperClass
 	{

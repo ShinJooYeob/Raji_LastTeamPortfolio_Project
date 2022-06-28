@@ -1,7 +1,7 @@
 
 
 #include "stdafx.h"
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 // dear imgui, 1.88 WIP
 // (main code and documentation)

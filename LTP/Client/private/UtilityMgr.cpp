@@ -21,8 +21,7 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-
-
+	ZeroMemory(m_StartTime, sizeof(_double)*E_DEBUGTIMER::DEBUGTIMER_END);
 
 	return S_OK;
 }
@@ -58,7 +57,7 @@ _float3 CUtilityMgr::RandomFloat3(_float Min, _float Max)
 		Min = Max;
 		Max = temp;
 	}
-	return _float3(RandomFloat(Min,Max), RandomFloat(Min, Max), RandomFloat(Min, Max));
+	return _float3(RandomFloat(Min, Max), RandomFloat(Min, Max), RandomFloat(Min, Max));
 }
 
 _float3 CUtilityMgr::RandomFloat3(_float3 Min, _float3 Max)
@@ -92,6 +91,37 @@ void CUtilityMgr::SlowMotionStart(_float fTargetTime, _float TargetSpeed)
 	m_pMainApp->SlowMotionStart(fTargetTime, TargetSpeed);
 }
 
+void CUtilityMgr::Start_DebugTimer(E_DEBUGTIMER type)
+{
+	m_StartTime[type] = clock();
+	// 실행코드를 실행한다.
+}
+
+void CUtilityMgr::End_DebugTimer(E_DEBUGTIMER type, wstring debugLog)
+{
+	if (m_StartTime[type] == 0)
+	{
+#ifdef _DEBUG
+		wstring log = L"__BEFORE_CALL_Start_DebugTimer_FUNC__\n";
+		OutputDebugStringW(log.c_str());
+		return;
+#endif
+	}
+
+#ifdef _DEBUG
+	{
+		_double EndTimer = ((int)clock() - m_StartTime[type]) / (CLOCKS_PER_SEC / 1000);
+		wstring debug = L"__ENDTIME: " + to_wstring(EndTimer) + L"ms__"
+			+ debugLog + L"___\n"; ;
+
+		OutputDebugStringW(debug.c_str());
+
+		m_StartTime[type] = 0;
+	}
+#endif
+
+}
+
 
 
 
@@ -121,7 +151,7 @@ _uint CUtilityMgr::CountDigit(_uint iNum)
 void CUtilityMgr::Free()
 {
 	Safe_Release(m_pRenderer);
-	
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }

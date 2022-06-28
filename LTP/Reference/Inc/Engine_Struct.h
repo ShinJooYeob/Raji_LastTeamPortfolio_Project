@@ -216,6 +216,18 @@ namespace Engine
 		unsigned int FileCount = 0;
 	}MYFILEPATH;
 
+	typedef struct tag_MeshBone
+	{
+		_uint			mNumWeights = 0;
+		aiVertexWeight* mAiWeights = nullptr;
+		~tag_MeshBone()
+		{
+			Safe_Delete_Array(mAiWeights);
+		}
+
+	}MESHBONEDESC;
+
+
 	typedef struct tag_MeshDesc
 	{
 		// 메시에 필요한 정보
@@ -223,17 +235,34 @@ namespace Engine
 		_uint			mNumVertices;
 		_uint			mNumFaces;
 
-		_float3*		mVertices;
-		_float3*		mNormals;
-		_float3*		mTangents;
-		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
-		FACEINDICES32*	mFaces;
+		_float3*		mVertices = nullptr;
+		_float3*		mNormals = nullptr;
+		_float3*		mTangents = nullptr;
+		_float2*		mUV = nullptr;
 
-		//	unsigned int mNumUVComponents[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+		//	_float3*		mTextureCoords[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+
+		FACEINDICES32*	mFaces = nullptr;
+
 		_uint			mMaterialIndex;
 
+		_uint			mNumAffectingBones = 0; // 영향주는 뼈정보
+		_uint*			mAffectingBones = nullptr;		// 영향주는 뼈정보 인데스
+		MESHBONEDESC*	mMeshBones = nullptr;				// 영향주는 뼈정보
+
+		~tag_MeshDesc()
+		{
+			Safe_Delete_Array(mAffectingBones);
+			Safe_Delete_Array(mVertices);
+			Safe_Delete_Array(mNormals);
+			Safe_Delete_Array(mTangents);
+			Safe_Delete_Array(mUV);
+			Safe_Delete_Array(mFaces);
+			Safe_Delete_Array(mMeshBones);
+
+		}
+
 		// C_STRUCT aiColor4D* mColors[AI_MAX_NUMBER_OF_COLOR_SETS];
-		// unsigned int mNumBones;
 		// C_STRUCT aiBone** mBones;
 		// C_STRUCT aiString mName;
 		// unsigned int mNumAnimMeshes;
@@ -241,33 +270,147 @@ namespace Engine
 		// unsigned int mMethod;
 		// C_STRUCT aiAABB mAABB;
 
-
-
 	}MESHDESC;
+
+	typedef struct tag_MatDesc
+	{
+		wchar_t MatName[MAX_TEXTURE_TYPE][MAX_PATH] = { L"" };
+
+	}MATDESC;
+
+	typedef struct tag_BoneDesc
+	{
+		tag_BoneDesc()
+		{
+			XMStoreFloat4x4(&mOffsetMat, XMMatrixIdentity());
+		}
+
+		tag_BoneDesc(const char* parentBoneName, const char* CurrentBoneName, _fMatrix trnasmat, _fMatrix offsetmat, _uint depth)
+		{
+			strcpy_s(mParentBoneName, parentBoneName);
+			strcpy_s(mCurrentBoneName, CurrentBoneName);
+			XMStoreFloat4x4(&mTransMat, trnasmat);
+			XMStoreFloat4x4(&mOffsetMat, offsetmat);
+			mDepth = depth;
+		}
+		~tag_BoneDesc()
+		{
+
+		}
+
+		// 부모뼈 현재뼈 offsetMat
+		char 		mParentBoneName[MAX_PATH] = "";
+		char		mCurrentBoneName[MAX_PATH] = "";
+		_float4x4	mOffsetMat;
+		_float4x4	mTransMat;
+
+		// 영향을 주는 뼈 인덱스
+
+		_uint		mDepth = 0;
+
+	}BONEDESC;
+
+	typedef struct tag_AnimationBoneDesc
+	{
+		tag_AnimationBoneDesc() {}
+
+		tag_AnimationBoneDesc(const char* name, _uint keyframes, _int hierindex)
+		{
+			strcpy_s(mBoneName, name);
+			mNumKeyFrames = keyframes;
+			mHierarchyNodeIndex = hierindex;
+			mKeyFrames = new KEYFRAME[mNumKeyFrames];
+		}
+
+	//	void clone(const tag_AnimationBoneDesc& rhs)
+	//	{
+	//		strcpy_s(mBoneName, rhs.mBoneName);
+	//		mNumKeyFrames = rhs.mNumKeyFrames;
+	//		mHierarchyNodeIndex = rhs.mHierarchyNodeIndex;
+	//		mKeyFrames = new KEYFRAME[mNumKeyFrames];
+	//		for (_uint i = 0; i < mNumKeyFrames; ++i)
+	//		{
+	//			mKeyFrames[i] = rhs.mKeyFrames[i];
+	//		}
+	//	}
+	//
+
+
+		char 		mBoneName[MAX_PATH] = "";
+		_int		mHierarchyNodeIndex = -1;
+		_uint		mNumKeyFrames = 0;
+		KEYFRAME*	mKeyFrames = nullptr;
+
+		~tag_AnimationBoneDesc()
+		{
+			Safe_Delete_Array(mKeyFrames);
+		}
+
+
+	}ANIBONES;
+
+	typedef struct tag_AnimationDesc
+	{
+		// 애니메이션 이름 / 시간 / 
+		tag_AnimationDesc() {}
+
+		tag_AnimationDesc(const char* name, double d, double t)
+		{
+			strcpy_s(mAniName, name);
+			mDuration = d;
+			mTicksPerSecond = t;
+
+
+		}
+		char 		mAniName[MAX_PATH] = "";
+		double		mDuration = 0;
+		double		mTicksPerSecond = 0;
+
+		_uint		mNumAniBones = 0;
+		ANIBONES*	mAniBones = nullptr;
+
+		~tag_AnimationDesc()
+		{
+			Safe_Delete_Array(mAniBones);
+		}
+
+	}ANIDESC;
+
+
+
 
 	typedef struct tag_ModelDesc
 	{
 		_uint mModelType = 0;
+		wchar_t mFBXFileName[MAX_PATH] = L"";
+		wchar_t mFBXFullPath[MAX_PATH] = L"";
 
 		// Ready_MeshContainers
 		_uint			mNumMeshes;
-		MESHDESC*		mMeshDesc;
+		MESHDESC*		mMeshDesc = nullptr;;
 
+		_uint			mNumMaterials;
+		MATDESC*		mMaterials = nullptr;;
 
-		//_uint			mNumMaterials;
-		// aiMaterial**	mMaterials;
+		_uint			mNumBones;
+		BONEDESC*		mBones = nullptr;;
 
-		// m_iNumMeshContainers
-		// m_iNumMaterials
-		// m_vecMeshContainerArr
+		// Dynamic Mesh
+		_uint			mNumAnimations;
+		ANIDESC*		mAnimations = nullptr;;
 
-
-		// Ready_Materials
-
-		// MESHMATERIALDESC
-
-		// 애니메이션 // 일단 그냥 모델만 테스트
-
+		~tag_ModelDesc()
+		{
+			// 소멸자 구현
+			Safe_Delete_Array(mMeshDesc);
+			mMeshDesc = nullptr;
+			Safe_Delete_Array(mMaterials);
+			mMaterials = nullptr;
+			Safe_Delete_Array(mBones);
+			mBones = nullptr;
+			Safe_Delete_Array(mAnimations);
+			mAnimations = nullptr;
+		}
 
 	}MODELDESC;
 

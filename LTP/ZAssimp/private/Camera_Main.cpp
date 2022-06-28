@@ -339,7 +339,7 @@ HRESULT CCamera_Main::Update_CamAction(_double fDeltaTime)
 
 CCamera_Main * CCamera_Main::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CCamera_Main* pInstance = new CCamera_Main(pDevice, pDeviceContext);
+	CCamera_Main* pInstance = NEW CCamera_Main(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg))) {
 		MSGBOX("Failed to Create CCamera_Main");
@@ -352,7 +352,7 @@ CCamera_Main * CCamera_Main::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 CGameObject * CCamera_Main::Clone(void * pArg)
 {
-	CCamera_Main* pInstance = new CCamera_Main(*this);
+	CCamera_Main* pInstance = NEW CCamera_Main(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg))) {
 		MSGBOX("Failed to Create CCamera_Main");

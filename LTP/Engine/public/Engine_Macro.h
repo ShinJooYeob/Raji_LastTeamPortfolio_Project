@@ -8,6 +8,20 @@
 #define ENGINE_DLL	_declspec(dllimport)
 #endif // DEBUG
 
+// IMGUI랑 같이 사용하기 할당 시 NEW를 써야함
+#ifdef _DEBUG
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
+#define NEW new ( _NORMAL_BLOCK, __FILE__,__LINE__ )
+
+#else
+#define NEW new
+
+#endif
+
 
 #define EASING_PI 3.1415926535f
 
@@ -50,7 +64,8 @@
 
 #define MSGBOX(MESSAGE) MessageBox(0, TEXT(MESSAGE), TEXT("System Message"), MB_OK);
 
-#define  NEW new
+#define MAX_TEXTURE_TYPE				18
+
 
 //싱글톤////////////////////////////////////////////////////////////////////////
 #define NO_COPY(CLASSNAME)								\
@@ -177,10 +192,10 @@ return _return;}
 
 // FBX 경로
 #define  STR_FILEPATH_RESOURCE_L					L"..\\Bin\\Resources"
-#define  STR_FILEPATH_FBX_STATIC_L					L"..\\Bin\\Resources\\Model\\StaticModel"
-#define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"..\\Bin\\Resources\\Model\\DynamicModel"
+#define  STR_FILEPATH_FBX_STATIC_L					L"..\\Bin\\Resources\\Mesh\\StaticMesh"
+#define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"..\\Bin\\Resources\\Mesh\\DynamicMesh"
 
-#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data"
+#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data\\Mesh"
 #define  STR_FILEPATH_RESOURCE_PATH_L				L"..\\Bin\\Resources\\PathTxT"
 
 // | 로 나눈 경로
