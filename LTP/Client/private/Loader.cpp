@@ -19,6 +19,7 @@
 #include "EditorTerrain.h"
 #include "Camera_Editor.h"
 #include "StaticMapObject.h"
+#include "NaviPoint.h"
 
 
 _uint CALLBACK LoadingThread(void* _Prameter)
@@ -288,7 +289,7 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE4, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/data/NaviMesh/NaviData_Stage_2.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_2.dat")))))
 		return E_FAIL;
 
 #pragma endregion
@@ -499,6 +500,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(L"ProtoType_EditRendererUI", CRendererEditSceneUI::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), 	CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NaviPoint),	CNaviPoint::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 	RELEASE_INSTANCE(CGameInstance);

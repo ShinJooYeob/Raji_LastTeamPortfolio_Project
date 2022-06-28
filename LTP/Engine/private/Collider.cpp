@@ -125,6 +125,16 @@ _float3 CCollider::Get_ColliderPosition(_uint iIndex)
 	return m_vecColliderBuffer[iIndex]->Get_ColliderPosition();
 }
 
+BoundingSphere * CCollider::Get_Sphere_Transform()
+{
+	return m_vecColliderBuffer[0]->Get_PointCollider();
+}
+
+CColliderBuffer * CCollider::Get_Edit_ColliderBuffer()
+{
+	return m_vecColliderBuffer[0];
+}
+
 #ifdef _DEBUG
 
 HRESULT CCollider::Render()

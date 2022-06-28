@@ -15,6 +15,13 @@ class CCollisionMgr final : public CBase
 		class CCollider* pCollider = nullptr;
 	}COLLIDERELEMENTS;
 
+public:
+	typedef struct tagEditPointCollider
+	{
+		CCollider* vCollider;
+		CGameObject* GameObject = nullptr;
+	}EDITPOINTCOLLIDER;
+
 private:
 	explicit CCollisionMgr();
 	virtual ~CCollisionMgr() = default;
@@ -28,6 +35,11 @@ public:
 	HRESULT Add_CollisionGroup(CollisionTypeID eType, class CGameObject* pCollisionObject, class CCollider* pCollider);
 	void	Clear_CollisionGroup();
 
+public:
+	//MapTool
+	HRESULT		 Add_NaviPointCollider(EDITPOINTCOLLIDER Collider);
+	CGameObject* NaviPointCollision(_Vector pos, _Vector dir);
+
 private:
 	HRESULT Inspect_Player_To_MonsterWeapon();
 	HRESULT Inspect_PlayerWeapon_To_Monster();
@@ -37,6 +49,8 @@ private:
 
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
+
+	list<EDITPOINTCOLLIDER>		m_EditPointCollider;
 
 
 private:

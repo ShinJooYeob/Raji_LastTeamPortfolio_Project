@@ -50,6 +50,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_EditorTerrain,
 	Prototype_Camera_Editor,
 	Prototype_TestObject_Himeko,
+	Prototype_NaviPoint,
 
 	Object_Prototype_End
 };
@@ -109,6 +110,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_TestObject_Himeko: 
 		return TEXT("Prototype_TestObject_Himeko");
+		break;
+
+	case Prototype_NaviPoint:
+		return TEXT("Prototype_NaviPoint");
 		break;
 		
 	default:

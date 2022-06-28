@@ -34,6 +34,9 @@ public:
 
 	_float3 Get_ColliderPosition();
 
+	//EditBOUNDING_TRANSFORM
+	BoundingSphere* Get_PointCollider() { return m_pSphere[BOUNDING_TRANSFORM]; }
+
 #ifdef _DEBUG
 public:
 	virtual _int Render();

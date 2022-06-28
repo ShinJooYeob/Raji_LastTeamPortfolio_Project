@@ -8,7 +8,6 @@
 #include "FrustumMgr.h"
 #include "PipeLineMgr.h"
 #include "LightMgr.h"
-#include "CollisionMgr.h"
 #include "RenderTargetMgr.h"
 #include "ExternFontMgr.h"
 #include "SoundMgr.h"
@@ -625,6 +624,20 @@ void CGameInstance::Clear_CollisionGroup()
 {
 	NULL_CHECK_BREAK(m_pCollisionMgr);
 	m_pCollisionMgr->Clear_CollisionGroup();
+}
+
+HRESULT CGameInstance::Add_NaviPointCollider(CCollisionMgr::EDITPOINTCOLLIDER Collider)
+{
+	NULL_CHECK_BREAK(m_pCollisionMgr);
+
+	return m_pCollisionMgr->Add_NaviPointCollider(Collider);
+}
+
+CGameObject * CGameInstance::NaviPointCollision(_Vector pos, _Vector dir)
+{
+	NULL_CHECK_BREAK(m_pCollisionMgr);
+
+	return m_pCollisionMgr->NaviPointCollision(pos, dir);
 }
 
 HRESULT CGameInstance::Add_Font(const _tchar * pFontTag, const _tchar * pFontFilePath)

@@ -75,6 +75,43 @@ void CCollisionMgr::Clear_CollisionGroup()
 	}
 }
 
+HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)
+{
+	m_EditPointCollider.push_back(Collider);
+
+	return S_OK;
+}
+
+CGameObject * CCollisionMgr::NaviPointCollision(_Vector pos, _Vector dir)
+{
+	CGameObject* Obj = nullptr;
+
+	for (auto& Point : m_EditPointCollider)
+	{
+		BoundingSphere* ThisSphereCol = Point.vCollider->Get_Sphere_Transform();
+
+		if (nullptr == ThisSphereCol)
+			continue;
+
+		_float	fDist = 0.f;
+		_Vector RayPos = pos;
+		_Vector RayDir = dir;
+
+		RayPos = XMVectorSetW(RayPos, 1.f);
+		RayDir = XMVectorSetW(RayDir, 1.f);
+		RayDir = XMVector3Normalize(RayDir);
+
+		if (true == ThisSphereCol->Intersects(RayPos, RayDir, fDist))
+		{
+			Obj = Point.GameObject;
+			m_EditPointCollider.clear();
+			return Obj;
+		}
+	}
+	m_EditPointCollider.clear();
+	return nullptr;
+}
+
 
 HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 {

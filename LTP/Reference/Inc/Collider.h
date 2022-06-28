@@ -30,6 +30,10 @@ public:
 
 	_float3 Get_ColliderPosition(_uint iIndex = 0);
 
+	//Edit
+	BoundingSphere*				Get_Sphere_Transform();
+	CColliderBuffer*			Get_Edit_ColliderBuffer();
+
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;

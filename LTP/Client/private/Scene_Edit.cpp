@@ -5,6 +5,10 @@
 #include "Camera_Editor.h"
 #include "ESCursor.h"
 #include "MapObject.h"
+#include "NaviPoint.h"
+#include "Cell.h"
+#include "CollisionMgr.h"
+#include "ColliderBuffer.h"
 
 CScene_Edit::CScene_Edit(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -64,7 +68,21 @@ HRESULT CScene_Edit::Initialize()
 	m_ArrBuffer[3] = 0.1f;
 
 
+#ifdef _DEBUG
+	m_pVIBuffer = CVIBuffer_Triangle::Create(m_pDevice, m_pDeviceContext);
+	if (nullptr == m_pVIBuffer)
+	{
+		MSGBOX("트라이앵글 버퍼떔에 터짐");
+		return E_FAIL;
+	}
 
+	m_pShader = CShader::Create(m_pDevice, m_pDeviceContext, TEXT("Shader_Navigation.hlsl"), VTXCOL_DECLARATION::Elements, VTXCOL_DECLARATION::iNumElements);
+	if (nullptr == m_pShader)
+	{
+		MSGBOX("쉐이더땜에 터짐");
+		return E_FAIL;
+	}
+#endif // _DEBUG
 
 
 
@@ -124,6 +142,9 @@ _int CScene_Edit::Update(_double fDeltaTime)
 	case 4://터레인 생성 탭
 		if (m_pCreatedTerrain != nullptr)
 			m_pCreatedTerrain->Update(fDeltaTime);
+
+		for (auto& Point : m_Points)
+			Point->Update(fDeltaTime);
 		break;
 	default:
 		break;
@@ -295,8 +316,33 @@ _int CScene_Edit::Render()
 	if (__super::Render() < 0)
 		return -1;
 
+#ifdef _DEBUG
+	if (nullptr == m_pVIBuffer)
+	{
+		MSGBOX("렌더에서 트라이앵글땜에 터짐");
+		return E_FAIL;
+	}
 
+	for (auto& Point : m_Points)
+	{
+		if (nullptr != Point)
+		{
+			Point->Render();
+		}
+	}
 
+	m_pShader->Set_RawValue("g_WorldMatrix", &XMMatrixIdentity(), sizeof(_float4x4));
+	m_pShader->Set_RawValue("g_ViewMatrix", &g_pGameInstance->Get_Transform_Float4x4_TP(TRANSFORMSTATETYPE::PLM_VIEW), sizeof(_float4x4));
+	m_pShader->Set_RawValue("g_ProjMatrix", &g_pGameInstance->Get_Transform_Float4x4_TP(TRANSFORMSTATETYPE::PLM_PROJ), sizeof(_float4x4));
+	//셀 렌더
+	for (auto& pCell : m_Cells)
+	{
+		if (nullptr != pCell)
+		{
+			pCell->Render(m_pVIBuffer, m_pShader, _float4(1.f, 1.f, 1.f, 1.f));
+		}
+	}
+#endif // _DEBUG
 
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("MapEditScene"));
@@ -592,11 +638,58 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 	}
 	break;
+
+	case Client::CScene_Edit::Data_Navigation:
+	{
+		//../bin/Resources/Data/Map/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/NaviMesh/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+		_ulong			dwByte = 0;
+		HANDLE			hFile = CreateFile(szFullPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		if (0 == hFile)
+		{
+			MSGBOX("네비메쉬저장 실패");
+			return E_FAIL;
+		}
+
+		_float3			vPoints[3];
+
+		for (auto& Cell : m_Cells)
+		{
+			for (_int i = 0; i < 3; ++i)
+			{
+				switch (i)
+				{
+				case 0:
+					XMStoreFloat3(&vPoints[i], Cell->Get_Point(CCell::POINT_A));
+					break;
+				case 1:
+					XMStoreFloat3(&vPoints[i], Cell->Get_Point(CCell::POINT_B));
+					break;
+				case 2:
+					XMStoreFloat3(&vPoints[i], Cell->Get_Point(CCell::POINT_C));
+					break;
+				}
+			}
+			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+		}
+
+		CloseHandle(hFile);
+
+		MSGBOX("네비메쉬저장 성공");
+	}
+	break;
+
 	default:
 
 		break;
 	}
-
 
 
 	return S_OK;
@@ -840,6 +933,148 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 	break;
 	case Client::CScene_Edit::Data_FilterMap:
 	{
+
+
+
+	}
+	break;
+
+	case Client::CScene_Edit::Data_Navigation:
+	{
+		m_iVertexCount = 0;
+		m_iCellCount = 0;
+
+		for (auto& Point : m_Points)
+			Safe_Delete(Point);
+		m_Points.clear();
+
+		for (auto& Cell : m_Cells)
+			Safe_Release(Cell);
+		m_Cells.clear();
+
+		for (auto& Vertex : m_vVertexs)
+			Safe_Delete(Vertex);
+		m_vVertexs.clear();
+
+		for (auto& CellName : m_vCellNames)
+			Safe_Delete(CellName);
+		m_vCellNames.clear();
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/NaviMesh/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		lstrcat(szFullPath, wFileName);
+
+		_ulong			dwByte = 0;
+		HANDLE			hFile = CreateFile(szFullPath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		if (0 == hFile)
+			return E_FAIL;
+
+		_float3			vPoints[3];
+
+		while (true)
+		{
+			ReadFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+			if (0 == dwByte)
+				break;
+
+			CCell*		pCell = CCell::Create(m_pDevice, m_pDeviceContext, vPoints, (_uint)m_Cells.size());
+			if (nullptr == pCell)
+			{
+				MSGBOX("Edit_Load_NaviMesh_Cell Failed");
+				return E_FAIL;
+			}
+
+			++m_iCellCount;
+			char sIntStr[5];
+			_itoa_s(m_iCellCount, sIntStr, 10);
+			char str[10] = "Cell";
+			strcat_s(str, sIntStr);
+
+			char* sCellNum = new char[10];
+
+			strcpy_s(sCellNum, 10, str);
+
+			m_vCellNames.push_back(sCellNum);
+
+			if (m_Points.size() <= 0)
+			{
+				for (_int i = 0; i < 3; ++i)
+				{
+					Ready_Layer_LoadNaviPoint(vPoints[i]);
+					++m_iVertexCount;
+					char sIntStr[5];
+					_itoa_s(m_iVertexCount, sIntStr, 10);
+					char str[10] = "Vertex";
+					char* sVertexNum = new char[10];
+					strcat_s(str, sIntStr);
+					strcpy_s(sVertexNum, 10, str);
+
+					m_vVertexs.push_back(sVertexNum);
+				}
+			}
+			else
+			{
+				_bool ISTakePoint = false;
+
+				for (_int i = 0; i < 3; ++i)
+				{
+					ISTakePoint = false;
+					for (_int j = 0; j < m_Points.size(); ++j)
+					{
+						_float3 PointPos = m_Points[j]->Get_Position();
+
+						if (vPoints[i] == PointPos)
+						{
+							ISTakePoint = true;
+							break;
+						}
+					}
+
+					if (!ISTakePoint)
+					{
+						Ready_Layer_LoadNaviPoint(vPoints[i]);
+						++m_iVertexCount;
+						char sIntStr[5];
+						_itoa_s(m_iVertexCount, sIntStr, 10);
+						char str[10] = "Vertex";
+						char* sVertexNum = new char[10];
+						strcat_s(str, sIntStr);
+						strcpy_s(sVertexNum, 10, str);
+
+						m_vVertexs.push_back(sVertexNum);
+					}
+				}
+			}
+			m_Cells.push_back(pCell);
+
+			if (nullptr != pCell)
+			{
+				memcpy(m_vVertexts, vPoints, sizeof(_float3) * 3);
+
+				for (_int i = 0; i < m_Points.size(); ++i)
+				{
+					CTransform* PointTransform = (CTransform*)m_Points[i]->Get_Component(TAG_COM(Com_Transform));
+					_float3 Pos = PointTransform->Get_MatrixState(CTransform::STATE_POS);
+
+					for (_int j = 0; j < 3; ++j)
+					{
+
+						if (Pos == m_vVertexts[j])
+						{
+							m_Points[i]->Push_Cells(pCell);
+							break;
+						}
+					}
+				}
+
+				ZeroMemory(m_vVertexts, sizeof(_float3) * 3);
+			}
+		}
+
+		CloseHandle(hFile);
 
 
 
@@ -3486,12 +3721,99 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 
 			ImGui::TreePop();
 		}
-
-
-
-
 	}
-	else {
+	else 
+	{
+		/////////////////////////////////////////////////////////
+		CGameInstance* pInstance = g_pGameInstance;
+
+		if (pInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_DoubleDown)
+		{
+			POINT ptMouse;
+			GetCursorPos(&ptMouse);
+			ScreenToClient(g_hWnd, &ptMouse);
+
+
+
+			_Vector vCursorPos = XMVectorSet(
+				(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+				(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+				0, 1.f);
+			//_Vector vCursorPos = XMVectorSet(	(_float(ptMouse.x) / g_iWinCX * 0.5f) - 1.f, 	(_float(ptMouse.y) / g_iWinCY * 0.5f) + 1.f ,		0, 1.f);
+
+			_Matrix InvProjMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_PROJ));
+
+			_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+			_Matrix InvViewMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_VIEW));
+			vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+			//vRayDir = XMVector3TransformNormal(vRayDir, m_pCreatedTerrain->Get_Component(TAG_COM(COm_C))->Get_Camera_Transform()->Get_InverseWorldMatrix());
+			
+
+			if (m_pCreatedTerrain)
+			{
+				_Vector vCamPos = m_pEditorCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+				_Vector vOldPos = vCamPos;
+				_Vector vNewPos;
+				_float3 vResult;
+				_bool IsPicked = false;
+
+
+				for (_uint i = 0; i < 200; i++)
+				{
+					vNewPos = vOldPos + vRayDir;
+
+					vResult = m_pCreatedTerrain->Pick_OnTerrain(&IsPicked, vNewPos, vOldPos);
+
+					if (IsPicked)
+					{
+
+						//wstring ResultString = L"X : " + to_wstring(vResult.x) + L"	Y : " + to_wstring(vResult.y) + L"	Z : " + to_wstring(vResult.z) + L"\n";
+						//OutputDebugStringW(ResultString.c_str());
+						m_fPickingedPosition[0] = vResult.x;
+						m_fPickingedPosition[1] = vResult.y;
+						m_fPickingedPosition[2] = vResult.z;
+						break;
+					}
+
+					vOldPos = vNewPos;
+				}
+
+				if (IsPicked && !m_iBatchedVecIndex)
+				{
+					memcpy(m_vecBatchedObject[0].matSRT.m[2], &vResult, sizeof(_float3));
+
+					RenewElenmetTransform(&m_vecBatchedObject[0]);
+				}
+			}
+			else
+			{
+				_Vector vCamPos = m_pEditorCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+				if (XMVectorGetY(vCamPos) * XMVectorGetY(vRayDir) < 0)
+				{
+					_float Scale = XMVectorGetY(vCamPos) / -XMVectorGetY(vRayDir);
+
+					_float3 vTargetPos = vCamPos + Scale * vRayDir;
+
+					m_fPickingedPosition[0] = vTargetPos.x;
+					m_fPickingedPosition[1] = vTargetPos.y;
+					m_fPickingedPosition[2] = vTargetPos.z;
+
+					if (!m_iBatchedVecIndex)
+					{
+
+						memcpy(m_vecBatchedObject[0].matSRT.m[2], &vTargetPos, sizeof(_float3));
+
+						RenewElenmetTransform(&m_vecBatchedObject[0]);
+					}
+
+				}
+			}
+		}
+		//////////////////////////////////////////////
 
 		Make_VerticalSpacing(3);
 
@@ -3508,6 +3830,625 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 		ImGui::Text(PickingPos);
 
 		Make_VerticalSpacing(3);
+
+		string VertexIndexText = "VertexIndex : " + to_string(m_iVertexIndex) + "\n";
+
+		//static char str0[128] = "Hello, world!";
+		ImGui::Text((VertexIndexText.c_str()));
+
+		Make_VerticalSpacing(3);
+
+		ibClickChecker = 0;
+		ImGui::RadioButton("Terrain_Position", &m_iRadioNumMoving, 0); ImGui::SameLine();
+		ibClickChecker += _uint(ImGui::IsItemClicked());
+		ImGui::RadioButton("Terrain_Rotation", &m_iRadioNumMoving, 1); ImGui::SameLine();
+		ibClickChecker += _uint(ImGui::IsItemClicked());
+
+		if (ImGui::Button("VertexCountReset"))
+		{
+			m_iVertexIndex = 0;
+			ZeroMemory(m_vVertexts, sizeof(_float3) * 3);
+		}
+
+		if (ibClickChecker)
+		{
+			ZeroMemory(m_TerrainArrBuffer, sizeof(_float) * 4);
+			m_TerrainArrBuffer[3] = 0.1f;
+		}
+
+		Make_VerticalSpacing(2);
+
+		switch (m_iRadioNumMoving)
+		{
+		case 0://Terrain Pos
+		{
+			CTransform* Transform = static_cast<CTransform*>(m_pCreatedTerrain->Get_Component(TEXT("Com_Transform")));
+
+
+			memcpy(m_TerrainArrBuffer, &(m_TerrainObjectSRT.m[2]), sizeof(_float) * 3);
+			ImGui::DragFloat3("Terrain X Y Z", m_TerrainArrBuffer, m_TerrainArrBuffer[3], -FLT_MAX, FLT_MAX);
+
+			memcpy(&(m_TerrainObjectSRT.m[2]), m_TerrainArrBuffer, sizeof(_float) * 3);
+
+			_float Temp[4] = { 1.f, 1.f, 1.f, 0.f };
+			memcpy(&(m_TerrainObjectSRT.m[0]), Temp, sizeof(_float) * 3);
+
+			_Matrix Trans = XMMatrixTranslation(m_TerrainObjectSRT.m[2][0], m_TerrainObjectSRT.m[2][1], m_TerrainObjectSRT.m[2][2]);
+			_Matrix RotX = XMMatrixRotationX(XMConvertToRadians(m_TerrainObjectSRT.m[1][0]));
+			_Matrix RotY = XMMatrixRotationY(XMConvertToRadians(m_TerrainObjectSRT.m[1][1]));
+			_Matrix RotZ = XMMatrixRotationZ(XMConvertToRadians(m_TerrainObjectSRT.m[1][2]));
+			_Matrix Scale = XMMatrixScaling((m_TerrainObjectSRT.m[0][0]), (m_TerrainObjectSRT.m[0][1]), (m_TerrainObjectSRT.m[0][2]));
+
+
+			_float4x4 Matrix = Scale* RotX *RotY* RotZ* Trans;
+
+			Transform->Set_Matrix(Matrix);
+
+			break;
+			/*CTransform* Transform = static_cast<CTransform*>(m_pCreatedTerrain->Get_Component(TEXT("Com_Transform")));
+
+			m_vTerrainPos = Transform->Get_MatrixState(CTransform::STATE_POS);
+			ImGui::DragFloat3(" Terrain X Y Z", m_TerrainArrBuffer, 0.1f, -FLT_MAX, FLT_MAX);
+
+			Transform->Set_MatrixState(CTransform::STATE_POS, _float3(m_TerrainArrBuffer[0], m_TerrainArrBuffer[1], m_TerrainArrBuffer[2]));
+			break;*/
+		}
+		case 1://Terrain Rotation
+		{
+			CTransform* Transform = static_cast<CTransform*>(m_pCreatedTerrain->Get_Component(TEXT("Com_Transform")));
+
+			memcpy(m_TerrainArrBuffer, &(m_TerrainObjectSRT.m[1]), sizeof(_float) * 3);
+			ImGui::DragFloat3("Terrain X Y Z", m_TerrainArrBuffer, m_TerrainArrBuffer[3], -FLT_MAX, FLT_MAX);
+
+			memcpy(&(m_TerrainObjectSRT.m[1]), m_TerrainArrBuffer, sizeof(_float) * 3);
+
+			_float Temp[4] = { 1.f, 1.f, 1.f, 0.f };
+			memcpy(&(m_TerrainObjectSRT.m[0]), Temp, sizeof(_float) * 3);
+
+			_Matrix Trans = XMMatrixTranslation(m_TerrainObjectSRT.m[2][0], m_TerrainObjectSRT.m[2][1], m_TerrainObjectSRT.m[2][2]);
+			_Matrix RotX = XMMatrixRotationX(XMConvertToRadians(m_TerrainObjectSRT.m[1][0]));
+			_Matrix RotY = XMMatrixRotationY(XMConvertToRadians(m_TerrainObjectSRT.m[1][1]));
+			_Matrix RotZ = XMMatrixRotationZ(XMConvertToRadians(m_TerrainObjectSRT.m[1][2]));
+			_Matrix Scale = XMMatrixScaling((m_TerrainObjectSRT.m[0][0]), (m_TerrainObjectSRT.m[0][1]), (m_TerrainObjectSRT.m[0][2]));
+
+
+			_float4x4 Matrix = Scale* RotX *RotY* RotZ* Trans;
+
+			Transform->Set_Matrix(Matrix);
+			break;
+		}
+		}
+
+		Make_VerticalSpacing(1);
+
+		ImGui::RadioButton("Navi_Picking", &m_iPickingModeNumber, 0); ImGui::SameLine();
+		ImGui::RadioButton("Navi_Modify", &m_iPickingModeNumber, 1); ImGui::SameLine();
+
+		if (m_iPickingModeNumber == 0)
+		{
+			if (m_iVertexIndex == 3)
+			{
+				//시계방향으로 바꾸기.
+				_int iCCW = CCWClockSort();
+
+				if (iCCW > 0)
+				{
+					_float3 Temp = m_vVertexts[0];
+
+					m_vVertexts[0] = m_vVertexts[2];
+					m_vVertexts[2] = Temp;
+				}
+
+				CCell*		pCell = CCell::Create(m_pDevice, m_pDeviceContext, m_vVertexts, (_uint)m_Cells.size());
+				if (nullptr != pCell)
+				{
+					for (_int i = 0; i < m_Points.size(); ++i)
+					{
+						CTransform* PointTransform = (CTransform*)m_Points[i]->Get_Component(TAG_COM(Com_Transform));
+						_float3 Pos = PointTransform->Get_MatrixState(CTransform::STATE_POS);
+
+						for (_int j = 0; j < 3; ++j)
+						{
+							if (Pos == m_vVertexts[j])
+							{
+								m_Points[i]->Push_Cells(pCell);
+								break;
+							}
+						}
+					}
+				}
+
+				ZeroMemory(m_vVertexts, sizeof(_float3) * 3);
+
+				m_Cells.push_back(pCell);
+				m_iVertexIndex = 0;
+
+				++m_iCellCount;
+				char sIntStr[5];
+				_itoa_s(m_iCellCount, sIntStr, 10);
+				char str[10] = "Cell";
+				strcat_s(str, sIntStr);
+
+				char* sCellNum = new char[10];
+
+				strcpy_s(sCellNum, 10, str);
+
+				m_vCellNames.push_back(sCellNum);
+			}
+
+			Add_Vertex();
+		}
+		else if (m_iPickingModeNumber == 1)
+		{
+			Make_VerticalSpacing(2);
+
+			ImGui::RadioButton("Vertex", &m_iVertexAndCell, 0); ImGui::SameLine();
+			ImGui::RadioButton("Cell", &m_iVertexAndCell, 1); ImGui::SameLine();
+
+			if (m_iVertexAndCell == 0)
+			{
+				if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
+				{
+					for (auto& Point : m_Points)
+					{
+						CCollisionMgr::EDITPOINTCOLLIDER TypeColl;
+
+						TypeColl.vCollider = Point->Get_Collider();
+						TypeColl.GameObject = Point;
+						TypeColl.vCollider->Get_Edit_ColliderBuffer()->Set_IsConflicted(false);
+						g_pGameInstance->Add_NaviPointCollider(TypeColl);
+					}
+
+					POINT ptMouse;
+					GetCursorPos(&ptMouse);
+					ScreenToClient(g_hWnd, &ptMouse);
+
+					_Vector vCursorPos = XMVectorSet(
+						(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+						(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+						0, 1.f);
+
+					_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+
+					_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+					_float3 m_vRayPos = _float3(0.f, 0.f, 0.f);
+
+					_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+					vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+					XMStoreFloat3(&m_vRayPos, XMVector3TransformCoord(XMLoadFloat3(&m_vRayPos), InvViewMat));
+
+					m_pPointObj = static_cast<CNaviPoint*>(g_pGameInstance->NaviPointCollision(XMLoadFloat3(&m_vRayPos), vRayDir));
+				}
+				if (nullptr != m_pPointObj)
+				{
+					CCollider* PointCollider = m_pPointObj->Get_Collider();
+					CColliderBuffer* ColliderBuf = PointCollider->Get_Edit_ColliderBuffer();
+					ColliderBuf->Set_IsConflicted(true);
+					Make_VerticalSpacing(2);
+					CTransform* Transform = (CTransform*)m_pPointObj->Get_Component(TAG_COM(Com_Transform));
+					_float3 Pos = Transform->Get_MatrixState(CTransform::STATE_POS);
+					memcpy(m_VertexArrBuffer, &Pos, sizeof(_float) * 3);
+					ImGui::DragFloat3("Vertex  X Y Z", m_VertexArrBuffer, 0.1f, -FLT_MAX, FLT_MAX);
+					Transform->Set_MatrixState(CTransform::STATE_POS, _float3(m_VertexArrBuffer[0], m_VertexArrBuffer[1], m_VertexArrBuffer[2]));
+
+					for (_int i = 0; i < m_Points.size(); ++i)
+					{
+
+						if (m_Points[i] == m_pPointObj)
+						{
+							m_iVertexListCount = i;
+							m_Points[i]->ReLocationCell(Pos, Transform->Get_MatrixState(CTransform::STATE_POS));
+						}
+					}
+				}
+			}
+			else if (m_iVertexAndCell == 1)
+			{
+				if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
+				{
+					POINT ptMouse;
+					GetCursorPos(&ptMouse);
+					ScreenToClient(g_hWnd, &ptMouse);
+
+					_Vector vCursorPos = XMVectorSet(
+						(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+						(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+						0, 1.f);
+
+					_Matrix InvProjMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_PROJ));
+
+					_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+					_Matrix InvViewMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_VIEW));
+					vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+					if (m_pCreatedTerrain)
+					{
+						_Vector vCamPos = m_pEditorCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+						_Vector vOldPos = vCamPos;
+						_Vector vNewPos;
+						_float3 vResult;
+						_bool IsPicked = false;
+
+
+						for (_uint i = 0; i < 200; i++)
+						{
+							vNewPos = vOldPos + vRayDir;
+
+							vResult = m_pCreatedTerrain->Pick_OnTerrain(&IsPicked, vNewPos, vOldPos);
+
+							if (IsPicked)
+							{
+								_Vector Pos = XMLoadFloat3(&vResult);
+								Pos = XMVectorSetW(Pos, 1.f);
+								for (_int j = 0; j < m_Cells.size(); ++j)
+								{
+									if (nullptr != m_Cells[j])
+									{
+										_int	NeighborIndex = -1;
+										_int	Line[3] = { 1, 1, 1 };
+										if (m_Cells[j]->isIn(Pos, &NeighborIndex, Line))
+										{
+											m_bIsCellOption = true;
+											m_OptionNumber = m_Cells[j]->Get_CellOption();
+											m_iCellListCount = j;
+										}
+									}
+								}
+								break;
+							}
+
+							vOldPos = vNewPos;
+						}
+					}
+				}
+				
+			}
+
+			
+		}
+
+		Make_VerticalSpacing(2);
+
+		ImGui::Text("VertexList"); ImGui::SameLine(200.f, 1.f); ImGui::Text("CellList");
+
+
+		if (ImGui::BeginListBox("", ImVec2(150.f, 70.f)))
+		{
+			for (int n = 0; n < m_vVertexs.size(); n++)
+			{
+				const bool is_selected = (m_iVertexListCount == n);
+				if (ImGui::Selectable(m_vVertexs[n], is_selected))
+				{
+					m_iVertexListCount = n;
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndListBox();
+		}
+
+		ImGui::SameLine(200.f, 1.f);
+
+		if (ImGui::BeginListBox(" ", ImVec2(150.f, 70.f)))
+		{
+			for (int n = 0; n < m_vCellNames.size(); n++)
+			{
+				const bool is_selected = (m_iCellListCount == n);
+				if (ImGui::Selectable(m_vCellNames[n], is_selected))
+				{
+					m_iCellListCount = n;
+
+				}
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+					m_bIsCellListClick = is_selected;
+				}
+			}
+			ImGui::EndListBox();
+		}
+
+		Make_VerticalSpacing(2);
+		if (ImGui::Button("Point Delete"))
+		{
+			if (m_vVertexs.size() > 0)
+			{
+				Safe_Delete(m_vVertexs[m_iVertexListCount]);
+				m_vVertexs.erase(m_vVertexs.begin() + m_iVertexListCount);
+
+				m_Points[m_iVertexListCount]->Set_IsDead();
+				m_Points.erase(m_Points.begin() + m_iVertexListCount);
+
+				m_iVertexListCount = 0;
+			}
+		}
+
+		ImGui::SameLine(200.f, 1.f);
+
+		if (ImGui::Button("Cell Delete"))
+		{
+			if (m_vCellNames.size() > 0)
+			{
+				Safe_Delete(m_vCellNames[m_iCellListCount]);
+				m_vCellNames.erase(m_vCellNames.begin() + m_iCellListCount);
+
+
+				Safe_Release(m_Cells[m_iCellListCount]);
+				vector<CCell*>::iterator  itr =  m_Cells.erase(m_Cells.begin() + m_iCellListCount);
+
+				for (itr; itr != m_Cells.end(); ++itr)
+				{
+					
+					(*itr)->Set_Index((*itr)->Get_Index() - 1);
+				}
+				
+				m_iCellListCount = 0;
+			}
+		}
+
+		Make_VerticalSpacing(2);
+
+		const char* items[] = { "CELL_NOMAL", "CELL_DROP" };
+		static int item_current = 0;
+		ImGui::Combo("Cell Option", &item_current, items, IM_ARRAYSIZE(items));
+		if (m_bIsCellListClick)
+		{
+			if (m_bIsCellOption)
+			{
+				item_current = m_OptionNumber;
+				m_bIsCellOption = false;
+			}
+			if (m_Cells.size() > 0)
+			{
+				if (item_current == 0)
+				{
+					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_NOMAL);
+				}
+				else if (item_current == 1)
+					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_DROP);
+			}
+		}
+
+		Make_VerticalSpacing(10);
+
+		if (ImGui::TreeNode("Navigation Save & Load"))
+		{
+			if (ImGui::Button("Save Navigation", ImVec2(-FLT_MIN, 30.f)))
+				ImGui::OpenPopup("Save Navigation");
+
+			if (ImGui::Button("Load Navigation", ImVec2(-FLT_MIN, 30.f)))
+				ImGui::OpenPopup("Load Navigation");
+
+			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+			if (ImGui::BeginPopupModal("Save Navigation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				if (m_FilePathList.size() == 0)
+				{
+					m_FilePathList.clear();
+					_tfinddata64_t fd;
+					__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/NaviMesh/*.*"), &fd);
+					if (handle == -1 || handle == 0)
+						return E_FAIL;
+
+					_int iResult = 0;
+
+					char szFilename[MAX_PATH];
+
+					while (iResult != -1)
+					{
+						if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+						{
+							iResult = _tfindnext64(handle, &fd);
+							continue;
+						}
+
+						WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+						m_FilePathList.push_back({ szFilename });
+
+						iResult = _tfindnext64(handle, &fd);
+					}
+
+					_findclose(handle);
+				}
+
+				ImGui::Text("Save Navigation!\n\nExist NaviGationDataFiles");
+
+				static ImGuiTextFilter filter;
+
+				char	szCheckforSameFileName[256] = "";
+
+				if (ImGui::BeginListBox(" "))
+				{
+					auto iter = m_FilePathList.begin();
+
+
+					for (; iter != m_FilePathList.end(); iter++)
+					{
+						const bool is_selected = false;
+
+						if (filter.PassFilter(iter->c_str()))
+						{
+							if (ImGui::Selectable(iter->c_str(), is_selected))
+							{
+								strcpy_s(filter.InputBuf, iter->c_str());
+							}
+
+							if (!strcmp(iter->c_str(), filter.InputBuf))
+								strcpy_s(szCheckforSameFileName, filter.InputBuf);
+						}
+					}
+					ImGui::EndListBox();
+				}
+
+				filter.Draw("Input FileName");
+
+				ImGui::Separator();
+				if (ImGui::Button("Save", ImVec2(120, 0)))
+				{
+
+					if (strcmp(filter.InputBuf, ""))
+					{
+
+						if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+						{
+							ImGui::OpenPopup("Navi One More Check");
+						}
+						else
+						{
+							//실제 저장
+
+							Sava_Data(filter.InputBuf, Data_Navigation);
+
+							ImGui::CloseCurrentPopup();
+							m_FilePathList.clear();
+						}
+					}
+
+
+
+				}
+				ImGui::SetItemDefaultFocus();
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					ImGui::CloseCurrentPopup();
+					m_FilePathList.clear();
+				}
+
+
+				//서브 팝업
+				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+				if (ImGui::BeginPopupModal("Navi One More Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+
+					ImGui::Text("NaviGationData Already Exist\nDo you want to Override on it?");
+
+					if (ImGui::Button("Ok", ImVec2(130, 0)))
+					{
+
+						//실제 저장
+						Sava_Data(filter.InputBuf, Data_Navigation);
+
+						ImGui::CloseCurrentPopup();
+						m_FilePathList.clear();
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel", ImVec2(130, 0)))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopupModal("Load Navigation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Laod Navigation!\n\n");
+				ImGui::Separator();
+
+
+				if (m_FilePathList.size() == 0)
+				{
+					m_FilePathList.clear();
+					_tfinddata64_t fd;
+					__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/NaviMesh/*.*"), &fd);
+					if (handle == -1 || handle == 0)
+						return E_FAIL;
+
+					_int iResult = 0;
+
+					char szFilename[MAX_PATH];
+
+					while (iResult != -1)
+					{
+						if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+						{
+							iResult = _tfindnext64(handle, &fd);
+							continue;
+						}
+
+
+						WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+						//strcpy_s(szFullPath, szCurPath);
+						//strcat_s(szFullPath, szFilename);
+						m_FilePathList.push_back({ szFilename });
+
+
+						iResult = _tfindnext64(handle, &fd);
+					}
+					_findclose(handle);
+				}
+
+				static ImGuiTextFilter filter;
+
+				char	szCheckforSameFileName[256] = "";
+
+				if (ImGui::BeginListBox(" "))
+				{
+					auto iter = m_FilePathList.begin();
+
+
+					for (; iter != m_FilePathList.end(); iter++)
+					{
+						const bool is_selected = false;
+
+						if (filter.PassFilter(iter->c_str()))
+						{
+							if (ImGui::Selectable(iter->c_str(), is_selected))
+							{
+								strcpy_s(filter.InputBuf, iter->c_str());
+							}
+
+							if (!strcmp(iter->c_str(), filter.InputBuf))
+								strcpy_s(szCheckforSameFileName, filter.InputBuf);
+						}
+					}
+					ImGui::EndListBox();
+
+				}
+
+				filter.Draw("Input FileName");
+
+
+
+
+				if (ImGui::Button("OK", ImVec2(120, 0)))
+				{
+
+					if (strcmp(filter.InputBuf, ""))
+					{
+						if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+						{
+							Load_Data(filter.InputBuf, Data_Navigation);
+							m_FilePathList.clear();
+							ImGui::CloseCurrentPopup();
+						}
+					}
+				}
+				ImGui::SetItemDefaultFocus();
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+					m_FilePathList.clear();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+			ImGui::TreePop();
+		}
+
+		Make_VerticalSpacing(10);
 
 		if (ImGui::TreeNode("Save & Delete HeightMap"))
 		{
@@ -3661,10 +4602,6 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 				ImGui::EndPopup();
 			}
 
-
-
-
-
 			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
 			if (ImGui::BeginPopupModal("Delete HeightMap", NULL, ImGuiWindowFlags_AlwaysAutoResize))
@@ -3699,6 +4636,151 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 		}
 	}
 
+	return S_OK;
+}
+
+void CScene_Edit::Add_Vertex()
+{
+	if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
+	{
+		for (auto& Point : m_Points)
+		{
+			CCollisionMgr::EDITPOINTCOLLIDER TypeColl;
+
+			TypeColl.vCollider = Point->Get_Collider();
+			TypeColl.GameObject = Point;
+			g_pGameInstance->Add_NaviPointCollider(TypeColl);
+		}
+
+		POINT ptMouse;
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+		_Vector vCursorPos = XMVectorSet(
+			(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+			(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+			0, 1.f);
+
+		_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+
+		_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+		_float3 m_vRayPos = _float3(0.f, 0.f, 0.f);
+
+		_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+		vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+		XMStoreFloat3(&m_vRayPos, XMVector3TransformCoord(XMLoadFloat3(&m_vRayPos), InvViewMat));
+
+		CGameObject* Obj = g_pGameInstance->NaviPointCollision(XMLoadFloat3(&m_vRayPos), vRayDir);
+
+		if (nullptr == Obj)
+		{
+			POINT ptMouse;
+			GetCursorPos(&ptMouse);
+			ScreenToClient(g_hWnd, &ptMouse);
+
+
+
+			_Vector vCursorPos = XMVectorSet(
+				(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+				(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+				0, 1.f);
+
+			_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+
+			_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+			_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+			vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+			if (m_pCreatedTerrain)
+			{
+				_Vector vCamPos = m_pEditorCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+				_Vector vOldPos = vCamPos;
+				_Vector vNewPos;
+				_float3 vResult;
+				_bool IsPicked = false;
+
+
+				for (_uint i = 0; i < 200; i++)
+				{
+					vNewPos = vOldPos + vRayDir;
+
+					vResult = m_pCreatedTerrain->Pick_OnTerrain(&IsPicked, vNewPos, vOldPos);
+
+					if (IsPicked)
+					{
+						Ready_Layer_NaviPoint(vResult);
+						break;
+					}
+
+					vOldPos = vNewPos;
+				}
+			}
+
+			++m_iVertexCount;
+			char sIntStr[5];
+			_itoa_s(m_iVertexCount, sIntStr, 10);
+			char str[10] = "Vertex";
+			char* sVertexNum = new char[10];
+			strcat_s(str, sIntStr);
+			strcpy_s(sVertexNum, 10, str);
+
+			m_vVertexs.push_back(sVertexNum);
+		}
+		else
+		{
+			if (m_iVertexIndex < 3)
+			{
+				CTransform* ObjTransform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+				XMStoreFloat3(&m_vVertexts[m_iVertexIndex], ObjTransform->Get_MatrixState(CTransform::STATE_POS));
+				++m_iVertexIndex;
+			}
+		}
+	}
+}
+
+_int CScene_Edit::CCWClockSort()
+{
+	//x1 * y2 + x2 * y3 + x3 * y1
+	_int a =_int( m_vVertexts[0].x * m_vVertexts[1].z + m_vVertexts[1].x * m_vVertexts[2].z + m_vVertexts[2].x * m_vVertexts[0].z);
+	//y1 * x2 + y2 * x3 + y3 * x1
+	_int b = _int( m_vVertexts[0].z * m_vVertexts[1].x + m_vVertexts[1].z * m_vVertexts[2].x + m_vVertexts[2].z * m_vVertexts[0].x);
+
+
+	return a - b;
+}
+
+HRESULT CScene_Edit::Ready_Layer_NaviPoint(_float3 Pos)
+{
+	CNaviPoint* pNaviPoint = nullptr;
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&pNaviPoint), SCENE_EDIT, TAG_OP(Prototype_NaviPoint)));
+	NULL_CHECK_RETURN(pNaviPoint, E_FAIL);
+	CTransform* Transform =  (CTransform*)pNaviPoint->Get_Component(TAG_COM(Com_Transform));
+
+	Transform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+	if (m_iVertexIndex < 3)
+	{
+		XMStoreFloat3(&m_vVertexts[m_iVertexIndex], Transform->Get_MatrixState(CTransform::STATE_POS));
+		++m_iVertexIndex;
+	}
+
+	m_Points.push_back(pNaviPoint);
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Ready_Layer_LoadNaviPoint(_float3 Pos)
+{
+	CNaviPoint* pNaviPoint = nullptr;
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&pNaviPoint), SCENE_EDIT, TAG_OP(Prototype_NaviPoint)));
+	NULL_CHECK_RETURN(pNaviPoint, E_FAIL);
+	CTransform* Transform = (CTransform*)pNaviPoint->Get_Component(TAG_COM(Com_Transform));
+
+	Transform->Set_MatrixState(CTransform::STATE_POS, Pos);
+	m_Points.push_back(pNaviPoint);
 	return S_OK;
 }
 
@@ -3855,11 +4937,28 @@ void CScene_Edit::Free()
 		Safe_Release(iter);
 	m_vecLookBatchedObj.clear();
 
+	for (auto& Point : m_Points)
+		Point->Free();
+	m_Points.clear();
+
+	for (auto& Cell : m_Cells)
+		Cell->Free();
+	m_Cells.clear();
+
+	for (auto& Vertex : m_vVertexs)
+		Safe_Delete(Vertex);
+	m_vVertexs.clear();
+
+	for (auto& CellName : m_vCellNames)
+		Safe_Delete(CellName);
+	m_vCellNames.clear();
 
 
 	Safe_Release(m_pCreatedTerrain);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_TargetSRV);
+	Safe_Release(m_pVIBuffer);
+	Safe_Release(m_pShader);
 	//Safe_Release(m_pRendererEditUI);
 #endif
 }
