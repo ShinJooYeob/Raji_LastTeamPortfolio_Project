@@ -83,7 +83,7 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 	for (auto& pair: mMap_ModelDesc)
 	{		
 		wstring name = pair.first;
-		_uint length = name.length();
+		_uint length = _uint(name.length());
 		wstring Name = name.substr(0, length - 4);
 		Save_MODELDESC(STR_FILEPATH_RESOURCE_DAT_L, Name, pair.second);
 		Safe_Delete(pair.second);
@@ -404,7 +404,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 
 		// Ani 데이터 복사
 		auto VecAni = model->Get_VecAni();
-		_uint NumAnimations = ModelDesc->mNumAnimations = VecAni.size();
+		_uint NumAnimations =ModelDesc->mNumAnimations = _uint(VecAni.size());
 		
 		ModelDesc->mAnimations =NEW ANIDESC[NumAnimations];
 

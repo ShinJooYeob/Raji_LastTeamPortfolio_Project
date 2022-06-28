@@ -170,7 +170,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_AvgLuminece"), 150, 450, 100, 100));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_LumineceMask"), 150, 550, 100, 100));
 
-	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_GodRay"), 640, 360, 720, 720));
+	//FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_GodRay"), 640, 360, 720, 720));
 
 
 
@@ -188,7 +188,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_LumineceMask")));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_GodRay")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_GodRay")));
 
 
 	

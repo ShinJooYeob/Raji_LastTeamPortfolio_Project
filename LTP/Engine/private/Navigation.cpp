@@ -44,7 +44,7 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
 		if (0 == dwByte)
 			break;
 
-		CCell*		pCell = CCell::Create(m_pDevice, m_pDeviceContext, vPoints, m_Cells.size());
+		CCell*		pCell = CCell::Create(m_pDevice, m_pDeviceContext, vPoints, _uint(m_Cells.size()));
 		if (nullptr == pCell)
 			return E_FAIL;
 
@@ -114,7 +114,7 @@ _bool CNavigation::Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* 
 		else
 		{
 			/* 슬라이딩. */
-			_Vector SlidingVector;
+			//_Vector SlidingVector;
 			_Vector Line = m_Cells[m_NaviDesc.iCurrentIndex]->Get_LineDir(iLineNumber);
 			Line = XMVector3Normalize(Line);
 			vDir = XMVector3Normalize(vDir);

@@ -4,6 +4,15 @@
     <Filter Include="Default">
       <UniqueIdentifier>{135df1f5-a573-44c5-a0f7-4fac19d35c83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Default\00.Win32Frame">
+      <UniqueIdentifier>{d5929dfc-0b9d-401c-9f08-a128a2645907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\01.Resource">
+      <UniqueIdentifier>{54f440fe-2b1f-4913-803a-78a5b59b45d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\02.Etc">
+      <UniqueIdentifier>{d9cc5833-e9c8-4b44-af52-5d65bc8794c7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.GameObject">
       <UniqueIdentifier>{1e3acef8-4f46-4ca4-ae1b-dc8708f5ddbe}</UniqueIdentifier>
     </Filter>
@@ -30,6 +39,30 @@
     </Filter>
     <Filter Include="01.GameObject\00.Camera">
       <UniqueIdentifier>{679099b1-92a8-4926-bb1d-66b277cafb42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player">
+      <UniqueIdentifier>{5b4a2e76-6924-450a-bcaa-3ea61d0fafa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster">
+      <UniqueIdentifier>{e402d177-2582-410e-9a7b-a085447e4ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\03.Npc">
+      <UniqueIdentifier>{0ec860d4-f67f-4654-8346-a74e34a68bfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\05.SkyBox">
+      <UniqueIdentifier>{88098f82-4509-4315-98a5-678083138f6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain">
+      <UniqueIdentifier>{111bb108-04f6-4804-a7ed-b1ac40e6d873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject">
+      <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject">
+      <UniqueIdentifier>{cc515ead-bb04-41b8-aadc-3e855ee22769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI">
+      <UniqueIdentifier>{7283bfda-be09-4504-a6b1-d4294a912b6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.Scene\01.Scene_Loby">
       <UniqueIdentifier>{ba7a4ca4-6126-4de3-a1bf-c9af0b593e19}</UniqueIdentifier>
@@ -76,14 +109,38 @@
     <Filter Include="03.Manager\02.ImguiMgr\99.Default">
       <UniqueIdentifier>{17ffe9ec-0c2e-4dae-b1a1-6b80f19037b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\01.AssimpModelTest">
+    <Filter Include="01.GameObject\97.TestObject">
       <UniqueIdentifier>{a7b3c531-e407-40f9-a353-10b9cfcf15b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Manager\03.AssimpMgr">
-      <UniqueIdentifier>{198508c1-98d7-4c79-a514-a8fe44cab236}</UniqueIdentifier>
+    <Filter Include="01.GameObject\97.TestObject\00.For_EditorScene">
+      <UniqueIdentifier>{ff4047c5-d159-4854-b153-f03f045d7655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject">
+      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject">
+      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\96.NaviPoint">
+      <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Default\02.Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Default\02.Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default\01.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Default\00.Win32Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp">
+      <Filter>04.ShaderFiles</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Client_Enum.h">
       <Filter>99.Define</Filter>
     </ClInclude>
@@ -101,9 +158,6 @@
     </ClInclude>
     <ClInclude Include="..\public\UtilityMgr.h">
       <Filter>03.Manager\01.UtilityMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Loader.h">
-      <Filter>02.Scene\04.Scene_InGame</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Scene_Loading.h">
       <Filter>02.Scene\02.Scene_Loading</Filter>
@@ -169,42 +223,51 @@
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestObject.h">
-      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+      <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestObject2.h">
-      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    <ClInclude Include="..\public\SkyBox.h">
+      <Filter>01.GameObject\05.SkyBox</Filter>
     </ClInclude>
-    <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp">
-      <Filter>04.ShaderFiles</Filter>
+    <ClInclude Include="..\public\EditorTerrain.h">
+      <Filter>01.GameObject\06.Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Default</Filter>
+    <ClInclude Include="..\public\Scene_Edit.h">
+      <Filter>02.Scene\99.Scene_Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ZAssimp_Main.h">
-      <Filter>Default</Filter>
+    <ClInclude Include="..\public\Camera_Editor.h">
+      <Filter>01.GameObject\00.Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Default</Filter>
+    <ClInclude Include="..\public\ESCursor.h">
+      <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Default</Filter>
+    <ClInclude Include="..\public\MapObject.h">
+      <Filter>01.GameObject\07.MapObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FIleIO\AssimpMgr.h">
-      <Filter>03.Manager\03.AssimpMgr</Filter>
+    <ClInclude Include="..\public\StaticMapObject.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Player.h">
-      <Filter>01.GameObject\01.Player</Filter>
+    <ClInclude Include="..\public\NaviPoint.h">
+      <Filter>01.GameObject\96.NaviPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Loader.h">
+      <Filter>02.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestStaticObject.h">
+      <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>Default\00.Win32Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Default\02.Etc</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MainApp.cpp">
       <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UtilityMgr.cpp">
       <Filter>03.Manager\01.UtilityMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Loader.cpp">
-      <Filter>02.Scene\04.Scene_InGame</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Scene_Loading.cpp">
       <Filter>02.Scene\02.Scene_Loading</Filter>
@@ -267,30 +330,61 @@
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestObject.cpp">
-      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+      <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TestObject2.cpp">
-      <Filter>01.GameObject\01.AssimpModelTest</Filter>
+    <ClCompile Include="..\private\SkyBox.cpp">
+      <Filter>01.GameObject\05.SkyBox</Filter>
     </ClCompile>
-    <ClCompile Include="ZAssimp_Main.cpp">
-      <Filter>Default</Filter>
+    <ClCompile Include="..\private\EditorTerrain.cpp">
+      <Filter>01.GameObject\06.Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Default</Filter>
+    <ClCompile Include="..\private\Scene_Edit.cpp">
+      <Filter>02.Scene\99.Scene_Editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FIleIO\AssimpMgr.cpp">
-      <Filter>03.Manager\03.AssimpMgr</Filter>
+    <ClCompile Include="..\public\Camera_Editor.cpp">
+      <Filter>01.GameObject\00.Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp">
-      <Filter>01.GameObject\01.Player</Filter>
+    <ClCompile Include="..\private\ESCursor.cpp">
+      <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMapObject.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapObject.cpp">
+      <Filter>01.GameObject\07.MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaviPoint.cpp">
+      <Filter>01.GameObject\96.NaviPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Loader.cpp">
+      <Filter>02.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestStaticObject.cpp">
+      <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="..\public\Imgui\imgui.natvis">
-      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
-    </Natvis>
+    <Image Include="Client.ico">
+      <Filter>Default\01.Resource</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>Default\01.Resource</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>Default\02.Etc</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>Default\01.Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_NonAnimModel.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
     <FxCompile Include="..\bin\ShaderFiles\Shader_VtxCubeTex.hlsl">
       <Filter>04.ShaderFiles</Filter>
     </FxCompile>
@@ -306,29 +400,10 @@
     <FxCompile Include="..\bin\ShaderFiles\Shader_AnimModel.hlsl">
       <Filter>04.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\bin\ShaderFiles\Shader_Deferred.hlsl">
-      <Filter>04.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\bin\ShaderFiles\Shader_NonAnimModel.hlsl">
-      <Filter>04.ShaderFiles</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="ZAssimp.ico">
-      <Filter>Default</Filter>
-    </Image>
-    <Image Include="small.ico">
-      <Filter>Default</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="ZAssimp.rc">
-      <Filter>Default</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt">
-      <Filter>Default</Filter>
-    </Text>
+    <Natvis Include="..\public\Imgui\imgui.natvis">
+      <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>
