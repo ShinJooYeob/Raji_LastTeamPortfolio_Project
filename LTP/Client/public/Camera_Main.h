@@ -7,6 +7,11 @@ BEGIN(Client)
 class CCamera_Main :public CCamera
 {
 public:
+	enum ECameraMode
+	{
+		CAM_MODE_NOMAL
+	};
+
 	enum CameraEffectID
 	{
 		CAM_EFT_SHAKE,
@@ -22,10 +27,30 @@ public:
 	virtual HRESULT Initialize_Clone(void* pArg)override;
 
 public:
-	_bool Get_IsCamAction() { return m_bCamActionStart; };
+	_bool		Get_IsCamAction() { return m_bCamActionStart; };
 
 public:
-	_bool	CamActionStart(CAMERAACTION Act);
+	_bool		CamActionStart(CAMERAACTION Act);
+
+public: /* Get Camera Transform State */
+	_fVector	Get_CameraState(CTransform::TransformState eState);
+	_fVector	Get_CameraState_Normalize(CTransform::TransformState eState);
+
+public: /* Setting State */
+	void		Set_TargetArmLength(_float fTargetArmLength);
+	void		Set_FocusTarget(CGameObject* pFocusTarget);
+	void		Set_CameraMode(ECameraMode eCameraMode);
+	void		LookAt_Target();
+
+public: /* Getter */
+	_float		Get_TargetArmLength();
+
+private: /* Chase Target Method */
+	void		ChaseTarget_NormalMode(_double fDeltaTime);
+
+private:
+	ECameraMode		m_eCurCamMode = CAM_MODE_NOMAL;
+
 private:
 	//_bool			m_bIsCamMoving = false;
 	_bool			m_bCamActionStart = false;
@@ -36,6 +61,12 @@ private:
 	_uint			m_iNowLookIndex = 0;
 	_double			m_ActionPassedTime = 0;
 
+private: /* Target Info */
+	CGameObject*	m_pFocusTarget = nullptr;
+	_float			m_fTargetArmLength = 0.f;
+	_float			m_fMax_TargetArmLength = 100.f;
+	_float			m_fMin_TargetArmLength = 0.f;
+
 public:
 	virtual _int Update(_double fDeltaTime)override;
 	virtual _int LateUpdate(_double fDeltaTime)override;
@@ -43,13 +74,8 @@ public:
 	virtual _int LateRender()override;
 
 private:
-
 	HRESULT			SetUp_Components();
 	HRESULT			Update_CamAction(_double fDeltaTime);
-
-
-
-
 
 public:
 	HRESULT		Start_CameraShaking_Thread(_double TotalTime, _float Power);
@@ -58,6 +84,9 @@ public:
 
 
 	virtual HRESULT Set_ViewMatrix() override;
+
+private:
+	_int		Update_NormalMode(_double fDeltaTime);
 
 private:
 	_bool				m_bIsStartedShaking = false;

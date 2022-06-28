@@ -176,6 +176,21 @@ HRESULT CGameObject::Change_Component_by_Parameter(CComponent * NewComponent, co
 	return S_OK;
 }
 
+_fVector CGameObject::Get_AttachCamPos()
+{
+	return XMVectorSetW(m_fAttachCamPos.XMVector(), 1.f);
+}
+
+_fVector CGameObject::Get_AttachCamLook()
+{
+	return m_fAttachCamLook.XMVector();
+}
+
+void CGameObject::Update_AttachCamPos()
+{
+	
+}
+
 
 CComponent * CGameObject::Find_Components(const _tchar * tagComponent)
 {

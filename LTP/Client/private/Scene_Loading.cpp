@@ -100,6 +100,11 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 		case SCENEID::SCENE_STAGE4:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage4::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
+
+		case SCENEID::SCENE_STAGE5:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Stage5::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
+
 //		case SCENEID::SCENE_ENDING:
 //			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Ending::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 //			break;

@@ -28,11 +28,13 @@ public:
 	HRESULT Change_AnimIndex_UntilNReturn_Must(_uint iAnimIndex, _uint iUntilIndex, _uint iReturnIndex, _double ExitTime = 0.15, _bool bBlockAnimUntilReturnChange = false);
 	HRESULT Change_AnimIndex_UntilTo(_uint iAnimIndex, _uint iReturnIndex, _double ExitTime = 0.15, _bool bBlockAnimUntilReturnChange = false);
 	_uint	Get_NowAnimIndex() { return m_iNowAnimIndex; };
-	_uint	Get_IsHavetoBlockAnimChange() { return m_bIsBlockAnim; };
+	_uint	Get_OldAnimIndex() { return m_iOldAnimIndex; };
+	_bool	Get_IsHavetoBlockAnimChange() { return m_bIsBlockAnim; };
 	_double	Get_PlayRate();
 	_bool	Get_IsUntillPlay() { return m_bIsUntill; };
 	_bool	Get_IsAnimChanging() { return m_bIsChagingAnim; }
 	void	Set_BlockAnim(_bool IsBlock) { m_bIsBlockAnim = IsBlock; };
+	void	Set_OldAnimIndex(_uint iAnimIndex);
 	void    Set_NextAnim_Must(_uint iAnim) { m_iNextAnimIndex = iAnim; };
 	HRESULT	Remove_CertainKeyFrameIndex(_uint iAnimIndex);
 	void	Add_Time_To_NowAnimPlayAcc(_double Time) { m_NowPlayTimeAcc += Time; }
@@ -47,6 +49,9 @@ public:
 private:
 	const aiScene*				m_pScene = nullptr;
 	Importer					m_Importer;
+
+public:
+	_fMatrix Get_BoneMatrix(const char* pBoneName);
 
 private: /*매시 보관(영항 받는 머테리얼 기준으로 분류하여 저장)*/
 	_uint									m_iNumMeshContainers = 0;

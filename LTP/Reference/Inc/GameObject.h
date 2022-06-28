@@ -40,6 +40,9 @@ public:
 	HRESULT Change_Component_by_NewAssign(_uint iScenenNum, const _tchar* tagPrototype, const _tchar* tagComponent, void* pArg = nullptr);
 	HRESULT Change_Component_by_Parameter(CComponent* NewComponent, const _tchar* tagComponent, void* pArg = nullptr);
 
+	_fVector Get_AttachCamPos();
+	_fVector Get_AttachCamLook();
+	virtual void Update_AttachCamPos();
 
 protected:
 	map<const _tchar*, class CComponent**>	m_mapComponets;
@@ -58,7 +61,12 @@ protected:
 	_bool						m_bIsOnScreen = false;
 
 
-	_float						m_fFrustumRadius = 1.f; 
+	_float						m_fFrustumRadius = 1.f;
+
+	_float3						m_fAttachCamPos = _float3(0, 0, 0);
+	_float3						m_fAttachCamPos_Offset = _float3(0, 0, 0);
+	_float3						m_fAttachCamLook = _float3(0, 0, 0);
+
 protected:
 	HRESULT Add_Component(_uint iScenenNum, const _tchar* tagPrototype,const _tchar* tagComponent, CComponent** ppOut , void* pArg =nullptr);
 	

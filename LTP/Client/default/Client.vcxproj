@@ -188,6 +188,7 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapObject.h" />
+    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="..\private\ImguiMgr.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MapObject.cpp" />
+    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />

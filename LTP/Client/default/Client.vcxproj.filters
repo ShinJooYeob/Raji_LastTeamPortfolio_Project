@@ -252,6 +252,9 @@
     <ClInclude Include="..\public\Loader.h">
       <Filter>02.Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Loader.cpp">
       <Filter>02.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

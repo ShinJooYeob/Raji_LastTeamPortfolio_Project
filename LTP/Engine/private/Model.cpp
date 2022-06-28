@@ -448,6 +448,11 @@ _double CModel::Get_PlayRate()
 	return m_vecAnimator[m_iNowAnimIndex]->Get_PlayRate(m_NowPlayTimeAcc);
 }
 
+void CModel::Set_OldAnimIndex(_uint iAnimIndex)
+{
+	m_iOldAnimIndex = iAnimIndex;
+}
+
 HRESULT CModel::Remove_CertainKeyFrameIndex(_uint iAnimIndex)
 {
 	if (iAnimIndex >= m_vecAnimator.size())
@@ -502,6 +507,8 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 
 				m_NowPlayTimeAcc = 0;
 
+		
+
 				if (m_iNowAnimIndex < m_iNextAnimIndex)
 				{
 					m_iNowAnimIndex = m_iNowAnimIndex + 1;
@@ -511,6 +518,7 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 					m_bIsUntill = false;
 					m_iNowAnimIndex = m_iNowAnimIndex;
 					m_TotalAnimExitTime = 0;
+					m_bIsBlockAnim = false;
 				}
 
 				m_AnimExitAcc = 0;
@@ -613,7 +621,7 @@ HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 					m_OldPlayTimeAcc = m_NowPlayTimeAcc;
 					m_iOldAnimIndex = m_iNowAnimIndex;
 					m_NowPlayTimeAcc = 0;
-					m_TotalAnimExitTime = 0.15;
+					m_TotalAnimExitTime = 0.15f;
 					m_iNowAnimIndex = m_iNextAnimIndex;
 					m_AnimExitAcc = 0;
 					m_KindsOfAnimChange = 0;
@@ -760,6 +768,19 @@ ATTACHBONEMATRIX_PTR CModel::Find_AttachMatrix_InHirarchyNode(const char * pName
 	tReturn.pUpdatedNodeMat = pNode->Get_UpdatedTransformMat();
 	tReturn.pDefaultPivotMat = &m_DefaultPivotMatrix;
 	return tReturn;
+}
+
+_fMatrix CModel::Get_BoneMatrix(const char * pBoneName)
+{
+	_Matrix BoneMatrix = XMMatrixIdentity();
+
+	CHierarchyNode*		pNode = Find_HierarchyNode(pBoneName);
+	if (nullptr == pNode)
+		return BoneMatrix;
+	
+	BoneMatrix = XMLoadFloat4x4(&pNode->Get_OffsetMatrix()) * pNode->Get_CombinedMatrix() * XMLoadFloat4x4(&m_DefaultPivotMatrix);
+
+	return BoneMatrix;
 }
 
 HRESULT CModel::Ready_HierarchyNodes(aiNode * pNode, CHierarchyNode * pParent, _uint iDepth)
