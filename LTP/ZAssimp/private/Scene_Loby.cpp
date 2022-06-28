@@ -18,8 +18,6 @@ HRESULT CScene_Loby::Initialize()
 //	FAILED_CHECK(Ready_Light());
 //	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 
-	
-	float* a = NEW float;
 
 	//	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	//	// 경로 / 저장위치 / 파일이름 / 확장자명

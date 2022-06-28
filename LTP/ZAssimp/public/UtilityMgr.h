@@ -5,7 +5,8 @@ BEGIN(Client)
 
 class CUtilityMgr final :public CBase
 {
-	DECLARE_SINGLETON(CUtilityMgr)
+	DECLARE_SINGLETON(CUtilityMgr);
+
 public:
 	enum E_DEBUGTIMER
 	{

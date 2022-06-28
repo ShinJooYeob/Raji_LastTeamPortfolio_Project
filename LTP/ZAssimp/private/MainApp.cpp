@@ -197,7 +197,7 @@ HRESULT CMainApp::Ready_SingletonMgr()
 	FAILED_CHECK(GetSingle(CImguiMgr)->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
 #endif // _DEBUG
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr());
+//	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr());
 	FAILED_CHECK(GetSingle(CAssimpMgr)->Initialize(m_pDevice,m_pDeviceContext));
 
 	
