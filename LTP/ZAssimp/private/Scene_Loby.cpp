@@ -18,6 +18,7 @@ HRESULT CScene_Loby::Initialize()
 //	FAILED_CHECK(Ready_Light());
 //	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 
+	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	// 경로 / 저장위치 / 파일이름 / 확장자명
@@ -29,6 +30,7 @@ HRESULT CScene_Loby::Initialize()
 	// Dat파일 경로 업데이트
 	PathFinder_Text(STR_FILEPATH_RESOURCE_DAT_L, STR_FILEPATH_RESOURCE_PATH_L, STR_FILENAME_FBXDAT_TXT, L"");
 	
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1,L"ASSIMP_TIME");
 
 	return S_OK;
 }

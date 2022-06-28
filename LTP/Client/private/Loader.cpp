@@ -538,8 +538,6 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 HRESULT CLoader::Load_Model_DatFile()
 {
-	
-
 	// 데이터 파일로 assimp 없이 모델 초기화 / 데이터 초기화
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1);
@@ -561,6 +559,8 @@ HRESULT CLoader::Load_Model_DatFile()
 	// 모델 컴포넌트 생성
 	// For. Test
 	auto dynamiciter = dynamic_dat.begin();
+	
+	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 	for (auto& modeldesc : List_ModelDynamic)
 	{
 		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
@@ -585,6 +585,7 @@ HRESULT CLoader::Load_Model_DatFile()
 		if (staticiter == static_dat.end())
 			break;
 	}
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1,L"asdasd");
 
 
 #pragma endregion TESTCODE
