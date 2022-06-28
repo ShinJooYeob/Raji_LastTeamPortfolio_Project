@@ -100,6 +100,8 @@ private:
 	HRESULT Caculate_AvgLuminence();
 	HRESULT Render_Bloom();
 	HRESULT Make_BluredDeffered();
+	HRESULT Render_Volumatric();
+	HRESULT Render_GodRay();
 
 private:
 	HRESULT Render_DepthOfField();

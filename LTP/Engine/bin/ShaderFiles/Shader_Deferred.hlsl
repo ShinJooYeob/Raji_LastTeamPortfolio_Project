@@ -9,6 +9,7 @@ texture2D			g_WorldPosTexture;
 texture2D			g_ShadeTexture;
 texture2D			g_MaskTexture;
 
+texture2D			g_NoiseTexture;
 
 texture2D			g_ShadowMapTexture;
 
@@ -68,7 +69,11 @@ cbuffer ForPostProcessing
 	float				g_fDofTargetLength = 10;
 	
 	float				g_fRimWidth = 0.55f;
+
+	float4				g_vLightShaftValue = 0;
+	float2				g_vScreenLightUVPos = 0;
 };
+
 
 sampler DefaultSampler = sampler_state
 {
@@ -84,7 +89,6 @@ sampler WrapSampler = sampler_state
 	AddressU = wrap;
 	AddressV = wrap;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -670,6 +674,90 @@ PS_OUT PS_ToneMapping(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_VolumeMatricFog(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+
+
+	//vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
+	//float		fViewZ = vDepthDesc.x * 300.f;
+
+	//vector		vWorldPos;
+
+	//vWorldPos.x = (In.vTexUV.x * 2.f - 1.f) * fViewZ;
+	//vWorldPos.y = (In.vTexUV.y * -2.f + 1.f) * fViewZ;
+	//vWorldPos.z = vDepthDesc.y * fViewZ; /* 0 ~ f */
+	//vWorldPos.w = 1.f * fViewZ;
+
+	//vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+	//vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
+
+
+
+
+	return Out;
+}
+
+PS_OUT PS_GodRay(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+	//float4 g_vLightShaftValue
+
+	// x = Density
+	// y = Decay
+	// z = Weight
+	// w = Exposure
+
+
+
+#define NUM_SAMPLES 64
+
+	//화면 공간에서 픽셀로부터 광원을 향하는 벡터 계산
+	float2 DeltaTexCoord = (In.vTexUV - g_vScreenLightUVPos);
+
+	//샘플링할 수로 나누고 제어 팩터로 스케일링한다
+	DeltaTexCoord *= 1.0 / NUM_SAMPLES* g_vLightShaftValue.x;
+
+	//샘플링
+	vector Color = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
+
+	//일루미네이션 감소 팩터 설정
+	float IlluminationDecay = 1.0;
+
+	//방정식 3의 적용
+	for (int i = 0; i < NUM_SAMPLES; ++i)
+	{
+		//광선을 따라 샘플링
+		In.vTexUV -= DeltaTexCoord;
+
+		//샘플을 새 좌표로 위치 시킴
+
+		vector Sample = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+
+		//if (Sample.r == 1)
+		//{
+			//스케일 / 감쇄 팩터를 적용해 감소를 수행
+			Sample = IlluminationDecay * g_vLightShaftValue.z;
+
+			//합쳐진 색 저장
+			Color += Sample;
+		//}
+
+		//감쇄 팩터 지수 업데이트
+		IlluminationDecay *= g_vLightShaftValue.y;
+	}
+
+	// 최종 컬러를 추가 컨트롤 팩터와 함께 출력
+	Out.vColor = saturate(float4((Color * g_vLightShaftValue.w).xyz, 1.0));
+	//Out.vColor = 0;
+
+	return Out;
+}
+
+
+
 
 
 BlendState	NonBlending
@@ -865,5 +953,30 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_ToneMapping();
 	}
+
+	pass VolumatricFog // 15
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_VolumeMatricFog();
+	}
+
+	pass GodRay // 16
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_GodRay();
+	}
+
+
+	
 
 }

@@ -62,7 +62,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 
 	/* For.Target_Shadow*/
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Shadow"), (_uint)Viewport.Width * ShadowMapQuality, (_uint)Viewport.Height * ShadowMapQuality, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Shadow"), (_uint)Viewport.Width * ShadowMapQuality, (_uint)Viewport.Width * ShadowMapQuality, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledShadow"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceDownScaledShadow"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaledBluredShadow"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -76,6 +76,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_AvgLuminece"), (_uint)1, (_uint)1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_VolumatricFog"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_GodRay"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By2"), (_uint)(Viewport.Width / 2), (_uint)(Viewport.Height / 2), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -125,6 +129,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MakeLumiMask"), TEXT("Target_LumineceMask")));
 
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_VolumatricFog"), TEXT("Target_VolumatricFog")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_GodRay"), TEXT("Target_GodRay")));
+
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By2"), TEXT("Target_DownScaled_By2")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By3"), TEXT("Target_DownScaled_By3")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By4"), TEXT("Target_DownScaled_By4")));
@@ -161,7 +169,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_UpScaledBluredShadow"), 150, 350, 100, 100));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_AvgLuminece"), 150, 450, 100, 100));
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_LumineceMask"), 150, 550, 100, 100));
-	
+
+	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(TEXT("Target_GodRay"), 640, 360, 720, 720));
+
+
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_MtrlDiffuse")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_MtrlNormal")));
@@ -175,6 +186,11 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_UpScaledBluredShadow")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_AvgLuminece")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_LumineceMask")));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), TEXT("Target_GodRay")));
+
+
 	
 #endif
 
@@ -202,7 +218,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
 	TextureDesc.Width = (_uint)Viewport.Width * ShadowMapQuality;
-	TextureDesc.Height = (_uint)Viewport.Height * ShadowMapQuality;
+	TextureDesc.Height = (_uint)Viewport.Width * ShadowMapQuality;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
 	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -340,6 +356,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	FAILED_CHECK(Render_NonBlend_NoLight());
 
+	//FAILED_CHECK(Render_GodRay());
+	//FAILED_CHECK(Render_Volumatric());
 	FAILED_CHECK(Render_Bloom());
 	FAILED_CHECK(Render_DepthOfField());
 
@@ -553,8 +571,8 @@ HRESULT CRenderer::Copy_DeferredToBackBuffer()
 	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
-
-
+	
+	
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 14));
 
 	return S_OK;
@@ -800,6 +818,79 @@ HRESULT CRenderer::Make_BluredDeffered()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Volumatric()
+{
+
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_VolumatricFog")));
+	
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_float4x4		ViewMatrixInv, ProjMatrixInv;
+
+
+
+	XMStoreFloat4x4(&ViewMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW))));
+	XMStoreFloat4x4(&ProjMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrixInv", &ViewMatrixInv, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrixInv", &ProjMatrixInv, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_DepthTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
+	
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 15));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_VolumatricFog")));
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_GodRay()
+{
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_GodRay")));
+
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_float4x4		ViewMatrixInv, ProjMatrixInv;
+
+	_float4 ProjSpacePos = XMVector3TransformCoord(_float3(0, 30, 10).Multiply_Matrix_AsPosVector(pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW)), pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ));
+	_float2 ScreenLightPos = _float2(ProjSpacePos.x * 0.5f + 0.5f, ProjSpacePos.y * -0.5f + 0.5f);
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_vLightShaftValue", &_float4(0.002f, 1.05f, 0.8f, 1.f), sizeof(_float4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_vScreenLightUVPos", &ScreenLightPos, sizeof(_float2)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 16));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_GodRay")));
+
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_DepthOfField()
 {
 	m_fTexleSize = 2.f;
@@ -898,7 +989,7 @@ HRESULT CRenderer::Render_ShadowMap()
 	ViewPortDesc.TopLeftX = 0;
 	ViewPortDesc.TopLeftY = 0;
 	ViewPortDesc.Width = (_float)OldViewPortDesc.Width * ShadowMapQuality;
-	ViewPortDesc.Height = (_float)OldViewPortDesc.Height * ShadowMapQuality;
+	ViewPortDesc.Height = (_float)OldViewPortDesc.Width * ShadowMapQuality;
 	ViewPortDesc.MinDepth = 0.f;
 	ViewPortDesc.MaxDepth = 1.f;
 
