@@ -15,7 +15,7 @@
 //#include "Scene_Ending.h"
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 //#include "Scene_Edit.h"
 #endif // USE_IMGUI
 

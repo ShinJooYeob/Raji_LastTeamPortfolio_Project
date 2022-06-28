@@ -5,15 +5,7 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "FIleIO/AssimpMgr.h"
-
-//#include "LoadingUI.h"
-
-
-
-#ifdef USE_IMGUI
 #include "ImguiMgr.h"
-#endif // USE_IMGUI
-//#include "UtilityMgr.h"
 
 CMainApp::CMainApp()
 	:m_pGameInstance(GetSingle(CGameInstance))
@@ -201,9 +193,9 @@ HRESULT CMainApp::Scene_Change(SCENEID eSceneID)
 HRESULT CMainApp::Ready_SingletonMgr()
 {
 
-#ifdef USE_IMGUI
-	FAILED_CHECK(GETIMGUI->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
-#endif // USE_IMGUI
+#ifdef _DEBUG
+	FAILED_CHECK(GetSingle(CImguiMgr)->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
+#endif // _DEBUG
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
 	FAILED_CHECK(GetSingle(CAssimpMgr)->Initialize(m_pDevice,m_pDeviceContext));
@@ -215,7 +207,7 @@ HRESULT CMainApp::Ready_SingletonMgr()
 HRESULT CMainApp::Free_SingletonMgr()
 {
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	if (0 != GetSingle(CImguiMgr)->DestroyInstance())
 	{
 		MSGBOX("Failed to Release CImguiMgr");

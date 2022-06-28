@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 // dear imgui, v1.88 WIP
 // (tables and columns code)

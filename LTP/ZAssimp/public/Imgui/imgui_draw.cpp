@@ -23,7 +23,7 @@ Index of this file:
 */
 
 #include "stdafx.h"
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
