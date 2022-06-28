@@ -20,6 +20,7 @@ private:
 
 public:
 	HRESULT Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, class CMainApp*	pMainApp);
+	HRESULT Initialize_UtilityMgr();
 
 
 	/*For Random*/
