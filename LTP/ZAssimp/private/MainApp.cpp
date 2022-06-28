@@ -325,7 +325,7 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 
 CMainApp * CMainApp::Create()
 {
-	CMainApp* pInstance = new CMainApp;
+	CMainApp* pInstance = NEW CMainApp;
 
 	if (FAILED(pInstance->Initialize()))
 	{

@@ -361,7 +361,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 				_uint NumWeight = ModelDesc->mMeshDesc[i].mMeshBones[j].mNumWeights = pAffectingBone->mNumWeights;
 				if (NumWeight == 0)
 					continue;
-				ModelDesc->mMeshDesc[i].mMeshBones[j].mAiWeights = new aiVertexWeight[NumWeight];
+				ModelDesc->mMeshDesc[i].mMeshBones[j].mAiWeights = NEW aiVertexWeight[NumWeight];
 
 				for (_uint k = 0; k < NumWeight; k++)
 				{

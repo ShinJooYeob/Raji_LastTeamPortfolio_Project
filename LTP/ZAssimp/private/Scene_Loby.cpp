@@ -167,7 +167,7 @@ HRESULT CScene_Loby::PathFinder_Text(wstring path, wstring txtpath, wstring txtn
 
 CScene_Loby * CScene_Loby::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Loby* pTempLoby = new CScene_Loby(pDevice,pDeviceContext);
+	CScene_Loby* pTempLoby = NEW CScene_Loby(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

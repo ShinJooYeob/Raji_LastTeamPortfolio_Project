@@ -557,12 +557,20 @@ HRESULT CLoader::Load_Model_DatFile()
 	// ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
 	// For. Test
 
+	auto iter = dynamic_dat.begin();
+
+
+
 	for (auto& modeldesc : List_ModelCreateTest)
 	{
 		FAILED_CHECK(pGameInstance->Add_Component_Prototype(
 			SCENEID::SCENE_STATIC,
-			TAG_CP(Prototype_Mesh_Player),
+			(*iter)->FileName,
 			CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix)));
+
+		iter++;
+		if (iter == dynamic_dat.end())
+			break;
 
 		//CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modeldesc, TransformMatrix);
 
@@ -573,8 +581,12 @@ HRESULT CLoader::Load_Model_DatFile()
 		//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix)));
 
 		// CModel* DebugModel = CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modeldesc, TransformMatrix);
-		int Debug = 5;
 	}
+
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(
+		SCENEID::SCENE_STATIC,
+		TAG_CP(Prototype_Mesh_Player),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, *List_ModelCreateTest.begin(), TransformMatrix)));
 
 	return S_OK;
 
@@ -587,7 +599,6 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 	_ulong			dwByte = 0;
 	for (auto& path : pathlist)
 	{
-
 		wstring fullpath = path->FullPath;
 		wstring FileName = path->FileName;
 		MODELDESC* modelDesc = nullptr;
@@ -712,7 +723,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 						ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
 						// »À Weight
-						for (int bone = 0; bone < NumAffectingBones; ++bone)
+						for (_uint bone = 0; bone < NumAffectingBones; ++bone)
 						{
 							ReadFile(hFile, &meshdesc->mMeshBones[bone].mNumWeights, sizeof(_uint), &dwByte, nullptr);
 							_uint NumWeight = meshdesc->mMeshBones[bone].mNumWeights;

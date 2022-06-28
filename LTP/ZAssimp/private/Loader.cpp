@@ -477,7 +477,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)
 {
-	CLoader* pTempLoader = new CLoader;
+	CLoader* pTempLoader = NEW CLoader;
 
 	if (FAILED(pTempLoader->Initialize(pDevice,pDeviceContext,eSceneID)))
 	{
