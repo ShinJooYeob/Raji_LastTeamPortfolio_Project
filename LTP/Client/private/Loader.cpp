@@ -341,8 +341,8 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Mesh_Player),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix, 2)));
+//	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Mesh_Player),
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix, 2)));
 
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	/* 테스트 알게락 */
@@ -389,7 +389,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	// Assimp Dynamic
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_Player),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.fbx", TransformMatrix)));
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.fbx", TransformMatrix)));
 
 
 #pragma endregion

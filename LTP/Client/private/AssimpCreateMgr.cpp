@@ -490,8 +490,6 @@ HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, 
 
 	// #CREATE ModelCom 
 
-
-
 	for (auto& pair : map)
 	{
 		FAILED_CHECK(GetSingle(CGameInstance)->Add_Component_Prototype(
