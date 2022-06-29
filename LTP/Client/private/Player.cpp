@@ -287,10 +287,9 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 
 HRESULT CPlayer::Update_State_Attack(_double fDeltaTime)
 {
-	if (true == m_bPressedPowerAttackKey)
+	if (true == m_bAttackEnd && true == m_bPressedPowerAttackKey)
 	{
-		m_bPlayPowerAttack = true;
-//		m_bPressedPowerAttackKey = false;
+		m_bPlayPowerAttack = true; 
 	}
 
 	if (true == m_bAttackEnd)
@@ -299,8 +298,6 @@ HRESULT CPlayer::Update_State_Attack(_double fDeltaTime)
 		m_bAttackEnd = false;
 	}
 
-	Set_MainAttackAnim(m_bPlayJumpAttack);
-	
 	Attack(fDeltaTime);
 
 	return S_OK;
@@ -397,6 +394,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 	{
 		m_bPressedMainAttackKey = true;
 		m_bPressedPowerAttackKey = false;
+		m_bPlayPowerAttack = false;
 	}
 	else if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
 	{
@@ -800,10 +798,10 @@ void CPlayer::Attack(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) 다음 콤보 커멘트 입력 체크
+		// 1) Check to Input Next Combo Command
 		Check_NextComboCommand();
 
-		// 2) 끝난 다음 전환 될 콤보 행동 체크
+		// 2) Check to Next Combo Behavior
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.66f <= fAnimPlayRate)
@@ -1080,7 +1078,7 @@ void CPlayer::Attack(_double fDeltaTime)
 		// 2) 끝난 다음 전환 될 콤보 행동 체크
 		if (true == m_bPlayNextCombo)
 		{
-			if (0.86f <= fAnimPlayRate)
+			if (0.7f <= fAnimPlayRate)
 			{
 				Change_NextCombo();
 			}
@@ -1112,7 +1110,7 @@ void CPlayer::Attack(_double fDeltaTime)
 	{
 		if (fAnimPlayRate <= 0.425f)
 		{
-			m_fAnimSpeed = 3.f;
+			m_fAnimSpeed = 2.f;
 		}
 		else
 		{
@@ -1153,6 +1151,156 @@ void CPlayer::Attack(_double fDeltaTime)
 
 		// Look At Mouse Pos
 		if (0.53f <= fAnimPlayRate)
+		{
+			LookAt_MousePos();
+		}
+		//
+	}
+		break;
+	case SPEAR_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
+	{
+		m_fAnimSpeed = 1.5f;
+
+		if (0.25f >= fAnimPlayRate)
+		{
+			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+		}
+		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
+		{
+			m_fAnimSpeed = 1.5f;
+			m_pModel->Set_BlockAnim(false);
+			m_bAttackEnd = true;
+		}
+
+
+		////////////////////Next Combo Check //////////////////////
+		// 1) 다음 콤보 커멘트 입력 체크
+		Check_NextComboCommand();
+
+		if (true == m_bPlayNextCombo)
+		{
+			// 2) 끝난 다음 전환 될 콤보 행동 체크
+			if (0.66f <= fAnimPlayRate)
+			{
+				m_bPlayJumpAttack = false;
+				Change_NextCombo();
+			}
+			else if (0.6f <= fAnimPlayRate && 0.66f > fAnimPlayRate)
+			{
+				if (true == m_bReadyDodgeCombo)
+				{
+					m_pModel->Set_BlockAnim(false);
+					m_bPlayDodgeCombo = true;
+					m_bPlayJumpAttack = false;
+				}
+			}
+		}
+		/////////////////////////////////////////////////////////
+
+
+		// Look At Mouse Pos
+		if (0.f <= fAnimPlayRate)
+		{
+			LookAt_MousePos();
+		}
+		//
+	}
+		break;
+	case SPEAR_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
+	{
+		m_fAnimSpeed = 1.5f;
+
+		if (0.25f >= fAnimPlayRate)
+		{
+			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+		}
+		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
+		{
+			m_fAnimSpeed = 1.5f;
+			m_pModel->Set_BlockAnim(false);
+			m_bAttackEnd = true;
+		}
+
+
+		////////////////////Next Combo Check //////////////////////
+		// 1) 다음 콤보 커멘트 입력 체크
+		Check_NextComboCommand();
+
+		if (true == m_bPlayNextCombo)
+		{
+			// 2) 끝난 다음 전환 될 콤보 행동 체크
+			if (0.66f <= fAnimPlayRate)
+			{
+				m_bPlayJumpAttack = false;
+				Change_NextCombo();
+			}
+			else if (0.6f <= fAnimPlayRate && 0.66f > fAnimPlayRate)
+			{
+				if (true == m_bReadyDodgeCombo)
+				{
+					m_pModel->Set_BlockAnim(false);
+					m_bPlayDodgeCombo = true;
+					m_bPlayJumpAttack = false;
+				}
+			}
+		}
+		/////////////////////////////////////////////////////////
+
+
+		// Look At Mouse Pos
+		if (0.f <= fAnimPlayRate)
+		{
+			LookAt_MousePos();
+		}
+		//
+	}
+		break;
+	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
+	{
+		m_fAnimSpeed = 1.5f;
+
+		if (0.25f >= fAnimPlayRate)
+		{
+			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+		}
+		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
+		{
+			m_fAnimSpeed = 1.5f;
+			m_pModel->Set_BlockAnim(false);
+			m_bAttackEnd = true;
+		}
+
+
+		////////////////////Next Combo Check //////////////////////
+		// 1) 다음 콤보 커멘트 입력 체크
+		Check_NextComboCommand();
+
+		if (true == m_bPlayNextCombo)
+		{
+			// 2) 끝난 다음 전환 될 콤보 행동 체크
+			if (0.66f <= fAnimPlayRate)
+			{
+				m_bPlayJumpAttack = false;
+				Change_NextCombo();
+			}
+			else if (0.6f <= fAnimPlayRate && 0.66f > fAnimPlayRate)
+			{
+				if (true == m_bReadyDodgeCombo)
+				{
+					m_pModel->Set_BlockAnim(false);
+					m_bPlayDodgeCombo = true;
+					m_bPlayJumpAttack = false;
+				}
+			}
+		}
+		/////////////////////////////////////////////////////////
+
+
+		// Look At Mouse Pos
+		if (0.f <= fAnimPlayRate)
 		{
 			LookAt_MousePos();
 		}
@@ -1675,7 +1823,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 		case BASE_ANIM_DODGE_ROLL:
 			if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 			{
-				// Next Combo Command 가 입력되지 않았을 경우 Idle 상태로 전환
+				// if Not Input Next Combo Command, Change to Idle
 				if (false == m_bPlayNextCombo)
 				{
 					m_fAnimSpeed = 1.f;
@@ -1728,7 +1876,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 		case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 			if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 			{
-				// Next Combo Command 가 입력 되었을 경우
+				// If Input Next Combo Command
 				if(true == m_bPlayNextCombo)
 				{
 					m_bPlayNextCombo = false;
@@ -1745,13 +1893,11 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 					else										// Change to Attack Combo 
 					{
 						m_bPlayMainAttackCombo = false;
-						m_bPressedMainAttackKey = false;
-						m_bPlayPowerAttack = false;
 						m_bAttackEnd = true;
 					}
 					m_iCurCombo = (m_iCurCombo % m_iMaxCombo) + 1;
 				}
-				else if (MOVDIR_END != m_eInputDir && true == m_bAttackEnd)			// 입력이 되지 않았고 이동 커멘드가 입력 되었을 경우
+				else if (MOVDIR_END != m_eInputDir && true == m_bAttackEnd)			// If not input Command & input Mov Command
 				{
 					Set_PlayerState(STATE_MOV);
 					m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F, 0.3f);
@@ -1760,7 +1906,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_bPlayJumpAttack = false;
 					m_bPlayPowerAttack = false;
 				}
-				else if (MOVDIR_END == m_eInputDir && true == m_bAttackEnd)			// 입력이 되지 않았고 이동 커멘드가 입력되지 않았을 경우
+				else if (MOVDIR_END == m_eInputDir && true == m_bAttackEnd)			// If not input Command & not input Mov Command
 				{
 					Set_PlayerState(STATE_IDLE);
 					m_pModel->Change_AnimIndex(BASE_ANIM_IDLE, 0.1f);
