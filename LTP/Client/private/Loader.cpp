@@ -5,7 +5,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-////로비??/////////////////////////////////////////////////////////////////////
+///??/////////////////////////////////////////////////////////////////////
 #include "TestObject.h"
 #include "AnimationClip.h"
 #include "Navigation.h"
@@ -18,12 +18,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-////?�디?�씬///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 #include "ESCursor.h"
 #include "EditorTerrain.h"
 #include "Camera_Editor.h"
 #include "StaticMapObject.h"
 #include "NaviPoint.h"
+#include "AssimpCreateMgr.h"
 
 
 ////����//////////////////////////////////////////////////////////////////////
@@ -125,28 +126,31 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix)));
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix)));
 
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_SkyBox),
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
 
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	/* Å×½ºÆ® ¾Ë°Ô¶ô */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+	//TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	///* Å×½ºÆ® ¾Ë°Ô¶ô */
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
 
+
+	// #TEST Create NoAssimp 
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Modele();
 
 
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
+//	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
 
 	
 #pragma endregion
@@ -377,7 +381,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 	_Matrix			TransformMatrix;
-	TransformMatrix = XMMatrixScaling(1, 1, 1);// * XMMatrixRotationY(XMConvertToRadians(180));
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	// Assimp static
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject),
@@ -385,16 +389,14 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	// Assimp Dynamic
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_Player),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "crea_Snot_a", "crea_Snot_a.FBX", TransformMatrix)));
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.fbx", TransformMatrix)));
 
-	// NoAssimp
-	FAILED_CHECK(Load_Model_DatFile());
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestStaticObject::Create(m_pDevice, m_pDeviceContext)));
+	
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
@@ -588,6 +590,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	return S_OK;
 }
 
+<<<<<<< HEAD
 HRESULT CLoader::Load_Model_DatFile()
 {
 	// ?�이???�일�?assimp ?�이 모델 초기??/ ?�이??초기??
@@ -861,6 +864,8 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 }
 
 
+=======
+>>>>>>> Jihwan
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)
 {
 	CLoader* pTempLoader = new CLoader;

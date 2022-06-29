@@ -20,7 +20,10 @@ texture2D			g_NormalTexture;
 //texture2D			g_AmbientOcculusionTexture;
 
 
-
+cbuffer LightPosition
+{
+	float4 g_vLightPosition;
+};
 
 cbuffer AttechMatrix
 {
@@ -46,6 +49,40 @@ struct VS_OUT
 	float4		vBinormal : BINORMAL;
 
 };
+struct VS_OUT_SHADOW
+{
+	float4		vPosition : SV_POSITION;
+	float4		vClipPosition : TEXCOORD1;
+};
+
+VS_OUT_SHADOW VS_Shadow(VS_IN In)
+{
+
+	VS_OUT_SHADOW			Out = (VS_OUT_SHADOW)0;
+
+
+	Out.vPosition = mul(vector(In.vPosition, 1), g_WorldMatrix);
+	Out.vPosition = mul(Out.vPosition, g_LightViewMatrix);
+	Out.vPosition = mul(Out.vPosition, g_LightProjMatrix);
+
+	Out.vClipPosition = Out.vPosition;
+	return Out;
+};
+VS_OUT_SHADOW VS_Shadow_AttachedBone(VS_IN In)
+{
+
+	VS_OUT_SHADOW			Out = (VS_OUT_SHADOW)0;
+
+
+	Out.vPosition = mul(vector(In.vPosition, 1), g_AttechMatrix);
+	Out.vPosition = mul(Out.vPosition, g_LightViewMatrix);
+	Out.vPosition = mul(Out.vPosition, g_LightProjMatrix);
+
+	Out.vClipPosition = Out.vPosition;
+	return Out;
+};
+
+
 
 
 VS_OUT VS_MAIN_DEFAULT(VS_IN In)
@@ -110,6 +147,14 @@ struct PS_IN
 	float4		vTangent : TANGENT;
 	float4		vBinormal : BINORMAL;
 };
+struct PS_IN_SHADOW
+{
+	float4		vPosition : SV_POSITION;
+	float4		vClipPosition : TEXCOORD1;
+};
+
+
+
 
 struct PS_OUT
 {
@@ -118,12 +163,30 @@ struct PS_OUT
 	vector		vSpecular : SV_TARGET2;
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
 };
-
 struct PS_OUT_NODEFERRED
 {
 	vector		vDiffuse : SV_TARGET0;
 };
+struct PS_OUT_SHADOW
+{
+	vector		vDiffuse : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	float Depth = In.vClipPosition.z / In.vClipPosition.w;
+
+	//Out.vDiffuse = float4(Depth.xxx, 1);
+
+
+	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, 1);
+
+	return Out;
+}
 
 PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 {
@@ -142,6 +205,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vEmissive = saturate(vector(g_vLimLight.rgb, g_fEmissive));
 
 	return Out;
 }
@@ -166,7 +231,8 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vEmissive = saturate(vector(g_vLimLight.rgb, g_fEmissive));
 
 	return Out;
 }
@@ -177,7 +243,7 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vDiffuse.a = 1;
-	Out.vEmissive = 1.f;
+	Out.vEmissive = vector(0,0,0,1.f);
 
 	return Out;
 }
@@ -186,7 +252,28 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 
 technique11		DefaultTechnique
 {
-	pass Default		//0
+
+	pass Shadow		//0
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Shadow();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Shadow();
+	}
+	pass Shadow_AttachedBone		//1
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Shadow_AttachedBone();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Shadow();
+	}
+	pass Default		//2
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -196,7 +283,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}	
-	pass AllMost_Discard		//1
+	pass AllMost_Discard		//3
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -206,7 +293,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_ZTESTALLMOST();
 	}
-	pass CullModeNone		//2
+	pass CullModeNone		//4
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -216,7 +303,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}
-	pass AllMost_Discard_CullModeNone		//3
+	pass AllMost_Discard_CullModeNone		//5
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -228,7 +315,7 @@ technique11		DefaultTechnique
 	}
 
 
-	pass SkyBox		//4
+	pass SkyBox		//6
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(NonZTestAndWriteState, 0);
@@ -240,7 +327,7 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_SKYBOX();
 	}
 
-	pass AttachBone		//5
+	pass AttachBone		//7
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -251,7 +338,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}
-	pass AttachBone_ccw		//6
+	pass AttachBone_ccw		//8
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);

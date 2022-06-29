@@ -141,7 +141,7 @@ void CFileInfoMgr::SaveVectorToDat(wstring savetxtName, wstring ExtensionName)
 				FileCount + L'|';
 
 			// 문서 저장
-			string outText = CHelperClass::to_utf8(filetxt);
+			string outText = CHelperClass::Convert_Wstr2str(filetxt);
 			fWrite << outText << "\n";
 		}
 	}
