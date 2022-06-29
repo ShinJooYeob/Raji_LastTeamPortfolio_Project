@@ -33,6 +33,9 @@ LTP/ZAssimp/bin/Resources/**/**/**/**/*.*
 
 LTP/assimpPack/bin/Resources/*.*
 LTP/assimpPack/bin/Resources/**/*.*
+LTP/assimpPack/bin/Resources/**/*.*
+LTP/assimpPack/bin/Resources/**/**/*.*
+
 
 \Engine
 
