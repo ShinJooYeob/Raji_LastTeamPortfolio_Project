@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 
 // assimp Test Scene
+// PhyX 사용전 백업
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
