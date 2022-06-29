@@ -98,6 +98,8 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_Monster_Mahinasura_Minion,
 
+	Prototype_Object_Boss_Rangda,
+
 	Object_Prototype_End
 };
 
@@ -162,7 +164,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Mahinasura_Minion:
 		return TEXT("Prototype_Object_Monster_Mahinasura_Minion");
-		
+
+	case Prototype_Object_Boss_Rangda:
+		return TEXT("Prototype_Object_Boss_Rangda");
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -477,7 +481,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 
 
-
+	Prototype_Mesh_Boss_Rangda,
 
 
 	Prototype_Mesh_SkyBox,
@@ -599,6 +603,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Mesh_Monster_Mahinasura_Minion");
 		break;
 
+	case Prototype_Mesh_Boss_Rangda:
+		return TEXT("Prototype_Mesh_Boss_Rangda");
+		break;
+
 	case Prototype_Mesh_TestObject:
 		return TEXT("Prototype_Mesh_TestObject");
 		break;
@@ -606,6 +614,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_TestObject_Himeko:
 		return TEXT("Prototype_Mesh_TestObject_Himeko");
 		break;
+
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;

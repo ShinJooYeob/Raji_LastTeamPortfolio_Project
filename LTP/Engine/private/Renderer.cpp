@@ -358,8 +358,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	//FAILED_CHECK(Render_GodRay());
 	//FAILED_CHECK(Render_Volumatric());
-	FAILED_CHECK(Render_Bloom());
-	FAILED_CHECK(Render_DepthOfField());
+	//FAILED_CHECK(Render_Bloom());
+	//FAILED_CHECK(Render_DepthOfField());
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 

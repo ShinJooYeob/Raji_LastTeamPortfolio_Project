@@ -127,6 +127,12 @@
     <Filter Include="03.Manager\03.AssimpCreateMgr">
       <UniqueIdentifier>{273b7580-8fe8-4ad0-94a1-60d11ec214b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss">
+      <UniqueIdentifier>{f0ed39f5-01e2-4e2c-98d3-a61dbff5343d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Rangda">
+      <UniqueIdentifier>{bd5b5ed1-25e4-48b1-a551-be1926a41042}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -284,8 +290,15 @@
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster_Mahinasura.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
-    <ClInclude Include="..\public\AssimpCreateMgr.h">
+    <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\Boss.h">
+      <Filter>01.GameObject\02.Monster\Boss</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rangda.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AssimpCreateMgr.h">
+  </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -415,6 +428,12 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
       <Filter>03.Manager\03.AssimpCreateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Boss.cpp">
+      <Filter>01.GameObject\02.Monster\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

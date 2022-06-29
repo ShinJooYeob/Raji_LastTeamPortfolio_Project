@@ -306,7 +306,7 @@ HRESULT CModel::Change_AnimIndex_UntilNReturn(_uint iAnimIndex, _uint iUntilInde
 		return E_FAIL;
 
 
-	if (iReturnIndex == m_iNextAnimIndex) return S_FALSE;
+	if (iReturnIndex == m_iNextAnimIndex && iAnimIndex == m_iNowAnimIndex && iReturnIndex == m_iReturnIndex) return S_FALSE;
 
 
 
@@ -392,7 +392,7 @@ HRESULT CModel::Change_AnimIndex_UntilTo(_uint iAnimIndex, _uint iReturnIndex, _
 		return E_FAIL;
 
 
-	if (iReturnIndex == m_iNextAnimIndex) return S_FALSE;
+	if (iReturnIndex == m_iNextAnimIndex && iAnimIndex == m_iNowAnimIndex) return S_FALSE;
 
 	if (!m_bIsSwapFunctionCalled && (m_bIsChagingAnim || m_AnimExitAcc)) // m_AnimExitAcc 변환 중이였다면
 	{
@@ -435,7 +435,7 @@ HRESULT CModel::Change_AnimIndex_ReturnTo(_uint iAnimIndex, _uint iReturnIndex, 
 	if (iAnimIndex >= m_iNumAnimationClip || iReturnIndex >= m_iNumAnimationClip)
 		return E_FAIL;
 
-	if (iReturnIndex == m_iNextAnimIndex) return S_FALSE;
+	if (iReturnIndex == m_iNextAnimIndex && iAnimIndex == m_iNowAnimIndex) return S_FALSE;
 
 
 	m_bIsChagingAnim = true;

@@ -137,19 +137,19 @@ _int CCamera_Main::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
 	{
-		m_pTransform->Move_Forward(fDeltaTime);
+		m_pTransform->Move_Forward(fDeltaTime * 10.);
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
 	{
-		m_pTransform->Move_Backward(fDeltaTime);
+		m_pTransform->Move_Backward(fDeltaTime* 10.);
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press)
 	{
-		m_pTransform->Move_Right(fDeltaTime);
+		m_pTransform->Move_Right(fDeltaTime* 10.);
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
 	{
-		m_pTransform->Move_Left(fDeltaTime);
+		m_pTransform->Move_Left(fDeltaTime* 10.);
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_PGUP) & DIS_Press)
 	{

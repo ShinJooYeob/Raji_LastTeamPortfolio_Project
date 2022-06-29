@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h" />
     <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp" />
     <ClInclude Include="..\public\AssimpCreateMgr.h" />
+    <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\Client_Define.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
@@ -218,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
+    <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
     <ClCompile Include="..\private\EditorTerrain.cpp" />
     <ClCompile Include="..\private\ESCursor.cpp" />
@@ -228,6 +231,7 @@
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
