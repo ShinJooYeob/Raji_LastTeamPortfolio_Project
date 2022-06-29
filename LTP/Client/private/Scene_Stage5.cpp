@@ -59,10 +59,6 @@ _int CScene_Stage5::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE5"));
-#endif // _DEBUG
 
 	return 0;
 }

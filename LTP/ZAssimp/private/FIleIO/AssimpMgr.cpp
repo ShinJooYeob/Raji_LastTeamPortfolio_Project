@@ -27,7 +27,6 @@ HRESULT CAssimpMgr::ReleaseMap()
 	for (auto& pair : mMap_ModelDesc)
 	{
 		Safe_Delete(pair.second);
-		
 	}
 
 	mMap_ModelDesc.clear();
@@ -75,7 +74,7 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 		// 3. 로드된 Scene으로 필요 데이터 복사
 		CopyData_MODELDESC(wPath, wName, ModelCash, CModel::TYPE_ANIM);
 
-		Safe_Release(ModelCash);
+	//	Safe_Release(ModelCash);
 	}
 
 	// 4. 데이터 Dat 파일로 저장
@@ -86,7 +85,7 @@ HRESULT CAssimpMgr::Initialize_FbxSetting()
 		_uint length = _uint(name.length());
 		wstring Name = name.substr(0, length - 4);
 		Save_MODELDESC(STR_FILEPATH_RESOURCE_DAT_L, Name, pair.second);
-		Safe_Delete(pair.second);
+	//	Safe_Delete(pair.second);
 	}
 
 	Safe_Delete_List(Path_Static);
@@ -304,7 +303,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 			ModelDesc->mMeshDesc[i].mUV[k].x = cash[k].x;
 			ModelDesc->mMeshDesc[i].mUV[k].y = cash[k].y;
 		}
-		Safe_Delete_Array(cash);
+		// Safe_Delete_Array(cash);
 
 
 		//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
@@ -397,7 +396,7 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 			boneindex++;
 		}
 		
-		Safe_Delete_List(VecBones);
+	//	Safe_Delete_List(VecBones);
 
 
 
@@ -427,18 +426,18 @@ HRESULT CAssimpMgr::CopyData_MODELDESC(wstring fbxFullpath, wstring namepath, CM
 				// 뼈 키프레임 복사
 				CClipBone* aniBone = ani->Get_VecClipBones()[b];
 
-				ANIBONES* anibone = NEW ANIBONES(aniBone->Get_Name(),
+					anidesc->mAniBones[b] = ANIBONES(aniBone->Get_Name(),
 					aniBone->Get_Frames(), aniBone->Get_HierNodeIndex());
 				const vector<KEYFRAME*>* keycontainer = aniBone->Get_KeyFrameContainor();
 				_uint index = 0;
 				for (auto& key : *keycontainer)
 				{
-					anibone->mKeyFrames[index] = *key;
+					anidesc->mAniBones[b].mKeyFrames[index] = *key;
 					index++;
 				}
-				Safe_Delete(anibone);
-
+				int DebugBreak = 5;
 			}
+			int DebugBreak2 = 5;
 			//////////////////////////////////////////////////////
 
 			ModelDesc->mAnimations[i] = *anidesc;

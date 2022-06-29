@@ -34,6 +34,10 @@ public:
 	
 	list<CGameObject*>*			Get_ObjectList_from_Layer(_uint iSceneNum, const _tchar* tagLayer);
 
+
+
+
+
 public:
 	_int Update(_double fDeltaTime);
 	_int LateUpdate(_double fDeltaTime);
@@ -43,12 +47,18 @@ private:
 	map<const _tchar*, CGameObject*>			m_mapPrototypes;
 	typedef map<const _tchar*, CGameObject*>	PROTOTYPES;
 
+
 private:
-	map<const _tchar*, CObjectLayer*>*				m_mapLayer = nullptr;
-	typedef map<const _tchar*, CObjectLayer*>		LAYERS;
+	map<wstring, CObjectLayer*>*				m_mapLayer = nullptr;
+	typedef map<wstring, CObjectLayer*>		LAYERS;
 
 	_uint		m_iMaxSceneNum = 0;
 
+public:
+	_uint			Get_ObjectPrototypeNum() { return (_uint)m_mapPrototypes.size(); };
+	const _tchar*	Get_PrototypeTag(_uint iIndex);
+	_uint			Get_SceneLayerSize(_uint iSceneNum) { return _uint(m_mapLayer[iSceneNum].size()); };
+	const _tchar*	Get_SceneLayerTag(_uint iSceneNum,_uint iIndex);
 
 private:
 	CGameObject*	Find_Prototype(const _tchar* tagPrototype);

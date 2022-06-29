@@ -30,6 +30,9 @@ private:
 	CGameInstance*			m_pGameInstance = nullptr;
 	CRenderer*				m_pComRenderer = nullptr;
 
+#ifdef _DEBUG
+	class CImguiMgr*				m_pImguiMgr = nullptr;
+#endif // _DEBUG
 
 
 private: //슬로우 모션용
@@ -39,12 +42,6 @@ private: //슬로우 모션용
 	_float					m_fTargetTime = 1.f;
 	_double					m_SlowTimes = 1;
 
-#ifdef _DEBUG
-private:
-	_tchar				m_szFPS[MAX_PATH] = TEXT("");
-	_ulong				m_dwNumRender = 0;
-	_double				m_dTimerAcc = 0.0f;
-#endif // _DEBUG
 
 private:
 	HRESULT Scene_Change(SCENEID eSceneID);

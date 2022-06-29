@@ -26,14 +26,30 @@ public:
 	_int	End_Update_Frame();
 	HRESULT	Render_ImguiMgr();
 
+public: /*For Debug*/
+	_int	Update_DebugWnd(_double fDeltaTime);
+	_int	LateUpdate_DebugWnd(_double fDeltaTime);
+	_int	Render_DebugWnd();
+
+
 	
 private:
-	ID3D11Device*			m_pDevice = nullptr;
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
-	// ID3D11ShaderResourceView*
+	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
 	ID3D11RenderTargetView*		m_pBackBufferRTV = nullptr;
 	ID3D11DepthStencilView*		m_pDepthStencilView = nullptr;
 	IDXGISwapChain*				m_pSwapChain = nullptr;
+
+
+private:
+	_bool						m_bOnDebugWnd = false;
+	_bool						bArrWindowFlag[10] = { 0 };
+
+	_ulong				m_dwNumRender = 0;
+	_double				m_dTimerAcc = 0.0f;
+
+private:
+	void Make_VerticalSpacing(_uint count);
 
 
 public:

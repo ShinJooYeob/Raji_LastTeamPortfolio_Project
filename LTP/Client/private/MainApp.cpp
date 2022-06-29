@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Model.h"
 #include "UtilityMgr.h"
+#include "AssimpCreateMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -78,6 +79,7 @@ _int CMainApp::Update(_double fDeltaTime)
 		MSGBOX("Failed to Update_Engine ");
 		return E_FAIL;
 	}
+	FAILED_CHECK(m_pImguiMgr->Update_DebugWnd(fDeltaTime));
 
 	if (FAILED(m_pGameInstance->LateUpdate_Engine(fDeltaTime * m_SlowTimes)))
 	{
@@ -86,6 +88,10 @@ _int CMainApp::Update(_double fDeltaTime)
 		return E_FAIL;
 
 	}
+#ifdef _DEBUG
+	FAILED_CHECK(m_pImguiMgr->LateUpdate_DebugWnd(fDeltaTime));
+#endif // _DEBUG
+
 
 	return 0;
 }
@@ -125,27 +131,11 @@ HRESULT CMainApp::Render()
 
 	FAILED_CHECK(m_pComRenderer->Render_RenderGroup(g_fDeltaTime));
 	FAILED_CHECK(m_pGameInstance->Render_Scene());
+#ifdef _DEBUG
+	FAILED_CHECK(m_pImguiMgr->Render_DebugWnd());
+#endif // _DEBUG
 
 	FAILED_CHECK(m_pGameInstance->Present());
-
-
-#ifdef _DEBUG
-	if (m_pGameInstance->Get_DIKeyState(DIK_F7)& DIS_Down) g_bIsShowFPS = !g_bIsShowFPS;
-	if (g_bIsShowFPS)
-	{
-		++m_dwNumRender;
-		m_dTimerAcc += g_fDeltaTime;
-
-		if (m_dTimerAcc >= 1.f)
-		{
-			wsprintf(m_szFPS, TEXT("FPS : %d"), m_dwNumRender);
-			SetWindowText(g_hWnd, m_szFPS);
-
-			m_dwNumRender = 0;
-			m_dTimerAcc = 0.f;
-		}
-	}
-#endif // _DEBUG
 
 
 	return S_OK;
@@ -206,10 +196,16 @@ HRESULT CMainApp::Ready_SingletonMgr()
 {
 
 #ifdef USE_IMGUI
+
 	FAILED_CHECK(GETIMGUI->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
+	m_pImguiMgr = GETIMGUI;
+	NULL_CHECK_RETURN(m_pImguiMgr,E_FAIL);
+	Safe_AddRef(m_pImguiMgr);
+
 #endif // USE_IMGUI
 
-//	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
+	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
 
 	return S_OK;
 }
@@ -228,6 +224,11 @@ HRESULT CMainApp::Free_SingletonMgr()
 	if (0 != GetSingle(CUtilityMgr)->DestroyInstance())
 	{
 		MSGBOX("Failed to Release CUtilityMgr");
+		return E_FAIL;
+	}
+	if (0 != GetSingle(CAssimpCreateMgr)->DestroyInstance())
+	{
+		MSGBOX("Failed to Release CAssimpCreateMgr");
 		return E_FAIL;
 	}
 
@@ -360,6 +361,10 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	m_pGameInstance->Get_NowScene()->Free();
+
+#ifdef _DEBUG
+	Safe_Release(m_pImguiMgr);
+#endif // _DEBUG
 
 	if (FAILED(Free_SingletonMgr()))
 	{

@@ -60,18 +60,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_Hidden_Cube(PS_IN In)
-{
-	PS_OUT		Out = (PS_OUT)0;
-
-	Out.vColor = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-
-	if (Out.vColor.r > g_fVisualValue)
-		discard;
-	//Out.vColor *= saturate(g_fVisualValue);
-
-	return Out;
-}
 PS_OUT PS_EDITCUBE(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
@@ -85,6 +73,16 @@ PS_OUT PS_EDITCUBE(PS_IN In)
 
 technique11		DefaultTechnique
 {
+	pass Shadow		//0
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
 	pass Cube
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -106,17 +104,6 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}	
-
-	pass Hidden
-	{
-		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_ccw);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_Hidden_Cube();
-	}
 	pass EditScene // 3
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);

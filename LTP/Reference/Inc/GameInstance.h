@@ -167,6 +167,13 @@ public: /* CFileInfoMgr */
 
 
 
+public:	/*For DebugWnd*/
+	_uint			Get_ObjectPrototypeNum() ;
+	const _tchar*	Get_PrototypeTag(_uint iIndex);
+	_uint			Get_SceneLayerSize(_uint iSceneNum);
+	const _tchar*	Get_SceneLayerTag(_uint iSceneNum, _uint iIndex);
+
+
 private:
 	CGraphic_Device*	m_pGraphicDevice = nullptr;
 	CTimeMgr*			m_pTimerMgr = nullptr;

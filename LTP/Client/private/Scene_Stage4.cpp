@@ -2,6 +2,7 @@
 #include "..\Public\Scene_Stage4.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
+#include "Player.h"
 
 CScene_Stage4::CScene_Stage4(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -24,6 +25,8 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+	
 	
 	
 	
@@ -56,11 +59,6 @@ _int CScene_Stage4::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGE4"));
-#endif // _DEBUG
 
 	return 0;
 }
@@ -145,7 +143,7 @@ HRESULT CScene_Stage4::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	else 
 	{
-		m_pMainCam->Set_NowSceneNum(SCENE_STAGE3);
+		m_pMainCam->Set_NowSceneNum(SCENE_STAGE4);
 	}
 	
 	return S_OK;
@@ -153,7 +151,7 @@ HRESULT CScene_Stage4::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage4::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
@@ -172,6 +170,39 @@ HRESULT CScene_Stage4::Ready_TestObject(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject_Himeko)));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Rangda)));
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player)));
+
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE4, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+
+	m_pMainCam->Set_CameraMode(CCamera_Main::ECameraMode::CAM_MODE_NOMAL);
+	m_pMainCam->Set_FocusTarget(pPlayer);
+	m_pMainCam->Set_TargetArmLength(0.f);
+
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
+
+	pTransform->Set_Matrix(tt);
 
 	return S_OK;
 }

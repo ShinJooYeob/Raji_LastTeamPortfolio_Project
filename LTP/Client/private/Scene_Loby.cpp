@@ -19,8 +19,8 @@ HRESULT CScene_Loby::Initialize()
 
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
-	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
+//	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+//	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 		
@@ -32,16 +32,17 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (GetKeyState(VK_RETURN) & 0x8000)
-	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
-	}
+
 
 	if (GetKeyState(VK_F2) & 0x8000)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_EDIT), SCENEID::SCENE_LOADING));
+	}
+	else if (GetKeyState(VK_F3) & 0x8000)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
 	}
 	else if (GetKeyState(VK_F4) & 0x8000)
 	{
@@ -82,10 +83,6 @@ _int CScene_Loby::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("LobyScene"));
-#endif // _DEBUG
 
 	return 0;
 }

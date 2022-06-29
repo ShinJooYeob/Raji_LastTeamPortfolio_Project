@@ -5,7 +5,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-////로비씬//////////////////////////////////////////////////////////////////////
+///??/////////////////////////////////////////////////////////////////////
 #include "TestObject.h"
 #include "AnimationClip.h"
 #include "Navigation.h"
@@ -18,12 +18,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-////에디터씬///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 #include "ESCursor.h"
 #include "EditorTerrain.h"
 #include "Camera_Editor.h"
 #include "StaticMapObject.h"
 #include "NaviPoint.h"
+#include "AssimpCreateMgr.h"
 
 
 ////����//////////////////////////////////////////////////////////////////////
@@ -125,28 +126,31 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix)));
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_TestObject),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix)));
 
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_LOBY, TAG_CP(Prototype_Mesh_SkyBox),
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
 
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	/* Å×½ºÆ® ¾Ë°Ô¶ô */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+	//TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	///* Å×½ºÆ® ¾Ë°Ô¶ô */
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
 
+
+	// #TEST Create NoAssimp 
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Modele();
 
 
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
+//	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
 
 	
 #pragma endregion
@@ -300,8 +304,6 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_Mesh_TestObject_Himeko),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Himeko", "new_Himeko.fbx", TransformMatrix)));
 
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE4, TEXT("Prototype_Component_Navigation"),
@@ -326,7 +328,7 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	EnterCriticalSection(_CriSec);
 	m_bIsLoadingFinished = true;
 	LeaveCriticalSection(_CriSec);
-
+	 
 
 	return S_OK;
 }
@@ -379,7 +381,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 	_Matrix			TransformMatrix;
-	TransformMatrix = XMMatrixScaling(1, 1, 1);// * XMMatrixRotationY(XMConvertToRadians(180));
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	// Assimp static
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject),
@@ -387,16 +389,14 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	// Assimp Dynamic
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_Player),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "crea_Snot_a", "crea_Snot_a.FBX", TransformMatrix)));
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.fbx", TransformMatrix)));
 
-	// NoAssimp
-	FAILED_CHECK(Load_Model_DatFile());
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestStaticObject::Create(m_pDevice, m_pDeviceContext)));
+	
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
@@ -431,12 +431,23 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.FBX", TransformMatrix)));
 
 
+	/////////���Ͷ� �÷��̾� ��ȣ�ۿ� üũ�Ϸ��� �ϴ� �÷��̾� �ܾ��
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_Player),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix, 2)));
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+	/////////
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Mahinasura_Minion), CMonster_Mahinasura_Minion::Create(m_pDevice, m_pDeviceContext)));
-
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Player), CPlayer::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 
@@ -538,7 +549,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	/* 테스트 알게락 */
+	/* ?�스???�게??*/
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
@@ -581,16 +592,16 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 HRESULT CLoader::Load_Model_DatFile()
 {
-	// 데이터 파일로 assimp 없이 모델 초기화 / 데이터 초기화
+	// ?�이???�일�?assimp ?�이 모델 초기??/ ?�이??초기??
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 	_Matrix TransformMatrix = XMMatrixScaling(1, 1, 1);
 
-	// 파일 경로
+	// ?�일 경로
 	auto static_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
 	auto dynamic_dat = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
 
 
-	// MODELDESC / LOAD 함수
+	// MODELDESC / LOAD ?�수
 	list<MODELDESC*> List_ModelStatic;
 	list<MODELDESC*> List_ModelDynamic;
 
@@ -599,7 +610,7 @@ HRESULT CLoader::Load_Model_DatFile()
 
 #pragma region TESTCODE
 
-	// 모델 컴포넌트 생성
+	// 모델 컴포?�트 ?�성
 	// For. Test
 	auto dynamiciter = dynamic_dat.begin();
 	
@@ -645,7 +656,7 @@ HRESULT CLoader::Load_Model_DatFile()
 
 HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc)
 {
-	// #LOAD 클라이언트 로드 함수
+	// #LOAD ?�라?�언??로드 ?�수
 
 	_ulong			dwByte = 0;
 	for (auto& path : pathlist)
@@ -676,7 +687,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 			CModel::MODELTYPE ModelType = (CModel::MODELTYPE)modelDesc->mModelType;
 
-			// 할당
+			// ?�당
 			if (modelDesc->mNumMeshes != 0)
 				modelDesc->mMeshDesc = new MESHDESC[modelDesc->mNumMeshes];
 
@@ -727,12 +738,12 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				if (dwByte == 0)
 					return E_FAIL;
 
-				// UV 추가
+				// UV 추�?
 				ReadFile(hFile, meshdesc->mUV, sizeof(_float2)*meshdesc->mNumVertices, &dwByte, nullptr);
 				if (dwByte == 0)
 					return E_FAIL;
 
-				// 여러개 UV 추가시 
+				// ?�러�?UV 추�???
 				//for (_uint j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++j)
 				//{
 				//	_float3* cash = new _float3[meshdesc->mNumVertices];
@@ -768,12 +779,12 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					_uint NumAffectingBones = meshdesc->mNumAffectingBones;
 					if (NumAffectingBones != 0)
 					{
-						// 뼈 인덱스 리스트
+						// �??�덱??리스??
 						meshdesc->mAffectingBones = new _uint[NumAffectingBones];
 						meshdesc->mMeshBones = new MESHBONEDESC[NumAffectingBones];
 
 						ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
-						// 뼈 Weight
+						// �?Weight
 						for (_uint bone = 0; bone < NumAffectingBones; ++bone)
 						{
 							ReadFile(hFile, &meshdesc->mMeshBones[bone].mNumWeights, sizeof(_uint), &dwByte, nullptr);
