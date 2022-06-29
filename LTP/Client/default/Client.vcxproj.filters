@@ -255,6 +255,13 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -361,6 +368,13 @@
     </ClCompile>
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
