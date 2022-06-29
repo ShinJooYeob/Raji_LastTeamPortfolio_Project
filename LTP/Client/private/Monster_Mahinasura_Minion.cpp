@@ -30,6 +30,9 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
+
+	SetUp_Info();
+
 	return S_OK;
 }
 
@@ -107,20 +110,82 @@ _int CMonster_Mahinasura_Minion::LateRender()
 	return _int();
 }
 
+HRESULT CMonster_Mahinasura_Minion::SetUp_Info()
+{
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS,_float3(2.f,0.f,2.f));
+
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pPlayerTransform = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player),TAG_COM(Com_Transform)));
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Minion::SetUp_Fight(_double dDeltaTime)
+{
+	m_fDis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+
+	if (m_fDis < 1)
+	{
+		switch (m_iInfinityAnimNumber)
+		{
+		case 1:
+			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
+			break;
+		case 21:
+			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
+			break;
+		default:
+			m_pTransformCom->Move_Backward(dDeltaTime);
+			break;
+
+		}
+	}
+
+	if (m_bLookAtOn)
+	{
+		m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+	}
+
+	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	////평범하게 움직이기
+	//if (pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Up(dDeltaTime);
+	//}
+	//if (pGameInstance->Get_DIKeyState(DIK_H) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Down(dDeltaTime);
+	//}
+
+	//RELEASE_INSTANCE(CGameInstance);
+
+
+	return S_OK;
+}
+
 HRESULT CMonster_Mahinasura_Minion::PlayAnim(_double dDeltaTime)
 {
+	SetUp_Fight(dDeltaTime);
+
 
 	CoolTime_Manager(dDeltaTime);
 
-	if (m_pModel->Get_IsHavetoBlockAnimChange())//true == m_bIOnceAnimSwitch)
+	if (true == m_bIOnceAnimSwitch)
 	{
 		Once_AnimMotion(dDeltaTime);
-		m_pModel->Change_AnimIndex(m_iAnimNumber,0.15, m_bIOnceAnimSwitch);
+		m_pModel->Change_AnimIndex(m_iOnceAnimNumber);
 	}
 	else
 	{
 		Infinity_AnimMotion(dDeltaTime);
-		m_pModel->Change_AnimIndex(m_iAnimNumber);
+		m_pModel->Change_AnimIndex(m_iInfinityAnimNumber);
 	}
 
 	return S_OK;
@@ -129,23 +194,24 @@ HRESULT CMonster_Mahinasura_Minion::PlayAnim(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
-	m_dOnceCoolTime += dDeltaTime;
-	if (m_dOnceCoolTime > 4)
-	{
-		m_iOncePattern = rand() % 3;
 
+	m_dOnceCoolTime += dDeltaTime;
+
+	if (m_dOnceCoolTime > 4 && m_fDis < 4)
+	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
 		m_bIOnceAnimSwitch = true;
-		m_pModel->Set_BlockAnim(true);
+
+		Pattern_Change();
 	}
 
 	//반복적으로 동작하는 애니메이션
 	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 2)
 	{
-		m_iInfinityPattern = rand() % 2;
+		m_iInfinityPattern = rand() % 3;
 
 
 		m_dInfinity_CoolTime = 0;
@@ -158,18 +224,43 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 
+
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iAnimNumber = 18;
+		m_iOnceAnimNumber = 18;
 		break;
 	case 1:
-		m_iAnimNumber = 19;
+		m_iOnceAnimNumber = 19;
 		break;
 	case 2:
-		m_iAnimNumber = 20;
+		m_iOnceAnimNumber = 20;
+		break;
+	case 3:
+		m_iOnceAnimNumber = 3;
+		break;
+	case 4:
+		m_iOnceAnimNumber = 4;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 5;
 		break;
 	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Minion::Pattern_Change()
+{
+
+	m_iOncePattern += 1;
+
+	if (m_iOncePattern > 2)
+	{
+		m_iOncePattern = 0;
+	}
+
+
 	return S_OK;
 }
 
@@ -178,22 +269,34 @@ HRESULT CMonster_Mahinasura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_iAnimNumber = 0;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 1:
-		m_iAnimNumber = 1;
+		//if (m_fDis > 1)
+			m_pTransformCom->Move_Forward(dDeltaTime * 0.6);
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 2:
-		m_iAnimNumber = 2;
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+		m_iInfinityAnimNumber = 21;
 		break;
 	case 3:
-		m_iAnimNumber = 3;
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+		m_iInfinityAnimNumber = 21;
 		break;
 	case 4:
-		m_iAnimNumber = 4;
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+		m_iInfinityAnimNumber = 21;
+		break;
+	case 5:
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+		m_iInfinityAnimNumber = 21;
+		break;
+	case 6:
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+		m_iInfinityAnimNumber = 21;
 		break;
 	}
-
 	return S_OK;
 }
 
@@ -226,33 +329,55 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
 		m_iAdjMovedIndex = 0;
+
+		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
+		{
+			m_bIOnceAnimSwitch = false;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
+		}
+	}
 
 
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
+		//switch (iNowAnimIndex)
+		//{
+		//case 1://애니메이션 인덱스마다 잡아주면 됨
+		//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
+		//	{
+
+		//		m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
+		//	}
+		//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+		//	{
+
+
+		//		m_iAdjMovedIndex++;
+		//	}
+
+		//	break;
+		//case 2:
+
+		//	break;
+		//}
+		
 		switch (iNowAnimIndex)
 		{
-		case 1://애니메이션 인덱스마다 잡아주면 됨
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
+		case 18:
+			if (PlayRate >= 0.27272 && PlayRate <= 0.875)
 			{
-
-				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
+				m_bLookAtOn = false;
+				m_pTransformCom->Move_Forward(dDeltaTime);
 			}
-			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-			{
-
-
-				m_iAdjMovedIndex++;
+			else {
+				m_bLookAtOn = true;
 			}
-
-			break;
-		case 2:
-
 			break;
 		}
 	}
-
 
 	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;

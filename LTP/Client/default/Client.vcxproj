@@ -190,7 +190,6 @@
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Monster_Mahinasura.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
@@ -225,7 +224,6 @@
     <ClCompile Include="..\private\MapObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
-    <ClCompile Include="..\private\Monster_Mahinasura.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
