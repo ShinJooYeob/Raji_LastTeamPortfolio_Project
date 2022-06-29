@@ -723,6 +723,32 @@ wstring CGameInstance::Get_PathData(wstring Fullpath)
 	return m_pFileIoMgr->Get_PathData(Fullpath);
 }
 
+_uint CGameInstance::Get_ObjectPrototypeNum()
+{
+	NULL_CHECK_BREAK(m_pObjectMgr);
+
+
+	return m_pObjectMgr->Get_ObjectPrototypeNum();
+}
+
+const _tchar * CGameInstance::Get_PrototypeTag(_uint iIndex)
+{
+	NULL_CHECK_BREAK(m_pObjectMgr);
+	return m_pObjectMgr->Get_PrototypeTag(iIndex);;
+}
+
+_uint CGameInstance::Get_SceneLayerSize(_uint iSceneNum)
+{
+	NULL_CHECK_BREAK(m_pObjectMgr);
+	return m_pObjectMgr->Get_SceneLayerSize(iSceneNum);;
+}
+
+const _tchar * CGameInstance::Get_SceneLayerTag(_uint iSceneNum, _uint iIndex)
+{
+	NULL_CHECK_BREAK(m_pObjectMgr);
+	return m_pObjectMgr->Get_SceneLayerTag(iSceneNum, iIndex);;
+}
+
 
 
 

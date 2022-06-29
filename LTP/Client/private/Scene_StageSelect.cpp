@@ -56,11 +56,6 @@ _int CScene_StageSelect::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("SCENE_STAGESELECT"));
-#endif // _DEBUG
-
 	return 0;
 }
 

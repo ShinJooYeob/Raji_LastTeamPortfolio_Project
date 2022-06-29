@@ -21,7 +21,7 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-	ZeroMemory(m_StartTime, sizeof(_double)*E_DEBUGTIMER::DEBUGTIMER_END);
+	ZeroMemory(m_StartTime, sizeof(clock_t) * E_DEBUGTIMER::DEBUGTIMER_END);
 
 	return S_OK;
 }

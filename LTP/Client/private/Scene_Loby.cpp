@@ -32,11 +32,7 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (GetKeyState(VK_RETURN) & 0x8000)
-	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
-	}
+
 
 	if (GetKeyState(VK_F2) & 0x8000)
 	{
@@ -82,10 +78,6 @@ _int CScene_Loby::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-		SetWindowText(g_hWnd, TEXT("LobyScene"));
-#endif // _DEBUG
 
 	return 0;
 }

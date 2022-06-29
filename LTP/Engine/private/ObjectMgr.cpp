@@ -281,6 +281,26 @@ list<CGameObject*>* CObjectMgr::Get_ObjectList_from_Layer(_uint iSceneNum, const
 	return pLayer->Get_ObjectList();
 }
 
+const _tchar * CObjectMgr::Get_PrototypeTag(_uint iIndex)
+{
+	if (iIndex >= m_mapPrototypes.size())return nullptr;
+	auto& iter = m_mapPrototypes.begin();
+	for (_uint i = 0; i < iIndex; i++)
+		iter++;
+	return iter->first;
+}
+
+const _tchar * CObjectMgr::Get_SceneLayerTag(_uint iSceneNum, _uint iIndex)
+{
+	if (iIndex >= m_mapLayer[iSceneNum].size()) return nullptr;
+
+	 auto& iter = m_mapLayer[iSceneNum].begin();
+	 for (_uint i = 0; i < iIndex; i++)
+		 iter++;
+
+	return iter->first.c_str();
+}
+
 _int CObjectMgr::Update(_double fDeltaTime)
 {
 	for (_uint eSceneNym = 0 ; eSceneNym < m_iMaxSceneNum; eSceneNym++)
@@ -329,7 +349,7 @@ CGameObject * CObjectMgr::Find_Prototype(const _tchar * tagPrototype)
 CObjectLayer * CObjectMgr::Find_Layer(_uint iSceneNum, const _tchar * tagLayer)
 {
 
-	auto iter = find_if(m_mapLayer[iSceneNum].begin(), m_mapLayer[iSceneNum].end(), CTagFinder(tagLayer));
+	auto iter = find_if(m_mapLayer[iSceneNum].begin(), m_mapLayer[iSceneNum].end(), CTagStringFinder(tagLayer));
 
 	if (iter == m_mapLayer[iSceneNum].end())
 		return nullptr;

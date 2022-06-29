@@ -25,6 +25,49 @@ enum SCENEID
 	SCENE_EDIT,
 	SCENE_END
 };
+static const char* Tag_ScenenName(SCENEID eTag)
+{
+	switch (eTag)
+	{
+	case SCENE_STATIC: 
+		return "SCENE_STATIC";
+	case SCENE_LOBY:
+		return "SCENE_LOBY";
+	case SCENE_LOADING:
+		return "SCENE_LOADING";
+	case SCENE_STAGESELECT:
+		return "SCENE_STAGESELECT";
+	case SCENE_STAGE1:
+		return "SCENE_STAGE1";
+	case SCENE_STAGE2:
+		return "SCENE_STAGE2";
+	case SCENE_STAGE3:
+		return "SCENE_STAGE3";
+	case SCENE_STAGE4:
+		return "SCENE_STAGE4";
+	case SCENE_STAGE5:
+		return "SCENE_STAGE5";
+	case SCENE_STAGE6:
+		return "SCENE_STAGE6";
+	case SCENE_STAGE7:
+		return "SCENE_STAGE7";
+	case SCENE_BOSS:
+		return "SCENE_BOSS";
+	case SCENE_ENDING:
+		return "SCENE_ENDING";
+	case SCENE_EDIT:
+		return "SCENE_EDIT";
+	default:
+		MSGBOX("Wrong Type SceneNumber");
+		return nullptr;
+		break;
+	}
+
+}
+
+#define  TAG_SCENE Tag_ScenenName
+
+
 
 
 
