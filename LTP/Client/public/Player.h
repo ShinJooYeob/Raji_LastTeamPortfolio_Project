@@ -20,7 +20,7 @@ private:
 	};
 	
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_POWER_ATTACK, STATE_JUMPATTACK, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
 	enum EPLAYERANIM_BASE {
@@ -37,6 +37,8 @@ private:
 		SPEAR_ANIM_POWER_ATK_COMBO_0, SPEAR_ANIM_POWER_ATK_COMBO_1, SPEAR_ANIM_POWER_ATK_COMBO_2, SPEAR_ANIM_ULTIMATE,
 		SPEAR_ANIM_EXECUTION_GADASURA, SPEAR_ANIM_EXECUTION_JALSURA, SPEAR_ANIM_EXECUTION_MAHINASURA, SPEAR_ANIM_EXECUTION_TEZABSURA, SPEAR_ANIM_EXECUTION_NINJA,
 		SPEAR_ANIM_THROW_START, SPEAR_ANIM_THROW_LOOP, SPEAR_ANIM_THROW_END, SPEAR_ANIM_THROW_LOOP_MOV_F, SPEAR_ANIM_THROW_LOOP_MOV_B, SPEAR_ANIM_THROW_LOOP_MOV_L, SPEAR_ANIM_THROW_LOOP_MOV_R,
+		SPEAR_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK, SPEAR_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK, SPEAR_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK,
+		SPEAR_ANIM_POWER_ATK_COMBO_0_JUMPATTACK, SPEAR_ANIM_POWER_ATK_COMBO_1_JUMPATTACK, SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK,
 		SPEAR_ANIM_END
 	};
 
@@ -60,13 +62,13 @@ public:
 	_fVector Get_BonePos(const char* pBoneName);
 
 private: /* Change Start State */
-	void	Set_State_IdleStart(_double fDeltaTime);			// Idle
-	void	Set_State_MoveStart(_double fDeltaTime);			// Move
+	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
+	void	Set_State_MoveStart(_double fDeltaTime);								// Move
 
-	void	Set_State_DodgeStart(_double fDeltaTime);			// Dodge
-	void	Set_State_MainAttackStart(_double fDeltaTime);		// MainAttack
+	void	Set_State_DodgeStart(_double fDeltaTime);								// Dodge
+	void	Set_State_MainAttackStart(_double fDeltaTime);							// MainAttack
 
-	void	Set_State_TurnBackStart(_double fDeltaTime);		// TurnBack
+	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
 
 private:
 	virtual void Update_AttachCamPos() override;
@@ -78,8 +80,9 @@ private:
 	HRESULT Update_State_Idle(_double fDeltaTime);
 	HRESULT Update_State_Move(_double fDeltaTime);
 	
-	HRESULT Update_State_ComboAction(_double fDeltaTime);
 	HRESULT Update_State_Attack(_double fDeltaTime);
+	HRESULT Update_State_PowerAttack(_double fDeltaTime);
+	HRESULT Update_State_JumpAttack(_double fDeltaTime);
 	HRESULT Update_State_Evasion(_double fDeltaTime);
 
 
@@ -112,7 +115,12 @@ private: /* Setter */
 	void				Set_PlayerState(EPLAYER_STATE eState);
 	void				Set_TurnInputDir();
 	void				Set_TurnInputDir_CalDir();
-	void				Set_MainAttackAnim();
+	void				Set_MainAttackAnim(_bool bJumpAttack);
+	void				Set_PowerAttackAnim(_bool bJumpAttack);
+
+private:
+	void				Check_NextComboCommand();
+	void				Change_NextCombo();
 
 private: /* Getter */
 	_fVector			LookAt_MousePos();
@@ -137,6 +145,7 @@ private: /* Animation Control */
 	_bool				m_bPlayTurnBackAnim = false;
 	const _int			m_iMaxCombo = 3;
 	_int				m_iCurCombo = 1;
+	
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -149,20 +158,22 @@ private: /* Animation Control */
 
 	_bool				m_bPlayNextCombo = false;
 
-	_bool				m_bAttackEnd = false;
+	_bool				m_bPlayMainAttackCombo = false;
+	_bool				m_bReadyMainAttackCombo = false;
+	_bool				m_bPlayDodgeCombo = false;
+	_bool				m_bReadyDodgeCombo = false;
+	_bool				m_bPlayJumpAttackCombo = false;
+	_bool				m_bReadyJumpAttackCombo = false;
 
+
+	_bool				m_bAttackEnd = true;
+	_bool				m_bPlayJumpAttack = false;
 	_bool				m_bMainAttacking = false;
+	_bool				m_bPlayPowerAttack = false;
 	_bool				m_bDodging = false;
-
+	
 private: /* Activate */
 	_bool				m_bActivateLookDir = false;
-	
-
-private: /* Player Stats (이 중 몇몇은PlayerStatComp로 처리 예정) */
-	_float				m_fPlayerCurSpeed = 0.f;
-	_float				m_fPlayerMaxSpeed = 0.f;
-	_float				m_fCurMovSpeedIncRate = 0.f;
-	_float				m_fInerpSpeedMaxTime = 5.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
