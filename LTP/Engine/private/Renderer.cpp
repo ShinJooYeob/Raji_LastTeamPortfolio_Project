@@ -26,7 +26,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 
 }
-#define ShadowMapQuality 10
+#define ShadowMapQuality 1
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
