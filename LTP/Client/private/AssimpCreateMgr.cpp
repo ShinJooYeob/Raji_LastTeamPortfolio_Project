@@ -50,12 +50,16 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile()
 	FAILED_CHECK(Load_ModelMap(mFile_DynamicList, mMap_DynamicModelDesc));
 
 	// Create ModelCom
-	_Matrix			TransformMatrix;
-	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) *XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_Matrix			TransformMatrix_dynamic;
+	TransformMatrix_dynamic = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) *XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	_Matrix			TransformMatrix_static;
+	TransformMatrix_static = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+
 
 	SCENEID sceneID = SCENE_STATIC;
-	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, TransformMatrix));
-	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, TransformMatrix));
+	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, TransformMatrix_static));
+	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, TransformMatrix_dynamic));
 
 	mCurrent_NameIter = mList_Name_ModelCom.begin();
 
