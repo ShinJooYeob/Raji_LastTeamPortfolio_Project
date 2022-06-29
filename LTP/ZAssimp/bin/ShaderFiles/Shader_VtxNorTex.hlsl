@@ -16,6 +16,11 @@ texture2D		g_BrushTexture;
 
 texture2D		g_HeightMapTexture;
 
+cbuffer LightPosition
+{
+	float4 g_vLightPosition;
+};
+
 cbuffer BrushDesc
 {
 	float4		g_vBrushPos = float4(10.0f, 0.0f, 10.f, 1.f);
@@ -112,10 +117,11 @@ struct PS_OUT
 	vector		vSpecular : SV_TARGET2;
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
 };
 
 
-PS_OUT PS_MAIN_TERRAIN_DIRECTIONAL(PS_IN In)
+PS_OUT PS_MAIN_TERRAIN_Default(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
@@ -155,53 +161,8 @@ PS_OUT PS_MAIN_TERRAIN_DIRECTIONAL(PS_IN In)
 		
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
-
+		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 		
-	}
-
-	return Out;
-}
-//(L.Diffus *  M.Diffuse) * (Shade (0 ~ 1) + (L.Ambient * M.Ambient)) + 
-//(L.Specular * M.Specular) * 스펙큘러의 세기(0 ~ 1 사이의 실수)
-
-
-PS_OUT PS_MAIN_TERRAIN_POINT(PS_IN In)
-{
-	PS_OUT		Out = (PS_OUT)0;
-
-	if (In.bIsNotDraw)
-	{
-		discard;
-	}
-	else {
-
-		vector	vSourMtrlDiffuse = g_SourDiffuseTexture.Sample(DefaultSampler, In.vTexUV * g_fMimMapSize);
-		vector	vDestMtrlDiffuse1 = g_DestDiffuseTexture1.Sample(DefaultSampler, In.vTexUV * g_fMimMapSize);
-		vector	vDestMtrlDiffuse2 = g_DestDiffuseTexture2.Sample(DefaultSampler, In.vTexUV * g_fMimMapSize);
-		vector	vDestMtrlDiffuse3 = g_DestDiffuseTexture3.Sample(DefaultSampler, In.vTexUV * g_fMimMapSize);
-		vector	vDestMtrlDiffuse4 = g_DestDiffuseTexture4.Sample(DefaultSampler, In.vTexUV * g_fMimMapSize);
-
-
-		vector	vFilterColor = g_FilterTexture.Sample(DefaultSampler, In.vTexUV);
-
-
-		vector	vMtrlDiffuse = vSourMtrlDiffuse * (1.f - vFilterColor.a) + vDestMtrlDiffuse1 * (vFilterColor.a);
-		vMtrlDiffuse = vMtrlDiffuse * (1.f - vFilterColor.r) + vDestMtrlDiffuse2 * (vFilterColor.r);
-		vMtrlDiffuse = vMtrlDiffuse * (1.f - vFilterColor.g) + vDestMtrlDiffuse3 * (vFilterColor.g);
-		vMtrlDiffuse = vMtrlDiffuse * (1.f - vFilterColor.b) + vDestMtrlDiffuse4 * (vFilterColor.b);
-
-		float  FogShaderRate = 1 - min(max((2.8f - In.vWorldPos.y), 0) / 2.8f, 1);
-
-		Out.vDiffuse = vMtrlDiffuse;
-		Out.vDiffuse.a *= FogShaderRate;
-
-		if (Out.vDiffuse.a == 0.0f)
-			discard;
-
-
-		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
-		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
-		Out.vSpecular = 1;
 	}
 
 	return Out;
@@ -257,7 +218,7 @@ PS_OUT PS_MAIN_TERRAIN_WIRE(PS_IN In)
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
-
+		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	}
 
 	return Out;
@@ -318,6 +279,7 @@ PS_OUT PS_MAIN_TERRAIN_EDIT(PS_IN In)
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
+		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	}
 	return Out;
 }
@@ -349,7 +311,17 @@ PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
 
 technique11		DefaultTechnique
 {
-	pass Terrain_DirectionalLight // 0
+	pass Shadow		//0
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Shadow();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Shadow();
+	}
+	pass Terrain_Default // 1
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -357,19 +329,8 @@ technique11		DefaultTechnique
 
 		VertexShader = compile vs_5_0 VS_MAIN_TERRAIN();
 		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TERRAIN_DIRECTIONAL();
+		PixelShader = compile ps_5_0 PS_MAIN_TERRAIN_Default();
 	}	
-
-	pass Terrain_PointLight // 1
-	{
-		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_ccw);
-
-		VertexShader = compile vs_5_0 VS_MAIN_TERRAIN();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TERRAIN_POINT();
-	}
 	pass Terrain_Wire // 2
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -380,25 +341,5 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_TERRAIN_WIRE();
 	}
-	pass Terrain_EditTerrain // 3
-	{
-		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_ccw);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TERRAIN();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TERRAIN_EDIT();
-	}
-
-	pass ShadowMap // 4
-	{
-		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_ccw);
-
-		VertexShader = compile vs_5_0 VS_Shadow();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_Shadow();
-	}
 }

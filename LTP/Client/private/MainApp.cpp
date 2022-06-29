@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Model.h"
 #include "UtilityMgr.h"
+#include "AssimpCreateMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -209,7 +210,8 @@ HRESULT CMainApp::Ready_SingletonMgr()
 	FAILED_CHECK(GETIMGUI->Initialize_ImguiMgr(m_pDevice, m_pDeviceContext, m_pBackBufferRTV, m_pDepthStencilView, m_pSwapChain));
 #endif // USE_IMGUI
 
-//	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
+	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
 
 	return S_OK;
 }
@@ -228,6 +230,11 @@ HRESULT CMainApp::Free_SingletonMgr()
 	if (0 != GetSingle(CUtilityMgr)->DestroyInstance())
 	{
 		MSGBOX("Failed to Release CUtilityMgr");
+		return E_FAIL;
+	}
+	if (0 != GetSingle(CAssimpCreateMgr)->DestroyInstance())
+	{
+		MSGBOX("Failed to Release CAssimpCreateMgr");
 		return E_FAIL;
 	}
 

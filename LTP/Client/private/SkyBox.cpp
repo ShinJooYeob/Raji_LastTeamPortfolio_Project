@@ -101,7 +101,7 @@ HRESULT CSkyBox::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_SkyBox), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_SkyBox), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 
 

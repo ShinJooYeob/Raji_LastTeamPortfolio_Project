@@ -87,27 +87,28 @@ namespace Engine
 	}
 
 	template <typename LIST>
-	void Safe_Delete_List(LIST& List)
+	void Safe_Delete_List(LIST& list)
 	{
-		for (auto& obj : List)
+
+		for (auto& val: list)
 		{
-			Safe_Delete(obj);
+			Safe_Delete(val);
 		}
 	}
 
-	//template <typename T>
-	//void Safe_Delete_Map(T Map)
-	//{
-	//	for (auto& obj : Map)
-	//	{
-	//		Safe_Delete(obj.second);
-	//	}
-	//	Map.clear();
-	//	Safe_Delete(Map);
-	//}
 
 
-	
+	template <typename MAP>
+	void Safe_Delete_Map(MAP& map)
+	{
+
+		for (auto& pair : map)
+		{
+			Safe_Delete(pair.second);
+		}
+	}
+
+
 
 
 
@@ -115,37 +116,17 @@ namespace Engine
 	{
 	public:
 		// 파일입출력에서 쓰던거
-		static std::string to_utf8(const wchar_t* buffer, int len)
+		static vector<wstring> WStringSplit(wstring input, wchar_t de)
 		{
-			int nChars = ::WideCharToMultiByte(
-				CP_UTF8,
-				0,
-				buffer,
-				len,
-				NULL,
-				0,
-				NULL,
-				NULL);
-			if (nChars == 0) return "";
+			vector<wstring> answer;
+			wstringstream ss(input);
+			wstring temp;
 
-			string newbuffer;
-			newbuffer.resize(nChars);
-			::WideCharToMultiByte(
-				CP_UTF8,
-				0,
-				buffer,
-				len,
-				const_cast<char*>(newbuffer.c_str()),
-				nChars,
-				NULL,
-				NULL);
-
-			return newbuffer;
-		}
-
-		static std::string to_utf8(const std::wstring& str)
-		{
-			return to_utf8(str.c_str(), (int)str.size());
+			while (getline(ss, temp, de))
+			{
+				answer.push_back(temp);
+			}
+			return answer;
 		}
 
 		static vector<string> StringSplit(string input, char de)

@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\Reference\Inc\imstb_textedit.h" />
     <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h" />
     <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp" />
+    <ClInclude Include="..\public\AssimpCreateMgr.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\Client_Define.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
     <ClCompile Include="..\private\EditorTerrain.cpp" />
     <ClCompile Include="..\private\ESCursor.cpp" />

@@ -124,6 +124,9 @@
     <Filter Include="01.GameObject\96.NaviPoint">
       <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Manager\03.AssimpCreateMgr">
+      <UniqueIdentifier>{273b7580-8fe8-4ad0-94a1-60d11ec214b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -255,6 +258,14 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
+    <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\AssimpCreateMgr.h">
+      <Filter>03.Manager\03.AssimpCreateMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -361,6 +372,14 @@
     </ClCompile>
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
+    <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\private\AssimpCreateMgr.cpp">
+      <Filter>03.Manager\03.AssimpCreateMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

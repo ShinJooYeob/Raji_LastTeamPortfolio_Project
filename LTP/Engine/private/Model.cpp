@@ -197,7 +197,6 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 		if (iAnimCount != 1)
 			FAILED_CHECK(Ready_MoreAnimation(szFullPath, iAnimCount, iFlag));
 
-
 	}
 	
 	return S_OK;
@@ -216,7 +215,6 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 
 		m_pScene = nullptr;
 		m_pModelDesc = desc; // 테스트용 인자로 받고 버릴 수 있음
-
 		
 		// 영향을 주는 뼈 업데이트
 		FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
@@ -235,7 +233,6 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 
 		// 애니메이션 초기화
 		FAILED_CHECK(Ready_Animation(m_pModelDesc));
-
 
 
 	}
@@ -1500,7 +1497,6 @@ CHierarchyNode * CModel::Find_HierarchyNode(const char * pName, _uint* pNodeInde
 
 	for (_uint i = 0 ; i< m_vecHierarchyNode.size(); i++)
 	{
-
 		if(!strcmp(m_vecHierarchyNode[i]->Get_Name(), pName))
 		{
 			pHierarchyNode = (m_vecHierarchyNode[i]);
@@ -1510,16 +1506,6 @@ CHierarchyNode * CModel::Find_HierarchyNode(const char * pName, _uint* pNodeInde
 		}
 	}
 	return pHierarchyNode;
-
-	//auto	iter = find_if(m_vecHierarchyNode.begin(), m_vecHierarchyNode.end(), [&](CHierarchyNode* pNode)
-	//{
-	//	return !strcmp(pNode->Get_Name(), pName);
-	//});
-
-	//if (iter == m_vecHierarchyNode.end())
-	//	return nullptr;
-
-	//return *iter;
 }
 
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, MODELTYPE eModelType, const char * pModelFilePath, const char * pModelFileName, _fMatrix& TransformMatrix, _uint iAnimCount)
@@ -1587,7 +1573,7 @@ void CModel::Free()
 		m_Importer.FreeScene();
 		Safe_Delete_Array(m_vecMeshContainerArr);
 
-		Safe_Delete(m_pModelDesc);
+	//	Safe_Delete(m_pModelDesc);
 	}
 
 

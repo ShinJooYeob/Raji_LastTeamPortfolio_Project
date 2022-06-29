@@ -18,6 +18,11 @@ cbuffer ScreenSizeBuffer
 	float				fScreemHeight = 720;
 };
 
+cbuffer EmissiveNLimLight
+{
+	float3			g_vLimLight = 0;
+	float			g_fEmissive = 0;
+};
 
 
 sampler DefaultSampler = sampler_state

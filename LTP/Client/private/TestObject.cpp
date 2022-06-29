@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\TestObject.h"
+#include "..\public\AssimpCreateMgr.h"
 
 
 CTestObject::CTestObject(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -63,8 +64,22 @@ _int CTestObject::Update(_double fDeltaTime)
 	{
 		m_pTransformCom->Move_Left(fDeltaTime);
 	}
+	_float3 up = _float3(0, 1, 0);
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
+	{
+		m_pTransformCom->Turn_CCW(up.XMVector(), fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
+	{
+		m_pTransformCom->Turn_CW(up.XMVector(),fDeltaTime);
+	}
 
+	if (KEYDOWN(DIK_F))
+	{
+		const wchar_t* name =  GetSingle(CAssimpCreateMgr)->GetName_Iter_Plus();
+		FAILED_CHECK(Change_Component_by_NewAssign(SCENE_STATIC, name,TAG_COM(Com_Model)));
+	}
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
@@ -124,8 +139,11 @@ HRESULT CTestObject::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	// MODELCOM_NAME
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, L"Player.fbx", TAG_COM(Com_Model), (CComponent**)&m_pModel));
+
+//	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+//	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
