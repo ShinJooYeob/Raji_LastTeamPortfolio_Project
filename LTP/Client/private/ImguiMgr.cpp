@@ -450,6 +450,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 					if (ImGui::Button("-", ImVec2(20, 18)))
 					{
+						//pObjectTransform->Get_MoveSpeed()
 						pObjectTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltaTime);
 					}
 					ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
