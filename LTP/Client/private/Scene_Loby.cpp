@@ -43,6 +43,11 @@ _int CScene_Loby::Update(_double fDeltaTime)
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_EDIT), SCENEID::SCENE_LOADING));
 	}
+	else if (GetKeyState(VK_F3) & 0x8000)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
+	}
 	else if (GetKeyState(VK_F4) & 0x8000)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());

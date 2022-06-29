@@ -32,6 +32,9 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
 
+	if (m_eNowSceneNum = 7)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(1.f, 0.f, 0.f));
+
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	return S_OK;

@@ -48,6 +48,7 @@ public:
 	_Vector Get_MatrixState_Normalized(TransformState eState) { return ((_float4*)(m_WorldMatrix.m[eState]))->Get_Nomalize(); };
 	_Vector Get_MatrixScale(TransformState eState);
 	_Matrix Get_MatrixScale_All();
+	_Vector Get_Scale();
 
 	void Set_MatrixState(TransformState eState, const _fVector& vVec);
 	void Set_MatrixState(TransformState eState, const _float3& vVec);
@@ -76,6 +77,7 @@ public:
 
 //Turn////////////////////////////////////////////////////////////////////////
 	void LookAt(_fVector vTarget);
+	void LookAtExceptY(_fVector vTargetPos, _double TimeDelta);
 	void LookDir(_fVector vTargetLook);
 	
 	//월드 좌표 기준으로 현제 회전 상태에서 이어서 회전을 하고싶을 떄

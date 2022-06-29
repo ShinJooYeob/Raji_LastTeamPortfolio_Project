@@ -26,7 +26,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 
 }
-#define ShadowMapQuality 10
+#define ShadowMapQuality 1
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -358,8 +358,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	//FAILED_CHECK(Render_GodRay());
 	//FAILED_CHECK(Render_Volumatric());
-	FAILED_CHECK(Render_Bloom());
-	FAILED_CHECK(Render_DepthOfField());
+	//FAILED_CHECK(Render_Bloom());
+	//FAILED_CHECK(Render_DepthOfField());
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 

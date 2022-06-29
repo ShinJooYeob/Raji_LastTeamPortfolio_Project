@@ -59,6 +59,24 @@ _Matrix CTransform::Get_MatrixScale_All()
 	return matResult;
 }
 
+_Vector CTransform::Get_Scale()
+{
+	_Vector vScale = { 0 };
+	_float fScaleX, fScaleY, fScaleZ;
+
+	XMStoreFloat(&fScaleX, Get_MatrixScale(CTransform::STATE_RIGHT));
+	XMStoreFloat(&fScaleY, Get_MatrixScale(CTransform::STATE_UP));
+	XMStoreFloat(&fScaleZ, Get_MatrixScale(CTransform::STATE_LOOK));
+
+
+	vScale = XMVectorSetX(vScale, fScaleX);
+	vScale = XMVectorSetY(vScale, fScaleY);
+	vScale = XMVectorSetZ(vScale, fScaleZ);
+
+
+	return vScale;
+}
+
 void CTransform::Set_MatrixState(TransformState eState, const _fVector & vVec)
 {
 	XMStoreFloat3((_float3*)(&m_WorldMatrix.m[eState][0]), vVec);
@@ -176,6 +194,29 @@ void CTransform::LookAt(_fVector vTarget)
 
 	XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_UP]), XMVector3Normalize(XMVector3Cross(vLook, vRight)) * matScale.r[STATE_UP]);
 
+}
+
+void CTransform::LookAtExceptY(_fVector vTargetPos, _double TimeDelta)
+{
+	_Vector vPosition = Get_MatrixState(CTransform::STATE_POS);
+	_Vector vScale = Get_Scale();
+
+	_Vector vRight, vUp, vLook;
+
+	vLook = vTargetPos - vPosition;
+	vLook = XMVector3Normalize(vLook);
+
+	vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	vRight = XMVector3Normalize(vRight) * XMVectorGetX(vScale);
+
+	vLook = XMVector3Cross(vRight, XMVectorSet(0.f, 1.f, 0.f, 0.f));
+
+	vUp = XMVector3Cross(vLook, vRight);
+	vUp = XMVector3Normalize(vUp) * XMVectorGetY(vScale);
+
+	Set_MatrixState(CTransform::STATE_RIGHT, vRight);
+	Set_MatrixState(CTransform::STATE_UP, vUp);
+	Set_MatrixState(CTransform::STATE_LOOK, vLook);
 }
 
 void CTransform::LookDir(_fVector vTargetLook)

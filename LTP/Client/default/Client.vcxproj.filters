@@ -124,6 +124,12 @@
     <Filter Include="01.GameObject\96.NaviPoint">
       <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss">
+      <UniqueIdentifier>{f0ed39f5-01e2-4e2c-98d3-a61dbff5343d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Rangda">
+      <UniqueIdentifier>{bd5b5ed1-25e4-48b1-a551-be1926a41042}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -255,6 +261,17 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
+    <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\Boss.h">
+      <Filter>01.GameObject\02.Monster\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rangda.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -361,6 +378,17 @@
     </ClCompile>
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
+    <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\private\Boss.cpp">
+      <Filter>01.GameObject\02.Monster\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
