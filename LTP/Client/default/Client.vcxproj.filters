@@ -260,6 +260,7 @@
     </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClInclude>

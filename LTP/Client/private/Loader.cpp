@@ -328,7 +328,7 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	EnterCriticalSection(_CriSec);
 	m_bIsLoadingFinished = true;
 	LeaveCriticalSection(_CriSec);
-
+	 
 
 	return S_OK;
 }
@@ -590,7 +590,6 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	return S_OK;
 }
 
-<<<<<<< HEAD
 HRESULT CLoader::Load_Model_DatFile()
 {
 	// ?�이???�일�?assimp ?�이 모델 초기??/ ?�이??초기??
@@ -864,8 +863,6 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 }
 
 
-=======
->>>>>>> Jihwan
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)
 {
 	CLoader* pTempLoader = new CLoader;
