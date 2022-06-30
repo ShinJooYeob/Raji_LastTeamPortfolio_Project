@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
+#include "PhysXMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -207,7 +208,9 @@ HRESULT CMainApp::Ready_SingletonMgr()
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
 	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
+	FAILED_CHECK(GetSingle(CPhysXMgr)->Initialize_PhysX(m_pDevice, m_pDeviceContext));
 
+	
 	return S_OK;
 }
 
