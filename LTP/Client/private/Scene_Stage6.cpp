@@ -154,17 +154,14 @@ HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 }
 HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 {
-
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_TestObject)));
 	return S_OK;
-
 }
 
 
 HRESULT CScene_Stage6::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
-
 	return S_OK;
 }
 

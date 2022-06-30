@@ -43,10 +43,15 @@
 #include <assimp/postprocess.h>
 
 // PHYSX
+#include <physx/PxPhysics.h>
+#include <physx/PxPhysicsAPI.h>
+
 
 
 using namespace DirectX;
 using namespace Assimp;
+using namespace physx;
+
 //using namespace DX;
 
 
