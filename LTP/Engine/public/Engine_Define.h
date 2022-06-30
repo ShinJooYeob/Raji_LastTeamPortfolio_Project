@@ -18,10 +18,11 @@
 #include <DirectXMath.h>
 #include <typeinfo>
 
-
+// DX11
 #include <d3dcompiler.h>
 #include <d3dx11effect.h>
 
+// XTK
 #include <DirectXCollision.h>
 
 #include <DirectXTK/PrimitiveBatch.h>
@@ -36,9 +37,13 @@
 #include <DirectXTK/ScreenGrab.h>
 #include <wincodec.h>
 
+// Assimp
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+
+// PHYSX
+#include <PxActor.h>
 
 
 using namespace DirectX;
