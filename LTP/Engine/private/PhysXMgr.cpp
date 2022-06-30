@@ -44,18 +44,18 @@ void CPhysXMgr::TestPhysX()
 		gDefaultErrorCallback);
 	NULL_CHECK_BREAK(mFoundation);
 
-
 	//bool recordMemoryAllocations = true;
 
-	//mPvd = PxCreatePvd(*gFoundation);
+//	mPvd = PxCreatePvd(*gFoundation);
 	//PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	//mPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 
-	//mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation,
-	//	PxTolerancesScale(), recordMemoryAllocations, mPvd);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation,
+		PxTolerancesScale());
 	//NULL_CHECK_BREAK(mPhysics);
 
+	int a = 5;
 
 
 
@@ -72,3 +72,4 @@ void CPhysXMgr::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }
+

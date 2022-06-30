@@ -119,11 +119,12 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../public/;../public/physx/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4010</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Debug/PhysX_64.lib;Debug/PhysXCommon_64.lib;Debug/PhysXFoundation_64.lib;Debug/PhysXCooking_64.lib;Debug/PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Debug/PhysX_64.lib;Debug/PhysXCommon_64.lib;Debug/PhysXFoundation_64.lib;Debug/PhysXCooking_64.lib;Debug\PhysXPvdSDK_static_64.lib;Debug\PhysXVehicle_static_64.lib;Debug\PhysXCharacterKinematic_static_64.lib;Debug\PhysXExtensions_static_64.lib;Debug\PhysXCooking_64.lib;Debug\PhysX_64.lib;Debug\PhysXCommon_64.lib;Debug\PhysXFoundation_64.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
