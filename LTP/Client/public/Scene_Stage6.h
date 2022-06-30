@@ -1,6 +1,11 @@
 #pragma once
 
 #include "Scene.h"
+#include <physx/PxActor.h>
+
+// JIHWAN
+// Assimp Sample Scene
+// Phyx Sample Scene
 
 BEGIN(Client)
 class CScene_Stage6 final : public CScene

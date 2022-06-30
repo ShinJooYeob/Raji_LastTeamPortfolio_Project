@@ -3,8 +3,6 @@
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 
-// assimp Test Scene
-// PhyX 사용전 백업
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
@@ -22,7 +20,12 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 
+	// Assimp Test
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
+
+	// Phy
+
+
 	return S_OK;
 }
 
@@ -161,8 +164,6 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 HRESULT CScene_Stage6::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
-
-
 
 	return S_OK;
 }

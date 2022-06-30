@@ -79,8 +79,9 @@ _int CMainApp::Update(_double fDeltaTime)
 		MSGBOX("Failed to Update_Engine ");
 		return E_FAIL;
 	}
+#ifdef _DEBUG
 	FAILED_CHECK(m_pImguiMgr->Update_DebugWnd(fDeltaTime));
-
+#endif // _DEBUG
 	if (FAILED(m_pGameInstance->LateUpdate_Engine(fDeltaTime * m_SlowTimes)))
 	{
 		__debugbreak();

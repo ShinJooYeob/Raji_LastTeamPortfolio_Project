@@ -43,7 +43,6 @@
 #include <assimp/postprocess.h>
 
 // PHYSX
-#include <PxActor.h>
 
 
 using namespace DirectX;
