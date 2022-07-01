@@ -220,7 +220,7 @@ VS_OUT VS_MAIN_ATTACHEDNOWEIGHTW(VS_IN In)
 	matWV = mul(WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-	Out.vPosition = mul(vLocalPosition, matWVP);
+	Out.vPosition = mul(vector(vLocalPosition.xyz , 1.f), matWVP);
 	Out.vNormal = normalize(mul(vector(vLocalNormal.xyz, 0.f), WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = mul(vLocalPosition, WorldMatrix);

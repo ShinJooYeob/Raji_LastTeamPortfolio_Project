@@ -79,6 +79,7 @@ enum OBJECTPROTOTYPEID
 {
 	Prototype_Camera_Main,
 	Prototype_Player,
+	Prototype_PlayerWeapon_Spear,
 
 	Prototype_SkyBox,
 
@@ -144,7 +145,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Player:
 		return TEXT("Prototype_Player");
 		break;
-		
+	case Prototype_PlayerWeapon_Spear:
+		return TEXT("Prototype_PlayerWeapon_Spear");
+		break;
 
 	case Prototype_StaticMapObject:
 		return TEXT("Prototype_StaticMapObject");
@@ -505,6 +508,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_AlgaeRock_Ledge,
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
+	Prototype_Mesh_PlayerWeapon_Spear,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
 	Prototype_Mesh_Monster_Ninjasura,
@@ -636,6 +640,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Player:
 		return TEXT("Player.fbx");
 		break;
+
+	case Prototype_Mesh_PlayerWeapon_Spear:
+		return TEXT("PlayerSpear.fbx");
+		break;
+
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
 		return TEXT("Monster_Mahinasura_Minion.fbx");

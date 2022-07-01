@@ -162,6 +162,14 @@ _fVector CPlayer::Get_BonePos(const char * pBoneName)
 	return vPos;
 }
 
+_fMatrix CPlayer::Get_BoneMatrix(const char * pBoneName)
+{
+	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
+	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	return TransformMatrix;
+}
+
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 {
 	Set_PlayerState(STATE_IDLE);
@@ -3138,10 +3146,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	//FAILED_CHECK(Add_Component(m_eNowSceneNum, TEXT("Player.fbx"), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-//	FAILED_CHECK(Add_Component(m_eNowSceneNum, L"Player.fbx", TAG_COM(Com_Model), (CComponent**)&m_pModel));
+
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 

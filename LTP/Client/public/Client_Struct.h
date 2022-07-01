@@ -1,9 +1,61 @@
 #pragma once
 
+#include "GameObject.h"
 
 
 
 BEGIN(Client)
+
+// TODO: 필요한 추가 헤더는
+// 이 파일이 아닌 STDAFX.H에서 참조합니다.
+
+
+
+typedef struct tagAttachedDesc
+{
+
+	HRESULT Initialize_AttachedDesc(CGameObject*	pAttachTarget, const char*	pAttachBoneName)
+	{
+		pAttachingObjectTransform = (CTransform*)pAttachTarget->Get_Component(TAG_COM(Com_Transform));
+		NULL_CHECK_BREAK(pAttachingObjectTransform);
+		pModel = (CModel*)pAttachTarget->Get_Component(TAG_COM(Com_Model));
+		NULL_CHECK_BREAK(pModel);
+		m_pAttachedNode = pModel->Find_HierarchyNode(pAttachBoneName);
+		NULL_CHECK_BREAK(m_pAttachedNode);
+		return S_OK;
+	}
+
+	_Matrix Caculate_AttachedBoneMatrix()
+	{
+		NULL_CHECK_BREAK(pModel);
+		NULL_CHECK_BREAK(m_pAttachedNode);
+		NULL_CHECK_BREAK(pAttachingObjectTransform);
+
+		_Matrix BoneMatrix = pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix();
+		BoneMatrix.r[0] = XMVector3Normalize(BoneMatrix.r[0]);
+		BoneMatrix.r[1] = XMVector3Normalize(BoneMatrix.r[1]);
+		BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
+
+		return BoneMatrix;
+	}
+
+	_Vector Get_AttachedBoneWorldPosition()
+	{
+		NULL_CHECK_BREAK(pModel);
+		NULL_CHECK_BREAK(m_pAttachedNode);
+		NULL_CHECK_BREAK(pAttachingObjectTransform);
+
+		return (pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
+	}
+
+private:
+	CTransform*			pAttachingObjectTransform = nullptr;
+	CModel*				pModel = nullptr;
+	CHierarchyNode*		m_pAttachedNode = nullptr;
+
+}ATTACHEDESC;
+
+
 typedef struct tagFonts
 {
 	wstring szString;

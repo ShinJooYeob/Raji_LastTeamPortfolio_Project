@@ -21,3 +21,6 @@
 #define KEYPRESS(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Press
 #define KEYDOUBLE(x)	GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_DoubleDown
 
+
+
+
