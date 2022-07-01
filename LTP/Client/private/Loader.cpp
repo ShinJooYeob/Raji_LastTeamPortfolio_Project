@@ -142,9 +142,12 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 
-	// #TEST Create NoAssimp 
-	GetSingle(CAssimpCreateMgr)->Load_ALL_Modele();
-
+	// #LOAD ALLMODEL
+	// 모든 모델 로드 TEST
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+	// #LOAD OneLOAD
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(L"Player.fbx" ,TransformMatrix);
 
 
 #pragma endregion

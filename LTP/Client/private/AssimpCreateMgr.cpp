@@ -15,53 +15,80 @@ HRESULT CAssimpCreateMgr::Initalize(ID3D11Device* d, ID3D11DeviceContext* c)
 	Safe_AddRef(d);
 	Safe_AddRef(c);
 
-
-
+	Init_ModelName_FileList();
 	return S_OK;
 }
 
-HRESULT CAssimpCreateMgr::Load_ALL_Modele()
+HRESULT CAssimpCreateMgr::Load_ALL_Model(_fMatrix staticDefault, _fMatrix dynamicDefault)
 {
 	// 모든 모델 컴포넌트 생성
-	FAILED_CHECK(Load_Model_DatFile());
+	FAILED_CHECK(Load_Model_DatFile_All(staticDefault,dynamicDefault));
+	return S_OK;
+}
+
+HRESULT CAssimpCreateMgr::Load_Model_One_ByFBXName(const wchar_t * fbxName, _fMatrix DefaultMat)
+{
+	FAILED_CHECK(Load_Model_DatFile_One(fbxName,DefaultMat));
 	return S_OK;
 }
 
 const wchar_t * CAssimpCreateMgr::GetName_Iter_Plus()
 {
 	++mCurrent_NameIter;
-	if (mCurrent_NameIter == mList_Name_ModelCom.end())
-		mCurrent_NameIter = mList_Name_ModelCom.begin();
+	if (mCurrent_NameIter == mList_CreateModelName.end())
+		mCurrent_NameIter = mList_CreateModelName.begin();
 
 	return (*mCurrent_NameIter);
 }
 
-HRESULT CAssimpCreateMgr::Load_Model_DatFile()
+HRESULT CAssimpCreateMgr::Load_Model_DatFile_One(const wchar_t* fbxName, _fMatrix DefaultMat)
 {
-	// 파일 리스트
-	mFile_StaticList = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
-	mFile_DynamicList = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
+	// 생성할 FBX 이름으로 생성
+	for (auto iter: mList_CreateModelName)
+	{
+		if (lstrcmp(iter, fbxName) == 0)
+		{
+			
+#ifdef _DEBUG
+			wstring log = L"AlReady Compoenet: fbxName" + wstring(fbxName) + L"\n";
+			OutputDebugStringW(log.c_str());
+#endif
+			return S_FALSE;
+		}
+	}
+	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 
+	// 특정 모델 Desc에 저장 후 모델 생성
+	FAILED_CHECK(Load_ModelFBXName_CreateModel(fbxName, DefaultMat));
+	mCurrent_NameIter = mList_CreateModelName.begin();
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+
+	return S_OK;
+}
+
+HRESULT CAssimpCreateMgr::Init_ModelName_FileList()
+{
+	// 파일 리스트 초기화
+	mList_DataFIle_Static = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
+	mList_DataFIle_Dynamic = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
+	return S_OK;
+}
+
+HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatrix dynamicDefault)
+{
+	// 모든 모델 로드
 
 	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 
 	// Load ModelDesc
-	FAILED_CHECK(Load_ModelMap(mFile_StaticList, mMap_StaticModelDesc));
-	FAILED_CHECK(Load_ModelMap(mFile_DynamicList, mMap_DynamicModelDesc));
-
-	// Create ModelCom
-	_Matrix			TransformMatrix_dynamic;
-	TransformMatrix_dynamic = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) *XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	_Matrix			TransformMatrix_static;
-	TransformMatrix_static = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-
+	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
+	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
 
 	SCENEID sceneID = SCENE_STATIC;
-	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, TransformMatrix_static));
-	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, TransformMatrix_dynamic));
+	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
+	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
 
-	mCurrent_NameIter = mList_Name_ModelCom.begin();
+	mCurrent_NameIter = mList_CreateModelName.begin();
 
 	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
 	
@@ -484,6 +511,263 @@ HRESULT CAssimpCreateMgr::Load_ModelMap(const list<MYFILEPATH*>& pathlist, map<c
 	return S_OK;
 }
 
+HRESULT CAssimpCreateMgr::Load_ModelFBXName_CreateModel(const wchar_t * fbxName, _fMatrix Default)
+{
+	// 특정 모델 컴포넌트 초기화
+
+	wstring fullpath = L"";
+	wstring FileName = L"";
+	wstring SearchName = fbxName;
+
+	MODELDESC* modelDesc = new MODELDESC;
+	// 1.파일 찾기
+
+	bool isSearch = false;
+	_ulong			dwByte = 0;
+	for (auto& path : mList_DataFIle_Dynamic)
+	{
+		if (isSearch)
+			break;
+
+		fullpath = path->FullPath;
+		FileName = path->FileName;
+		HANDLE			hFile = CreateFile(fullpath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		if (0 == hFile)
+			return E_FAIL;
+
+		// UINT
+		ReadFile(hFile, modelDesc->mFBXFullPath, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+		ReadFile(hFile, modelDesc->mFBXFileName, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+
+		if (lstrcmp(modelDesc->mFBXFileName, fbxName) == 0)
+		{
+			isSearch = true;
+		}
+		CloseHandle(hFile);
+	}
+
+	if (isSearch == false)
+	{
+		for (auto& path : mList_DataFIle_Static)
+		{
+			if (isSearch)
+				break;
+
+			fullpath = path->FullPath;
+			FileName = path->FileName;
+			HANDLE			hFile = CreateFile(fullpath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+			if (0 == hFile)
+				return E_FAIL;
+
+			// UINT
+			ReadFile(hFile, modelDesc->mFBXFullPath, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+			ReadFile(hFile, modelDesc->mFBXFileName, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+
+			if (lstrcmp(modelDesc->mFBXFileName, fbxName) == 0)
+			{
+				isSearch = true;
+			}
+			CloseHandle(hFile);
+		}
+
+	}
+
+	if (isSearch == false)
+		return E_FAIL;
+
+
+	HANDLE			hFile = CreateFile(fullpath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+	{
+
+		// UINT
+		ReadFile(hFile, modelDesc->mFBXFullPath, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+		ReadFile(hFile, modelDesc->mFBXFileName, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
+
+		ReadFile(hFile, &modelDesc->mModelType, sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &modelDesc->mNumMeshes, sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &modelDesc->mNumMaterials, sizeof(_uint), &dwByte, nullptr);
+
+		if (modelDesc->mModelType == CModel::TYPE_ANIM)
+		{
+			ReadFile(hFile, &modelDesc->mNumBones, sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &modelDesc->mNumAnimations, sizeof(_uint), &dwByte, nullptr);
+		}
+
+		CModel::MODELTYPE ModelType = (CModel::MODELTYPE)modelDesc->mModelType;
+
+		// 
+		if (modelDesc->mNumMeshes != 0)
+			modelDesc->mMeshDesc = new MESHDESC[modelDesc->mNumMeshes];
+
+		if (modelDesc->mNumMaterials != 0)
+			modelDesc->mMaterials = new MATDESC[modelDesc->mNumMaterials];
+
+		if (ModelType == CModel::TYPE_ANIM)
+		{
+			if (modelDesc->mNumBones != 0)
+				modelDesc->mBones = new BONEDESC[modelDesc->mNumBones];
+
+			if (modelDesc->mNumAnimations != 0)
+				modelDesc->mAnimations = new ANIDESC[modelDesc->mNumAnimations];
+		}
+
+		// MESH
+		for (_uint i = 0; i < modelDesc->mNumMeshes; ++i)
+		{
+			MESHDESC* meshdesc = &modelDesc->mMeshDesc[i];
+
+			// uint
+			ReadFile(hFile, &meshdesc->mPrimitiveTypes, sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &meshdesc->mNumVertices, sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &meshdesc->mNumFaces, sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &meshdesc->mMaterialIndex, sizeof(_uint), &dwByte, nullptr);
+
+			if (ModelType == CModel::TYPE_ANIM)
+			{
+				ReadFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
+			}
+
+			meshdesc->mVertices = new _float3[meshdesc->mNumVertices];
+			meshdesc->mNormals = new _float3[meshdesc->mNumVertices];
+			meshdesc->mTangents = new _float3[meshdesc->mNumVertices];
+			meshdesc->mUV = new _float2[meshdesc->mNumVertices];
+			meshdesc->mFaces = new FACEINDICES32[meshdesc->mNumFaces];
+
+			// VTX
+			ReadFile(hFile, meshdesc->mVertices, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
+			if (dwByte == 0)
+				return E_FAIL;
+
+			ReadFile(hFile, meshdesc->mNormals, sizeof(_float3) *meshdesc->mNumVertices, &dwByte, nullptr);
+			if (dwByte == 0)
+				return E_FAIL;
+
+			ReadFile(hFile, meshdesc->mTangents, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
+			if (dwByte == 0)
+				return E_FAIL;
+
+			// UV 異붽?
+			ReadFile(hFile, meshdesc->mUV, sizeof(_float2)*meshdesc->mNumVertices, &dwByte, nullptr);
+			if (dwByte == 0)
+				return E_FAIL;
+
+			// INDEX
+			ReadFile(hFile, meshdesc->mFaces, sizeof(FACEINDICES32)*meshdesc->mNumFaces, &dwByte, nullptr);
+			if (dwByte == 0)
+				return E_FAIL;
+
+			// WEIGHT
+			if (modelDesc->mModelType == CModel::TYPE_ANIM)
+			{
+				_uint NumAffectingBones = meshdesc->mNumAffectingBones;
+				if (NumAffectingBones != 0)
+				{
+					// 堉??몃뜳??由ъ뒪??
+					meshdesc->mAffectingBones = new _uint[NumAffectingBones];
+					meshdesc->mMeshBones = new MESHBONEDESC[NumAffectingBones];
+
+					ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
+					// 堉?Weight
+					for (_uint bone = 0; bone < NumAffectingBones; ++bone)
+					{
+						ReadFile(hFile, &meshdesc->mMeshBones[bone].mNumWeights, sizeof(_uint), &dwByte, nullptr);
+						_uint NumWeight = meshdesc->mMeshBones[bone].mNumWeights;
+						if (NumWeight == 0)
+							continue;
+
+						meshdesc->mMeshBones[bone].mAiWeights = new aiVertexWeight[NumWeight];
+
+						ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
+							sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
+						int debug = 5;
+					}
+				}
+			}
+		}
+
+		// MATERIAL
+		for (_uint i = 0; i < modelDesc->mNumMaterials; ++i)
+		{
+			MATDESC* matdesc = &modelDesc->mMaterials[i];
+			ReadFile(hFile, matdesc->MatName, sizeof(wchar_t)*MAX_PATH*AI_TEXTURE_TYPE_MAX, &dwByte, nullptr);
+		}
+
+		// BONE
+		if (modelDesc->mModelType == CModel::TYPE_ANIM)
+		{
+			for (_uint i = 0; i < modelDesc->mNumBones; ++i)
+			{
+				BONEDESC* bonedesc = &modelDesc->mBones[i];
+				ReadFile(hFile, bonedesc->mParentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				ReadFile(hFile, bonedesc->mCurrentBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				ReadFile(hFile, &bonedesc->mOffsetMat, sizeof(_float4x4), &dwByte, nullptr);
+				ReadFile(hFile, &bonedesc->mTransMat, sizeof(_float4x4), &dwByte, nullptr);
+				ReadFile(hFile, &bonedesc->mDepth, sizeof(_uint), &dwByte, nullptr);
+			}
+
+
+			// ANI
+			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+			{
+				ANIDESC* anidesc = &modelDesc->mAnimations[i];
+				ReadFile(hFile, anidesc->mAniName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+				ReadFile(hFile, &anidesc->mDuration, sizeof(double), &dwByte, nullptr);
+				ReadFile(hFile, &anidesc->mTicksPerSecond, sizeof(double), &dwByte, nullptr);
+				ReadFile(hFile, &anidesc->mNumAniBones, sizeof(_uint), &dwByte, nullptr);
+			}
+
+			for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
+			{
+				ANIDESC* anidesc = &modelDesc->mAnimations[i];
+				anidesc->mAniBones = new ANIBONES[anidesc->mNumAniBones];
+				for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
+				{
+					ANIBONES* anibone = &anidesc->mAniBones[j];
+
+
+					ReadFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
+					ReadFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
+					ReadFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
+					anibone->mKeyFrames = new KEYFRAME[anibone->mNumKeyFrames];
+					ReadFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
+
+				}
+
+			}
+		}
+
+		CloseHandle(hFile);
+
+		if (modelDesc->mModelType == CModel::TYPE_NONANIM)
+		{
+			mList_CreateModelName.push_front(modelDesc->mFBXFileName);
+			mMap_StaticModelDesc.emplace(modelDesc->mFBXFileName, modelDesc);
+
+			FAILED_CHECK(GetSingle(CGameInstance)->Add_Component_Prototype(
+				SCENEID::SCENE_STATIC,
+				modelDesc->mFBXFileName,
+				CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, modelDesc, Default)));
+		}
+
+		else if (modelDesc->mModelType == CModel::TYPE_ANIM)
+		{
+			mList_CreateModelName.push_front(modelDesc->mFBXFileName);
+			mMap_DynamicModelDesc.emplace(modelDesc->mFBXFileName, modelDesc);
+
+			FAILED_CHECK(GetSingle(CGameInstance)->Add_Component_Prototype(
+				SCENEID::SCENE_STATIC,
+				modelDesc->mFBXFileName,
+				CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, modelDesc, Default)));
+
+		}
+	}
+
+	return S_OK;
+}
+
+
 HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type, _Matrix defaultMat)
 {
 	if (map.empty())
@@ -501,7 +785,7 @@ HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, 
 			pair.first,
 			CModel::Create(m_pDevice, m_pDeviceContext, type, pair.second, defaultMat)));
 
-		mList_Name_ModelCom.push_front(pair.first);
+		mList_CreateModelName.push_front(pair.first);
 	}
 	return S_OK;
 }
@@ -548,8 +832,8 @@ void CAssimpCreateMgr::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 
-	Safe_Delete_List(mFile_StaticList);
-	Safe_Delete_List(mFile_DynamicList);
+	Safe_Delete_List(mList_DataFIle_Static);
+	Safe_Delete_List(mList_DataFIle_Dynamic);
 
 	//Safe_Delete_List(mList_ModelStatic);
 	//Safe_Delete_List(mList_ModelDynamic);
