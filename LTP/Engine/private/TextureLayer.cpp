@@ -149,8 +149,8 @@ HRESULT CTextureLayer::Add_Model_Texture(_uint iIndex, const _tchar * pTextureFi
 			if (FAILED(CreateDDSTextureFromFile(m_pDevice, ChagedtoPngPath.c_str(), &TexturForRelease, &pSRV)))
 			{
 				IsNotExistPath = true;
-				wstring DebugString = L"\nNot Exist PNG File : " + wstring(ChagedtoPngPath) + L"\n";
 				Safe_Release(pSRV);
+				wstring DebugString = L"\nNot Exist PNG File : " + wstring(ChagedtoPngPath) + L"\n";
 				OutputDebugString(DebugString.c_str());
 			}
 

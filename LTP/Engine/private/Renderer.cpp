@@ -341,7 +341,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	FAILED_CHECK(Render_NonBlend_NoLight());
 
-	if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
+	//if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_VOLUMATRIC])
 		FAILED_CHECK(Render_Volumatric());
@@ -838,9 +838,47 @@ HRESULT CRenderer::Render_GodRay()
 {
 
 
+	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	_Vector vSunDir = XMVector3Normalize(XMVectorSetW(pLightDesc->vVector.XMVector(), 1) - XMVectorSet(10, -10, 10, 1));
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
+	_Vector vCamLook = vCamWorldMat.r[2];
+
+
+	const float dotCamSun = -XMVectorGetX(XMVector3Dot(vCamLook, vSunDir));
+	if (dotCamSun <= 0.0f)return S_FALSE;
+
+
+	_float3 vSunPos = -200.0f * vSunDir;
+	_float3 vEyePos = vCamWorldMat.r[3];
+	vSunPos.x += vEyePos.x;
+	vSunPos.z += vEyePos.z;
+
+	_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
+	_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+
+	_Matrix mViewProjection = mView * mProj;
+	_float3 vSunPosSS =	XMVector3TransformCoord(vSunPos.XMVector(), mViewProjection);
+
+	static const float fMaxSunDist = 1.3f;
+	if (abs(vSunPosSS.x) >= fMaxSunDist || abs(vSunPosSS.y) >= fMaxSunDist)
+	{
+		return S_FALSE;
+	}
+
+	// Attenuate the sun color based on how far the sun is from the view
+	//_float3 vSunColorAtt = vSunColor;
+	_float3 vSunColorAtt = _float3(1,0,0);
+	float fMaxDist = max(abs(vSunPosSS.x), abs(vSunPosSS.y));
+	if (fMaxDist >= 1.0f)
+	{
+		vSunColorAtt = vSunColorAtt.XMVector() * (fMaxSunDist - fMaxDist);
+	}
+
+
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_GodRay")));
 
-	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
 
 	_float4x4		ViewMatrixInv, ProjMatrixInv;
 
