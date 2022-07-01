@@ -3,6 +3,7 @@
 #pragma comment (lib,"Effects11d.lib")
 #pragma comment (lib,"DirectXTKd.lib")
 #pragma comment (lib,"assimp-vc140-mtd.lib")
+
 #else
 #pragma comment (lib,"Effects11.lib")
 #pragma comment (lib,"DirectXTK.lib")

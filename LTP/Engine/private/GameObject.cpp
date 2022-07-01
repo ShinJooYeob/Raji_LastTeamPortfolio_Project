@@ -101,19 +101,17 @@ HRESULT CGameObject::Add_Component(_uint iScenenNum, const _tchar* tagPrototype,
 		return E_FAIL;
 	}
 
-	 CComponent* pCloneComponent = GetSingle(CGameInstance)->Clone_Component(iScenenNum, tagPrototype, pArg);
+	CComponent* pCloneComponent = GetSingle(CGameInstance)->Clone_Component(iScenenNum, tagPrototype, pArg);
 
-	 if (pCloneComponent == nullptr)
-	 {
-		 pCloneComponent = GetSingle(CGameInstance)->Clone_Component(0, tagPrototype, pArg);
-		 NULL_CHECK_BREAK(pCloneComponent);
-	 }
+	if (pCloneComponent == nullptr)
+	{
+		pCloneComponent = GetSingle(CGameInstance)->Clone_Component(0, tagPrototype, pArg);
+		NULL_CHECK_BREAK(pCloneComponent);
+	}
 
-
-
-	 (*ppOut) = pCloneComponent;
-	 Safe_AddRef(pCloneComponent);
-	 m_mapComponets.emplace(tagComponent, ppOut);
+	(*ppOut) = pCloneComponent;
+	Safe_AddRef(pCloneComponent);
+	m_mapComponets.emplace(tagComponent, ppOut);
 
 
 	return S_OK;

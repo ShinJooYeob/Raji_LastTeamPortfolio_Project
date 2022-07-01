@@ -17,7 +17,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-	TestPhysX();
+//	TestPhysX();
 
 
 	return S_OK;
@@ -30,19 +30,6 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 void CPhysXMgr::TestPhysX()
 {
 	// 초기화용 변수
-	PxDefaultAllocator			mAllocCallback;
-	PxDefaultErrorCallback		mErrorCallback;
-	
-	PxDefaultCpuDispatcher*		mDisPatcher = nullptr;
-	PxTolerancesScale			mToleranceScale;
-
-	PxFoundation*				mFoundation;
-	PxPhysics*					mPhysics = nullptr;
-
-	PxScene*					mScene = nullptr;
-	PxMaterial*					mMaterial = nullptr;
-
-	PxPvd*						mPvd;
 
 
 	// Init
@@ -83,22 +70,58 @@ void CPhysXMgr::TestPhysX()
 
 	mScene = mPhysics->createScene(sceneDesc);
 
+#ifdef _DEBUG
+	PxPvdSceneClient* pvdClient = mScene->getScenePvdClient();
+	if (pvdClient)
+	{
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS,true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+	}
 
 
+#endif // DEBUG
+
+	
 	// Create Simulation
+	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	// 스태틱 메시로 Plane 생성
+	PxRigidStatic* groudPlane = PxCreatePlane(*mPhysics,PxPlane(0,1,0,99),*mMaterial);
+	mScene->addActor(*groudPlane);
 
+	float halfsize = 0.5f;
+	const PxTransform t(PxVec3(0,0,0));
+	PxU32 size = 30;
+	
+	CreateStack(t,size,halfsize);
 
 	// Run
+	while (1)
+	{
+		// Debugger에서 실행되는 거 확인
+		mScene->simulate(1.0f / 60.0f);
+		mScene->fetchResults(true); // 결과 업데이트
+	}
 
+}
 
-
-
-	PxSceneDesc desc(mPhysics->getTolerancesScale());
-//	desc.gravity = PxVec3(0, -9.8f, 0.0f);
-//	mDispatcher = PxDefaultCpuDispatcherCreate(2);
-//	desc.cpuDispatcher = mDispatcher;
-//	desc.filterShader = PxDefaultSimulationFilterShader;
-
+HRESULT CPhysXMgr::CreateStack(const PxTransform & trans, PxU32 size, PxReal halfExtent)
+{
+	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
+	for (PxU32 i = 0; i < size; i++)
+	{
+		for (PxU32 j = 0; j < size - i; j++)
+		{
+			PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
+			PxRigidDynamic* body = mPhysics->createRigidDynamic(trans.transform(localTm));
+			NULL_CHECK_BREAK(body);
+			body->attachShape(*shape);
+			PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+			mScene->addActor(*body);
+		}
+	}
+	shape->release();
+	return S_OK;
 }
 
 void CPhysXMgr::Free()
