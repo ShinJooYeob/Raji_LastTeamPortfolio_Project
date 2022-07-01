@@ -109,6 +109,7 @@ enum OBJECTPROTOTYPEID
 
 	//JJB
 	Prototype_Object_Boss_Rangda,
+	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Effect_MagicCircle,
 
 	Object_Prototype_End
@@ -189,6 +190,11 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
+		break;
+
+	case Prototype_Object_Boss_Chiedtian:
+		return TEXT("Prototype_Object_Boss_Chiedtian");
+		break;
 
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
@@ -523,6 +529,7 @@ enum COMPONENTPROTOTYPEID
 
 
 	Prototype_Mesh_Boss_Rangda,
+	Prototype_Mesh_Boss_Chieftian,
 
 
 	Prototype_Mesh_SkyBox,
@@ -681,6 +688,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		
 	case Prototype_Mesh_Boss_Rangda:
 		return TEXT("Boss_Randa.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_Chieftian:
+		return TEXT("Boss_Chiedtian.fbx");
 		break;
 
 	case Prototype_Mesh_TestObject:
