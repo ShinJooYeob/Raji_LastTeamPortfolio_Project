@@ -235,6 +235,11 @@ HRESULT CMainApp::Free_SingletonMgr()
 		MSGBOX("Failed to Release CAssimpCreateMgr");
 		return E_FAIL;
 	}
+	if (0 != GetSingle(CPhysXMgr)->DestroyInstance())
+	{
+		MSGBOX("Failed to Release CPhysXMgr");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
