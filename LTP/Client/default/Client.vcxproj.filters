@@ -154,6 +154,15 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Vayusura_Leader">
       <UniqueIdentifier>{00e2325d-4b5f-4835-bacc-ec49b9c61b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Gadasura_Black">
+      <UniqueIdentifier>{cf480f64-11db-47ae-ae86-e11e64297966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet">
+      <UniqueIdentifier>{f96b2ddc-b00a-4af9-8d6d-5bc7d15e52e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal">
+      <UniqueIdentifier>{ad11d86f-f304-4384-826a-20223b2c5663}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -288,14 +297,9 @@
     <ClInclude Include="..\public\Player.h">
       <Filter>01.GameObject\01.Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Boss.h">
       <Filter>01.GameObject\02.Monster\Boss</Filter>
@@ -328,6 +332,21 @@
     </ClInclude>
     <ClInclude Include="..\public\Rangda_MagicCircle.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Mahinasura_Minion.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Mahinasura_Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Bullet.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Bullet_Universal.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -439,10 +458,6 @@
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
@@ -474,6 +489,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>01.GameObject\02.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Bullet.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Bullet_Universal.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

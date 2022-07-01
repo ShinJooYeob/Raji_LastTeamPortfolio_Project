@@ -75,6 +75,9 @@ private:
 
 	_float3				m_fPlayerPos;
 
+	//Distance
+	_float4				m_fDirection;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

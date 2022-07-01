@@ -192,6 +192,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Monster_Bullet.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Leader.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="..\public\TestStaticObject.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Monster_Bullet_Universal.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -233,6 +235,7 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MapObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Monster_Bullet.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
@@ -269,6 +272,7 @@
     <ClCompile Include="..\public\Imgui\imgui_tables.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Monster_Bullet_Universal.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

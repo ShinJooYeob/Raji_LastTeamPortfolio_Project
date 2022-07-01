@@ -31,10 +31,10 @@ LTP/ZAssimp/bin/Resources/**/**/*.*
 LTP/ZAssimp/bin/Resources/**/**/**/*.*
 LTP/ZAssimp/bin/Resources/**/**/**/**/*.*
 
-LTP/assimpPack/bin/Resources/*.*
-LTP/assimpPack/bin/Resources/**/*.*
-LTP/assimpPack/bin/Resources/**/*.*
-LTP/assimpPack/bin/Resources/**/**/*.*
+LTP/assimpPack_release/bin/Resources/*.*
+LTP/assimpPack_release/bin/Resources/**/*.*
+LTP/assimpPack_release/bin/Resources/**/*.*
+LTP/assimpPack_release/bin/Resources/**/**/*.*
 
 
 \Engine

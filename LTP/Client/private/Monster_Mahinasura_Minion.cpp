@@ -454,14 +454,14 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 
 				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.5f , 2.2f, PlayRate -0.27272f, 0.17128f);
+				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.5f , 2.2f, (_float)PlayRate -0.27272f, 0.17128f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
 			else if (PlayRate >= 0.444 && PlayRate <= 0.6)
 			{
 				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.2f , 1.f, PlayRate -0.444f, 0.156f);
+				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.2f , 1.f,static_cast<_float>(PlayRate) -0.444f, 0.156f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
@@ -486,7 +486,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 
 				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f , 1.f, PlayRate-0.24f, 0.36f);
+				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f , 1.f,(_float)PlayRate-0.24f, 0.36f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 
