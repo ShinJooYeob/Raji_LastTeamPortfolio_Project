@@ -31,6 +31,7 @@
 #define SOUND_WEIGHT 0.1f
 
 #define GetSingle(SINGLETON) SINGLETON::GetInstance()
+#define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
 
 #define DIS_Up				0b00000001
 #define DIS_Down			0b00000110

@@ -146,10 +146,17 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	static _bool bisLoaded = false;
 	if (!bisLoaded)
-	{
-		GetSingle(CAssimpCreateMgr)->Load_ALL_Modele();
+	{	// #LOAD ALLMODEL
+	// 모든 모델 로드 TEST
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+
+	// #LOAD OneLOAD
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(L"Player.fbx" ,TransformMatrix);
 		bisLoaded = true;
 	}
+
 
 
 
@@ -399,7 +406,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	// Assimp Dynamic
 //	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_Player),
-//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "Monster_Mahinasura_Minion", "Monster_Mahinasura_Minion.fbx", TransformMatrix)));
+//		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.fbx", TransformMatrix)));
 
 
 #pragma endregion

@@ -276,9 +276,6 @@
     <ClInclude Include="..\public\Monster_Gadasura_Black.h">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Mahinasura.h">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClInclude>
@@ -298,7 +295,7 @@
       <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AssimpCreateMgr.h">
-  </ClInclude>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -413,9 +410,6 @@
       <Filter>01.GameObject\02.Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Mahinasura.cpp">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp">

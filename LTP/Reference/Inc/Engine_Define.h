@@ -3,6 +3,7 @@
 #pragma comment (lib,"Effects11d.lib")
 #pragma comment (lib,"DirectXTKd.lib")
 #pragma comment (lib,"assimp-vc140-mtd.lib")
+
 #else
 #pragma comment (lib,"Effects11.lib")
 #pragma comment (lib,"DirectXTK.lib")
@@ -18,10 +19,11 @@
 #include <DirectXMath.h>
 #include <typeinfo>
 
-
+// DX11
 #include <d3dcompiler.h>
 #include <d3dx11effect.h>
 
+// XTK
 #include <DirectXCollision.h>
 
 #include <DirectXTK/PrimitiveBatch.h>
@@ -36,13 +38,21 @@
 #include <DirectXTK/ScreenGrab.h>
 #include <wincodec.h>
 
+// Assimp
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
+// PHYSX
+#include <physx/PxPhysics.h>
+#include <physx/PxPhysicsAPI.h>
+
+
 
 using namespace DirectX;
 using namespace Assimp;
+using namespace physx;
+
 //using namespace DX;
 
 

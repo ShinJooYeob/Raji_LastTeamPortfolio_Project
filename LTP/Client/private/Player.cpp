@@ -1126,10 +1126,10 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.66f <= fAnimPlayRate)
@@ -1177,10 +1177,10 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.66f <= fAnimPlayRate)
@@ -1226,12 +1226,12 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
 		if (true == m_bPlayNextCombo)
 		{
-			// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+			// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 			if (0.66f <= fAnimPlayRate)
 			{
 				m_bPlayJumpAttack = false;
@@ -2000,10 +2000,10 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.85f <= fAnimPlayRate)
@@ -2050,10 +2050,10 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.66f <= fAnimPlayRate)
@@ -2099,12 +2099,12 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ���� �޺� Ŀ��Ʈ �Է� üũ
+		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
 		if (true == m_bPlayNextCombo)
 		{
-			// 2) ���� ���� ��ȯ �� �޺� �ൿ üũ
+			// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 			if (0.66f <= fAnimPlayRate)
 			{
 				m_bPlayJumpAttack = false;
@@ -3131,8 +3131,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum,TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+//	FAILED_CHECK(Add_Component(m_eNowSceneNum, L"Player.fbx", TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 

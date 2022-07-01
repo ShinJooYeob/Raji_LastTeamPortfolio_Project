@@ -134,7 +134,7 @@ HRESULT CStaticMapObject::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	//FAILED_CHECK(Add_Component(m_eNowSceneNum, L"HalfCircle.fbx", TAG_COM(Com_Model), (CComponent**)&m_pModel));
+//	FAILED_CHECK(Add_Component(m_eNowSceneNum, TEXT("AlgaeRock_Ledge.fbx"), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom));
 
