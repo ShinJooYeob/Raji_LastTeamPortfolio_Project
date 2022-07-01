@@ -101,6 +101,10 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_Object_Monster_Mahinasura_Minion,
+	Prototype_Object_Monster_Mahinasura_Leader,
+	Prototype_Object_Monster_Vayusura_Minion,
+	Prototype_Object_Monster_Vayusura_Leader,
+
 
 	//JJB
 	Prototype_Object_Boss_Rangda,
@@ -170,6 +174,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Mahinasura_Minion:
 		return TEXT("Prototype_Object_Monster_Mahinasura_Minion");
+
+	case Prototype_Object_Monster_Vayusura_Minion:
+		return TEXT("Prototype_Object_Monster_Vayusura_Minion");
+
+	case Prototype_Object_Monster_Vayusura_Leader:
+		return TEXT("Prototype_Object_Monster_Vayusura_Leader");
+
+	case Prototype_Object_Monster_Mahinasura_Leader:
+		return TEXT("Prototype_Object_Monster_Mahinasura_Leader");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
@@ -501,6 +514,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
 	
 	
+	Prototype_Mesh_Monster_Vayusura_Minion,
+	Prototype_Mesh_Monster_Vayusura_Leader,
+
+
 	Prototype_Mesh_Boss_Rangda,
 
 
@@ -617,15 +634,25 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		
 
 	case Prototype_Mesh_Player:
-		return TEXT("Prototype_Mesh_Player");
+		return TEXT("Player.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
 		return TEXT("Monster_Mahinasura_Minion.fbx");
 		break;
+
 	case Prototype_Mesh_Monster_Mahinasura_Leader:
-		return TEXT("Monster_Mahinasura_Leader_glft.fbx");
+		return TEXT("Monster_Mahinasura_Leader.fbx");
 		break;
+
+	case Prototype_Mesh_Monster_Vayusura_Minion:
+		return TEXT("Monster_Vayusura_Minion.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Vayusura_Leader:
+		return TEXT("Monster_Vayusura_Leader.fbx");
+		break;
+
 	case Prototype_Mesh_Monster_Ninjasura:
 		return TEXT("Monster_Ninjasura_GLTF.fbx");
 		break;

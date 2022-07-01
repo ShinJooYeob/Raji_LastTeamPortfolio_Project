@@ -6,12 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-class CMonster_Mahinasura_Minion final : public CMonster
+class CMonster_Vayusura_Leader final : public CMonster
 {
 private:
-	explicit CMonster_Mahinasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Mahinasura_Minion(const CMonster_Mahinasura_Minion& rhs);
-	virtual ~CMonster_Mahinasura_Minion() = default;
+	explicit CMonster_Vayusura_Leader(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Vayusura_Leader(const CMonster_Vayusura_Leader& rhs);
+	virtual ~CMonster_Vayusura_Leader() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -35,8 +35,6 @@ private: //애니메이션
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
-	HRESULT				Special_Trigger(_double	dDeltaTime);
-
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -52,7 +50,7 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-	//Anim Once Pattern
+		//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
@@ -63,9 +61,11 @@ private://애니메이션 동작 및 이벤트
 	_double				m_dInfinity_CoolTime = 0;
 	_uint				m_iInfinityPattern = 0;
 	_uint				m_iInfinityAnimNumber = 0;
-	
-	//Anim Special Pattern
-	_double				m_dSpecial_CoolTime = 0;
+
+	//Anim Combo Pattern
+	_bool				m_bComboAnimSwitch = false;
+
+	_double				m_dAcceleration = 1;
 
 private:
 	_float				m_fDistance = 0;
@@ -73,15 +73,14 @@ private:
 
 	_float3				m_TempLook;
 
-	_uint				m_iBoolOnce = 0;
-
+	_float3				m_fPlayerPos;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Mahinasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Vayusura_Leader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

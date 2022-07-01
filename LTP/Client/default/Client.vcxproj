@@ -193,7 +193,10 @@
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
+    <ClInclude Include="..\public\Monster_Mahinasura_Leader.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
+    <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
+    <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
@@ -231,7 +234,10 @@
     <ClCompile Include="..\private\MapObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
+    <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
+    <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
+    <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
