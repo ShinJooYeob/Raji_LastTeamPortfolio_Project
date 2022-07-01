@@ -342,7 +342,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_NonBlend_NoLight());
 
 	//if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
-		FAILED_CHECK(Render_GodRay());
+		//FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_VOLUMATRIC])
 		FAILED_CHECK(Render_Volumatric());
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])

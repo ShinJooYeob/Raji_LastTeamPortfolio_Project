@@ -25,12 +25,13 @@ LTP/Client/bin/Resources/**/**/**/**/**/**/*.*
 LTP/Client/bin/Resources/**/**/**/**/**/**/**/*.*
 LTP/Client/bin/Resources/**/**/**/**/**/**/**/**/*.*
 
-LTP/ZAssimp/bin/Resources
+LTP/ZAssimp
 LTP/ZAssimp/bin/Resources/**/*.*
 LTP/ZAssimp/bin/Resources/**/**/*.*
 LTP/ZAssimp/bin/Resources/**/**/**/*.*
 LTP/ZAssimp/bin/Resources/**/**/**/**/*.*
 
+LTP/assimpPack_release
 LTP/assimpPack_release/bin/Resources/*.*
 LTP/assimpPack_release/bin/Resources/**/*.*
 LTP/assimpPack_release/bin/Resources/**/*.*

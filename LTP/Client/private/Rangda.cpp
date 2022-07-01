@@ -345,14 +345,14 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				PlayerPos.y = HandPos.y = MonsterPos.y;
 
 				_float3 vGoalDir = (PlayerPos.XMVector() - HandPos.XMVector());
-				_float fLength= g_pGameInstance->Easing(TYPE_SinInOut,0, vGoalDir.Get_Lenth(),PlayRate, 0.1674876847290640f) ;
+				_float fLength= g_pGameInstance->Easing(TYPE_SinInOut,0, vGoalDir.Get_Lenth(),(_float)PlayRate, 0.1674876847290640f) ;
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 
 			}
 			else if (PlayRate < 0.310344827586206)
 			{
-				m_fAnimmultiple = 1.8;
+				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
 			}
@@ -367,7 +367,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
-				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, PlayRate, 0.97f);
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, (_float)PlayRate, 0.97f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
@@ -386,14 +386,14 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				PlayerPos.y = HandPos.y = MonsterPos.y;
 
 				_float3 vGoalDir = (PlayerPos.XMVector() - HandPos.XMVector());
-				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), PlayRate, 0.1674876847290640f);
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate, 0.1674876847290640f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 
 			}
 			else if (PlayRate < 0.310344827586206)
 			{
-				m_fAnimmultiple = 1.8;
+				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
 			}
@@ -408,7 +408,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
-				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, PlayRate, 0.97f);
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, (_float)PlayRate, 0.97f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
