@@ -97,6 +97,9 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_Object_Monster_Mahinasura_Minion,
+	Prototype_Object_Monster_Mahinasura_Leader,
+	Prototype_Object_Monster_Vayusura_Minion,
+	Prototype_Object_Monster_Vayusura_Leader,
 
 	Prototype_Object_Boss_Rangda,
 
@@ -164,6 +167,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Mahinasura_Minion:
 		return TEXT("Prototype_Object_Monster_Mahinasura_Minion");
+
+	case Prototype_Object_Monster_Vayusura_Minion:
+		return TEXT("Prototype_Object_Monster_Vayusura_Minion");
+
+	case Prototype_Object_Monster_Vayusura_Leader:
+		return TEXT("Prototype_Object_Monster_Vayusura_Leader");
+
+	case Prototype_Object_Monster_Mahinasura_Leader:
+		return TEXT("Prototype_Object_Monster_Mahinasura_Leader");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
@@ -479,6 +491,9 @@ enum COMPONENTPROTOTYPEID
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
+	Prototype_Mesh_Monster_Mahinasura_Leader,
+	Prototype_Mesh_Monster_Vayusura_Minion,
+	Prototype_Mesh_Monster_Vayusura_Leader,
 
 
 	Prototype_Mesh_Boss_Rangda,
@@ -600,7 +615,19 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
-		return TEXT("Prototype_Mesh_Monster_Mahinasura_Minion");
+		return TEXT("Monster_Mahinasura_Minion.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Mahinasura_Leader:
+		return TEXT("Monster_Mahinasura_Leader.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Vayusura_Minion:
+		return TEXT("Monster_Vayusura_Minion.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Vayusura_Leader:
+		return TEXT("Monster_Vayusura_Leader.fbx");
 		break;
 
 	case Prototype_Mesh_Boss_Rangda:
