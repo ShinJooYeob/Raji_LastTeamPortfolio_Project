@@ -133,6 +133,12 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Rangda">
       <UniqueIdentifier>{bd5b5ed1-25e4-48b1-a551-be1926a41042}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Boss_Bullet">
+      <UniqueIdentifier>{609269ce-58f5-4694-bc38-c83885b99131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle">
+      <UniqueIdentifier>{f1a150e1-1c60-4f40-b38e-42a098ead95e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -296,6 +302,9 @@
     </ClInclude>
     <ClInclude Include="..\public\AssimpCreateMgr.h">
     </ClInclude>
+    <ClInclude Include="..\public\Rangda_MagicCircle.h">
+      <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -428,6 +437,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Rangda.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda_MagicCircle.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

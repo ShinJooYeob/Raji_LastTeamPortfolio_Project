@@ -29,21 +29,8 @@ protected:
 	_bool		m_bIsAttack = false;
 	_float		m_fAttackCoolTime = 3.f;
 	_float		m_fSkillCoolTime = 10.f;
-
-
-
-//protected:
-//	CShader*			m_pShaderCom = nullptr;
-//	CRenderer*			m_pRendererCom = nullptr;
-//	CModel*				m_pModel = nullptr;
-//	CTransform*			m_pTransformCom = nullptr;
-//
-//	_uint				m_iOldAnimIndex = INT_MAX;
-//	_uint				m_iAdjMovedIndex = 0;
-
-protected:
-	//virtual HRESULT SetUp_Components();
-	//virtual HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);
+	_float		m_fAnimmultiple = 1.f; // AnimationPlaySpeed
+	_float		m_fRange = 0.f; // 오브젝트간의 거리변수
 
 public:
 	virtual void Free() override;

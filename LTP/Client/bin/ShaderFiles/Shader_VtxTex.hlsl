@@ -8,6 +8,8 @@ texture2D			g_BlurTargetTexture;
 texture2D			g_DepthTexture;
 texture2D			g_NoiseTexture;
 
+float				g_Alpha;
+
 
 
 
@@ -107,6 +109,22 @@ PS_OUT_NOLIGHT PS_MAIN_ALLMOSTDISCARD(PS_IN In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_Effect_Alpha_UP(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+	if (Out.vDiffuse.a < 0.1f)
+		discard;
+
+	Out.vDiffuse.a = Out.vDiffuse.a * g_Alpha;
+
+
+
+	return Out;
+}
+
 
 
 technique11		DefaultTechnique
@@ -130,6 +148,17 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_RECT();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_RECT();
+	}
+
+	pass Rect_Alpha_Up		//2
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Effect_Alpha_UP();
 	}
 
 }
