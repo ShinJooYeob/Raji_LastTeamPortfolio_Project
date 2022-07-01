@@ -31,7 +31,6 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Scaled_All(_float3(150.f, 150.f, 150.f));
 
 	SetUp_Info();
 
@@ -432,9 +431,7 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 
 
-		switch (iNowAnimIndex)
-		{
-		}
+
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;

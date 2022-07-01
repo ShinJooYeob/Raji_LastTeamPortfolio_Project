@@ -150,7 +150,7 @@ HRESULT CPhysXMgr::Clean_Phyics()
 
 void CPhysXMgr::Free()
 {
-	Clean_Phyics();
+//	Clean_Phyics();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

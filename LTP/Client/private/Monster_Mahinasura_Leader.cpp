@@ -31,7 +31,6 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Scaled_All(_float3(100.f, 100.f, 100.f));
 
 	SetUp_Info();
 

@@ -157,15 +157,17 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	static _bool bisLoaded = false;
 	if (!bisLoaded)
-	{	// #LOAD ALLMODEL
-	// 모든 모델 로드 TEST
-	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
-
-	// #LOAD OneLOAD
-	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(L"Player.fbx" ,TransformMatrix);
+	{
+		// #LOAD ALLMODEL
+		// 모든 모델 로드 TEST
+		TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Player), TransformMatrix);
 		bisLoaded = true;
+
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+
+		// #LOAD OneLOAD
 	}
 
 
