@@ -284,6 +284,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_DefaultUI),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Default.txt" )));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"TestEffect.txt")));
+	//TestEffect.txt;
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
 		CCollider::Create(m_pDevice, m_pDeviceContext)));

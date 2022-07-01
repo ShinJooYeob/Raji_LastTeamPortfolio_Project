@@ -34,6 +34,10 @@ private:
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
 
+	CGameObject*		m_pPlayerObj;
+
+	_float				m_fTestHPIndex = 1.f;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);

@@ -195,6 +195,7 @@
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Rangda.h" />
+    <ClInclude Include="..\public\Rangda_MagicCircle.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
+    <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />

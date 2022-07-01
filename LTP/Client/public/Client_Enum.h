@@ -98,7 +98,9 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_Monster_Mahinasura_Minion,
 
+	//JJB
 	Prototype_Object_Boss_Rangda,
+	Prototype_Object_Effect_MagicCircle,
 
 	Object_Prototype_End
 };
@@ -167,6 +169,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
+
+	case Prototype_Object_Effect_MagicCircle:
+		return TEXT("Prototype_Object_Effect_MagicCircle");
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -295,6 +300,7 @@ enum LAYERID
 	Layer_UI_INPUT,
 
 	Layer_TestObject,
+	Layer_TestEffect,
 
 };
 
@@ -435,6 +441,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_TestObject:
 		return TEXT("Layer_TestObject");
 		break;
+
+	case Layer_TestEffect:
+		return TEXT("Layer_TestEffect");
+		break;
 		
 	default:
 		MSGBOX("Wrong Type Layer");
@@ -505,6 +515,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_SettingScene,
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
+	Prototype_Texture_TestEffect,
 
 
 };
@@ -604,7 +615,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 	case Prototype_Mesh_Boss_Rangda:
-		return TEXT("Prototype_Mesh_Boss_Rangda");
+		return TEXT("Boss_Randa.fbx");
 		break;
 
 	case Prototype_Mesh_TestObject:
@@ -681,6 +692,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 			break;
 		case Prototype_Texture_PauseUI:
 			return TEXT("Prototype_Texture_PauseUI");
+			break;
+
+		case Prototype_Texture_TestEffect:
+			return TEXT("Prototype_Texture_TestEffect");
 			break;
 			
 				//메쉬////////////////////////////////////////////////////////////////////////

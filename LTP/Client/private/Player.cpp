@@ -86,7 +86,14 @@ _int CPlayer::Update(_double fDeltaTime)
 	Adjust_AnimMovedTransform(fDeltaTime);
 
 	// Debug Camera //
-	m_fAttachCamPos_Offset = _float3(0.f, 3.f, -2.f);
+	if (m_eNowSceneNum == 7)
+	{
+		m_fAttachCamPos_Offset = _float3(0.f, 4.f, -10.f);
+	}
+	else
+	{
+		m_fAttachCamPos_Offset = _float3(0.f, 3.f, -2.f);
+	}
 	Update_AttachCamPos();
 	//
 
@@ -408,6 +415,8 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 		m_bPressedMainAttackKey = false;
 		m_bPressedPowerAttackKey = false;
 	}
+	m_bPressedMainAttackKey = false;
+	m_bPressedPowerAttackKey = false;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return false;
@@ -1627,7 +1636,9 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TEXT("Player.fbx"), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+
+//	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 

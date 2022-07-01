@@ -288,8 +288,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
 
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
+	if (vDiffuse.a < 0.1f)
+		discard;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
