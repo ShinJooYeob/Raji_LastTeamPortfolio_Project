@@ -54,6 +54,10 @@ public:
 #endif // _DEBUG
 
 
+public:
+	_Matrix Caculate_AttachedBone(class CHierarchyNode* pNode);
+
+
 
 public:
 	_uint	Get_NumMaterial() { return m_iNumMaterials; };
@@ -143,8 +147,7 @@ private:
 	HRESULT Ready_Animation(MODELDESC* desc);
 	HRESULT Ready_OffsetMatrices(MODELDESC* desc);
 	
-
-private:
+public:
 	CHierarchyNode* Find_HierarchyNode(const char* pName, _uint* pNodeIndex = nullptr);
 
 public:

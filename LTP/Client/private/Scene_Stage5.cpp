@@ -3,6 +3,8 @@
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 #include "Player.h"
+#include "PlayerWeapon.h"
+#include "PlayerWeapon_Spear.h"
 #include "MapObject.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -152,17 +154,22 @@ HRESULT CScene_Stage5::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player)));
-	
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	
+	// Setting Cam Attach to Player //
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
 
+	CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(pPlayer, "skd_r_palm");
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));
 
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));

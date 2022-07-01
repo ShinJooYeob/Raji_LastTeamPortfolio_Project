@@ -15,6 +15,8 @@
 #include "Collider.h"
 #include "Navigation.h"
 
+#include "HierarchyNode.h"
+
 
 BEGIN(Engine)
 class CComponent;

@@ -19,8 +19,12 @@ public:
 	virtual _int LateRender();
 
 	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj,class CCollider* pConflictedCollider ,_uint iConflictedObjColliderIndex,CollisionTypeID eConflictedObjCollisionType) {};
+
 public:
 	virtual void Set_NowSceneNum(_uint eNowSceneNum) {	m_eNowSceneNum = eNowSceneNum; };
+
+	virtual _fVector Get_BonePos(const char* pBoneName);
+	virtual _fMatrix Get_BoneMatrix(const char* pBoneName);
 
 	void Set_NameTag(const _tchar* szNameTag) {	m_szNameTag = szNameTag;};
 	const _tchar* Get_NameTag() { return m_szNameTag; };

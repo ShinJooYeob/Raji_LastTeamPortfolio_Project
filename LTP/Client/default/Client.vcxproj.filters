@@ -154,6 +154,12 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Vayusura_Leader">
       <UniqueIdentifier>{00e2325d-4b5f-4835-bacc-ec49b9c61b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons">
+      <UniqueIdentifier>{470f6530-c266-4b0c-8bef-8fb458a60e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\00. Spear">
+      <UniqueIdentifier>{49a509a6-9bea-427a-b3f0-9d1c7db005e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -329,6 +335,12 @@
     <ClInclude Include="..\public\Rangda_MagicCircle.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon.h">
+      <Filter>01.GameObject\01.Player\00. Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Spear.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\00. Spear</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -474,6 +486,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Spear.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\00. Spear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

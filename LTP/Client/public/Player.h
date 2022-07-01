@@ -92,7 +92,8 @@ public:
 	virtual _int LateRender() override;
 	
 public:
-	_fVector Get_BonePos(const char* pBoneName);
+	virtual _fVector Get_BonePos(const char* pBoneName) override;
+	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle

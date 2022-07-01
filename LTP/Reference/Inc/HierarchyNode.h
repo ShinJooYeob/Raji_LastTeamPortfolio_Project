@@ -5,7 +5,7 @@
 
 BEGIN(Engine)
 
-class CHierarchyNode final :public CBase
+class ENGINE_DLL CHierarchyNode final :public CBase
 {
 private:
 	CHierarchyNode();

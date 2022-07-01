@@ -67,6 +67,16 @@ _int CGameObject::LateRender()
 	return _int();
 }
 
+_fVector CGameObject::Get_BonePos(const char * pBoneName)
+{
+	return _fVector();
+}
+
+_fMatrix CGameObject::Get_BoneMatrix(const char * pBoneName)
+{
+	return _fMatrix();
+}
+
 _float CGameObject::Compute_RenderSortValue()
 {
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);

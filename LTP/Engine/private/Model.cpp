@@ -844,6 +844,11 @@ ATTACHBONEMATRIX_PTR CModel::Find_AttachMatrix_InHirarchyNode(const char * pName
 	return tReturn;
 }
 
+_Matrix CModel::Caculate_AttachedBone(CHierarchyNode * pNode)
+{
+	return pNode->Get_UpdatedMatrix() * m_DefaultPivotMatrix.XMatrix();;
+}
+
 const CMeshContainer * CModel::Find_aiMesh(aiMesh * comparemesh) const
 {
 	if (m_pScene == nullptr)
@@ -892,7 +897,11 @@ _fMatrix CModel::Get_BoneMatrix(const char * pBoneName)
 	if (nullptr == pNode)
 		return BoneMatrix;
 	
-	BoneMatrix = XMLoadFloat4x4(&pNode->Get_OffsetMatrix()) * pNode->Get_CombinedMatrix() * XMLoadFloat4x4(&m_DefaultPivotMatrix);
+	BoneMatrix = pNode->Get_UpdatedMatrix() * m_DefaultPivotMatrix.XMatrix();
+
+	BoneMatrix.r[0] = XMVector3Normalize(BoneMatrix.r[0]);
+	BoneMatrix.r[1] = XMVector3Normalize(BoneMatrix.r[1]);
+	BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
 
 	return BoneMatrix;
 }
