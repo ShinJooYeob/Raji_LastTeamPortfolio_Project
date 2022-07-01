@@ -15,31 +15,43 @@ CMapObject::CMapObject(const CMapObject & rhs)
 
 HRESULT CMapObject::Initialize_Prototype(void * pArg)
 {
+	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 	return S_OK;
 }
 
 HRESULT CMapObject::Initialize_Clone(void * pArg)
 {
+	FAILED_CHECK(__super::Initialize_Clone(pArg));
 	return S_OK;
 }
 
 _int CMapObject::Update(_double fDeltaTime)
 {
+	if (__super::Update(fDeltaTime) < 0)
+		return -1;
+
 	return _int();
 }
 
 _int CMapObject::LateUpdate(_double fDeltaTime)
 {
+	if (__super::LateUpdate(fDeltaTime) < 0)
+		return -1;
+
 	return _int();
 }
 
 _int CMapObject::Render()
 {
+	if (__super::Render() < 0)
+		return -1;
 	return _int();
 }
 
 _int CMapObject::LateRender()
 {
+	if (__super::LateRender() < 0)
+		return -1;
 	return _int();
 }
 

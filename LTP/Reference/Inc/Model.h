@@ -46,6 +46,15 @@ public:
 	HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, const char* szBoneValueName = nullptr);
 
 	ATTACHBONEMATRIX_PTR Find_AttachMatrix_InHirarchyNode(const char* pName);
+
+
+#ifdef _DEBUG
+	_float Get_DebugAnimSpeed() { return m_fDebugAnimPlaySpeed; };
+	void Set_DebugAnimSpeed(_float fSpeed) { m_fDebugAnimPlaySpeed = fSpeed; };
+#endif // _DEBUG
+
+
+
 public:
 	_uint	Get_NumMaterial() { return m_iNumMaterials; };
 	const aiScene*	Get_AssimpScene() const
@@ -107,6 +116,10 @@ private:
 	_bool		m_bIsChagingAnim = false;
 	_uint		m_KindsOfAnimChange = 0;
 	_bool		m_bIsSwapFunctionCalled= false;//블렌딩할때 꼬이지 않도록 하는 불값
+
+#ifdef _DEBUG
+	_float		m_fDebugAnimPlaySpeed = 1.f;
+#endif // _DEBUG
 
 public:
 	static _bool MODEL_TOOLPATH_FLAG; // Mesh 까지의 경로 비우기

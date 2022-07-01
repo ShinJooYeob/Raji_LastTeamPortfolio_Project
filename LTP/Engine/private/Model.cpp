@@ -559,6 +559,10 @@ HRESULT CModel::Bind_OnShader(CShader * pShader, _uint iMaterialIndex, _uint eTe
 
 HRESULT CModel::Update_AnimationClip(_double fDeltaTime,_bool IsUpdateAll)
 {
+#ifdef _DEBUG
+	fDeltaTime *= m_fDebugAnimPlaySpeed;
+#endif // _DEBUG
+
 	m_bIsSwapFunctionCalled = false;
 	switch (m_KindsOfAnimChange)
 	{

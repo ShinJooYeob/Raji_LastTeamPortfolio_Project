@@ -2,6 +2,7 @@
 #include "..\public\ImguiMgr.h"
 #include "Scene_Loading.h"
 #include "GameObject.h"
+#include "Camera_Main.h"
 
 #ifdef USE_IMGUI
 
@@ -179,8 +180,30 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		}
 		ImGui::Text("FPS : %d ", Frame); ImGui::SameLine(100);
 		ImGui::TableNextColumn(); ImGui::Checkbox("BG X", &bArrWindowFlag[0]); ImGui::SameLine();
-		ImGui::TableNextColumn(); ImGui::Checkbox("Block Move", &bArrWindowFlag[1]); ImGui::SameLine(0.f ,50.f);
-		if (ImGui::Button("Close All Tree"))	{	open_action = 0;	}
+		ImGui::TableNextColumn(); ImGui::Checkbox("Block Move", &bArrWindowFlag[1]);
+
+
+		CCamera_Main* pCam =(CCamera_Main*)pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Camera_Main));
+		if (pCam != nullptr)
+		{
+			ImGui::SameLine();
+
+			//enum ECameraMode
+			//{
+			//	CAM_MODE_FREE, CAM_MODE_NOMAL
+			//};
+			_bool	CamModeIsFree = (pCam->Get_CameraMode() == ECameraMode::CAM_MODE_FREE);
+			ImGui::TableNextColumn(); ImGui::Checkbox("Cam Free", &CamModeIsFree);
+			pCam->Set_CameraMode((CamModeIsFree) ? ECameraMode::CAM_MODE_FREE : ECameraMode::CAM_MODE_NOMAL);
+
+			ImGui::SameLine();
+		}
+		else
+		{
+			ImGui::SameLine(0.f, 50.f);
+		}
+
+		if (ImGui::Button("Close All"))	{	open_action = 0;	}
 	}
 	ImGui::Separator();
 
@@ -235,6 +258,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 	if (ImGui::TreeNode("Object Controller"))
 	{
+		if (g_pGameInstance->Get_NowSceneNum() == SCENE_LOADING)open_ObjectController = -1;
 		_bool IsAllClosed = false;
 
 		if (open_ObjectController != -1)	ImGui::SetNextItemOpen(open_ObjectController == 1);
@@ -346,6 +370,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			_int iStaticLayerNum = _int(pGameInstance->Get_SceneLayerSize(SCENE_STATIC));
 			_int iNowSceneLayerNum =(_int) pGameInstance->Get_SceneLayerSize(iNowSceneEnum);
 
+			static int SelectedLayerObjectIndex = 0;
 			static int SelectedLayerIndex = 0;
 
 			if (ImGui::BeginListBox("", ImVec2(150.f, min((iStaticLayerNum + iNowSceneLayerNum) *18.f, 250.f))))
@@ -362,6 +387,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 						if (ImGui::Selectable(sTag.assign(wTag.begin(), wTag.end()).c_str(), is_selected))
 						{
 							SelectedLayerIndex = n;
+							SelectedLayerObjectIndex = 0;
 						}
 					}
 					else
@@ -372,6 +398,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 						if (ImGui::Selectable(sTag.assign(wTag.begin(), wTag.end()).c_str(), is_selected))
 						{
 							SelectedLayerIndex = n;
+							SelectedLayerObjectIndex = 0;
 						}
 
 					}
@@ -387,7 +414,6 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			ImGui::SameLine(0.f, 20);
 
 
-			static int SelectedLayerObjectIndex = 0;
 			list<CGameObject*>* pObjectList = nullptr;
 
 			if (SelectedLayerIndex < iStaticLayerNum)
@@ -425,6 +451,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 				auto& iter = pObjectList->begin();
 				for (_int i = 0; i < SelectedLayerObjectIndex; i++)
 					iter++;
+				CGameObject*	pObject = (*iter);
 				CTransform* pObjectTransform = (CTransform*)(*iter)->Get_Component(TAG_COM(Com_Transform));
 
 				if (pObjectTransform != nullptr)
@@ -446,42 +473,195 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 
 					Make_VerticalSpacing(2);
-					ImGui::Text("Rotation");
+					ImGui::Text("Rotation"); 
+					ImGui::SameLine(250);	ImGui::Text("Scaling");
 
-					if (ImGui::Button("-", ImVec2(20, 18)))
+					static _float RotSpeed = 10.;
+					ImGui::DragFloat("Rot Speed", &RotSpeed, 0.1f, 0.001f, 360);
+					RotSpeed = min(max(RotSpeed, 0), 360);
+
+
+					ImGui::Button("-", ImVec2(20, 18));
+					if (ImGui::IsItemHovered())
 					{
-						//pObjectTransform->Get_MoveSpeed()
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
+
 					}
 					ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
-					if (ImGui::Button("+", ImVec2(20, 18)))
+					
+					ImGui::Button("+", ImVec2(20, 18));
+					if (ImGui::IsItemHovered())
 					{
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
 					}
 
 
-					if (ImGui::Button("- ", ImVec2(20, 18)))
-					{
+					ImGui::SameLine(250);
+					_float3 OldScaled = pObjectTransform->Get_Scale();
+					_float Scaled = OldScaled.x;
+					ImGui::DragFloat("X ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+					OldScaled.x = Scaled;
+
+
+
+					ImGui::Button("- ", ImVec2(20, 18));
+						if (ImGui::IsItemHovered())
+						{
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
 					}
 					ImGui::SameLine(0, 10);		ImGui::Text("Y");			ImGui::SameLine(0, 10);
-					if (ImGui::Button("+ ", ImVec2(20, 18)))
+					ImGui::Button("+ ", ImVec2(20, 18));
+		
+					if (ImGui::IsItemHovered())
 					{
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
 
 					}
 
-
-					if (ImGui::Button("-  ", ImVec2(20, 18)))
+					ImGui::SameLine(250);
+					Scaled = OldScaled.y;
+					ImGui::DragFloat("Y ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+					OldScaled.y = Scaled;
+					ImGui::Button("-  ", ImVec2(20, 18));
+						if (ImGui::IsItemHovered())
 					{
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
 
 					}
 					ImGui::SameLine(0, 10);		ImGui::Text("Z");			ImGui::SameLine(0, 10);
-					if (ImGui::Button("+  ", ImVec2(20, 18)))
+					ImGui::Button("+  ", ImVec2(20, 18));
+					if (ImGui::IsItemHovered())
 					{
+						_float OldTurnSpeed = pObjectTransform->Get_TurnSpeed();
+						pObjectTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
 						pObjectTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), fDeltaTime);
+						pObjectTransform->Set_TurnSpeed(OldTurnSpeed);
 					}
+
+					ImGui::SameLine(250);
+					Scaled = OldScaled.z;
+					ImGui::DragFloat("Z ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+					OldScaled.z = Scaled;
+
+					OldScaled.x = max(OldScaled.x, 0.001f);
+					OldScaled.y = max(OldScaled.y, 0.001f);
+					OldScaled.z = max(OldScaled.z, 0.001f);
+
+
+					pObjectTransform->Scaled_All(OldScaled);
+
+
+					Make_VerticalSpacing(1); 
+					ImGui::SameLine(50);
+					if (ImGui::Button("ReSet Rot", ImVec2(80, 25)))
+					{
+						pObjectTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), 0);
+					}
+
+					ImGui::SameLine(250);
+					if (ImGui::Button("ReSet Scale", ImVec2(100, 25)))
+					{
+						pObjectTransform->Scaled_All(_float3(1,1,1));
+					}
+
+					Make_VerticalSpacing(3);
+
+					_float fNowHP	= pObject->Get_NowHP();
+					_float fMaxHP = pObject->Get_MaxHP();
+
+					_float HpRate = fNowHP / fMaxHP;
+
+					ImGui::DragFloat("Hp", &HpRate, 0.001f, 0.f, 1.f);
+					HpRate = min(max(HpRate, 0), 1.f);
+
+					HpRate *= fMaxHP;
+					pObject->Set_NowHP(HpRate);
+
+					Make_VerticalSpacing(3);
+
+
+
+					CModel* pModel= (CModel*)(*iter)->Get_Component(TAG_COM(Com_Model));
+					if (pModel != nullptr)
+					{
+						_float fSpeed = pModel->Get_DebugAnimSpeed();
+
+						ImGui::DragFloat("Anim Speed", &fSpeed, 0.01f, 0.f, 20.f);
+						fSpeed = min(max(fSpeed, 0), 20.f);
+
+						pModel->Set_DebugAnimSpeed(fSpeed);
+
+						Make_VerticalSpacing(3);
+
+					}
+
+
+					if (ImGui::TreeNode("LimLight & Emisive Setting"))
+					{
+
+
+						static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+						static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+						static bool alpha_preview = true;
+						static bool alpha_half_preview = false;
+						static bool drag_and_drop = true;
+						static bool options_menu = false;
+						//static bool options_menu = true;
+						static bool hdr = false;
+						static bool ref_color = false;
+
+
+						_float4 ObjectLimLight = pObject->Get_LimLightValue();
+						_float ObjectEmissive = pObject->Get_EmissiveValue();
+
+
+						color = ImVec4(ObjectLimLight.x, ObjectLimLight.y, ObjectLimLight.z, ObjectLimLight.w);
+
+						ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+						ImGuiColorEditFlags flags = misc_flags;
+						/*if (!alpha)           flags |= ImGuiColorEditFlags_NoAlpha;        // This is by default if you call ColorPicker3() instead of ColorPicker4()	  */
+						/*if (alpha_bar)        flags |= ImGuiColorEditFlags_AlphaBar;																					  */
+						/*if (!side_preview)    flags |= ImGuiColorEditFlags_NoSidePreview;																				  */
+						/*if (picker_mode == 1) flags |= ImGuiColorEditFlags_PickerHueBar;																				  */
+						/*if (picker_mode == 2) flags |= ImGuiColorEditFlags_PickerHueWheel;																			  */
+						/*if (display_mode == 1)flags |= ImGuiColorEditFlags_NoInputs;       // Disable all RGB/HSV/Hex displays										  */
+						/*if (display_mode == 2)flags |= ImGuiColorEditFlags_DisplayRGB;     // Override display mode													  */
+						/*if (display_mode == 3)flags |= ImGuiColorEditFlags_DisplayHSV;																				  */
+						/*if (display_mode == 4)flags |= ImGuiColorEditFlags_DisplayHex;																				  */
+
+						ImGui::ColorPicker4("MyColor##444", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+
+
+
+						Make_VerticalSpacing(2);
+
+
+						ImGui::DragFloat("EmissiveIntensive", &ObjectEmissive, 0.01f, 0, 1.f);
+
+						ObjectEmissive = min(max(ObjectEmissive, 0), 1);
+
+
+						pObject->Set_LimLight_N_Emissive(_float4(color.x, color.y, color.z, color.w), ObjectEmissive);
+
+
+						ImGui::TreePop();
+					}
+					
 				}
 
 
@@ -501,6 +681,176 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 	if (open_action != -1)	ImGui::SetNextItemOpen(open_action != 0);
 	if (ImGui::TreeNode("Post Processing Controller"))
 	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		_bool bBool = pUtil->Get_IsOnPostProcessing(POSTPROCESSING_DEBUGCOLLIDER);
+		ImGui::Checkbox("Show Collider", &bBool);
+		pUtil->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, bBool);
+
+		ImGui::Separator();
+
+		bBool = pUtil->Get_IsOnPostProcessing(POSTPROCESSING_DEBUGTARGET);
+		ImGui::Checkbox("Debug RenderTarget", &bBool);
+		pUtil->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGTARGET, bBool);
+
+		if (bBool)
+		{
+
+			static int SelectedTargetIndex = 0;
+			_int iTargetNum = _int(pUtil->Get_DebugRenderTargetSize());
+
+			if (ImGui::BeginListBox("", ImVec2(150.f, (iTargetNum) *18.f)))
+			{
+				for (int n = 0; n < iTargetNum; n++)
+				{
+					const bool is_selected = (SelectedTargetIndex == n);
+					
+					wstring wTargetTag = pUtil->Get_DebugRenderTargetTag(n);
+					string sTargetTag = "";
+					
+					if (ImGui::Selectable(sTargetTag.assign(wTargetTag.begin(), wTargetTag.end()).c_str(), is_selected))
+					{
+						SelectedTargetIndex = n;
+					}
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndListBox();
+
+
+
+
+
+				ImGui::SameLine(0,70);
+
+
+				if (ImGui::Button("Show Bigger"))
+					ImGui::OpenPopup("Show Bigger");
+
+
+				ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+				ImGui::SetNextWindowSize(ImVec2(center.x * 1.79f , center.y * 1.93f), ImGuiCond_None);
+
+				if (ImGui::BeginPopupModal("Show Bigger", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					if (ImGui::Button("Close", ImVec2(center.x* 1.76f, 0)))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::SetItemDefaultFocus();
+
+					ID3D11ShaderResourceView* TargetSRV = g_pGameInstance->Get_SRV(pUtil->Get_DebugRenderTargetTag(SelectedTargetIndex));
+
+					if (TargetSRV != nullptr)
+					{
+
+						ImTextureID my_tex_id = TargetSRV;
+						float my_tex_w = center.x* 1.76f;
+						float my_tex_h = center.y * 1.76f;
+						{
+							ImGuiIO& io = ImGui::GetIO();
+							ImVec2 pos = ImGui::GetCursorScreenPos();
+							ImVec2 uv_min = ImVec2(0.0f, 0.0f);                 // Top-left
+							ImVec2 uv_max = ImVec2(1.0f, 1.0f);                 // Lower-right
+							ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);   // No tint
+							ImVec4 border_col = ImVec4(1.0f, 1.0f, 1.0f, 0.5f); // 50% opaque white
+							ImGui::Image(my_tex_id, ImVec2(my_tex_w, my_tex_h), uv_min, uv_max, tint_col, border_col);
+							if (ImGui::IsItemHovered() && pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_WHEEL) & DIS_Press)
+							{
+								ImGui::BeginTooltip();
+								float region_sz = 100.0f;
+								float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
+								float region_y = io.MousePos.y - pos.y - region_sz * 0.5f;
+								float zoom = 4.0f;
+								if (region_x < 0.0f) { region_x = 0.0f; }
+								else if (region_x > my_tex_w - region_sz) { region_x = my_tex_w - region_sz; }
+								if (region_y < 0.0f) { region_y = 0.0f; }
+								else if (region_y > my_tex_h - region_sz) { region_y = my_tex_h - region_sz; }
+								ImVec2 uv0 = ImVec2((region_x) / my_tex_w, (region_y) / my_tex_h);
+								ImVec2 uv1 = ImVec2((region_x + region_sz) / my_tex_w, (region_y + region_sz) / my_tex_h);
+								ImGui::Image(my_tex_id, ImVec2(region_sz * zoom, region_sz * zoom), uv0, uv1, tint_col, border_col);
+								ImGui::EndTooltip();
+							}
+						}
+					}
+
+
+					ImGui::EndPopup();
+				}
+
+
+
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		}
+
+
+		ImGui::Separator();
+		//if (!bBool)
+		//	ImGui::Separator();
+
+		bBool = pUtil->Get_IsOnPostProcessing(POSTPROCESSING_SHADOW);
+		ImGui::Checkbox("Shadow", &bBool);
+		pUtil->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, bBool);
+
+		if (bBool)
+		{
+			_float Value = pUtil->Get_ShadowIntensive();
+			ImGui::DragFloat("ShadowIntensive", &Value, 0.001f, 0.001f, 1.f);
+			Value = max(min(Value, 1.f), 0.01f);
+			pUtil->Set_ShadowIntensive(Value);
+		}
+
+		ImGui::Separator();
+
+		bBool = pUtil->Get_IsOnPostProcessing(POSTPROCESSING_BLOOM);
+		ImGui::Checkbox("Bloom", &bBool);
+		pUtil->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, bBool);
+
+		if (bBool)
+		{
+			_float Value = pUtil->Get_BloomOverLuminceValue();
+			ImGui::DragFloat("BloomOverLumince", &Value, 0.001f, 0.001f, 1.f);
+			Value = max(min(Value, 1.f), 0.01f);
+			pUtil->Set_BloomOverLuminceValue(Value);
+		}
+
+
+		ImGui::Separator();
+
+
+		bBool = pUtil->Get_IsOnPostProcessing(POSTPROCESSING_DOF);
+		ImGui::Checkbox("Depth Of Feild", &bBool);
+		pUtil->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, bBool);
+
+		if (bBool)
+		{
+			_float Value = pUtil->Get_DofLength();
+			ImGui::DragFloat("Dof Length", &Value, 0.1f, 0.001f, 100.f);
+			Value = max(min(Value, 100.f), 0.01f);
+			pUtil->Set_DofLength(Value);
+		}
+
+
+
 		ImGui::TreePop();
 	}
 	ImGui::Separator();

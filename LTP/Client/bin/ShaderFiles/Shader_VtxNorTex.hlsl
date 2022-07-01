@@ -112,12 +112,14 @@ struct PS_IN
 
 struct PS_OUT
 {
+
 	vector		vDiffuse : SV_TARGET0;
 	vector		vNormal : SV_TARGET1;
 	vector		vSpecular : SV_TARGET2;
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
 	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 
 
@@ -162,7 +164,8 @@ PS_OUT PS_MAIN_TERRAIN_Default(PS_IN In)
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-		
+		Out.vEmissive = g_fEmissive;
+		Out.vLimLight = g_vLimLight;
 	}
 
 	return Out;
@@ -219,6 +222,8 @@ PS_OUT PS_MAIN_TERRAIN_WIRE(PS_IN In)
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+		Out.vEmissive = g_fEmissive;
+		Out.vLimLight = g_vLimLight;
 	}
 
 	return Out;
@@ -280,6 +285,8 @@ PS_OUT PS_MAIN_TERRAIN_EDIT(PS_IN In)
 		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+		Out.vEmissive = g_fEmissive;
+		Out.vLimLight = g_vLimLight;
 	}
 	return Out;
 }

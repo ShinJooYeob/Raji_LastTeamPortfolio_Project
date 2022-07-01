@@ -164,6 +164,7 @@ struct PS_OUT
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
 	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 struct PS_OUT_NODEFERRED
 {
@@ -206,8 +207,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = saturate(vector(g_vLimLight.rgb, g_fEmissive));
-
+	Out.vEmissive = g_fEmissive;
+	Out.vLimLight = g_vLimLight;
 	return Out;
 }
 PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
@@ -232,8 +233,8 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = saturate(vector(g_vLimLight.rgb, g_fEmissive));
-
+	Out.vEmissive = g_fEmissive;
+	Out.vLimLight = g_vLimLight;
 	return Out;
 }
 

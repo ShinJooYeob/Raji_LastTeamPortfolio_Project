@@ -1,5 +1,9 @@
 #pragma once
 
+enum ECameraMode
+{
+	CAM_MODE_FREE, CAM_MODE_NOMAL
+};
 
 enum UPGRADEID
 {
@@ -479,8 +483,14 @@ enum COMPONENTPROTOTYPEID
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
-
-
+	Prototype_Mesh_Monster_Mahinasura_Leader,
+	Prototype_Mesh_Monster_Ninjasura,
+	Prototype_Mesh_Monster_Jalsura,
+	Prototype_Mesh_Monster_Gadasura_Black,
+	Prototype_Mesh_Monster_Gadasura_Rage,
+	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
+	
+	
 	Prototype_Mesh_Boss_Rangda,
 
 
@@ -600,9 +610,28 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
-		return TEXT("Prototype_Mesh_Monster_Mahinasura_Minion");
+		return TEXT("Monster_Mahinasura_Minion.fbx");
+		break;
+	case Prototype_Mesh_Monster_Mahinasura_Leader:
+		return TEXT("Monster_Mahinasura_Leader_glft.fbx");
+		break;
+	case Prototype_Mesh_Monster_Ninjasura:
+		return TEXT("Monster_Ninjasura_GLTF.fbx");
+		break;
+	case Prototype_Mesh_Monster_Jalsura:
+		return TEXT("Monster_Jalsura.fbx");
 		break;
 
+	case Prototype_Mesh_Monster_Gadasura_Black:
+		return TEXT("Monster_Gadasura_Black.fbx");
+		break;
+	case Prototype_Mesh_Monster_Gadasura_Rage:
+		return TEXT("Monster_Gadasura_Rage.fbx");
+		break;
+	case Prototype_Mesh_Monster_Gadasura_Rage_Hollogram:
+		return TEXT("Monster_Gadasura_Rage_Hollogram.fbx");
+		break;
+		
 	case Prototype_Mesh_Boss_Rangda:
 		return TEXT("Prototype_Mesh_Boss_Rangda");
 		break;

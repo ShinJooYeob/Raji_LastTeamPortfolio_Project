@@ -19,7 +19,7 @@ HRESULT CScene_Loby::Initialize()
 
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
-//	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 //	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
@@ -57,7 +57,7 @@ _int CScene_Loby::Update(_double fDeltaTime)
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_T) & DIS_Down)
+	if (pGameInstance->Get_DIKeyState(DIK_F7) & DIS_Down)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE7), SCENEID::SCENE_LOADING));
@@ -173,7 +173,7 @@ HRESULT CScene_Loby::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
 {
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
 
 
 	return S_OK;

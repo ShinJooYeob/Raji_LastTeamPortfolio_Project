@@ -57,6 +57,8 @@ struct PS_OUT_MTRL
 	vector		vSpecular : SV_TARGET2;
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 
 struct PS_OUT_NOLIGHT

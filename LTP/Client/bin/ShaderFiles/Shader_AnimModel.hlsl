@@ -3,21 +3,21 @@
 
 texture2D			g_DiffuseTexture;
 texture2D			g_SpecularTexture;
-//texture2D			g_AmbientTexture;
-//texture2D			g_EmissiveTexture;
+texture2D			g_AmbientTexture;
+texture2D			g_EmissiveTexture;
 texture2D			g_HeightTexture;
 texture2D			g_NormalTexture;
-//texture2D			g_ShininessTexture;
+texture2D			g_ShininessTexture;
 texture2D			g_OpacityTexture;
-//texture2D			g_DisplaceTexture;
-//texture2D			g_LightMapTexture;
-//texture2D			g_ReflectTexture;
-//texture2D			g_BaseColorTexture;
-//texture2D			g_NormalCamTexture;
-//texture2D			g_EmissionColorTexture;
-//texture2D			g_MetalTexture;
-//texture2D			g_DiffuseRoughTexture;
-//texture2D			g_AmbientOcculusionTexture;
+texture2D			g_DisplaceTexture;
+texture2D			g_LightMapTexture;
+texture2D			g_ReflectTexture;
+texture2D			g_BaseColorTexture;
+texture2D			g_NormalCamTexture;
+texture2D			g_EmissionColorTexture;
+texture2D			g_MetalTexture;
+texture2D			g_DiffuseRoughTexture;
+texture2D			g_AmbientOcculusionTexture;
 
 
 texture2D			g_NoiseTexture;
@@ -259,6 +259,7 @@ struct PS_OUT
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
 	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 struct PS_OUT_NOLIGHT
 {
@@ -287,9 +288,9 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
+	//
+	if (vDiffuse.a < 0.1f)
+		discard;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
@@ -306,7 +307,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz,0);
-	Out.vEmissive = saturate(vector(g_vLimLight.rgb, g_fEmissive));
+	Out.vEmissive = g_fEmissive;
+	Out.vLimLight = g_vLimLight;
 	return Out;
 }
 

@@ -46,6 +46,22 @@ public:
 	HRESULT Render_RenderGroup(_double fDeltaTime);
 	HRESULT Clear_RenderGroup_forSceneChaging();
 
+	void OnOff_PostPorcessing(POSTPROCESSINGID eID) { m_PostProcessingOn[eID] = !m_PostProcessingOn[eID]; };
+	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID,_bool bBool) { m_PostProcessingOn[eID] = bBool; };
+	_bool Get_IsOnPostPorcessing(POSTPROCESSINGID eID) { return m_PostProcessingOn[eID]; };
+
+	_float Get_DofLength() { return m_fDofLength; };
+	void	Set_DofLength(_float vDofValue) { m_fDofLength = vDofValue; };
+
+	_float Get_ShadowIntensive() { return m_fShadowIntensive; };
+	void	Set_ShadowIntensive(_float vShadowIntensive) { m_fShadowIntensive = vShadowIntensive; };
+
+	_float Get_BloomOverLuminceValue() { return m_fOverLuminece * 0.5f; };
+	void	Set_BloomOverLuminceValue(_float vBloomOverLuminceValue) { m_fOverLuminece = vBloomOverLuminceValue * 2.f; };
+
+	_uint Get_DebugRenderTargetSize() { return _uint(m_szDebugRenderTargetList.size()); };
+	const _tchar* Get_DebugRenderTargetTag(_uint iIndex);
+
 
 private:
 	list<CGameObject*>				m_RenderObjectList[RENDER_END];
@@ -58,6 +74,10 @@ private:
 private:
 	list<class CComponent*>					m_DebugObjectList;
 	typedef list<class CComponent*>			DEBUGOBJECT;
+
+private:
+	vector<wstring>					m_szDebugRenderTargetList;
+	typedef vector<wstring>			DEBUGRENDERTARGET;
 
 private:
 	class CRenderTargetMgr*					m_pRenderTargetMgr = nullptr;
@@ -77,8 +97,13 @@ private:
 	ID3D11DepthStencilView*			m_DownScaledDepthStencil[5] = { nullptr };
 
 	_float						m_fDofLength = 10.f;
+	_float						m_fOverLuminece = 1.8f;
 	_float						m_fTexleSize = 2.f;
 	_bool						m_bShadowLightMatBindedChecker = false;
+
+	_float						m_fShadowIntensive = 0.65f;
+
+	_bool						m_PostProcessingOn[POSTPROCESSING_END];
 
 private:
 	HRESULT Render_Priority();
@@ -108,7 +133,7 @@ private:
 	HRESULT Render_ShadowMap();
 	HRESULT Render_ShadowGroup();
 
-
+	HRESULT Add_DebugRenderTarget(const _tchar* szTargetTag, _float fX, _float fY, _float fCX, _float fCY);
 
 
 #ifdef _DEBUG

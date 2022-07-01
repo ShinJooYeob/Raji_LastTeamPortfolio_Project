@@ -7,10 +7,6 @@ BEGIN(Client)
 class CCamera_Main :public CCamera
 {
 public:
-	enum ECameraMode
-	{
-		CAM_MODE_NOMAL
-	};
 
 	enum CameraEffectID
 	{
@@ -35,6 +31,9 @@ public:
 public: /* Get Camera Transform State */
 	_fVector	Get_CameraState(CTransform::TransformState eState);
 	_fVector	Get_CameraState_Normalize(CTransform::TransformState eState);
+
+public:
+	ECameraMode Get_CameraMode() { return m_eCurCamMode; }
 
 public: /* Setting State */
 	void		Set_TargetArmLength(_float fTargetArmLength);

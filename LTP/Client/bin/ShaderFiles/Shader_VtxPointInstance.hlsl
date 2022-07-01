@@ -149,6 +149,8 @@ struct PS_OUT
 	vector		vSpecular : SV_TARGET2;
 	vector		vEmissive : SV_TARGET3;
 	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN_INST(PS_IN In)
@@ -162,8 +164,9 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 		discard;
 
 	Out.vDiffuse *= In.vColor;
-	Out.vEmissive = 1;
-	
+	Out.vEmissive = g_fEmissive;
+	Out.vLimLight = g_vLimLight;
+
 	return Out;
 }
 

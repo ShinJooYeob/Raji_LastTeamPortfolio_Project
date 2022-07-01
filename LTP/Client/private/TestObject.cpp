@@ -32,7 +32,7 @@ HRESULT CTestObject::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	//Set_LimLight_N_Emissive(_float3(0.2f, 0.5f, 1.f ));
+	//Set_LimLight_N_Emissive(_float4(0.2f, 0.5f, 1.f,1.f ));
 
 	return S_OK;
 }
@@ -48,32 +48,32 @@ _int CTestObject::Update(_double fDeltaTime)
 	//OutputDebugStringW(tt.c_str());
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
-	{
-		m_pTransformCom->Move_Forward(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
-	{
-		m_pTransformCom->Move_Backward(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
-	{
-		m_pTransformCom->Move_Right(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
-	{
-		m_pTransformCom->Move_Left(fDeltaTime);
-	}
-	_float3 up = _float3(0, 1, 0);
+	//if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Forward(fDeltaTime);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Backward(fDeltaTime);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Right(fDeltaTime);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
+	//{
+	//	m_pTransformCom->Move_Left(fDeltaTime);
+	//}
+	//_float3 up = _float3(0, 1, 0);
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
-	{
-		m_pTransformCom->Turn_CCW(up.XMVector(), fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
-	{
-		m_pTransformCom->Turn_CW(up.XMVector(),fDeltaTime);
-	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
+	//{
+	//	m_pTransformCom->Turn_CCW(up.XMVector(), fDeltaTime);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
+	//{
+	//	m_pTransformCom->Turn_CW(up.XMVector(),fDeltaTime);
+	//}
 
 	if (KEYDOWN(DIK_F))
 	{

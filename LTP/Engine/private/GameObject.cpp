@@ -54,7 +54,7 @@ _int CGameObject::Render()
 
 	if (m_pEngineShader)
 	{
-		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float3)));
+		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float4)));
 		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float)));
 	}
 
@@ -81,7 +81,7 @@ _float CGameObject::Compute_RenderSortValue()
 
 
 
-void CGameObject::Set_LimLight_N_Emissive(_float3 vLimLight, _float fEmissive)
+void CGameObject::Set_LimLight_N_Emissive(_float4 vLimLight, _float fEmissive)
 {
 	m_vLimLight = vLimLight;
 	m_fEmissiveIntensive = fEmissive;

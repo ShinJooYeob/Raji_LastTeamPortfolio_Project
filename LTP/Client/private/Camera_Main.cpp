@@ -135,34 +135,119 @@ _int CCamera_Main::Update(_double fDeltaTime)
 	FAILED_CHECK(Update_CamAction(fDeltaTime));
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
-	{
-		m_pTransform->Move_Forward(fDeltaTime * 10.);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
-	{
-		m_pTransform->Move_Backward(fDeltaTime* 10.);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press)
-	{
-		m_pTransform->Move_Right(fDeltaTime* 10.);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
-	{
-		m_pTransform->Move_Left(fDeltaTime* 10.);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_PGUP) & DIS_Press)
-	{
-		m_pTransform->MovetoDir(XMVectorSet(0,1,0,0),fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_PGDN) & DIS_Press)
-	{
-		m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
-	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
+	//{
+	//	m_pTransform->Move_Forward(fDeltaTime * 10.);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
+	//{
+	//	m_pTransform->Move_Backward(fDeltaTime* 10.);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press)
+	//{
+	//	m_pTransform->Move_Right(fDeltaTime* 10.);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
+	//{
+	//	m_pTransform->Move_Left(fDeltaTime* 10.);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_PGUP) & DIS_Press)
+	//{
+	//	m_pTransform->MovetoDir(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_PGDN) & DIS_Press)
+	//{
+	//	m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
+	//}
 
 
 	switch (m_eCurCamMode)
 	{
+	case ECameraMode::CAM_MODE_FREE:
+	{
+		if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+		{
+			m_pTransform->Move_Forward(fDeltaTime);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+		{
+			m_pTransform->Move_Backward(fDeltaTime);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+		{
+			m_pTransform->Move_Right(fDeltaTime);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
+		{
+			m_pTransform->Move_Left(fDeltaTime);
+		}		
+		if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
+		{
+			m_pTransform->MovetoDir(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
+		{
+			m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
+		}
+
+	
+		{
+			static _bool IsWheelClicked = false;
+			_byte BtnState = g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_WHEEL);
+			if (BtnState & DIS_Press)
+			{
+				if (!IsWheelClicked && (BtnState & DIS_Down))
+					IsWheelClicked = true;
+				else if (IsWheelClicked && (BtnState & DIS_Up))
+					IsWheelClicked = false;
+				else if (IsWheelClicked && (BtnState & DIS_Press))
+				{
+					if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
+					{
+
+						_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
+
+						m_pTransform->Turn_CW(m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), fWheelMove*fDeltaTime* 0.1f);
+
+						fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
+
+						m_pTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fWheelMove* fDeltaTime * 0.1f);
+
+
+					}
+					else {
+
+						_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
+
+						m_pTransform->MovetoDir_bySpeed(
+							m_pTransform->Get_MatrixState(CTransform::STATE_UP), (_float)fWheelMove, fDeltaTime);
+
+						fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
+
+						m_pTransform->MovetoDir_bySpeed(
+							m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), (_float)-fWheelMove, fDeltaTime);
+
+
+					}
+
+
+				}
+
+			}
+			if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
+			{
+				_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL);
+				if (fWheelMove)
+				{
+					m_pTransform->MovetoDir_bySpeed(
+						m_pTransform->Get_MatrixState(CTransform::STATE_LOOK), (_float)fWheelMove, fDeltaTime);
+				}
+
+			}
+
+		}
+	}
+		break;
 	case ECameraMode::CAM_MODE_NOMAL:
 		Update_NormalMode(fDeltaTime);
 		break;
@@ -286,7 +371,7 @@ HRESULT CCamera_Main::Set_ViewMatrix()
 
 _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 {
-	if (nullptr == m_pFocusTarget)
+	if (nullptr == m_pFocusTarget || m_eNowSceneNum == SCENE_LOADING)
 		return 0;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);

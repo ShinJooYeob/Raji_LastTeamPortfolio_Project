@@ -28,6 +28,7 @@ public:
 	HRESULT Clear_All_RenderTargetColor();
 	HRESULT Clear_SpecificMRT(const _tchar* pMRTTag);
 
+
 #ifdef _DEBUG
 public:
 	HRESULT Ready_DebugDesc(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);

@@ -38,6 +38,7 @@ public:
 	void Set_Pivot(_float3 vPivot) { memcpy(&(m_TransformDesc.vPivot), &vPivot, sizeof(_float3)); };
 
 
+	_float Get_TurnSpeed() { return m_TransformDesc.fRotationPerSec; };
 	_float Get_MoveSpeed() { return m_TransformDesc.fMovePerSec; };
 	_Vector Get_Pivot() {return m_TransformDesc.vPivot.XMVector(); };
 

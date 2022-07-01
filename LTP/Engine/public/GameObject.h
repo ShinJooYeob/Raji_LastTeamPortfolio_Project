@@ -31,7 +31,9 @@ public:
 	virtual void Set_IsDead() { m_bIsDead = true; }
 	_bool Get_IsDead() { return m_bIsDead; }
 
-	void Set_LimLight_N_Emissive(_float3 vLimLight = _float3(0), _float fEmissive = _float(0));
+	void Set_LimLight_N_Emissive(_float4 vLimLight = _float4(0), _float fEmissive = _float(0));
+	_float4 Get_LimLightValue() { return m_vLimLight; };
+	_float	Get_EmissiveValue() { return m_fEmissiveIntensive; };
 
 	virtual HRESULT ReInitialize(void* pArg = nullptr) { return S_OK; };
 
@@ -43,6 +45,10 @@ public:
 	_fVector Get_AttachCamPos();
 	_fVector Get_AttachCamLook();
 	virtual void Update_AttachCamPos();
+
+	_float Get_NowHP() { return m_fHP; };
+	_float Get_MaxHP() { return m_fMaxHP; };
+	void	Set_NowHP(_float fHP) { m_fHP = fHP; };
 
 protected:
 	map<const _tchar*, class CComponent**>	m_mapComponets;
@@ -64,9 +70,14 @@ protected:
 	_float3						m_fAttachCamPos = _float3(0, 0, 0);
 	_float3						m_fAttachCamPos_Offset = _float3(0, 0, 0);
 	_float3						m_fAttachCamLook = _float3(0, 0, 0);
-	_float3						m_vLimLight = _float3(0);
+
+	_float4						m_vLimLight = _float3(0);
 	_float						m_fEmissiveIntensive = _float(0);
+
 	_float						m_fFrustumRadius = 1.f; 
+
+	_float					m_fHP	= 32.f;
+	_float					m_fMaxHP = 32.f;
 
 private:
 	class CShader*				m_pEngineShader = nullptr;

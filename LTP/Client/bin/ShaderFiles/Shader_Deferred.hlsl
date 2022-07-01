@@ -6,6 +6,7 @@ texture2D			g_SpecularTexture;
 texture2D			g_EmissiveTexture;
 texture2D			g_DepthTexture;
 texture2D			g_WorldPosTexture;
+texture2D			g_LimLightTexture;
 texture2D			g_ShadeTexture;
 texture2D			g_MaskTexture;
 
@@ -64,11 +65,13 @@ cbuffer ScreenSizeBuffer
 cbuffer ForPostProcessing
 {
 	float				g_fTexelSize = 2.f;
+	
+	float				g_fShadowIntensive = 0.65f;
 
 	float3				g_vDofTargetPosition = 0;
 	float				g_fDofTargetLength = 10;
 	
-	float				g_fRimWidth = 0.55f;
+	float				g_fOverLuminence = 1.8f;
 
 	float4				g_vLightShaftValue = 0;
 	float2				g_vScreenLightUVPos = 0;
@@ -305,8 +308,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vEmissiveDesc.a > 0)
 	{
-		Out.vShade = 1.f;
-		Out.vSpecular = 0.f;
+
+		Out.vShade = Out.vShade + vEmissiveDesc.a;
+		Out.vSpecular = max(Out.vSpecular - vEmissiveDesc.a,0);
+		
+		Out.vSpecular.a = 0.f;
 
 	}
 
@@ -362,8 +368,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
 	if (vEmissiveDesc.a > 0)
 	{
-		Out.vShade = 1.f;
-		Out.vSpecular = 0.f;
+		Out.vShade = Out.vShade + vEmissiveDesc.a;
+		Out.vSpecular = Out.vSpecular + vEmissiveDesc.a;
+		Out.vSpecular.a = 0.f;
 	}
 
 	return Out;
@@ -384,14 +391,14 @@ PS_OUT_AfterDeferred PS_MAIN_EndDeferred(PS_IN In)
 	Out.vColor = vDiffuseDesc * vShadeDesc + vSpecularDesc;
 
 
-	vector		vLimLightDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		vLimLightDesc = g_LimLightTexture.Sample(DefaultSampler, In.vTexUV);
 
 
-	if (vLimLightDesc.r + vLimLightDesc.g + vLimLightDesc.b > 0)
+	if (vLimLightDesc.a > 0)
 	{
 		vector		vNormal = vector(vMtrlNormalMapDesc.xyz * 2.f - 1.f, 0.f);
 		float3 vCameraPos = normalize(g_vCamPosition.xyz - vWorldPositionDesc.xyz);
-		float RimLightColor = smoothstep(1.0f - g_fRimWidth, 1.0f, 1 - max(0, dot(vNormal.xyz, vCameraPos)));
+		float RimLightColor = smoothstep(1.0f - vLimLightDesc.a, 1.0f, 1 - max(0, dot(vNormal.xyz, vCameraPos)));
 		Out.vColor += RimLightColor * vector(vLimLightDesc.rgb, 0);
 	}
 
@@ -572,9 +579,10 @@ PS_OUT PS_ShadowDrawLightWorldToWorld(PS_IN In)
 	//if (CurrentDepth > ShadowDepth + 0.0000125)
 	//if (CurrentDepth > ShadowDepth + 0.000125)
 	//if (CurrentDepth > ShadowDepth )
+
 	if (CurrentDepth > ShadowDepth + 0.00000125f)
 	{
-		Out.vColor = vector(0.65f, 0.65f, 0.65f, 1);
+		Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive , g_fShadowIntensive , 1);
 	}
 	return Out;
 }
@@ -638,7 +646,7 @@ PS_OUT PS_LumineceMask(PS_IN In)
 	vector		vTargetDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
 	vector		vAvgLumineceMapDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
 
-	if (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) > vAvgLumineceMapDesc.r * 1.8f)
+	if (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) > vAvgLumineceMapDesc.r * g_fOverLuminence)
 	{
 		Out.vColor = 1.f;
 	}
