@@ -154,6 +154,15 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Vayusura_Leader">
       <UniqueIdentifier>{00e2325d-4b5f-4835-bacc-ec49b9c61b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian">
+      <UniqueIdentifier>{d1d94933-c3bb-42fa-a0fa-aa75a6826208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\MonsterWeapon">
+      <UniqueIdentifier>{f9c89e62-1892-4c84-bdbb-379249803901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon">
+      <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -329,6 +338,15 @@
     <ClInclude Include="..\public\Rangda_MagicCircle.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Chiedtian.h">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterWeapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Chiedtuan_Weapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -474,6 +492,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chiedtian.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterWeapon.cpp">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chiedtuan_Weapon.cpp">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

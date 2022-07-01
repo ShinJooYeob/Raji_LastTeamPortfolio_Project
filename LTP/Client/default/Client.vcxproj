@@ -181,6 +181,8 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\Chiedtian.h" />
+    <ClInclude Include="..\public\Chiedtuan_Weapon.h" />
     <ClInclude Include="..\public\Client_Define.h" />
     <ClInclude Include="..\public\Client_Enum.h" />
     <ClInclude Include="..\public\Client_Macro.h" />
@@ -192,6 +194,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Leader.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
@@ -227,12 +230,15 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\Chiedtian.cpp" />
+    <ClCompile Include="..\private\Chiedtuan_Weapon.cpp" />
     <ClCompile Include="..\private\EditorTerrain.cpp" />
     <ClCompile Include="..\private\ESCursor.cpp" />
     <ClCompile Include="..\private\ImguiMgr.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MapObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />

@@ -31,7 +31,7 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Scaled_All(_float3(2.f, 2.f, 2.f));
+	m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
 
 	m_pModel->Change_AnimIndex(0);
 
