@@ -80,6 +80,23 @@ _int CMainApp::Update(_double fDeltaTime)
 		MSGBOX("Failed to Update_Engine ");
 		return E_FAIL;
 	}
+
+	// Phycis Update
+	if (FAILED(GetSingle(CPhysXMgr)->Update_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to Update_PhysX ");
+		return E_FAIL;
+	}
+	// Phycis Update
+	if (FAILED(GetSingle(CPhysXMgr)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to LateUpdate_PhysX ");
+		return E_FAIL;
+	}
+
+
 #ifdef _DEBUG
 	FAILED_CHECK(m_pImguiMgr->Update_DebugWnd(fDeltaTime));
 #endif // _DEBUG

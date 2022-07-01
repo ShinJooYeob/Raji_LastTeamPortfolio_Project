@@ -13,11 +13,26 @@ public:
 
 public:
 	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	void TestPhysX();
+	HRESULT Update_PhysX(_double timedelta);
+	HRESULT LateUpdate_PhysX(_double timedelta);
 
-public:
+
+private:
+	HRESULT CreateTest_Base();
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
+
+	HRESULT Create_Cook();
+
+	
+	PxFoundation*	Get_Foundation();
+	PxPhysics*		Get_PhysicsCreater();
+
+//	void			Set_Material(_float3 vec);
+
+private:
+	HRESULT Initialize_PhysXLib();
+
 
 private:
 	PxDefaultAllocator			mAllocCallback;
@@ -26,13 +41,15 @@ private:
 	PxDefaultCpuDispatcher*		mDisPatcher = nullptr;
 	PxTolerancesScale			mToleranceScale;
 
-	PxFoundation*				mFoundation;
+	PxFoundation*				mFoundation= nullptr;
 	PxPhysics*					mPhysics = nullptr;
+	// 모델 메시 제어
+	PxCooking*					mCooking;
 
 	PxScene*					mScene = nullptr;
 	PxMaterial*					mMaterial = nullptr;
 
-	PxPvd*						mPvd;
+	PxPvd*						mPvd = nullptr;
 
 
 public:
