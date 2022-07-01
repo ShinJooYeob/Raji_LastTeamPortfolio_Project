@@ -34,6 +34,8 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+	m_pTransformCom->Scaled_All(_float3(2.5f, 2.5f, 2.5f));
+
 	return S_OK;
 }
 
@@ -141,28 +143,11 @@ HRESULT CMonster_Vayusura_Leader::SetUp_Fight(_double dDeltaTime)
 
 	if (m_bLookAtOn)
 	{
-		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-
 
 		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
-		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+		m_pTransformCom->Turn_Dir(vTarget, 0.95f);
 	}
-
-	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	////평범하게 움직이기
-	//if (pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Up(dDeltaTime);
-	//}
-	//if (pGameInstance->Get_DIKeyState(DIK_H) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Down(dDeltaTime);
-	//}
-
-	//RELEASE_INSTANCE(CGameInstance);
-
 
 	return S_OK;
 }
@@ -193,7 +178,7 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 	m_dOnceCoolTime += dDeltaTime;
 
-	if (m_dOnceCoolTime > 2 && m_fDistance < 3 || m_bComboAnimSwitch == true)
+	if (m_dOnceCoolTime > 6)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
@@ -209,10 +194,19 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 	//반복적으로 동작하는 애니메이션
 	m_dInfinity_CoolTime += dDeltaTime;
-	if (m_dInfinity_CoolTime >= 1.5)
+	if (m_dInfinity_CoolTime >= 2.5)
 	{
 		m_iInfinityPattern = rand() % 4;
 
+
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
+
+		if (m_fDistance > 12)
+		{
+			m_iInfinityPattern = 10;
+		}
 
 		m_dInfinity_CoolTime = 0;
 	}
@@ -226,10 +220,10 @@ HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 5; //Vayusura_Dive
+		m_iOnceAnimNumber = 6; //Vayusura_Dive
 		break;
 	case 1:
-		m_iOnceAnimNumber = 5; //Vayusura_Dive
+		m_iOnceAnimNumber = 6; //Vayusura_Dive
 		break;
 
 	}
@@ -244,7 +238,7 @@ HRESULT CMonster_Vayusura_Leader::Pattern_Change()
 
 	if (m_iOncePattern > 2)
 	{
-		//m_iOncePattern = rand() % 2; //OncePattern Random
+		m_iOncePattern = 0;
 	}
 
 
@@ -258,35 +252,59 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	case 0:
 		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7)
 		{
-			m_pTransformCom->Move_Up(dDeltaTime * 0.5);
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(0.f, 1.f, 0.f, 0.f)), dDeltaTime * 0.5);
+
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
 		}
 		m_iInfinityAnimNumber = 0; // flapping
 		break;
 	case 1:
 		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 4)
 		{
-			m_pTransformCom->Move_Down(dDeltaTime * 0.5);
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(0.f, 1.f, 0.f, 0.f)), -dDeltaTime * 0.5);
+
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
 		}
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 2:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).x < m_fPlayerPos.x + 10 &&
-			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).x > m_fPlayerPos.x - 10)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
 		{
 
-			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(1.f, 0.f, 0.f, 0.f)), dDeltaTime);
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
 		}
 		m_iInfinityAnimNumber = 1;
 		break;
 	case 3:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).x < m_fPlayerPos.x + 10 &&
-			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).x > m_fPlayerPos.x - 10)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
 		{
 
-			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(1.f, 0.f, 0.f, 0.f)), -dDeltaTime);
+			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
 		}
 		m_iInfinityAnimNumber = 1;
 		break;
+	case 10:
+	{
+		_float3 fTempPlayerPos = m_fPlayerPos;
+
+		fTempPlayerPos.y += 5;
+
+		_Vector vTarget = XMVector3Normalize(XMLoadFloat3(&fTempPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		//m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+		if (m_fDistance > 7)
+		{
+			m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+
+			m_pTransformCom->MovetoDir(vTarget, dDeltaTime );
+			m_iInfinityAnimNumber = 2;
+		}
+		else {
+
+		}
+		break;
+	}
 	}
 
 	return S_OK;
@@ -298,7 +316,7 @@ HRESULT CMonster_Vayusura_Leader::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Vayusura_Minion), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -358,129 +376,6 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		//	break;
 		//}
-
-
-
-		switch (iNowAnimIndex)
-		{
-		case 2:
-		{
-			if (PlayRate >= 0.2 && PlayRate <= 0.6)
-			{
-				m_bLookAtOn = false;
-				m_pTransformCom->Move_Backward(dDeltaTime * 0.3);
-			}
-			break;
-		}
-		case 3:
-		{
-			if (PlayRate <= 0.48)
-			{
-				if (m_iAdjMovedIndex == 0)
-				{
-					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-					m_iAdjMovedIndex += 1;
-				}
-				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook));
-
-				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(vRight) * 3 * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
-			}
-			break;
-		}
-		case 4:
-		{
-			if (PlayRate <= 0.48)
-			{
-				if (m_iAdjMovedIndex == 0)
-				{
-					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-					m_iAdjMovedIndex += 1;
-				}
-				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
-
-				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * 3 * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
-			}
-			break;
-		}
-		case 18:
-		{
-			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
-			{
-				m_bLookAtOn = false;
-
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.5f, 2.2f, PlayRate - 0.27272f, 0.17128f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-			}
-			else if (PlayRate >= 0.444 && PlayRate <= 0.6)
-			{
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.2f, 1.f, PlayRate - 0.444f, 0.156f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-			}
-			break;
-		}
-		case 19: {
-			if (PlayRate >= 0.24 && PlayRate <= 0.48)
-			{
-				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 0.6);
-			}
-			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
-			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		case 20: {
-			if (PlayRate >= 0.24 && PlayRate <= 0.6)
-			{
-				m_bLookAtOn = false;
-
-
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, PlayRate - 0.24f, 0.36f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-
-				//m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		case 21: {
-			if (PlayRate > 0 && PlayRate <= 0.720720)
-			{
-				m_dAcceleration = 1.5;
-			}
-			else if (PlayRate >= 0.720720 && PlayRate <= 0.875)
-			{
-				m_dAcceleration = 3;
-			}
-			else {
-				m_dAcceleration = 1;
-			}
-			break;
-		}
-		case 22: {
-			if (PlayRate > 0 && PlayRate >= 0.125)
-			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		}
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;

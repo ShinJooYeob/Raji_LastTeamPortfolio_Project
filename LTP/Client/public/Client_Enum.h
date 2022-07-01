@@ -930,3 +930,22 @@ static const char* Tag_ModelTextureType(_uint eTag)
 #define  MODLETEXTYPE Tag_ModelTextureType
 
 
+enum BULLETMESHID
+{
+	VAYUSURA_LEADER_BULLET,
+	BULLET_END
+};
+
+static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
+{
+	switch (eTag)
+	{
+	case VAYUSURA_LEADER_BULLET:
+		return TEXT("Prototype_Component_Model_Bullet_Vayusura_Leader.fbx");
+	default:
+		MSGBOX("Not Prototype_Component_Model_Bullet");
+		break;
+	}
+}
+
+#define TAG_MONSTER_BULLET Tag_ModelMonsterBulletType

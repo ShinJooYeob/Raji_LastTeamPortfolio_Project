@@ -324,7 +324,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 			{
 
 				m_bLookAtOn = false;
-				m_iInfinityAnimNumber = 3;
+				m_iInfinityAnimNumber = 5;
 
 				_Vector vTarget = XMVector3Normalize(XMLoadFloat3(&m_TempPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 				m_pTransformCom->Turn_Dir(vTarget, 0.9f);
