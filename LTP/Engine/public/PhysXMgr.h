@@ -15,10 +15,9 @@ public:
 	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	void TestPhysX();
 
-
 public:
-	HRESULT CreateStack(const PxTransform& trans, PxU32 size, PxReal halfExtent);
-
+	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
+	HRESULT Clean_Phyics();
 
 private:
 	PxDefaultAllocator			mAllocCallback;

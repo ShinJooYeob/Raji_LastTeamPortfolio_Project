@@ -5,6 +5,8 @@
 
 IMPLEMENT_SINGLETON(CPhysXMgr)
 
+
+
 CPhysXMgr::CPhysXMgr()
 {
 }
@@ -91,9 +93,9 @@ void CPhysXMgr::TestPhysX()
 
 	float halfsize = 0.5f;
 	const PxTransform t(PxVec3(0,0,0));
-	PxU32 size = 30;
+	PxU32 size = 5;
 	
-	CreateStack(t,size,halfsize);
+	CreateStack_Test(t,size,halfsize);
 
 	// Run
 	while (1)
@@ -105,7 +107,8 @@ void CPhysXMgr::TestPhysX()
 
 }
 
-HRESULT CPhysXMgr::CreateStack(const PxTransform & trans, PxU32 size, PxReal halfExtent)
+//Test
+HRESULT CPhysXMgr::CreateStack_Test(const PxTransform & trans, PxU32 size, PxReal halfExtent)
 {
 	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
 	for (PxU32 i = 0; i < size; i++)
@@ -120,12 +123,35 @@ HRESULT CPhysXMgr::CreateStack(const PxTransform & trans, PxU32 size, PxReal hal
 			mScene->addActor(*body);
 		}
 	}
-	shape->release();
+	PX_RELEASE(shape);
+
 	return S_OK;
 }
 
+HRESULT CPhysXMgr::Clean_Phyics()
+{
+	PX_RELEASE(mPhysics);
+	PX_RELEASE(mFoundation);
+	PX_RELEASE(mDisPatcher);
+	PX_RELEASE(mScene);
+	PX_RELEASE(mMaterial);
+	PxCloseExtensions();
+
+	if (mPvd)
+	{
+		PxPvdTransport* transport = mPvd->getTransport();
+		PX_RELEASE(mPvd);
+		PX_RELEASE(transport);
+	}
+	return S_OK;
+
+}
+
+
 void CPhysXMgr::Free()
 {
+	Clean_Phyics();
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }
