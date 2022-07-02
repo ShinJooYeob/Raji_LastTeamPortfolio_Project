@@ -339,6 +339,9 @@
     <ClInclude Include="..\public\Monster_Gadasura_Black.h">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PhysX\PhysXMgr.h">
+      <Filter>05.PhysX\Mgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -484,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\PhysXMgr.cpp">
+      <Filter>05.PhysX\Mgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
