@@ -2,6 +2,7 @@
 #include "..\Public\Scene_Stage6.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
+// #include "Phyxs/PhyxSampleTest.h"
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -10,6 +11,7 @@ CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDevi
 
 HRESULT CScene_Stage6::Initialize()
 {
+
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
@@ -24,7 +26,7 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 
 	// Phy
-
+	FAILED_CHECK(Ready_Layer_Phycis());
 
 	return S_OK;
 }
@@ -158,6 +160,13 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 	return S_OK;
 }
 
+HRESULT CScene_Stage6::Ready_Layer_Phycis()
+{
+//	m_pPhySample = CPhyxSampleTest::Create();
+
+	return S_OK;
+}
+
 
 HRESULT CScene_Stage6::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
@@ -185,4 +194,5 @@ CScene_Stage6 * CScene_Stage6::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 void CScene_Stage6::Free()
 {
 	__super::Free();
+//	Safe_Release(m_pPhySample);
 }

@@ -93,15 +93,6 @@ public: /*For. SoundMgr*/
 	_float  Get_Channel_Volume(CHANNELID eID);
 	_bool  Get_Channel_IsPaused(CHANNELID eID);
 
-public: /*For. PhysXMgr*/ 
-	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	HRESULT Update_PhysX(_double timedelta);
-	HRESULT LateUpdate_PhysX(_double timedelta);
-
-	PxFoundation*	Get_Foundation();
-	PxPhysics*		Get_PhysicsCreater();
-	PxCooking*		Get_PhysicsCooking();
-
 
 
 public: /* For.TimerMgr */
@@ -201,7 +192,6 @@ private:
 	CExternFontMgr*		m_pExternFontMgr	= nullptr;
 	CSoundMgr*			m_pSoundMgr = nullptr;
 	CFileInfoMgr*		m_pFileIoMgr = nullptr;
-	CPhysXMgr*			m_pPhyMgr = nullptr;
 
 public:
 	static void Release_Engine();

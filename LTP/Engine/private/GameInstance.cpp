@@ -12,7 +12,6 @@
 #include "ExternFontMgr.h"
 #include "SoundMgr.h"
 #include "FileInfoMgr.h"
-#include "PhysXMgr.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -33,9 +32,7 @@ CGameInstance::CGameInstance()
 	m_pRenderTargetMgr(GetSingle(CRenderTargetMgr)),
 	m_pExternFontMgr(GetSingle(CExternFontMgr)),
 	m_pSoundMgr(GetSingle(CSoundMgr)),
-	m_pFileIoMgr(GetSingle(CFileInfoMgr)),
-	m_pPhyMgr(GetSingle(CPhysXMgr))
-	
+	m_pFileIoMgr(GetSingle(CFileInfoMgr))	
 
 {
 
@@ -55,7 +52,6 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pExternFontMgr);
 	Safe_AddRef(m_pSoundMgr);
 	Safe_AddRef(m_pFileIoMgr);
-	Safe_AddRef(m_pPhyMgr);
 }
 
 
@@ -96,7 +92,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, const CGraphic_Device:
 
 	FAILED_CHECK(m_pExternFontMgr->Initialize_FontMgr(*ppDeviceOut, *ppDeviceContextOut));
 
-	FAILED_CHECK(m_pPhyMgr->Initialize_PhysX(*ppDeviceOut, *ppDeviceContextOut));
 
 
 	return S_OK;
@@ -521,45 +516,6 @@ _bool CGameInstance::Get_Channel_IsPaused(CHANNELID eID)
 	return m_pSoundMgr->Get_Channel_IsPaused(eID);
 }
 
-HRESULT CGameInstance::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-
-	return m_pPhyMgr->Initialize_PhysX(pDevice, pDeviceContext);
-}
-
-HRESULT CGameInstance::Update_PhysX(_double timedelta)
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-	return m_pPhyMgr->Update_PhysX(timedelta);
-}
-
-HRESULT CGameInstance::LateUpdate_PhysX(_double timedelta)
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-	return m_pPhyMgr->LateUpdate_PhysX(timedelta);
-
-}
-
-PxFoundation * CGameInstance::Get_Foundation()
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-
-	return m_pPhyMgr->Get_Foundation();
-}
-
-PxPhysics * CGameInstance::Get_PhysicsCreater()
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-
-	return m_pPhyMgr->Get_PhysicsCreater();
-}
-PxCooking * CGameInstance::Get_PhysicsCooking()
-{
-	NULL_CHECK_BREAK(m_pPhyMgr);
-
-	return m_pPhyMgr->Get_PhysicsCooking();
-}
 
 HRESULT CGameInstance::PlayThread(void * _ThreadFunc, void * _pArg)
 {
@@ -849,8 +805,6 @@ void CGameInstance::Release_Engine()
 	if (0 != GetSingle(CFileInfoMgr)->DestroyInstance())
 		MSGBOX("Failed to Release Com CFileInfoMgr ");
 
-	if (0 != GetSingle(CPhysXMgr)->DestroyInstance())
-		MSGBOX("Failed to Release Com CPhysXMgr ");
 
 	if (0 != GetSingle(CGraphic_Device)->DestroyInstance())
 		MSGBOX("Failed to Release Com Graphic_Device ");
@@ -875,7 +829,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pRenderTargetMgr);
 	Safe_Release(m_pExternFontMgr);
 	Safe_Release(m_pFileIoMgr);
-	Safe_Release(m_pPhyMgr);
 	
 	
 	

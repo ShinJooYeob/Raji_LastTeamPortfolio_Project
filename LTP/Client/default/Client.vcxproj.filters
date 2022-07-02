@@ -160,8 +160,8 @@
     <Filter Include="05.PhysX\SnipSampleTest">
       <UniqueIdentifier>{ba343726-6092-4104-b5e6-4966c0087ac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.PhysX\Scene">
-      <UniqueIdentifier>{5653fcfb-de3d-4e88-97cc-7b402d803b76}</UniqueIdentifier>
+    <Filter Include="05.PhysX\Mgr">
+      <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -339,9 +339,6 @@
     <ClInclude Include="..\public\Monster_Gadasura_Black.h">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Phyxs\PhyxSampleTest.h">
-      <Filter>05.PhysX\SnipSampleTest</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -487,9 +484,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PhysX\PhyxSampleTest.cpp">
-      <Filter>05.PhysX\SnipSampleTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

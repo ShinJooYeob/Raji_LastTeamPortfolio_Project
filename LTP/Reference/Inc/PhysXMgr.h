@@ -20,7 +20,8 @@ public:
 	PxFoundation*	Get_Foundation();
 	PxPhysics*		Get_PhysicsCreater();
 	PxCooking*		Get_PhysicsCooking();
-
+	PxScene*		Get_PhysicsScene();
+	
 private:
 	HRESULT CreateTest_Base();
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);

@@ -81,18 +81,18 @@ _int CMainApp::Update(_double fDeltaTime)
 	}
 
 #pragma region PhysX_Update
-	if (FAILED(GetSingle(CGameInstance)->Update_PhysX(fDeltaTime * m_SlowTimes)))
-	{
-		__debugbreak();
-		MSGBOX("Failed to Update_PhysX ");
-		return E_FAIL;
-	}
-	if (FAILED(GetSingle(CGameInstance)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
-	{
-		__debugbreak();
-		MSGBOX("Failed to LateUpdate_PhysX ");
-		return E_FAIL;
-	}
+	//if (FAILED(GetSingle(CGameInstance)->Update_PhysX(fDeltaTime * m_SlowTimes)))
+	//{
+	//	__debugbreak();
+	//	MSGBOX("Failed to Update_PhysX ");
+	//	return E_FAIL;
+	//}
+	//if (FAILED(GetSingle(CGameInstance)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
+	//{
+	//	__debugbreak();
+	//	MSGBOX("Failed to LateUpdate_PhysX ");
+	//	return E_FAIL;
+	//}
 #pragma endregion PhysX_Update
 
 

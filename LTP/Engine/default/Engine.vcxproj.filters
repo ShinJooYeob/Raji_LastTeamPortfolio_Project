@@ -166,12 +166,6 @@
     <Filter Include="01.Utillity\13.FileIOMgr">
       <UniqueIdentifier>{928cbff2-fa77-485f-9e5f-6f13765084c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.PhysX">
-      <UniqueIdentifier>{35effe7b-d94e-4ae0-bd6d-d298f6183c38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.PhysX\01.PhysXMgr">
-      <UniqueIdentifier>{03d65cfb-2d25-42e7-8bdc-06b6344df51f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -342,9 +336,6 @@
     <ClInclude Include="..\public\FileInfoMgr.h">
       <Filter>01.Utillity\13.FileIOMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PhysXMgr.h">
-      <Filter>97.PhysX\01.PhysXMgr</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -496,9 +487,6 @@
     </ClCompile>
     <ClCompile Include="..\private\FileInfoMgr.cpp">
       <Filter>01.Utillity\13.FileIOMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PhysXMgr.cpp">
-      <Filter>97.PhysX\01.PhysXMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
