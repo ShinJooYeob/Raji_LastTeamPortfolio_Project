@@ -465,7 +465,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 					float ObjectPosition[3] = { 0,0,0 };
 					_float3 vPosition = pObjectTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 					memcpy(ObjectPosition, &vPosition, sizeof(_float) * 3);
-					ImGui::DragFloat3("   ", ObjectPosition, 0.1f, -FLT_MAX, FLT_MAX);
+					ImGui::DragFloat3("   ", ObjectPosition, 0.00001f, -FLT_MAX, FLT_MAX);
 
 					memcpy(&vPosition, ObjectPosition, sizeof(_float) * 3);
 

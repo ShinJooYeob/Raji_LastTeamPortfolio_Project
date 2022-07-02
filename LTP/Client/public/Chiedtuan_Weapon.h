@@ -1,5 +1,8 @@
 #pragma once
 #include "MonsterWeapon.h"
+
+BEGIN(Client)
+
 class CChiedtuan_Weapon final : public CMonsterWeapon
 {
 private:
@@ -32,9 +35,12 @@ private:
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
 
-	CGameObject*		m_pPlayerObj;
+	ATTACHEDESC			m_eAttachedDesc;
 
-	_float				m_fTestHPIndex = 1.f;
+	_float4x4			m_fAttachedMatrix;
+
+private:
+	void				Update_AttachMatrix();
 
 private:
 	HRESULT SetUp_Components();
@@ -45,4 +51,4 @@ public:
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
-
+END
