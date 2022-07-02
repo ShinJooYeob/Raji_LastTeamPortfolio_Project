@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;..\bin\PhysXDLL\debug\PhysXExtensions_static_64.lib;..\bin\PhysXDLL\debug\PhysX_64.lib;..\bin\PhysXDLL\debug\PhysXPvdSDK_static_64.lib;..\bin\PhysXDLL\debug\PhysXVehicle_static_64.lib;..\bin\PhysXDLL\debug\PhysXCharacterKinematic_static_64.lib;..\bin\PhysXDLL\debug\PhysXCooking_64.lib;..\bin\PhysXDLL\debug\PhysXCommon_64.lib;..\bin\PhysXDLL\debug\SnippetUtils_static_64.lib;..\bin\PhysXDLL\debug\SnippetRender_static_64.lib;..\bin\PhysXDLL\debug\PhysXFoundation_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -149,13 +149,14 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../public/;../default/;../../Reference/Inc/;../public/Imgui/;../bin/ShaderFiles/;../public/PhysX/;../../Reference/Inc/physx/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;..\bin\PhysXDLL\release\PhysXExtensions_static_64.lib;..\bin\PhysXDLL\release\PhysX_64.lib;..\bin\PhysXDLL\release\PhysXPvdSDK_static_64.lib;..\bin\PhysXDLL\release\PhysXVehicle_static_64.lib;..\bin\PhysXDLL\release\PhysXCharacterKinematic_static_64.lib;..\bin\PhysXDLL\release\PhysXCooking_64.lib;..\bin\PhysXDLL\release\PhysXCommon_64.lib;..\bin\PhysXDLL\release\PhysXFoundation_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -198,6 +199,7 @@
     <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
     <ClInclude Include="..\public\PhysX\PhysXMgr.h" />
+    <ClInclude Include="..\public\PhysX\PhyxSampleTest.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
@@ -240,6 +242,7 @@
     <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
     <ClCompile Include="..\private\physX\PhysXMgr.cpp" />
+    <ClCompile Include="..\private\physX\PhyxSampleTest.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />

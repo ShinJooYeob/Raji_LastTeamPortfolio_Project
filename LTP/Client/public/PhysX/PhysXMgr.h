@@ -2,6 +2,8 @@
 
 #include "Base.h"
 
+
+
 BEGIN(Engine)
 
 class CPhysXMgr final : public CBase
@@ -17,14 +19,14 @@ public:
 	HRESULT LateUpdate_PhysX(_double timedelta);
 
 
-//	PxFoundation*	Get_Foundation();
-//	PxPhysics*		Get_PhysicsCreater();
-//	PxCooking*		Get_PhysicsCooking();
-//	PxScene*		Get_PhysicsScene();
+	PxFoundation*	Get_Foundation();
+	PxPhysics*		Get_PhysicsCreater();
+	PxCooking*		Get_PhysicsCooking();
+	PxScene*		Get_PhysicsScene();
 	
 private:
 	HRESULT CreateTest_Base();
-//	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
+	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
 	HRESULT Create_Cook();
 
@@ -33,21 +35,21 @@ private:
 
 
 private:
-	//PxDefaultAllocator			mAllocCallback;
-	//PxDefaultErrorCallback		mErrorCallback;
+	PxDefaultAllocator			mAllocCallback;
+	PxDefaultErrorCallback		mErrorCallback;
 
-	//PxDefaultCpuDispatcher*		mDisPatcher = nullptr;
-	//PxTolerancesScale			mToleranceScale;
+	PxDefaultCpuDispatcher*		mDisPatcher = nullptr;
+	PxTolerancesScale			mToleranceScale;
 
-	//PxFoundation*				mFoundation= nullptr;
-	//PxPhysics*					mPhysics = nullptr;
-	//// 모델 메시 제어
-	//PxCooking*					mCooking = nullptr;
+	PxFoundation*				mFoundation = nullptr;
+	PxPhysics*					mPhysics = nullptr;
+	// 모델 메시 제어
+	PxCooking*					mCooking = nullptr;
 
-	//PxScene*					mScene = nullptr;
-	//PxMaterial*					mMaterial = nullptr;
+	PxScene*					mScene = nullptr;
+	PxMaterial*					mMaterial = nullptr;
 
-	//PxPvd*						mPvd = nullptr;
+	PxPvd*						mPvd = nullptr;
 
 
 public:

@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
+#include "PhysX/PhysXMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -14,10 +15,6 @@
 
 
 #include "SkyBox.h"
-
-
-
-
 
 
 CMainApp::CMainApp()
@@ -52,10 +49,9 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK(Scene_Change(SCENEID::SCENE_LOBY));
 
-
-
-
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"VinerFonts", L"../bin/Resources/Fonts/Reenie.spritefont"));
+
+
 
 	return S_OK;
 }
@@ -81,18 +77,19 @@ _int CMainApp::Update(_double fDeltaTime)
 	}
 
 #pragma region PhysX_Update
-	//if (FAILED(GetSingle(CGameInstance)->Update_PhysX(fDeltaTime * m_SlowTimes)))
-	//{
-	//	__debugbreak();
-	//	MSGBOX("Failed to Update_PhysX ");
-	//	return E_FAIL;
-	//}
-	//if (FAILED(GetSingle(CGameInstance)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
-	//{
-	//	__debugbreak();
-	//	MSGBOX("Failed to LateUpdate_PhysX ");
-	//	return E_FAIL;
-	//}
+	if (FAILED(GetSingle(CPhysXMgr)->Update_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to Update_PhysX ");
+		return E_FAIL;
+	}
+
+	if (FAILED(GetSingle(CPhysXMgr)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to LateUpdate_PhysX ");
+		return E_FAIL;
+	}
 #pragma endregion PhysX_Update
 
 
@@ -224,6 +221,7 @@ HRESULT CMainApp::Ready_SingletonMgr()
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
 	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
+	FAILED_CHECK(GetSingle(CPhysXMgr)->Initialize_PhysX(m_pDevice, m_pDeviceContext));
 
 	
 	return S_OK;

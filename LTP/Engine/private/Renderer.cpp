@@ -1161,7 +1161,9 @@ HRESULT CRenderer::Render_ShadowGroup()
 
 HRESULT CRenderer::Add_DebugRenderTarget(const _tchar * szTargetTag, _float fX, _float fY, _float fCX, _float fCY)
 {
+#ifdef _DEBUG
 	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(szTargetTag, fX, fY, fCX, fCY));
+#endif // _DEBUG
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), szTargetTag));
 

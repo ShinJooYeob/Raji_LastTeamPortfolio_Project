@@ -342,6 +342,9 @@
     <ClInclude Include="..\public\PhysX\PhysXMgr.h">
       <Filter>05.PhysX\Mgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PhysX\PhyxSampleTest.h">
+      <Filter>05.PhysX\SnipSampleTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -490,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="..\private\physX\PhysXMgr.cpp">
       <Filter>05.PhysX\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\PhyxSampleTest.cpp">
+      <Filter>05.PhysX\SnipSampleTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
