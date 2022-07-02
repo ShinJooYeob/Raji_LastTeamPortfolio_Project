@@ -27,6 +27,7 @@ private:
 		class CTransform* pTransform = nullptr;
 		class CShader* pShader = nullptr;
 		class CModel* pModel = nullptr;
+		_float fIsOcllusion = 1.f;
 		_float4x4 AttacehdMatrix = XMMatrixIdentity();
 	}SHADOWDESC;
 
@@ -41,26 +42,11 @@ private:
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderID, CGameObject* pGameObject);
-	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, class CModel* pModel = nullptr, _float4x4* AttacehdMatrix = nullptr);
+	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, class CModel* pModel = nullptr,_float4x4* AttacehdMatrix = nullptr);
 	HRESULT Add_DebugGroup(class CComponent* pComponent);
 	HRESULT Render_RenderGroup(_double fDeltaTime);
 	HRESULT Clear_RenderGroup_forSceneChaging();
 
-	void OnOff_PostPorcessing(POSTPROCESSINGID eID) { m_PostProcessingOn[eID] = !m_PostProcessingOn[eID]; };
-	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID,_bool bBool) { m_PostProcessingOn[eID] = bBool; };
-	_bool Get_IsOnPostPorcessing(POSTPROCESSINGID eID) { return m_PostProcessingOn[eID]; };
-
-	_float Get_DofLength() { return m_fDofLength; };
-	void	Set_DofLength(_float vDofValue) { m_fDofLength = vDofValue; };
-
-	_float Get_ShadowIntensive() { return m_fShadowIntensive; };
-	void	Set_ShadowIntensive(_float vShadowIntensive) { m_fShadowIntensive = vShadowIntensive; };
-
-	_float Get_BloomOverLuminceValue() { return m_fOverLuminece * 0.5f; };
-	void	Set_BloomOverLuminceValue(_float vBloomOverLuminceValue) { m_fOverLuminece = vBloomOverLuminceValue * 2.f; };
-
-	_uint Get_DebugRenderTargetSize() { return _uint(m_szDebugRenderTargetList.size()); };
-	const _tchar* Get_DebugRenderTargetTag(_uint iIndex);
 
 
 private:
@@ -103,6 +89,20 @@ private:
 
 	_float						m_fShadowIntensive = 0.65f;
 
+	_float						m_fGodrayLength = 64.f;
+	_float						m_fGodrayIntensity = 0.2f;
+	_float						m_fInitDecay = 0.2f;
+	_float						m_fDistDecay = 0.8f;
+	_float						m_fMaxDeltaLen = 0.005f;
+
+	_float3 m_vFogColor = _float3(0.5f, 0.5f, 0.5f);
+	_float m_fFogStartDist = 37.0f;
+	_float3 m_vFogHighlightColor = _float3(0.8f, 0.7f, 0.4f);
+	_float m_fFogGlobalDensity = 1.5f;
+	_float m_fFogHeightFalloff = 0.2f;
+
+
+
 	_bool						m_PostProcessingOn[POSTPROCESSING_END];
 
 private:
@@ -125,7 +125,7 @@ private:
 	HRESULT Caculate_AvgLuminence();
 	HRESULT Render_Bloom();
 	HRESULT Make_BluredDeffered();
-	HRESULT Render_Volumatric();
+	HRESULT Render_DDFog();
 	HRESULT Render_GodRay();
 
 private:
@@ -135,6 +135,47 @@ private:
 
 	HRESULT Add_DebugRenderTarget(const _tchar* szTargetTag, _float fX, _float fY, _float fCX, _float fCY);
 
+
+public:
+	void OnOff_PostPorcessing(POSTPROCESSINGID eID) { m_PostProcessingOn[eID] = !m_PostProcessingOn[eID]; };
+	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool) { m_PostProcessingOn[eID] = bBool; };
+	_bool Get_IsOnPostPorcessing(POSTPROCESSINGID eID) { return m_PostProcessingOn[eID]; };
+
+	_float Get_DofLength() { return m_fDofLength; };
+	void	Set_DofLength(_float vDofValue) { m_fDofLength = vDofValue; };
+	_float Get_ShadowIntensive() { return m_fShadowIntensive; };
+	void	Set_ShadowIntensive(_float vShadowIntensive) { m_fShadowIntensive = vShadowIntensive; };
+	_float Get_BloomOverLuminceValue() { return m_fOverLuminece * 0.5f; };
+	void	Set_BloomOverLuminceValue(_float vBloomOverLuminceValue) { m_fOverLuminece = vBloomOverLuminceValue * 2.f; };
+
+
+	_float Get_GodrayLength() { return m_fGodrayLength; };
+	void  Set_GodrayLength(_float fValue) {	m_fGodrayLength = fValue;	};
+	_float Get_GodrayIntensity() { return m_fGodrayIntensity; };
+	void  Set_GodrayIntensity(_float fValue) { m_fGodrayIntensity = fValue; };
+	_float Get_StartDecay() { return m_fInitDecay; };
+	void  Set_StartDecay(_float fValue) { m_fInitDecay = fValue; };
+	_float Get_DistDecay() { return m_fDistDecay; };
+	void  Set_DistDecay(_float fValue) { m_fDistDecay = fValue; };
+	_float Get_MaxDeltaLen() { return m_fMaxDeltaLen; };
+	void  Set_MaxDeltaLen(_float fValue) { m_fMaxDeltaLen = fValue; };
+
+
+	_float3 Get_FogColor() { return m_vFogColor; };
+	void  Set_FogColor(_float3 vValue) { m_vFogColor = vValue; };
+	_float Get_FogStartDist() { return m_fFogStartDist; };
+	void  Set_FogStartDist(_float fValue) { m_fFogStartDist = fValue; };
+	_float3 Get_FogHighlightColor() { return m_vFogHighlightColor; };
+	void  Set_FogHighlightColor(_float3 vValue) { m_vFogHighlightColor = vValue; };
+	_float Get_FogGlobalDensity() { return m_fFogGlobalDensity; };
+	void  Set_FogGlobalDensity(_float fValue) { m_fFogGlobalDensity = fValue; };
+	_float Get_FogHeightFalloff() { return m_fFogHeightFalloff; };
+	void  Set_FogHeightFalloff(_float fValue) { m_fFogHeightFalloff = fValue; };
+
+
+
+	_uint Get_DebugRenderTargetSize() { return _uint(m_szDebugRenderTargetList.size()); };
+	const _tchar* Get_DebugRenderTargetTag(_uint iIndex);
 
 #ifdef _DEBUG
 	HRESULT Render_Debug();

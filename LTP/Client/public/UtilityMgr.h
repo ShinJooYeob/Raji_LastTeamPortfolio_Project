@@ -37,17 +37,7 @@ public:
 	void End_DebugTimer(E_DEBUGTIMER type, wstring debugLog = L"");
 
 	/*For DebugMode*/
-	void OnOff_PostProcessing(POSTPROCESSINGID eID);
-	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool);
-	_bool Get_IsOnPostProcessing(POSTPROCESSINGID eID);
-	_float Get_DofLength() ;
-	void Set_DofLength(_float vDofValue) ;
-	_float Get_ShadowIntensive() ;
-	void Set_ShadowIntensive(_float vShadowIntensive);
-	_float	Get_BloomOverLuminceValue();
-	void	Set_BloomOverLuminceValue(_float vBloomOverLuminceValue);
-	_uint Get_DebugRenderTargetSize();
-	const _tchar* Get_DebugRenderTargetTag(_uint iIndex);
+	CRenderer* Get_Renderer() { return m_pRenderer; }
 
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();

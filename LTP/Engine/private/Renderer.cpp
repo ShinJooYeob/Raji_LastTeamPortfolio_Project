@@ -79,9 +79,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_AvgLuminece"), (_uint)1, (_uint)1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_VolumatricFog"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
-
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_GodRay"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledRefOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Oclussion"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By2"), (_uint)(Viewport.Width / 2), (_uint)(Viewport.Height / 2), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -124,6 +125,8 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow")));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ShadowDownScaling"), TEXT("Target_ReferenceDownScaledShadow")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ShadowDownScaling"), TEXT("Target_DownScaledRefOclussion")));
+	
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ShadowVBlur"), TEXT("Target_DownScaledShadow")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ShadowHBlur_N_UpScaling"), TEXT("Target_UpScaledBluredShadow")));
 
@@ -132,10 +135,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MakeLumiMask"), TEXT("Target_LumineceMask")));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_VolumatricFog"), TEXT("Target_VolumatricFog")));
-
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_GodRay"), TEXT("Target_GodRay")));
-
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Oclussion"), TEXT("Target_Oclussion")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceOclussion"), TEXT("Target_ReferenceOclussion")));
+	
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By2"), TEXT("Target_DownScaled_By2")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By3"), TEXT("Target_DownScaled_By3")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By4"), TEXT("Target_DownScaled_By4")));
@@ -175,7 +178,11 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_UpScaledBluredShadow"), 1280 - 150, 350, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_AvgLuminece"), 1280 - 150, 450, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_LumineceMask"), 1280 - 150, 550, 100, 100));
+	
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_Oclussion"), 1280 - 250, 50, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_GodRay"), 1280 - 250, 150, 100, 100));
 
+	
 	
 #endif
 
@@ -299,6 +306,11 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 	tDesc.pModel = pModel;
 	tDesc.pShader = pShader;
 
+	if (tDesc.pGameObject->Get_IsOcllusion())
+		tDesc.fIsOcllusion = 0.9f;
+	else 
+		tDesc.fIsOcllusion = 1.f;
+
 	if (AttacehdMatrix)
 		tDesc.AttacehdMatrix = AttacehdMatrix->TransposeXMatrix();
 
@@ -341,14 +353,14 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	FAILED_CHECK(Render_NonBlend_NoLight());
 
-	//if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
-		//FAILED_CHECK(Render_GodRay());
-	if (m_PostProcessingOn[POSTPROCESSING_VOLUMATRIC])
-		FAILED_CHECK(Render_Volumatric());
+	if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
+		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
 		FAILED_CHECK(Render_Bloom());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
 		FAILED_CHECK(Render_DepthOfField());
+	if (m_PostProcessingOn[POSTPROCESSING_DDFOG])
+		FAILED_CHECK(Render_DDFog());
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 
@@ -797,18 +809,20 @@ HRESULT CRenderer::Make_BluredDeffered()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Volumatric()
+HRESULT CRenderer::Render_DDFog()
 {
 
+	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	if (!pLightDesc) return S_FALSE;
+
+	_float3 vToSunDir = - XMVector3Normalize(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_VolumatricFog")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
 	
 	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
 
 	_float4x4		ViewMatrixInv, ProjMatrixInv;
-
-
 
 	XMStoreFloat4x4(&ViewMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW))));
 	XMStoreFloat4x4(&ProjMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ))));
@@ -820,13 +834,24 @@ HRESULT CRenderer::Render_Volumatric()
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pShader->Set_Texture("g_DepthTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_vCamPosition", &pPipeLineMgr->Get_TargetPostion_float4(PLV_CAMERA), sizeof(_float4)));
+	
+	FAILED_CHECK(m_pShader->Set_RawValue("FogColor", &m_vFogColor, sizeof(_float3)));
+	FAILED_CHECK(m_pShader->Set_RawValue("FogHighlightColor", &m_vFogHighlightColor, sizeof(_float3)));
+	FAILED_CHECK(m_pShader->Set_RawValue("FogStartDist", &m_fFogStartDist, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("FogGlobalDensity", &m_fFogGlobalDensity, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("FogHeightFalloff", &m_fFogHeightFalloff, sizeof(_float)));
+	
+	//float fHighlightColorFactor = -D3DXVec3Dot(g_Camera.GetWorldAhead(), &g_vDirLightDir) * 1.5f * abs(g_fTimeOfDay - 0.5f);
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
 	
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 15));
 
-	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_VolumatricFog")));
+	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
+	FAILED_CHECK(Copy_DeferredToReference());
 
 
 
@@ -839,27 +864,38 @@ HRESULT CRenderer::Render_GodRay()
 
 
 	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
-	_Vector vSunDir = XMVector3Normalize(XMVectorSetW(pLightDesc->vVector.XMVector(), 1) - XMVectorSet(10, -10, 10, 1));
+	if (!pLightDesc) return S_FALSE;
+
+	_Vector vSunDir =  XMVector3Normalize(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1) );
+
 	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
 
 	_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
-	_Vector vCamLook = vCamWorldMat.r[2];
+	_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
 
 
-	const float dotCamSun = -XMVectorGetX(XMVector3Dot(vCamLook, vSunDir));
+	const float dotCamSun = -XMVectorGetX(XMVector3Dot(XMVectorSetW(vCamLook,0), XMVectorSetW(vSunDir,0)));
 	if (dotCamSun <= 0.0f)return S_FALSE;
 
 
-	_float3 vSunPos = -200.0f * vSunDir;
-	_float3 vEyePos = vCamWorldMat.r[3];
-	vSunPos.x += vEyePos.x;
-	vSunPos.z += vEyePos.z;
-
+	_float3 vSunPos = pLightDesc->vVector.XMVector();
+	//_float3 vSunPos = -200.0f * vSunDir;
+	//_float3 vEyePos = vCamWorldMat.r[3];
+	//vSunPos.x += vEyePos.x;
+	//vSunPos.z += vEyePos.z;
+	
 	_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
 	_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
 
 	_Matrix mViewProjection = mView * mProj;
-	_float3 vSunPosSS =	XMVector3TransformCoord(vSunPos.XMVector(), mViewProjection);
+
+	//_float3 vSunPosSS = XMVector3TransformCoord(XMVectorSetW(vSunPos.XMVector(), 1), mView);
+	//
+	//vSunPosSS = XMVector3TransformCoord(vSunPosSS.XMVector(),mProj);
+	_float3 vSunPosSS =	vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
+
+	vSunPosSS.x = (vSunPosSS.x * 0.5f) + 0.5f;
+	vSunPosSS.y = (vSunPosSS.y * -0.5f) + 0.5f;
 
 	static const float fMaxSunDist = 1.3f;
 	if (abs(vSunPosSS.x) >= fMaxSunDist || abs(vSunPosSS.y) >= fMaxSunDist)
@@ -869,7 +905,7 @@ HRESULT CRenderer::Render_GodRay()
 
 	// Attenuate the sun color based on how far the sun is from the view
 	//_float3 vSunColorAtt = vSunColor;
-	_float3 vSunColorAtt = _float3(1,0,0);
+	_float3 vSunColorAtt = _float3(0.71875f, 0.83984375f, 0.390625f);
 	float fMaxDist = max(abs(vSunPosSS.x), abs(vSunPosSS.y));
 	if (fMaxDist >= 1.0f)
 	{
@@ -877,25 +913,63 @@ HRESULT CRenderer::Render_GodRay()
 	}
 
 
+
+
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceOclussion"), TEXT("Target_ReferenceOclussion")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Oclussion"), TEXT("Target_Oclussion")));
+
+
+
+	D3D11_VIEWPORT		OldViewPortDesc;
+	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldViewPortDesc));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_ReferenceOclussion"), m_DownScaledDepthStencil[0]));
+
+
+
+	m_fTexleSize = 1.f;
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledRefOclussion"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
+
+	m_pDeviceContext->RSSetViewports(1, &OldViewPortDesc);
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_ReferenceOclussion")));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Oclussion")));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceOclussion"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Oclussion")));
+
+
+
+
+
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_GodRay")));
 
 
 	_float4x4		ViewMatrixInv, ProjMatrixInv;
 
-	_float4 ProjSpacePos = XMVector3TransformCoord(_float3(0, 30, 10).Multiply_Matrix_AsPosVector(pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW)), pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ));
-	_float2 ScreenLightPos = _float2(ProjSpacePos.x * 0.5f + 0.5f, ProjSpacePos.y * -0.5f + 0.5f);
 
+	_float fGodRayNumDelta = 1.f / (m_fGodrayLength - 1.f); 
 
-	FAILED_CHECK(m_pShader->Set_RawValue("g_vLightShaftValue", &_float4(0.002f, 1.05f, 0.8f, 1.f), sizeof(_float4)));
-	FAILED_CHECK(m_pShader->Set_RawValue("g_vScreenLightUVPos", &ScreenLightPos, sizeof(_float2)));
+	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &vSunPosSS, sizeof(_float2)));
+	FAILED_CHECK(m_pShader->Set_RawValue("InitDecay", &m_fInitDecay, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("DistDecay", &m_fDistDecay, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("RayColor", &vSunColorAtt, sizeof(_float3)));
+	FAILED_CHECK(m_pShader->Set_RawValue("MaxDeltaLen", &m_fMaxDeltaLen, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayLength", &m_fGodrayLength, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayNumDelta", &fGodRayNumDelta, sizeof(_float)));
 
-	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
-	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
-	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+	//g_fGodRayLength = 64;
+	//g_fGodRayNumDelta = 1.f / 63.f;
 
+	//	g_fGodRayLength = 64; m_fGodrayLength
 
-	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
-	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Depth"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Oclussion"))));
 
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 16));
 
@@ -903,6 +977,22 @@ HRESULT CRenderer::Render_GodRay()
 
 
 
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayIntensity", &m_fGodrayIntensity, sizeof(_float)));
+	
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_GodRay"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+
+
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 17));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
+	FAILED_CHECK(Copy_DeferredToReference());
 
 
 	return S_OK;
@@ -1058,7 +1148,9 @@ HRESULT CRenderer::Render_ShadowGroup()
 			}
 			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
+			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 
+			
 			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
 			for (_uint i = 0; i < NumMaterial; i++)
@@ -1083,6 +1175,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
 				m_bShadowLightMatBindedChecker = true;
 			}
+			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
 			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
@@ -1112,6 +1205,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
 				m_bShadowLightMatBindedChecker = true;
 			}
+			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
 			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
@@ -1140,6 +1234,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
 				m_bShadowLightMatBindedChecker = true;
 			}
+			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
 			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
@@ -1169,6 +1264,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 				m_bShadowLightMatBindedChecker = true;
 			}
 
+			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 			CVIBuffer* pVIBuffer = (CVIBuffer*)ShadowDesc.pGameObject->Get_Component(L"Com_VIBuffer");
 			NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
 

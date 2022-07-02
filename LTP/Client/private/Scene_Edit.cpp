@@ -553,6 +553,7 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 			WriteFile(hFile, &(tObjectElement.PassIndex), sizeof(_uint), &dwByte, nullptr);
 			WriteFile(hFile, &(tObjectElement.FrustumRange), sizeof(_float), &dwByte, nullptr);
+			WriteFile(hFile, &(tObjectElement.bIsOcllsuion), sizeof(_bool), &dwByte, nullptr);
 			WriteFile(hFile, &(tObjectElement.matSRT.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 			WriteFile(hFile, &(tObjectElement.matTransform.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 
@@ -766,6 +767,8 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 			ReadFile(hFile, &(tData.PassIndex), sizeof(_uint), &dwByte, nullptr);
 			ReadFile(hFile, &(tData.FrustumRange), sizeof(_float), &dwByte, nullptr);
+			ReadFile(hFile, &(tData.bIsOcllsuion), sizeof(_bool), &dwByte, nullptr);
+			
 			ReadFile(hFile, &(tData.matSRT.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 			ReadFile(hFile, &(tData.matTransform.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 
@@ -784,6 +787,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 				//매쉬 바꿔주기 
 				tData.pObject->Change_Component_by_NewAssign(SCENE_EDIT, tData.MeshID, TAG_COM(Com_Model));
 				((CMapObject*)tData.pObject)->Set_FrustumSize(tData.FrustumRange);
+				((CMapObject*)tData.pObject)->Set_IsOcllusion(tData.bIsOcllsuion);
 				((CMapObject*)tData.pObject)->Set_PassIndex(tData.PassIndex);
 			}
 
@@ -800,6 +804,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		m_iBatchedVecIndex = 0;
 		m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+		m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 		m_fFrustumRange = (m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange);
 		m_iPassIndex = (m_vecBatchedObject[m_iBatchedVecIndex].PassIndex);
 
@@ -1167,6 +1172,7 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 				// 해당 오브젝트의 메트릭스 받아오기
 				m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
 				m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
+				m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 				m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 
 
@@ -1613,6 +1619,7 @@ HRESULT CScene_Edit::Widget_SRT(_double fDeltatime)
 
 			m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
 			m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
+			m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 			m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 
 		}
@@ -1720,6 +1727,7 @@ HRESULT CScene_Edit::Widget_SRT(_double fDeltatime)
 	}
 	Make_VerticalSpacing(2);
 
+	ImGui::Checkbox("IsOcllusion", &m_bIsOcllusion);
 
 	ImGui::DragFloat("FrustumRange ", &m_fFrustumRange, 0.003f, 0, FLT_MAX);
 
@@ -1863,6 +1871,7 @@ HRESULT CScene_Edit::Widget_BatchedObjectList(_double fDeltatime)
 
 					m_iBatchedVecIndex = n;
 					m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+					m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 					m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 					m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 				}
@@ -1898,12 +1907,14 @@ HRESULT CScene_Edit::Widget_BatchedObjectList(_double fDeltatime)
 
 			m_iBatchedVecIndex = 0;
 			m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+			m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 			m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 			m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 
 
 			m_iBatchedVecIndex = _uint(m_vecBatchedObject.size() - 1);
 			m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+			m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 			m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 			m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 		}
@@ -1976,6 +1987,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 							m_iBatchedVecIndex = 0;
 							m_bIsModelMove = 0;
 							m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+							m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 							m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 							m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 
@@ -2026,6 +2038,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 						{
 							m_iBatchedVecIndex = 0; m_bIsModelMove = 0;
 							m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+							m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 							m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 							m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 							ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
@@ -2062,6 +2075,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 			ObjElement.matSRT = m_vecBatchedObject[m_iBatchedVecIndex].matSRT;
 			ObjElement.PassIndex = m_iPassIndex;
 			ObjElement.FrustumRange = m_fFrustumRange;
+			ObjElement.bIsOcllsuion = m_bIsOcllusion;
 
 
 			lstrcpy(ObjElement.MeshID, TAG_CP((COMPONENTPROTOTYPEID)m_iSelectedObjectNMesh[1]));
@@ -2084,6 +2098,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 
 			m_iBatchedVecIndex = _uint(m_vecBatchedObject.size() - 1);
 			m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+			m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 			m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 			m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
 
@@ -2451,6 +2466,7 @@ HRESULT CScene_Edit::RenewElenmetTransform(OBJELEMENT * pObjElement)
 	pObjElement->matTransform = Scale* RotX *RotY* RotZ* Trans;
 
 	pObjElement->FrustumRange = m_fFrustumRange;
+	pObjElement->bIsOcllsuion = m_bIsOcllusion;
 	pObjElement->PassIndex = m_iPassIndex;
 
 	if (pObjElement->pObject != nullptr)
@@ -2461,6 +2477,7 @@ HRESULT CScene_Edit::RenewElenmetTransform(OBJELEMENT * pObjElement)
 		if (m_iBatchedVecIndex)
 		{
 			((CMapObject*)pObjElement->pObject)->Set_FrustumSize(m_fFrustumRange);
+			((CMapObject*)pObjElement->pObject)->Set_IsOcllusion(m_bIsOcllusion);
 			((CMapObject*)pObjElement->pObject)->Set_PassIndex(m_iPassIndex);
 		}
 	}

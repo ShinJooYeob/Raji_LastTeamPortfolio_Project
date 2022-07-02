@@ -26,7 +26,7 @@ HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer,_double fDe
 	if (LIGHTDESC::TYPE_DIRECTIONAL == m_LightDesc.eLightType)
 	{
 
-		_float4 ShaderLightDir = XMVector3Normalize(XMVectorSetW(XMVectorSet(128, 0, 128, 1) -m_LightDesc.vVector.XMVector() ,0));
+		_float4 ShaderLightDir = XMVector3Normalize(XMVectorSetW(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(m_LightDesc.vVector.XMVector(),1) ,0));
 		pShader->Set_RawValue("g_vLightDir", &ShaderLightDir, sizeof(_float4));
 		iPassIndex = 1;
 	}

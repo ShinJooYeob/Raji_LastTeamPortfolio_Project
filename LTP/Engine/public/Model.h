@@ -46,7 +46,7 @@ public:
 	HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, const char* szBoneValueName = nullptr);
 
 	ATTACHBONEMATRIX_PTR Find_AttachMatrix_InHirarchyNode(const char* pName);
-
+	_uint Get_HaveAnimNum();
 
 #ifdef _DEBUG
 	_float Get_DebugAnimSpeed() { return m_fDebugAnimPlaySpeed; };

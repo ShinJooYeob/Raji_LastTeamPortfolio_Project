@@ -92,7 +92,7 @@ HRESULT CScene_Boss::Ready_Light()
 		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		LightDesc.vAmbient = _float4(1.0f);
 		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = _float4(0.f, 256, 128.f, 0);
+		LightDesc.vVector = _float4(-10, 10, -10, 0);
 
 		g_pGameInstance->Add_Light(LightDesc);
 	}

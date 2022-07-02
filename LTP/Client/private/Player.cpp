@@ -37,6 +37,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
+	Set_IsOcllusion(true);
+
 	return S_OK;
 }
 

@@ -96,6 +96,7 @@ private:
 	_int m_iSelectedXYZ = 0;
 	_int m_iPassIndex = 0;
 	_float m_fFrustumRange = 5.f;
+	_bool	m_bIsOcllusion = false;
 	_float m_ArrBuffer[4];
 	_float4x4* m_SelectedObjectSRT = nullptr;
 

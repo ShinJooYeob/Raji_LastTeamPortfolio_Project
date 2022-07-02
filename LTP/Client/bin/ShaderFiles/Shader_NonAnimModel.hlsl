@@ -184,7 +184,7 @@ PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
 	//Out.vDiffuse = float4(Depth.xxx, 1);
 
 
-	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, 1);
+	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, g_fOclussionObject);
 
 	return Out;
 }

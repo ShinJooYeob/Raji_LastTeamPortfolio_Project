@@ -73,9 +73,28 @@ cbuffer ForPostProcessing
 	
 	float				g_fOverLuminence = 1.8f;
 
-	float4				g_vLightShaftValue = 0;
-	float2				g_vScreenLightUVPos = 0;
+	float				g_fGodRayLength = 64;
+	float				g_fGodRayNumDelta = 1.f / 63.f;
+	float				g_fGodRayIntensity = 0.5f;
 };
+cbuffer cbFog					
+{
+	float3 FogColor = float3(0.5f, 0.5f, 0.5f);
+	float FogStartDist = 37.0f;
+	float3 FogHighlightColor = float3(0.8f, 0.7f, 0.4f);
+	float FogGlobalDensity = 1.5f;
+	float3 FogSunDir;
+	float FogHeightFalloff = 0.2f;
+}
+
+cbuffer RayTraceConstants
+{
+	float2 SunPos;
+	float InitDecay;
+	float DistDecay;
+	float3 RayColor;
+	float MaxDeltaLen;
+}
 
 
 sampler DefaultSampler = sampler_state
@@ -92,6 +111,37 @@ sampler WrapSampler = sampler_state
 	AddressU = wrap;
 	AddressV = wrap;
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+float3 ApplyFog(float3 originalColor, float eyePosY, float3 eyeToPixel)
+{
+	float pixelDist = length(eyeToPixel);
+	float3 eyeToPixelNorm = eyeToPixel / pixelDist;
+
+	// Find the fog staring distance to pixel distance
+	float fogDist = max(pixelDist - FogStartDist, 0.0);
+
+	// Distance based fog intensity
+	float fogHeightDensityAtViewer = exp(-FogHeightFalloff * eyePosY);
+	float fogDistInt = fogDist * fogHeightDensityAtViewer;
+
+	// Height based fog intensity
+	float eyeToPixelY = eyeToPixel.y * (fogDist / pixelDist);
+	float t = FogHeightFalloff * eyeToPixelY;
+	const float thresholdT = 0.01;
+	float fogHeightInt = abs(t) > thresholdT ?
+		(1.0 - exp(-t)) / t : 1.0;
+
+	// Combine both factors to get the final factor
+	float fogFinalFactor = exp(-FogGlobalDensity * fogDistInt * fogHeightInt);
+
+	// Find the sun highlight and use it to blend the fog color
+	float sunHighlightFactor = saturate(dot(eyeToPixelNorm, FogSunDir));
+	sunHighlightFactor = pow(sunHighlightFactor, 8.0);
+	float3 fogFinalColor = lerp(FogColor, FogHighlightColor, sunHighlightFactor);
+
+	return lerp(fogFinalColor, originalColor, fogFinalFactor);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -308,13 +358,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vEmissiveDesc.a > 0)
 	{
-
 		Out.vShade = Out.vShade + vEmissiveDesc.a;
 		Out.vSpecular = max(Out.vSpecular - vEmissiveDesc.a,0);
-		
 		Out.vSpecular.a = 0.f;
-
 	}
+
 
 	return Out;	
 }
@@ -541,21 +589,13 @@ PS_OUT PS_Masking_Blur(PS_IN_BLUR In)
 	return Out;
 }
 
-PS_OUT PS_ShadowDrawLightWorldToWorld(PS_IN In)
+PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 {
-	PS_OUT		Out = (PS_OUT)0;
+	PS_OUT_AfterDeferred		Out = (PS_OUT_AfterDeferred)0;
 
 	vector		vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
 	//float		fViewZ = vDepthDesc.x * 300.f;
 	vector		vWorldPos = vector(vWorldPosition.xyz,1);
-
-	//vWorldPos.x = (In.vTexUV.x * 2.f - 1.f) * fViewZ;
-	//vWorldPos.y = (In.vTexUV.y * -2.f + 1.f) * fViewZ;
-	//vWorldPos.z = vDepthDesc.y * fViewZ; /* 0 ~ f */
-	//vWorldPos.w = 1.f * fViewZ;
-
-	//vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	//vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
 	float4 ClipPos = mul(vWorldPos, g_LightViewMatrix);
 	ClipPos = mul(ClipPos, g_LightProjMatrix);
@@ -580,10 +620,21 @@ PS_OUT PS_ShadowDrawLightWorldToWorld(PS_IN In)
 	//if (CurrentDepth > ShadowDepth + 0.000125)
 	//if (CurrentDepth > ShadowDepth )
 
-	if (CurrentDepth > ShadowDepth + 0.00000125f)
+	if (vWorldPosition.x != 1)
 	{
-		Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive , g_fShadowIntensive , 1);
+		if (CurrentDepth > ShadowDepth + 0.00000125f)
+		{
+			Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive , g_fShadowIntensive , 1);
+		}
+		if (vShadowDesc.a < 1.f && CurrentDepth > ShadowDepth - 0.00125f && CurrentDepth < ShadowDepth + 0.00125f)
+		{
+			Out.vColor2 = 1.f;
+		}
+
 	}
+
+
+
 	return Out;
 }
 
@@ -682,84 +733,82 @@ PS_OUT PS_ToneMapping(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_AddMaskToTarget(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+
+
+	Out.vColor =  pow(pow(g_MaskTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * g_fGodRayIntensity + pow( g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) ,1.f/2.2f);
+
+
+	return Out;
+}
+
+
 PS_OUT PS_VolumeMatricFog(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
 
 
-	//vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
-	//float		fViewZ = vDepthDesc.x * 300.f;
-
-	//vector		vWorldPos;
-
-	//vWorldPos.x = (In.vTexUV.x * 2.f - 1.f) * fViewZ;
-	//vWorldPos.y = (In.vTexUV.y * -2.f + 1.f) * fViewZ;
-	//vWorldPos.z = vDepthDesc.y * fViewZ; /* 0 ~ f */
-	//vWorldPos.w = 1.f * fViewZ;
-
-	//vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	//vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-
-
-
-
-
+	float3 WorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
+	if (WorldPosition.x == 1)
+	{
+		Out.vColor = vector(FogColor.xyz, 1.f);
+	}
+	else
+	{
+		Out.vColor = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+		float3 eyeToPixel = WorldPosition - g_vCamPosition.xyz;
+		Out.vColor = pow(vector(ApplyFog(Out.vColor.xyz, g_vCamPosition.y, eyeToPixel).xyz, 1.f), 1.f / 2.2f);
+		Out.vColor.a = 1.f;
+	}
+	
 	return Out;
 }
 
 PS_OUT PS_GodRay(PS_IN In)
 {
+
+
 	PS_OUT		Out = (PS_OUT)0;
-	//float4 g_vLightShaftValue
+	// Find the direction and distance to the sun
+	float2 dirToSun = (SunPos - In.vTexUV);
+	float lengthToSun = length(dirToSun);
+	dirToSun /= lengthToSun;
 
-	// x = Density
-	// y = Decay
-	// z = Weight
-	// w = Exposure
+	// Find the ray delta
+	float deltaLen = min(MaxDeltaLen, lengthToSun * g_fGodRayNumDelta);
+	float2 rayDelta = dirToSun * deltaLen;
 
+	// Each step decay	
+	float stepDecay = DistDecay * deltaLen;
 
+	// Initial values
+	float2 rayOffset = float2(0.0, 0.0);
+	float decay = InitDecay;
+	float rayIntensity = 0.0f;
 
-#define NUM_SAMPLES 64
-
-	//화면 공간에서 픽셀로부터 광원을 향하는 벡터 계산
-	float2 DeltaTexCoord = (In.vTexUV - g_vScreenLightUVPos);
-
-	//샘플링할 수로 나누고 제어 팩터로 스케일링한다
-	DeltaTexCoord *= 1.0 / NUM_SAMPLES* g_vLightShaftValue.x;
-
-	//샘플링
-	vector Color = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
-
-	//일루미네이션 감소 팩터 설정
-	float IlluminationDecay = 1.0;
-
-	//방정식 3의 적용
-	for (int i = 0; i < NUM_SAMPLES; ++i)
+	// Ray march towards the sun
+	for (int i = 0; i < g_fGodRayLength; i++)
 	{
-		//광선을 따라 샘플링
-		In.vTexUV -= DeltaTexCoord;
+		// Sample at the current location
+		float2 sampPos = In.vTexUV + rayOffset;
+		float fCurIntensity = g_TargetTexture.Sample(DefaultSampler, sampPos);
 
-		//샘플을 새 좌표로 위치 시킴
+		// Sum the intensity taking decay into account
+		rayIntensity += fCurIntensity * decay;
 
-		vector Sample = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+		// Advance to the next position
+		rayOffset += rayDelta;
 
-		//if (Sample.r == 1)
-		//{
-			//스케일 / 감쇄 팩터를 적용해 감소를 수행
-			Sample = IlluminationDecay * g_vLightShaftValue.z;
-
-			//합쳐진 색 저장
-			Color += Sample;
-		//}
-
-		//감쇄 팩터 지수 업데이트
-		IlluminationDecay *= g_vLightShaftValue.y;
+		// Update the decay
+		decay = saturate(decay - stepDecay);
 	}
 
-	// 최종 컬러를 추가 컨트롤 팩터와 함께 출력
-	Out.vColor = saturate(float4((Color * g_vLightShaftValue.w).xyz, 1.0));
-	//Out.vColor = 0;
+	Out.vColor = float4(rayIntensity*RayColor.x, rayIntensity*RayColor.y, rayIntensity*RayColor.z, 1.f);
+
 
 	return Out;
 }
@@ -983,6 +1032,17 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_GodRay();
 	}
+	pass AddMaskToTarget // 17
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_AddMaskToTarget();
+	}
+
 
 
 	

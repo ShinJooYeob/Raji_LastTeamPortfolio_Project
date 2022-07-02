@@ -98,13 +98,13 @@ HRESULT CScene_Stage5::Ready_Light()
 		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		LightDesc.vAmbient = _float4(1.0f);
 		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = _float4(0.f, 256, 128.f, 0);
+		LightDesc.vVector = _float4(-10, 10, -10, 0);
 
 		g_pGameInstance->Add_Light(LightDesc);
 	}
 	else
 	{
-		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(0.f, 256, 128.f, 0).XMVector());
+		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(-10, 10, -10, 0).XMVector());
 	}
 
 
@@ -166,7 +166,9 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 
 
 	CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
-	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(pPlayer, "skd_r_palm");
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(pPlayer, "skd_r_palm",_float3(100, 100, 100),_float3(90,0,0),_float3(-63.02f, 0.59f, -112.96f));
+
+
 	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
 	
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));

@@ -54,6 +54,9 @@ public:
 	_float Get_MaxHP() { return m_fMaxHP; };
 	void	Set_NowHP(_float fHP) { m_fHP = fHP; };
 
+	_bool	Get_IsOcllusion() { return m_bIsOcllusionObject; }
+	void	Set_IsOcllusion(_bool bBool) { m_bIsOcllusionObject = bBool; }
+
 protected:
 	map<const _tchar*, class CComponent**>	m_mapComponets;
 	typedef map<const _tchar*, class CComponent**>	COMPONENTS;
@@ -70,6 +73,7 @@ protected:
 	_float						m_fRenderSortValue = 0;
 	_bool						m_bIsOnScreen = false;
 
+	_bool						m_bIsOcllusionObject = false;
 
 	_float3						m_fAttachCamPos = _float3(0, 0, 0);
 	_float3						m_fAttachCamPos_Offset = _float3(0, 0, 0);

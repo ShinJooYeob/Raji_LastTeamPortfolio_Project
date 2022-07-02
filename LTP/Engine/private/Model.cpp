@@ -844,6 +844,18 @@ ATTACHBONEMATRIX_PTR CModel::Find_AttachMatrix_InHirarchyNode(const char * pName
 	return tReturn;
 }
 
+_uint CModel::Get_HaveAnimNum()
+{
+	if (m_eModelType == TYPE_NONANIM)
+		return 0;
+	else
+	{
+		return m_vecAnimator.size();
+	}
+
+	return _uint();
+}
+
 _Matrix CModel::Caculate_AttachedBone(CHierarchyNode * pNode)
 {
 	return pNode->Get_UpdatedMatrix() * m_DefaultPivotMatrix.XMatrix();;

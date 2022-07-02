@@ -10,6 +10,8 @@ cbuffer	ShadowPipeLine
 {
 	matrix			g_LightViewMatrix;
 	matrix			g_LightProjMatrix;
+
+	float			g_fOclussionObject = 0.9f;
 };
 
 cbuffer ScreenSizeBuffer
