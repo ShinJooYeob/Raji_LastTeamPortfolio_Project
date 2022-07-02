@@ -20,15 +20,15 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	FAILED_CHECK(Initialize_PhysXLib());
 
 	// #TEST
-	FAILED_CHECK(CreateTest_Base());
+//	FAILED_CHECK(CreateTest_Base());
 //	FAILED_CHECK(Create_Cook());
 	
 
-	while (1)
-	{
-		mScene->simulate(1.f / 60.f);
-		mScene->fetchResults(true);
-	}
+	//while (1)
+	//{
+	//	mScene->simulate(1.f / 60.f);
+	//	mScene->fetchResults(true);
+	//}
 
 	return S_OK;
 
@@ -309,7 +309,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 void CPhysXMgr::Free()
 {
 
-//	Clean_Phyics();
+	Clean_Phyics();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

@@ -2,7 +2,7 @@
 #include "..\Public\Scene_Stage6.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
-// #include "Phyxs/PhyxSampleTest.h"
+#include "physX/PhyxSampleTest.h"
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -162,7 +162,7 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Phycis()
 {
-//	m_pPhySample = CPhyxSampleTest::Create();
+	m_pPhySample = CPhyxSampleTest::Create();
 
 	return S_OK;
 }
