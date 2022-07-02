@@ -17,7 +17,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-	FAILED_CHECK(Initialize_PhysXLib());
+//	FAILED_CHECK(Initialize_PhysXLib());
 
 	// #TEST
 //	FAILED_CHECK(CreateTest_Base());
@@ -52,6 +52,15 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 		// 결과 업데이트
 		mScene->fetchResults(true);
 	}
+
+	// PxU32 NumActor;
+	// PxActor** activeActors = mScene->getActiveActors(NumActor);
+
+	// 랜더링 오브젝트에 업데이트
+	// for ()
+	// {
+	// }
+
 	return S_OK;
 }
 
@@ -249,7 +258,7 @@ PxScene * CPhysXMgr::Get_PhysicsScene()
 
 HRESULT CPhysXMgr::Initialize_PhysXLib()
 {
-
+	
 	// Init
 	mToleranceScale.length = 100;
 	mToleranceScale.speed = 981;
@@ -273,7 +282,9 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale, true, mPvd);
 	NULL_CHECK_BREAK(mPhysics);
 
+#ifdef _DEBUG
 	PxInitExtensions(*mPhysics, mPvd);
+#endif // _DEBUG
 
 #else
 	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale);
@@ -305,6 +316,20 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	return S_OK;
 }
 
+HRESULT CPhysXMgr::CreateBox(const PxTransform& t, _float3 halfExtent)
+{
+	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent.x, halfExtent.y, halfExtent.z), *mMaterial);
+	PxRigidDynamic* body = mPhysics->createRigidDynamic(t);
+	body->attachShape(*shape);
+	PxRigidBodyExt::updateMassAndInertia(*body, 1.0f);
+	mScene->addActor(*body);
+	
+	shape->release();
+
+
+	return S_OK;
+
+}
 
 void CPhysXMgr::Free()
 {

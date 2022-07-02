@@ -24,11 +24,18 @@ public:
 	PxCooking*		Get_PhysicsCooking();
 	PxScene*		Get_PhysicsScene();
 	
+public:
+	// 충돌체 연결
+	HRESULT CreateBox(const PxTransform& t, _float3 halfextent);
+
+
 private:
 	HRESULT CreateTest_Base();
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
 	HRESULT Create_Cook();
+
+
 
 private:
 	HRESULT Initialize_PhysXLib();

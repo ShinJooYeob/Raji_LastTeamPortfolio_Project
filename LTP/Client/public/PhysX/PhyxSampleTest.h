@@ -31,9 +31,6 @@ private:
 	PxRigidDynamic* createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 
 
-
-
-
 private:
 	PxFoundation*			mFoundation = nullptr;
 	PxPhysics*				mPhysics = nullptr;

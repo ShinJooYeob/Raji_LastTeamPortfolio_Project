@@ -29,13 +29,13 @@ HRESULT CPhyxSampleTest::Initialize_Prototype()
 
 	// 연결만 시키면 될듯
 
-	mFoundation = GetSingle(CPhysXMgr)->Get_Foundation();
-	mPhysics = GetSingle(CPhysXMgr)->Get_PhysicsCreater();
-	mCooking = GetSingle(CPhysXMgr)->Get_PhysicsCooking();
-	mScene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+//	mFoundation = GetSingle(CPhysXMgr)->Get_Foundation();
+//	mPhysics = GetSingle(CPhysXMgr)->Get_PhysicsCreater();
+//	mCooking = GetSingle(CPhysXMgr)->Get_PhysicsCooking();
+//	mScene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+//	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
-	FAILED_CHECK(SnipTestCreate_Func1());
+//	FAILED_CHECK(SnipTestCreate_Func1());
 
 	
 	return S_OK;
@@ -78,6 +78,7 @@ PxReal stackZ = 10.0f;
 
 HRESULT CPhyxSampleTest::SnipTestCreate_Func1()
 {
+	// 스텍 생성 / 공과 충돌
 	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
 	mScene->addActor(*groundPlane);
 
@@ -88,6 +89,38 @@ HRESULT CPhyxSampleTest::SnipTestCreate_Func1()
 
 HRESULT CPhyxSampleTest::SnipTestCreate_Func2()
 {
+	// 메시 쿠킹 옵션
+	PxTolerancesScale ToleranceScale;
+	ToleranceScale.length = 100;
+	ToleranceScale.speed = 981;
+
+	// eBVH33 : 변형메시 사용
+	PxCookingParams cookingParams = PxCookingParams(ToleranceScale);
+	cookingParams.midphaseDesc.setToDefault(PxMeshMidPhase::eBVH33);
+	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+
+
+	//// get vertex array
+	//PxVec3* verts = mesh->getVerticesForModification();
+
+	//// update the vertices here
+
+
+	//	// tell PhysX to update the mesh structure
+	//	PxBounds3 newBounds = mesh->refitBVH();
+
+
+	//	// created earlier
+	//	PxRigidActor* myActor;
+	//	PxTriangleMesh* myTriMesh;
+	//	PxMaterial* myMaterial;
+
+	//	// create a shape instancing a triangle mesh at the given scale
+	//	PxMeshScale scale(PxVec3(x, y, z), PxQuat(PxIdentity));
+	//	PxTriangleMeshGeometry geom(myTriMesh, scale);
+	//	PxShape* myTriMeshShape = PxRigidActorExt::createExclusiveShape(*myActor, geom, *myMaterial);
+
+
 	return S_OK;
 }
 
