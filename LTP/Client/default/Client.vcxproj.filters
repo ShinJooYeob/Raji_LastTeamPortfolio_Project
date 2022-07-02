@@ -190,6 +190,12 @@
     <Filter Include="05.PhysX\Mgr">
       <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow">
+      <UniqueIdentifier>{787c5d22-7198-4974-9964-cca24eee3a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
+      <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -404,6 +410,12 @@
     <ClInclude Include="..\public\PhysX\PhyxSampleTest.h">
       <Filter>05.PhysX\SnipSampleTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Bow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Sword.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -586,6 +598,12 @@
     </ClCompile>
     <ClCompile Include="..\private\physX\PhyxSampleTest.cpp">
       <Filter>05.PhysX\SnipSampleTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Bow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

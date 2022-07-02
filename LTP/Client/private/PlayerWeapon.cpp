@@ -57,6 +57,11 @@ _int CPlayerWeapon::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon::Set_BlockUpdate(_bool bBlock)
+{
+	m_bBlockUpdate = bBlock;
+}
+
 _fVector CPlayerWeapon::Get_BonePos(const char * pBoneName)
 {
 	return _fVector();

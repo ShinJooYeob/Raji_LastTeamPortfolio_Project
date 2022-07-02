@@ -51,6 +51,7 @@ HRESULT CCamera_Main::Initialize_Clone(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_fMin_TargetArmLength = -10.f;
 	return S_OK;
 }
 
@@ -377,15 +378,15 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) < 0)
 	{
-		m_fTargetArmLength -= 1.f;
-		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
+		m_fTargetArmLength += 1.f;
+		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
 		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
 	}
 	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
 	{
-		m_fTargetArmLength += 1.f;
-		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
+		m_fTargetArmLength -= 1.f;
+		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
 		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
 	}

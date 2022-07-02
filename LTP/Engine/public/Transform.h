@@ -86,12 +86,11 @@ public:
 	void Turn_CCW(_fVector vAxis, _double fDeltaTime);
 	void Turn_Direct(_fVector vAxis, _float fRadian);		// Made_By Jino
 	void Turn_Dir(_fVector vTargetDir, _float fWeight);		// Made_By Jino
-	
-	void Turn_Interp(_fVector vTargetDir, _float fWeight);		// Made_By Jino
 
 	//로컬 좌표 기준으로 회전을 시켜주고 싶을 떄
 	void Rotation_CW(_fVector vAxis, _float fRadian);
 	void Rotation_CCW(_fVector vAxis, _float fRadian);
+	void Rotation_Multi(_float3 fRadians);					// Made_By Jino
 
 //Scale////////////////////////////////////////////////////////////////////////
 	//로컬 기준으로 특정 사이즈로 세팅하고 싶을 떄

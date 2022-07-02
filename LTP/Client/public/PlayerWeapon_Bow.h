@@ -4,15 +4,15 @@
 
 BEGIN(Client)
 
-class CPlayerWeapon_Spear final : public CPlayerWeapon
+class CPlayerWeapon_Bow final : public CPlayerWeapon
 {
 public:
-	enum ESpearPivot { SPEAR_PIVOT_NORMAL, SPEAR_PIVOT_THROW, SPEAR_PIVOT_TAKEDOWN, SPEAR_PIVOT_END };
+	enum EBowPivot { BOW_PIVOT_NORMAL, BOW_PIVOT_THROW, BOW_PIVOT_TAKEDOWN, BOW_PIVOT_END };
 
 private:
-	CPlayerWeapon_Spear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	CPlayerWeapon_Spear(const CPlayerWeapon_Spear& rhs);
-	virtual ~CPlayerWeapon_Spear() = default;
+	CPlayerWeapon_Bow(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	CPlayerWeapon_Bow(const CPlayerWeapon_Bow& rhs);
+	virtual ~CPlayerWeapon_Bow() = default;
 
 public:
 	virtual HRESULT		Initialize_Prototype(void* pArg) override;
@@ -38,8 +38,10 @@ private:
 
 	void				Update_AttachMatrix();
 
-public:				
-	void				Change_Pivot(ESpearPivot ePitvot);
+	void				Set_Pivot();
+
+public:
+	void				Change_Pivot(EBowPivot ePitvot);
 
 private:
 	HRESULT				SetUp_Components();
@@ -56,8 +58,9 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 public:
-	static CPlayerWeapon_Spear*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CPlayerWeapon_Bow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);
 	virtual void					Free() override;
 };
+
 END

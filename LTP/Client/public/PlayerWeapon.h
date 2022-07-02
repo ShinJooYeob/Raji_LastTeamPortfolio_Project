@@ -25,17 +25,21 @@ public:
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
 public:
-	virtual _int Update(_double fDeltaTime) override;
-	virtual _int LateUpdate(_double fDeltaTimer) override;
-	virtual _int Render() override;
-	virtual _int LateRender() override;
+	virtual _int		Update(_double fDeltaTime) override;
+	virtual _int		LateUpdate(_double fDeltaTimer) override;
+	virtual _int		Render() override;
+	virtual _int		LateRender() override;
+
+public:
+	void				Set_BlockUpdate(_bool bBlock);
 
 private:
-	virtual _fVector Get_BonePos(const char* pBoneName) override;
-	virtual void Update_AttachCamPos() override;
+	virtual _fVector	Get_BonePos(const char* pBoneName) override;
+	virtual void		Update_AttachCamPos() override;
 
 protected:
 	PlayerWeaponDesc			m_tPlayerWeaponDesc;
+	_bool						m_bBlockUpdate = false;
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

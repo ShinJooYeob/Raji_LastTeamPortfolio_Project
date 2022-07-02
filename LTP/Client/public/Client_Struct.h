@@ -22,9 +22,16 @@ typedef struct tagAttachedDesc
 
 		m_DefaultBonePivot = XMMatrixScaling(vScale.x, vScale.y, vScale.z)
 			* XMMatrixRotationX(XMConvertToRadians(vRot.x))* XMMatrixRotationY(XMConvertToRadians(vRot.y))* XMMatrixRotationZ(XMConvertToRadians(vRot.z))
-			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y / vScale.y, vPosition.z / vScale.z);
+			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y/ vScale.y, vPosition.z /vScale.z);
 
 		return S_OK;
+	}
+
+	void Set_DefaultBonePivot(_float3 vScale, _float3 vRot, _float3 vPosition)
+	{
+		m_DefaultBonePivot = XMMatrixScaling(vScale.x, vScale.y, vScale.z)
+			* XMMatrixRotationX(XMConvertToRadians(vRot.x))* XMMatrixRotationY(XMConvertToRadians(vRot.y))* XMMatrixRotationZ(XMConvertToRadians(vRot.z))
+			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y / vScale.y, vPosition.z / vScale.z);
 	}
 
 	_Matrix Caculate_AttachedBoneMatrix()
