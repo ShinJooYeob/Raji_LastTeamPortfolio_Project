@@ -230,7 +230,7 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
-		vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * dDeltaTime;
+		vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 	}

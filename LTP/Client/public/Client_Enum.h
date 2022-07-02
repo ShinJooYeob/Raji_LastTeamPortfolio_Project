@@ -970,7 +970,7 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 		return TEXT("Monster_Bullet_Vayusura_Leader.fbx");
 	default:
 		MSGBOX("Not Prototype_Component_Model_Bullet");
-		break;
+		return TEXT("ha! ha!");
 	}
 }
 
