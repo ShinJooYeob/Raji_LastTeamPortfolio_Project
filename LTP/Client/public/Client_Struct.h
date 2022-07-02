@@ -14,7 +14,7 @@ BEGIN(Client)
 typedef struct tagAttachedDesc
 {
 
-	HRESULT Initialize_AttachedDesc(CGameObject*	pAttachTarget, const char*	pAttachBoneName)
+	HRESULT Initialize_AttachedDesc(CGameObject*	pAttachTarget, const char*	pAttachBoneName, _float3 vScale, _float3 vRot, _float3 vPosition)
 	{
 		pAttachingObjectTransform = (CTransform*)pAttachTarget->Get_Component(TAG_COM(Com_Transform));
 		NULL_CHECK_BREAK(pAttachingObjectTransform);
@@ -22,7 +22,19 @@ typedef struct tagAttachedDesc
 		NULL_CHECK_BREAK(pModel);
 		m_pAttachedNode = pModel->Find_HierarchyNode(pAttachBoneName);
 		NULL_CHECK_BREAK(m_pAttachedNode);
+
+		m_DefaultBonePivot = XMMatrixScaling(vScale.x, vScale.y, vScale.z)
+			* XMMatrixRotationX(XMConvertToRadians(vRot.x))* XMMatrixRotationY(XMConvertToRadians(vRot.y))* XMMatrixRotationZ(XMConvertToRadians(vRot.z))
+			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y/ vScale.y, vPosition.z /vScale.z);
+
 		return S_OK;
+	}
+
+	void Set_DefaultBonePivot(_float3 vScale, _float3 vRot, _float3 vPosition)
+	{
+		m_DefaultBonePivot = XMMatrixScaling(vScale.x, vScale.y, vScale.z)
+			* XMMatrixRotationX(XMConvertToRadians(vRot.x))* XMMatrixRotationY(XMConvertToRadians(vRot.y))* XMMatrixRotationZ(XMConvertToRadians(vRot.z))
+			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y / vScale.y, vPosition.z / vScale.z);
 	}
 
 	_Matrix Caculate_AttachedBoneMatrix()
@@ -36,7 +48,7 @@ typedef struct tagAttachedDesc
 		BoneMatrix.r[1] = XMVector3Normalize(BoneMatrix.r[1]);
 		BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
 
-		return BoneMatrix;
+		return m_DefaultBonePivot.XMatrix() * BoneMatrix;
 	}
 
 	_Vector Get_AttachedBoneWorldPosition()
@@ -45,13 +57,14 @@ typedef struct tagAttachedDesc
 		NULL_CHECK_BREAK(m_pAttachedNode);
 		NULL_CHECK_BREAK(pAttachingObjectTransform);
 
-		return (pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
+		return (m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
 	}
 
 private:
 	CTransform*			pAttachingObjectTransform = nullptr;
 	CModel*				pModel = nullptr;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
+	_float4x4			m_DefaultBonePivot;
 
 }ATTACHEDESC;
 

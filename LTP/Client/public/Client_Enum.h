@@ -80,6 +80,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Camera_Main,
 	Prototype_Player,
 	Prototype_PlayerWeapon_Spear,
+	Prototype_PlayerWeapon_Bow,
+	Prototype_PlayerWeapon_Sword,
 
 	Prototype_SkyBox,
 
@@ -148,6 +150,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_PlayerWeapon_Spear:
 		return TEXT("Prototype_PlayerWeapon_Spear");
+		break;
+	case Prototype_PlayerWeapon_Bow:
+		return TEXT("Prototype_PlayerWeapon_Bow");
+		break;
+	case Prototype_PlayerWeapon_Sword:
+		return TEXT("Prototype_PlayerWeapon_Sword");
 		break;
 
 	case Prototype_StaticMapObject:
@@ -279,6 +287,7 @@ enum LAYERID
 	Layer_ScreenEffect,
 	Layer_SkyBox,
 	Layer_Player,
+	Layer_PlayerWeapon,
 	Layer_Bullet,
 	Layer_ClockBomb,
 
@@ -391,6 +400,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_Player:
 		return TEXT("Layer_Player");
+		break;
+	case Layer_PlayerWeapon:
+		return TEXT("Layer_PlayerWeapon");
 		break;
 	case Layer_JumpPad:
 		return TEXT("Layer_JumpPad");
@@ -515,6 +527,8 @@ enum COMPONENTPROTOTYPEID
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
 	Prototype_Mesh_PlayerWeapon_Spear,
+	Prototype_Mesh_PlayerWeapon_Bow,
+	Prototype_Mesh_PlayerWeapon_Sword,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
 	Prototype_Mesh_Monster_Ninjasura,
@@ -651,7 +665,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_PlayerWeapon_Spear:
 		return TEXT("PlayerSpear.fbx");
 		break;
-
+	case Prototype_Mesh_PlayerWeapon_Bow:
+		return TEXT("PlayerBow.fbx");
+		break;
+	case Prototype_Mesh_PlayerWeapon_Sword:
+		return TEXT("PlayerSword.fbx");
+		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
 		return TEXT("Monster_Mahinasura_Minion.fbx");

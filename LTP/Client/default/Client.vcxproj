@@ -203,7 +203,9 @@
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerWeapon.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Bow.h" />
     <ClInclude Include="..\public\PlayerWeapon_Spear.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Sword.h" />
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
@@ -251,7 +253,9 @@
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerWeapon.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Bow.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Sword.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />

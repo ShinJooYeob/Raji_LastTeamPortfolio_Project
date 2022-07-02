@@ -303,11 +303,6 @@ void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight)
 	LookDir(vRotDir);
 }
 
-void CTransform::Turn_Interp(_fVector vTargetDir, _float fWeight)
-{
-
-}
-
 void CTransform::Rotation_CW(_fVector vAxis, _float fRadian)
 {
 	_Matrix matRUL = XMMatrixIdentity();
@@ -325,6 +320,33 @@ void CTransform::Rotation_CW(_fVector vAxis, _float fRadian)
 void CTransform::Rotation_CCW(_fVector vAxis, _float fRadian)
 {
 	Rotation_CW(vAxis, -fRadian);
+}
+
+void CTransform::Rotation_Multi(_float3 fRadians)
+{
+	_Vector		vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * XMVectorGetX(XMVector3Length(Get_MatrixState(CTransform::STATE_RIGHT)));
+	_Vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * XMVectorGetX(XMVector3Length(Get_MatrixState(CTransform::STATE_UP)));
+	_Vector		vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * XMVectorGetX(XMVector3Length(Get_MatrixState(CTransform::STATE_LOOK)));
+
+	_Matrix		RotationMatrix_x = XMMatrixRotationAxis(XMVectorSet(1.f, 0.f, 0.f, 0.f), fRadians.x);
+	_Matrix		RotationMatrix_y = XMMatrixRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadians.y);
+	_Matrix		RotationMatrix_z = XMMatrixRotationAxis(XMVectorSet(0.f, 0.f, 1.f, 0.f), fRadians.z);
+
+	vRight = XMVector4Transform(vRight, RotationMatrix_x);
+	vUp = XMVector4Transform(vUp, RotationMatrix_x);
+	vLook = XMVector4Transform(vLook, RotationMatrix_x);
+
+	vRight = XMVector4Transform(vRight, RotationMatrix_y);
+	vUp = XMVector4Transform(vUp, RotationMatrix_y);
+	vLook = XMVector4Transform(vLook, RotationMatrix_y);
+
+	vRight = XMVector4Transform(vRight, RotationMatrix_z);
+	vUp = XMVector4Transform(vUp, RotationMatrix_z);
+	vLook = XMVector4Transform(vLook, RotationMatrix_z);
+
+	Set_MatrixState(CTransform::STATE_RIGHT, vRight);
+	Set_MatrixState(CTransform::STATE_UP, vUp);
+	Set_MatrixState(CTransform::STATE_LOOK, vLook);
 }
 
 void CTransform::Scaled(TransformState eState, _float fScale)

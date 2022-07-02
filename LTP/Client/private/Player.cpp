@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Player.h"
 #include "Camera_Main.h"
+#include "PlayerWeapon_Spear.h"
+#include "PlayerWeapon_Bow.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -36,6 +38,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(1.f, 0.f, 0.f));
 
 	FAILED_CHECK(SetUp_EtcInfo());
+
+	FAILED_CHECK(SetUp_PlayerWeapons());
 
 	return S_OK;
 }
@@ -180,7 +184,17 @@ void CPlayer::Set_State_MoveStart(_double fDeltaTime)
 {
 	Move(m_eInputDir, fDeltaTime);
 	Set_PlayerState(STATE_MOV);
-	m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F, 0.1f);
+
+	switch (m_eCurWeapon)
+	{
+	case EWEAPON_TYPE::WEAPON_SPEAR:
+		m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F, 0.1f);
+		break;
+	case EWEAPON_TYPE::WEAPON_BOW:
+		m_pModel->Change_AnimIndex(BASE_ANIM_RUN_BOW, 0.1f);
+		break;
+	}
+
 }
 
 void CPlayer::Set_State_DodgeStart(_double fDeltaTime)
@@ -599,19 +613,35 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 
 	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
 	{
+		if(m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
+		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
 	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
+		m_pPlayerWeapons[1]->Set_BlockUpdate(false);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down)
 	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
+		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down)
 	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
+		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1399,9 +1429,14 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2:
 	{
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
 		if (fAnimPlayRate <= 0.425f)
 		{
 			m_fAnimSpeed = 2.f;
+		}
+		else if (fAnimPlayRate >= 0.78f)
+		{
+			static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 		}
 		else
 		{
@@ -1431,6 +1466,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 				if (true == m_bReadyDodgeCombo)
 				{
+					static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 					m_pModel->Set_BlockAnim(false);
 					m_bPlayDodgeCombo = true;
 				}
@@ -1544,6 +1580,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
 		m_fAnimSpeed = 1.5f;
 
 		if (0.25f >= fAnimPlayRate)
@@ -2065,10 +2102,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.66f <= fAnimPlayRate)
@@ -2440,6 +2475,7 @@ void CPlayer::Javelin(_double fDeltaTime)
 	switch (m_eCurUtilityState)
 	{
 	case UTILITY_START:
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_THROW);
 		m_fAnimSpeed = 5.f;
 		if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 		{
@@ -2481,6 +2517,7 @@ void CPlayer::Javelin(_double fDeltaTime)
 		Throw_Spear(fDeltaTime);
 		break;
 	case UTILITY_END:
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 		m_fAnimSpeed = 2.f;
 		m_eCurUtilityState = UTILITY_START;
 		Set_State_IdleStart(fDeltaTime);
@@ -2501,10 +2538,12 @@ void CPlayer::Throw_Spear(_double fDeltaTime)
 
 void CPlayer::Spear_Ultimate(_double fDeltaTime)
 {
+	static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
 	m_fAnimSpeed = 1.f;
 
 	if (0.98f <= m_pModel->Get_PlayRate())
 	{
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 		Set_State_IdleStart(fDeltaTime);
 	}
 }
@@ -3172,6 +3211,34 @@ HRESULT CPlayer::SetUp_EtcInfo()
 
 	m_fAttachCamPos_Offset = _float3(0.f, 8.f, -8.f);
 	Update_AttachCamPos();
+
+	ZeroMemory(m_pPlayerWeapons, sizeof(CPlayerWeapon*) * (WEAPON_END - 1));
+	return S_OK;
+}
+
+HRESULT CPlayer::SetUp_PlayerWeapons()
+{
+	// Create Player Weapon Spear //
+	CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(-97, -120, -60), _float3(-0.661f, -0.04f, -1.133f));
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));
+	m_pPlayerWeapons[WEAPON_SPEAR - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon)));
+	m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_BlockUpdate(true);
+
+	// Create Player Weapon Bow//
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_l_palm", _float3(0, 0, 0), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Bow), &eWeaponDesc));
+	m_pPlayerWeapons[WEAPON_BOW - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 1));
+	m_pPlayerWeapons[WEAPON_BOW - 1]->Set_BlockUpdate(true);
+
+	//// Create Player Weapon Bow//
+	//eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	//eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Sword), &eWeaponDesc));
+	//m_pPlayerWeapons[WEAPON_SWORD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 2));
+	//m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_BlockUpdate(false);
 	return S_OK;
 }
 
@@ -3272,6 +3339,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 			{
+				static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 				// If Input Next Combo Command
 				if (true == m_bPlayNextCombo)
 				{

@@ -70,9 +70,6 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\01.Transform">
       <UniqueIdentifier>{f7613dc7-6bdc-48f7-8c3e-8eb4f7eade50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\02.Renderer">
-      <UniqueIdentifier>{a3a33219-1fa1-493e-8514-c74a794d64d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model">
       <UniqueIdentifier>{677691cf-6b70-4e1a-8493-354e7639b474}</UniqueIdentifier>
     </Filter>
@@ -171,6 +168,9 @@
     </Filter>
     <Filter Include="97.PhysX\01.PhysXMgr">
       <UniqueIdentifier>{03d65cfb-2d25-42e7-8bdc-06b6344df51f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\02.Renderer">
+      <UniqueIdentifier>{a3a33219-1fa1-493e-8514-c74a794d64d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

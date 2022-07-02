@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "PlayerWeapon.h"
 
 BEGIN(Client)
 
@@ -39,6 +40,8 @@ private:
 		BASE_ANIM_RUN_F, BASE_ANIM_RUN_B, BASE_ANIM_RUN_L, BASE_ANIM_RUN_R, 
 		BASE_ANIM_TURN_BACK,
 		BASE_ANIM_DODGE_ROLL, BASE_ANIM_DODGE_CARTWHEEL, BASE_ANIM_DODGE_FLIP,
+		BASE_ANIM_RUN_BOW, 
+		BASE_ANIM_IDLE_SWORD, BASE_ANIM_RUN_F_SWORD,
 		BASE_ANIM_END
 	};
 
@@ -85,15 +88,18 @@ public:
 	virtual HRESULT Initialize_Prototype(void* pArg) override;
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
+
 public:
 	virtual _int Update(_double fDeltaTime) override;
 	virtual _int LateUpdate(_double fDeltaTimer) override;
 	virtual _int Render() override;
 	virtual _int LateRender() override;
 	
+
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
+
 
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
@@ -163,6 +169,7 @@ private: /* Actions */
 	void				Shield_Mode(_double fDeltaTime);
 	void				Sword_Ultimate(_double fDeltaTime);
 
+
 private: /* Select Anim */
 	void				Play_DodgeAnim();
 
@@ -172,7 +179,6 @@ private: /* Setter */
 	void				Set_PlayerState(EPLAYER_STATE eState);
 	void				Set_TurnInputDir();
 	void				Set_TurnInputDir_CalDir();
-
 	void				Set_MainAttackAnim(_bool bJumpAttack);
 
 
@@ -199,12 +205,14 @@ private: /* Key Input State */
 	_bool				m_bPressedUtilityKey = false;
 	_bool				m_bPressedUltimateKey = false;
 
+
 private: /* Enum Stats */
 	_uint					m_eCurAnim = BASE_ANIM_IDLE;
 	EWEAPON_TYPE 			m_eCurWeapon = WEAPON_END;
 	EPLAYER_STATE			m_eCurState = STATE_END;
 	EUTILITYSKILL_STATE		m_eCurUtilityState = UTILITY_START;
 	EBOWMAINATK_STATE		m_eCurBowMainAtkState = BOWMAINATK_START;
+
 
 private: /* Animation Control */
 	_bool				m_bPlayTurnBackAnim = false;
@@ -248,11 +256,13 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 
+private:
+	CPlayerWeapon*		m_pPlayerWeapons[WEAPON_END - 1];
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_EtcInfo();
-
+	HRESULT SetUp_PlayerWeapons();
 
 	HRESULT Adjust_AnimMovedTransform(_double fDeltatime);
 
