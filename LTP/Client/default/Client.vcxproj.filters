@@ -154,6 +154,12 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Vayusura_Leader">
       <UniqueIdentifier>{00e2325d-4b5f-4835-bacc-ec49b9c61b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX">
+      <UniqueIdentifier>{bbca00da-bf1c-4ef0-981e-8364cb5f6ae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\snip">
+      <UniqueIdentifier>{ba343726-6092-4104-b5e6-4966c0087ac8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

@@ -37,13 +37,11 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 {
 	// Tick
-	
 	if (mScene)
 	{
 		// Debugger에서 실행되는 거 확인
 		mScene->simulate(timedelta);
 	}
-	
 	return S_OK;
 }
 
@@ -54,7 +52,6 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 		// 결과 업데이트
 		mScene->fetchResults(true);
 	}
-
 	return S_OK;
 }
 
@@ -104,23 +101,26 @@ HRESULT CPhysXMgr::Clean_Phyics()
 	PX_RELEASE(mScene);
 	PX_RELEASE(mMaterial);
 	PxCloseExtensions();
-	if (mPvd)
-	{
-		PxPvdTransport* transport = mPvd->getTransport();
-		PX_RELEASE(transport);
-		PX_RELEASE(mPvd);
-	}
-//	PX_RELEASE(mCooking);	
 	PX_RELEASE(mPhysics);
+	PX_RELEASE(mCooking);
 	PX_RELEASE(mFoundation);
+
+#ifdef _DEBUG
+	//if (mPvd)
+	//{
+	//	PxPvdTransport* transport = mPvd->getTransport();
+	//	PX_RELEASE(mPvd);
+	//	PX_RELEASE(transport);
+
+	//}
+#endif // _DEBUG
 	return S_OK;
 
 }
 
 HRESULT CPhysXMgr::Create_Cook()
 {
-	// 블록 메시 예제
-	// 정점 정의
+	// 정점 메시 예제
 	PxVec3 convexVerts[] = { PxVec3(0,1,0),PxVec3(1,0,0),PxVec3(-1,0,0),PxVec3(0,0,1),
 	PxVec3(0,0,-1) };
 
@@ -140,7 +140,6 @@ HRESULT CPhysXMgr::Create_Cook()
 	PxConvexMesh* convexMesh = mPhysics->createConvexMesh(input);
 
 	// 메시 인스턴스를 엑터한테 추가하는 개념
-//	PxRigidActor* aConvexActor = mPhysics->createRigidDynamic(PxTransform(0,0,0));
 	PxRigidActor* aConvexActor = mPhysics->createRigidStatic(PxTransform(0,0,0));
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
@@ -149,6 +148,63 @@ HRESULT CPhysXMgr::Create_Cook()
 	NULL_CHECK_BREAK(aConvexShape);
 
 	mScene->addActor(*aConvexActor);
+
+
+	//// Triangle Mesh Ex
+	//PxTriangleMeshDesc meshDesc;
+	//// 기존에 Model에서 정의하듯이 정의한다.
+	//meshDesc.points.count = nbVerts;
+	//meshDesc.points.stride = sizeof(PxVec3);
+	//meshDesc.points.data = verts;
+
+	//meshDesc.triangles.count = triCount;
+	//meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	//meshDesc.triangles.data = indices32;
+
+	//PxDefaultMemoryOutputStream writeBuffer;
+	//PxTriangleMeshCookingResult::Enum result;
+	//bool status = cooking.cookTriangleMesh(meshDesc, writeBuffer, result);
+	//if (!status)
+	//	return NULL;
+
+	//PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+	//return physics.createTriangleMesh(readBuffer);
+
+
+	//PxTriangleMesh* aTriangleMesh = theCooking->createTriangleMesh(meshDesc,
+	//	thePhysics->getPhysicsInsertionCallback());
+
+
+	// 지형
+	int numCols = 10;
+	int numRows = 10;
+
+	// 지형 샘플러 X*Z
+	PxHeightFieldSample* samples = NEW PxHeightFieldSample[(sizeof(PxHeightFieldSample) * (numCols * numRows))];
+	// 지형 정보
+	PxHeightFieldDesc hfDesc;
+	hfDesc.format = PxHeightFieldFormat::eS16_TM;
+	hfDesc.nbColumns = numCols;
+	hfDesc.nbRows = numRows;
+	hfDesc.samples.data = samples;
+	hfDesc.samples.stride = sizeof(PxHeightFieldSample);
+
+	// 지형 클래스 cook 클래스로 샘플링된 지형 정보 저장 == 정점 정보저장
+	PxHeightField* aHeightField = mCooking->createHeightField(hfDesc,
+		mPhysics->getPhysicsInsertionCallback());
+
+
+	// 지형 도형 인스턴스
+	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), 10, numCols, numCols);
+
+	// 엑터에 지형 정보 달기
+	PxRigidActor* aHieightFieldActor = mPhysics->createRigidStatic(PxTransform(0, 0, 0));
+
+	PxShape* aHeightFieldShape = PxRigidActorExt::createExclusiveShape(*aHieightFieldActor,
+		hfGeom, *mMaterial);
+
+	mScene->addActor(*aHieightFieldActor);
+
 
 	return S_OK;
 }
