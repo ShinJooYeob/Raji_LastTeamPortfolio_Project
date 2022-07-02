@@ -850,7 +850,7 @@ _uint CModel::Get_HaveAnimNum()
 		return 0;
 	else
 	{
-		return m_vecAnimator.size();
+		return _uint(m_vecAnimator.size());
 	}
 
 	return _uint();
