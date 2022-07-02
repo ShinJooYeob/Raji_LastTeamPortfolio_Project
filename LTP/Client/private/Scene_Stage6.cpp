@@ -38,6 +38,8 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
+	
+	m_pPhySample->Update(fDeltaTime);
 
 	return 0;
 }

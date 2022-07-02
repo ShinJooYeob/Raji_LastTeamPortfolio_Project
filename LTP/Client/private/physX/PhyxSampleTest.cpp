@@ -1,6 +1,23 @@
 #include "stdafx.h"
+#include "Camera_Main.h"
+
 #include "..\public\PhysX\PhyxSampleTest.h"
 #include "..\public\PhysX\PhysXMgr.h"
+
+/*
+typedef int64_t PxI64;
+typedef uint64_t PxU64;
+typedef int32_t PxI32;
+typedef uint32_t PxU32;
+typedef int16_t PxI16;
+typedef uint16_t PxU16;
+typedef int8_t PxI8;
+typedef uint8_t PxU8;
+typedef float PxF32;
+typedef double PxF64;
+typedef float PxReal;
+*/
+
 
 CPhyxSampleTest::CPhyxSampleTest()
 {
@@ -29,6 +46,17 @@ HRESULT CPhyxSampleTest::Initialize_Prototype()
 _int CPhyxSampleTest::Update(_double dDeltaTime)
 {
 
+	if (KEYDOWN(DIK_SPACE))
+	{
+		CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+		CTransform* pCamTransform = pMainCam->Get_Camera_Transform();
+		NULL_CHECK_BREAK(pCamTransform);
+		_float3 trans3 = pCamTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		createDynamic(PxTransform(trans3.x, trans3.y, trans3.z), PxSphereGeometry(3.0f),PxVec3(0, 0, -1) * 200);
+	}
+
+
+
 	return _int();
 }
 
@@ -55,10 +83,6 @@ HRESULT CPhyxSampleTest::SnipTestCreate_Func1()
 
 	for (PxU32 i = 0; i < 5; i++)
 		CreateStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
-
-//	if (!interactive)
-//		CreateDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
-
 	return S_OK;
 }
 
@@ -89,6 +113,16 @@ HRESULT CPhyxSampleTest::CreateStack(const PxTransform& t, PxU32 size, PxReal ha
 	shape->release();
 	return S_OK;
 }
+
+PxRigidDynamic * CPhyxSampleTest::createDynamic(const PxTransform & t, const PxGeometry & geometry, const PxVec3 & velocity)
+{
+	PxRigidDynamic* dynamic = PxCreateDynamic(*mPhysics, t, geometry, *mMaterial, 10.0f);
+	dynamic->setAngularDamping(0.5f);
+	dynamic->setLinearVelocity(velocity);
+	mScene->addActor(*dynamic);
+	return dynamic;
+}
+
 
 CPhyxSampleTest * CPhyxSampleTest::Create()
 {

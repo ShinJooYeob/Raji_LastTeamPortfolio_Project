@@ -27,7 +27,10 @@ private:
 	HRESULT SnipTestCreate_Func2();
 	HRESULT SnipTestCreate_Func3();
 
-	HRESULT CreateStack(const PxTransform& t, PxU32 size, PxReal halfExtent);
+	HRESULT CreateStack(const PxTransform& t, PxU32 size, PxReal halfExtent);	
+	PxRigidDynamic* createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+
+
 
 
 
