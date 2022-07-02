@@ -35,6 +35,11 @@ private: //애니메이션
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
+
+public: //ETC
+	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
+	_bool				Get_AttackAttackFrieOn() { return m_bAttackFrieOn; }
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -78,6 +83,10 @@ private:
 	//Distance
 	_float4				m_fDirection;
 
+	
+	//Attack
+	_bool				m_bAttackCancelOn = false;
+	_bool				m_bAttackFrieOn = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

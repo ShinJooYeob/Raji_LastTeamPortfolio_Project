@@ -2,23 +2,32 @@
 
 #include "Monster_Bullet.h"
 
-class Monster_Bullet_Universal final : public CMonster_Bullet
+class CMonster_Bullet_Universal final : public CMonster_Bullet
 {
 public:
-	typedef struct tagMonster_Bullet_Universal_MeshDesc {
+	typedef struct tagMonster_Bullet_UniversalDesc {
 		_uint	iBulletMeshNumber;
 
-		_float	fSpeedPerSec;
-		_float3 vScale;
-		_float3 vLook;
-		_float4	vPosition;
+		_float			fSpeedPerSec;
+		_float3			fScale;
+		_float3			fLook;
 
+		CTransform*		Object_Transform = nullptr;
 
-	}UNIVERSAL_BULLET_MESHDESC;
+		_float3			fPositioning;
+
+		void*			Object = nullptr;
+
+		_double			dDuration;
+
+		_bool			bBornAttachOn = false;
+		const char*		pBoneName = nullptr;
+
+}MONSTER_BULLET_UNIVERSALDESC;
 private:
-	explicit Monster_Bullet_Universal(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit Monster_Bullet_Universal(const Monster_Bullet_Universal& rhs);
-	virtual ~Monster_Bullet_Universal() = default;
+	explicit CMonster_Bullet_Universal(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Bullet_Universal(const CMonster_Bullet_Universal& rhs);
+	virtual ~CMonster_Bullet_Universal() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -30,8 +39,25 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual	void Set_IsDead()override;
+
 private:
 	HRESULT SetUp_Components();
+
+private:
+	HRESULT	SetUp_Info();
+	HRESULT	SetUp_BoneMatrix();
+	HRESULT SetUp_Fire(_double dDeltaTime);
+
+	HRESULT	Initialize_Bullet();
+
+private:
+	HRESULT	Vayusura_Leader_Bullet(_double dDeltaTime);
+
+
+private:
+	MONSTER_BULLET_UNIVERSALDESC m_Monster_Bullet_UniversalDesc; //Monster_Bullet_Universal Desc;
+	ATTACHEDESC			m_AttachedDesc; //Born Desc;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -40,10 +66,18 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
 
+	CTransform*			m_pPlayerTransform = nullptr;
+
+private:
+	_float4				m_fTempPos;
+	_float3				m_fTempLook;
+
+private:
+	_double				m_dDeltaTime = 0;
 
 
 public:
-	static Monster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

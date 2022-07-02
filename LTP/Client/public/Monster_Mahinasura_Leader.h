@@ -80,6 +80,8 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
+	_bool				m_bFastRunOn = false;
+
 
 private:
 	HRESULT SetUp_Components();

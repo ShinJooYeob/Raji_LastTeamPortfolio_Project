@@ -178,6 +178,9 @@
     <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon">
       <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion">
+      <UniqueIdentifier>{ddbd2a06-5086-4915-b052-a0cb38f50973}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -313,8 +316,6 @@
       <Filter>01.GameObject\01.Player</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Monster.h" />
-    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Boss.h">
       <Filter>01.GameObject\02.Monster\Boss</Filter>
@@ -377,6 +378,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Chiedtuan_Weapon.h">
       <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>01.GameObject\02.Monster\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Minion.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -488,7 +498,6 @@
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
       <Filter>03.Manager\03.AssimpCreateMgr</Filter>
@@ -546,6 +555,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp">
       <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

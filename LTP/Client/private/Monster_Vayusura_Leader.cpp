@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Monster_Vayusura_Leader.h"
+#include "Monster_Bullet_Universal.h"
 
 
 CMonster_Vayusura_Leader::CMonster_Vayusura_Leader(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -76,6 +77,7 @@ _int CMonster_Vayusura_Leader::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 	return _int();
@@ -356,26 +358,57 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 
 
-		//switch (iNowAnimIndex)
-		//{
-		//case 1://애니메이션 인덱스마다 잡아주면 됨
-		//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
-		//	{
+		switch (iNowAnimIndex)
+		{
+		case 1://애니메이션 인덱스마다 잡아주면 됨
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
+			{
 
-		//		m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
-		//	}
-		//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-		//	{
+				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+			{
 
 
-		//		m_iAdjMovedIndex++;
-		//	}
+				m_iAdjMovedIndex++;
+			}
 
-		//	break;
-		//case 2:
+			break;
+		case 2:
+			break;
+		case 6:
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
+			{
+				m_bAttackFrieOn = false;
 
-		//	break;
-		//}
+				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+				Monster_BulletDesc.iBulletMeshNumber = BULLETMESHID::VAYUSURA_LEADER_BULLET;
+				Monster_BulletDesc.fSpeedPerSec = 10;
+				//Monster_BulletDesc.fScale = _float3(100.f, 100.f, 100.f);
+				Monster_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+				Monster_BulletDesc.Object_Transform = m_pTransformCom;
+				//Monster_BulletDesc.fPositioning = _float3(-5.f,30.f,20.f);
+				Monster_BulletDesc.fPositioning = _float3(-0.16327f, 0.32063f, 0.073993f);
+
+
+				Monster_BulletDesc.Object = this;
+
+				Monster_BulletDesc.dDuration = 15;
+
+				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.792411)
+			{
+				m_bAttackFrieOn = true;
+			}
+			break;
+		}
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;
