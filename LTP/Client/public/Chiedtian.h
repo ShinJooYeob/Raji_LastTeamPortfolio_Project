@@ -5,6 +5,8 @@ BEGIN(Client)
 
 class CChiedtian final : public CBoss
 {
+public:
+	enum AttackNumber{ATTACK_FIRE, ATTACK_SPIN, ATTACK_WHINING, ATTACK_END};
 private:
 	CChiedtian(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CChiedtian(const CChiedtian& rhs);
@@ -30,14 +32,25 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 	_uint				m_iAniNum = 0;
 
-	_float				m_fAttackCoolTime = 5.f;
-	_float				m_fSkillCoolTime = 8.f;
+	_float				m_fAttackCoolTime = 4.f;
+	_float				m_fSkillCoolTime = 6.f;
+	_float				m_fJumpTime = 3.f;
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
+
+	//fire Attack
+	_bool				m_bIsFireAttack = false;
+	_float				m_fFireTime = 10.f;
+	//Spin Attack
+	_bool				m_bIsSpinAttack = false;
+	_float				m_fSpinTime = 14.f;
+
 
 	CGameObject*		m_pPlayerObj;
 
 	_float				m_fTestHPIndex = 1.f;
+
+	vector<class CChiedtuan_Weapon*>		m_pWeapons;
 
 private:
 	HRESULT SetUp_Components();
