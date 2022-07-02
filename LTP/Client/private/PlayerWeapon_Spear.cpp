@@ -27,13 +27,6 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 	m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
 
 	FAILED_CHECK(SetUp_EtcInfo());
-
-	m_pTransformCom->Scaled_All(_float3(100, 100, 100));
-
-	_Matrix mat = XMMatrixScaling(100, 100, 100) * XMMatrixRotationX(XMConvertToRadians(90))
-		*XMMatrixTranslation(-63.02f* 0.01f, 0.59f* 0.01f,  -112.96f * 0.01f);
-	
-	m_pTransformCom->Set_Matrix(mat);
 	return S_OK;
 }
 

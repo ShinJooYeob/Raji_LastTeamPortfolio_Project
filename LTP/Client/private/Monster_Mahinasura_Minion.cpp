@@ -28,7 +28,7 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
-	m_pTransformCom->Scaled_All(_float3(100, 100, 100));
+	//m_pTransformCom->Scaled_All(_float3(100, 100, 100));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
@@ -74,6 +74,7 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 	return _int();
@@ -214,6 +215,8 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 		m_bIOnceAnimSwitch = true;
 
+		m_bFastRunOn = false;
+
 		Pattern_Change();
 	}
 
@@ -225,6 +228,8 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 
 		m_dInfinity_CoolTime = 0;
+
+		m_bFastRunOn = false;
 	}
 
 	Special_Trigger(dDeltaTime);
@@ -495,7 +500,12 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 21: {
-			if (PlayRate > 0 && PlayRate >= 0.125)
+			if (PlayRate > 0 && PlayRate >= 0.125 && m_bFastRunOn == false)
+			{
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+				m_bFastRunOn = true;
+			}
+			else if (m_bFastRunOn = true)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
 			}

@@ -105,12 +105,16 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Mahinasura_Leader,
 	Prototype_Object_Monster_Vayusura_Minion,
 	Prototype_Object_Monster_Vayusura_Leader,
+	Prototype_Obejct_Monster_Tezabsura_Minion,
 
 
 	//JJB
 	Prototype_Object_Boss_Rangda,
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Effect_MagicCircle,
+
+	//Monster_Bullet
+	Prototype_Object_Monster_Bullet_Universal,
 
 	Object_Prototype_End
 };
@@ -179,14 +183,17 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Mahinasura_Minion:
 		return TEXT("Prototype_Object_Monster_Mahinasura_Minion");
 
+	case Prototype_Object_Monster_Mahinasura_Leader:
+		return TEXT("Prototype_Object_Monster_Mahinasura_Leader");
+
 	case Prototype_Object_Monster_Vayusura_Minion:
 		return TEXT("Prototype_Object_Monster_Vayusura_Minion");
 
 	case Prototype_Object_Monster_Vayusura_Leader:
 		return TEXT("Prototype_Object_Monster_Vayusura_Leader");
 
-	case Prototype_Object_Monster_Mahinasura_Leader:
-		return TEXT("Prototype_Object_Monster_Mahinasura_Leader");
+	case Prototype_Obejct_Monster_Tezabsura_Minion:
+		return TEXT("Prototype_Object_Monster_Tezabsura_Minion");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
@@ -198,6 +205,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
+
+	case Prototype_Object_Monster_Bullet_Universal:
+		return TEXT("Prototype_Object_Monster_Bullet_Universal");
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -522,6 +532,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Gadasura_Black,
 	Prototype_Mesh_Monster_Gadasura_Rage,
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
+	Prototype_Mesh_Monster_Tezabsura_Minion,
 	
 	
 	Prototype_Mesh_Monster_Vayusura_Minion,
@@ -684,6 +695,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_Monster_Gadasura_Rage_Hollogram:
 		return TEXT("Monster_Gadasura_Rage_Hollogram.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Tezabsura_Minion:
+		return TEXT("Monster_Tezabsura_Minion.fbx");
 		break;
 		
 	case Prototype_Mesh_Boss_Rangda:
@@ -952,7 +967,7 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 	switch (eTag)
 	{
 	case VAYUSURA_LEADER_BULLET:
-		return TEXT("Prototype_Component_Model_Bullet_Vayusura_Leader.fbx");
+		return TEXT("Monster_Bullet_Vayusura_Leader.fbx");
 	default:
 		MSGBOX("Not Prototype_Component_Model_Bullet");
 		break;

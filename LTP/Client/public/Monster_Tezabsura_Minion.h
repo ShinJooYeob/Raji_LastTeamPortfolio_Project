@@ -6,12 +6,13 @@ class CNavigation;
 END
 
 BEGIN(Client)
-class CMonster_Mahinasura_Minion final : public CMonster
+class CMonster_Tezabsura_Minion final : public CMonster
 {
+
 private:
-	explicit CMonster_Mahinasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Mahinasura_Minion(const CMonster_Mahinasura_Minion& rhs);
-	virtual ~CMonster_Mahinasura_Minion() = default;
+	explicit CMonster_Tezabsura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Tezabsura_Minion(const CMonster_Tezabsura_Minion& rhs);
+	virtual ~CMonster_Tezabsura_Minion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -37,6 +38,8 @@ private: //애니메이션
 
 	HRESULT				Special_Trigger(_double	dDeltaTime);
 
+	HRESULT				Jumping(_double dDeltaTime);
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -52,7 +55,7 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-	//Anim Once Pattern
+		//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
@@ -63,9 +66,14 @@ private://애니메이션 동작 및 이벤트
 	_double				m_dInfinity_CoolTime = 0;
 	_uint				m_iInfinityPattern = 0;
 	_uint				m_iInfinityAnimNumber = 0;
-	
+
+	//Anim Combo Pattern
+	_bool				m_bComboAnimSwitch = false;
+
 	//Anim Special Pattern
 	_double				m_dSpecial_CoolTime = 0;
+
+	_double				m_dAcceleration = 1;
 
 private:
 	_float				m_fDistance = 0;
@@ -75,7 +83,13 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
-	_bool				m_bFastRunOn = false;
+
+	//Tezabsura Jump
+	_bool				m_bJumpingOn = false;
+	_float				m_fJumpPower = 0;
+	_float3				m_fJumpTempPos;
+	_double				m_dJumpTime = 0;
+
 
 
 private:
@@ -83,7 +97,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Mahinasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Tezabsura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

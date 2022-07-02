@@ -1,18 +1,19 @@
 #include "stdafx.h"
-#include "..\public\Monster_Mahinasura_Leader.h"
+#include "..\public\Monster_Tezabsura_Minion.h"
+#include "Monster_Bullet_Universal.h"
 
 
-CMonster_Mahinasura_Leader::CMonster_Mahinasura_Leader(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Tezabsura_Minion::CMonster_Tezabsura_Minion(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Mahinasura_Leader::CMonster_Mahinasura_Leader(const CMonster_Mahinasura_Leader & rhs)
+CMonster_Tezabsura_Minion::CMonster_Tezabsura_Minion(const CMonster_Tezabsura_Minion & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Mahinasura_Leader::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Tezabsura_Minion::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +21,7 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
+HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -34,10 +35,13 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+	m_fJumpPower = 3.f;
+
 	return S_OK;
 }
 
-_int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
+_int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
@@ -53,7 +57,7 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 
 
 	PlayAnim(dDeltaTime);
-
+	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
@@ -62,7 +66,7 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
+_int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -80,7 +84,7 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Mahinasura_Leader::Render()
+_int CMonster_Tezabsura_Minion::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
@@ -108,7 +112,7 @@ _int CMonster_Mahinasura_Leader::Render()
 	return _int();
 }
 
-_int CMonster_Mahinasura_Leader::LateRender()
+_int CMonster_Tezabsura_Minion::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
@@ -116,7 +120,7 @@ _int CMonster_Mahinasura_Leader::LateRender()
 	return _int();
 }
 
-HRESULT CMonster_Mahinasura_Leader::SetUp_Info()
+HRESULT CMonster_Tezabsura_Minion::SetUp_Info()
 {
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
@@ -132,7 +136,7 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Info()
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::SetUp_Fight(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
@@ -182,7 +186,7 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::PlayAnim(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
 
@@ -191,7 +195,8 @@ HRESULT CMonster_Mahinasura_Leader::PlayAnim(_double dDeltaTime)
 	if (true == m_bIOnceAnimSwitch)
 	{
 		Once_AnimMotion(dDeltaTime);
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber);
+		_uint i = m_pModel->Get_NowAnimIndex();
+		m_pModel->Change_AnimIndex(m_iOnceAnimNumber,(i == 8 || i == 9 || i == 10)?0:0.15f); //1도 넣으면 좋을듯
 	}
 	else
 	{
@@ -202,17 +207,22 @@ HRESULT CMonster_Mahinasura_Leader::PlayAnim(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
 	m_dOnceCoolTime += dDeltaTime;
+	m_dSpecial_CoolTime += dDeltaTime;
 
-	if (m_dOnceCoolTime > 2 && m_fDistance < 3 || m_bComboAnimSwitch == true)
+	if (m_dOnceCoolTime > 2 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
+		if (m_bComboAnimSwitch == false)
+		{
+			Special_Trigger(dDeltaTime);
+		}
 		if (m_bIOnceAnimSwitch == false)
 		{
 			Pattern_Change();
@@ -220,8 +230,6 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 			m_bIOnceAnimSwitch = true;
 		}
-
-		m_bFastRunOn = false;
 	}
 
 	//반복적으로 동작하는 애니메이션
@@ -232,93 +240,76 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 
 		m_dInfinity_CoolTime = 0;
-
-		m_bFastRunOn = false;
 	}
-
-	Special_Trigger(dDeltaTime);
 
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 
 	switch (m_iOncePattern)
 	{
-	case 0:
-		m_iOnceAnimNumber = 2; //_Dodge_Back
-		break;
 	case 1:
-		m_iOnceAnimNumber = 3; //_Dodge_Right
-		m_bComboAnimSwitch = true;
+		m_iOnceAnimNumber = 12; //Attack
+		m_bComboAnimSwitch = false;
 		break;
 	case 2:
-		m_iOnceAnimNumber = 18; //LungeAttack
+		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
 		break;
 	case 3:
-		m_iOnceAnimNumber = 21; //Scorpion_Attack
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
 		break;
 	case 4:
-		m_iOnceAnimNumber = 4; //_Dodge_Left
+		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = true;
 		break;
 	case 5:
-		m_iOnceAnimNumber = 18; //LungeAttack
-		m_bComboAnimSwitch = true;
+		m_iOnceAnimNumber = 12; //Attack
+		m_bComboAnimSwitch = false;
 		break;
 	case 6:
-		m_iOnceAnimNumber = 19; //QuickAttack
+		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
 		break;
 	case 7:
-		m_iOnceAnimNumber = 21; //Scorpion_Attack
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
 		break;
 	case 8:
-		m_iOnceAnimNumber = 4; //_Dodge_Left
+		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = true;
 		break;
 	case 9:
-		m_iOnceAnimNumber = 18; //LungeAttack
-		m_bComboAnimSwitch = true;
-		break;
-	case 10:
-		m_iOnceAnimNumber = 20; //TailWhip
-		m_bComboAnimSwitch = true;
-		break;
-	case 11:
-		m_iOnceAnimNumber = 21; //Scorpion_Attack
+		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
 		break;
-	case 12:
-		m_iOnceAnimNumber = 2; //_Dodge_Back
-		break;
+
 	case 30:
-		m_iOnceAnimNumber = 7; //Taunt
+		m_iOnceAnimNumber = 11;
 		break;
 	}
 
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Pattern_Change()
+HRESULT CMonster_Tezabsura_Minion::Pattern_Change()
 {
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 13)
+	if (m_iOncePattern > 9)
 	{
-		m_iOncePattern = rand() % 6; //OncePattern Random
+		m_iOncePattern = 0; //OncePattern Random
 	}
 
 
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iInfinityPattern)
 	{
@@ -326,35 +317,33 @@ HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 1:
-		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
 		m_iInfinityAnimNumber = 1;
 		break;
 	case 2:
-		m_iInfinityAnimNumber = 22;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 3:
-		m_iInfinityAnimNumber = 22;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 4:
-		m_iInfinityAnimNumber = 22;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 5:
-		m_iInfinityAnimNumber = 22;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 6:
-		m_iInfinityAnimNumber = 22;
+		m_iInfinityAnimNumber = 1;
 		break;
 	}
 
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Special_Trigger(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::Special_Trigger(_double dDeltaTime)
 {
-	m_dSpecial_CoolTime += dDeltaTime;
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -368,13 +357,68 @@ HRESULT CMonster_Mahinasura_Leader::Special_Trigger(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::SetUp_Components()
+HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
+{
+
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+	_double PlayRate = m_pModel->Get_PlayRate();
+
+	//if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10) 이게 맞는것
+	//{
+	//	m_bLookAtOn = false;
+
+	//	_uint TargetAnimIndex = iNowAnimIndex - 8;
+
+	//	if (PlayRate <=0 && iNowAnimIndex == 8)
+	//	{
+	//		m_fJumpTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//	}
+
+	//	_float fJumpY = 0;
+	//	if (PlayRate + TargetAnimIndex >= 0.5f && PlayRate + TargetAnimIndex <= 2.5f)
+	//	{
+	//		fJumpY  = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, PlayRate + TargetAnimIndex - 0.5f, 2.f);
+	//	}
+	//	else
+	//	{
+	//		fJumpY = 0;
+	//	}
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fJumpTempPos.XMVector() + XMVectorSet(0, fJumpY, 0, 0));
+	//}
+
+	if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
+	{
+		m_bLookAtOn = false;
+
+		_uint TargetAnimIndex = iNowAnimIndex - 8;
+
+		if (PlayRate <= 0 && iNowAnimIndex == 8)
+		{
+			m_fJumpTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		}
+
+		_float fJumpY = 0;
+		if (PlayRate + TargetAnimIndex >= 0.5f && PlayRate + TargetAnimIndex <= 2.5f)
+		{
+			fJumpY = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, PlayRate + TargetAnimIndex - 0.5f, 2.f);
+		}
+		else
+		{
+			fJumpY = 0;
+		}
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fJumpTempPos.XMVector() + XMVectorSet(0, fJumpY, 0, 0));
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Mahinasura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Minion), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -391,7 +435,7 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
@@ -434,165 +478,49 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 		//	break;
 		//}
-
-
-
 		switch (iNowAnimIndex)
 		{
-		case 2:
-		{
-			if (PlayRate >= 0.2 && PlayRate <= 0.6)
+		case 1:
+			if (PlayRate > 0)
 			{
-				m_bLookAtOn = false;
-				m_pTransformCom->Move_Backward(dDeltaTime * 0.3);
+				m_pTransformCom->Move_Forward(dDeltaTime);
 			}
 			break;
-		}
-		case 3:
-		{
-			if (PlayRate <= 0.48)
-			{
-				if (m_iAdjMovedIndex == 0)
-				{
-					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-					m_iAdjMovedIndex += 1;
-				}
-				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook));
-
-				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(vRight) * 3 * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
-			}
+		default:
 			break;
 		}
-		case 4:
-		{
-			if (PlayRate <= 0.48)
-			{
-				if (m_iAdjMovedIndex == 0)
-				{
-					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
-					m_iAdjMovedIndex += 1;
-				}
-				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
-
-				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * 3 * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
-			}
-			break;
-		}
-		case 18:
-		{
-			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
-			{
-				m_bLookAtOn = false;
-
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.5f, 2.2f, (_float)PlayRate - 0.27272f, 0.17128f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-			}
-			else if (PlayRate >= 0.444 && PlayRate <= 0.6)
-			{
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.2f, 1.f, (_float)PlayRate - 0.444f, 0.156f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-			}
-			break;
-		}
-		case 19: {
-			if (PlayRate >= 0.24 && PlayRate <= 0.48)
-			{
-				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 0.6);
-			}
-			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
-			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		case 20: {
-			if (PlayRate >= 0.24 && PlayRate <= 0.6)
-			{
-				m_bLookAtOn = false;
-
-
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, (_float)PlayRate - 0.24f, 0.36f);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
-
-				//m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		case 21: {
-			if (PlayRate > 0 && PlayRate <= 0.720720)
-			{
-				m_dAcceleration = 1.5;
-			}
-			else if (PlayRate >= 0.720720 && PlayRate <= 0.875)
-			{
-				m_dAcceleration = 3;
-			}
-			else {
-				m_dAcceleration = 1;
-			}
-			break;
-		}
-		case 22: {
-			if (PlayRate > 0 && PlayRate >= 0.125 && m_bFastRunOn == false)
-			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-				m_bFastRunOn = true;
-			}
-			else if (m_bFastRunOn = true)
-			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
-			}
-			break;
-		}
-		}
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 
-CMonster_Mahinasura_Leader * CMonster_Mahinasura_Leader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Tezabsura_Minion * CMonster_Tezabsura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Mahinasura_Leader*	pInstance = new CMonster_Mahinasura_Leader(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Mahinasura_Leader");
+		MSGBOX("Failed to Created CMonster_Tezabsura_Minion");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Mahinasura_Leader::Clone(void * pArg)
+CGameObject * CMonster_Tezabsura_Minion::Clone(void * pArg)
 {
-	CMonster_Mahinasura_Leader*	pInstance = new CMonster_Mahinasura_Leader(*this);
+	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Mahinasura_Leader");
+		MSGBOX("Failed to Created CMonster_Tezabsura_Minion");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Mahinasura_Leader::Free()
+void CMonster_Tezabsura_Minion::Free()
 {
 	__super::Free();
 
