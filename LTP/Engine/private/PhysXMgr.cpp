@@ -1,6 +1,7 @@
 #include "..\Public\PhysXMgr.h"
 #include "ExternFont.h"
 
+
 #define PVD_HOST "127.0.0.1"
 
 IMPLEMENT_SINGLETON(CPhysXMgr)
@@ -21,7 +22,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 	// #TEST
 //	FAILED_CHECK(CreateTest_Base());
-	FAILED_CHECK(Create_Cook());
+//	FAILED_CHECK(Create_Cook());
 	
 
 	//while (1)
@@ -54,6 +55,7 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 	}
 	return S_OK;
 }
+PxReal stackZ = 10.0f;
 
 HRESULT CPhysXMgr::CreateTest_Base()
 {
@@ -68,6 +70,18 @@ HRESULT CPhysXMgr::CreateTest_Base()
 	const PxTransform t(PxVec3(0, 0, 0));
 	PxU32 size = 5;
 	CreateStack_Test(t, size, halfsize);
+
+
+	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
+	mScene->addActor(*groundPlane);
+
+
+//	for (PxU32 i = 0; i < 5; i++)
+//		createStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
+//
+//	if (!interactive)
+//		createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
+//
 
 
 	return S_OK;
@@ -219,6 +233,12 @@ PxPhysics * CPhysXMgr::Get_PhysicsCreater()
 {
 	NULL_CHECK_BREAK(mPhysics);
 	return mPhysics;
+}
+
+PxCooking * CPhysXMgr::Get_PhysicsCooking()
+{
+	NULL_CHECK_BREAK(mCooking);
+	return mCooking;
 }
 
 HRESULT CPhysXMgr::Initialize_PhysXLib()

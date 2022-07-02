@@ -5,7 +5,6 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
-#include "PhysXMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -81,20 +80,20 @@ _int CMainApp::Update(_double fDeltaTime)
 		return E_FAIL;
 	}
 
-	// Phycis Update
-	if (FAILED(GetSingle(CPhysXMgr)->Update_PhysX(fDeltaTime * m_SlowTimes)))
+#pragma region PhysX_Update
+	if (FAILED(GetSingle(CGameInstance)->Update_PhysX(fDeltaTime * m_SlowTimes)))
 	{
 		__debugbreak();
 		MSGBOX("Failed to Update_PhysX ");
 		return E_FAIL;
 	}
-	// Phycis Update
-	if (FAILED(GetSingle(CPhysXMgr)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
+	if (FAILED(GetSingle(CGameInstance)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
 	{
 		__debugbreak();
 		MSGBOX("Failed to LateUpdate_PhysX ");
 		return E_FAIL;
 	}
+#pragma endregion PhysX_Update
 
 
 #ifdef _DEBUG
@@ -225,7 +224,6 @@ HRESULT CMainApp::Ready_SingletonMgr()
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
 	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
-	FAILED_CHECK(GetSingle(CPhysXMgr)->Initialize_PhysX(m_pDevice, m_pDeviceContext));
 
 	
 	return S_OK;
@@ -252,11 +250,7 @@ HRESULT CMainApp::Free_SingletonMgr()
 		MSGBOX("Failed to Release CAssimpCreateMgr");
 		return E_FAIL;
 	}
-	if (0 != GetSingle(CPhysXMgr)->DestroyInstance())
-	{
-		MSGBOX("Failed to Release CPhysXMgr");
-		return E_FAIL;
-	}
+
 
 	return S_OK;
 }

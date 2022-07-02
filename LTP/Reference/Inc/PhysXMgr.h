@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CPhysXMgr final : public CBase
+class CPhysXMgr final : public CBase
 {
 	DECLARE_SINGLETON(CPhysXMgr)
 public:
@@ -17,18 +17,15 @@ public:
 	HRESULT LateUpdate_PhysX(_double timedelta);
 
 
+	PxFoundation*	Get_Foundation();
+	PxPhysics*		Get_PhysicsCreater();
+	PxCooking*		Get_PhysicsCooking();
+
 private:
 	HRESULT CreateTest_Base();
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
-
 	HRESULT Create_Cook();
-
-	
-	PxFoundation*	Get_Foundation();
-	PxPhysics*		Get_PhysicsCreater();
-
-//	void			Set_Material(_float3 vec);
 
 private:
 	HRESULT Initialize_PhysXLib();
@@ -44,7 +41,7 @@ private:
 	PxFoundation*				mFoundation= nullptr;
 	PxPhysics*					mPhysics = nullptr;
 	// 모델 메시 제어
-	PxCooking*					mCooking;
+	PxCooking*					mCooking = nullptr;
 
 	PxScene*					mScene = nullptr;
 	PxMaterial*					mMaterial = nullptr;

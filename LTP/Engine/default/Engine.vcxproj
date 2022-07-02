@@ -117,7 +117,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/;../public/physx/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../public/physx/;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4010</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -174,7 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/;../public/physx/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../public/physx/;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4010</DisableSpecificWarnings>
     </ClCompile>
     <Link>

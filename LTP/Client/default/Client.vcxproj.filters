@@ -157,8 +157,11 @@
     <Filter Include="05.PhysX">
       <UniqueIdentifier>{bbca00da-bf1c-4ef0-981e-8364cb5f6ae2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.PhysX\snip">
+    <Filter Include="05.PhysX\SnipSampleTest">
       <UniqueIdentifier>{ba343726-6092-4104-b5e6-4966c0087ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\Scene">
+      <UniqueIdentifier>{5653fcfb-de3d-4e88-97cc-7b402d803b76}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -291,12 +294,6 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Player.h">
-      <Filter>01.GameObject\01.Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
     <ClInclude Include="..\public\Monster.h" />
@@ -308,8 +305,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Rangda.h">
       <Filter>01.GameObject\02.Monster\Boss\Rangda</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\AssimpCreateMgr.h">
     </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
@@ -334,6 +329,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Rangda_MagicCircle.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AssimpCreateMgr.h">
+      <Filter>03.Manager\03.AssimpCreateMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Phyxs\PhyxSampleTest.h">
+      <Filter>05.PhysX\SnipSampleTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -442,12 +449,6 @@
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp">
-      <Filter>01.GameObject\01.Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
-      <Filter>01.GameObject\02.Monster</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
@@ -480,6 +481,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Rangda_MagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PhysX\PhyxSampleTest.cpp">
+      <Filter>05.PhysX\SnipSampleTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
