@@ -2,6 +2,9 @@
 #include "..\Public\Scene_Stage6.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
+#include "Player.h"
+
+#include "physX/PhyxSampleTest.h"
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -10,21 +13,21 @@ CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDevi
 
 HRESULT CScene_Stage6::Initialize()
 {
+
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
 	FAILED_CHECK(Ready_Light());
-
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
-	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+
 
 	// Assimp Test
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 
 	// Phy
-
+	FAILED_CHECK(Ready_Layer_Phycis());
 
 	return S_OK;
 }
@@ -36,6 +39,8 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
+	
+	m_pPhySample->Update(fDeltaTime);
 
 	return 0;
 }
@@ -103,6 +108,7 @@ HRESULT CScene_Stage6::Ready_Light()
 	}
 
 
+
 	return S_OK;
 }
 
@@ -154,14 +160,37 @@ HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 }
 HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_TestObject)));
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_TestObject)));
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player)));
+
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+
+	m_pMainCam->Set_CameraMode(CAM_MODE_NOMAL);
+	m_pMainCam->Set_FocusTarget(pPlayer);
+	m_pMainCam->Set_TargetArmLength(0.f);
+	return S_OK;
+
+}
+
+HRESULT CScene_Stage6::Ready_Layer_Phycis()
+{
+	m_pPhySample = CPhyxSampleTest::Create();
+
 	return S_OK;
 }
 
 
 HRESULT CScene_Stage6::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
 	return S_OK;
 }
 
@@ -185,4 +214,5 @@ CScene_Stage6 * CScene_Stage6::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 void CScene_Stage6::Free()
 {
 	__super::Free();
+//	Safe_Release(m_pPhySample);
 }

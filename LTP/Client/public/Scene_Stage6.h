@@ -30,9 +30,16 @@ private:
 	HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_AssimpModelTest(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 
+
+	HRESULT Ready_Layer_Phycis();
+
+	
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
+
+	class CPhyxSampleTest*			m_pPhySample = nullptr;
 public:
 	static CScene_Stage6* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual void Free() override;

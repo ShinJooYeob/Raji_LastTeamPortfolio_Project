@@ -23,6 +23,7 @@ class CRenderTargetMgr;
 class CExternFontMgr;
 class CSoundMgr;
 class CFileInfoMgr;
+class CPhysXMgr;
 
 class ENGINE_DLL CGameInstance final :public CBase
 {

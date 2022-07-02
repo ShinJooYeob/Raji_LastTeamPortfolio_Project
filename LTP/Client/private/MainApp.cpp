@@ -5,7 +5,7 @@
 #include "Model.h"
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
-#include "PhysXMgr.h"
+#include "PhysX/PhysXMgr.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -15,10 +15,6 @@
 
 
 #include "SkyBox.h"
-
-
-
-
 
 
 CMainApp::CMainApp()
@@ -53,10 +49,9 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK(Scene_Change(SCENEID::SCENE_LOBY));
 
-
-
-
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"VinerFonts", L"../bin/Resources/Fonts/Reenie.spritefont"));
+
+
 
 	return S_OK;
 }
@@ -80,6 +75,24 @@ _int CMainApp::Update(_double fDeltaTime)
 		MSGBOX("Failed to Update_Engine ");
 		return E_FAIL;
 	}
+
+#pragma region PhysX_Update
+	if (FAILED(GetSingle(CPhysXMgr)->Update_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to Update_PhysX ");
+		return E_FAIL;
+	}
+
+	if (FAILED(GetSingle(CPhysXMgr)->LateUpdate_PhysX(fDeltaTime * m_SlowTimes)))
+	{
+		__debugbreak();
+		MSGBOX("Failed to LateUpdate_PhysX ");
+		return E_FAIL;
+	}
+#pragma endregion PhysX_Update
+
+
 #ifdef _DEBUG
 	FAILED_CHECK(m_pImguiMgr->Update_DebugWnd(fDeltaTime));
 #endif // _DEBUG
@@ -235,6 +248,7 @@ HRESULT CMainApp::Free_SingletonMgr()
 		MSGBOX("Failed to Release CAssimpCreateMgr");
 		return E_FAIL;
 	}
+
 	if (0 != GetSingle(CPhysXMgr)->DestroyInstance())
 	{
 		MSGBOX("Failed to Release CPhysXMgr");

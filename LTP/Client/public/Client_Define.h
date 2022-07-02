@@ -14,13 +14,16 @@ extern _bool g_bShowMouse;
 #define GETIMGUI GetSingle(CImguiMgr)
 #endif // USE_IMGUI
 
-
 namespace Client {};
 using namespace Client;
 
 #include "Client_Enum.h"
 #include "Client_Struct.h"
 #include "Client_Macro.h"
+
+#include <PxPhysics.h>
+#include <PxPhysicsAPI.h>
+using namespace physx;
 
 #include "UtilityMgr.h"
 

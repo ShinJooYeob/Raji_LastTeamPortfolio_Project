@@ -13,7 +13,6 @@
 #include "SoundMgr.h"
 #include "FileInfoMgr.h"
 
-
 IMPLEMENT_SINGLETON(CGameInstance);
 
 
@@ -33,8 +32,7 @@ CGameInstance::CGameInstance()
 	m_pRenderTargetMgr(GetSingle(CRenderTargetMgr)),
 	m_pExternFontMgr(GetSingle(CExternFontMgr)),
 	m_pSoundMgr(GetSingle(CSoundMgr)),
-	m_pFileIoMgr(GetSingle(CFileInfoMgr))
-	
+	m_pFileIoMgr(GetSingle(CFileInfoMgr))	
 
 {
 
@@ -93,6 +91,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, const CGraphic_Device:
 	FAILED_CHECK(m_pRenderTargetMgr->Initialize_RenderTargetMgr(*ppDeviceOut, *ppDeviceContextOut));
 
 	FAILED_CHECK(m_pExternFontMgr->Initialize_FontMgr(*ppDeviceOut, *ppDeviceContextOut));
+
+
 
 	return S_OK;
 }
@@ -516,6 +516,7 @@ _bool CGameInstance::Get_Channel_IsPaused(CHANNELID eID)
 	return m_pSoundMgr->Get_Channel_IsPaused(eID);
 }
 
+
 HRESULT CGameInstance::PlayThread(void * _ThreadFunc, void * _pArg)
 {
 	NULL_CHECK_BREAK(m_pThreadMgr);
@@ -804,6 +805,7 @@ void CGameInstance::Release_Engine()
 	if (0 != GetSingle(CFileInfoMgr)->DestroyInstance())
 		MSGBOX("Failed to Release Com CFileInfoMgr ");
 
+
 	if (0 != GetSingle(CGraphic_Device)->DestroyInstance())
 		MSGBOX("Failed to Release Com Graphic_Device ");
 
@@ -827,6 +829,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pRenderTargetMgr);
 	Safe_Release(m_pExternFontMgr);
 	Safe_Release(m_pFileIoMgr);
+	
 	
 	
 }
