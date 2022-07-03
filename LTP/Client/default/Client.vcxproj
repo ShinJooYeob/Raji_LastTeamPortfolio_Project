@@ -201,6 +201,7 @@
     <ClInclude Include="..\public\Monster_Mahinasura_Leader.h" />
     <ClInclude Include="..\public\Monster_Mahinasura_Minion.h" />
     <ClInclude Include="..\public\Monster_Tezabsura_Minion.h" />
+    <ClInclude Include="..\public\Monster_Tezabsura_Purple.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
     <ClInclude Include="..\public\PhysX\PhysXMgr.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Minion.cpp" />
     <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp" />
+    <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
     <ClCompile Include="..\private\physX\PhysXMgr.cpp" />

@@ -196,6 +196,9 @@
     <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
       <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple">
+      <UniqueIdentifier>{dbf0aa8d-d058-45cc-93d4-030b9a5f18c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -327,8 +330,6 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Boss.h">
       <Filter>01.GameObject\02.Monster\Boss</Filter>
     </ClInclude>
@@ -415,6 +416,15 @@
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Purple.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -523,7 +533,6 @@
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
       <Filter>03.Manager\03.AssimpCreateMgr</Filter>
     </ClCompile>
@@ -604,6 +613,12 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

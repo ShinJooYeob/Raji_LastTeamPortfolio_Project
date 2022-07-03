@@ -2,6 +2,14 @@
 #include "Monster_Bullet_Universal.h"
 #include "Monster_Vayusura_Leader.h"
 
+const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END]
+{
+	TEXT("Monster_Bullet_Vayusura_Leader.fbx"),
+	TEXT("Monster_Bullet_Tezabsura_Minion.fbx"),
+	TEXT("Monster_Bullet_Tezabsura_Purple.fbx"),
+	TEXT("Monster_Bullet_Tezabsura_Purple.fbx")
+
+};
 
 CMonster_Bullet_Universal::CMonster_Bullet_Universal(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster_Bullet(pDevice, pDeviceContext)
@@ -35,7 +43,6 @@ HRESULT CMonster_Bullet_Universal::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
 
 
 	SetUp_Info();
@@ -120,7 +127,7 @@ HRESULT CMonster_Bullet_Universal::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_MONSTER_BULLET(m_Monster_Bullet_UniversalDesc.iBulletMeshNumber), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, m_pMonster_Bullet_UniversalTag[m_Monster_Bullet_UniversalDesc.iBulletMeshNumber], TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -139,7 +146,10 @@ HRESULT CMonster_Bullet_Universal::SetUp_BoneMatrix()
 {
 	if (m_Monster_Bullet_UniversalDesc.bBornAttachOn)
 	{
-		m_AttachedDesc.Initialize_AttachedDesc(static_cast<CGameObject*>(m_Monster_Bullet_UniversalDesc.Object), m_Monster_Bullet_UniversalDesc.pBoneName, m_Monster_Bullet_UniversalDesc.fScale, _float3(0.f, 0.f, 0.f), m_Monster_Bullet_UniversalDesc.fPositioning);
+		m_AttachedDesc.Initialize_AttachedDesc(static_cast<CGameObject*>(m_Monster_Bullet_UniversalDesc.Object),
+			m_Monster_Bullet_UniversalDesc.pBoneName, 
+			m_Monster_Bullet_UniversalDesc.fScale, 
+			_float3(0.f, 0.f, 0.f), m_Monster_Bullet_UniversalDesc.fPositioning);
 	}
 	return S_OK;
 }
@@ -162,7 +172,11 @@ HRESULT CMonster_Bullet_Universal::SetUp_Info()
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 
-		m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+		_float3 PlayerLookAtPibut = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+		PlayerLookAtPibut.y += 1.f;
+
+		m_pTransformCom->LookAt(XMLoadFloat3(&PlayerLookAtPibut));
 
 
 		XMStoreFloat4(&m_fTempPos, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
@@ -182,10 +196,20 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 {
 	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
 	{
-	case BULLETMESHID::VAYUSURA_LEADER_BULLET:
+	case VAYUSURA_LEADER_BULLET:
 		Vayusura_Leader_Bullet(dDeltaTime);
 		break;
+	case TEZABSURA_MINION_BULLET:
+		Tezabsura_Minion_Bullet(dDeltaTime);
+		break;
+	case TEZABSURA_PURPLE_DEFAULT_BULLET:
+		Tezabsura_Purple_Default_Bullet(dDeltaTime);
+		break;
+	case TEZABSURA_PURPLE_PRIMARY_BULLET:
+		Tezabsura_Purple_Primary_BUllet(dDeltaTime);
+		break;
 	default:
+		MSGBOX("Not BulletMeshNumber");
 		break;
 	}
 	return S_OK;
@@ -195,7 +219,7 @@ HRESULT CMonster_Bullet_Universal::Initialize_Bullet()
 {
 	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
 	{
-	case BULLETMESHID::VAYUSURA_LEADER_BULLET:
+	case BULLETMESHID::Prototype_Mesh_Monster_Bullet_Vayusura_Leader:
 		break;
 	default:
 		break;
@@ -212,11 +236,13 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 	//vPosition += XMVector3Normalize(m_Monster_Bullet_UniversalDesc.Object_Transform->Get_MatrixState(CTransform::STATE_LOOK)) * m_Monster_Bullet_UniversalDesc.fPositioning.z;
 	CMonster_Vayusura_Leader* Monster_Object = static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object);
 
-	if(false == Monster_Object->Get_AttackAttackFrieOn())
+	if(false == Monster_Object->Get_AttackAttackFrieOn() && !m_bIsFired)
 	{
 
-		m_pTransformCom->Scaling_All(dDeltaTime);
-
+		m_PassedTime += dDeltaTime;
+		//m_pTransformCom->Scaling_All(dDeltaTime);
+		m_pTransformCom->Scaled_All(_float3(_float(m_PassedTime) * 1.f ));
+		 
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_AttachedDesc.Get_AttachedBoneWorldPosition());
 
@@ -227,6 +253,7 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fTempLook, XMVector3Normalize(XMLoadFloat3(&fPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	}
 	else {
+		m_bIsFired = true;
 		_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
@@ -241,6 +268,42 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 	}
 
 
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
+{
+	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Default_Bullet(_double dDeltaTime)
+{
+	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_BUllet(_double dDeltaTime)
+{
+	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 
 	return S_OK;
 }

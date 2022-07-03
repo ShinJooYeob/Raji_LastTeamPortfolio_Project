@@ -35,8 +35,6 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-	m_pTransformCom->Scaled_All(_float3(2.5f, 2.5f, 2.5f));
-
 	return S_OK;
 }
 
@@ -377,20 +375,18 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 2:
 			break;
 		case 6:
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
 			{
 				m_bAttackFrieOn = false;
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
-				Monster_BulletDesc.iBulletMeshNumber = BULLETMESHID::VAYUSURA_LEADER_BULLET;
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET;
 				Monster_BulletDesc.fSpeedPerSec = 10;
-				//Monster_BulletDesc.fScale = _float3(100.f, 100.f, 100.f);
-				Monster_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+				Monster_BulletDesc.fScale = _float3(0.1f,0.1f,0.1f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
-				//Monster_BulletDesc.fPositioning = _float3(-5.f,30.f,20.f);
-				Monster_BulletDesc.fPositioning = _float3(-0.16327f, 0.32063f, 0.073993f);
+				Monster_BulletDesc.fPositioning = _float3(-0.0016327f, 0.0032063f, 0.023993f);
 
 
 				Monster_BulletDesc.Object = this;

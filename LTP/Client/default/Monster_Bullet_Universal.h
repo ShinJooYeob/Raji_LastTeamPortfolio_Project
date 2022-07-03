@@ -5,6 +5,14 @@
 class CMonster_Bullet_Universal final : public CMonster_Bullet
 {
 public:
+	enum Monster_Bullet_UniversalType {
+		VAYUSURA_LEADER_BULLET,
+		TEZABSURA_MINION_BULLET,
+		TEZABSURA_PURPLE_DEFAULT_BULLET,
+		TEZABSURA_PURPLE_PRIMARY_BULLET,
+		MONSTER_BULLET_UNIVERSAL_END,
+	}zz;
+public:
 	typedef struct tagMonster_Bullet_UniversalDesc {
 		_uint	iBulletMeshNumber;
 
@@ -53,6 +61,9 @@ private:
 
 private:
 	HRESULT	Vayusura_Leader_Bullet(_double dDeltaTime);
+	HRESULT	Tezabsura_Minion_Bullet(_double dDeltaTime);
+	HRESULT	Tezabsura_Purple_Default_Bullet(_double dDeltaTime);
+	HRESULT Tezabsura_Purple_Primary_BUllet(_double dDeltaTime);
 
 
 private:
@@ -74,7 +85,8 @@ private:
 
 private:
 	_double				m_dDeltaTime = 0;
-
+	_double				m_PassedTime = 0;
+	_bool				m_bIsFired = false;
 
 public:
 	static CMonster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

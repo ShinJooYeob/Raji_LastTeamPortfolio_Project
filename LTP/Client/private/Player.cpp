@@ -613,38 +613,38 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
-	{
-		if(m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	//if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
+	//{
+	//	if(m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
 
-		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
-		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
-	{
-		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
+	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
+	//}
+	//else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
+	//{
+	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
 
-		m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
-		m_pPlayerWeapons[1]->Set_BlockUpdate(false);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down)
-	{
-		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
+	//	m_pPlayerWeapons[1]->Set_BlockUpdate(false);
+	//}
+	//else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down)
+	//{
+	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
 
-		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
-		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down)
-	{
-		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
+	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
+	//}
+	//else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down)
+	//{
+	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
 
-		m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
-		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	}
+	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
+	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
+	//}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return false;
