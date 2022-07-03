@@ -17,6 +17,7 @@ public:
 	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	HRESULT Update_PhysX(_double timedelta);
 	HRESULT LateUpdate_PhysX(_double timedelta);
+	HRESULT Renderer();
 
 
 	PxFoundation*	Get_Foundation();
@@ -52,13 +53,18 @@ private:
 	HRESULT Clean_Phyics();
 	HRESULT Create_Cook();
 
-
+	HRESULT Render_Actor(const PxRigidActor* actor);
+	HRESULT RenderShape(const PxGeometryHolder& h);
+	
 
 private:
 	HRESULT Initialize_PhysXLib();
 
 
 private:
+	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
+
 	PxDefaultAllocator			mAllocCallback;
 	PxDefaultErrorCallback		mErrorCallback;
 
@@ -72,13 +78,8 @@ private:
 
 	PxScene*					mScene = nullptr;
 	PxMaterial*					mMaterial = nullptr;
-	static PxMaterial*			gMaterial ;
 
 	PxPvd*						mPvd = nullptr;
-
-	static PxPhysics*			gPhysics;
-	static PxCooking*			gCooking;
-	static PxFoundation*		gFoundation;
 
 	// TESTCODE
 	PxActor*						mTestActor = nullptr;
@@ -87,9 +88,10 @@ private:
 
 public:
 
-	ID3D11Device*			m_pDevice = nullptr;
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
-
+	static PxPhysics*			gPhysics;
+	static PxCooking*			gCooking;
+	static PxFoundation*		gFoundation;
+	static PxMaterial*			gMaterial;
 
 public:
 	virtual void Free() override;

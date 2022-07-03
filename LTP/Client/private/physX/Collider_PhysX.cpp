@@ -26,6 +26,8 @@ HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
 		return E_FAIL;
 
 
+	
+
 	return S_OK;
 }
 
@@ -60,4 +62,6 @@ CComponent * CCollider_PhysX::Clone(void * pArg)
 void CCollider_PhysX::Free()
 {
 	__super::Free();
+
+
 }

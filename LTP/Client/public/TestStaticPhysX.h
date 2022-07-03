@@ -22,31 +22,23 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-
-
 	PxTransform		Get_Transform() { return mTrans; }
-	PxShape*		Get_Shape() { return mShapes; }
-	PxRigidActor*	Get_Actore() { return mActor; }
 
 
 private:
 	// 피직스 관련
-	CShader*			mpShaderCom = nullptr;
+	CTransform*			m_pTransformCom = nullptr;
 	PxTransform			mTrans;
-	PxShape*			mShapes = nullptr;
 	PxRigidActor*		mActor = nullptr;
 
-
-
+	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
-//	CModel*				m_pModel = nullptr;
-//	CTransform*			m_pTransformCom = nullptr;
+	CModel*				m_pModel = nullptr;
 
-
-	static int OBJID;
 
 private:
 	HRESULT SetUp_Components();
+	HRESULT Update_PhysXPos();
 
 public:
 	static CTestStaticPhysX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -3,7 +3,8 @@
 #include "..\Public\Player.h"
 #include "..\Public\Camera_Main.h"
 
-#define PVD_HOST "127.0.0.1"
+#define							PVD_HOST "127.0.0.1"
+#define							MAX_NUM_ACTOR_SHAPES 128
 
 IMPLEMENT_SINGLETON(CPhysXMgr)
 
@@ -60,42 +61,37 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 		mScene->fetchResults(true);
 	}
 
-	CPlayer* pPlayer = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
-	if (pPlayer == nullptr)
-		return S_FALSE;
-
-	if (mTestRigActor)
-	{
-		CTransform* pTransPos = pPlayer->Get_Transform();
-		PxVec3 PlayerPos = *(PxVec3*)&pTransPos->Get_MatrixState_Float3(CTransform::STATE_POS);
-		mTestRigActor->setGlobalPose(PxTransform(PlayerPos));
-	}
-
-
-
-	// 모든 객체 가져오기
-	PxU32 nbActors = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-	if (nbActors)
-	{
-		// 모든 피직스 객체 Get
-		std::vector<PxRigidActor*> actors(nbActors);
-		mScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-		
-		// 랜더링 수행
-		for (auto vec: actors)
-		{
-
-			PxScene* scene = vec->getScene();
-			auto pos =  vec->getGlobalPose();
-			int debug = 5;
-
-
-		}
-	}
-
+	Renderer();
 
 	return S_OK;
 }
+
+
+
+HRESULT CPhysXMgr::Renderer()
+{
+	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+
+	// 모든 객체 가져오기
+	PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+	if (numActor)
+	{
+		// 모든 피직스 객체 Get
+		std::vector<PxRigidActor*> actors(numActor);
+		mScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC,
+			reinterpret_cast<PxActor**>(&actors[0]), numActor);
+
+		for (auto& actor : actors)
+		{
+			PxTransform tr =  actor->getGlobalPose();
+			Render_Actor(actor);
+		}
+	}
+	
+	return S_OK;
+
+}
+
 
 void CPhysXMgr::KEYTEST()
 {
@@ -282,7 +278,7 @@ HRESULT CPhysXMgr::Create_Cook()
 
 
 	// 지형 도형 인스턴스
-	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), PxReal(10), numCols, numCols);
+	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), PxReal(10.f), numCols, numCols);
 
 	// 엑터에 지형 정보 달기
 	PxRigidActor* aHieightFieldActor = mPhysics->createRigidStatic(PxTransform(0, 0, 0));
@@ -291,6 +287,80 @@ HRESULT CPhysXMgr::Create_Cook()
 		hfGeom, *mMaterial);
 
 	mScene->addActor(*aHieightFieldActor);
+
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::Render_Actor(const PxRigidActor* actor )
+{
+	bool sleeping = actor->is<PxRigidDynamic>() ? actor->is<PxRigidDynamic>()->isSleeping() : false;
+
+	if (sleeping)
+		return S_FALSE;
+
+	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+	const PxU32 numShapes = actor->getNbShapes();
+	if (numShapes >= MAX_NUM_ACTOR_SHAPES)
+		return E_FAIL;
+
+	actor->getShapes(shapes, numShapes);
+
+	// 모양 마다 그려준다.
+	for (PxU32 j = 0; j < numShapes; j++)
+	{
+		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *actor));
+		const PxGeometryHolder h = shapes[j]->getGeometry();
+		RenderShape(h);
+
+		int debug = 5;
+	}
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::RenderShape(const PxGeometryHolder & h)
+{
+	const PxGeometry& geom =  h.any();
+
+	switch (geom.getType())
+	{
+	case PxGeometryType::eSPHERE:		
+	{
+		const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
+		// sphereGeom.radius;
+		break;
+	}
+
+	case PxGeometryType::eBOX:
+	{
+		const PxBoxGeometry& boxGeom = static_cast<const PxBoxGeometry&>(geom);
+		//	boxGeom.halfExtents.x;
+		break;
+	}
+	case PxGeometryType::eCAPSULE:
+	{
+		const PxCapsuleGeometry& capsuleGeom = static_cast<const PxCapsuleGeometry&>(geom);
+		//	const PxF32 radius = capsuleGeom.radius;
+		//	const PxF32 halfHeight = capsuleGeom.halfHeight;		
+
+	}
+		break;
+
+	//case PxGeometryType::eCONVEXMESH:
+	//	PxConvexMeshGeometry
+	//	break;
+
+	//case PxGeometryType::eTRIANGLEMESH:
+	//	PxTriangleMeshGeometry
+	//	break;
+
+
+	default:
+		break;
+
+
+	}
 
 
 	return S_OK;

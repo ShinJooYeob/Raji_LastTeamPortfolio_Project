@@ -11,7 +11,6 @@ CTestStaticPhysX::CTestStaticPhysX(const CTestStaticPhysX & rhs)
 	: CGameObject(rhs)
 {
 }
-int CTestStaticPhysX::OBJID = 0;
 
 HRESULT CTestStaticPhysX::Initialize_Prototype(void * pArg)
 {
@@ -27,10 +26,12 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
+	m_pTransformCom->Scaled_All(_float3(1, 1, 1));
 
-	mTrans.transform(PxVec3(0, 0, 0));
-
-
+//	mTrans.transform(PxVec3(0, 0, 0));
+//	PxRigidDynamic* asd = GetSingle(CPhysXMgr)->gPhysics->createRigidDynamic(mTrans);
+//	GetSingle(CPhysXMgr)->CreateSphere_Actor(asd, CPhysXMgr::gMaterial, 5.0f);
 
 
 	return S_OK;
@@ -40,6 +41,8 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 {
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+//	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
 
 	return _int();
@@ -51,34 +54,34 @@ _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-
-
-
-
+	mTrans = 
+	// 충돌체 달기
+	mActor = GetSingle(CPhysXMgr)->gPhysics->createRigidDynamic()
 	return _int();
 }
 
 _int CTestStaticPhysX::Render()
 {
-	if (__super::Render() < 0)		return -1;
+	if (__super::Render() < 0)		
+		return -1;
 
+	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
-	//CGameInstance* pInstance = GetSingle(CGameInstance);
-	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	CGameInstance* pInstance = GetSingle(CGameInstance);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	//for (_uint i = 0; i < NumMaterial; i++)
-	//{
-	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	for (_uint i = 0; i < NumMaterial; i++)
+	{
+		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
-	//}
-
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
+	}
 	return _int();
 }
 
@@ -93,21 +96,24 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(VAYUSURA_LEADER_BULLET), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
+	CTransform::TRANSFORMDESC tDesc = {};
 
+	tDesc.fMovePerSec = 5;
+	tDesc.fRotationPerSec = XMConvertToRadians(60);
+	tDesc.fScalingPerSec = 1.f;
+	tDesc.vPivot = _float3(0, 0, 0);
 
-	//CTransform::TRANSFORMDESC tDesc = {};
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
-	//tDesc.fMovePerSec = 5;
-	//tDesc.fRotationPerSec = XMConvertToRadians(60);
-	//tDesc.fScalingPerSec = 1.f;
-	//tDesc.vPivot = _float3(0, 0, 0);
+	return S_OK;
+}
 
-	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
-
+HRESULT CTestStaticPhysX::Update_PhysXPos()
+{
 
 	return S_OK;
 }
@@ -139,6 +145,7 @@ CGameObject * CTestStaticPhysX::Clone(void * pArg)
 void CTestStaticPhysX::Free()
 {
 	__super::Free();
+
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);

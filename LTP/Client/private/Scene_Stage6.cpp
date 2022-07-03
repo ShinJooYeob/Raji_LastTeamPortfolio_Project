@@ -40,7 +40,7 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 	
-	m_pPhySample->Update(fDeltaTime);
+//	m_pPhySample->Update(fDeltaTime);
 
 	return 0;
 }
@@ -53,6 +53,11 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
+	if (KEYDOWN(DIK_K))
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), L"PhysX_Test"));
+
+	}
 	return 0;
 }
 
@@ -183,7 +188,6 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Phycis()
 {
-	m_pPhySample = CPhyxSampleTest::Create();
 
 	return S_OK;
 }
