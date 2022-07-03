@@ -7,7 +7,9 @@ const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_
 	TEXT("Monster_Bullet_Vayusura_Leader.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Minion.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Purple.fbx"),
-	TEXT("Monster_Bullet_Tezabsura_Purple.fbx")
+	TEXT("Monster_Bullet_Tezabsura_Purple.fbx"),
+	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
+	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx")
 
 };
 
@@ -49,7 +51,6 @@ HRESULT CMonster_Bullet_Universal::Initialize_Clone(void * pArg)
 	SetUp_BoneMatrix();
 
 
-	//Initialize_Bullet();
 
 	return S_OK;
 }
@@ -182,6 +183,8 @@ HRESULT CMonster_Bullet_Universal::SetUp_Info()
 		XMStoreFloat4(&m_fTempPos, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 		XMStoreFloat3(&m_fTempLook, m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 
+		m_fTempPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
 	}
 	else {
 		MSGBOX("CMonster_Bullet_Universal Not Obejct_Transform");
@@ -206,7 +209,13 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 		Tezabsura_Purple_Default_Bullet(dDeltaTime);
 		break;
 	case TEZABSURA_PURPLE_PRIMARY_BULLET:
-		Tezabsura_Purple_Primary_BUllet(dDeltaTime);
+		Tezabsura_Purple_Primary_Bullet(dDeltaTime);
+		break;
+	case TEZABSURA_BOMBER_DEFAULT_BULLET:
+		Tezabsura_Bomber_Default_Bullet(dDeltaTime);
+		break;
+	case TEZABSURA_BOMBER_HOWITZER_BULLET:
+		Tezabsura_Bomber_Howitzer_Bullet(dDeltaTime);
 		break;
 	default:
 		MSGBOX("Not BulletMeshNumber");
@@ -215,16 +224,44 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Bullet_Universal::Initialize_Bullet()
+_Vector CMonster_Bullet_Universal::Bezier(_Vector StartPoint, _Vector LastPoint, _double dDeltaTime)
 {
-	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	if (m_dBezierTime <= 1)
 	{
-	case BULLETMESHID::Prototype_Mesh_Monster_Bullet_Vayusura_Leader:
-		break;
-	default:
-		break;
+		m_dBezierTime += dDeltaTime;
 	}
-	return S_OK;
+	else {
+		Set_IsDead();
+	}
+
+	_Vector  CenterPos = (StartPoint - LastPoint);
+
+	CenterPos = StartPoint + (CenterPos * 0.1); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
+
+	_float4 TempCenter;
+	XMStoreFloat4(&TempCenter, CenterPos);
+
+	TempCenter.y = TempCenter.y + 10;
+
+	_Vector BezierPos = ((1 - m_dBezierTime)*(1 - m_dBezierTime)*StartPoint) + (2 * m_dBezierTime*(1 - m_dBezierTime) *XMLoadFloat4(&TempCenter)) + (m_dBezierTime*m_dBezierTime)*LastPoint;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
+
+
+	//_Vector  CenterPos = (StartPoint - LastPoint) ;
+
+	//CenterPos = StartPoint + (CenterPos * 0.5);
+
+	//_float4 TempCenter;
+	//XMStoreFloat4(&TempCenter, CenterPos);
+
+	//TempCenter.y = TempCenter.y + 10;
+
+	//_Vector BezierPos = ((1 - m_dBezierTime)*(1 - m_dBezierTime)*StartPoint) + (2 * m_dBezierTime*(1 - m_dBezierTime) *XMLoadFloat4(&TempCenter)) + (m_dBezierTime*m_dBezierTime)*LastPoint;
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos)
+
+	return _Vector();
 }
 
 HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
@@ -287,6 +324,18 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Default_Bullet(_double dDeltaTime)
 {
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
+
+	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_Bullet(_double dDeltaTime)
+{
+	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
@@ -296,7 +345,7 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Default_Bullet(_double dDelt
 	return S_OK;
 }
 
-HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_BUllet(_double dDeltaTime)
+HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Default_Bullet(_double dDeltaTime)
 {
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	_Vector vLook = XMLoadFloat3(&m_fTempLook);
@@ -304,6 +353,19 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_BUllet(_double dDelt
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Howitzer_Bullet(_double dDeltaTime)
+{
+	Bezier(XMLoadFloat4(&m_fTempPos), XMLoadFloat4(&m_fTempPlayerPos), dDeltaTime);
+	//_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	//vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 
 	return S_OK;
 }

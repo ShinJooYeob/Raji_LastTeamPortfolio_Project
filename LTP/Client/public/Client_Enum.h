@@ -109,6 +109,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Vayusura_Leader,
 	Prototype_Obejct_Monster_Tezabsura_Minion,
 	Prototype_Obejct_Monster_Tezabsura_Purple,
+	Prototype_Obejct_Monster_Tezabsura_Bomber,
 
 
 	//JJB
@@ -207,6 +208,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Obejct_Monster_Tezabsura_Purple:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Purple");
+
+	case Prototype_Obejct_Monster_Tezabsura_Bomber:
+		return TEXT("Prototype_Object_Monster_Tezabsura_Bomber");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
@@ -554,6 +558,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Vayusura_Leader,
 	Prototype_Mesh_Monster_Tezabsura_Minion,
 	Prototype_Mesh_Monster_Tezabsura_Purple,
+	Prototype_Mesh_Monster_Tezabsura_Bomber,
 	Prototype_Mesh_Monster_Ninjasura,
 	Prototype_Mesh_Monster_Jalsura,
 	Prototype_Mesh_Monster_Gadasura_Black,
@@ -714,6 +719,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Monster_Tezabsura_Purple:
 		return TEXT("Monster_Tezabsura_Purple.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Tezabsura_Bomber:
+		return TEXT("Monster_Tezabsura_Bomber.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Ninjasura:
@@ -997,6 +1006,7 @@ enum BULLETMESHID
 	Prototype_Mesh_Monster_Bullet_Vayusura_Leader,
 	Prototype_Mesh_Monster_Bullet_Tezabsura_Minion,
 	Prototype_Mesh_Monster_Bullet_Tezabsura_Purple,
+	Prototype_Mesh_Monster_Bullet_Tezabsura_Bomber,
 	Tezabsura_Purple_Default_BUllet,
 	BULLET_END
 };
@@ -1011,6 +1021,8 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 		return TEXT("Monster_Bullet_Tezabsura_Minion.fbx");
 	case Prototype_Mesh_Monster_Bullet_Tezabsura_Purple:
 		return TEXT("Monster_Bullet_Tezabsura_Purple.fbx");
+	case Prototype_Mesh_Monster_Bullet_Tezabsura_Bomber:
+		return TEXT("Monster_Bullet_Tezabsura_Bomber.fbx");
 	default:
 		MSGBOX("Not Prototype_Component_Model_Bullet");
 		return TEXT("ha! ha!");

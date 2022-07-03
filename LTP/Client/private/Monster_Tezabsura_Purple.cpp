@@ -29,6 +29,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
+
+	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
@@ -249,7 +251,7 @@ HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 	switch (m_iOncePattern)
 	{
 	case 1:
-		m_iOnceAnimNumber = 12; //Attack
+		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 	case 2:
@@ -301,7 +303,7 @@ HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = false;
 		break;
 	case 14:
-		m_iOnceAnimNumber = 12; //Attack
+		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 
@@ -499,7 +501,7 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 12:
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
 			{
-				m_bIOnceAnimSwitch = false;
+				m_bLookAtOn = false;
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
@@ -524,20 +526,40 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			break;
 		case 13:
-			if (m_iAdjMovedIndex == 0  && PlayRate >= 0.481481)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.5555)
 			{
-				m_iAdjMovedIndex++;
-			}
-			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.518518f)
-			{
-				m_iAdjMovedIndex++;
-			}
-			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.5555)
-			{
-				m_iAdjMovedIndex++;
-			}
-			else if (m_iAdjMovedIndex == 3 && PlayRate >= 0.592592)
-			{
+				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET;
+				Monster_BulletDesc.fSpeedPerSec = 7;
+				Monster_BulletDesc.fScale = _float3(0.9f, 0.9f, 0.9f);
+
+				Monster_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+
+
+				Monster_BulletDesc.Object = this;
+
+				Monster_BulletDesc.dDuration = 15;
+
+				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.pBoneName = "jaw_01";
+
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.15f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.925f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.075f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.925f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.075f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 				m_iAdjMovedIndex++;
 			}
 			break;

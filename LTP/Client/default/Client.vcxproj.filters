@@ -199,6 +199,12 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple">
       <UniqueIdentifier>{dbf0aa8d-d058-45cc-93d4-030b9a5f18c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber">
+      <UniqueIdentifier>{1dd0660e-2a78-435c-afeb-d56394bf3035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine">
+      <UniqueIdentifier>{5a961c5f-a222-43f9-9049-0c095f47843e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -426,6 +432,12 @@
     <ClInclude Include="..\public\Monster_Tezabsura_Purple.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Bomber.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Landmine.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -619,6 +631,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Bomber.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Landmine.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
