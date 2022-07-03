@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "..\Public\PhysX\PhysXMgr.h"
+#include "..\Public\Player.h"
 
 #define PVD_HOST "127.0.0.1"
 
 IMPLEMENT_SINGLETON(CPhysXMgr)
+
+PxMaterial* CPhysXMgr::gMaterial = nullptr;
 
 CPhysXMgr::CPhysXMgr()
 {
@@ -17,25 +20,31 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-//	FAILED_CHECK(Initialize_PhysXLib());
-
-	// #TEST
-//	FAILED_CHECK(CreateTest_Base());
-//	FAILED_CHECK(Create_Cook());
-	
-
-	//while (1)
-	//{
-	//	mScene->simulate(1.f / 60.f);
-	//	mScene->fetchResults(true);
-	//}
+	FAILED_CHECK(Initialize_PhysXLib());
 
 	return S_OK;
 
 }
+static float X = 0;
+static float Z = 0;
 
 HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 {
+	// #TEST
+	// 플레이어 위치 받아서 테스트
+
+	if (KEYDOWN(DIK_C))
+	{
+
+		CPlayer* pPlayer = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
+		NULL_CHECK_RETURN(pPlayer,E_FAIL);
+		CTransform* pTransPos = pPlayer->Get_Transform();
+		PxVec3 PlayerPos = *(PxVec3*)&pTransPos->Get_MatrixState_Float3(CTransform::STATE_POS);
+		mTestRigActor = mPhysics->createRigidStatic(PxTransform(PlayerPos));
+		CreateSphere(PxTransform(0,0,0), mTestRigActor, mMaterial, 5);
+		Z += 1; 
+	}
+
 	// Tick
 	if (mScene)
 	{
@@ -66,30 +75,8 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 
 HRESULT CPhysXMgr::CreateTest_Base()
 {
-	// Mat 객체들 생성
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-	// Plane 객체 생성
-	PxRigidStatic* groudPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 99), *mMaterial);
-	mScene->addActor(*groudPlane);
-
-//	사각형 박스 생성
-	float halfsize = 0.5f;
-	const PxTransform t(PxVec3(0, 0, 0));
-	PxU32 size = 5;
-	CreateStack_Test(t, size, halfsize);
-
-
 	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
 	mScene->addActor(*groundPlane);
-
-
-//	for (PxU32 i = 0; i < 5; i++)
-//		createStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
-//
-//	if (!interactive)
-//		createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
-//
-
 
 	return S_OK;
 }
@@ -164,7 +151,7 @@ HRESULT CPhysXMgr::Create_Cook()
 
 	// 메시 인스턴스를 엑터한테 추가하는 개념
 	PxRigidActor* aConvexActor = mPhysics->createRigidStatic(PxTransform(0,0,0));
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+
 
 	PxShape* aConvexShape = PxRigidActorExt::createExclusiveShape(*aConvexActor,
 		PxConvexMeshGeometry(convexMesh), *mMaterial);
@@ -263,6 +250,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mToleranceScale.length = 100;
 	mToleranceScale.speed = 981;
 
+	
+
 	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, mAllocCallback,
 		mErrorCallback);
 	NULL_CHECK_BREAK(mFoundation);
@@ -313,28 +302,40 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	}
 #endif // DEBUG
 
+	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	gMaterial = mMaterial;
+
 	return S_OK;
 }
 
-HRESULT CPhysXMgr::CreateBox(const PxTransform& t, _float3 halfExtent)
+
+HRESULT CPhysXMgr::CreateBox(const PxTransform& t, PxRigidActor* actor, PxMaterial* Material, _float3 halfExtent)
 {
-	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent.x, halfExtent.y, halfExtent.z), *mMaterial);
-	PxRigidDynamic* body = mPhysics->createRigidDynamic(t);
-	body->attachShape(*shape);
-	PxRigidBodyExt::updateMassAndInertia(*body, 1.0f);
-	mScene->addActor(*body);
-	
+	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent.x, halfExtent.y, halfExtent.z), *Material);
+	NULL_CHECK_BREAK(shape);
+	actor->attachShape(*shape);
+	mScene->addActor(*actor);
 	shape->release();
+	return S_OK;
+}
 
-
+HRESULT CPhysXMgr::CreateSphere(const PxTransform & t, PxRigidActor * actor, PxMaterial * Material, _float halfExtent)
+{
+	PxShape* shape = mPhysics->createShape(PxSphereGeometry(halfExtent), *Material);
+	NULL_CHECK_BREAK(shape);
+	actor->attachShape(*shape);
+	mScene->addActor(*actor);
+	shape->release();
 	return S_OK;
 
+	return E_NOTIMPL;
 }
+
 
 void CPhysXMgr::Free()
 {
 
-//	Clean_Phyics();
+	Clean_Phyics();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

@@ -196,6 +196,9 @@
     <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
       <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\Com_PhyCom">
+      <UniqueIdentifier>{bb17a656-8c87-4c47-8753-44c44937719e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -416,6 +419,9 @@
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
+      <Filter>05.PhysX\Com_PhyCom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -604,6 +610,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
+      <Filter>05.PhysX\Com_PhyCom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

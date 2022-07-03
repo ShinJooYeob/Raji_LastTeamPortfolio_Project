@@ -99,6 +99,7 @@ public:
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
+	CTransform* Get_Transform() const { return m_pTransformCom; }
 
 
 private: /* Change Start State */

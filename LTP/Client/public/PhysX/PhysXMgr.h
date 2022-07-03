@@ -25,8 +25,20 @@ public:
 	PxScene*		Get_PhysicsScene();
 	
 public:
+	// Shape Test
+	HRESULT CreateBox(const PxTransform& t, PxRigidActor* actor, PxMaterial* Material, _float3 halfExtent);
+	HRESULT CreateSphere(const PxTransform& t, PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
+//	HRESULT CreateSpeher(const PxTransform& t, _float3 halfextent);
+
+public:
+	// Actor Test
+
+
 	// 충돌체 연결
-	HRESULT CreateBox(const PxTransform& t, _float3 halfextent);
+	
+	
+	HRESULT CreateBox_Actor();
+
 
 
 private:
@@ -55,9 +67,15 @@ private:
 
 	PxScene*					mScene = nullptr;
 	PxMaterial*					mMaterial = nullptr;
+	static PxMaterial*			gMaterial ;
 
 	PxPvd*						mPvd = nullptr;
 
+
+	// TESTCODE
+	PxActor*						mTestActor = nullptr;
+	PxRigidActor*					mTestRigActor = nullptr;
+	PxTransform*					mTestTransfrom1 = nullptr;
 
 public:
 
