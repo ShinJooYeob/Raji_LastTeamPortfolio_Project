@@ -38,7 +38,8 @@ private:
 
 private:
 	HRESULT SetUp_Components();
-	HRESULT Update_PhysXPos();
+	HRESULT Update_Trans2Px();
+	HRESULT Update_Px2Trans();
 
 public:
 	static CTestStaticPhysX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

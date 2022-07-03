@@ -74,19 +74,19 @@ HRESULT CPhysXMgr::Renderer()
 
 	// 모든 객체 가져오기
 	PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-	if (numActor)
-	{
-		// 모든 피직스 객체 Get
-		std::vector<PxRigidActor*> actors(numActor);
-		mScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC,
-			reinterpret_cast<PxActor**>(&actors[0]), numActor);
+	//if (numActor)
+	//{
+	//	// 모든 피직스 객체 Get
+	//	std::vector<PxRigidActor*> actors(numActor);
+	//	mScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC,
+	//		reinterpret_cast<PxActor**>(&actors[0]), numActor);
 
-		for (auto& actor : actors)
-		{
-			PxTransform tr =  actor->getGlobalPose();
-			Render_Actor(actor);
-		}
-	}
+	//	for (auto& actor : actors)
+	//	{
+	//		PxTransform tr =  actor->getGlobalPose();
+	//		Render_Actor(actor);
+	//	}
+	//}
 	
 	return S_OK;
 

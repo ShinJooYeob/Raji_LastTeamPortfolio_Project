@@ -33,7 +33,12 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 //	PxRigidDynamic* asd = GetSingle(CPhysXMgr)->gPhysics->createRigidDynamic(mTrans);
 //	GetSingle(CPhysXMgr)->CreateSphere_Actor(asd, CPhysXMgr::gMaterial, 5.0f);
 
+	// 충돌체 달기
+	mActor = GetSingle(CPhysXMgr)->CreateDynamic(PxTransform(0, 0, 0), PxBoxGeometry(1,1,1));
+		;
+	GetSingle(CPhysXMgr)->CreateSphere_Actor(mActor, GetSingle(CPhysXMgr)->gMaterial, 10.0f);
 
+	
 	return S_OK;
 }
 
@@ -41,6 +46,7 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 {
 
 	if (__super::Update(fDeltaTime) < 0)return -1;
+	Update_Trans2Px();
 
 //	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
@@ -54,9 +60,8 @@ _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-	mTrans = 
-	// 충돌체 달기
-	mActor = GetSingle(CPhysXMgr)->gPhysics->createRigidDynamic()
+	Update_Px2Trans();
+
 	return _int();
 }
 
@@ -112,11 +117,24 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CTestStaticPhysX::Update_PhysXPos()
+HRESULT CTestStaticPhysX::Update_Trans2Px()
 {
+	// Transform 위치 PX로 업데이트
+	mTrans = PxTransform(*(PxVec3*)&m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
+	return S_OK;
+}
+
+HRESULT CTestStaticPhysX::Update_Px2Trans()
+{
+	mTrans = mActor->getGlobalPose();
+	_float3 vec3 = *(_float3*)&mTrans.p;
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vec3);
+
 
 	return S_OK;
 }
+
+
 
 CTestStaticPhysX * CTestStaticPhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
