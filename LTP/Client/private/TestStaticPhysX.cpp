@@ -1,0 +1,147 @@
+#include "stdafx.h"
+#include "..\public\TestStaticPhysX.h"
+
+
+CTestStaticPhysX::CTestStaticPhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+	:CGameObject(pDevice, pDeviceContext)
+{
+}
+
+CTestStaticPhysX::CTestStaticPhysX(const CTestStaticPhysX & rhs)
+	: CGameObject(rhs)
+{
+}
+int CTestStaticPhysX::OBJID = 0;
+
+HRESULT CTestStaticPhysX::Initialize_Prototype(void * pArg)
+{
+	FAILED_CHECK(__super::Initialize_Prototype(pArg));
+
+
+	return S_OK;
+}
+
+HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
+{
+	FAILED_CHECK(__super::Initialize_Clone(pArg));
+
+	FAILED_CHECK(SetUp_Components());
+
+
+	mTrans.transform(PxVec3(0, 0, 0));
+
+
+
+
+	return S_OK;
+}
+
+_int CTestStaticPhysX::Update(_double fDeltaTime)
+{
+
+	if (__super::Update(fDeltaTime) < 0)return -1;
+
+
+	return _int();
+}
+
+_int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
+{
+	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
+
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+
+
+
+
+
+	return _int();
+}
+
+_int CTestStaticPhysX::Render()
+{
+	if (__super::Render() < 0)		return -1;
+
+
+	//CGameInstance* pInstance = GetSingle(CGameInstance);
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 1, i, "g_BoneMatrices"));
+	//}
+
+	return _int();
+}
+
+_int CTestStaticPhysX::LateRender()
+{
+	return _int();
+}
+
+
+
+HRESULT CTestStaticPhysX::SetUp_Components()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+
+
+
+	//CTransform::TRANSFORMDESC tDesc = {};
+
+	//tDesc.fMovePerSec = 5;
+	//tDesc.fRotationPerSec = XMConvertToRadians(60);
+	//tDesc.fScalingPerSec = 1.f;
+	//tDesc.vPivot = _float3(0, 0, 0);
+
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+
+	return S_OK;
+}
+
+CTestStaticPhysX * CTestStaticPhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+{
+	CTestStaticPhysX*	pInstance = new CTestStaticPhysX(pDevice, pDeviceContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pArg)))
+	{
+		DEBUGBREAK;
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CTestStaticPhysX::Clone(void * pArg)
+{
+	CTestStaticPhysX*	pInstance = new CTestStaticPhysX(*this);
+
+	if (FAILED(pInstance->Initialize_Clone(pArg)))
+	{
+		DEBUGBREAK;
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CTestStaticPhysX::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModel);
+}

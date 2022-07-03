@@ -139,8 +139,6 @@ HRESULT CMainApp::Render()
 		return E_FAIL;
 	}
 
-
-
 	FAILED_CHECK(m_pGameInstance->Clear_BackBuffer_View(_float4(0.5f, 0.5f, 0.5f, 1.f)));
 	FAILED_CHECK(m_pGameInstance->Clear_DepthStencil_View());
 
@@ -151,8 +149,6 @@ HRESULT CMainApp::Render()
 #endif // _DEBUG
 
 	FAILED_CHECK(m_pGameInstance->Present());
-
-
 	return S_OK;
 
 }
