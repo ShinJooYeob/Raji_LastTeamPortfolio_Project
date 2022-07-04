@@ -25,17 +25,16 @@ HRESULT CChiedtuan_Weapon::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
-	ZeroMemory(&m_eAttachedDesc, sizeof(ATTACHEDESC));
+	ZeroMemory(&m_WeaponDesc, sizeof(WEAPOPNDESC));
 	if (nullptr != pArg)
 	{
-		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
+		memcpy(&m_WeaponDesc, pArg, sizeof(WEAPOPNDESC));
 	}
 
 	FAILED_CHECK(SetUp_Components());
 
 	//m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
-	//m_pTransformCom->Scaled_All(_float3(10.f, 10.f, 10.f))
-	m_pModel->Change_AnimIndex(15);
+	m_pTransformCom->Scaled_All(_float3(0.8f));
 	return S_OK;
 }
 
@@ -43,19 +42,6 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-
-	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
-	{
-		m_pModel->Change_AnimIndex(m_iAniNum);
-		++m_iAniNum;
-	}
-
-	if (m_iAniNum > 23)
-		m_iAniNum = 0;
-
-
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
-	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
 	return _int();
 }
@@ -69,10 +55,21 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
+
+
+
+	//_Matrix mat =
+	//	XMMatrixRotationX(XMConvertToRadians(0))*
+	//	XMMatrixRotationY(XMConvertToRadians(0))*
+	//	XMMatrixRotationZ(XMConvertToRadians(0));
+
+	//m_pTransformCom->Set_Matrix(mat);
+
+
+
 
 	return _int();
 }
@@ -101,7 +98,7 @@ _int CChiedtuan_Weapon::Render()
 		{
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
 	}
 
 	return _int();
@@ -114,16 +111,31 @@ _int CChiedtuan_Weapon::LateRender()
 
 void CChiedtuan_Weapon::Update_AttachMatrix()
 {
-	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
 HRESULT CChiedtuan_Weapon::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TR)
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
+	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TL)
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon2), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
+	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR)
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon3), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
+	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	}
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -136,31 +148,6 @@ HRESULT CChiedtuan_Weapon::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
-	return S_OK;
-}
-
-HRESULT CChiedtuan_Weapon::Adjust_AnimMovedTransform(_double fDeltatime)
-{
-	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
-	_double PlayRate = m_pModel->Get_PlayRate();
-
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
-		m_iAdjMovedIndex = 0;
-
-	if (PlayRate <= 0.98)
-	{
-		//switch (iNowAnimIndex)
-		//{
-		//default:
-		//	break;
-		//}
-	}
-	else
-	{
-
-	}
-
-	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 

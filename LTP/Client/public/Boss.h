@@ -27,8 +27,8 @@ public:
 protected:
 	_bool		m_bIsHit = false;
 	_bool		m_bIsAttack = false;
-	_float		m_fAttackCoolTime = 3.f;
-	_float		m_fSkillCoolTime = 10.f;
+	_float		m_fAttackCoolTime = 0.f;
+	_float		m_fSkillCoolTime = 0.f;
 	_float		m_fAnimmultiple = 1.f; // AnimationPlaySpeed
 	_float		m_fRange = 0.f; // 오브젝트간의 거리변수
 

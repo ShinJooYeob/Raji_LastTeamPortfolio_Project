@@ -56,6 +56,12 @@ typedef struct tagAttachedDesc
 
 		return (m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
 	}
+public:
+
+	void Set_ReAttachBoneName(const char*	pAttachBoneName)
+	{
+		m_pAttachedNode = pModel->Find_HierarchyNode(pAttachBoneName);
+	}
 
 	CTransform* Get_AttachObjectTransform()
 	{

@@ -29,8 +29,6 @@ private:
 	_uint				m_iAdjMovedIndex = 0; 
 	_uint				m_iAniNum = 0;
 
-	_float				m_fAttackCoolTime = 5.f;
-	_float				m_fSkillCoolTime = 8.f;
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
 
