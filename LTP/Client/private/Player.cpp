@@ -3524,9 +3524,15 @@ HRESULT CPlayer::SetUp_EtcInfo()
 
 
 	// Release Skill Timer //
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Add_Timer(TEXT("Player_Timer_ShellingShot_Delay"));
-	RELEASE_INSTANCE(CGameInstance);
+	static bool TimerIsSpwaned = false;
+
+	if (!TimerIsSpwaned)
+	{
+		TimerIsSpwaned = true;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Add_Timer(TEXT("Player_Timer_ShellingShot_Delay"));
+		RELEASE_INSTANCE(CGameInstance);
+	}
 
 
 	m_fMaxTime_ShellingDelay = 0.5f;

@@ -71,7 +71,7 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 
 HRESULT CPhysXMgr::Renderer()
 {
-	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+//	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 
 	// 모든 객체 가져오기
 	PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
@@ -279,7 +279,7 @@ HRESULT CPhysXMgr::Create_Cook()
 
 
 	// 지형 도형 인스턴스
-	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), PxReal(10.f), numCols, numCols);
+	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), PxReal(10.f), PxReal(numCols), PxReal(numCols));
 
 	// 엑터에 지형 정보 달기
 	PxRigidActor* aHieightFieldActor = mPhysics->createRigidStatic(PxTransform(0, 0, 0));
