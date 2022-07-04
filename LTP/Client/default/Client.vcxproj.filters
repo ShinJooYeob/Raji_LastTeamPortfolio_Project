@@ -241,6 +241,9 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake">
       <UniqueIdentifier>{30e977db-f5f5-4f31-80ff-3760c24daecc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\Base">
+      <UniqueIdentifier>{192520f9-04e9-45d9-bc15-5831f45bd9e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -456,9 +459,6 @@
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\TestStaticPhysX.h">
       <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClInclude>
@@ -497,6 +497,21 @@
     </ClInclude>
     <ClInclude Include="..\public\Snake.h">
       <Filter>01.GameObject\02.Monster\Boss\Snake</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
+      <Filter>05.PhysX\3.Com_PhyCom\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -683,9 +698,6 @@
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\TestStaticPhysX.cpp">
       <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClCompile>
@@ -721,6 +733,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Snake.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Snake</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

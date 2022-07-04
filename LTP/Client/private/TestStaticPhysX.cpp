@@ -205,17 +205,12 @@ void CTestStaticPhysX::Set_DynamicBullet()
 	_float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	m_pPhysX->Set_Postiotn(position);
 
-
-
-
 }
 
 
 void CTestStaticPhysX::Set_ChainTest()
 {
-	_float offsetX = 2.5f;
 	static _float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-	position.z += 1;
 	position.y += 10;
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, position);
 

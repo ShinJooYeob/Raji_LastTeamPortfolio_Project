@@ -35,6 +35,7 @@ public:
  	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1,1,1));
 	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
 	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	HRESULT CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 
 
@@ -63,10 +64,13 @@ public:
 #endif // _DEBUG
 
 private:
+//	CTransform*					mTransform = nullptr;
+	ATTACHEDESC					mAttachDesc;
+
 	PxRigidActor*				mRigActor = nullptr;
 	PxTransform					mPxTransform;
 	PxVec3						mActorScale = PxVec3(1,1,1);
-	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_END;
+	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_COLLIDER;
 
 private:
 	// 물리충돌 해제
