@@ -19,14 +19,15 @@ HRESULT CLight::Initilize_Protoype(const LIGHTDESC & LightDesc)
 	return S_OK;
 }
 
-HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer,_double fDeltaTime)
+HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer, _float3* vDirectionalAtPoint, _double fDeltaTime)
 {
 	_uint		iPassIndex = 0;
 
 	if (LIGHTDESC::TYPE_DIRECTIONAL == m_LightDesc.eLightType)
 	{
 
-		_float4 ShaderLightDir = XMVector3Normalize(XMVectorSetW(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(m_LightDesc.vVector.XMVector(),1) ,0));
+		_float4 ShaderLightDir = XMVector3Normalize(XMVectorSetW(XMVectorSet(vDirectionalAtPoint->x, vDirectionalAtPoint->y, vDirectionalAtPoint->z, 1) 
+			- XMVectorSetW(m_LightDesc.vVector.XMVector(),1) ,0));
 		pShader->Set_RawValue("g_vLightDir", &ShaderLightDir, sizeof(_float4));
 		iPassIndex = 1;
 	}

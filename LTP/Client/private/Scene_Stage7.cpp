@@ -97,13 +97,13 @@ HRESULT CScene_Stage7::Ready_Light()
 		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		LightDesc.vAmbient = _float4(1.0f);
 		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = _float4(-10, 10, -10, 0);
+		LightDesc.vVector = DefalutSunPosition;
 
 		g_pGameInstance->Add_Light(LightDesc);
 	}
 	else
 	{
-		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(-10, 10, -10, 0).XMVector());
+		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, DefalutSunPosition.XMVector());
 	}
 
 

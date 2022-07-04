@@ -515,8 +515,9 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Renderer,
 	Prototype_Transform,
 	Prototype_Collider,
-	Prototype_Trail,
 	Prototype_Navigation,
+	Prototype_SwordTrail,
+	Prototype_MotionTrail,
 	Prototype_Shader_VT,
 	Prototype_Shader_VCT,
 	Prototype_Shader_VNT,
@@ -602,8 +603,13 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Collider:
 		return TEXT("Prototype_Component_Collider");
 		break;
-	case Prototype_Trail:
-		return TEXT("Prototype_Component_Trail");
+
+	case Prototype_MotionTrail:
+		return TEXT("Prototype_Component_MotionTrail");
+		break;
+		
+	case Prototype_SwordTrail:
+		return TEXT("Prototype_Component_SwordTrail");
 		break;
 
 	case Prototype_Navigation:
@@ -863,7 +869,8 @@ enum COMPONENTID
 	Com_Collider,
 	Com_SwordTrail,
 	Com_SubSwordTrail,
-	Com_Navaigation
+	Com_MotionTrail,
+	Com_Navaigation,
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -911,6 +918,10 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 	case Com_SubSwordTrail:
 		return TEXT("Com_SubSwordTrail");
 		break;
+	case Com_MotionTrail:
+		return TEXT("Com_MotionTrail");
+		break;
+		
 	case Com_Navaigation:
 		return TEXT("Com_Navigation");
 		break;

@@ -17,7 +17,8 @@ public:
 	virtual HRESULT Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDESC* pAIMesh, _fMatrix& TransformMatrix);
 	virtual HRESULT Initialize_Clone(void* pArg);
 
-	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix ,_float4x4* pBoneMatrices, const char* szBoneName, const vector<CHierarchyNode*>* pVecHierarchyNodes);
+	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix, _float4x4* pBoneMatrices, const char* szBoneName, const vector<CHierarchyNode*>* pVecHierarchyNodes);
+	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix, _float4x4* pBoneMatrices, const char* szBoneName, vector<_float4x4>* pUpdateMatrix,	_bool bBool);
 public:
 	_uint		Get_MaterialIndex();
 	_uint		Get_NumAffectingBones() { return m_iNumAffectingBones; };

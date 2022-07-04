@@ -58,6 +58,10 @@ public:
 	_Matrix Caculate_AttachedBone(class CHierarchyNode* pNode);
 
 
+	vector<class CHierarchyNode*>*	Get_HierarchyContainer() { return &m_vecHierarchyNode; };
+	vector<class CMeshContainer*>*	 Get_MeshContainerArr() { return m_vecMeshContainerArr; };
+	_float4x4 Get_DefaiultPivotMat() { return m_DefaultPivotMatrix; };
+
 
 public:
 	_uint	Get_NumMaterial() { return m_iNumMaterials; };

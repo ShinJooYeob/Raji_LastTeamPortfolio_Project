@@ -13,7 +13,7 @@
 #endif // USE_IMGUI
 //#include "UtilityMgr.h"
 
-
+ 
 #include "SkyBox.h"
 
 
@@ -272,6 +272,12 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Transform),
 		CTransform::Create(m_pDevice, m_pDeviceContext)));
+	
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_MotionTrail),
+		CMotionTrail::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_SwordTrail),
+		CSwordTrail::Create(m_pDevice, m_pDeviceContext, L"SwordTrail.txt", 20)));
+	
 
 	////버퍼인덱스 프로토타입 생성
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect),

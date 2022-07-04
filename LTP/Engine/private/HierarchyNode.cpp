@@ -6,6 +6,7 @@ CHierarchyNode::CHierarchyNode()
 {
 }
 
+
 HRESULT CHierarchyNode::Initialize_HierarchyNode(CHierarchyNode* pParent, const char* pName, _float4x4* TransformationMatrix, _uint iDepth)
 {
 	if (iDepth != 0 && (pParent == nullptr || pName == nullptr || TransformationMatrix == nullptr)) return E_FAIL;
@@ -44,6 +45,8 @@ HRESULT CHierarchyNode::Initialize_HierarchyNode(BONEDESC * desc)
 
 	return S_OK;
 }
+
+
 
 void CHierarchyNode::Update_CombinedMatrix()
 {

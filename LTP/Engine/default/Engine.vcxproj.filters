@@ -172,6 +172,15 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\02.Renderer">
       <UniqueIdentifier>{a3a33219-1fa1-493e-8514-c74a794d64d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\09.SwordTrail">
+      <UniqueIdentifier>{7367d5d1-26d3-4cb4-bad5-da4b66024ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail">
+      <UniqueIdentifier>{f8bf38ee-d60c-42d9-9eca-781339768f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail\00.TrailBuffer">
+      <UniqueIdentifier>{5ddf9634-e0da-429e-9543-8ed3072e7322}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -342,6 +351,15 @@
     <ClInclude Include="..\public\FileInfoMgr.h">
       <Filter>01.Utillity\13.FileIOMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MotionTrail.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MotionTrailBuffer.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail\00.TrailBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SwordTrail.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\09.SwordTrail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -494,6 +512,15 @@
     <ClCompile Include="..\private\FileInfoMgr.cpp">
       <Filter>01.Utillity\13.FileIOMgr</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\MotionTrail.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MotionTrailBuffer.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail\00.TrailBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SwordTrail.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\09.SwordTrail</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\ShaderFiles\Shader_Deferred.hlsl">
@@ -501,6 +528,9 @@
     </FxCompile>
     <FxCompile Include="..\bin\ShaderFiles\Shader_Navigation.hlsl">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\07.Navigation</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxTrailInstance.hlsl">
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

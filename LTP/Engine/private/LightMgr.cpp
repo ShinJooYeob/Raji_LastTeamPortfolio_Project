@@ -66,7 +66,7 @@ HRESULT CLightMgr::Render(CShader * pShader, CVIBuffer_Rect * pViBuffer, MATRIXW
 				}
 				else
 				{
-					(*iter)->Render(pShader, pViBuffer, fDeltaTime);
+					(*iter)->Render(pShader, pViBuffer,&m_vSunAtPoint ,fDeltaTime);
 					iter++;
 				}
 			

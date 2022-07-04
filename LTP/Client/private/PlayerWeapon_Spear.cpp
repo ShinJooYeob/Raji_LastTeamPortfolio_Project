@@ -30,6 +30,14 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 	Set_IsOcllusion(true);
 
 
+	//소드 트레일 온오프 함수 1인자로 온 2인자가 소드 트레일 시작 위치 3인자가 소드 트레일 종착 위치.
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	m_pSwordTrail->Set_TrailTurnOn(true, mat.r[3] - mat.r[2], mat.r[3] + mat.r[2]);
 
 	// Rim Light //
 	//Set_LimLight_N_Emissive(_float4(1.f, 0, 0, 1.f), 0.f);
@@ -60,6 +68,10 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 
 	m_pModel->Change_AnimIndex(0);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
+
+	
+
+
 	return _int();
 }
 
@@ -83,10 +95,20 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
+
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	m_pSwordTrail->Update_SwordTrail(mat.r[3] - mat.r[2],	mat.r[3] + mat.r[2], fDeltaTimer);
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+
 	return _int();
 }
 
@@ -210,6 +232,20 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+	CSwordTrail::TRAILDESC tSwordDesc;
+	//2번인가가 노이즈 사용일거임 0번이 기본 1번은 나도 모름
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(0, 0.84705882f, 1, 1.f);
+	tSwordDesc.iTextureIndex = 1;
+	//노이즈 사용하는 트레일 일때만 사용
+	tSwordDesc.NoiseSpeed = 0;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+	//이후에 추가적으로 값 바꿔주고싶을 때
+	//m_pSwordTrailCom->Set_Color(_float4(0, 0.84705882f, 1, 1.f));
+	//m_pSwordTrailCom->Set_PassIndex(0);
+	//m_pSwordTrailCom->Set_TextureIndex(1);
+
 
 	return S_OK;
 }
@@ -251,4 +287,5 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pSwordTrail);
 }

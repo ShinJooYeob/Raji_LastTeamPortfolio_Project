@@ -312,6 +312,32 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MotionTrail(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+
+
+	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+	float3x3	NormalWorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+	vNormal = mul(vNormal, NormalWorldMatrix);
+
+
+	Out.vDiffuse = vector(0,0,0,0.001f);
+	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vEmissive = 1.f;
+	Out.vLimLight = g_vLimLight;
+	return Out;
+}
+
 
 technique11		DefaultTechnique
 {
@@ -364,5 +390,15 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_ATTACHEDNOWEIGHTW();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
+	}
+	pass ForMotionTrailBuffer//5
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_NOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MotionTrail();
 	}
 }

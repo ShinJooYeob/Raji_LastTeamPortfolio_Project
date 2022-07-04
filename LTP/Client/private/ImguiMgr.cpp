@@ -772,8 +772,62 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 	if (open_action != -1)	ImGui::SetNextItemOpen(open_action != 0);
 	if (ImGui::TreeNode("Post Processing Controller"))
 	{
+		ImGui::Separator();
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 		
+		if (ImGui::TreeNode("Main Light Controller"))
+		{
+			LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+
+			if (pLightDesc == nullptr)
+			{
+				LIGHTDESC LightDesc;
+
+				LightDesc.eLightType = tagLightDesc::TYPE_DIRECTIONAL;
+				LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+				LightDesc.vAmbient = _float4(1.0f);
+				LightDesc.vSpecular = _float4(1);
+				LightDesc.vVector = _float4(-10, 10, -10, 0);
+				g_pGameInstance->Add_Light(LightDesc);
+				pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+			}
+
+
+			_float3 vSunPos = pLightDesc->vVector;
+			float arrSunPos[3];
+			memcpy(arrSunPos, &vSunPos, sizeof(float) * 3);
+
+
+			ImGui::DragFloat3("Sun Pos", arrSunPos, 0.134f, -64, 320.f);
+
+			vSunPos.x = max(min(arrSunPos[0], 320.f), -64.f);
+			vSunPos.y = max(min(arrSunPos[1], 48.f), 10.f);
+			vSunPos.z = max(min(arrSunPos[2], 320.f), -64.f);
+
+			g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(vSunPos, 0).XMVector());
+			
+
+			Make_VerticalSpacing(1);
+
+			
+
+			_float3 vSunLookAt = pUtil->Get_Renderer()->Get_SunAtPoint();
+			memcpy(arrSunPos, &vSunLookAt, sizeof(float) * 3);
+
+			ImGui::DragFloat3("Sun LookAt ", arrSunPos, 0.134f, -64, 320.f);
+
+			vSunLookAt.x = max(min(arrSunPos[0], 320.f), -64.f);
+			vSunLookAt.y = max(min(arrSunPos[1], -10.f), -128.f);
+			vSunLookAt.z = max(min(arrSunPos[2], 320.f), -64.f);
+
+			pUtil->Get_Renderer()->Set_SunAtPoint(vSunLookAt);
+
+
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+
+
 		_bool bBool = pUtil->Get_Renderer()->Get_IsOnPostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
 		ImGui::Checkbox("Show Collider", &bBool);
 		pUtil->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, bBool);
@@ -918,6 +972,37 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 			if (bBool)
 			{
+				if (ImGui::TreeNode("GodRay Color"))
+				{
+					static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+					static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+					static bool alpha_preview = true;
+					static bool alpha_half_preview = false;
+					static bool drag_and_drop = true;
+					static bool options_menu = false;
+					//static bool options_menu = true;
+					static bool hdr = false;
+					static bool ref_color = false;
+
+					//Get_GodRayColor() { return m_vGodRayColor; }
+					//Set_SunAtPoint(_float3 vVector) { m_vGodRayColor = vVector; }
+					_float3 ColorValue = pUtil->Get_Renderer()->Get_GodRayColor();
+
+					color = ImVec4(ColorValue.x, ColorValue.y, ColorValue.z, 1.f);
+
+					ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+					ImGuiColorEditFlags flags = misc_flags;
+
+					ImGui::ColorPicker4("FogColor##444", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+
+					ColorValue.x = max(min(color.x, 1.f), 0.f);
+					ColorValue.y = max(min(color.y, 1.f), 0.f);
+					ColorValue.z = max(min(color.z, 1.f), 0.f); 
+
+					pUtil->Get_Renderer()->Set_GodRayColor(ColorValue);
+					ImGui::TreePop();
+				}
+
 				Value = pUtil->Get_Renderer()->Get_GodrayLength();
 				ImGui::DragFloat("GodrayLength", &Value, 1.f, 1.f, 64.f);
 				Value = _float(_int(max(min(Value, 64.f), 1.f)));
@@ -935,8 +1020,8 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 
 				Value = pUtil->Get_Renderer()->Get_DistDecay();
-				ImGui::DragFloat("DistDecay", &Value, 0.001f, 0.001f, 1.f);
-				Value = max(min(Value, 1.f), 0.001f);
+				ImGui::DragFloat("DistDecay", &Value, 0.001f, 0.001f, 30.f);
+				Value = max(min(Value, 30.f), 0.001f);
 				pUtil->Get_Renderer()->Set_DistDecay(Value);
 
 
@@ -966,6 +1051,14 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			ImGui::DragFloat("BloomOverLumince", &Value, 0.001f, 0.001f, 1.f);
 			Value = max(min(Value, 1.f), 0.01f);
 			pUtil->Get_Renderer()->Set_BloomOverLuminceValue(Value);
+
+
+			Value = pUtil->Get_Renderer()->Get_BloomBrightnessMul();
+			ImGui::DragFloat("Brightness Mul", &Value, 0.001f, 0.001f, 3.f);
+			Value = max(min(Value, 3.f), 0.001f);
+			pUtil->Get_Renderer()->Set_BloomBrightnessMul(Value);
+
+
 		}
 
 

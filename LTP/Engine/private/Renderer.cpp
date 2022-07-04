@@ -199,7 +199,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	XMStoreFloat4x4(&m_WVPmat.ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH(Viewport.Width, Viewport.Height, 0.f, 1.f)));
 
 
-	m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSet(0, 10, -10, 1), XMVectorSet(10, -10, 10, 1), XMVectorSet(0, 1, 0, 0)));
+	m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSet(0, 10, -10, 1), XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1), XMVectorSet(0, 1, 0, 0)));
 	m_LightWVPmat.ProjMatrix = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1, 0.2f, 3000));
 
 
@@ -321,6 +321,21 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 	return S_OK;
 }
 
+HRESULT CRenderer::Add_TrailGroup(TRAILGROUP eTrailID, CComponent * pTrailComponent)
+{
+	if (eTrailID >= TRAILGROUP::TRAIL_END)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_TrailList[eTrailID].push_back(pTrailComponent);
+	Safe_AddRef(pTrailComponent);
+
+
+	return S_OK;
+}
+
 
 HRESULT CRenderer::Add_DebugGroup(CComponent * pComponent)
 {
@@ -341,6 +356,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_Priority());
 	FAILED_CHECK(Render_NonBlend());
 	FAILED_CHECK(Render_Blend());
+	FAILED_CHECK(Render_SwordTrail());
+	FAILED_CHECK(Render_MotionTrail());
 	FAILED_CHECK(Render_AfterObj());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
 
@@ -355,12 +372,13 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
-	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
-		FAILED_CHECK(Render_Bloom());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
 		FAILED_CHECK(Render_DepthOfField());
 	if (m_PostProcessingOn[POSTPROCESSING_DDFOG])
 		FAILED_CHECK(Render_DDFog());
+	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
+		FAILED_CHECK(Render_Bloom());
+
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 
@@ -407,6 +425,14 @@ HRESULT CRenderer::Clear_RenderGroup_forSceneChaging()
 		m_ShadowObjectList[i].clear();
 	}
 
+	for (_uint i = 0; i < TRAIL_END; ++i)
+	{
+		for (auto& RenderObject : m_TrailList[i])
+		{
+			Safe_Release(RenderObject);
+		}
+		m_TrailList[i].clear();
+	}
 
 
 	for (auto& DebugObject : m_DebugObjectList)
@@ -481,6 +507,8 @@ HRESULT CRenderer::Render_Lights(_double fDeltaTime)
 {
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_LightAcc")));
 
+	m_pLightMgr->Set_SunAtPoint(m_vSunAtPoint);
+	
 	FAILED_CHECK(m_pLightMgr->Render(m_pShader, m_pVIBuffer, &m_WVPmat, fDeltaTime));
 
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_LightAcc")));
@@ -630,6 +658,40 @@ HRESULT CRenderer::Render_BlurShadow()
 
 		FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
 		FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Shadow"))));
+
+
+
+		LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+		if (!pLightDesc) return S_FALSE;
+
+		_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
+
+		_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
+		_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
+
+
+
+
+		_float3 vSunPos = pLightDesc->vVector.XMVector();
+		_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
+		_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+
+		_Matrix mViewProjection = mView * mProj;
+		_float3 vSunPosSS = vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
+
+		vSunPosSS.x = (vSunPosSS.x * 0.5f) + 0.5f;
+		vSunPosSS.y = (vSunPosSS.y * -0.5f) + 0.5f;
+
+
+		const float dotCamSun = -XMVectorGetX(XMVector3Dot(XMVectorSetW(vCamLook, 0), XMVectorSetW(vSunDir, 0)));
+		if (dotCamSun <= 0.0f)
+		{
+			vSunPosSS.x = -100.f;
+			vSunPosSS.y = -100.f;
+		}
+
+		FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &vSunPosSS, sizeof(_float2)));
+
 		FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 8));
 
 		FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_ShadowDownScaling")));
@@ -765,7 +827,12 @@ HRESULT CRenderer::Render_Bloom()
 	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_UpScaled_By2"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_BluredTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_BluredDefferred"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
 	
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fBloomMul", &m_fBloomBrightnessMul, sizeof(_float)));
+	
+
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 13));
 
 
@@ -815,7 +882,7 @@ HRESULT CRenderer::Render_DDFog()
 	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 	if (!pLightDesc) return S_FALSE;
 
-	_float3 vToSunDir = - XMVector3Normalize(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
+	_float3 vToSunDir = - XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
@@ -847,6 +914,7 @@ HRESULT CRenderer::Render_DDFog()
 
 	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_GodRay"))));
 	
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 15));
 
@@ -866,7 +934,7 @@ HRESULT CRenderer::Render_GodRay()
 	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 	if (!pLightDesc) return S_FALSE;
 
-	_Vector vSunDir =  XMVector3Normalize(XMVectorSet(10, -10, 10, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1) );
+	_Vector vSunDir =  XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1) );
 
 	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
 
@@ -874,8 +942,9 @@ HRESULT CRenderer::Render_GodRay()
 	_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
 
 
-	const float dotCamSun = -XMVectorGetX(XMVector3Dot(XMVectorSetW(vCamLook,0), XMVectorSetW(vSunDir,0)));
-	if (dotCamSun <= 0.0f)return S_FALSE;
+	const float dotCamSun = -XMVectorGetX(XMVector3Dot(XMVectorSetW(vCamLook, 0), XMVectorSetW(vSunDir, 0)));
+	if (dotCamSun <= 0.0f) 
+		return S_FALSE;
 
 
 	_float3 vSunPos = pLightDesc->vVector.XMVector();
@@ -897,22 +966,27 @@ HRESULT CRenderer::Render_GodRay()
 	vSunPosSS.x = (vSunPosSS.x * 0.5f) + 0.5f;
 	vSunPosSS.y = (vSunPosSS.y * -0.5f) + 0.5f;
 
-	static const float fMaxSunDist = 1.3f;
-	if (abs(vSunPosSS.x) >= fMaxSunDist || abs(vSunPosSS.y) >= fMaxSunDist)
+	static const float fMaxSunDist = 2.f;
+	float fMaxDist = max(abs(vSunPosSS.x), abs(vSunPosSS.y));
+
+	//_float SunDist = _float3(vSunPosSS.x, vSunPosSS.y,0).Get_Lenth();
+	//if (SunDist >= fMaxSunDist)
+	//{
+	//	return S_FALSE;
+	//}
+	if (fMaxDist >= fMaxSunDist)
 	{
 		return S_FALSE;
 	}
 
+	_float GodRayIntensive = m_fGodrayIntensity;
 	// Attenuate the sun color based on how far the sun is from the view
-	//_float3 vSunColorAtt = vSunColor;
-	_float3 vSunColorAtt = _float3(0.71875f, 0.83984375f, 0.390625f);
-	float fMaxDist = max(abs(vSunPosSS.x), abs(vSunPosSS.y));
-	if (fMaxDist >= 1.0f)
-	{
-		vSunColorAtt = vSunColorAtt.XMVector() * (fMaxSunDist - fMaxDist);
-	}
-
-
+	//if (fMaxDist >= 1.0f)
+	//{
+	//	//vSunColorAtt = vSunColorAtt.XMVector() * (fMaxSunDist - fMaxDist);
+	//	GodRayIntensive *= (1 - fMaxDist) / fMaxSunDist + 1.f;
+	//}
+	GodRayIntensive *= fMaxSunDist - fMaxDist;
 
 
 	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceOclussion"), TEXT("Target_ReferenceOclussion")));
@@ -924,24 +998,17 @@ HRESULT CRenderer::Render_GodRay()
 	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldViewPortDesc));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_ReferenceOclussion"), m_DownScaledDepthStencil[0]));
-
-
-
 	m_fTexleSize = 1.f;
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
-
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledRefOclussion"))));
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
-
 	m_pDeviceContext->RSSetViewports(1, &OldViewPortDesc);
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_ReferenceOclussion")));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Oclussion")));
-
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceOclussion"))));
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
-
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Oclussion")));
 
 
@@ -959,15 +1026,11 @@ HRESULT CRenderer::Render_GodRay()
 	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &vSunPosSS, sizeof(_float2)));
 	FAILED_CHECK(m_pShader->Set_RawValue("InitDecay", &m_fInitDecay, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("DistDecay", &m_fDistDecay, sizeof(_float)));
-	FAILED_CHECK(m_pShader->Set_RawValue("RayColor", &vSunColorAtt, sizeof(_float3)));
+	FAILED_CHECK(m_pShader->Set_RawValue("RayColor", &m_vGodRayColor, sizeof(_float3)));
 	FAILED_CHECK(m_pShader->Set_RawValue("MaxDeltaLen", &m_fMaxDeltaLen, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayLength", &m_fGodrayLength, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayNumDelta", &fGodRayNumDelta, sizeof(_float)));
 
-	//g_fGodRayLength = 64;
-	//g_fGodRayNumDelta = 1.f / 63.f;
-
-	//	g_fGodRayLength = 64; m_fGodrayLength
 
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Oclussion"))));
 
@@ -980,7 +1043,7 @@ HRESULT CRenderer::Render_GodRay()
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
 
-	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayIntensity", &m_fGodrayIntensity, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayIntensity", &GodRayIntensive, sizeof(_float)));
 	
 
 	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_GodRay"))));
@@ -993,6 +1056,39 @@ HRESULT CRenderer::Render_GodRay()
 
 	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
 	FAILED_CHECK(Copy_DeferredToReference());
+
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_MotionTrail()
+{
+	for (auto& pMotionTrailComponet : m_TrailList[TRAIL_MOTION])
+	{
+		if (pMotionTrailComponet != nullptr)
+		{
+			FAILED_CHECK(pMotionTrailComponet->Render());
+		}
+		Safe_Release(pMotionTrailComponet);
+	}
+	m_TrailList[TRAIL_MOTION].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_SwordTrail()
+{
+
+	for (auto& pSwordTrailComponet : m_TrailList[TRAIL_SWORD])
+	{
+		if (pSwordTrailComponet != nullptr)
+		{
+			FAILED_CHECK(pSwordTrailComponet->Render());
+		}
+
+		Safe_Release(pSwordTrailComponet);
+	}
+	m_TrailList[TRAIL_SWORD].clear();
 
 
 	return S_OK;
@@ -1113,7 +1209,7 @@ HRESULT CRenderer::Render_ShadowMap()
 
 
 	if (pLightDesc)
-		m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSetW(pLightDesc->vVector.XMVector(), 1), XMVectorSet(10, -10, 10, 1), XMVectorSet(0, 1, 0, 0)));
+		m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSetW(pLightDesc->vVector.XMVector(), 1), XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1), XMVectorSet(0, 1, 0, 0)));
 
 
 	FAILED_CHECK(Render_ShadowGroup());
@@ -1492,6 +1588,15 @@ void CRenderer::Free()
 			Safe_Release(ShadowDesc.pGameObject);
 		}
 		m_ShadowObjectList[i].clear();
+	}
+
+	for (_uint i = 0; i < TRAIL_END; ++i)
+	{
+		for (auto& RenderObject : m_TrailList[i])
+		{
+			Safe_Release(RenderObject);
+		}
+		m_TrailList[i].clear();
 	}
 
 

@@ -255,6 +255,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CMotionTrail*		m_pMotionTrail = nullptr;
 
 private:
 	CPlayerWeapon*		m_pPlayerWeapons[WEAPON_END - 1];

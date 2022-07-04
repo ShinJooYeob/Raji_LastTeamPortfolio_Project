@@ -54,6 +54,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CSwordTrail*		m_pSwordTrail = nullptr;
 
 public:
 	static CPlayerWeapon_Spear*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -54,6 +54,21 @@ _int CPlayer::Update(_double fDeltaTime)
 	// Check Player Key Input
 	Check_PlayerKeyInput(fDeltaTime);
 
+	static bool TestBool = false;
+	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
+		TestBool = !TestBool;
+	if (TestBool)
+	{
+		static double Timer = 0;
+		Timer -= fDeltaTime;
+		if (Timer < 0)
+		{
+			Timer = 0.05f;
+			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4());
+		}
+	}
+
+
 
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
@@ -109,6 +124,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	Update_AttachCamPos();
 	//
 
+
+	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
+
 	return _int();
 }
 
@@ -118,6 +136,8 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
+
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
@@ -146,7 +166,6 @@ _int CPlayer::Render()
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-
 	}
 
 	return _int();
@@ -3202,6 +3221,17 @@ HRESULT CPlayer::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
+
+	tMotionDesc.iNumTrailCount = 6;
+	tMotionDesc.pModel = m_pModel;
+	tMotionDesc.pShader = m_pShaderCom;
+	tMotionDesc.vLimLight = _float4(1, 0.5f, 0, 1.f);
+	tMotionDesc.iPassIndex = 5;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
+
+	
 	return S_OK;
 }
 
@@ -3424,4 +3454,6 @@ void CPlayer::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+	Safe_Release(m_pMotionTrail);
 }

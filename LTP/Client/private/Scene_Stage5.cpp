@@ -28,6 +28,7 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
+	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	
 	
 	
@@ -98,13 +99,13 @@ HRESULT CScene_Stage5::Ready_Light()
 		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		LightDesc.vAmbient = _float4(1.0f);
 		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = _float4(-10, 10, -10, 0);
+		LightDesc.vVector = DefalutSunPosition;
 
 		g_pGameInstance->Add_Light(LightDesc);
 	}
 	else
 	{
-		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(-10, 10, -10, 0).XMVector());
+		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, DefalutSunPosition.XMVector());
 	}
 
 
@@ -171,14 +172,6 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));
 
 
-	// Test Object //
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
-	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
-	NULL_CHECK_RETURN(pTransform, E_FAIL);
-	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
-	pTransform->Set_Matrix(tt);
-	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_FrustumSize(99999999.f);
-
 
 
 
@@ -191,6 +184,36 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_Stage5::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_SkyBox)));
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
+	pTransform->Set_Matrix(tt);
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_FrustumSize(99999999.f);
+
+	// Test Object //
+	for (_uint i = 0; i < 10; i++)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+		CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+		NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+		_Matrix tt = XMMatrixScaling(10, 1, 1)*XMMatrixRotationZ(XMConvertToRadians(-90)) * XMMatrixTranslation(-50 +(i*10.f) , 0, 10);
+		pTransform->Set_Matrix(tt);
+		((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_IsOcllusion(true);
+		((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_FrustumSize(99999999.f);
+
+	}
+
+
+
+
 
 	return S_OK;
 }

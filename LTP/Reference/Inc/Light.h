@@ -19,7 +19,7 @@ public:
 
 
 public:
-	HRESULT Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer, _double fDeltaTime);
+	HRESULT Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer, _float3* vDirectionalAtPoint ,_double fDeltaTime);
 
 
 private:

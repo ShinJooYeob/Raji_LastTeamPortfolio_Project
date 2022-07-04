@@ -72,6 +72,7 @@ cbuffer ForPostProcessing
 	float				g_fDofTargetLength = 10;
 	
 	float				g_fOverLuminence = 1.8f;
+	float				g_fBloomMul = 1.f;
 
 	float				g_fGodRayLength = 64;
 	float				g_fGodRayNumDelta = 1.f / 63.f;
@@ -141,6 +142,26 @@ float3 ApplyFog(float3 originalColor, float eyePosY, float3 eyeToPixel)
 	float3 fogFinalColor = lerp(FogColor, FogHighlightColor, sunHighlightFactor);
 
 	return lerp(fogFinalColor, originalColor, fogFinalFactor);
+}
+
+float3 Calculate_ClipUV_N_CurrentDepth(texture2D WorldTexture, float2 UVPos, matrix mViewProj)
+{
+	vector		vWorldPosition = WorldTexture.Sample(DefaultSampler, UVPos);
+	//float		fViewZ = vDepthDesc.x * 300.f;
+	vector		vWorldPos = vector(vWorldPosition.xyz, 1);
+
+	float4 ClipPos = mul(vWorldPos, g_LightViewMatrix);
+	ClipPos = mul(ClipPos, g_LightProjMatrix);
+
+	float CurrentDepth = ClipPos.z / ClipPos.w;
+	float2 UV = ClipPos.xy / ClipPos.w;
+
+	UV.y = UV.y * -0.5f + 0.5f;
+	UV.x = UV.x * 0.5f + 0.5f;
+
+	float3 Out = float3(UV.x, UV.y, CurrentDepth);
+
+	return Out;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -593,45 +614,82 @@ PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 {
 	PS_OUT_AfterDeferred		Out = (PS_OUT_AfterDeferred)0;
 
+
+
+
 	vector		vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
 	//float		fViewZ = vDepthDesc.x * 300.f;
+
+	matrix LightViewProj = mul(g_LightViewMatrix, g_LightProjMatrix);
+	float3 ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, In.vTexUV, LightViewProj);
+
 	vector		vWorldPos = vector(vWorldPosition.xyz,1);
+	vector		vShadowDesc = g_TargetTexture.Sample(DefaultSampler, ClipUV_N_CurrentDepth.xy);
 
-	float4 ClipPos = mul(vWorldPos, g_LightViewMatrix);
-	ClipPos = mul(ClipPos, g_LightProjMatrix);
+	//if ()
+	//	discard;
 
-	float CurrentDepth = ClipPos.z / ClipPos.w;
-	float2 UV = ClipPos.xy / ClipPos.w;
-
-	UV.y = UV.y * -0.5f + 0.5f;
-	UV.x = UV.x * 0.5f + 0.5f;
-
-	vector		vShadowDesc = g_TargetTexture.Sample(DefaultSampler, UV);
-
-	if (vShadowDesc.a == 0.0f)
-		discard;
+#define FloatCorrectionValue 0.00000125f
+#define XTexelSize		0.00078125f
+#define YTexelSize		0.00138889f
+#define	DiagTexelSize	0.00159353f
 
 	float ShadowDepth = vShadowDesc.r;
-	//float ShadowDepth = vShadowDesc.r;
 
-
-	//0.000125
-	//if (CurrentDepth > ShadowDepth + 0.0000125)
-	//if (CurrentDepth > ShadowDepth + 0.000125)
-	//if (CurrentDepth > ShadowDepth )
-
-	if (vWorldPosition.x != 1)
+	if (length(SunPos - In.vTexUV)  < DiagTexelSize * 3.f)
 	{
-		if (CurrentDepth > ShadowDepth + 0.00000125f)
-		{
-			Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive , g_fShadowIntensive , 1);
-		}
-		if (vShadowDesc.a < 1.f && CurrentDepth > ShadowDepth - 0.00125f && CurrentDepth < ShadowDepth + 0.00125f)
-		{
-			Out.vColor2 = 1.f;
-		}
+		//(vWorldPosition.x == 1 && )
+		Out.vColor2 = 1.f;
 
 	}
+		if (ClipUV_N_CurrentDepth.z > ShadowDepth + FloatCorrectionValue)
+		{
+			if (vShadowDesc.a != 0.0f && vWorldPosition.x != 1)
+			{
+				Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive, g_fShadowIntensive, 1);
+				Out.vColor2 = 0.f;
+			}
+		}
+		else if (vShadowDesc.a < 1.f)
+		{
+
+			float OriginDepth = ClipUV_N_CurrentDepth.z;
+			bool IsGodRay = false;
+
+			[unroll(10)]
+			for (int i = -5; i <= 5; i++)
+			{
+				[unroll(10)]
+				for (int j = -5; j <= 5; j++)
+				{
+					float2 NewUV = In.vTexUV + float2(float(i) * XTexelSize, float(j) * YTexelSize);
+					ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, NewUV, LightViewProj);
+
+					vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, NewUV);
+					vWorldPos = vector(vWorldPosition.xyz, 1);
+					vShadowDesc = g_TargetTexture.Sample(DefaultSampler, ClipUV_N_CurrentDepth.xy);
+
+					if (ClipUV_N_CurrentDepth.z > OriginDepth + FloatCorrectionValue)
+						//||(vWorldPosition.x == 1 && length(SunPos - NewUV)  < 0.00159353f * 100 ))
+					{
+						IsGodRay = true;
+						break;
+					}
+
+				}
+				if (IsGodRay) break;
+			}
+
+			if (IsGodRay)
+			{
+				Out.vColor2 = 1.f;
+			}
+		}
+
+
+
+
+	
 
 
 
@@ -711,8 +769,17 @@ PS_OUT PS_Bloom(PS_IN In)
 
 
 	vector BluredMaskDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
+	vector WorldPosDesc = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
 
-	Out.vColor = pow(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV),2.2f) * BluredMaskDesc + pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV),2.2f) * (1 - BluredMaskDesc),1.f/2.2f );
+	
+	if (WorldPosDesc.x == 1)
+	{
+		Out.vColor = pow(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc + pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * (1 - BluredMaskDesc), 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vColor = pow(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc * g_fBloomMul + pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * (1 - BluredMaskDesc), 1.f / 2.2f);
+	}
 
 	return Out;
 }
@@ -752,10 +819,21 @@ PS_OUT PS_VolumeMatricFog(PS_IN In)
 
 
 
-	float3 WorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
+	float3 WorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV).xyz;
+	vector GodRayDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
+	
 	if (WorldPosition.x == 1)
 	{
-		Out.vColor = vector(FogColor.xyz, 1.f);
+		if (GodRayDesc.r == 0)
+		{
+			Out.vColor = vector(FogColor.xyz, 1.f);
+
+		}
+		else
+		{
+			Out.vColor = pow(pow(GodRayDesc, 2.2f) * g_fGodRayIntensity
+				+ pow(vector(FogColor.xyz, 1.f), 2.2f), 1.f / 2.2f);
+		}
 	}
 	else
 	{
@@ -795,7 +873,7 @@ PS_OUT PS_GodRay(PS_IN In)
 	{
 		// Sample at the current location
 		float2 sampPos = In.vTexUV + rayOffset;
-		float fCurIntensity = g_TargetTexture.Sample(DefaultSampler, sampPos);
+		float fCurIntensity = g_TargetTexture.Sample(DefaultSampler, sampPos).r;
 
 		// Sum the intensity taking decay into account
 		rayIntensity += fCurIntensity * decay;

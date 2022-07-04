@@ -187,6 +187,30 @@ HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix&
 	return S_OK;
 }
 
+HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader * pShader, _fMatrix & DefultPivotMatrix, _float4x4 * pBoneMatrices, const char * szBoneName, vector<_float4x4>* pUpdateMatrix, _bool bBool)
+{
+	ZeroMemory(pBoneMatrices, sizeof(_float4x4) * 150);
+	_uint	iIndex = 0;
+
+	if (m_iNumAffectingBones == 0)
+	{
+		_Matrix UpdatedMatrix = (((*pUpdateMatrix)[m_iParantHierarchyNodeIndex]).XMatrix());
+		XMStoreFloat4x4(&pBoneMatrices[0], XMMatrixTranspose(UpdatedMatrix * DefultPivotMatrix));
+
+	}
+	else
+	{
+		//#BUG asiimp와 UpdatedMatrix 값이 위치가 다름 
+		for (auto& iHierarchyIndex : m_vecAffectingBoneIndex)
+		{
+			_Matrix UpdatedMatrix = ((*pUpdateMatrix)[iHierarchyIndex]).XMatrix();
+			XMStoreFloat4x4(&pBoneMatrices[iIndex++], XMMatrixTranspose(UpdatedMatrix * DefultPivotMatrix));
+		}
+	}
+	FAILED_CHECK(pShader->Set_RawValue(szBoneName, pBoneMatrices, sizeof(_float4x4) * 150));
+	return S_OK;
+}
+
 _uint CMeshContainer::Get_MaterialIndex()
 {
 	return m_MaterialIndex;

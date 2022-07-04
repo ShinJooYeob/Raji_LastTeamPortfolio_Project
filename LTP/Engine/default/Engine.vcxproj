@@ -200,6 +200,7 @@
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\ClipBone.h" />
+    <ClInclude Include="..\public\MotionTrail.h" />
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\public\ColliderBuffer.h" />
     <ClInclude Include="..\public\CollisionMgr.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\public\Light.h" />
     <ClInclude Include="..\public\LightMgr.h" />
     <ClInclude Include="..\public\MeshContainer.h" />
+    <ClInclude Include="..\public\MotionTrailBuffer.h" />
     <ClInclude Include="..\public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\public\ObjectLayer.h" />
@@ -238,6 +240,7 @@
     <ClInclude Include="..\public\SceneMgr.h" />
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\public\SoundMgr.h" />
+    <ClInclude Include="..\public\SwordTrail.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\public\TextureLayer.h" />
     <ClInclude Include="..\public\ThreadMgr.h" />
@@ -258,6 +261,7 @@
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\ClipBone.cpp" />
+    <ClCompile Include="..\private\MotionTrail.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\private\ColliderBuffer.cpp" />
     <ClCompile Include="..\private\CollisionMgr.cpp" />
@@ -278,6 +282,7 @@
     <ClCompile Include="..\private\Light.cpp" />
     <ClCompile Include="..\private\LightMgr.cpp" />
     <ClCompile Include="..\private\MeshContainer.cpp" />
+    <ClCompile Include="..\private\MotionTrailBuffer.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\private\ObjectLayer.cpp" />
@@ -290,6 +295,7 @@
     <ClCompile Include="..\private\SceneMgr.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\private\SoundMgr.cpp" />
+    <ClCompile Include="..\private\SwordTrail.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\private\TextureLayer.cpp" />
     <ClCompile Include="..\private\ThreadMgr.cpp" />
@@ -307,6 +313,7 @@
   <ItemGroup>
     <FxCompile Include="..\bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxTrailInstance.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

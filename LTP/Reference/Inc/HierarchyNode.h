@@ -11,6 +11,8 @@ private:
 	CHierarchyNode();
 	virtual ~CHierarchyNode() = default;
 
+
+
 public:
 	HRESULT Initialize_HierarchyNode(CHierarchyNode* pParent, const char* pName, _float4x4* TransformationMatrix, _uint iDepth);
 	HRESULT Initialize_HierarchyNode(BONEDESC* desc);
