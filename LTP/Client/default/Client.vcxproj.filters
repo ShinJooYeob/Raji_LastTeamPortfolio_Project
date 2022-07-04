@@ -223,6 +223,21 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Texture_Bullet">
       <UniqueIdentifier>{a5a4a2d1-0644-4133-bd35-41f9e0f6159e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\Mgr">
+      <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow">
+      <UniqueIdentifier>{787c5d22-7198-4974-9964-cca24eee3a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
+      <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\03. Shield">
+      <UniqueIdentifier>{0bdc9a1d-252c-4f5f-83ef-c83b3226aa17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\04. Chakra">
+      <UniqueIdentifier>{8b922587-df8b-4cc0-80db-74910bedcba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -468,6 +483,15 @@
     <ClInclude Include="..\public\Monster_Bullet_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Shield.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\03. Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Chakra.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\04. Chakra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -679,6 +703,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Shield.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\03. Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\04. Chakra</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

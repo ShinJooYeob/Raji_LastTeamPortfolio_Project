@@ -9,6 +9,11 @@ class CPlayerWeapon_Bow final : public CPlayerWeapon
 public:
 	enum EBowPivot { BOW_PIVOT_NORMAL, BOW_PIVOT_THROW, BOW_PIVOT_TAKEDOWN, BOW_PIVOT_END };
 
+	enum EBowAnim {
+		BOW_ANIM_IDLE, BOW_ANIM_NORMAL_READY, BOW_ANIM_NORMAL_LOOP, BOW_ANIM_NORMAL_SHOT, 
+		BOW_ANIM_UTILITY_LOOP, BOW_ANIM_UTILITY_READY, BOW_ANIM_UTILITY_SHOT, BOW_ANIM_END
+	};
+
 private:
 	CPlayerWeapon_Bow(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CPlayerWeapon_Bow(const CPlayerWeapon_Bow& rhs);
@@ -23,6 +28,19 @@ public:
 	virtual _int		LateUpdate(_double fDeltaTimer) override;
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
+
+public:
+	void				PlayAnim_Idle();
+
+	void				PlayAnim_NormalAttack_Ready();
+	void				PlayAnim_NormalAttack_Shot();
+
+	void				PlayAnim_UtilityAttack_Ready();
+	void				PlayAnim_UtilityAttack_Loop();
+	void				PlayAnim_UtilityAttack_Shot();
+
+public:
+	void				Set_AnimSpeed(_float fAnimSpeed);
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -50,6 +68,9 @@ private:
 private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
+	_uint				m_iCurAnim = 0;
+	_bool				m_bOnceAnim = false;
+	_float				m_fAnimSpeed = 1.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

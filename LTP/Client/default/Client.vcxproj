@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Chakra.h" />
     <ClInclude Include="..\public\Chiedtian.h" />
     <ClInclude Include="..\public\Chiedtuan_Weapon.h" />
     <ClInclude Include="..\public\Client_Define.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerWeapon.h" />
     <ClInclude Include="..\public\PlayerWeapon_Bow.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Shield.h" />
     <ClInclude Include="..\public\PlayerWeapon_Spear.h" />
     <ClInclude Include="..\public\PlayerWeapon_Sword.h" />
     <ClInclude Include="..\public\Rangda.h" />
@@ -247,6 +249,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp" />
     <ClCompile Include="..\private\Chiedtian.cpp" />
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp" />
     <ClCompile Include="..\private\EditorTerrain.cpp" />
@@ -275,6 +278,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerWeapon.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Bow.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Shield.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />

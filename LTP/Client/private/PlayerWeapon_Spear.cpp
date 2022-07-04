@@ -24,8 +24,6 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
-	//m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
-
 	FAILED_CHECK(SetUp_EtcInfo());
 	Set_IsOcllusion(true);
 
@@ -66,7 +64,7 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 		break;
 	}
 
-	m_pModel->Change_AnimIndex(0);
+	m_pModel->Change_AnimIndex(m_iCurAnim, 0.f);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
 	
@@ -81,6 +79,12 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 		return 0;
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
+
+	if (true == m_bThrowing)
+	{
+		Throw(fDeltaTimer);
+	}
+
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
 	{
@@ -134,7 +138,7 @@ _int CPlayerWeapon_Spear::Render()
 		{
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassNum, i, "g_BoneMatrices"));
 	}
 
 	return _int();
@@ -215,6 +219,30 @@ void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 	}
 }
 
+void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
+{
+	m_pTransformCom->Set_Matrix(m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix());
+	m_pTransformCom->LookDir(vThrowDir);
+	m_bThrowing = true;
+	m_bThrowDir = vThrowDir;
+	m_iPassNum = 3;
+	m_iCurAnim = 8;
+}
+
+void CPlayerWeapon_Spear::Throw_End()
+{
+	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
+	m_bThrowing = false;
+	m_bThrowDir = { 0.f, 0.f, 0.f };
+	m_iPassNum = 4;
+	m_iCurAnim = 0;
+}
+
+void CPlayerWeapon_Spear::Throw(_double fDeltaTimer)
+{
+	m_pTransformCom->MovetoDir(m_bThrowDir.XMVector(), fDeltaTimer);
+}
+
 HRESULT CPlayerWeapon_Spear::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -225,8 +253,8 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	
 	CTransform::TRANSFORMDESC tDesc = {};
 
-	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
+	tDesc.fMovePerSec = 30;
+	tDesc.fRotationPerSec = XMConvertToRadians(360);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 
@@ -252,6 +280,8 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 
 HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 {
+	m_iPassNum = 4;
+	m_iCurAnim = 0;
 	return S_OK;
 }
 

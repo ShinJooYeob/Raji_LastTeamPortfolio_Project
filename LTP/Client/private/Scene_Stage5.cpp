@@ -166,10 +166,10 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
-	CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+	/*CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
 	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(pPlayer, "skd_r_palm", _float3(100, 100, 100), _float3(90, 0, 0), _float3(-63.02f, 0.59f, -112.96f));
 	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));*/
 
 
 

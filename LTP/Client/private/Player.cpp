@@ -3,6 +3,9 @@
 #include "Camera_Main.h"
 #include "PlayerWeapon_Spear.h"
 #include "PlayerWeapon_Bow.h"
+#include "PlayerWeapon_Shield.h"
+#include "PlayerWeapon_Chakra.h"
+#include "Timer.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -198,7 +201,18 @@ _fMatrix CPlayer::Get_BoneMatrix(const char * pBoneName)
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 {
 	Set_PlayerState(STATE_IDLE);
-	m_pModel->Change_AnimIndex(BASE_ANIM_IDLE, 0.15f, true);
+
+	switch (m_eCurWeapon)
+	{
+	case EWEAPON_TYPE::WEAPON_NONE:
+	case EWEAPON_TYPE::WEAPON_SPEAR:
+	case EWEAPON_TYPE::WEAPON_BOW:
+	case EWEAPON_TYPE::WEAPON_CHAKRA:
+		m_pModel->Change_AnimIndex(BASE_ANIM_IDLE, 0.15f, true);
+		break;
+	case EWEAPON_TYPE::WEAPON_SWORD:
+		m_pModel->Change_AnimIndex(BASE_ANIM_IDLE_SWORD, 0.15f, true);
+	}
 }
 
 void CPlayer::Set_State_MoveStart(_double fDeltaTime)
@@ -211,9 +225,13 @@ void CPlayer::Set_State_MoveStart(_double fDeltaTime)
 	case EWEAPON_TYPE::WEAPON_SPEAR:
 		m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F, 0.1f);
 		break;
+	case EWEAPON_TYPE::WEAPON_NONE:
 	case EWEAPON_TYPE::WEAPON_BOW:
+	case EWEAPON_TYPE::WEAPON_CHAKRA:
 		m_pModel->Change_AnimIndex(BASE_ANIM_RUN_BOW, 0.1f);
 		break;
+	case EWEAPON_TYPE::WEAPON_SWORD:
+		m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F_SWORD, 0.1f);
 	}
 
 }
@@ -228,6 +246,9 @@ void CPlayer::Set_State_DodgeStart(_double fDeltaTime)
 
 void CPlayer::Set_State_MainAttackStart(_double fDeltaTime)
 {
+	if (WEAPON_CHAKRA == m_eCurWeapon || WEAPON_NONE == m_eCurWeapon)
+		return;
+
 	if(EWEAPON_TYPE::WEAPON_BOW != m_eCurWeapon)
 		m_bPressedMainAttackKey = false;
 
@@ -247,6 +268,9 @@ void CPlayer::Set_State_MainAttackStart(_double fDeltaTime)
 
 void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 {
+	if (WEAPON_CHAKRA == m_eCurWeapon || WEAPON_NONE == m_eCurWeapon)
+		return;
+
 	Set_PlayerState(STATE_UTILITYSKILL);
 	m_eCurUtilityState = UTILITY_START;
 
@@ -266,6 +290,9 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 
 void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 {
+	if (WEAPON_CHAKRA == m_eCurWeapon || WEAPON_NONE == m_eCurWeapon)
+		return;
+
 	Set_PlayerState(STATE_ULTIMATESKILL);
 
 	switch (m_eCurWeapon)
@@ -632,41 +659,60 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
-	//{
-	//	if(m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	if (WEAPON_CHAKRA == m_eCurWeapon)
+	{
+		if (CPlayerWeapon_Chakra::EChakraState::CHAKRA_IDLE != static_cast<CPlayerWeapon_Chakra*>(m_pPlayerWeapons[WEAPON_CHAKRA - 1])->Get_ChakraState())
+			return false;
+	}
 
-	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
-	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	//}
-	//else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
-	//{
-	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
+	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+		{
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+			m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
+		}
 
-	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
-	//	m_pPlayerWeapons[1]->Set_BlockUpdate(false);
-	//}
-	//else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down)
-	//{
-	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
+		m_pPlayerWeapons[0]->Set_BlockUpdate(false);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
+	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+		{
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+			m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
+		}
 
-	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
-	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	//}
-	//else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down)
-	//{
-	//	if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
-	//		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+		m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
+		m_pPlayerWeapons[1]->Set_BlockUpdate(false);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down)
+	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+		{
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+			m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
+		}
 
-	//	m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
-	//	m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
-	//}
+		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
+		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(false);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down)
+	{
+		if (m_eCurWeapon > EWEAPON_TYPE::WEAPON_NONE)
+		{
+			m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(true);
+			m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
+		}
+
+		m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
+		m_pPlayerWeapons[m_eCurWeapon - 1]->Set_BlockUpdate(false);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
-	return false;
+	return true;
 }
 
 
@@ -1667,6 +1713,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_pModel->Change_AnimIndex(BOW_ANIM_MAIN_ATK_LOOP, 0.1f, false);
 			}
 			LookAt_MousePos();
+
+			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
 			break;
 		case BOWMAINATK_LOOP:
 			m_fAnimSpeed = 1.5f;
@@ -1694,6 +1742,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			break;
 		case BOWMAINATK_SHOT:
 			m_fAnimSpeed = 1.f;
+			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Shot();
 			if (0.9f <= m_pModel->Get_PlayRate())
 			{
 				m_eCurBowMainAtkState = BOWMAINATK_START;
@@ -1712,7 +1761,27 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		case BOW_ANIM_POWER_COMBO_0:
 		{
 			m_fAnimSpeed = 1.5f;
-			
+
+
+			// Bow Anim Control
+			if (false == m_bAnimChangeSwitch && 0.1 > fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Loop();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+				m_bAnimChangeSwitch = true;
+			}
+			else if(true == m_bAnimChangeSwitch && 0.2 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = false;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+			}
+			else if(0.3 < fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+			}
+			//
+
+
 			if (0.277f >= fAnimPlayRate)
 			{
 				_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.f, fAnimPlayRate, 0.277f);
@@ -1726,6 +1795,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					m_fAnimSpeed = 1.5f;
 					m_pModel->Set_BlockAnim(false);
 					m_bAttackEnd = true;
+					static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 				}
 			}
 
@@ -1749,6 +1819,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_pModel->Set_BlockAnim(false);
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
+						static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 					}
 				}
 			}
@@ -1769,14 +1840,35 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 2.f;
 
+
+			// Bow Anim Control
+			if (false == m_bAnimChangeSwitch && 0.387f < fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(6.f);
+				m_bAnimChangeSwitch = true;
+			}
+			else if (true == m_bAnimChangeSwitch && 0.806f < fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+			}
+			else if(0.806f < fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+			}
+			//
+
+
 			if (0.277f < fAnimPlayRate)
 			{
-				m_fAnimSpeed = 2.5f; 
+				m_fAnimSpeed = 2.5f;
 				if (0.9f < fAnimPlayRate)
 				{
 					m_fAnimSpeed = 1.f;
 					m_pModel->Set_BlockAnim(false);
 					m_bAttackEnd = true;
+					m_bAnimChangeSwitch = false;
+					static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 					return;
 				}
 			}
@@ -1801,6 +1893,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_pModel->Set_BlockAnim(false);
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
+						m_bAnimChangeSwitch = false;
+						static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 					}
 				}
 			}
@@ -1821,6 +1915,47 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 1.3f;
 
+
+			// Bow Anim Control
+			if (true == m_bAnimChangeSwitch && 0.525 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = false;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+			}
+			else if (false == m_bAnimChangeSwitch && 0.5 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = true;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+			}
+			else if (true == m_bAnimChangeSwitch && 0.525 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = false;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+			}
+			else if (false == m_bAnimChangeSwitch && 0.5 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = true;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+			}
+			else if (true == m_bAnimChangeSwitch && 0.425 < fAnimPlayRate)
+			{
+				m_bAnimChangeSwitch = false;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+			}
+			else if (false == m_bAnimChangeSwitch && 0.375 < fAnimPlayRate)
+			{
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+				m_bAnimChangeSwitch = true;
+			}
+			//
+
+
 			if (0.277f >= fAnimPlayRate)
 			{
 				_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.f, fAnimPlayRate, 0.277f);
@@ -1833,6 +1968,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					m_fAnimSpeed = 1.5f;
 					m_pModel->Set_BlockAnim(false);
 					m_bAttackEnd = true;
+					m_bAnimChangeSwitch = false;
 				}
 			}
 
@@ -1856,6 +1992,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_pModel->Set_BlockAnim(false);
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
+						m_bAnimChangeSwitch = false;
 					}
 				}
 			}
@@ -2073,10 +2210,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 
 		////////////////////Next Combo Check //////////////////////
-		// 1) ´ÙÀ½ ÄÞº¸ Ä¿¸àÆ® ÀÔ·Â Ã¼Å©
 		Check_NextComboCommand();
 
-		// 2) ³¡³­ ´ÙÀ½ ÀüÈ¯ µÉ ÄÞº¸ Çàµ¿ Ã¼Å©
 		if (true == m_bPlayNextCombo)
 		{
 			if (0.85f <= fAnimPlayRate)
@@ -2251,6 +2386,25 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1:
 	{
+		// 
+		if (false == m_bAnimChangeSwitch)
+		{
+			m_bAnimChangeSwitch = true;
+			_Vector vThrowStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vThrowStartPos = XMVectorSetY(vThrowStartPos, XMVectorGetY(vThrowStartPos) + 1.f);
+			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			vThrowStartPos += vPlayerLook * 1.5f;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
+		}
+		else
+		{
+			_Vector vThrowStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vThrowStartPos = XMVectorSetY(vThrowStartPos, XMVectorGetY(vThrowStartPos) + 1.f);
+			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Update_ThrowPos(vThrowStartPos, vPlayerLook, fAnimPlayRate);
+		}
+
+
 		if (0.205f >= fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.5f;
@@ -2271,6 +2425,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_fAnimSpeed = 1.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bAttackEnd = true;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_ThrowMode();
+			m_bAnimChangeSwitch = false;
 		}
 
 		////////////////////Next Combo Check //////////////////////
@@ -2280,7 +2436,11 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			if (0.72f <= fAnimPlayRate)
 			{
-				Change_NextCombo();
+				if (true == Change_NextCombo())
+				{
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_ThrowMode();
+					m_bAnimChangeSwitch = false;
+				}
 			}
 			else if (0.65f <= fAnimPlayRate)
 			{
@@ -2291,6 +2451,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 				{
 					m_pModel->Set_BlockAnim(false);
 					m_bPlayDodgeCombo = true;
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_ThrowMode();
+					m_bAnimChangeSwitch = false;
 				}
 			}
 		}
@@ -2299,6 +2461,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2:
 	{
+		_Vector vPutOnPos = (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 1.2f) + m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_SmashMode(vPutOnPos);
+		
 		if (fAnimPlayRate <= 0.425f)
 		{
 			m_fAnimSpeed = 1.5f;
@@ -2308,11 +2473,12 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_fAnimSpeed = 1.f;
 		}
 
-		if (fAnimPlayRate && 0.9f < fAnimPlayRate)
+		if (0.9f < fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bAttackEnd = true;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
 		}
 
 		////////////////////Next Combo Check //////////////////////
@@ -2322,7 +2488,10 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			if (0.66f <= fAnimPlayRate)
 			{
-				Change_NextCombo();
+				if (true == Change_NextCombo())
+				{
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
+				}
 			}
 			else if (0.6f <= fAnimPlayRate)
 			{
@@ -2333,6 +2502,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 				{
 					m_pModel->Set_BlockAnim(false);
 					m_bPlayDodgeCombo = true;
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
 				}
 			}
 		}
@@ -2393,7 +2563,25 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+
 		m_fAnimSpeed = 2.5f;
+
+		if (false == m_bAnimChangeSwitch)
+		{
+			m_bAnimChangeSwitch = true;
+			_Vector vThrowStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vThrowStartPos = XMVectorSetY(vThrowStartPos, XMVectorGetY(vThrowStartPos) + 1.f);
+			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			vThrowStartPos += vPlayerLook * 1.5f;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
+		}
+		else
+		{
+			_Vector vThrowStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vThrowStartPos = XMVectorSetY(vThrowStartPos, XMVectorGetY(vThrowStartPos) + 1.f);
+			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Update_ThrowPos(vThrowStartPos, vPlayerLook, fAnimPlayRate);
+		}
 
 		if (0.25f >= fAnimPlayRate)
 		{
@@ -2405,6 +2593,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_fAnimSpeed = 2.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bAttackEnd = true;
+			m_bAnimChangeSwitch = false;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
 		}
 
 
@@ -2416,7 +2606,11 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			if (0.66f <= fAnimPlayRate)
 			{
 				m_bPlayJumpAttack = false;
-				Change_NextCombo();
+				if (true == Change_NextCombo())
+				{
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
+					m_bAnimChangeSwitch = false;
+				}
 			}
 			else if (0.6f <= fAnimPlayRate && 0.66f > fAnimPlayRate)
 			{
@@ -2425,6 +2619,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 					m_pModel->Set_BlockAnim(false);
 					m_bPlayDodgeCombo = true;
 					m_bPlayJumpAttack = false;
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
+					m_bAnimChangeSwitch = false;
 				}
 			}
 		}
@@ -2443,6 +2639,13 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	{
 		m_fAnimSpeed = 1.5f;
 
+		if (false == m_bAnimChangeSwitch)
+		{
+			_Vector vPutOnPos = (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 2.5f) + m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_SmashMode(vPutOnPos);
+			m_bAnimChangeSwitch = true;
+		}
+
 		if (0.25f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
@@ -2453,6 +2656,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_fAnimSpeed = 1.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bAttackEnd = true;
+			m_bAnimChangeSwitch = false;
+			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
 		}
 
 
@@ -2464,27 +2669,26 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			if (0.66f <= fAnimPlayRate)
 			{
 				m_bPlayJumpAttack = false;
-				Change_NextCombo();
+				if (true == Change_NextCombo())
+				{
+					m_bAnimChangeSwitch = false;
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
+
+				}
 			}
 			else if (0.6f <= fAnimPlayRate && 0.66f > fAnimPlayRate)
 			{
 				if (true == m_bReadyDodgeCombo)
 				{
+					m_bAnimChangeSwitch = false;
 					m_pModel->Set_BlockAnim(false);
 					m_bPlayDodgeCombo = true;
 					m_bPlayJumpAttack = false;
+					static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_SmashMode();
 				}
 			}
 		}
 		/////////////////////////////////////////////////////////
-
-
-		// Look At Mouse Pos
-		if (0.f <= fAnimPlayRate)
-		{
-			LookAt_MousePos();
-		}
-		//
 	}
 	break;
 	}
@@ -2528,7 +2732,7 @@ void CPlayer::Javelin(_double fDeltaTime)
 				m_pModel->Change_AnimIndex(SPEAR_ANIM_THROW_LOOP_MOV_B, 0.1f, true);
 			else if (MOVDIR_L == m_eInputDir)
 				m_pModel->Change_AnimIndex(SPEAR_ANIM_THROW_LOOP_MOV_L, 0.1f, true);
-			else if (MOVDIR_R == m_eInputDir)
+			else if (MOVDIR_R == m_eInputDir) 
 				m_pModel->Change_AnimIndex(SPEAR_ANIM_THROW_LOOP_MOV_R, 0.1f, true);
 		}
 		LookAt_MousePos();
@@ -2542,6 +2746,7 @@ void CPlayer::Javelin(_double fDeltaTime)
 		m_fAnimSpeed = 2.f;
 		m_eCurUtilityState = UTILITY_START;
 		Set_State_IdleStart(fDeltaTime);
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_End();
 		break;
 	}
 }
@@ -2553,7 +2758,19 @@ void CPlayer::Throw_Spear(_double fDeltaTime)
 		if (true == m_bPressedUtilityKey)
 			m_eCurUtilityState = UTILITY_LOOP;
 		else
+		{
 			Set_State_IdleStart(fDeltaTime);
+			static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
+		}
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_End();
+		m_bThrowSpear = false;
+	}
+	else if (false == m_bThrowSpear && 0.14f >= m_pModel->Get_PlayRate() && 0.1f <= m_pModel->Get_PlayRate())
+	{
+		m_bThrowSpear = true;
+		_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_Start(vPlayerLook);
+
 	}
 }
 
@@ -2582,25 +2799,34 @@ void CPlayer::Shelling(_double fDeltaTime)
 		else if (false == m_bPressedUtilityKey)
 		{
 			m_eCurUtilityState = UTILITY_END;
+			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+			return;
 		}
+		
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 		break;
 	case UTILITY_LOOP:
+		m_fCurTime_ShellingDelay += (_float)g_pGameInstance->Get_DeltaTime(TEXT("Player_Timer_ShellingShot_Delay"));
+		
 		m_fAnimSpeed = 1.f;
 
 		if (false == m_bPressedUtilityKey)
 		{
+			m_fCurTime_ShellingDelay = 0.f;
 			m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_SHOT, 0.1f);
-			m_eCurUtilityState = UTILITY_END;
+			m_eCurUtilityState = UTILITY_END; 
 		}
-		else if (true == m_bPressedMainAttackKey)
+		else if (m_fCurTime_ShellingDelay >= m_fMaxTime_ShellingDelay && true == m_bPressedMainAttackKey)
 		{
+			m_fCurTime_ShellingDelay = 0.f;
 			m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_SHOT, 0.1f, true);
 			m_eCurUtilityState = UTILITY_ACTIVE;
+			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 		}
 		LookAt_MousePos();
 		break;
 	case UTILITY_ACTIVE:
-		m_fAnimSpeed = 0.5f;
+		m_fAnimSpeed = 1.5f;
 		Shot_Shelling(fDeltaTime);
 		break;
 	case UTILITY_END: 
@@ -2609,6 +2835,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 		{
 			m_eCurUtilityState = UTILITY_START;
 			Set_State_IdleStart(fDeltaTime);
+			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 		}
 		break;
 	}
@@ -2620,6 +2847,7 @@ void CPlayer::Shot_Shelling(_double fDeltaTime)
 	{
 		m_eCurUtilityState = UTILITY_LOOP;
 		m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_LOOP);
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Loop();
 	}
 }
 
@@ -2630,6 +2858,33 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	if (0.98f <= m_pModel->Get_PlayRate())
 	{
 		Set_State_IdleStart(fDeltaTime);
+	}
+	else if (0.774f <= m_pModel->Get_PlayRate())
+	{
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(3.f);
+	}
+	else if (true == m_bAnimChangeSwitch && 0.574f <= m_pModel->Get_PlayRate())
+	{
+		m_bAnimChangeSwitch = false;
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(1.f);
+	}
+	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
+	{
+		m_bAnimChangeSwitch = true;
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(2.f);
+	}
+	else if (true == m_bAnimChangeSwitch && 0.191f <= m_pModel->Get_PlayRate() && 0.446f >= m_pModel->Get_PlayRate())
+	{
+		m_bAnimChangeSwitch = false;
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Shot();
+	}
+	else if (false == m_bAnimChangeSwitch && 0.106f <= m_pModel->Get_PlayRate() && 0.191f >= m_pModel->Get_PlayRate())
+	{
+		m_bAnimChangeSwitch = true;
+		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
 	}
 }
 
@@ -2676,10 +2931,25 @@ void CPlayer::Shield_Mode(_double fDeltaTime)
 void CPlayer::Sword_Ultimate(_double fDeltaTime)
 {
 	m_fAnimSpeed = 1.f;
+	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 
-	if (0.98f <= m_pModel->Get_PlayRate())
+	if (false == m_bAnimChangeSwitch && 0.25f <= fAnimPlayRate)
 	{
+		m_bAnimChangeSwitch = true;
+		_float fTargetPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 4.f;
+		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_UltimateMode(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), fTargetPos_Y);
+	}
+
+	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
+	{
+		m_fAnimSpeed = 0.4f;
+	}
+
+	if (0.98f <= fAnimPlayRate)
+	{
+		m_bAnimChangeSwitch = false;
 		Set_State_IdleStart(fDeltaTime);
+		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_UltimateMode();
 	}
 }
 
@@ -3116,18 +3386,20 @@ void CPlayer::Check_NextComboCommand()
 	}
 }
 
-void CPlayer::Change_NextCombo()
+_bool CPlayer::Change_NextCombo()
 {
 	if (false == m_bPlayNextCombo)
-		return;
+		return false;
 
 	m_pModel->Set_BlockAnim(false);
 
 	if (true == m_bReadyMainAttackCombo)
 	{
 		m_bPlayMainAttackCombo = true;
+		return true;
 	}
 
+	return false;
 }
 
 _fVector CPlayer::LookAt_MousePos()
@@ -3200,6 +3472,12 @@ _fVector CPlayer::LookAt_MousePos()
 	return vResult;
 }
 
+_fVector CPlayer::Get_MousePos()
+{
+	
+	return _fVector();
+}
+
 HRESULT CPlayer::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -3237,14 +3515,26 @@ HRESULT CPlayer::SetUp_Components()
 
 HRESULT CPlayer::SetUp_EtcInfo()
 {
-	m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
+	m_eCurWeapon = EWEAPON_TYPE::WEAPON_NONE;
 	m_eCurAnim = EPLAYERANIM_BASE::BASE_ANIM_IDLE;
 	m_eCurState = EPLAYER_STATE::STATE_IDLE;
 
 	m_fAttachCamPos_Offset = _float3(0.f, 8.f, -8.f);
 	Update_AttachCamPos();
 
+
+	// Release Skill Timer //
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Add_Timer(TEXT("Player_Timer_ShellingShot_Delay"));
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	m_fMaxTime_ShellingDelay = 0.5f;
+	m_fCurTime_ShellingDelay = 0.f;
+	//
+
 	ZeroMemory(m_pPlayerWeapons, sizeof(CPlayerWeapon*) * (WEAPON_END - 1));
+
 	return S_OK;
 }
 
@@ -3258,19 +3548,34 @@ HRESULT CPlayer::SetUp_PlayerWeapons()
 	m_pPlayerWeapons[WEAPON_SPEAR - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon)));
 	m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_BlockUpdate(true);
 
-	// Create Player Weapon Bow//
+	// Create Player Weapon Bow //
 	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_l_palm", _float3(0, 0, 0), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Bow), &eWeaponDesc));
 	m_pPlayerWeapons[WEAPON_BOW - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 1));
 	m_pPlayerWeapons[WEAPON_BOW - 1]->Set_BlockUpdate(true);
 
-	//// Create Player Weapon Bow//
-	//eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
-	//eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Sword), &eWeaponDesc));
-	//m_pPlayerWeapons[WEAPON_SWORD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 2));
-	//m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_BlockUpdate(false);
+	//// Create Player Weapon Sword //
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Sword), &eWeaponDesc));
+	m_pPlayerWeapons[WEAPON_SWORD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 2));
+	m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_BlockUpdate(true);
+
+	//// Create Player Weapon Chakra //
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_l_palm", _float3(1.3f, 1.3f, 1.3f), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Chakra), &eWeaponDesc));
+	m_pPlayerWeapons[WEAPON_CHAKRA - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 3));
+	m_pPlayerWeapons[WEAPON_CHAKRA - 1]->Set_BlockUpdate(true);
+
+	//// Create Player Weapon Shield //
+	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_l_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Shield), &eWeaponDesc));
+	m_pPlayerWeapons[WEAPON_SHIELD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 4));
+	m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
+
 	return S_OK;
 }
 

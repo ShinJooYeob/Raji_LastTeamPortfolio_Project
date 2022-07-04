@@ -1287,9 +1287,9 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 
 					if (XMVectorGetY(vCamPos) * XMVectorGetY(vRayDir) < 0)
 					{
-						_float Scale = XMVectorGetY(vCamPos) / -XMVectorGetY(vRayDir);
+						_float Scale = (XMVectorGetY(vCamPos)  )/ - (XMVectorGetY(vRayDir)  );
 
-						_float3 vTargetPos = vCamPos + Scale * vRayDir;
+						_float3 vTargetPos = vCamPos + (Scale) * vRayDir;
 
 						m_fPickingedPosition[0] = vTargetPos.x;
 						m_fPickingedPosition[1] = vTargetPos.y;

@@ -53,8 +53,8 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	Set_Pivot();
 
-	m_pModel->Change_AnimIndex(0);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
+	//m_pModel->Change_AnimIndex(0);
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	return _int();
 }
 
@@ -118,6 +118,61 @@ _int CPlayerWeapon_Bow::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon_Bow::PlayAnim_Idle()
+{
+	m_pModel->Change_AnimIndex(BOW_ANIM_IDLE);
+	m_bOnceAnim = false;
+}
+
+void CPlayerWeapon_Bow::PlayAnim_NormalAttack_Ready()
+{
+	if (false == m_bOnceAnim)
+	{
+		m_pModel->Change_AnimIndex_ReturnTo(BOW_ANIM_NORMAL_READY, BOW_ANIM_NORMAL_LOOP, 0.1f, false);
+		m_bOnceAnim = true;
+		m_fAnimSpeed = 2.5f;
+	}
+}
+
+void CPlayerWeapon_Bow::PlayAnim_NormalAttack_Shot()
+{
+	if (true == m_bOnceAnim)
+	{
+		m_pModel->Change_AnimIndex_ReturnTo_Must(BOW_ANIM_NORMAL_SHOT, BOW_ANIM_IDLE, 0.1f, false);
+		m_bOnceAnim = false;
+	}
+}
+
+void CPlayerWeapon_Bow::PlayAnim_UtilityAttack_Ready()
+{
+	if (false == m_bOnceAnim)
+	{
+		m_pModel->Change_AnimIndex_ReturnTo_Must(BOW_ANIM_UTILITY_READY, BOW_ANIM_NORMAL_LOOP, 0.1f, false);
+		m_bOnceAnim = true;
+		m_fAnimSpeed = 2.f;
+	}
+}
+
+void CPlayerWeapon_Bow::PlayAnim_UtilityAttack_Loop()
+{
+	m_pModel->Change_AnimIndex(BOW_ANIM_NORMAL_LOOP, 0.1f);
+	m_bOnceAnim = true;
+}
+
+void CPlayerWeapon_Bow::PlayAnim_UtilityAttack_Shot()
+{
+	if (true == m_bOnceAnim)
+	{
+		m_pModel->Change_AnimIndex_ReturnTo_Must(BOW_ANIM_UTILITY_SHOT, BOW_ANIM_NORMAL_LOOP, 0.f, false);
+		m_bOnceAnim = false;
+	}
+}
+
+void CPlayerWeapon_Bow::Set_AnimSpeed(_float fAnimSpeed)
+{
+	m_fAnimSpeed = fAnimSpeed;
+}
+
 _fVector CPlayerWeapon_Bow::Get_BonePos(const char * pBoneName)
 {
 	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
@@ -173,8 +228,9 @@ void CPlayerWeapon_Bow::Update_AttachMatrix()
 
 void CPlayerWeapon_Bow::Set_Pivot()
 {
-	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(0.01f, 0.01f, 0.01f), _float3(90, -30, -185), _float3(0.0, 0.0, 0.0));
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-111.6f, -66.4f, -7.2f));
+	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(0.012f, 0.012f, 0.012f), _float3(90, -30, -185), _float3(0.0, 0.0, 0.0));
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-93.33f, -54.7f, -9.27f));
+	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-111.6f, -66.4f, -7.2f));
 }
 
 void CPlayerWeapon_Bow::Change_Pivot(EBowPivot ePitvot)
@@ -216,6 +272,7 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 
 HRESULT CPlayerWeapon_Bow::SetUp_EtcInfo()
 {
+	m_pModel->Change_AnimIndex(0);
 	return S_OK;
 }
 

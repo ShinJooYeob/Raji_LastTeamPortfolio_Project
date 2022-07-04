@@ -82,6 +82,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerWeapon_Spear,
 	Prototype_PlayerWeapon_Bow,
 	Prototype_PlayerWeapon_Sword,
+	Prototype_PlayerWeapon_Shield,
+	Prototype_PlayerWeapon_Chakra,
 
 	Prototype_SkyBox,
 
@@ -167,6 +169,13 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_PlayerWeapon_Sword:
 		return TEXT("Prototype_PlayerWeapon_Sword");
 		break;
+	case Prototype_PlayerWeapon_Shield:
+		return TEXT("Prototype_PlayerWeapon_Shield");
+		break;
+	case Prototype_PlayerWeapon_Chakra:
+		return TEXT("Prototype_PlayerWeapon_Chakra");
+		break;
+
 
 	case Prototype_StaticMapObject:
 		return TEXT("Prototype_StaticMapObject");
@@ -568,6 +577,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Spear,
 	Prototype_Mesh_PlayerWeapon_Bow,
 	Prototype_Mesh_PlayerWeapon_Sword,
+	Prototype_Mesh_PlayerWeapon_Shield,
+	Prototype_Mesh_PlayerWeapon_Chakra,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
 	Prototype_Mesh_Monster_Vayusura_Minion,
@@ -719,6 +730,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_PlayerWeapon_Sword:
 		return TEXT("PlayerSword.fbx");
+		break;
+	case Prototype_Mesh_PlayerWeapon_Shield:
+		return TEXT("PlayerShield.fbx");
+		break;
+	case Prototype_Mesh_PlayerWeapon_Chakra:
+		return TEXT("PlayerChakra.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:

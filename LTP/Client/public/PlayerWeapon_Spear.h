@@ -8,7 +8,7 @@ class CPlayerWeapon_Spear final : public CPlayerWeapon
 {
 public:
 	enum ESpearPivot { SPEAR_PIVOT_NORMAL, SPEAR_PIVOT_THROW, SPEAR_PIVOT_TAKEDOWN, SPEAR_PIVOT_END };
-
+	
 private:
 	CPlayerWeapon_Spear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CPlayerWeapon_Spear(const CPlayerWeapon_Spear& rhs);
@@ -28,6 +28,13 @@ private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
 
+public:				
+	void				Change_Pivot(ESpearPivot ePitvot);
+	void				Throw_Start(_fVector vThrowDir);
+	void				Throw_End();
+	void				Throw(_double fDeltaTimer);
+
+private:
 	_int				Update_Structure(_double fDeltaTime);
 	_int				Update_Equip(_double fDeltaTime);
 	_int				Update_NoEquip(_double fDeltaTime);
@@ -38,9 +45,6 @@ private:
 
 	void				Update_AttachMatrix();
 
-public:				
-	void				Change_Pivot(ESpearPivot ePitvot);
-
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
@@ -48,6 +52,10 @@ private:
 private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
+	_bool				m_bThrowing = false;
+	_float3				m_bThrowDir;
+	_uint				m_iPassNum;
+	_uint				m_iCurAnim;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
