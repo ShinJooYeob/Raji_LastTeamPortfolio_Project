@@ -29,11 +29,13 @@ public:
 	// Shape Test
 	HRESULT CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
 	HRESULT CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
-//	HRESULT CreateSpeher(const PxTransform& t, _float3 halfextent);
 
 public:
 	// Actor Test
 	PxRigidDynamic* CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+
+	PxRigidDynamic* CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidStatic* CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
 
 	// Create Joint 
 	void CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g,
@@ -42,10 +44,9 @@ public:
 	// CreateLimitedSpherical
 	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
-	
+	HRESULT Create_Plane();
+
 	void KEYTEST();
-
-
 
 private:
 	HRESULT CreateTest_Base();
@@ -82,6 +83,8 @@ private:
 	PxPvd*						mPvd = nullptr;
 
 	// TESTCODE
+
+
 	PxActor*						mTestActor = nullptr;
 	PxRigidActor*					mTestRigActor = nullptr;
 	PxTransform*					mTestTransfrom1 = nullptr;

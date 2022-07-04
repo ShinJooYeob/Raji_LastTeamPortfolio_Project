@@ -515,6 +515,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Renderer,
 	Prototype_Transform,
 	Prototype_Collider,
+	Prototype_Collider_PhysX,
 	Prototype_Trail,
 	Prototype_Navigation,
 	Prototype_Shader_VT,
@@ -601,6 +602,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Collider:
 		return TEXT("Prototype_Component_Collider");
+		break;
+	case Prototype_Collider_PhysX:
+		return TEXT("Prototype_Collider_PhysX");
 		break;
 	case Prototype_Trail:
 		return TEXT("Prototype_Component_Trail");
@@ -861,6 +865,7 @@ enum COMPONENTID
 	Com_Model,
 	Com_SubModel,
 	Com_Collider,
+	Com_Collider_PhysX,
 	Com_SwordTrail,
 	Com_SubSwordTrail,
 	Com_Navaigation
@@ -904,6 +909,11 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 	case Com_Collider:
 		return TEXT("Com_Collider");
 		break;
+
+	case Com_Collider_PhysX:
+		return TEXT("Com_Collider_PhysX");
+		break;
+		
 
 	case Com_SwordTrail:
 		return TEXT("Com_SwordTrail");

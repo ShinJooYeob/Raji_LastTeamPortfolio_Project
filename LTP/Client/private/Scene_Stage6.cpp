@@ -25,9 +25,9 @@ HRESULT CScene_Stage6::Initialize()
 
 	// Assimp Test
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
+	GetSingle(CPhysXMgr)->Create_Plane();
 
-	// Phy
-	FAILED_CHECK(Ready_Layer_Phycis());
+
 
 	return S_OK;
 }
@@ -53,7 +53,7 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (KEYDOWN(DIK_K))
+	if (KEYDOWN(DIK_V))
 	{
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), L"PhysX_Test"));
 

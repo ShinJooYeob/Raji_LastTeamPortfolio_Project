@@ -6,6 +6,7 @@
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
+#include "PhysX/Collider_PhysX.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -68,7 +69,7 @@ _int CMainApp::Update(_double fDeltaTime)
 	g_fDeltaTime = fDeltaTime * m_SlowTimes;
 
 
-
+	// 업데이트 -> 충돌 시물레이션 -> 레이트 업데이트
 	if (FAILED(m_pGameInstance->Update_Engine(fDeltaTime * m_SlowTimes)))
 	{
 		__debugbreak();
@@ -309,6 +310,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
 		CCollider::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
+		CCollider_PhysX::Create(m_pDevice, m_pDeviceContext)));
 
 
 	return S_OK;

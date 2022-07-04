@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\TestStaticPhysX.h"
+#include "..\public\PhysX\Collider_PhysX.h"
 
 
 CTestStaticPhysX::CTestStaticPhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -29,15 +30,8 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
 	m_pTransformCom->Scaled_All(_float3(1, 1, 1));
 
-//	mTrans.transform(PxVec3(0, 0, 0));
-//	PxRigidDynamic* asd = GetSingle(CPhysXMgr)->gPhysics->createRigidDynamic(mTrans);
-//	GetSingle(CPhysXMgr)->CreateSphere_Actor(asd, CPhysXMgr::gMaterial, 5.0f);
-
 	// 충돌체 달기
-	mActor = GetSingle(CPhysXMgr)->CreateDynamic(PxTransform(0, 0, 0), PxBoxGeometry(1,1,1));
-		;
-	GetSingle(CPhysXMgr)->CreateSphere_Actor(mActor, GetSingle(CPhysXMgr)->gMaterial, 10.0f);
-
+	m_pPhysX->CreateStaticActor();
 	
 	return S_OK;
 }
@@ -48,7 +42,6 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)return -1;
 	Update_Trans2Px();
 
-//	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
 
 	return _int();
@@ -87,6 +80,10 @@ _int CTestStaticPhysX::Render()
 
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
 	}
+#ifdef _DEBUG
+	m_pPhysX->Render();
+
+#endif // _DEBUG
 	return _int();
 }
 
@@ -105,6 +102,9 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(VAYUSURA_LEADER_BULLET), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider), (CComponent**)&m_pPhysX));
+
+	
 	CTransform::TRANSFORMDESC tDesc = {};
 
 	tDesc.fMovePerSec = 5;
@@ -120,15 +120,15 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 HRESULT CTestStaticPhysX::Update_Trans2Px()
 {
 	// Transform 위치 PX로 업데이트
-	mTrans = PxTransform(*(PxVec3*)&m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
+	// mTrans = PxTransform(*(PxVec3*)&m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
 	return S_OK;
 }
 
 HRESULT CTestStaticPhysX::Update_Px2Trans()
 {
-	mTrans = mActor->getGlobalPose();
-	_float3 vec3 = *(_float3*)&mTrans.p;
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vec3);
+	//mTrans = mActor->getGlobalPose();
+	//_float3 vec3 = *(_float3*)&mTrans.p;
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vec3);
 
 
 	return S_OK;

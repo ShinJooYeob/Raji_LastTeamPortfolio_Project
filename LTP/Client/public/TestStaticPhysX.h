@@ -29,12 +29,13 @@ private:
 	// 피직스 관련
 	CTransform*			m_pTransformCom = nullptr;
 	PxTransform			mTrans;
-	PxRigidActor*		mActor = nullptr;
+
 
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 
+	class CCollider_PhysX* m_pPhysX = nullptr;
 
 private:
 	HRESULT SetUp_Components();

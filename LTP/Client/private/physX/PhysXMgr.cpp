@@ -30,6 +30,8 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 	FAILED_CHECK(Initialize_PhysXLib());
 
+
+
 	return S_OK;
 
 }
@@ -40,7 +42,7 @@ HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 {
 	// #TEST
 	// 플레이어 위치 받아서 테스트
-	KEYTEST();
+	// KEYTEST();
 
 	// Tick
 	if (mScene)
@@ -60,8 +62,6 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 		// 결과 업데이트
 		mScene->fetchResults(true);
 	}
-
-	Renderer();
 
 	return S_OK;
 }
@@ -292,6 +292,14 @@ HRESULT CPhysXMgr::Create_Cook()
 	return S_OK;
 }
 
+HRESULT CPhysXMgr::Create_Plane()
+{
+	PxRigidStatic* Plane = PxCreatePlane(*mPhysics, PxPlane( 0, 1, 0, 0), *mMaterial);
+	mScene->addActor(*Plane);
+	return S_OK;
+
+}
+
 HRESULT CPhysXMgr::Render_Actor(const PxRigidActor* actor )
 {
 	bool sleeping = actor->is<PxRigidDynamic>() ? actor->is<PxRigidDynamic>()->isSleeping() : false;
@@ -480,8 +488,6 @@ HRESULT CPhysXMgr::CreateSphere_Actor(PxRigidActor * actor, PxMaterial * Materia
 	mScene->addActor(*actor);
 	shape->release();
 	return S_OK;
-
-	return E_NOTIMPL;
 }
 
 PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
@@ -491,6 +497,24 @@ PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry&
 	dynamic->setLinearVelocity(velocity);
 	mScene->addActor(*dynamic);
 	return dynamic;
+}
+
+PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,  const PxVec3 & velocity)
+{
+	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, t, geometry, *mMaterial, 1.f);
+	NULL_CHECK_BREAK(actor);
+	actor->setAngularDamping(0.5f);
+	actor->setLinearVelocity(velocity);
+	mScene->addActor(*actor);
+	return actor;
+}
+
+PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const PxGeometry& geometry)
+{
+	PxRigidStatic* actor = PxCreateStatic(*mPhysics, t, geometry, *mMaterial);
+	NULL_CHECK_BREAK(actor);
+	mScene->addActor(*actor);
+	return actor;
 }
 
 void CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
