@@ -52,18 +52,59 @@ AddressV = clamp;
 BlendState	AlphaBlending
 {
 	BlendEnable[0] = true;
+BlendEnable[1] = true;
+BlendEnable[2] = true;
+BlendEnable[3] = true;
+BlendEnable[4] = true;
+BlendEnable[5] = true;
+BlendEnable[6] = true;
+BlendEnable[7] = true;
+
 	BlendOp = Add;
 	SrcBlend = Src_Alpha;
 	DestBlend = Inv_Src_Alpha;
 };
 
+BlendState	AlphaBlendingJustDiffuse
+{
+	BlendEnable[0] = true;
+BlendEnable[1] = false;
+BlendEnable[2] = false;
+BlendEnable[3] = false;
+BlendEnable[4] = false;
+BlendEnable[5] = false;
+BlendEnable[6] = false;
+BlendEnable[7] = false;
+
+BlendOp = Add;
+SrcBlend = Src_Alpha;
+DestBlend = Inv_Src_Alpha;
+};
+
+
 BlendState	NonBlending
 {
 	BlendEnable[0] = false;
+BlendEnable[1] = false;
+BlendEnable[2] = false;
+BlendEnable[3] = false;
+BlendEnable[4] = false;
+BlendEnable[5] = false;
+BlendEnable[6] = false;
+BlendEnable[7] = false;
+
 };
 BlendState	ParticleBlending
 {
 	BlendEnable[0] = true;
+BlendEnable[1] = true;
+BlendEnable[2] = true;
+BlendEnable[3] = true;
+BlendEnable[4] = true;
+BlendEnable[5] = true;
+BlendEnable[6] = true;
+BlendEnable[7] = true;
+
 BlendOp = Add;
 SrcBlend = Src_Alpha;
 DestBlend = Inv_Src_Alpha;

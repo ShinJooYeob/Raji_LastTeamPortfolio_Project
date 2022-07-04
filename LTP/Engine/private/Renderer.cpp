@@ -356,7 +356,6 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_Priority());
 	FAILED_CHECK(Render_NonBlend());
 	FAILED_CHECK(Render_Blend());
-	FAILED_CHECK(Render_SwordTrail());
 	FAILED_CHECK(Render_MotionTrail());
 	FAILED_CHECK(Render_AfterObj());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
@@ -368,7 +367,16 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_DeferredTexture());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DefferredNReference")));
 
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
 	FAILED_CHECK(Render_NonBlend_NoLight());
+	FAILED_CHECK(Render_SwordTrail());
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
+	FAILED_CHECK(Copy_DeferredToReference());
+
+
+
 
 	if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
@@ -827,8 +835,8 @@ HRESULT CRenderer::Render_Bloom()
 	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_UpScaled_By2"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_BluredTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_BluredDefferred"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
-	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
-	
+	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_AvgLuminece"))));
+
 
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fBloomMul", &m_fBloomBrightnessMul, sizeof(_float)));
 	
@@ -1089,7 +1097,6 @@ HRESULT CRenderer::Render_SwordTrail()
 		Safe_Release(pSwordTrailComponet);
 	}
 	m_TrailList[TRAIL_SWORD].clear();
-
 
 	return S_OK;
 }
@@ -1405,7 +1412,6 @@ HRESULT CRenderer::Add_DebugRenderTarget(const _tchar * szTargetTag, _float fX, 
 
 HRESULT CRenderer::Render_NonBlend_NoLight()
 {
-	//FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
 
 	for (auto& RenderObject : m_RenderObjectList[RENDER_NONBLEND_NOLIGHT])
 	{
@@ -1418,9 +1424,7 @@ HRESULT CRenderer::Render_NonBlend_NoLight()
 
 	m_RenderObjectList[RENDER_NONBLEND_NOLIGHT].clear();
 
-	//FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
 
-	//FAILED_CHECK(Copy_DeferredToReference());
 
 	return S_OK;
 }

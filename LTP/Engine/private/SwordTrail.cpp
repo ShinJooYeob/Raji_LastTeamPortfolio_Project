@@ -173,7 +173,6 @@ HRESULT CSwordTrail::Render()
 	{
 		FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", 0));
 		FAILED_CHECK(m_pShader->Set_Texture("g_BackBufferTexture", GetSingle(CRenderTargetMgr)->Get_SRV(L"Target_AfterDefferred")));
-		FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 		FAILED_CHECK(m_pShader->Set_RawValue("g_fTime", &m_PassedTime, sizeof(_float)));
 
 		FAILED_CHECK(m_pVIBuffer->Render(m_pShader, m_tDesc.iPassIndex));

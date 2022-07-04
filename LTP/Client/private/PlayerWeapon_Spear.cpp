@@ -107,12 +107,12 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 	mat.r[2] = XMVector3Normalize(mat.r[2]);
 
 	m_pSwordTrail->Update_SwordTrail(mat.r[3] - mat.r[2],	mat.r[3] + mat.r[2], fDeltaTimer);
-	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
 }
 

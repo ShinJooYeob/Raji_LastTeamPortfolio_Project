@@ -769,17 +769,24 @@ PS_OUT PS_Bloom(PS_IN In)
 
 
 	vector BluredMaskDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
-	vector WorldPosDesc = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		vTargetDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	vector		vAvgLumineceMapDesc = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
 
 	
-	if (WorldPosDesc.x == 1)
-	{
-		Out.vColor = pow(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc + pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * (1 - BluredMaskDesc), 1.f / 2.2f);
-	}
-	else
-	{
-		Out.vColor = pow(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc * g_fBloomMul + pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * (1 - BluredMaskDesc), 1.f / 2.2f);
-	}
+
+	Out.vColor = pow(
+
+
+		(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc + vTargetDesc * (1 - BluredMaskDesc))
+		* g_fBloomMul * (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) / vAvgLumineceMapDesc.r) * 0.5f
+
+
+		, 1.f / 2.2f);
+		
+	
+
+
+
 
 	return Out;
 }
@@ -833,6 +840,7 @@ PS_OUT PS_VolumeMatricFog(PS_IN In)
 		{
 			Out.vColor = pow(pow(GodRayDesc, 2.2f) * g_fGodRayIntensity
 				+ pow(vector(FogColor.xyz, 1.f), 2.2f), 1.f / 2.2f);
+			Out.vColor.a = 1.f;
 		}
 	}
 	else
@@ -898,6 +906,13 @@ PS_OUT PS_GodRay(PS_IN In)
 BlendState	NonBlending
 {
 	BlendEnable[0] = false;
+	BlendEnable[1] = false;
+	BlendEnable[2] = false;
+	BlendEnable[3] = false;
+	BlendEnable[4] = false;
+	BlendEnable[5] = false;
+	BlendEnable[6] = false;
+	BlendEnable[7] = false;
 };
 
 BlendState	Blending_One
@@ -905,6 +920,13 @@ BlendState	Blending_One
 	BlendEnable[0] = true;
 	BlendEnable[1] = true;
 	BlendEnable[2] = true;
+	BlendEnable[1] = true;
+	BlendEnable[2] = true;
+	BlendEnable[3] = true;
+	BlendEnable[4] = true;
+	BlendEnable[5] = true;
+	BlendEnable[6] = true;
+	BlendEnable[7] = true;
 
 	BlendOp = Add;
 	SrcBlend = one;

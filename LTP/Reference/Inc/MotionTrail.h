@@ -17,8 +17,6 @@ public:
 		CModel*		pModel = nullptr;
 		CShader *	pShader=	nullptr;
 		_uint		iPassIndex = 5;
-		_float4		vLimLight = _float4(1,0,0,1);
-
 	}MOTIONTRAILDESC;
 
 private:
@@ -30,7 +28,7 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize_Clone(void* pArg)override;
 
-	void Add_MotionBuffer(_float4x4& WorldMatrix, _double TargetTime = 2.5f);
+	void Add_MotionBuffer(_float4x4& WorldMatrix, _float4 vColor ,_double TargetTime = 1.5f);
 	void Update_MotionTrail(_double fDeltaTime);
 	virtual HRESULT Render() override;
 

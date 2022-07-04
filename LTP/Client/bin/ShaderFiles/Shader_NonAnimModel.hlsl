@@ -244,7 +244,13 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vDiffuse.a = 1;
-	Out.vEmissive = vector(0,0,0,1.f);
+
+	Out.vNormal = vector(0, 0, 0, 1);
+	Out.vDepth = vector(1, 0, 0, 1);
+	Out.vSpecular = vector(0, 0, 1, 0);
+	Out.vWorldPosition = vector(1, 0, 0, 1);
+	Out.vEmissive = vector(1.f, 1.f, 1.f, 1.f);
+	Out.vLimLight = vector(0.f, 0.f, 0.f, 0.f);
 
 	return Out;
 }

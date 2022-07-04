@@ -393,7 +393,7 @@ technique11		DefaultTechnique
 	}
 	pass ForMotionTrailBuffer//5
 	{
-		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(AlphaBlendingJustDiffuse, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
 		SetRasterizerState(CullMode_ccw);
 

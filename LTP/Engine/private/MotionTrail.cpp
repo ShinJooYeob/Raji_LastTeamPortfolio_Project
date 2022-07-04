@@ -37,7 +37,7 @@ HRESULT CMotionTrail::Initialize_Clone(void * pArg)
 
 
 
-void CMotionTrail::Add_MotionBuffer(_float4x4 & WorldMatrix, _double TargetTime)
+void CMotionTrail::Add_MotionBuffer(_float4x4 & WorldMatrix, _float4 vColor , _double TargetTime)
 {
 	auto& iter = m_TrailBufferList.begin();
 
@@ -49,12 +49,12 @@ void CMotionTrail::Add_MotionBuffer(_float4x4 & WorldMatrix, _double TargetTime)
 
 	if (iter == m_TrailBufferList.end())
 	{
-		(*m_TrailBufferList.begin())->Start_MotionTrail(WorldMatrix, TargetTime);
+		(*m_TrailBufferList.begin())->Start_MotionTrail(WorldMatrix, vColor, TargetTime);
 
 	}
 	else
 	{
-		(*iter)->Start_MotionTrail(WorldMatrix, TargetTime);
+		(*iter)->Start_MotionTrail(WorldMatrix, vColor, TargetTime);
 	}
 
 	m_TrailBufferList.sort([](CMotionTrailBuffer* pSour, CMotionTrailBuffer* pDest)->_bool
@@ -80,7 +80,7 @@ HRESULT CMotionTrail::Render()
 	for (auto& pBuffer : m_TrailBufferList)
 	{
 		if (pBuffer->IsTrailing())
-			pBuffer->Render(m_tTrailDesc.pShader,m_tTrailDesc.iPassIndex, m_tTrailDesc.vLimLight, "g_BoneMatrices");
+			pBuffer->Render(m_tTrailDesc.pShader,m_tTrailDesc.iPassIndex, "g_BoneMatrices");
 
 	}
 

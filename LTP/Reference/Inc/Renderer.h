@@ -95,7 +95,7 @@ private:
 
 	_float						m_fDofLength = 30.f;
 	_float						m_fOverLuminece = 2.0f;
-	_float						m_fBloomBrightnessMul = 1.2f;
+	_float						m_fBloomBrightnessMul = 1.5f;
 	_float						m_fTexleSize = 2.f;
 	_bool						m_bShadowLightMatBindedChecker = false;
 

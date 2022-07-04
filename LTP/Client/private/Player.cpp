@@ -64,10 +64,10 @@ _int CPlayer::Update(_double fDeltaTime)
 	{
 		static double Timer = 0;
 		Timer -= fDeltaTime;
-		if (Timer < 0)
+		if (Timer < 0) 
 		{
-			Timer = 0.05f;
-			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4());
+			Timer = 0.1f;
+			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(),_float4(0.5f,0.8f,0.2f,1));
 		}
 	}
 
@@ -3504,7 +3504,6 @@ HRESULT CPlayer::SetUp_Components()
 	tMotionDesc.iNumTrailCount = 6;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
-	tMotionDesc.vLimLight = _float4(1, 0.5f, 0, 1.f);
 	tMotionDesc.iPassIndex = 5;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));

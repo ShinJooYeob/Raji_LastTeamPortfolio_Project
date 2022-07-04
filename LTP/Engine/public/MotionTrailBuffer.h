@@ -19,11 +19,11 @@ public:
 
 public:
 	_bool	IsTrailing() { return m_PassedTime < m_TargetTime; };
-	_double	Get_PassedTime() { return m_PassedTime; }
+	_double	Get_PassedTime() { return m_PassedTime / m_TargetTime; }
 
-	HRESULT Start_MotionTrail(_float4x4 WorldMatrix ,_double TargetTime);
+	HRESULT Start_MotionTrail(_float4x4 WorldMatrix, _float4 vColor ,_double TargetTime);
 	_int	Update_MotionBuffer(_double fDeltaTime);
-	HRESULT Render(class CShader* pShader, _uint iPassIndex, _float4 vLimLight, const char* szBoneValueName = nullptr);
+	HRESULT Render(class CShader* pShader, _uint iPassIndex, const char* szBoneValueName = nullptr);
 	
 
 
@@ -46,6 +46,7 @@ private:
 	_float4x4								m_DefaultPivotMatrix;
 	CModel*									m_pOriginalModel = nullptr;
 	_float									m_fEmisive = 0;
+	_float4									m_vColor = _float4(1, 0, 0, 1);
 
 
 private:

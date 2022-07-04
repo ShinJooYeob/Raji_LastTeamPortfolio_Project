@@ -36,8 +36,10 @@ HRESULT CMotionTrailBuffer::Initialize_Clone(void * pArg)
 
 
 
-HRESULT CMotionTrailBuffer::Start_MotionTrail(_float4x4 WorldMatrix, _double TargetTime)
+HRESULT CMotionTrailBuffer::Start_MotionTrail(_float4x4 WorldMatrix, _float4 vColor, _double TargetTime)
 {
+	m_vColor = vColor;
+	m_vColor.w = 1.f;
 	m_TargetTime = TargetTime;
 	m_PassedTime = 0;
 
@@ -51,17 +53,17 @@ HRESULT CMotionTrailBuffer::Start_MotionTrail(_float4x4 WorldMatrix, _double Tar
 
 _int CMotionTrailBuffer::Update_MotionBuffer(_double fDeltaTime)
 {
-		m_PassedTime += fDeltaTime;
+	m_PassedTime += fDeltaTime;
+	m_vColor.w = _float((m_TargetTime - m_PassedTime) / m_TargetTime);
 
 	return _int();
 }
 
-HRESULT CMotionTrailBuffer::Render(CShader * pShader, _uint iPassIndex,  _float4 vLimLight, const char* szBoneValueName)
+HRESULT CMotionTrailBuffer::Render(CShader * pShader, _uint iPassIndex,  const char* szBoneValueName)
 {
-	vLimLight.w =_float((m_TargetTime - m_PassedTime ) / m_TargetTime);
 	
 	FAILED_CHECK(pShader->Set_RawValue("g_fEmissive", &m_fEmisive, sizeof(_float)));
-	FAILED_CHECK(pShader->Set_RawValue("g_vLimLight", &vLimLight, sizeof(_float4)));
+	FAILED_CHECK(pShader->Set_RawValue("g_vLimLight", &m_vColor, sizeof(_float4)));
 	FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &m_WorldMatrix, sizeof(_float4x4)));
 	
 	for (_uint i = 0 ; i< m_iNumMaterials; i++)
