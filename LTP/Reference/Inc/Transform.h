@@ -108,6 +108,10 @@ public:
 	HRESULT Bind_OnShader_ApplyPivot(class CShader* pShader, const char* pValueName);
 	HRESULT Bind_OnShader_BillBoard_ApplyPivot(class CShader* pShader, const char* pValueName, _fMatrix& ViewMatrix);
 	
+public:
+	//시작 포인트, 마지막 포인트, 중앙 포인트, 시간을 담을 변수, 지속시간, 델타타임
+	_Vector BezierCurve(_Vector vStartPoint, _Vector vLastPoint, _Vector vCenterPoint, _double& dTempTime, _double dDurationTime, _double dDeltaTime);
+
 private:
 	TRANSFORMDESC		m_TransformDesc;
 	_float4x4			m_WorldMatrix;

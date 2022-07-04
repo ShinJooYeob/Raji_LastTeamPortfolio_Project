@@ -320,7 +320,7 @@ HRESULT CMonster_Tezabsura_Purple::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 9)
+	if (m_iOncePattern > 14)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}

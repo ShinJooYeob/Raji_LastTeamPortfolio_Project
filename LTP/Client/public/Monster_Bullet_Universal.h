@@ -2,6 +2,7 @@
 
 #include "Monster_Bullet.h"
 
+BEGIN(Client)
 class CMonster_Bullet_Universal final : public CMonster_Bullet
 {
 public:
@@ -12,8 +13,10 @@ public:
 		TEZABSURA_PURPLE_PRIMARY_BULLET,
 		TEZABSURA_BOMBER_DEFAULT_BULLET,
 		TEZABSURA_BOMBER_HOWITZER_BULLET,
+		TEZABSURA_LANDMINE_DEFAULT_BULLET,
+		TEZABSURA_LANDMINE_INSTALL,
 		MONSTER_BULLET_UNIVERSAL_END,
-	}zz;
+	};
 public:
 	typedef struct tagMonster_Bullet_UniversalDesc {
 		_uint	iBulletMeshNumber;
@@ -69,7 +72,8 @@ private:
 	HRESULT Tezabsura_Purple_Primary_Bullet(_double dDeltaTime);
 	HRESULT	Tezabsura_Bomber_Default_Bullet(_double dDeltaTime);
 	HRESULT Tezabsura_Bomber_Howitzer_Bullet(_double dDeltaTime);
-
+	HRESULT Tezabsura_Landmine_Default_Bullet(_double dDeltaTime);
+	HRESULT Tezabsura_Landmine_Install(_double dDeltaTime);
 
 private:
 	MONSTER_BULLET_UNIVERSALDESC m_Monster_Bullet_UniversalDesc; //Monster_Bullet_Universal Desc;
@@ -104,3 +108,4 @@ public:
 
 };
 
+END

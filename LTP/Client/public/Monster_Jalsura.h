@@ -6,12 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-class CMonster_Tezabsura_Landmine final : public CMonster
+class CMonster_Jalsura final : public CMonster
 {
 private:
-	explicit CMonster_Tezabsura_Landmine(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Tezabsura_Landmine(const CMonster_Tezabsura_Landmine& rhs);
-	virtual ~CMonster_Tezabsura_Landmine() = default;
+	explicit CMonster_Jalsura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Jalsura(const CMonster_Jalsura& rhs);
+	virtual ~CMonster_Jalsura() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -36,8 +36,6 @@ private: //애니메이션
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
 	HRESULT				Special_Trigger(_double	dDeltaTime);
-
-	HRESULT				Jumping(_double dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -82,22 +80,18 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
+	_bool				m_bFastRunOn = false;
 
-	//Tezabsura Jump
-	_bool				m_bJumpingOn = false;
-	_float				m_fJumpPower = 0;
-	_float3				m_fJumpTempPos;
-	_double				m_dJumpTime = 0;
 
-	_uint				test = 0;
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Tezabsura_Landmine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Jalsura* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
+
 };
 
 END

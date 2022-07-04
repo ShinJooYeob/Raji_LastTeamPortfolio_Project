@@ -159,7 +159,7 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Fight(_double dDeltaTime)
 		}
 	}
 
-	if (m_bLookAtOn)
+	if (m_bLookAtOn && m_iOnceAnimNumber != 13 && m_iOnceAnimNumber != 14 && m_iOnceAnimNumber != 17)
 	{
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
@@ -169,19 +169,6 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Fight(_double dDeltaTime)
 		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
 		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
 	}
-
-	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	////평범하게 움직이기
-	//if (pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Up(dDeltaTime);
-	//}
-	//if (pGameInstance->Get_DIKeyState(DIK_H) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Down(dDeltaTime);
-	//}
-
-	//RELEASE_INSTANCE(CGameInstance);
 
 
 	return S_OK;
@@ -197,7 +184,7 @@ HRESULT CMonster_Tezabsura_Landmine::PlayAnim(_double dDeltaTime)
 	{
 		Once_AnimMotion(dDeltaTime);
 		_uint i = m_pModel->Get_NowAnimIndex();
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber, (i == 11 || i == 8 || i == 9 || i == 10) ? 0 : 0.15f); //1도 넣으면 좋을듯
+		m_pModel->Change_AnimIndex(m_iOnceAnimNumber, (i == 8 || i == 9 || i == 10 ) ? 0 : 0.15f); //1도 넣으면 좋을듯
 	}
 	else
 	{
@@ -237,7 +224,7 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
-		m_iInfinityPattern = rand() % 13;
+		m_iInfinityPattern = rand() % 7;
 
 
 		m_dInfinity_CoolTime = 0;
@@ -248,31 +235,42 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 {
-
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 13; //Attack
+		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 	case 1:
-		m_iOnceAnimNumber = 14; //Howitzer
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 13; //Mine Install start
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+		m_dSpecial_CoolTime = 0;
+		m_bComboAnimSwitch = true;
 		break;
 	case 2:
-		m_iOnceAnimNumber = 8; //JumpStart
+		m_iOnceAnimNumber = 14; //Mine Install Attack
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
 		break;
 	case 3:
-		m_iOnceAnimNumber = 9; //JumpLoop
+		m_iOnceAnimNumber = 17; //Mine Install Attack
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
 		break;
 	case 4:
-		m_iOnceAnimNumber = 10; //JumpEnd
+		m_iOnceAnimNumber = 14; // Mine Install Attack
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
 		break;
 	case 5:
-		m_iOnceAnimNumber = 14; //Attack
+		m_iOnceAnimNumber = 15; //Mine Install End
 		m_bComboAnimSwitch = false;
 		break;
 	case 6:
@@ -285,35 +283,99 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 8:
 		m_iOnceAnimNumber = 10; //JumpEnd
-		m_bComboAnimSwitch = true;
-		break;
-	case 9:
-		m_iOnceAnimNumber = 14; //Attack
 		m_bComboAnimSwitch = false;
 		break;
+	case 9:
+		m_iOnceAnimNumber = 13; //Mine Install start
+		m_bComboAnimSwitch = true;
+		break;
 	case 10:
-		m_iOnceAnimNumber = 8; //JumpStart
+		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
 		break;
 	case 11:
-		m_iOnceAnimNumber = 9; //JumpLoop
+		m_iOnceAnimNumber = 17; //Mine Install Attack
 		m_bComboAnimSwitch = true;
 		break;
 	case 12:
-		m_iOnceAnimNumber = 10; //JumpEnd
+		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
 		break;
 	case 13:
-		m_iOnceAnimNumber = 14; //Attack
+		m_iOnceAnimNumber = 15; //Mine Install End
 		m_bComboAnimSwitch = false;
 		break;
 	case 14:
-		m_iOnceAnimNumber = 13; //Attack
+		m_iOnceAnimNumber = 8; //JumpStart
+		m_bComboAnimSwitch = true;
+		break;
+	case 15:
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
+		break;
+	case 16:
+		m_iOnceAnimNumber = 10; //JumpEnd
+		m_bComboAnimSwitch = false;
+		break;
+	case 17:
+		m_iOnceAnimNumber = 13; //Mine Install start
+		m_bComboAnimSwitch = true;
+		break;
+	case 18:
+		m_iOnceAnimNumber = 14; //Mine Install Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 19:
+		m_iOnceAnimNumber = 17; //Mine Install Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 20:
+		m_iOnceAnimNumber = 14; //Mine Install Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 21:
+		m_iOnceAnimNumber = 15; //Mine Install End
+		m_bComboAnimSwitch = false;
+		break;
+	case 22:
+		m_iOnceAnimNumber = 8; //JumpStart
+		m_bComboAnimSwitch = true;
+		break;
+	case 23:
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
+		break;
+	case 24:
+		m_iOnceAnimNumber = 10; //JumpEnd
+		m_bComboAnimSwitch = false;
+		break;
+	case 25:
+		m_iOnceAnimNumber = 13; //Mine Install start
+		m_bComboAnimSwitch = true;
+		break;
+	case 26:
+		m_iOnceAnimNumber = 14; //Mine Install Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 27:
+		m_iOnceAnimNumber = 17; //Mine Install ttack
+		m_bComboAnimSwitch = true;
+		break;
+	case 28:
+		m_iOnceAnimNumber = 14; //Mine Install ttack
+		m_bComboAnimSwitch = true;
+		break;
+	case 29:
+		m_iOnceAnimNumber = 15; //Mine Install Attack End
+		m_bComboAnimSwitch = false;
+		break;
+	case 30:
+		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 
-	case 30:
-		m_iOnceAnimNumber = 12;
+	case 70:
+		m_iOnceAnimNumber = 11;
 		break;
 	}
 
@@ -325,7 +387,7 @@ HRESULT CMonster_Tezabsura_Landmine::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 9)
+	if (m_iOncePattern > 30)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -342,22 +404,22 @@ HRESULT CMonster_Tezabsura_Landmine::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 1:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 2:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 3:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 4:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 5:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 6:
-		m_iInfinityAnimNumber = 11;
+		m_iInfinityAnimNumber = 1;
 		break;
 	}
 
@@ -375,7 +437,7 @@ HRESULT CMonster_Tezabsura_Landmine::Special_Trigger(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 
 		m_bIOnceAnimSwitch = true;
-		m_iOncePattern = 30;
+		m_iOncePattern = 70;
 	}
 
 
@@ -450,7 +512,7 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Bomber), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Landmine), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -497,27 +559,19 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			break;
 		case 11:
-			if (PlayRate > 0)
+			if (PlayRate >= 0.472222 && PlayRate <= 0.7222)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
 			}
 			break;
 		case 12:
-		{
-			if (PlayRate >= 0.97)
-			{
-				Set_IsDead();
-			}
-			break;
-		}
-		case 13:
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.464428)//0.57142
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
 			{
 				m_bLookAtOn = false;
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
-				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET;
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET;
 				Monster_BulletDesc.fSpeedPerSec = 10;
 				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
 
@@ -537,14 +591,20 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				m_iAdjMovedIndex++;
 			}
 			break;
-		case 14:
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.541666)
+		case 13:
+			if (PlayRate > 0)
 			{
 				m_bLookAtOn = false;
+			}
+			break;
+		case 14:
+			m_bLookAtOn = false;
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
+			{
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
-				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET;
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL;
 				Monster_BulletDesc.fSpeedPerSec = 10;
 				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
 
@@ -563,6 +623,65 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
 				m_iAdjMovedIndex++;
+
+			}
+			break;
+		case 15:
+			m_bLookAtOn = false;
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
+			{
+
+				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL;
+				Monster_BulletDesc.fSpeedPerSec = 10;
+				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
+
+				Monster_BulletDesc.Object_Transform = m_pTransformCom;
+				//Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+				Monster_BulletDesc.fPositioning = _float3(0.001f, 2.25f, -1.25f);
+
+
+				Monster_BulletDesc.Object = this;
+
+				Monster_BulletDesc.dDuration = 15;
+
+				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.pBoneName = "jaw_01";
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				m_iAdjMovedIndex++;
+
+			}
+			break;
+		case 17:
+			m_bLookAtOn = false;
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
+			{
+
+				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL;
+				Monster_BulletDesc.fSpeedPerSec = 10;
+				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
+
+				Monster_BulletDesc.Object_Transform = m_pTransformCom;
+				//Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+				Monster_BulletDesc.fPositioning = _float3(0.001f, 2.25f, -1.25f);
+
+
+				Monster_BulletDesc.Object = this;
+
+				Monster_BulletDesc.dDuration = 15;
+
+				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.pBoneName = "jaw_01";
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				m_iAdjMovedIndex++;
+
 			}
 			break;
 		default:

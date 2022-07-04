@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\Monster_Bullet_Universal.h"
+#include "Monster_Bullet_Universal.h"
 #include "Monster_Vayusura_Leader.h"
 
 const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END]
@@ -244,14 +244,14 @@ _Vector CMonster_Bullet_Universal::Bezier(_Vector StartPoint, _Vector LastPoint,
 
 	_Vector  CenterPos = (StartPoint - LastPoint);
 
-	CenterPos = StartPoint + (CenterPos * 0.1); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
+	CenterPos = StartPoint + (CenterPos * 0.1f); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
 
 	_float4 TempCenter;
 	XMStoreFloat4(&TempCenter, CenterPos);
 
 	TempCenter.y = TempCenter.y + 10;
 
-	_Vector BezierPos = ((1 - m_dBezierTime)*(1 - m_dBezierTime)*StartPoint) + (2 * m_dBezierTime*(1 - m_dBezierTime) *XMLoadFloat4(&TempCenter)) + (m_dBezierTime*m_dBezierTime)*LastPoint;
+	_Vector BezierPos = ((1 - (_float)m_dBezierTime)*(1 - (_float)m_dBezierTime)*StartPoint) + (2 * (_float)m_dBezierTime*(1 - (_float)m_dBezierTime) *XMLoadFloat4(&TempCenter)) + ((_float)m_dBezierTime*(_float)m_dBezierTime)*LastPoint;
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
 
@@ -399,14 +399,14 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime
 
 	_Vector  CenterPos = (XMLoadFloat4(&m_fTempPos) - XMLoadFloat4(&m_fTempPlayerPos));
 
-	CenterPos = XMLoadFloat4(&m_fTempPos) + (CenterPos * 0.1); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
+	CenterPos = XMLoadFloat4(&m_fTempPos) + (CenterPos * 0.1f); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
 
 	_float4 TempCenter;
 	XMStoreFloat4(&TempCenter, CenterPos);
 
 	TempCenter.y = TempCenter.y + 10;
 
-	_Vector BezierPos = ((1 - m_dBezierTime)*(1 - m_dBezierTime)*XMLoadFloat4(&m_fTempPos)) + (2 * m_dBezierTime*(1 - m_dBezierTime) *XMLoadFloat4(&TempCenter)) + (m_dBezierTime*m_dBezierTime)*XMLoadFloat4(&m_fTempPlayerPos);
+	_Vector BezierPos = ((1 - (_float)m_dBezierTime)*(1 - (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPos)) + (2 * (_float)m_dBezierTime*(1 - (_float)m_dBezierTime) *XMLoadFloat4(&TempCenter)) + ((_float)m_dBezierTime* (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPlayerPos);
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
 	return S_OK;

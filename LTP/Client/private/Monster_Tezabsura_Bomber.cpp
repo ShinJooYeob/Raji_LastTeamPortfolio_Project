@@ -105,7 +105,7 @@ _int CMonster_Tezabsura_Bomber::Render()
 	{
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
 	}
 
 
@@ -325,7 +325,7 @@ HRESULT CMonster_Tezabsura_Bomber::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 9)
+	if (m_iOncePattern > 14)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
