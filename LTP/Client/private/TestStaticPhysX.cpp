@@ -24,25 +24,52 @@ HRESULT CTestStaticPhysX::Initialize_Prototype(void * pArg)
 HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
-
+	
 	FAILED_CHECK(SetUp_Components());
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
-	m_pTransformCom->Scaled_All(_float3(1, 1, 1));
+	if (pArg != nullptr)
+	{
+		TESTPHYSXDESC desc;
+		memcpy(&desc, pArg, sizeof(TESTPHYSXDESC));
 
-	// 충돌체 달기
-	m_pPhysX->CreateStaticActor();
-	
+		memcpy(&desc, pArg, sizeof(TESTPHYSXDESC));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS,desc.pos);
+
+		Set_InitPhyType(desc.ePhyType);
+
+		desc.ePhyType;
+		desc.pos;
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CTestStaticPhysX::Set_InitPhyType(E_PHYTYPE e)
+{
+	mePhyType = e;
+	switch (mePhyType)
+	{
+	case Client::CTestStaticPhysX::E_PHYTYPE_TESTBOX:
+		Set_StaticBox();
+		break;
+	case Client::CTestStaticPhysX::E_PHYTYPE_BULLET:
+		Set_DynamicBullet();
+		break;
+	case Client::CTestStaticPhysX::E_PHYTYPE_END:
+		break;
+	default:
+		break;
+	}
 	return S_OK;
 }
 
 _int CTestStaticPhysX::Update(_double fDeltaTime)
 {
+	if (__super::Update(fDeltaTime) < 0)
+		return -1;
 
-	if (__super::Update(fDeltaTime) < 0)return -1;
-	Update_Trans2Px();
-
-
+	m_pPhysX->Update_BeforeSimulation(m_pTransformCom);
 
 	return _int();
 }
@@ -53,7 +80,7 @@ _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-	Update_Px2Trans();
+	m_pPhysX->Update_AfterSimulation(m_pTransformCom);
 
 	return _int();
 }
@@ -117,24 +144,31 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CTestStaticPhysX::Update_Trans2Px()
+void CTestStaticPhysX::Set_StaticBox()
 {
-	// Transform 위치 PX로 업데이트
-	// mTrans = PxTransform(*(PxVec3*)&m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
-	return S_OK;
+	// 충돌체 달기
+
+	_float3 scale = _float3(1,5,5);
+	m_pPhysX->CreateStaticActor(FLOAT3TOPXVEC3(scale));
+
+
+	m_pTransformCom->Scaled_All(scale);
+	m_pPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
+
 }
 
-HRESULT CTestStaticPhysX::Update_Px2Trans()
+void CTestStaticPhysX::Set_DynamicBullet()
 {
-	//mTrans = mActor->getGlobalPose();
-	//_float3 vec3 = *(_float3*)&mTrans.p;
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vec3);
+	_float3 scale = _float3(0.5f, 0.5f, 0.5f);
+	m_pPhysX->CreateDynamicActor(FLOAT3TOPXVEC3(scale));
+
+	m_pTransformCom->Scaled_All(scale);
+	m_pPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
 
 
-	return S_OK;
+
+
 }
-
-
 
 CTestStaticPhysX * CTestStaticPhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
@@ -148,7 +182,7 @@ CTestStaticPhysX * CTestStaticPhysX::Create(ID3D11Device * pDevice, ID3D11Device
 	return pInstance;
 }
 
-CGameObject * CTestStaticPhysX::Clone(void * pArg)
+CTestStaticPhysX * CTestStaticPhysX::Clone(void * pArg)
 {
 	CTestStaticPhysX*	pInstance = new CTestStaticPhysX(*this);
 

@@ -4,6 +4,17 @@
 
 
 #define  MAX_NUM_ACTOR_SHAPES 128
+
+//const FXMVECTOR COLOR_RED = _float4(1, 0, 0, 0).XMVector();
+//const FXMVECTOR COLOR_GREEN = _float4(0, 1, 0, 0).XMVector();
+//const FXMVECTOR COLOR_BLUE = _float4(0, 0, 1, 0).XMVector();
+//const FXMVECTOR COLOR_YELLOW = _float4(1, 1, 0, 0).XMVector();
+//const FXMVECTOR COLOR_SKY = _float4(0, 1, 1, 0).XMVector();
+//const FXMVECTOR COLOR_MAGENT = _float4(1, 0, 1, 0).XMVector();
+//const FXMVECTOR COLOR_BLACK = _float4(0, 0, 0, 0).XMVector();
+//const FXMVECTOR COLOR_WHITE = _float4(1, 1, 1, 0).XMVector();
+
+
 CCollider_PhysX::CCollider_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CComponent(pDevice, pDeviceContext)
 {
@@ -86,52 +97,75 @@ HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX::Update_Trans2Px()
+HRESULT CCollider_PhysX::Update_BeforeSimulation(CTransform* objTransform)
 {
-	// Transform 위치 PX로 업데이트
-//	mPxTransform = PxTransform(*(PxVec3*)&mTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
-	return S_OK;
-}
+	// 시뮬레이션 전의 충돌체 위치
+	// 현재 오브젝트 위치를 받아온다.
 
-HRESULT CCollider_PhysX::Update_Px2Trans()
-{
-	//mPxTransform = mRigActor->getGlobalPose();
-	//_float3 vec3 = *(_float3*)&mPxTransform.p;
-	//mTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	// Pos
+	mPxTransform = PxTransform(*(PxVec3*)&objTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+	// Rot
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::Set_PxScale(PxVec3 pxvec)
+HRESULT CCollider_PhysX::Update_AfterSimulation(CTransform* objTransform)
 {
+	// 시뮬레이션 후 충돌체를 업데이트 해준다.
+
+
+	// Pos
+	mPxTransform = mRigActor->getGlobalPose();
+	_float3 vec3 = *(_float3*)&mPxTransform.p;
+	objTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+
+
+	// Rot
+
+	//PxShape* shape;
+	//mRigActor->getShapes(&shape, 1);
+
+	//shape->Setsc()
+
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::CreateDynamicActor()
+HRESULT CCollider_PhysX::Set_PhysXScale(_float3 scaleVec)
+{
+	mActorScale  =  FLOAT3TOPXVEC3(scaleVec);
+	return S_OK;
+}
+
+HRESULT CCollider_PhysX::CreateDynamicActor(PxVec3 scale)
 {
 	if (mRigActor)
 		return S_FALSE;
 
-	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(1.0f));
+	mActorScale = scale;
+
+	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(mActorScale.x));
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::CreateStaticActor()
+HRESULT CCollider_PhysX::CreateStaticActor(PxVec3 scale)
 {
 	if (mRigActor)
 		return S_FALSE;
 
-	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(1.0f));
+	mActorScale = scale;
+	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxBoxGeometry(mActorScale));
 
 	return S_OK;
 
 }
-HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo)
+HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
 	if (mRigActor)
-	{	
+	{
 		PxShape* shape = CPhysXMgr::gPhysics->createShape(gemo, *CPhysXMgr::gMaterial);
+		shape->setLocalPose(offset);
+
 		NULL_CHECK_BREAK(shape);
 		mRigActor->attachShape(*shape);
 	}
@@ -139,12 +173,16 @@ HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo)
 	return S_OK;
 }
 
+void CCollider_PhysX::Set_Postiotn(_float3 positiotn)
+{
+	mRigActor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
+}
+
 #ifdef _DEBUG
 
 HRESULT CCollider_PhysX::Render()
 {
-	if (mRigActor)
-		return E_FAIL;
+	NULL_CHECK_RETURN(mRigActor, E_FAIL);
 
 	// 모양에 따라 드로잉
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
@@ -155,12 +193,14 @@ HRESULT CCollider_PhysX::Render()
 	m_pBasicEffect->SetProjection(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
 	m_pBasicEffect->Apply(m_pDeviceContext);
 
+
+	//bool sleeping = mRigActor->is<PxRigidDynamic>() ? mRigActor->is<PxRigidDynamic>()->isSleeping() : false;
+
+	//if (sleeping)
+	//	return S_FALSE;
+
 	m_pBatch->Begin();
 
-	bool sleeping = mRigActor->is<PxRigidDynamic>() ? mRigActor->is<PxRigidDynamic>()->isSleeping() : false;
-
-	if (sleeping)
-		return S_FALSE;
 
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 	const PxU32 numShapes = mRigActor->getNbShapes();
@@ -170,11 +210,13 @@ HRESULT CCollider_PhysX::Render()
 	mRigActor->getShapes(shapes, numShapes);
 
 	// 모양 마다 그려준다.
+	XMVECTORF32 color = DirectX::Colors::Cyan;
+
 	for (PxU32 j = 0; j < numShapes; j++)
 	{
 		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *mRigActor));
 		const PxGeometryHolder h = shapes[j]->getGeometry();
-		RenderShape(h, shpaeWorld);
+		RenderShape(h, shpaeWorld, color);
 	}
 
 	//switch (m_eColliderType)
@@ -194,14 +236,16 @@ HRESULT CCollider_PhysX::Render()
 
 	m_pBatch->End();
 
-
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& world, const PxVec4& color)
+
+HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color)
 {
 	const PxGeometry& geom = h.any();
-	_float3 worldpos = *(_float3*)&world.getPosition();
+	PxTransform worldTrans = PxTransform(world);
+	_float3 worldpos = PXVEC3TOFLOAT3(worldTrans.p);
+
 
 	switch (geom.getType())
 	{
@@ -209,16 +253,20 @@ HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& 
 	{
 		const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
 		BoundingSphere s = BoundingSphere(worldpos, sphereGeom.radius);
-		DX::Draw(m_pBatch, s);
+		DX::Draw(m_pBatch, s, color);
 		break;
 	}
 
 	case PxGeometryType::eBOX:
 	{
 		const PxBoxGeometry& boxGeom = static_cast<const PxBoxGeometry&>(geom);
-		_float3 vec3 = _float3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z);
-		BoundingBox box = BoundingBox(worldpos, vec3);
-		DX::Draw(m_pBatch, box);
+		_float3 halfextents = _float3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z);
+	//	PxQuat q = worldTrans.q;
+		_float4 q = *(_float4*)&worldTrans.q;
+
+		BoundingOrientedBox obbBox = BoundingOrientedBox(worldpos, halfextents, q);
+
+		DX::Draw(m_pBatch, obbBox, color);
 		break;
 	}
 	case PxGeometryType::eCAPSULE:

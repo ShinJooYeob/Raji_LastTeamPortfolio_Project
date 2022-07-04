@@ -4,9 +4,18 @@
 
 BEGIN(Client)
 
+
+
 class CCollider_PhysX : public CComponent
 {
 public:
+	enum E_PHYSXTYPE
+	{
+		E_PHYSXTYPE_COLLIDER,
+		E_PHYSXTYPE_JOINT,
+		E_PHYSXTYPE_END,
+
+	};
 
 private:
 	explicit CCollider_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -17,17 +26,19 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	HRESULT Update_Trans2Px();
-	HRESULT Update_Px2Trans();
-	HRESULT Set_PxScale(PxVec3 pxvec);
+	HRESULT Update_BeforeSimulation(CTransform* objTransform);
+	HRESULT Update_AfterSimulation(CTransform* objTransform);
+	HRESULT Set_PhysXScale(_float3 pxvec);
 
 
 public:
- 	HRESULT CreateDynamicActor();
-	HRESULT CreateStaticActor();
-	HRESULT Add_Shape(PxGeometry& gemo);
+ 	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1,1,1));
+	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
+	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 
+	PxRigidActor*	Get_ColliderActor() const {return mRigActor; }
+	void			Set_Postiotn(_float3 positiotn);
 
 	// 충돌 체크 자식 충돌 체크 랜더링
 
@@ -49,7 +60,7 @@ public:
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
-	HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& world,const PxVec4& color = PxVec4(0,0,0,0));
+	HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
 
 #endif // _DEBUG
 
@@ -60,8 +71,8 @@ public:
 
 private:
 	PxRigidActor*				mRigActor = nullptr;
-//	CTransform*					mTransform;
 	PxTransform					mPxTransform;
+	PxVec3						mActorScale = PxVec3(1,1,1);
 
 private:
 	_bool						m_bIsConflicted = false;

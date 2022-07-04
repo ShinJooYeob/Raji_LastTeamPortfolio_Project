@@ -205,6 +205,9 @@
     <Filter Include="01.GameObject\97.TestObject\01.PhysX_Obj">
       <UniqueIdentifier>{1e20f720-c66b-4d53-a501-c0398dd2dd5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\5.Extent">
+      <UniqueIdentifier>{cfef6f2c-ea89-4bea-8414-657f9e1c0ce3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

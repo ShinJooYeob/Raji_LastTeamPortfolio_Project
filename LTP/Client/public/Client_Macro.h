@@ -21,6 +21,8 @@
 #define KEYPRESS(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Press
 #define KEYDOUBLE(x)	GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_DoubleDown
 
+#define PXVEC3TOFLOAT3(x) *((_float3*)&x)
+#define FLOAT3TOPXVEC3(x) *((PxVec3*)&x)
 
 
 

@@ -13,6 +13,7 @@ PxPhysics* CPhysXMgr::gPhysics = nullptr;
 PxCooking* CPhysXMgr::gCooking = nullptr;
 PxFoundation* CPhysXMgr::gFoundation = nullptr;
 
+
 static CDemoCallback gDemoCallback;
 
 
@@ -407,7 +408,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	
 
-	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, mAllocCallback,
+	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, 
+		mAllocCallback,
 		mErrorCallback);
 	NULL_CHECK_BREAK(mFoundation);
 	gFoundation = mFoundation;
@@ -492,7 +494,9 @@ HRESULT CPhysXMgr::CreateSphere_Actor(PxRigidActor * actor, PxMaterial * Materia
 
 PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
 {
-	PxRigidDynamic* dynamic = PxCreateDynamic(*mPhysics, t, geometry, *mMaterial, 10.0f);
+	PxTransform testrans = PxTransform(PxVec3(0, 0, 0));
+
+	PxRigidDynamic* dynamic = PxCreateDynamic(*mPhysics, testrans, geometry, *mMaterial, 10.0f);
 	dynamic->setAngularDamping(0.5f);
 	dynamic->setLinearVelocity(velocity);
 	mScene->addActor(*dynamic);
@@ -501,7 +505,9 @@ PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry&
 
 PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,  const PxVec3 & velocity)
 {
-	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, t, geometry, *mMaterial, 1.f);
+	PxTransform testrans = PxTransform(PxVec3(0,0,0));
+
+	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, testrans, geometry, *mMaterial, 1.f);
 	NULL_CHECK_BREAK(actor);
 	actor->setAngularDamping(0.5f);
 	actor->setLinearVelocity(velocity);
@@ -517,8 +523,9 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 	return actor;
 }
 
-void CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
+HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
 {
+	// 관절 오브젝트 생성
 	PxVec3 offset(separation / 2, 0, 0);
 	PxTransform localTm(offset);
 	PxRigidDynamic* prev = NULL;
@@ -531,6 +538,8 @@ void CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry
 		prev = current;
 		localTm.p.x += separation;
 	}
+
+	return S_OK;
 }
 
 PxJoint * CPhysXMgr::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
@@ -553,9 +562,6 @@ PxJoint * CPhysXMgr::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform
 
 	return spher;
 }
-
-
-
 
 void CPhysXMgr::Free()
 {

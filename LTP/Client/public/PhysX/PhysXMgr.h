@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Base.h"
+#include "TestStaticPhysX.h"
 
 BEGIN(Engine)
-typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
+// 두 엑터를 연결해서 사용한다.
+typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
 class CPhysXMgr final : public CBase
 {
@@ -29,6 +31,12 @@ public:
 	// Shape Test
 	HRESULT CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
 	HRESULT CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
+	
+	// Create Chain
+	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
+
+
 
 public:
 	// Actor Test
@@ -37,9 +45,6 @@ public:
 	PxRigidDynamic* CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 	PxRigidStatic* CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
 
-	// Create Joint 
-	void CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g,
-		PxReal separation, JointCreateFunction createJoint);
 
 	// CreateLimitedSpherical
 	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
@@ -96,6 +101,8 @@ public:
 	static PxFoundation*		gFoundation;
 	static PxMaterial*			gMaterial;
 
+
+
 public:
 	virtual void Free() override;
 };
@@ -119,4 +126,5 @@ class CDemoConectCallback :
 	// PxContactModifyCallback을(를) 통해 상속됨
 	virtual void onContactModify(PxContactModifyPair * const pairs, PxU32 count) override;
 };
+
 END
