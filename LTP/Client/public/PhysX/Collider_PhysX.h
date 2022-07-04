@@ -37,12 +37,15 @@ public:
 	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 
+
 	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 
 	PxRigidActor*	Get_ColliderActor() const {return mRigActor; }
 	void			Set_Postiotn(_float3 positiotn);
-
+	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
+	void			Set_KeyUpdate(_bool b) { mbKeyUpdate = b; };
+	
 
 
 public:
@@ -64,6 +67,12 @@ private:
 	PxTransform					mPxTransform;
 	PxVec3						mActorScale = PxVec3(1,1,1);
 	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_END;
+
+private:
+	// 물리충돌 해제
+	bool						mbPhysXUpdate = true;
+	// 외부 입력 업데이트
+	bool						mbKeyUpdate = false;
 
 //private:
 //	_bool						m_bIsConflicted = false;

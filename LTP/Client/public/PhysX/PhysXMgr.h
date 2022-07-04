@@ -16,34 +16,34 @@ public:
 	virtual ~CPhysXMgr() = default;
 
 public:
-	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	HRESULT Update_PhysX(_double timedelta);
-	HRESULT LateUpdate_PhysX(_double timedelta);
-	HRESULT Renderer();
+	HRESULT					Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	HRESULT					Update_PhysX(_double timedelta);
+	HRESULT					LateUpdate_PhysX(_double timedelta);
+	HRESULT					Renderer();
 
 
-	PxFoundation*	Get_Foundation();
-	PxPhysics*		Get_PhysicsCreater();
-	PxCooking*		Get_PhysicsCooking();
-	PxScene*		Get_PhysicsScene();
+	PxFoundation*			Get_Foundation();
+	PxPhysics*				Get_PhysicsCreater();
+	PxCooking*				Get_PhysicsCooking();
+	PxScene*				Get_PhysicsScene();
 	
 public:
 	// Shape Test
-	HRESULT CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
-	HRESULT CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
+	HRESULT					CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
+	HRESULT					CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
 	
 	// Create Chain
-	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 
 
 
 public:
 	// Actor Test
-	PxRigidDynamic* CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidDynamic*			CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 
-	PxRigidDynamic* CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
-	PxRigidStatic* CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
+	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidStatic*			CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
+	PxRigidDynamic*			CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 
 
@@ -66,8 +66,8 @@ private:
 
 
 private:
-	ID3D11Device*			m_pDevice = nullptr;
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
+	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
 
 	PxDefaultAllocator			mAllocCallback;
 	PxDefaultErrorCallback		mErrorCallback;

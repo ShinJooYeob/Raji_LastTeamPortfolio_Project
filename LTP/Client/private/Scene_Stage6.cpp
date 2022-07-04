@@ -59,7 +59,7 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 		CTestStaticPhysX::TESTPHYSXDESC tagBox;
 		tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_TESTBOX;
 		tagBox.pos = _float3(0,0, Z1 += 1);
-
+		tagBox.bTrigger = true;
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj), L"PhysX_Test",&tagBox));
 
@@ -70,10 +70,20 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 		CTestStaticPhysX::TESTPHYSXDESC tagbullet;
 		tagbullet.ePhyType = CTestStaticPhysX::E_PHYTYPE_BULLET;
 		tagbullet.pos = _float3(0, yy+=1, 0);
+		tagbullet.bTrigger = false;
 
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), L"PhysX_Test", &tagbullet));
 
+	}
+	if (KEYDOWN(DIK_C))
+	{
+		auto vecDelete = g_pGameInstance->Get_ObjectList_from_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet));
+
+		for (auto obj: *vecDelete)
+		{
+			obj->Set_IsDead();
+		}
 	}
 
 	return 0;

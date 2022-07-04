@@ -93,6 +93,10 @@ HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX::Update_BeforeSimulation(CTransform* objTransform)
 {
+	if (mbPhysXUpdate == false)
+		return S_OK;
+	if (mbKeyUpdate)
+		return S_OK;
 	// 시뮬레이션 전의 충돌체 위치
 	// 현재 오브젝트 위치를 받아온다.
 
@@ -105,13 +109,25 @@ HRESULT CCollider_PhysX::Update_BeforeSimulation(CTransform* objTransform)
 
 HRESULT CCollider_PhysX::Update_AfterSimulation(CTransform* objTransform)
 {
+	if (mbPhysXUpdate == false)
+		return S_OK;
+
 	// 시뮬레이션 후 충돌체를 업데이트 해준다.
+	if (mbKeyUpdate)
+	{
+		
+		mPxTransform = PxTransform(*(PxVec3*)&objTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+		mRigActor->setGlobalPose(mPxTransform);
 
+	}
+	else
+	{
+		// Pos
+		mPxTransform = mRigActor->getGlobalPose();
+		_float3 vec3 = *(_float3*)&mPxTransform.p;
+		objTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	}
 
-	// Pos
-	mPxTransform = mRigActor->getGlobalPose();
-	_float3 vec3 = *(_float3*)&mPxTransform.p;
-	objTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 
 
 	// Rot
@@ -153,11 +169,17 @@ HRESULT CCollider_PhysX::CreateStaticActor(PxVec3 scale)
 	return S_OK;
 
 }
+
 HRESULT CCollider_PhysX::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 {
-	GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+	if (mRigActor)
+		return S_FALSE;
+
+	mRigActor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
 	return S_OK;
 }
+
+
 
 HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
@@ -181,11 +203,12 @@ void CCollider_PhysX::Set_Postiotn(_float3 positiotn)
 PxJoint * CCollider_PhysX::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
 	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.05f));
+	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.1f));
 	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
 	return j;
 
 }
+
 
 PxJoint * CCollider_PhysX::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {

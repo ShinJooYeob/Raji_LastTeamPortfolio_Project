@@ -14,7 +14,6 @@ public:
 	{
 		E_PHYTYPE_TESTBOX,
 		E_PHYTYPE_BULLET,
-		E_PHYTYPE_Chain,
 		E_PHYTYPE_END,
 	};
 	
@@ -22,6 +21,7 @@ public:
 	{
 		_float3		pos;
 		E_PHYTYPE	ePhyType;
+		_bool		bTrigger;
 
 	}TESTPHYSXDESC; 
 
@@ -42,6 +42,8 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	void	Set_Trigger(bool b) { mbTrigger = b; };
 
 
 
@@ -58,13 +60,18 @@ private:
 
 	class CCollider_PhysX* m_pPhysX = nullptr;
 
-	E_PHYTYPE mePhyType = E_PHYTYPE_END;
+	E_PHYTYPE			mePhyType = E_PHYTYPE_END;
+
+	bool				mbTrigger = false;
+
+
 
 private:
 	HRESULT SetUp_Components();
-
 	void Set_StaticBox();
 	void Set_DynamicBullet();
+	void Set_ChainTest();
+	
 
 
 public:

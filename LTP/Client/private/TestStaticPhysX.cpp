@@ -36,8 +36,7 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS,desc.pos);
 
 		Set_InitPhyType(desc.ePhyType);
-
-
+		Set_Trigger(desc.bTrigger);
 	}
 
 
@@ -55,8 +54,7 @@ HRESULT CTestStaticPhysX::Set_InitPhyType(E_PHYTYPE e)
 		Set_StaticBox();
 		break;
 	case Client::CTestStaticPhysX::E_PHYTYPE_BULLET:
-		Set_DynamicBullet();
-	//	m_pPhysX->CreateChain(PxTransform(PxVec3(1.0f, 5.0f, -3.0f)), 5, PxSphereGeometry(1.f), 3, CCollider_PhysX::CreateLimitedSpherical);
+		Set_ChainTest();
 
 		break;
 	case Client::CTestStaticPhysX::E_PHYTYPE_END:
@@ -72,14 +70,44 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	// ÀÌµ¿ 
+	bool isKey = false;
+	if (mePhyType == E_PHYTYPE_BULLET)
+	{
+		if (KEYPRESS(DIK_W))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Forward(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_S))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Backward(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_D))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Right(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_A))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Left(fDeltaTime);
+		}
+
+	}
+	m_pPhysX->Set_KeyUpdate(isKey);
 	m_pPhysX->Update_BeforeSimulation(m_pTransformCom);
+
 
 	return _int();
 }
 
+
 _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 {
-	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
+	if (__super::LateUpdate(fDeltaTime) < 0)
+		return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
@@ -93,23 +121,28 @@ _int CTestStaticPhysX::Render()
 	if (__super::Render() < 0)		
 		return -1;
 
-	NULL_CHECK_RETURN(m_pModel, E_FAIL);
-
-	CGameInstance* pInstance = GetSingle(CGameInstance);
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
+	if (mbTrigger == false)
 	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
+		NULL_CHECK_RETURN(m_pModel, E_FAIL);
+
+		CGameInstance* pInstance = GetSingle(CGameInstance);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+		FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+
+		_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
+		}
 	}
+
 #ifdef _DEBUG
 	m_pPhysX->Render();
 
@@ -167,14 +200,29 @@ void CTestStaticPhysX::Set_DynamicBullet()
 {
 	_float3 scale = _float3(0.5f, 0.5f, 0.5f);
 	m_pPhysX->CreateDynamicActor(FLOAT3TOPXVEC3(scale));
-
 	m_pTransformCom->Scaled_All(scale);
-	m_pPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
+
+	_float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	m_pPhysX->Set_Postiotn(position);
 
 
 
 
 }
+
+
+void CTestStaticPhysX::Set_ChainTest()
+{
+	_float offsetX = 2.5f;
+	static _float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	position.z += 1;
+	position.y += 10;
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, position);
+
+	// Chain Test
+	m_pPhysX->CreateChain(PxTransform(FLOAT3TOPXVEC3(position)) , 10, PxSphereGeometry(1),2, CCollider_PhysX::CreateLimitedSpherical);
+}
+
 
 CTestStaticPhysX * CTestStaticPhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {

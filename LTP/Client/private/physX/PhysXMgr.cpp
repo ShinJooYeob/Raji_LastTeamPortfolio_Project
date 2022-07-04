@@ -523,26 +523,31 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 	return actor;
 }
 
-HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
+PxRigidDynamic* CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
 {
 	// 관절 오브젝트 생성
-
+	
 	PxVec3 offset(separation / 2, 0, 0);
 	PxTransform localTm(offset);
 	PxRigidDynamic* prev = NULL;
+	PxRigidDynamic* first = NULL;
 
 	// N개의 관절 연결
+	// 엑터에 
 	for (PxU32 i = 0; i < length; i++)
 	{
 		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
 		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
 		mScene->addActor(*current);
+		if (prev == nullptr)
+			first = current;
 		prev = current;
 		localTm.p.x += separation;
 	}
 
-	return S_OK;
+	return first;
 }
+
 
 void CPhysXMgr::Free()
 {

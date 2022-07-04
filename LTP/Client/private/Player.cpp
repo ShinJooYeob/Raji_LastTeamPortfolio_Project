@@ -6,6 +6,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "Timer.h"
+#include "physx/Collider_PhysX.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -3363,6 +3364,31 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	}
 }
 
+void CPlayer::Set_HairPhysX()
+{
+	// #HAIR
+	// Hair PhysX Test
+	NULL_CHECK_BREAK(m_pCollider_HairPhysX);
+
+	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
+//	CHierarchyNode* Nodes;
+//
+//	m_pModel->Find_HierarchyNode("skd_hair01");
+//	m_pModel->Find_HierarchyNode("skd_hair01");
+//	m_pModel->Find_HierarchyNode("skd_hair01");
+//
+//
+//	_float3 scale = _float3(1, 1, 1);
+//	// Create Actors
+//	m_pCollider_HairPhysX->CreateJoint();
+//
+//	// ConnectBones
+////	m_pTransformCom->Scaled_All(scale);
+//	m_pCollider_HairPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
+
+
+}
+
 void CPlayer::Check_NextComboCommand()
 {
 	if (true == m_bPressedPowerAttackKey)
@@ -3486,8 +3512,11 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
+
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
+	
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -3767,4 +3796,6 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
+	Safe_Release(m_pCollider_HairPhysX);
+	
 }
