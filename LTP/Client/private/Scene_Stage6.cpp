@@ -54,7 +54,7 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (KEYDOWN(DIK_V))
+	if (KEYDOWN(DIK_X))
 	{
 		CTestStaticPhysX::TESTPHYSXDESC tagBox;
 		tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_TESTBOX;

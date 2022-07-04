@@ -119,6 +119,9 @@ _int CTestStaticPhysX::Render()
 
 _int CTestStaticPhysX::LateRender()
 {
+	if (__super::LateRender() < 0)
+		return -1;
+
 	return _int();
 }
 
@@ -206,4 +209,7 @@ void CTestStaticPhysX::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pPhysX);
+
+	
 }

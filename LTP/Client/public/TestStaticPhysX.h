@@ -52,7 +52,6 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 //	PxTransform			mTrans;
 
-
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;

@@ -53,17 +53,6 @@ HRESULT CCollider_PhysX::Initialize_Prototype(void * pArg)
 	if (FAILED(__super::Initialize_Prototype(pArg)))
 		return E_FAIL;
 
-	return S_OK;
-}
-
-HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
-{
-	if (FAILED(__super::Initialize_Clone(pArg)))
-		return E_FAIL;
-
-	mRigActor = nullptr;
-
-
 #ifdef _DEBUG
 	m_pBasicEffect = new BasicEffect(m_pDevice);
 	m_pBasicEffect->SetVertexColorEnabled(true);
@@ -82,6 +71,20 @@ HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
 	NULL_CHECK_RETURN(m_pBatch, E_FAIL);
 
 #endif // _DEBUG
+
+
+	return S_OK;
+}
+
+HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
+{
+	if (FAILED(__super::Initialize_Clone(pArg)))
+		return E_FAIL;
+
+	mRigActor = nullptr;
+
+
+
 
 
 	return S_OK;
@@ -364,6 +367,17 @@ CComponent * CCollider_PhysX::Clone(void * pArg)
 void CCollider_PhysX::Free()
 {
 	__super::Free();
+
+#ifdef _DEBUG
+	if (m_bIsClone == false)
+	{
+		Safe_Delete(m_pBasicEffect);
+		Safe_Delete(m_pBatch);
+	}
+#endif // _DEBUG
+
+	Safe_Release(m_pInputLayout);
+
 
 
 }
