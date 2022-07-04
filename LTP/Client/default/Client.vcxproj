@@ -226,6 +226,7 @@
     <ClInclude Include="..\public\Scene_Stage4.h" />
     <ClInclude Include="..\public\Scene_Stage3.h" />
     <ClInclude Include="..\public\SkyBox.h" />
+    <ClInclude Include="..\public\Snake.h" />
     <ClInclude Include="..\public\StaticMapObject.h" />
     <ClInclude Include="..\public\TestObject.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
+    <ClCompile Include="..\private\Snake.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
     <ClCompile Include="..\private\NaviPoint.cpp" />
     <ClCompile Include="..\private\TestObject.cpp" />

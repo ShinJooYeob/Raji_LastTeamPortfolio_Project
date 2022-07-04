@@ -334,7 +334,7 @@ HRESULT CPhysXMgr::CreateBox(const PxTransform& t, _float3 halfExtent)
 void CPhysXMgr::Free()
 {
 
-	Clean_Phyics();
+	//Clean_Phyics();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

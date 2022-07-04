@@ -114,6 +114,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_Rangda,
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Boss_ChiedtianWeapon,
+	Prototype_Object_Boss_Snake,
 	Prototype_Object_Effect_MagicCircle,
 
 	//Monster_Bullet
@@ -214,6 +215,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Boss_ChiedtianWeapon:
 		return TEXT("Prototype_Object_Boss_ChiedtianWeapon");
+		break;
+
+	case Prototype_Object_Boss_Snake:
+		return TEXT("Prototype_Object_Boss_Snake");
 		break;
 
 	case Prototype_Object_Effect_MagicCircle:
@@ -561,6 +566,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Boss_Rangda,
 	Prototype_Mesh_Boss_Chieftian,
 	Prototype_Mesh_Boss_ChieftianWeapon,
+	Prototype_Mesh_Boss_ChieftianWeapon2,
+	Prototype_Mesh_Boss_ChieftianWeapon3,
+	Prototype_Mesh_Boss_ChieftianWeapon4,
+	Prototype_Mesh_Boss_Snake,
 
 
 	Prototype_Mesh_SkyBox,
@@ -736,6 +745,22 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Boss_ChieftianWeapon:
 		return TEXT("Chieft_Weapon.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_ChieftianWeapon2:
+		return TEXT("Katana_M_19.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_ChieftianWeapon3:
+		return TEXT("Katana_M_26.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_ChieftianWeapon4:
+		return TEXT("Katana_M_28.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_Snake:
+		return TEXT("Boss_Snake.fbx");
 		break;
 
 	case Prototype_Mesh_TestObject:

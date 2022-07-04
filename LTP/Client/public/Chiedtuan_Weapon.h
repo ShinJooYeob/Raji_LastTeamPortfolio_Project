@@ -5,6 +5,14 @@ BEGIN(Client)
 
 class CChiedtuan_Weapon final : public CMonsterWeapon
 {
+public:
+	enum KatanaPOS {KATANA_TR, KATANA_TL, KATANA_BR, KATANA_BL};
+
+	typedef struct WeaponDesc
+	{
+		KatanaPOS m_KatanaPOS;
+		ATTACHEDESC m_eAttachedDesc;
+	}WEAPOPNDESC;
 private:
 	CChiedtuan_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CChiedtuan_Weapon(const CChiedtuan_Weapon& rhs);
@@ -20,22 +28,21 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	void	Set_WeaponDesc(WEAPOPNDESC WeaponDesc) {
+		m_WeaponDesc = WeaponDesc;
+	}
+
+	void	Set_WaistgirdScal() { m_pTransformCom->Scaled_All(_float3(0.6f)); }
+	void	Set_SpinScal() { m_pTransformCom->Scaled_All(_float3(0.8f)); }
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 
-	_uint				m_iOldAnimIndex = INT_MAX;
-	_uint				m_iAdjMovedIndex = 0;
-	_uint				m_iAniNum = 0;
-
-	_float				m_fAttackCoolTime = 5.f;
-	_float				m_fSkillCoolTime = 8.f;
-	_bool				m_bIsHalf = false;
-	_bool				m_bIsLookAt = true;
-
-	ATTACHEDESC			m_eAttachedDesc;
+	WEAPOPNDESC			m_WeaponDesc;
 
 	_float4x4			m_fAttachedMatrix;
 
@@ -44,7 +51,6 @@ private:
 
 private:
 	HRESULT SetUp_Components();
-	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);
 
 public:
 	static CChiedtuan_Weapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

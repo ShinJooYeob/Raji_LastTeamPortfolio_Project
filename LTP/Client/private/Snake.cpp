@@ -1,0 +1,270 @@
+#include "stdafx.h"
+#include "..\public\Snake.h"
+
+
+CSnake::CSnake(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+	:CBoss(pDevice, pDeviceContext)
+{
+}
+
+CSnake::CSnake(const CSnake & rhs)
+	: CBoss(rhs)
+{
+}
+
+HRESULT CSnake::Initialize_Prototype(void * pArg)
+{
+	FAILED_CHECK(__super::Initialize_Prototype(pArg));
+
+
+	return S_OK;
+}
+
+HRESULT CSnake::Initialize_Clone(void * pArg)
+{
+	FAILED_CHECK(__super::Initialize_Clone(pArg));
+
+	FAILED_CHECK(SetUp_Components());
+
+	if (pArg != nullptr)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
+
+	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
+
+	m_pTransformCom->Scaled_All(_float3(3.f, 3.f, 3.f));
+
+	m_pModel->Change_AnimIndex(0);
+
+	m_fAttackCoolTime = 5.f;
+	m_fSkillCoolTime = 8.f;
+	m_bIsHit = false;
+
+	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum,
+		TEXT("Layer_Player"));
+
+	return S_OK;
+}
+
+_int CSnake::Update(_double fDeltaTime)
+{
+	if (__super::Update(fDeltaTime) < 0)return -1;
+
+
+	if (!m_bIsAttack)
+		m_fAttackCoolTime -= (_float)fDeltaTime;
+	
+	if (m_pModel->Get_NowAnimIndex() == 1)
+		m_fRotTime += (_float)fDeltaTime;
+
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+
+	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	_Vector	vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
+
+
+	if (m_bIsAttack)
+	{
+		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+		_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+		PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+		_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
+		m_pTransformCom->Turn_Dir(Dir, 0.90f);
+	}
+
+	if (XMVectorGetX(vAngle) > 0.94f && !m_bIsAttack && m_fAttackCoolTime <= 0.f)
+	{
+		m_bIsAttack = true;
+
+		m_pModel->Change_AnimIndex(2);
+	}
+	else if(!m_bIsAttack)
+	{
+		m_pModel->Change_AnimIndex(1);
+	}
+
+	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple)));
+	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
+
+	return _int();
+}
+
+_int CSnake::LateUpdate(_double fDeltaTime)
+{
+	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
+
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	return _int();
+}
+
+_int CSnake::Render()
+{
+	if (__super::Render() < 0)		return -1;
+
+	NULL_CHECK_RETURN(m_pModel, E_FAIL);
+
+	CGameInstance* pInstance = GetSingle(CGameInstance);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+
+	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+
+	_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	for (_uint i = 0; i < NumMaterial; i++)
+	{
+		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	}
+
+	return _int();
+}
+
+_int CSnake::LateRender()
+{
+	if (__super::LateRender() < 0)		return -1;
+
+	return _int();
+}
+
+HRESULT CSnake::SetUp_Components()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_Snake), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+
+
+	CTransform::TRANSFORMDESC tDesc = {};
+
+	tDesc.fMovePerSec = 5;
+	tDesc.fRotationPerSec = XMConvertToRadians(60);
+	tDesc.fScalingPerSec = 1;
+	tDesc.vPivot = _float3(0, 0, 0);
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+
+	return S_OK;
+}
+
+HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
+{
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+	_double PlayRate = m_pModel->Get_PlayRate();
+
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+		m_iAdjMovedIndex = 0;
+
+
+	if (PlayRate <= 0.98)
+	{
+		switch (iNowAnimIndex)
+		{
+		case 0:
+		break;
+
+		case 1://애니메이션 인덱스마다 잡아주면 됨
+		{
+			if(m_iRotationRandom == 0)
+				m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.5f);
+			else if (m_iRotationRandom == 1)
+			{
+				m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.5f);
+			}
+			else if (m_iRotationRandom == 2)
+			{
+				m_fRotTime += (_float)fDeltatime;
+
+				if(m_fRotTime < 3)
+					m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.5f);
+				else
+					m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.5f);
+			}
+
+		}
+		break;
+
+		case 2:
+		break;
+
+		case 3:
+		break;
+
+		case 4:
+		break;
+
+		case 5:
+		break;
+
+		case 6:
+		break;
+
+		}
+	}
+	else
+	{
+		if (iNowAnimIndex == 1)
+		{
+		}
+
+		if (iNowAnimIndex == 2)
+		{
+			m_bIsAttack = false;
+			m_fAttackCoolTime = 1.f;
+			m_fRotTime = 0.f;
+			m_iRotationRandom = rand() % 2;
+			m_iRotationRandom = 2;
+		}
+	}
+
+	m_iOldAnimIndex = iNowAnimIndex;
+	return S_OK;
+}
+
+CSnake * CSnake::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+{
+	CSnake*	pInstance = new CSnake(pDevice, pDeviceContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pArg)))
+	{
+		MSGBOX("Failed to Created CSnake");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CSnake::Clone(void * pArg)
+{
+	CSnake*	pInstance = new CSnake(*this);
+
+	if (FAILED(pInstance->Initialize_Clone(pArg)))
+	{
+		MSGBOX("Failed to Created  Clone CSnake");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CSnake::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModel);
+}
