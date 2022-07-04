@@ -37,10 +37,10 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 
 		Set_InitPhyType(desc.ePhyType);
 
-		desc.ePhyType;
-		desc.pos;
 
 	}
+
+
 
 	return S_OK;
 }
@@ -48,6 +48,7 @@ HRESULT CTestStaticPhysX::Initialize_Clone(void * pArg)
 HRESULT CTestStaticPhysX::Set_InitPhyType(E_PHYTYPE e)
 {
 	mePhyType = e;
+
 	switch (mePhyType)
 	{
 	case Client::CTestStaticPhysX::E_PHYTYPE_TESTBOX:
@@ -55,6 +56,8 @@ HRESULT CTestStaticPhysX::Set_InitPhyType(E_PHYTYPE e)
 		break;
 	case Client::CTestStaticPhysX::E_PHYTYPE_BULLET:
 		Set_DynamicBullet();
+	//	m_pPhysX->CreateChain(PxTransform(PxVec3(1.0f, 5.0f, -3.0f)), 5, PxSphereGeometry(1.f), 3, CCollider_PhysX::CreateLimitedSpherical);
+
 		break;
 	case Client::CTestStaticPhysX::E_PHYTYPE_END:
 		break;

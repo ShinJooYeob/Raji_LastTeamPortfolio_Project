@@ -526,10 +526,12 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
 {
 	// 관절 오브젝트 생성
+
 	PxVec3 offset(separation / 2, 0, 0);
 	PxTransform localTm(offset);
 	PxRigidDynamic* prev = NULL;
 
+	// N개의 관절 연결
 	for (PxU32 i = 0; i < length; i++)
 	{
 		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
@@ -540,27 +542,6 @@ HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeome
 	}
 
 	return S_OK;
-}
-
-PxJoint * CPhysXMgr::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-{
-	// FIX
-	PxFixedJoint* fix = PxFixedJointCreate(*gPhysics, a0, t0, a1, t1);
-	// 파손 관절 예시
-	fix->setBreakForce(1000, 100000);
-	fix->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
-	fix->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
-
-	// Sphere
-	PxSphericalJoint* spher = PxSphericalJointCreate(*gPhysics, a0, t0, a1, t1);
-	spher->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.05f));
-	spher->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
-
-//	spher->setConstraintFlag(PxConstraintFlag::eVISUALIZATION,true);//
-
-
-
-	return spher;
 }
 
 void CPhysXMgr::Free()

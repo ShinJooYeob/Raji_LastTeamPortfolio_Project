@@ -14,6 +14,7 @@ public:
 	{
 		E_PHYTYPE_TESTBOX,
 		E_PHYTYPE_BULLET,
+		E_PHYTYPE_Chain,
 		E_PHYTYPE_END,
 	};
 	

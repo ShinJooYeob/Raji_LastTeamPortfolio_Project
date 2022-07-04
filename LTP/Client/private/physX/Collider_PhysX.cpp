@@ -5,15 +5,6 @@
 
 #define  MAX_NUM_ACTOR_SHAPES 128
 
-//const FXMVECTOR COLOR_RED = _float4(1, 0, 0, 0).XMVector();
-//const FXMVECTOR COLOR_GREEN = _float4(0, 1, 0, 0).XMVector();
-//const FXMVECTOR COLOR_BLUE = _float4(0, 0, 1, 0).XMVector();
-//const FXMVECTOR COLOR_YELLOW = _float4(1, 1, 0, 0).XMVector();
-//const FXMVECTOR COLOR_SKY = _float4(0, 1, 1, 0).XMVector();
-//const FXMVECTOR COLOR_MAGENT = _float4(1, 0, 1, 0).XMVector();
-//const FXMVECTOR COLOR_BLACK = _float4(0, 0, 0, 0).XMVector();
-//const FXMVECTOR COLOR_WHITE = _float4(1, 1, 1, 0).XMVector();
-
 
 CCollider_PhysX::CCollider_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CComponent(pDevice, pDeviceContext)
@@ -159,6 +150,12 @@ HRESULT CCollider_PhysX::CreateStaticActor(PxVec3 scale)
 	return S_OK;
 
 }
+HRESULT CCollider_PhysX::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
+{
+	GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+	return S_OK;
+}
+
 HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
 	if (mRigActor)
@@ -176,6 +173,36 @@ HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
 void CCollider_PhysX::Set_Postiotn(_float3 positiotn)
 {
 	mRigActor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
+}
+
+PxJoint * CCollider_PhysX::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+{
+	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.05f));
+	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+	return j;
+
+}
+
+PxJoint * CCollider_PhysX::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+{
+	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setBreakForce(1000, 100000);
+	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
+	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+
+	return j;
+}
+
+PxJoint * CCollider_PhysX::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+{
+
+	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
+	return j;
 }
 
 #ifdef _DEBUG

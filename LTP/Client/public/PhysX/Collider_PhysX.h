@@ -34,28 +34,23 @@ public:
 public:
  	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1,1,1));
 	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
+	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
+
 	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 
 	PxRigidActor*	Get_ColliderActor() const {return mRigActor; }
 	void			Set_Postiotn(_float3 positiotn);
 
-	// 충돌 체크 자식 충돌 체크 랜더링
 
-	//_bool Inspect_Collision(CCollider* pTargetCollider, _uint iBufferIndex = 0, _uint iTargetIndex = 0, _uint2* pOutIndex = nullptr);
 
-	//HRESULT Set_ParantBuffer(_uint iParantIndex = 0, _int iIndex = -1);
+public:
+	// CreateLimitedSpherical
+	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
-	//_uint Get_NumColliderBuffer() { return _uint(m_vecColliderBuffer.size()); };
-	//_int Add_ColliderBuffer(COLLIDERTYPE eColliderType, COLLIDERDESC* pColliderDesc = nullptr);
-	//void Set_Conflicted(_double TotalTime = 0.5);
-	//_bool Get_Conflicted() { return m_bIsConflicted; }
-
-	//_float3 Get_ColliderPosition(_uint iIndex = 0);
-
-	////Edit
-	//BoundingSphere*				Get_Sphere_Transform();
-	//CColliderBuffer*			Get_Edit_ColliderBuffer();
 
 public:
 #ifdef _DEBUG
@@ -64,19 +59,16 @@ public:
 
 #endif // _DEBUG
 
-//private:
-//	vector<CColliderBuffer*>    m_vecColliderBuffer;
-//	vector<CColliderBuffer*>	m_vecPrototypeCollideBuffer;
-//
-
 private:
 	PxRigidActor*				mRigActor = nullptr;
 	PxTransform					mPxTransform;
 	PxVec3						mActorScale = PxVec3(1,1,1);
+	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_END;
 
-private:
-	_bool						m_bIsConflicted = false;
-	_double						m_ConflictedPassedTime = 0;
+//private:
+//	_bool						m_bIsConflicted = false;
+//	_double						m_ConflictedPassedTime = 0;
+
 
 private:
 //	_bool Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetCollider, _uint iTargetIndex, _uint2* pOutIndex);

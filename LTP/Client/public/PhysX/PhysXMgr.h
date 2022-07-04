@@ -46,8 +46,6 @@ public:
 	PxRigidStatic* CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
 
 
-	// CreateLimitedSpherical
-	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
 	HRESULT Create_Plane();
 
