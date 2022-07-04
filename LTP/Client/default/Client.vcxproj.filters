@@ -196,6 +196,21 @@
     <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
       <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple">
+      <UniqueIdentifier>{dbf0aa8d-d058-45cc-93d4-030b9a5f18c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber">
+      <UniqueIdentifier>{1dd0660e-2a78-435c-afeb-d56394bf3035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine">
+      <UniqueIdentifier>{5a961c5f-a222-43f9-9049-0c095f47843e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Jalsura">
+      <UniqueIdentifier>{d0851d53-573b-4691-a89e-80d420ba66af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Texture_Bullet">
+      <UniqueIdentifier>{a5a4a2d1-0644-4133-bd35-41f9e0f6159e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -327,8 +342,6 @@
     <ClInclude Include="..\public\TestStaticObject.h">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Boss.h">
       <Filter>01.GameObject\02.Monster\Boss</Filter>
     </ClInclude>
@@ -383,9 +396,6 @@
     <ClInclude Include="..\public\Monster_Bullet.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Monster_Bullet_Universal.h">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Chiedtian.h">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian</Filter>
     </ClInclude>
@@ -415,6 +425,30 @@
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Black.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Purple.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Bomber.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Landmine.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Texture_Bullet.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Texture_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Jalsura.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Jalsura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Bullet_Universal.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -523,7 +557,6 @@
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
       <Filter>03.Manager\03.AssimpCreateMgr</Filter>
     </ClCompile>
@@ -569,9 +602,6 @@
     <ClCompile Include="..\private\Monster_Bullet.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Monster_Bullet_Universal.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Chiedtian.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian</Filter>
     </ClCompile>
@@ -604,6 +634,27 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Bomber.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Bomber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Landmine.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Landmine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Texture_Bullet.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Texture_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Jalsura.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Jalsura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

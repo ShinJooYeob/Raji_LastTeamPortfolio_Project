@@ -79,7 +79,6 @@ _int CRangda_MagicCircle::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-
 	NULL_CHECK_RETURN(m_pVIBufferCom, E_FAIL);
 
 
@@ -89,7 +88,7 @@ _int CRangda_MagicCircle::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
+	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture",0)))
 		return E_FAIL;
 
 	m_pShaderCom->Set_RawValue("g_Alpha", &m_fAlpha, sizeof(_float));

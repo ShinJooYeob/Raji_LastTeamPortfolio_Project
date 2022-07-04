@@ -108,6 +108,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Vayusura_Minion,
 	Prototype_Object_Monster_Vayusura_Leader,
 	Prototype_Obejct_Monster_Tezabsura_Minion,
+	Prototype_Obejct_Monster_Tezabsura_Purple,
+	Prototype_Obejct_Monster_Tezabsura_Bomber,
+	Prototype_Obejct_Monster_Tezabsura_Landmine,
+	Prototype_Object_Monster_Jalsura,
 
 
 	//JJB
@@ -118,6 +122,7 @@ enum OBJECTPROTOTYPEID
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
+	Prototype_Object_Monster_Texture_Bullet,
 
 	Object_Prototype_End
 };
@@ -204,6 +209,18 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Obejct_Monster_Tezabsura_Minion:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Minion");
 
+	case Prototype_Obejct_Monster_Tezabsura_Purple:
+		return TEXT("Prototype_Object_Monster_Tezabsura_Purple");
+
+	case Prototype_Obejct_Monster_Tezabsura_Bomber:
+		return TEXT("Prototype_Object_Monster_Tezabsura_Bomber");
+
+	case Prototype_Obejct_Monster_Tezabsura_Landmine:
+		return TEXT("Prototype_Object_Monster_Tezabsura_Landmine");
+
+	case Prototype_Object_Monster_Jalsura:
+		return TEXT("Prototype_Object_Monster_Jalsura");
+
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
 		break;
@@ -221,6 +238,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
+
+	case Prototype_Object_Monster_Texture_Bullet:
+		return TEXT("Prototype_Object_Monster_Texture_Bullet");
+
 	default:
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
@@ -547,16 +568,17 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Sword,
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
-	Prototype_Mesh_Monster_Ninjasura,
+	Prototype_Mesh_Monster_Vayusura_Minion,
+	Prototype_Mesh_Monster_Vayusura_Leader,
+	Prototype_Mesh_Monster_Tezabsura_Minion,
+	Prototype_Mesh_Monster_Tezabsura_Purple,
+	Prototype_Mesh_Monster_Tezabsura_Bomber,
+	Prototype_Mesh_Monster_Tezabsura_Landmine,
 	Prototype_Mesh_Monster_Jalsura,
+	Prototype_Mesh_Monster_Ninjasura,
 	Prototype_Mesh_Monster_Gadasura_Black,
 	Prototype_Mesh_Monster_Gadasura_Rage,
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
-	Prototype_Mesh_Monster_Tezabsura_Minion,
-	
-	
-	Prototype_Mesh_Monster_Vayusura_Minion,
-	Prototype_Mesh_Monster_Vayusura_Leader,
 
 
 	Prototype_Mesh_Boss_Rangda,
@@ -586,7 +608,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
-
+	Prototype_Texture_Monster_Bullet,
 
 };
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
@@ -711,11 +733,28 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Monster_Vayusura_Leader.fbx");
 		break;
 
-	case Prototype_Mesh_Monster_Ninjasura:
-		return TEXT("Monster_Ninjasura_GLTF.fbx");
+	case Prototype_Mesh_Monster_Tezabsura_Minion:
+		return TEXT("Monster_Tezabsura_Minion.fbx");
 		break;
+
+	case Prototype_Mesh_Monster_Tezabsura_Purple:
+		return TEXT("Monster_Tezabsura_Purple.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Tezabsura_Bomber:
+		return TEXT("Monster_Tezabsura_Bomber.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Tezabsura_Landmine:
+		return TEXT("Monster_Tezabsura_Landmine.fbx");
+		break;
+
 	case Prototype_Mesh_Monster_Jalsura:
 		return TEXT("Monster_Jalsura.fbx");
+		break;
+
+	case Prototype_Mesh_Monster_Ninjasura:
+		return TEXT("Monster_Ninjasura_GLTF.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Gadasura_Black:
@@ -726,10 +765,6 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_Monster_Gadasura_Rage_Hollogram:
 		return TEXT("Monster_Gadasura_Rage_Hollogram.fbx");
-		break;
-
-	case Prototype_Mesh_Monster_Tezabsura_Minion:
-		return TEXT("Monster_Tezabsura_Minion.fbx");
 		break;
 		
 	case Prototype_Mesh_Boss_Rangda:
@@ -787,6 +822,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case 	Prototype_Texture_Edit_Terrain:
 		return TEXT("Prototype_Texture_Edit_Terrain");
+
+	case Prototype_Texture_Monster_Bullet:
+		return TEXT("Prototype_Texture_Monster_Bullet");
+		break;
 
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");
@@ -998,7 +1037,12 @@ static const char* Tag_ModelTextureType(_uint eTag)
 
 enum BULLETMESHID
 {
-	VAYUSURA_LEADER_BULLET,
+	Prototype_Mesh_Monster_Bullet_Vayusura_Leader,
+	Prototype_Mesh_Monster_Bullet_Tezabsura_Minion,
+	Prototype_Mesh_Monster_Bullet_Tezabsura_Purple,
+	Prototype_Mesh_Monster_Bullet_Tezabsura_Bomber,
+	Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine,
+	Tezabsura_Purple_Default_BUllet,
 	BULLET_END
 };
 
@@ -1006,8 +1050,16 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 {
 	switch (eTag)
 	{
-	case VAYUSURA_LEADER_BULLET:
+	case Prototype_Mesh_Monster_Bullet_Vayusura_Leader:
 		return TEXT("Monster_Bullet_Vayusura_Leader.fbx");
+	case Prototype_Mesh_Monster_Bullet_Tezabsura_Minion:
+		return TEXT("Monster_Bullet_Tezabsura_Minion.fbx");
+	case Prototype_Mesh_Monster_Bullet_Tezabsura_Purple:
+		return TEXT("Monster_Bullet_Tezabsura_Purple.fbx");
+	case Prototype_Mesh_Monster_Bullet_Tezabsura_Bomber:
+		return TEXT("Monster_Bullet_Tezabsura_Bomber.fbx");
+	case Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine:
+		return TEXT("Monster_Bullet_Tezabsura_Landmine.fbx");
 	default:
 		MSGBOX("Not Prototype_Component_Model_Bullet");
 		return TEXT("ha! ha!");

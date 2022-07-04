@@ -6,12 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-class CMonster_Tezabsura_Minion final : public CMonster
+class CMonster_Tezabsura_Landmine final : public CMonster
 {
 private:
-	explicit CMonster_Tezabsura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Tezabsura_Minion(const CMonster_Tezabsura_Minion& rhs);
-	virtual ~CMonster_Tezabsura_Minion() = default;
+	explicit CMonster_Tezabsura_Landmine(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Tezabsura_Landmine(const CMonster_Tezabsura_Landmine& rhs);
+	virtual ~CMonster_Tezabsura_Landmine() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -89,17 +89,15 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
-
-
+	_uint				test = 0;
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Tezabsura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Tezabsura_Landmine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
-
 };
 
 END

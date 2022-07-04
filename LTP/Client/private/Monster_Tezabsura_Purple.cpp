@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "..\public\Monster_Tezabsura_Minion.h"
+#include "..\public\Monster_Tezabsura_Purple.h"
 #include "Monster_Bullet_Universal.h"
 
-CMonster_Tezabsura_Minion::CMonster_Tezabsura_Minion(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Tezabsura_Purple::CMonster_Tezabsura_Purple(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Tezabsura_Minion::CMonster_Tezabsura_Minion(const CMonster_Tezabsura_Minion & rhs)
+CMonster_Tezabsura_Purple::CMonster_Tezabsura_Purple(const CMonster_Tezabsura_Purple & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Tezabsura_Minion::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Tezabsura_Purple::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +20,7 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
+HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -29,6 +29,8 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
+
+	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
@@ -40,7 +42,7 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
+_int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
@@ -65,7 +67,7 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
+_int CMonster_Tezabsura_Purple::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -83,7 +85,7 @@ _int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Tezabsura_Minion::Render()
+_int CMonster_Tezabsura_Purple::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
@@ -111,7 +113,7 @@ _int CMonster_Tezabsura_Minion::Render()
 	return _int();
 }
 
-_int CMonster_Tezabsura_Minion::LateRender()
+_int CMonster_Tezabsura_Purple::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
@@ -119,7 +121,7 @@ _int CMonster_Tezabsura_Minion::LateRender()
 	return _int();
 }
 
-HRESULT CMonster_Tezabsura_Minion::SetUp_Info()
+HRESULT CMonster_Tezabsura_Purple::SetUp_Info()
 {
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
@@ -135,7 +137,7 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Info()
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
@@ -185,7 +187,7 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
 
@@ -195,7 +197,7 @@ HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
 	{
 		Once_AnimMotion(dDeltaTime);
 		_uint i = m_pModel->Get_NowAnimIndex();
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber,(i == 1 || i == 8 || i == 9 || i == 10)?0:0.15f); //1도 넣으면 좋을듯
+		m_pModel->Change_AnimIndex(m_iOnceAnimNumber, (i == 1 || i == 8 || i == 9 || i == 10) ? 0 : 0.15f); //1도 넣으면 좋을듯
 	}
 	else
 	{
@@ -206,7 +208,7 @@ HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
@@ -244,12 +246,12 @@ HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iOncePattern)
 	{
 	case 1:
-		m_iOnceAnimNumber = 12; //Attack
+		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 	case 2:
@@ -265,7 +267,7 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = true;
 		break;
 	case 5:
-		m_iOnceAnimNumber = 12; //Attack
+		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 	case 6:
@@ -281,7 +283,27 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = true;
 		break;
 	case 9:
-		m_iOnceAnimNumber = 12; //Attack
+		m_iOnceAnimNumber = 13; //Attack
+		m_bComboAnimSwitch = false;
+		break;
+	case 10:
+		m_iOnceAnimNumber = 8; //JumpStart
+		m_bComboAnimSwitch = true;
+		break;
+	case 11:
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
+		break;
+	case 12:
+		m_iOnceAnimNumber = 10; //JumpEnd
+		m_bComboAnimSwitch = true;
+		break;
+	case 13:
+		m_iOnceAnimNumber = 13; //Attack
+		m_bComboAnimSwitch = false;
+		break;
+	case 14:
+		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
 		break;
 
@@ -293,12 +315,12 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Pattern_Change()
+HRESULT CMonster_Tezabsura_Purple::Pattern_Change()
 {
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 9)
+	if (m_iOncePattern > 14)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -307,7 +329,7 @@ HRESULT CMonster_Tezabsura_Minion::Pattern_Change()
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Infinity_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::Infinity_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iInfinityPattern)
 	{
@@ -337,7 +359,7 @@ HRESULT CMonster_Tezabsura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Special_Trigger(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::Special_Trigger(_double dDeltaTime)
 {
 
 
@@ -355,7 +377,7 @@ HRESULT CMonster_Tezabsura_Minion::Special_Trigger(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::Jumping(_double dDeltaTime)
 {
 
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
@@ -417,13 +439,13 @@ HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
+HRESULT CMonster_Tezabsura_Purple::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Minion), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Purple), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -440,7 +462,7 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
+HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
@@ -461,28 +483,6 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
-
-
-		//switch (iNowAnimIndex)
-		//{
-		//case 1://애니메이션 인덱스마다 잡아주면 됨
-		//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
-		//	{
-
-		//		m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
-		//	}
-		//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-		//	{
-
-
-		//		m_iAdjMovedIndex++;
-		//	}
-
-		//	break;
-		//case 2:
-
-		//	break;
-		//}
 		switch (iNowAnimIndex)
 		{
 		case 1:
@@ -505,7 +505,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
-				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_MINION_BULLET;
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET;
 				Monster_BulletDesc.fSpeedPerSec = 10;
 				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
 
@@ -522,13 +522,47 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
-
-
-
-
-
 				m_iAdjMovedIndex++;
 			}
+			break;
+		case 13:
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.5555)
+			{
+				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET;
+				Monster_BulletDesc.fSpeedPerSec = 7;
+				Monster_BulletDesc.fScale = _float3(0.9f, 0.9f, 0.9f);
+
+				Monster_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+
+
+				Monster_BulletDesc.Object = this;
+
+				Monster_BulletDesc.dDuration = 15;
+
+				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.pBoneName = "jaw_01";
+
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.15f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.925f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.075f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.925f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.075f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				m_iAdjMovedIndex++;
+			}
+			break;
 		default:
 			break;
 		}
@@ -539,31 +573,31 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	return S_OK;
 }
 
-CMonster_Tezabsura_Minion * CMonster_Tezabsura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Tezabsura_Purple * CMonster_Tezabsura_Purple::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Purple*	pInstance = new CMonster_Tezabsura_Purple(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Tezabsura_Minion");
+		MSGBOX("Failed to Created CMonster_Tezabsura_Purple");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Tezabsura_Minion::Clone(void * pArg)
+CGameObject * CMonster_Tezabsura_Purple::Clone(void * pArg)
 {
-	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(*this);
+	CMonster_Tezabsura_Purple*	pInstance = new CMonster_Tezabsura_Purple(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Tezabsura_Minion");
+		MSGBOX("Failed to Created CMonster_Tezabsura_Purple");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Tezabsura_Minion::Free()
+void CMonster_Tezabsura_Purple::Free()
 {
 	__super::Free();
 

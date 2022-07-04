@@ -440,6 +440,16 @@ HRESULT CTransform::Bind_OnShader_BillBoard_ApplyPivot(CShader * pShader, const 
 	return pShader->Set_RawValue(pValueName, &ShaderMat, sizeof(_float4x4));
 }
 
+_Vector CTransform::BezierCurve(_Vector vStartPoint, _Vector vLastPoint, _Vector vCenterPoint, _double & dTempTime, _double dDurationTime, _double dDeltaTime)
+{
+	if (dTempTime <= dDurationTime)
+	{
+		dTempTime += dDeltaTime;
+	}
+
+	return ((1 - (_float)dTempTime)*(1 - (_float)dTempTime)*vStartPoint) + (2 * (_float)dTempTime*(1 - (_float)dTempTime) *vCenterPoint) + ((_float)dTempTime*(_float)dTempTime)*vLastPoint;
+}
+
 
 
 
