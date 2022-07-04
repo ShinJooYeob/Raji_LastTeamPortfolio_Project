@@ -123,7 +123,6 @@ void CUtilityMgr::End_DebugTimer(E_DEBUGTIMER type, wstring debugLog)
 }
 
 
-
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()
 {
 	NULL_CHECK_RETURN(m_pRenderer, E_FAIL);

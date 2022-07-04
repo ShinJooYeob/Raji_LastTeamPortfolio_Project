@@ -57,6 +57,11 @@ typedef struct tagAttachedDesc
 		return (m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
 	}
 
+	CTransform* Get_AttachObjectTransform()
+	{
+		return pAttachingObjectTransform;
+	}
+
 private:
 	CTransform*			pAttachingObjectTransform = nullptr;
 	CModel*				pModel = nullptr;

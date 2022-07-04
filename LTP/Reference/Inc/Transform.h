@@ -84,8 +84,10 @@ public:
 	//월드 좌표 기준으로 현제 회전 상태에서 이어서 회전을 하고싶을 떄
 	void Turn_CW(_fVector vAxis, _double fDeltaTime);
 	void Turn_CCW(_fVector vAxis, _double fDeltaTime);
-	void Turn_Direct(_fVector vAxis, _float fRadian);		// Made_By Jino
-	void Turn_Dir(_fVector vTargetDir, _float fWeight);		// Made_By Jino
+	void Turn_Direct(_fVector vAxis, _float fRadian);											// Made_By Jino
+	void Turn_Dir(_fVector vTargetDir, _float fWeight);											// Made_By Jino
+	void Turn_Revolution_CW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);			// Made_By Jino
+	void Turn_Revolution_CCW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);		// Made_By Jino
 
 	//로컬 좌표 기준으로 회전을 시켜주고 싶을 떄
 	void Rotation_CW(_fVector vAxis, _float fRadian);

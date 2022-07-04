@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "PlayerWeapon.h"
 
+BEGIN(Engine)
+class CTimer;
+END
+
 BEGIN(Client)
 
 class CPlayer final : public CGameObject
@@ -25,7 +29,7 @@ private:
 	};
 
 	enum EWEAPON_TYPE {
-		WEAPON_NONE, WEAPON_SPEAR, WEAPON_BOW, WEAPON_SWORD, WEAPON_CHAKRA, WEAPON_END
+		WEAPON_NONE, WEAPON_SPEAR, WEAPON_BOW, WEAPON_SWORD, WEAPON_CHAKRA, WEAPON_SHIELD, WEAPON_END
 	};
 	
 	enum EPLAYER_STATE {
@@ -184,12 +188,12 @@ private: /* Setter */
 
 private:
 	void				Check_NextComboCommand();
-	void				Change_NextCombo();
+	_bool				Change_NextCombo();
 
 
 private: /* Getter */
 	_fVector			LookAt_MousePos();
-
+	_fVector			Get_MousePos();
 
 private:
 	_float4				m_fCamLookPoint;
@@ -245,10 +249,17 @@ private: /* Animation Control */
 	_bool				m_bPlayPowerAttack = false;
 	_bool				m_bDodging = false;
 	
+	_bool				m_bThrowSpear = false;
+
+	_bool				m_bAnimChangeSwitch = false;
+	_bool				m_bAnimChangeSwitch_2nd = false;
 
 private: /* Activate */
 	_bool				m_bActivateLookDir = false;
 
+private: /* Timer */
+	_float				m_fMaxTime_ShellingDelay = 0.f;
+	_float				m_fCurTime_ShellingDelay = 0.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

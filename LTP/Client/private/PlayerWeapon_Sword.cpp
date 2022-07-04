@@ -49,7 +49,9 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 		break;
 	}
 
-	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(75, -170, -10), _float3(0.0, 0.0, 0.0));
+	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(90, -170, -10), _float3(0.0, 0.0, 0.0));
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.4f, 1.19f, 0.09f));
+
 	// 0.4, 1.1, 0.4
 	m_pModel->Change_AnimIndex(0); 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));

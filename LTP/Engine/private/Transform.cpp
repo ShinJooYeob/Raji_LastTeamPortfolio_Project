@@ -303,6 +303,19 @@ void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight)
 	LookDir(vRotDir);
 }
 
+void CTransform::Turn_Revolution_CW(_fVector vCenterPos, _float fDistance, _double fDeltaTime)
+{
+	Turn_Revolution_CCW(vCenterPos, fDistance, -fDeltaTime);
+}
+
+void CTransform::Turn_Revolution_CCW(_fVector vCenterPos, _float fDistance, _double fDeltaTime)
+{
+	Set_MatrixState(CTransform::TransformState::STATE_POS, vCenterPos);
+	Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+	_Vector vMyNewPos = Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * fDistance);
+	Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+}
+
 void CTransform::Rotation_CW(_fVector vAxis, _float fRadian)
 {
 	_Matrix matRUL = XMMatrixIdentity();

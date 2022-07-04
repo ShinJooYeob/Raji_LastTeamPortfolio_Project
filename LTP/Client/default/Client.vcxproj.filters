@@ -196,6 +196,12 @@
     <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
       <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\03. Shield">
+      <UniqueIdentifier>{0bdc9a1d-252c-4f5f-83ef-c83b3226aa17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\04. Chakra">
+      <UniqueIdentifier>{8b922587-df8b-4cc0-80db-74910bedcba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -328,7 +334,6 @@
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster_Gadasura_Black.h" />
-    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Boss.h">
       <Filter>01.GameObject\02.Monster\Boss</Filter>
     </ClInclude>
@@ -415,6 +420,15 @@
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player.h">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Shield.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\03. Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Chakra.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\04. Chakra</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -523,7 +537,6 @@
     <ClCompile Include="..\private\TestStaticObject.cpp">
       <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\AssimpCreateMgr.cpp">
       <Filter>03.Manager\03.AssimpCreateMgr</Filter>
     </ClCompile>
@@ -604,6 +617,15 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>01.GameObject\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Shield.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\03. Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\04. Chakra</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
