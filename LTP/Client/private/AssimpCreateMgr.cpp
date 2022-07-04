@@ -23,6 +23,8 @@ HRESULT CAssimpCreateMgr::Load_ALL_Model(_fMatrix staticDefault, _fMatrix dynami
 {
 	// ¸ðµç ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
 	FAILED_CHECK(Load_Model_DatFile_All(staticDefault,dynamicDefault));
+//	FAILED_CHECK(Free_VertexData());
+
 	return S_OK;
 }
 
@@ -787,6 +789,23 @@ HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, 
 
 		mList_CreateModelName.push_front(pair.first);
 	}
+	return S_OK;
+}
+
+HRESULT CAssimpCreateMgr::Free_VertexData()
+{
+	for (auto desc: mMap_StaticModelDesc)
+	{
+		Safe_Delete_Array(desc.second->mMeshDesc);
+		desc.second->mNumMeshes = 0;
+
+	}
+	for (auto desc: mMap_DynamicModelDesc)
+	{
+		Safe_Delete_Array(desc.second->mMeshDesc);
+		desc.second->mNumMeshes = 0;
+	}
+
 	return S_OK;
 }
 

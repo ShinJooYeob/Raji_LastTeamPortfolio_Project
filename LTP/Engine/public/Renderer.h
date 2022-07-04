@@ -131,7 +131,6 @@ private:
 	HRESULT Render_NonBlend_NoLight();
 	HRESULT Render_Blend();
 	HRESULT Render_AfterObj();
-
 	HRESULT Render_UI();
 	
 private:

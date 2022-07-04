@@ -6,6 +6,7 @@
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
+#include "PhysX/Collider_PhysX.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -68,7 +69,7 @@ _int CMainApp::Update(_double fDeltaTime)
 	g_fDeltaTime = fDeltaTime * m_SlowTimes;
 
 
-
+	// 업데이트 -> 충돌 시물레이션 -> 레이트 업데이트
 	if (FAILED(m_pGameInstance->Update_Engine(fDeltaTime * m_SlowTimes)))
 	{
 		__debugbreak();
@@ -139,8 +140,6 @@ HRESULT CMainApp::Render()
 		return E_FAIL;
 	}
 
-
-
 	FAILED_CHECK(m_pGameInstance->Clear_BackBuffer_View(_float4(0.5f, 0.5f, 0.5f, 1.f)));
 	FAILED_CHECK(m_pGameInstance->Clear_DepthStencil_View());
 
@@ -151,8 +150,6 @@ HRESULT CMainApp::Render()
 #endif // _DEBUG
 
 	FAILED_CHECK(m_pGameInstance->Present());
-
-
 	return S_OK;
 
 }
@@ -320,6 +317,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
 		CCollider::Create(m_pDevice, m_pDeviceContext)));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
+		CCollider_PhysX::Create(m_pDevice, m_pDeviceContext)));
+
 
 	return S_OK;
 }
@@ -348,7 +348,6 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Camera_Main), CCamera_Main::Create(m_pDevice, m_pDeviceContext, &CameraDesc)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_SkyBox), CSkyBox::Create(m_pDevice, m_pDeviceContext)));
-
 
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UIImage), CUIImage::Create(m_pDevice, m_pDeviceContext)));
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));

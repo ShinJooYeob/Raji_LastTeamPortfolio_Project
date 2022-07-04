@@ -1,9 +1,21 @@
 #include "stdafx.h"
 #include "..\Public\PhysX\PhysXMgr.h"
+#include "..\Public\Player.h"
+#include "..\Public\Camera_Main.h"
 
-#define PVD_HOST "127.0.0.1"
+#define							PVD_HOST "127.0.0.1"
+#define							MAX_NUM_ACTOR_SHAPES 128
 
 IMPLEMENT_SINGLETON(CPhysXMgr)
+
+PxMaterial* CPhysXMgr::gMaterial = nullptr;
+PxPhysics* CPhysXMgr::gPhysics = nullptr;
+PxCooking* CPhysXMgr::gCooking = nullptr;
+PxFoundation* CPhysXMgr::gFoundation = nullptr;
+
+
+static CDemoCallback gDemoCallback;
+
 
 CPhysXMgr::CPhysXMgr()
 {
@@ -17,79 +29,128 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-//	FAILED_CHECK(Initialize_PhysXLib());
+	FAILED_CHECK(Initialize_PhysXLib());
 
-	// #TEST
-//	FAILED_CHECK(CreateTest_Base());
-//	FAILED_CHECK(Create_Cook());
-	
 
-	//while (1)
-	//{
-	//	mScene->simulate(1.f / 60.f);
-	//	mScene->fetchResults(true);
-	//}
 
 	return S_OK;
 
 }
+static float X = 0;
+static float Z = 0;
 
 HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 {
+	// #TEST
+	// 플레이어 위치 받아서 테스트
+	// KEYTEST();
+
 	// Tick
 	if (mScene)
 	{
 		// Debugger에서 실행되는 거 확인
-		mScene->simulate(timedelta);
+		mScene->simulate((PxReal)timedelta);
 	}
 	return S_OK;
 }
 
 HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 {
+	// 업데이트전에 콜라이더를 받아옴
+
 	if (mScene)
 	{
 		// 결과 업데이트
 		mScene->fetchResults(true);
 	}
 
-	// PxU32 NumActor;
-	// PxActor** activeActors = mScene->getActiveActors(NumActor);
-
-	// 랜더링 오브젝트에 업데이트
-	// for ()
-	// {
-	// }
-
 	return S_OK;
+}
+
+
+
+HRESULT CPhysXMgr::Renderer()
+{
+	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+
+	// 모든 객체 가져오기
+	PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+	//if (numActor)
+	//{
+	//	// 모든 피직스 객체 Get
+	//	std::vector<PxRigidActor*> actors(numActor);
+	//	mScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC,
+	//		reinterpret_cast<PxActor**>(&actors[0]), numActor);
+
+	//	for (auto& actor : actors)
+	//	{
+	//		PxTransform tr =  actor->getGlobalPose();
+	//		Render_Actor(actor);
+	//	}
+	//}
+	
+	return S_OK;
+
+}
+
+
+void CPhysXMgr::KEYTEST()
+{
+	if (KEYDOWN(DIK_C))
+	{
+		// CreatePlayer
+		CPlayer* pPlayer = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
+		NULL_CHECK_BREAK(pPlayer);
+		CTransform* pTransPos = pPlayer->Get_Transform();
+		PxVec3 PlayerPos = *(PxVec3*)&pTransPos->Get_MatrixState_Float3(CTransform::STATE_POS);
+		PxTransform PlayerTrans = PxTransform(PlayerPos);
+
+		// mTestRigActor = mPhysics->createRigidDynamic(PlayerTrans);
+		// CreateSphere_Actor(mTestRigActor, mMaterial, 1);
+
+		mTestRigActor = CreateDynamic(PlayerTrans, PxSphereGeometry(3.0f), PxVec3(1, 1, 1));
+
+
+		// CreateChain
+
+		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, 0.0f)), 10, PxBoxGeometry(1.0f, 0.5f, 1.0f), 4.0f,
+		// 	CPhysXMgr::CreateLimitedSpherical);
+		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createBreakableFixed);
+		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
+	}
+
+
+	if (KEYDOWN(DIK_V))
+	{
+		PxVec3 Box1Pos = PxVec3(10, 0, -50);
+		PxVec3 Box2Pos = PxVec3(-10, 0, -50);
+
+		PxVec3 BOXScale = PxVec3(5, 30, 5);
+
+		PxRigidStatic* BoxActor1 = mPhysics->createRigidStatic(PxTransform(Box1Pos));
+		PxRigidStatic* BoxActor2 = mPhysics->createRigidStatic(PxTransform(Box2Pos));
+		CreateBox_Actor(BoxActor1, mMaterial, BOXScale);
+		CreateBox_Actor(BoxActor2, mMaterial, BOXScale);
+	}
+
+	if (KEYDOWN(DIK_SPACE))
+	{
+		// Test
+		CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+		CTransform* pCamTransform = pMainCam->Get_Camera_Transform();
+		NULL_CHECK_BREAK(pCamTransform);
+		PxVec3 CamPos = *(PxVec3*)&pCamTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		PxTransform trans3 = PxTransform(CamPos);
+		CreateDynamic(trans3, PxSphereGeometry(3.0f), PxVec3(0, 0, -1) * 200);
+	}
+
+
 }
 
 HRESULT CPhysXMgr::CreateTest_Base()
 {
-	// Mat 객체들 생성
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-	// Plane 객체 생성
-	PxRigidStatic* groudPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 99), *mMaterial);
-	mScene->addActor(*groudPlane);
-
-//	사각형 박스 생성
-	float halfsize = 0.5f;
-	const PxTransform t(PxVec3(0, 0, 0));
-	PxU32 size = 5;
-	CreateStack_Test(t, size, halfsize);
-
-
 	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
 	mScene->addActor(*groundPlane);
-
-
-//	for (PxU32 i = 0; i < 5; i++)
-//		createStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
-//
-//	if (!interactive)
-//		createDynamic(PxTransform(PxVec3(0, 40, 100)), PxSphereGeometry(10), PxVec3(0, -50, -100));
-//
-
 
 	return S_OK;
 }
@@ -98,6 +159,7 @@ HRESULT CPhysXMgr::CreateTest_Base()
 HRESULT CPhysXMgr::CreateStack_Test(const PxTransform & trans, PxU32 size, PxReal halfExtent)
 {
 	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
+	
 	for (PxU32 i = 0; i < size; i++)
 	{
 		for (PxU32 j = 0; j < size - i; j++)
@@ -117,7 +179,6 @@ HRESULT CPhysXMgr::CreateStack_Test(const PxTransform & trans, PxU32 size, PxRea
 
 HRESULT CPhysXMgr::Clean_Phyics()
 {
-
 	PX_RELEASE(mDisPatcher);
 	PX_RELEASE(mScene);
 	PX_RELEASE(mMaterial);
@@ -164,7 +225,7 @@ HRESULT CPhysXMgr::Create_Cook()
 
 	// 메시 인스턴스를 엑터한테 추가하는 개념
 	PxRigidActor* aConvexActor = mPhysics->createRigidStatic(PxTransform(0,0,0));
-	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+
 
 	PxShape* aConvexShape = PxRigidActorExt::createExclusiveShape(*aConvexActor,
 		PxConvexMeshGeometry(convexMesh), *mMaterial);
@@ -218,7 +279,7 @@ HRESULT CPhysXMgr::Create_Cook()
 
 
 	// 지형 도형 인스턴스
-	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), 10, numCols, numCols);
+	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(1), PxReal(10.f), numCols, numCols);
 
 	// 엑터에 지형 정보 달기
 	PxRigidActor* aHieightFieldActor = mPhysics->createRigidStatic(PxTransform(0, 0, 0));
@@ -227,6 +288,88 @@ HRESULT CPhysXMgr::Create_Cook()
 		hfGeom, *mMaterial);
 
 	mScene->addActor(*aHieightFieldActor);
+
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::Create_Plane()
+{
+	PxRigidStatic* Plane = PxCreatePlane(*mPhysics, PxPlane( 0, 1, 0, 0), *mMaterial);
+	mScene->addActor(*Plane);
+	return S_OK;
+
+}
+
+HRESULT CPhysXMgr::Render_Actor(const PxRigidActor* actor )
+{
+	bool sleeping = actor->is<PxRigidDynamic>() ? actor->is<PxRigidDynamic>()->isSleeping() : false;
+
+	if (sleeping)
+		return S_FALSE;
+
+	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+	const PxU32 numShapes = actor->getNbShapes();
+	if (numShapes >= MAX_NUM_ACTOR_SHAPES)
+		return E_FAIL;
+
+	actor->getShapes(shapes, numShapes);
+
+	// 모양 마다 그려준다.
+	for (PxU32 j = 0; j < numShapes; j++)
+	{
+		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *actor));
+		const PxGeometryHolder h = shapes[j]->getGeometry();
+		RenderShape(h);
+
+		int debug = 5;
+	}
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::RenderShape(const PxGeometryHolder & h)
+{
+	const PxGeometry& geom =  h.any();
+
+	switch (geom.getType())
+	{
+	case PxGeometryType::eSPHERE:		
+	{
+		const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
+		// sphereGeom.radius;
+		break;
+	}
+
+	case PxGeometryType::eBOX:
+	{
+		const PxBoxGeometry& boxGeom = static_cast<const PxBoxGeometry&>(geom);
+		//	boxGeom.halfExtents.x;
+		break;
+	}
+	case PxGeometryType::eCAPSULE:
+	{
+		const PxCapsuleGeometry& capsuleGeom = static_cast<const PxCapsuleGeometry&>(geom);
+		//	const PxF32 radius = capsuleGeom.radius;
+		//	const PxF32 halfHeight = capsuleGeom.halfHeight;		
+
+	}
+		break;
+
+	//case PxGeometryType::eCONVEXMESH:
+	//	PxConvexMeshGeometry
+	//	break;
+
+	//case PxGeometryType::eTRIANGLEMESH:
+	//	PxTriangleMeshGeometry
+	//	break;
+
+
+	default:
+		break;
+
+
+	}
 
 
 	return S_OK;
@@ -263,14 +406,19 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mToleranceScale.length = 100;
 	mToleranceScale.speed = 981;
 
-	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, mAllocCallback,
+	
+
+	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, 
+		mAllocCallback,
 		mErrorCallback);
 	NULL_CHECK_BREAK(mFoundation);
+	gFoundation = mFoundation;
 
 	// 메시 베이크에 해당되는 인자 전달
 	// mPhysics->getPhysicsInsertionCallback();
 	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(mToleranceScale));
 	NULL_CHECK_BREAK(mCooking);
+	gCooking = mCooking;
 
 
 #ifdef  _DEBUG
@@ -281,6 +429,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale, true, mPvd);
 	NULL_CHECK_BREAK(mPhysics);
+	gPhysics = mPhysics;
 
 #ifdef _DEBUG
 	PxInitExtensions(*mPhysics, mPvd);
@@ -294,6 +443,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0, -9.81f, 0.0f);
+	sceneDesc.simulationEventCallback = &gDemoCallback;
 
 #ifdef  _DEBUG
 	mDisPatcher = PxDefaultCpuDispatcherCreate(2);
@@ -313,30 +463,153 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	}
 #endif // DEBUG
 
+	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	gMaterial = mMaterial;
+
 	return S_OK;
 }
 
-HRESULT CPhysXMgr::CreateBox(const PxTransform& t, _float3 halfExtent)
-{
-	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent.x, halfExtent.y, halfExtent.z), *mMaterial);
-	PxRigidDynamic* body = mPhysics->createRigidDynamic(t);
-	body->attachShape(*shape);
-	PxRigidBodyExt::updateMassAndInertia(*body, 1.0f);
-	mScene->addActor(*body);
-	
-	shape->release();
 
+HRESULT CPhysXMgr::CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent)
+{
+	PxShape* shape = mPhysics->createShape(PxBoxGeometry(halfExtent.x, halfExtent.y, halfExtent.z), *Material);
+	shape->setContactOffset(1);
+
+	NULL_CHECK_BREAK(shape);
+	actor->attachShape(*shape);
+	mScene->addActor(*actor);
+	shape->release();
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::CreateSphere_Actor(PxRigidActor * actor, PxMaterial * Material, _float halfExtent)
+{
+	PxShape* shape = mPhysics->createShape(PxSphereGeometry(halfExtent), *Material);
+	NULL_CHECK_BREAK(shape);
+	actor->attachShape(*shape);
+	mScene->addActor(*actor);
+	shape->release();
+	return S_OK;
+}
+
+PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
+{
+	PxTransform testrans = PxTransform(PxVec3(0, 0, 0));
+
+	PxRigidDynamic* dynamic = PxCreateDynamic(*mPhysics, testrans, geometry, *mMaterial, 10.0f);
+	dynamic->setAngularDamping(0.5f);
+	dynamic->setLinearVelocity(velocity);
+	mScene->addActor(*dynamic);
+	return dynamic;
+}
+
+PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,  const PxVec3 & velocity)
+{
+	PxTransform testrans = PxTransform(PxVec3(0,0,0));
+
+	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, testrans, geometry, *mMaterial, 1.f);
+	NULL_CHECK_BREAK(actor);
+	actor->setAngularDamping(0.5f);
+	actor->setLinearVelocity(velocity);
+	mScene->addActor(*actor);
+	return actor;
+}
+
+PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const PxGeometry& geometry)
+{
+	PxRigidStatic* actor = PxCreateStatic(*mPhysics, t, geometry, *mMaterial);
+	NULL_CHECK_BREAK(actor);
+	mScene->addActor(*actor);
+	return actor;
+}
+
+HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
+{
+	// 관절 오브젝트 생성
+
+	PxVec3 offset(separation / 2, 0, 0);
+	PxTransform localTm(offset);
+	PxRigidDynamic* prev = NULL;
+
+	// N개의 관절 연결
+	for (PxU32 i = 0; i < length; i++)
+	{
+		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
+		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
+		mScene->addActor(*current);
+		prev = current;
+		localTm.p.x += separation;
+	}
 
 	return S_OK;
-
 }
 
 void CPhysXMgr::Free()
 {
-
-//	Clean_Phyics();
-
+	Clean_Phyics();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }
 
+void CDemoCallback::onConstraintBreak(PxConstraintInfo * constraints, PxU32 count)
+{
+	OutputDebugStringW(L"onConstraintBreak_Demo");
+	OutputDebugStringW(L"\n");
+}
+
+void CDemoCallback::onWake(PxActor ** actors, PxU32 count)
+{
+	OutputDebugStringW(L"onWake_Demo");
+	OutputDebugStringW(L"\n");
+}
+
+void CDemoCallback::onSleep(PxActor ** actors, PxU32 count)
+{
+	OutputDebugStringW(L"onSleep_Demo");
+	OutputDebugStringW(L"\n");
+}
+
+void CDemoCallback::onContact(const PxContactPairHeader & pairHeader, const PxContactPair * pairs, PxU32 nbPairs)
+{
+	OutputDebugStringW(L"onContact_Demo");
+	OutputDebugStringW(L"\n");
+
+	//for (PxU32 i = 0; i < nbPairs; i++)
+	//{
+	//	const PxContactPair& cp = pairs[i];
+
+	//	if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+	//	{
+	//		if ((pairHeader.actors[0] == mSubmarineActor) || (pairHeader.actors[1] == mSubmarineActor))
+	//		{
+	//			PxActor* otherActor = (mSubmarineActor == pairHeader.actors[0]) ? pairHeader.actors[1] : pairHeader.actors[0];
+	//			Seamine* mine = reinterpret_cast<Seamine*>(otherActor->userData);
+	//			// insert only once
+	//			if (std::find(mMinesToExplode.begin(), mMinesToExplode.end(), mine) == mMinesToExplode.end())
+	//				mMinesToExplode.push_back(mine);
+
+	//			break;
+	//		}
+	//	}
+	//}
+
+}
+
+void CDemoCallback::onTrigger(PxTriggerPair * pairs, PxU32 count)
+{
+	OutputDebugStringW(L"onTrigger_Demo");
+	OutputDebugStringW(L"\n");
+}
+
+void CDemoCallback::onAdvance(const PxRigidBody * const * bodyBuffer, const PxTransform * poseBuffer, const PxU32 count)
+{
+	OutputDebugStringW(L"onAdvance_Demo");
+	OutputDebugStringW(L"\n");
+}
+
+void CDemoConectCallback::onContactModify(PxContactModifyPair * const pairs, PxU32 count)
+{
+	// #TEST Contact Callback
+
+
+}

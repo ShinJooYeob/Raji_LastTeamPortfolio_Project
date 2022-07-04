@@ -25,9 +25,9 @@ HRESULT CScene_Stage6::Initialize()
 
 	// Assimp Test
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
+	GetSingle(CPhysXMgr)->Create_Plane();
 
-	// Phy
-	FAILED_CHECK(Ready_Layer_Phycis());
+
 
 	return S_OK;
 }
@@ -40,10 +40,11 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 	
-	m_pPhySample->Update(fDeltaTime);
 
 	return 0;
 }
+static float Z1 = 0;
+static float yy = 0;
 
 _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 {
@@ -52,6 +53,28 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
+
+	if (KEYDOWN(DIK_V))
+	{
+		CTestStaticPhysX::TESTPHYSXDESC tagBox;
+		tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_TESTBOX;
+		tagBox.pos = _float3(0,0, Z1 += 1);
+
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj), L"PhysX_Test",&tagBox));
+
+	}
+
+	if (KEYDOWN(DIK_Z))
+	{
+		CTestStaticPhysX::TESTPHYSXDESC tagbullet;
+		tagbullet.ePhyType = CTestStaticPhysX::E_PHYTYPE_BULLET;
+		tagbullet.pos = _float3(0, yy+=1, 0);
+
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), L"PhysX_Test", &tagbullet));
+
+	}
 
 	return 0;
 }
@@ -154,7 +177,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STATIC, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
@@ -166,9 +189,9 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player)));
 
-	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
@@ -183,7 +206,6 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Phycis()
 {
-	m_pPhySample = CPhyxSampleTest::Create();
 
 	return S_OK;
 }

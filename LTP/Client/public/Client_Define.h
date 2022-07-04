@@ -26,4 +26,5 @@ using namespace Client;
 using namespace physx;
 
 #include "UtilityMgr.h"
+#include "physX\PhysXMgr.h"
 

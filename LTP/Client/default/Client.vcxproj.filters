@@ -184,17 +184,29 @@
     <Filter Include="05.PhysX">
       <UniqueIdentifier>{bbca00da-bf1c-4ef0-981e-8364cb5f6ae2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.PhysX\SnipSampleTest">
-      <UniqueIdentifier>{ba343726-6092-4104-b5e6-4966c0087ac8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.PhysX\Mgr">
-      <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow">
       <UniqueIdentifier>{787c5d22-7198-4974-9964-cca24eee3a17}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.GameObject\01.Player\00. Weapons\02. Sword">
       <UniqueIdentifier>{b9345859-a538-4fc8-a59b-19c8ec08513b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\1.Mgr">
+      <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom">
+      <UniqueIdentifier>{bb17a656-8c87-4c47-8753-44c44937719e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\4.SnipSampleTest">
+      <UniqueIdentifier>{ba343726-6092-4104-b5e6-4966c0087ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\2.Callback">
+      <UniqueIdentifier>{4b7268a0-b7b2-4656-96dc-e83e30366bfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\97.TestObject\01.PhysX_Obj">
+      <UniqueIdentifier>{1e20f720-c66b-4d53-a501-c0398dd2dd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\5.Extent">
+      <UniqueIdentifier>{cfef6f2c-ea89-4bea-8414-657f9e1c0ce3}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Purple">
       <UniqueIdentifier>{dbf0aa8d-d058-45cc-93d4-030b9a5f18c1}</UniqueIdentifier>
@@ -415,16 +427,22 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\PhysXMgr.h">
-      <Filter>05.PhysX\Mgr</Filter>
+      <Filter>05.PhysX\1.Mgr</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\PhyxSampleTest.h">
-      <Filter>05.PhysX\SnipSampleTest</Filter>
+      <Filter>05.PhysX\4.SnipSampleTest</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Bow.h">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestStaticPhysX.h">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>01.GameObject\01.Player</Filter>
@@ -624,16 +642,22 @@
       <Filter>01.GameObject\02.Monster\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\PhysXMgr.cpp">
-      <Filter>05.PhysX\Mgr</Filter>
+      <Filter>05.PhysX\1.Mgr</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\PhyxSampleTest.cpp">
-      <Filter>05.PhysX\SnipSampleTest</Filter>
+      <Filter>05.PhysX\4.SnipSampleTest</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Bow.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestStaticPhysX.cpp">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>

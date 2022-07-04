@@ -209,6 +209,7 @@
     <ClInclude Include="..\public\Monster_Tezabsura_Purple.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX.h" />
     <ClInclude Include="..\public\PhysX\PhysXMgr.h" />
     <ClInclude Include="..\public\PhysX\PhyxSampleTest.h" />
     <ClInclude Include="..\public\Player.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\public\StaticMapObject.h" />
     <ClInclude Include="..\public\TestObject.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
+    <ClInclude Include="..\public\TestStaticPhysX.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -267,6 +269,7 @@
     <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX.cpp" />
     <ClCompile Include="..\private\physX\PhysXMgr.cpp" />
     <ClCompile Include="..\private\physX\PhyxSampleTest.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
@@ -280,6 +283,7 @@
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
     <ClCompile Include="..\private\NaviPoint.cpp" />
+    <ClCompile Include="..\private\TestStaticPhysX.cpp" />
     <ClCompile Include="..\private\TestObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Scene_Loading.cpp" />

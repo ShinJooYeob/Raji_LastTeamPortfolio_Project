@@ -46,16 +46,14 @@ HRESULT CPhyxSampleTest::Initialize_Prototype()
 _int CPhyxSampleTest::Update(_double dDeltaTime)
 {
 
-	if (KEYDOWN(DIK_SPACE))
-	{
-		CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
-		CTransform* pCamTransform = pMainCam->Get_Camera_Transform();
-		NULL_CHECK_BREAK(pCamTransform);
-		_float3 trans3 = pCamTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
-		createDynamic(PxTransform(trans3.x, trans3.y, trans3.z), PxSphereGeometry(3.0f),PxVec3(0, 0, -1) * 200);
-	}
-
-
+	//if (KEYDOWN(DIK_SPACE))
+	//{
+	//	CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	//	CTransform* pCamTransform = pMainCam->Get_Camera_Transform();
+	//	NULL_CHECK_BREAK(pCamTransform);
+	//	_float3 trans3 = pCamTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//	createDynamic(PxTransform(trans3.x, trans3.y, trans3.z), PxSphereGeometry(3.0f),PxVec3(0, 0, -1) * 200);
+	//}
 
 	return _int();
 }

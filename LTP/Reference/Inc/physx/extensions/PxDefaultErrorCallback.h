@@ -53,7 +53,45 @@ namespace physx
 		~PxDefaultErrorCallback() {};
 
 		virtual void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line)
-		{ }
+		{
+
+			string cmsg = message;
+			wstring msg = CHelperClass::Convert_str2wstr(cmsg);
+			string filename = file;
+			wstring wfile = CHelperClass::Convert_str2wstr(filename);
+
+
+
+			wstring log = L"PhyXError:" + msg + L"__" + wfile + L"__" + to_wstring(line) + L"\n";
+			OutputDebugStringW(log.c_str());
+
+			/*
+				switch (code)
+				{
+				case physx::PxErrorCode::eNO_ERROR:
+					break;
+				case physx::PxErrorCode::eDEBUG_INFO:
+					break;
+				case physx::PxErrorCode::eDEBUG_WARNING:
+					break;
+				case physx::PxErrorCode::eINVALID_PARAMETER:
+					break;
+				case physx::PxErrorCode::eINVALID_OPERATION:
+					break;
+				case physx::PxErrorCode::eOUT_OF_MEMORY:
+					break;
+				case physx::PxErrorCode::eINTERNAL_ERROR:
+					break;
+				case physx::PxErrorCode::eABORT:
+					break;
+				case physx::PxErrorCode::ePERF_WARNING:
+					break;
+				case physx::PxErrorCode::eMASK_ALL:
+					break;
+				default:
+					break;
+				}*/
+		}
 	};
 
 #if !PX_DOXYGEN

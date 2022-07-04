@@ -37,6 +37,7 @@ private:
 	HRESULT Load_ModelFBXName_CreateModel(const wchar_t * fbxName, _fMatrix Default);
 	HRESULT Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type,_Matrix defaultMat);
 
+	HRESULT Free_VertexData();
 private:
 	list<MYFILEPATH*> mList_DataFIle_Static;
 	list<MYFILEPATH*> mList_DataFIle_Dynamic;
