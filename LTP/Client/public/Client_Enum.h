@@ -1,5 +1,26 @@
 #pragma once
 
+enum eInstanceEffectID
+{
+	InstanceEffect_Ball,
+	InstanceEffect_Straight,
+	InstanceEffect_Cone,
+	InstanceEffect_Spread,
+	InstanceEffect_Fountain,
+	InstanceEffect_Suck,
+
+
+	InstanceEffect_End
+};
+enum eInstancePassID
+{
+	InstancePass_OriginColor,
+	InstancePass_BrightColor,
+
+	InstancePass_End
+};
+
+
 enum ECameraMode
 {
 	CAM_MODE_FREE, CAM_MODE_NOMAL
@@ -568,7 +589,13 @@ enum COMPONENTPROTOTYPEID
 	Prototype_VIBuffer_Cube,
 	Prototype_VIBuffer_Terrain,
 	Prototype_VIBuffer_Terrain_Edit,
-	Prototype_VIBuffer_Point_Instance,
+	Prototype_VIBuffer_Point_Instance_1,
+	Prototype_VIBuffer_Point_Instance_2,
+	Prototype_VIBuffer_Point_Instance_4,
+	Prototype_VIBuffer_Point_Instance_8,
+	Prototype_VIBuffer_Point_Instance_16,
+	Prototype_VIBuffer_Point_Instance_32,
+	Prototype_VIBuffer_Point_Instance_64,
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
@@ -630,6 +657,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
+	Prototype_Texture_Noise,
 	Prototype_Texture_Monster_Bullet,
 
 };
@@ -693,10 +721,28 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_VIBuffer_Cube");
 		break;
 
-	case Prototype_VIBuffer_Point_Instance:
-		return TEXT("Prototype_VIBuffer_Point_Instance");
+	case Prototype_VIBuffer_Point_Instance_1:
+		return TEXT("Prototype_VIBuffer_Point_Instance_1");
 		break;
-		
+	case Prototype_VIBuffer_Point_Instance_2:
+		return TEXT("Prototype_VIBuffer_Point_Instance_2");
+		break;
+	case Prototype_VIBuffer_Point_Instance_4:
+		return TEXT("Prototype_VIBuffer_Point_Instance_4");
+		break;
+	case Prototype_VIBuffer_Point_Instance_8:
+		return TEXT("Prototype_VIBuffer_Point_Instance_8");
+		break;
+	case Prototype_VIBuffer_Point_Instance_16:
+		return TEXT("Prototype_VIBuffer_Point_Instance_16");
+		break;
+	case Prototype_VIBuffer_Point_Instance_32:
+		return TEXT("Prototype_VIBuffer_Point_Instance_32");
+		break;
+	case Prototype_VIBuffer_Point_Instance_64:
+		return TEXT("Prototype_VIBuffer_Point_Instance_64");
+		break;
+
 
 		//메쉬////////////////////////////////////////////////////////////////////////
 
@@ -877,6 +923,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;
 
+	case 	Prototype_Texture_Noise:
+		return TEXT("Prototype_Texture_Noise");
+		break;
+
+		
 
 	case 	Prototype_Texture_GamePlayScene:
 		return TEXT("Prototype_Texture_GamePlayScene");

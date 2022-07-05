@@ -7,7 +7,9 @@
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
 #include "PhysX/Collider_PhysX.h"
-//#include "LoadingUI.h"
+#include "InstanceEffect.h"
+
+
 
 #ifdef USE_IMGUI
 #include "ImguiMgr.h"
@@ -283,8 +285,21 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Cube),
 		CVIBuffer_Cube::Create(m_pDevice, m_pDeviceContext)));
 
-	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance),
-		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext,15)));
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_1),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 1)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_2),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 2)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_4),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 4)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_8),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 8)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_16),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 16)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_32),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 32)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_64),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 64)));
 
 	////½¦ÀÌ´õ
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VT),
@@ -311,7 +326,13 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Default.txt" )));
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"TestEffect.txt")));
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_Noise),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"NoiseTexture.txt")));
+
+
+
 	//TestEffect.txt;
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
@@ -353,13 +374,12 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
 
 	
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Ball"), CParticleeObj_Ball::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Straight"), CParticleeObj_Straight::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Cone"), CParticleeObj_Cone::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Fixed"), CParticleeObj_Fixed::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Fixed_LookFree"), CParticleeObj_Fixed_LookFree::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Spread"), CParticleeObj_Spread::Create(m_pDevice, m_pDeviceContext)));
-	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObject_Object_particle_Map"), CParticleeObj_MapParticle::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Ball"), CInstanceEffect_Ball::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Straight"), CInstanceEffect_Straight::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Cone"), CInstanceEffect_Cone::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Spread"), CInstanceEffect_Spread::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Fountain"), CInstanceEffect_Fountain::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Suck"), CInstanceEffect_Suck::Create(m_pDevice, m_pDeviceContext)));
 	//
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));

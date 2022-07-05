@@ -106,6 +106,14 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_Depth")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_WorldPosition")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_LimLight")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlDiffuse")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlNormal")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlSpecular")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlEmissive")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_WorldPosition")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_LimLight")));
+
 	
 	
 	/* For.MRT_LightAcc : 빛을 그릴때 바인드 */
@@ -358,6 +366,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_Blend());
 	FAILED_CHECK(Render_MotionTrail());
 	FAILED_CHECK(Render_AfterObj());
+	FAILED_CHECK(Render_EffectObj());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
 
 	FAILED_CHECK(Render_BlurShadow());
@@ -1492,6 +1501,30 @@ HRESULT CRenderer::Render_AfterObj()
 
 	//FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
 	//FAILED_CHECK(Copy_DeferredToReference());
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_EffectObj()
+{
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Effect")));
+
+	for (auto& RenderObject : m_RenderObjectList[RENDER_EFFECT])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_EFFECT].clear();
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Effect")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Effect")));
+
+
 
 	return S_OK;
 }

@@ -123,6 +123,42 @@ void CUtilityMgr::End_DebugTimer(E_DEBUGTIMER type, wstring debugLog)
 }
 
 
+HRESULT CUtilityMgr::Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc)
+{
+	switch (tParticleDesc.eParticleTypeID)
+	{
+	case InstanceEffect_Ball:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Ball"), &tParticleDesc));
+		break;
+	case InstanceEffect_Straight:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Straight"), &tParticleDesc));
+		break;
+	case InstanceEffect_Cone:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Cone"), &tParticleDesc));
+		break;
+	case InstanceEffect_Spread:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Spread"), &tParticleDesc));
+		break;
+	case InstanceEffect_Suck:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Suck"), &tParticleDesc));
+		break;
+	case InstanceEffect_Fountain:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Fountain"), &tParticleDesc));
+		break;
+
+
+	case InstanceEffect_End:
+		break;
+	default:
+		break;
+	}
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()
 {
 	NULL_CHECK_RETURN(m_pRenderer, E_FAIL);

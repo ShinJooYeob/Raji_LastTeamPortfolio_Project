@@ -39,6 +39,13 @@ public:
 	/*For DebugMode*/
 	CRenderer* Get_Renderer() { return m_pRenderer; }
 
+
+	/*For Particle*/
+	HRESULT Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc);
+	//HRESULT Create_MeshInstance(_uint eSceneID, INSTPARTICLEDESC tParticleDesc);
+
+
+
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);
