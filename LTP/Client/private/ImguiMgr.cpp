@@ -5,6 +5,11 @@
 #include "Camera_Main.h"
 #include "TestObject_PhysX.h"
 
+#include "PhysX/Collider_PhysX_Static.h"
+#include "PhysX/Collider_PhysX_Dynamic.h"
+#include "PhysX/Collider_PhysX_Joint.h"
+
+
 #ifdef USE_IMGUI
 
 
@@ -1206,7 +1211,9 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	static  _float3 Force = _float3::Zero();
 	ImGui::DragFloat3("FORCE:", (float*)&Force, 0.1f, -100, 100);
 
-	CCollider_PhysX_Base::PHYSXDESC createDesc;
+	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
+	CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
+	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
 
 	if (ImGui::Button("Static_Box"))
 	{
@@ -1215,20 +1222,21 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_STATIC);
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
 
-		createDesc.bTrigger = false;
-		createDesc.ePhyType = E_PHYTYPE_STATIC;
-		createDesc.eShapeType = E_GEOMAT_BOX;
-		createDesc.mTrnasform = objTrans;
-		NULL_CHECK_BREAK(createDesc.mTrnasform);
+
+		createStatic.bTrigger = false;
+		createStatic.eShapeType = E_GEOMAT_BOX;
+		createStatic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createStatic.mTrnasform);
 		// createDesc.mVelocity;
-		obj->SetUp_ColliderDesc(createDesc);
-
-
+		colStatic->Set_ColiiderDesc(createStatic);
 
 	}
 
@@ -1240,18 +1248,20 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_STATIC);
+		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
 
-		createDesc.bTrigger = false;
-		createDesc.ePhyType = E_PHYTYPE_STATIC;
-		createDesc.eShapeType = E_GEOMAT_SPEHE;
-		createDesc.mTrnasform = objTrans;
-		NULL_CHECK_BREAK(createDesc.mTrnasform);
+		createStatic.bTrigger = false;
+		createStatic.eShapeType = E_GEOMAT_SPEHE;
+		createStatic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createStatic.mTrnasform);
 		// createDesc.mVelocity;
-		obj->SetUp_ColliderDesc(createDesc);
+		colStatic->Set_ColiiderDesc(createStatic);
 
 	}
 	ImGui::SameLine();
@@ -1262,18 +1272,19 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_STATIC);
+		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
 
-		createDesc.bTrigger = false;
-		createDesc.ePhyType = E_PHYTYPE_STATIC;
-		createDesc.eShapeType = E_GEOMAT_CAPSULE;
-		createDesc.mTrnasform = objTrans;
-		NULL_CHECK_BREAK(createDesc.mTrnasform);
+		createStatic.bTrigger = false;
+		createStatic.eShapeType = E_GEOMAT_CAPSULE;
+		createStatic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createStatic.mTrnasform);
 		// createDesc.mVelocity;
-		obj->SetUp_ColliderDesc(createDesc);
+		colStatic->Set_ColiiderDesc(createStatic);
 	}
 
 
@@ -1288,18 +1299,20 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
 
-		createDesc.bTrigger = false;
-		createDesc.ePhyType = E_PHYTYPE_DYNAMIC;
-		createDesc.eShapeType = E_GEOMAT_BOX;
-		createDesc.mTrnasform = objTrans;
-		NULL_CHECK_BREAK(createDesc.mTrnasform);
-		createDesc.mVelocity = Force;
-		obj->SetUp_ColliderDesc(createDesc);
+		createDynamic.bTrigger = false;
+		createDynamic.eShapeType = E_GEOMAT_BOX;
+		createDynamic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createDynamic.mTrnasform);
+		createDynamic.mVelocity = Force;
+		coldynamic->Set_ColiiderDesc(createDynamic);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Dynamic_Sphere"))
@@ -1309,18 +1322,20 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
 
-		createDesc.bTrigger = false;
-		createDesc.ePhyType = E_PHYTYPE_DYNAMIC;
-		createDesc.eShapeType = E_GEOMAT_SPEHE;
-		createDesc.mTrnasform = objTrans;
-		NULL_CHECK_BREAK(createDesc.mTrnasform);
-		createDesc.mVelocity = Force;
-		obj->SetUp_ColliderDesc(createDesc);
+		createDynamic.bTrigger = false;
+		createDynamic.eShapeType = E_GEOMAT_SPEHE;
+		createDynamic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createDynamic.mTrnasform);
+		createDynamic.mVelocity = Force;
+		coldynamic->Set_ColiiderDesc(createDynamic);
 	}
 
 

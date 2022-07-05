@@ -5,6 +5,7 @@
 CCollider_PhysX_Static::CCollider_PhysX_Static(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CCollider_PhysX_Base(pDevice, pDeviceContext)
 {
+	mePhysX_ID = E_PHYTYPE_STATIC;
 }
 
 CCollider_PhysX_Static::CCollider_PhysX_Static(const CCollider_PhysX_Static & rhs)
@@ -96,4 +97,63 @@ void CCollider_PhysX_Static::Free()
 
 
 
+}
+
+HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
+{
+	// 충돌 모델 초기화
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_STATIC));
+
+
+	// 위 정보로 콜라이더 초기화
+	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
+	if (mMain_Actor)
+		return E_FAIL;
+
+	PxGeometry* gemo = nullptr;
+
+	mMainTransform = mPhysXDesc.mTrnasform;
+
+	_float3 scale = mMainTransform->Get_Scale();
+	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
+
+	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	switch (mPhysXDesc.eShapeType)
+	{
+	case Client::E_GEOMAT_BOX:
+		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
+		break;
+	case Client::E_GEOMAT_SPEHE:
+		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
+		break;
+	case Client::E_GEOMAT_CAPSULE:
+		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
+		break;
+	case Client::E_GEOMAT_SHAPE:
+
+		break;
+	case Client::E_GEOMAT_VERTEX:
+		break;
+	case Client::E_GEOMAT_TRIANGLE:
+		break;
+	case Client::E_GEOMAT_END:
+		break;
+
+	default:
+		break;
+	}
+
+	PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
+	_Sfloat4x4 float4x4 = mMainTransform->Get_WorldFloat4x4();
+	_Squternion q = _Squternion::CreateFromRotationMatrix(float4x4);
+	pxtrans.q = *(PxQuat*)&q;
+
+	NULL_CHECK_BREAK(gemo);
+
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(pxtrans, *gemo);
+	NULL_CHECK_BREAK(mMain_Actor);
+	Safe_Delete(gemo);
+
+	return S_OK;
 }

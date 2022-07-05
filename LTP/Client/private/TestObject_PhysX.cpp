@@ -125,13 +125,57 @@ _int CTestObject_PhysX::LateRender()
 	return _int();
 }
 
-HRESULT CTestObject_PhysX::SetUp_ColliderDesc(CCollider_PhysX_Base::PHYSXDESC desc)
+HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)
 {
-	if (m_Com_ColliderBase)
-	return	m_Com_ColliderBase->Setup_PhysXDesc(desc);
-
+	// Collider Set;
+	if (id == E_PHYTYPE_DYNAMIC)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+		return S_OK;
+	}
+	if (id == E_PHYTYPE_STATIC)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+		return S_OK;
+	}
+	if (id == E_PHYTYPE_JOINT)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+		return S_OK;
+	}
 	return E_FAIL;
 }
+
+//HRESULT CTestObject_PhysX::SetUp_ColliderDesc(CCollider_PhysX_Base::PHYSXDESC desc)
+//{
+//	if (m_Com_ColliderBase)
+//		return E_FAIL;
+//	
+//	switch (desc.ePhyType)
+//	{
+//	case E_PHYTYPE_DYNAMIC:
+//		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
+//
+//		break;
+//	case E_PHYTYPE_STATIC:
+//		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
+//
+//		break;
+//	case E_PHYTYPE_JOINT:
+//		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
+//		break;
+//	default:
+//		break;
+//
+//	}
+//
+//	if (m_Com_ColliderBase)
+//	{
+//		return m_Com_ColliderBase->Setup_PhysXDesc(desc);
+//	}
+//		
+//	return E_FAIL;
+//}
 
 
 
@@ -143,7 +187,13 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
+
+	// Static / dynamic / 관절에 적용되는 컴포넌트들 생성
+	m_Com_ColliderBase = nullptr;
+	//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+	//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+	//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_Com_ColliderBase));
+
 
 	
 	CTransform::TRANSFORMDESC tDesc = {};

@@ -27,8 +27,10 @@ public:
 	virtual _int LateRender()override;
 
 public:
-	HRESULT	SetUp_ColliderDesc(CCollider_PhysX_Base::PHYSXDESC desc);
 	void	Set_Trigger(bool b) { mbTrigger = b; };
+
+	// 피직스 테스트시만 사용
+	HRESULT	Set_ColSetID(E_PHYTYPE id);
 
 private:
 	// 피직스 관련
@@ -45,6 +47,7 @@ private:
 //	class CCollider_PhysX_Joint*	m_Com_ColliderJoint = nullptr;
 
 	bool				mbTrigger = false;
+	int					mColID = 0;
 
 private:
 	HRESULT SetUp_Components();

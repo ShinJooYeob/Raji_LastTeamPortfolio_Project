@@ -98,6 +98,10 @@ public:
 	static PxFoundation*		gFoundation;
 	static PxMaterial*			gMaterial;
 
+	static PxMaterial*			gMaterial1;
+	static PxMaterial*			gMaterial2;
+
+
 
 
 public:

@@ -9,10 +9,12 @@
 CCollider_PhysX_Base::CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CComponent(pDevice, pDeviceContext)
 {
+	mePhysX_ID = E_PHYTYPE_END;
+
 }
 
 CCollider_PhysX_Base::CCollider_PhysX_Base(const CCollider_PhysX_Base & rhs)
-	: CComponent(rhs)
+	: CComponent(rhs), mePhysX_ID(rhs.mePhysX_ID)
 #ifdef _DEBUG
 	,m_pBasicEffect(rhs.m_pBasicEffect),
 	m_pBatch(rhs.m_pBatch),
@@ -125,143 +127,11 @@ HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 		mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 	
 
-	return S_OK;
+		return S_OK;
 }
 
-//HRESULT CCollider_PhysX_Base::Set_PhysXScale(_float3 scaleVec)
-//{
-//	mActorScale  =  FLOAT3TOPXVEC3(scaleVec);
-//	return S_OK;
-//}
-//
-//HRESULT CCollider_PhysX_Base::CreateDynamicActor(PxVec3 scale)
-//{
-//	if (mMain_Actor)
-//		return S_FALSE;
-//
-//	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(scale.x));
-//
-//	return S_OK;
-//}
-//
-//HRESULT CCollider_PhysX_Base::CreateStaticActor(PxVec3 scale)
-//{
-//	if (mMain_Actor)
-//		return S_FALSE;
-//
-//	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
-//
-//	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxBoxGeometry(scale));
-//
-//	return S_OK;
-//
-//}
-//
-//HRESULT CCollider_PhysX_Base::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
-//{
-//	if (mMain_Actor)
-//		return S_FALSE;
-//	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
-//	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
-//	return S_OK;
-//}
-//
-//
-//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
-//{
-//	if (mMain_Actor)
-//		return S_FALSE;
-//
-//	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_JOINT;
-//	ATTACHEDESC mAttachDesc;
-//	mAttachDesc = attach;
-//	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
-//	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
-//	return S_OK;
-//}
 
 
-
-HRESULT CCollider_PhysX_Base::Setup_PhysXDesc(PHYSXDESC desc)
-{
-	// 충돌 모델 초기화
-
-	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC));
-
-	// 위 정보로 콜라이더 초기화
-
-	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
-	if (mMain_Actor)
-		return E_FAIL;
-
-	PxGeometry* gemo = nullptr;
-
-	mMainTransform = mPhysXDesc.mTrnasform;
-
-	_float3 scale = mMainTransform->Get_Scale();
-	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-
-	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
-
-	switch (mPhysXDesc.eShapeType)
-	{
-	case Client::E_GEOMAT_BOX:
-		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-		break;
-	case Client::E_GEOMAT_SPEHE:
-		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-		break;
-	case Client::E_GEOMAT_CAPSULE:
-		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-		break;
-	case Client::E_GEOMAT_SHAPE:
-
-		break;
-	case Client::E_GEOMAT_VERTEX:
-		break;
-	case Client::E_GEOMAT_TRIANGLE:
-		break;
-	case Client::E_GEOMAT_END:
-		break;
-
-	default:
-		break;
-	}
-
-	PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
-	_Sfloat4x4 float4x4 = mMainTransform->Get_WorldFloat4x4();
-	_Squternion q = _Squternion::CreateFromRotationMatrix(float4x4);
-	pxtrans.q = *(PxQuat*)&q;
-
-	NULL_CHECK_BREAK(gemo);
-	switch (mPhysXDesc.ePhyType)
-	{
-	case Client::E_PHYTYPE_STATIC:
-		mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(pxtrans, *gemo);
-		break;
-
-	case Client::E_PHYTYPE_DYNAMIC:
-		mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(pxtrans, *gemo,FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
-		break;
-	case Client::E_PHYTYPE_JOINT:
-		break;
-	default:
-		break;
-
-	}
-
-	NULL_CHECK_BREAK(mMain_Actor);
-	Safe_Delete(gemo);
-
-
-	//mMain_Actor->attachShape(*shape);
-	//shape->setLocalPose(offset);
-	//NULL_CHECK_BREAK(shape);
-	//mMain_Actor->attachShape(*shape);
-
-	return S_OK;
-
-}
 
 HRESULT CCollider_PhysX_Base::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
@@ -282,32 +152,21 @@ void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
 	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
 }
 
-//PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+
+//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 //{
-//	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-//	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.1f));
-//	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
-//	return j;
-//}
+//	if (mMain_Actor)
+//		return S_FALSE;
 //
-//PxJoint * CCollider_PhysX_Base::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-//{
-//	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-//	j->setBreakForce(1000, 100000);
-//	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
-//	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
-//	return j;
+//	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_JOINT;
+//	ATTACHEDESC mAttachDesc;
+//	mAttachDesc = attach;
+//	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
+//	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+//	return S_OK;
 //}
-//
-//PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-//{
-//	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-//	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-//	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-//	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-//	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
-//	return j;
-//}
+
+
 
 #ifdef _DEBUG
 
@@ -419,32 +278,6 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 
 }
 #endif
-
-//CCollider_PhysX_Base * CCollider_PhysX_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
-//{
-//
-//	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base(pDevice, pDeviceContext);
-//
-//	if (FAILED(pInstance->Initialize_Prototype(pArg)))
-//	{
-//		MSGBOX("Failed to Create Transform Prototype");
-//		Safe_Release(pInstance);
-//	}
-//
-//	return pInstance;
-//}
-//
-//CComponent * CCollider_PhysX_Base::Clone(void * pArg)
-//{
-//	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base((*this));
-//
-//	if (FAILED(pInstance->Initialize_Clone(pArg)))
-//	{
-//		MSGBOX("Failed to Create Transform");
-//		Safe_Release(pInstance);
-//	}
-//	return pInstance;
-//}
 
 void CCollider_PhysX_Base::Free()
 {

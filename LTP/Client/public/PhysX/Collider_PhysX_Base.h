@@ -34,16 +34,34 @@ enum E_GEOMAT_TYPE
 class CCollider_PhysX_Base : public CComponent
 {
 public:
-
-	typedef struct Tag_PhysXDesc
+	// 각각 생성하는 콜라이더에 따른 DESC
+	typedef struct Tag_PhysXDesc_Static
 	{
 		CTransform*			mTrnasform = nullptr;
-		E_PHYTYPE			ePhyType = E_PHYTYPE_STATIC;
+		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+		_bool				bTrigger = false;
+
+	}PHYSXDESC_STATIC;
+
+
+	typedef struct Tag_PhysXDesc_Dynamic
+	{
+		CTransform*			mTrnasform = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mVelocity = _float3::Zero();
 		_bool				bTrigger = false;
 
-	}PHYSXDESC;
+	}PHYSXDESC_DYNAMIC;
+
+
+	typedef struct Tag_PhysXDesc_Joint
+	{
+		//CTransform*			mTrnasform = nullptr;
+		//E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+		//_float3				mVelocity = _float3::Zero();
+		//_bool				bTrigger = false;
+
+	}PHYSXDESC_JOINT;
 
 
 
@@ -66,42 +84,34 @@ public:
 #endif // _DEBUG
 
 public:
-	HRESULT			Setup_PhysXDesc(PHYSXDESC desc);
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
 	void			Set_Postiotn(_float3 positiotn);
 	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
 	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
-//	void			Set_KeyUpdate(_bool b) { mbKeyUpdate = b; };
 
-
-	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
+	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
+	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 public:
-
-
 	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
 	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-	HRESULT CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
 
-//	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-//	static PxJoint* CreateBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-//	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
-private:
+
+protected:
 	//	CTransform*					mTransform = nullptr;
-	PHYSXDESC					mPhysXDesc;
-	PxRigidActor*				mMain_Actor= nullptr;
-	PxTransform					mPxTransform;
-	CTransform*					mMainTransform = nullptr;
+	PxRigidActor*					mMain_Actor= nullptr;
+	PxTransform						mPxTransform;
+	CTransform*						mMainTransform = nullptr;
 
-private:
+protected:
+	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
 	// 물리충돌 해제
-	bool						mbPhysXUpdate = true;
+	bool							mbPhysXUpdate = true;
 	// 외부 입력 업데이트
-	// bool						mbKeyUpdate = false;
+	// bool							mbKeyUpdate = false;
 
-private:
 
 #ifdef _DEBUG
 private:

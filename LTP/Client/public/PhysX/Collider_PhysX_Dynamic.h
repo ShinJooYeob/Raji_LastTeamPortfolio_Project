@@ -20,6 +20,8 @@ public:
 	virtual HRESULT Update_BeforeSimulation()override;
 	virtual HRESULT Update_AfterSimulation()override;
 
+public:
+	const PHYSXDESC_DYNAMIC& Get_PhysXDesc() const { return mPhysXDesc; }
 
 public:
 #ifdef _DEBUG
@@ -27,11 +29,17 @@ public:
 
 #endif // _DEBUG
 
+	HRESULT Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc);
+
+
+protected:
+	PHYSXDESC_DYNAMIC mPhysXDesc;
 
 public:
 	static CCollider_PhysX_Dynamic * Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
 	virtual CComponent* Clone(void* pArg)override;
 	virtual void Free()override;
+
 };
 
 END
