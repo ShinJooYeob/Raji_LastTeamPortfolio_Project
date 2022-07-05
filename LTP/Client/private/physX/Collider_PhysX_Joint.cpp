@@ -35,14 +35,15 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
-
-
+	if (FAILED(__super::Update_BeforeSimulation()))
+		return E_FAIL;
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 {
-
+	if (FAILED(__super::Update_AfterSimulation()))
+		return E_FAIL;
 	return S_OK;
 }
 

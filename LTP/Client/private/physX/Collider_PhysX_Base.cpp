@@ -234,7 +234,7 @@ HRESULT CCollider_PhysX_Base::Setup_PhysXDesc(PHYSXDESC desc)
 	pxtrans.q = *(PxQuat*)&q;
 
 	NULL_CHECK_BREAK(gemo);
-	switch (mPhysXDesc.eShapeType)
+	switch (mPhysXDesc.ePhyType)
 	{
 	case Client::E_PHYTYPE_STATIC:
 		mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(pxtrans, *gemo);
@@ -461,6 +461,14 @@ void CCollider_PhysX_Base::Free()
 
 #endif // _DEBUG
 
+	if (m_bIsClone)
+	{
+		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+		if (scene)
+			scene->removeActor(*mMain_Actor);
+		mMain_Actor = nullptr;
+
+	}
 
 
 }

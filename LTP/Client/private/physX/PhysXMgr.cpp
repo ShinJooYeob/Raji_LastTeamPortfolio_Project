@@ -380,7 +380,7 @@ PxFoundation * CPhysXMgr::Get_Foundation()
 
 PxPhysics * CPhysXMgr::Get_PhysicsCreater()
 {
-	NULL_CHECK_BREAK(mPhysics);
+//	NULL_CHECK_BREAK(mPhysics);
 	return mPhysics;
 }
 
@@ -392,7 +392,7 @@ PxCooking * CPhysXMgr::Get_PhysicsCooking()
 
 PxScene * CPhysXMgr::Get_PhysicsScene()
 {
-	NULL_CHECK_BREAK(mScene);
+//	NULL_CHECK_BREAK(mScene);
 	return mScene;
 }
 

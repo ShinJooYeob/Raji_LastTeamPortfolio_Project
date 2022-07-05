@@ -1200,9 +1200,11 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 	// static 오브젝트 배치
 	static _float3 Position = _float3::Zero();
-	ImGui::DragFloat3("POS:",(float*)&Position,0.1f,-100,100);
+	ImGui::DragFloat3("POS:", (float*)&Position, 0.1f, -100, 100);
 	static  _float3 Scale = _float3::One();
 	ImGui::DragFloat3("SCALE:", (float*)&Scale, 0.1f, 0.1f, 100);
+	static  _float3 Force = _float3::Zero();
+	ImGui::DragFloat3("FORCE:", (float*)&Force, 0.1f, -100, 100);
 
 	CCollider_PhysX_Base::PHYSXDESC createDesc;
 
@@ -1213,7 +1215,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
-		
+
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
@@ -1227,7 +1229,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		obj->SetUp_ColliderDesc(createDesc);
 
 
-		
+
 	}
 
 	ImGui::SameLine();
@@ -1244,7 +1246,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		objTrans->Scaled_All(Scale);
 
 		createDesc.bTrigger = false;
-		createDesc.ePhyType =  E_PHYTYPE_STATIC;
+		createDesc.ePhyType = E_PHYTYPE_STATIC;
 		createDesc.eShapeType = E_GEOMAT_SPEHE;
 		createDesc.mTrnasform = objTrans;
 		NULL_CHECK_BREAK(createDesc.mTrnasform);
@@ -1274,50 +1276,68 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		obj->SetUp_ColliderDesc(createDesc);
 	}
 
-	//if (ImGui::Button("Static_Capsule"))
-	//{
-	//	testDesc.ePhyType = CTestObject_PhysX::E_PHYTYPE_STATIC;
-	//	testDesc.ePhyDetailType = CTestObject_PhysX::E_PHYDETAIL_STATIC_BOX;
-	//	testDesc.pos = Position;
-	//	testDesc.scale = Scale;
-	//	testDesc.bTrigger = false;
 
-	//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX), &testDesc));
+	ImGui::Separator();
 
-	//}
 
-	//ImGui::SameLine();
-	//ImGui::SameLine();
+	// dynamic 오브젝트 배치
+	if (ImGui::Button("Dynamic_Box"))
+	{
 
-	//ImGui::Separator();
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
+		CTestObject_PhysX* obj =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
 
-	//
-	//// dynamic 오브젝트 배치
-	//if (ImGui::Button("Dynamic_Box"))
-	//{
-	//	testDesc.ePhyType = CTestObject_PhysX::E_PHYTYPE_STATIC;
-	//	testDesc.ePhyDetailType = CTestObject_PhysX::E_PHYDETAIL_STATIC_BOX;
-	//	testDesc.pos = _float3(0, 0, 0);
-	//	testDesc.scale = Scale;
-	//	testDesc.bTrigger = true;
+		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		objTrans->Scaled_All(Scale);
 
-	//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX), &testDesc));
+		createDesc.bTrigger = false;
+		createDesc.ePhyType = E_PHYTYPE_DYNAMIC;
+		createDesc.eShapeType = E_GEOMAT_BOX;
+		createDesc.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createDesc.mTrnasform);
+		createDesc.mVelocity = Force;
+		obj->SetUp_ColliderDesc(createDesc);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Dynamic_Sphere"))
+	{
 
-	//}
-	//ImGui::Separator();
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
+		CTestObject_PhysX* obj =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
 
-	//// Joint 테스트
-	//if (ImGui::Button("Joint"))
-	//{
-	//	// CTestStaticPhysX::TESTPHYSXDESC tagBox;
-	//	// tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_STATIC;
-	//	// tagBox.ePhyDetailType = CTestStaticPhysX::E_PHYDETAIL_STATIC_BOX;
-	//	// tagBox.pos = _float3(0, 0, Z1 += 1);
-	//	// tagBox.bTrigger = true;
-	//	// 
-	//	// FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX), &tagBox));
+		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		objTrans->Scaled_All(Scale);
 
-	//}
+		createDesc.bTrigger = false;
+		createDesc.ePhyType = E_PHYTYPE_DYNAMIC;
+		createDesc.eShapeType = E_GEOMAT_SPEHE;
+		createDesc.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createDesc.mTrnasform);
+		createDesc.mVelocity = Force;
+		obj->SetUp_ColliderDesc(createDesc);
+	}
+
+
+	ImGui::Separator();
+
+	// Joint 테스트
+	if (ImGui::Button("Joint"))
+	{
+		// CTestStaticPhysX::TESTPHYSXDESC tagBox;
+		// tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_STATIC;
+		// tagBox.ePhyDetailType = CTestStaticPhysX::E_PHYDETAIL_STATIC_BOX;
+		// tagBox.pos = _float3(0, 0, Z1 += 1);
+		// tagBox.bTrigger = true;
+		// 
+		// FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX), &tagBox));
+
+	}
 
 	ImGui::Separator();
 
