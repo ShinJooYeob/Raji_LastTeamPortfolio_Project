@@ -193,7 +193,7 @@ private:
 
 
 private: /* Getter */
-	_fVector			LookAt_MousePos();
+	void				LookAt_MousePos();
 	_fVector			Get_MousePos();
 
 private:
@@ -215,7 +215,7 @@ private: /* Enum Stats */
 	_uint					m_eCurAnim = BASE_ANIM_IDLE;
 	EWEAPON_TYPE 			m_eCurWeapon = WEAPON_END;
 	EPLAYER_STATE			m_eCurState = STATE_END;
-	EUTILITYSKILL_STATE		m_eCurUtilityState = UTILITY_START;
+	EUTILITYSKILL_STATE		m_eCurUtilityState = UTILITY_START; 
 	EBOWMAINATK_STATE		m_eCurBowMainAtkState = BOWMAINATK_START;
 
 
@@ -253,7 +253,7 @@ private: /* Animation Control */
 	_bool				m_bThrowSpear = false;
 
 	_bool				m_bAnimChangeSwitch = false;
-	_bool				m_bAnimChangeSwitch_2nd = false;
+	_bool				m_bActionSwitch = false;
 
 private: /* Activate */
 	_bool				m_bActivateLookDir = false;

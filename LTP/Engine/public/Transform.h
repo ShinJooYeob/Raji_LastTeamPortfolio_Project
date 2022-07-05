@@ -75,6 +75,7 @@ public:
 	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime);
 	void MovetoTarget(_fVector vTarget, _double fDeltaTime);
 
+	_bool MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);
 
 //Turn////////////////////////////////////////////////////////////////////////
 	void LookAt(_fVector vTarget);

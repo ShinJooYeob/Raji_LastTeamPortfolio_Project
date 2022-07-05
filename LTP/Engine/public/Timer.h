@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CTimer final : public CBase
+class ENGINE_DLL CTimer final : public CBase
 {
 private:
 	explicit CTimer();
