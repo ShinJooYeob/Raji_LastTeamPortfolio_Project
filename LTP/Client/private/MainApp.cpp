@@ -6,7 +6,7 @@
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
-#include "PhysX/Collider_PhysX.h"
+#include "PhysX/Collider_PhysX_Base.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -318,7 +318,7 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CCollider::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
-		CCollider_PhysX::Create(m_pDevice, m_pDeviceContext)));
+		CCollider_PhysX_Base::Create(m_pDevice, m_pDeviceContext)));
 
 
 	return S_OK;

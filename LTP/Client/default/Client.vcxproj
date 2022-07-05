@@ -214,7 +214,6 @@
     <ClInclude Include="..\public\Monster_Tezabsura_Purple.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
-    <ClInclude Include="..\public\PhysX\Collider_PhysX.h" />
     <ClInclude Include="..\public\PhysX\PhysXMgr.h" />
     <ClInclude Include="..\public\PhysX\PhyxSampleTest.h" />
     <ClInclude Include="..\public\Player.h" />
@@ -281,7 +280,6 @@
     <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
-    <ClCompile Include="..\private\physX\Collider_PhysX.cpp" />
     <ClCompile Include="..\private\physX\PhysXMgr.cpp" />
     <ClCompile Include="..\private\physX\PhyxSampleTest.cpp" />
     <ClCompile Include="..\private\Player.cpp" />

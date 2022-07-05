@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\public\TestStaticPhysX.h"
-#include "..\public\PhysX\Collider_PhysX.h"
+#include "..\public\PhysX\Collider_PhysX_Base.h"
 
 
 CTestStaticPhysX::CTestStaticPhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -96,8 +96,8 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 		}
 
 	}
-	m_pPhysX->Set_KeyUpdate(isKey);
-	m_pPhysX->Update_BeforeSimulation(m_pTransformCom);
+	m_Com_COlliderPhysX_Test->Set_KeyUpdate(isKey);
+	m_Com_COlliderPhysX_Test->Update_BeforeSimulation(m_pTransformCom);
 
 
 	return _int();
@@ -111,7 +111,7 @@ _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-	m_pPhysX->Update_AfterSimulation(m_pTransformCom);
+	m_Com_COlliderPhysX_Test->Update_AfterSimulation(m_pTransformCom);
 
 	return _int();
 }
@@ -144,7 +144,7 @@ _int CTestStaticPhysX::Render()
 	}
 
 #ifdef _DEBUG
-	m_pPhysX->Render();
+	m_Com_COlliderPhysX_Test->Render();
 
 #endif // _DEBUG
 	return _int();
@@ -168,7 +168,7 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider), (CComponent**)&m_pPhysX));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider), (CComponent**)&m_Com_COlliderPhysX_Test));
 
 	
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -188,22 +188,22 @@ void CTestStaticPhysX::Set_StaticBox()
 	// 충돌체 달기
 
 	_float3 scale = _float3(1,5,5);
-	m_pPhysX->CreateStaticActor(FLOAT3TOPXVEC3(scale));
+	m_Com_COlliderPhysX_Test->CreateStaticActor(FLOAT3TOPXVEC3(scale));
 
 
 	m_pTransformCom->Scaled_All(scale);
-	m_pPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	m_Com_COlliderPhysX_Test->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
 
 }
 
 void CTestStaticPhysX::Set_DynamicBullet()
 {
 	_float3 scale = _float3(0.5f, 0.5f, 0.5f);
-	m_pPhysX->CreateDynamicActor(FLOAT3TOPXVEC3(scale));
+	m_Com_COlliderPhysX_Test->CreateDynamicActor(FLOAT3TOPXVEC3(scale));
 	m_pTransformCom->Scaled_All(scale);
 
 	_float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-	m_pPhysX->Set_Postiotn(position);
+	m_Com_COlliderPhysX_Test->Set_Postiotn(position);
 
 }
 
@@ -215,7 +215,7 @@ void CTestStaticPhysX::Set_ChainTest()
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, position);
 
 	// Chain Test
-	m_pPhysX->CreateChain(PxTransform(FLOAT3TOPXVEC3(position)) , 10, PxSphereGeometry(1),2, CCollider_PhysX::CreateLimitedSpherical);
+	m_Com_COlliderPhysX_Test->CreateChain(PxTransform(FLOAT3TOPXVEC3(position)) , 10, PxSphereGeometry(1),2, CCollider_PhysX_Base::CreateLimitedSpherical);
 }
 
 
@@ -252,7 +252,7 @@ void CTestStaticPhysX::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
-	Safe_Release(m_pPhysX);
+	Safe_Release(m_Com_COlliderPhysX_Test);
 
 	
 }

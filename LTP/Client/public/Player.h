@@ -269,7 +269,7 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
-	class CCollider_PhysX*	m_pCollider_HairPhysX = nullptr;
+	class CCollider_PhysX_Base*	m_pCollider_HairPhysX = nullptr;
 
 private:
 	CPlayerWeapon*		m_pPlayerWeapons[WEAPON_END - 1];

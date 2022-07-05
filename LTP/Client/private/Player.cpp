@@ -6,7 +6,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "Timer.h"
-#include "physx/Collider_PhysX.h"
+#include "physx\Collider_PhysX_Base.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -3370,17 +3370,17 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 
 void CPlayer::Set_HairPhysX()
 {
-	// #HAIR
-	// Hair PhysX Test
-	NULL_CHECK_BREAK(m_pCollider_HairPhysX);
+	//// #HAIR
+	//// Hair PhysX Test
+	//NULL_CHECK_BREAK(m_pCollider_HairPhysX);
 
-	//// Create Player Hair //
-	ATTACHEDESC eAttachedDesc;
-	eAttachedDesc.Initialize_AttachedDesc(this, "skd_hair01", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	////// Create Player Hair //
+	//ATTACHEDESC eAttachedDesc;
+	//eAttachedDesc.Initialize_AttachedDesc(this, "skd_hair01", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 
 
-	// Chain Test
-	m_pCollider_HairPhysX->CreateChain(eAttachedDesc, 10, PxSphereGeometry(1), 2, CCollider_PhysX::CreateLimitedSpherical);
+	//// Chain Test
+	//m_pCollider_HairPhysX->CreateChain(eAttachedDesc, 10, PxSphereGeometry(1), 2, CCollider_PhysX::CreateLimitedSpherical);
 
 
 

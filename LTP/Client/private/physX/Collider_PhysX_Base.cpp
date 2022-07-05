@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "..\Public\PhysX\Collider_PhysX.h"
+#include "..\Public\PhysX\Collider_PhysX_Base.h"
 #include "DebugDraw.h"
 
 
 #define  MAX_NUM_ACTOR_SHAPES 128
 
 
-CCollider_PhysX::CCollider_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CCollider_PhysX_Base::CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CComponent(pDevice, pDeviceContext)
 {
 }
 
-CCollider_PhysX::CCollider_PhysX(const CCollider_PhysX & rhs)
+CCollider_PhysX_Base::CCollider_PhysX_Base(const CCollider_PhysX_Base & rhs)
 	: CComponent(rhs),
 #ifdef _DEBUG
 	m_pBasicEffect(rhs.m_pBasicEffect),
@@ -48,7 +48,7 @@ CCollider_PhysX::CCollider_PhysX(const CCollider_PhysX & rhs)
 }
 
 
-HRESULT CCollider_PhysX::Initialize_Prototype(void * pArg)
+HRESULT CCollider_PhysX_Base::Initialize_Prototype(void * pArg)
 {
 	if (FAILED(__super::Initialize_Prototype(pArg)))
 		return E_FAIL;
@@ -76,7 +76,7 @@ HRESULT CCollider_PhysX::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
+HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 {
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
@@ -87,7 +87,7 @@ HRESULT CCollider_PhysX::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX::Update_BeforeSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Base::Update_BeforeSimulation(CTransform* objTransform)
 {
 
 	// 시뮬레이션 전의 충돌체 위치
@@ -110,7 +110,7 @@ HRESULT CCollider_PhysX::Update_BeforeSimulation(CTransform* objTransform)
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::Update_AfterSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Base::Update_AfterSimulation(CTransform* objTransform)
 {
 	if (mbPhysXUpdate == false)
 		return S_OK;
@@ -151,13 +151,13 @@ HRESULT CCollider_PhysX::Update_AfterSimulation(CTransform* objTransform)
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::Set_PhysXScale(_float3 scaleVec)
+HRESULT CCollider_PhysX_Base::Set_PhysXScale(_float3 scaleVec)
 {
 	mActorScale  =  FLOAT3TOPXVEC3(scaleVec);
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::CreateDynamicActor(PxVec3 scale)
+HRESULT CCollider_PhysX_Base::CreateDynamicActor(PxVec3 scale)
 {
 	if (mRigActor)
 		return S_FALSE;
@@ -169,12 +169,12 @@ HRESULT CCollider_PhysX::CreateDynamicActor(PxVec3 scale)
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX::CreateStaticActor(PxVec3 scale)
+HRESULT CCollider_PhysX_Base::CreateStaticActor(PxVec3 scale)
 {
 	if (mRigActor)
 		return S_FALSE;
 
-	mePhysxType = CCollider_PhysX::E_PHYSXTYPE_COLLIDER;
+	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
 
 	mActorScale = scale;
 	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxBoxGeometry(mActorScale));
@@ -183,23 +183,23 @@ HRESULT CCollider_PhysX::CreateStaticActor(PxVec3 scale)
 
 }
 
-HRESULT CCollider_PhysX::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
+HRESULT CCollider_PhysX_Base::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 {
 	if (mRigActor)
 		return S_FALSE;
-	mePhysxType = CCollider_PhysX::E_PHYSXTYPE_COLLIDER;
+	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
 
 	mRigActor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
 	return S_OK;
 }
 
 
-HRESULT CCollider_PhysX::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
+HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 {
 	if (mRigActor)
 		return S_FALSE;
 
-	mePhysxType = CCollider_PhysX::E_PHYSXTYPE_JOINT;
+	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_JOINT;
 	mAttachDesc = attach;
 	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
 	mRigActor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
@@ -208,7 +208,7 @@ HRESULT CCollider_PhysX::CreateChain(ATTACHEDESC attach, PxU32 length, const PxG
 
 
 
-HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
+HRESULT CCollider_PhysX_Base::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
 	if (mRigActor)
 	{
@@ -222,12 +222,12 @@ HRESULT CCollider_PhysX::Add_Shape(PxGeometry& gemo, PxTransform offset)
 	return S_OK;
 }
 
-void CCollider_PhysX::Set_Postiotn(_float3 positiotn)
+void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
 {
 	mRigActor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
 }
 
-PxJoint * CCollider_PhysX::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
 	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
 	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.1f));
@@ -237,7 +237,7 @@ PxJoint * CCollider_PhysX::CreateLimitedSpherical(PxRigidActor * a0, const PxTra
 }
 
 
-PxJoint * CCollider_PhysX::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+PxJoint * CCollider_PhysX_Base::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
 	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
 	j->setBreakForce(1000, 100000);
@@ -247,7 +247,7 @@ PxJoint * CCollider_PhysX::CreateBreakableFixed(PxRigidActor * a0, const PxTrans
 	return j;
 }
 
-PxJoint * CCollider_PhysX::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
 
 	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
@@ -260,7 +260,7 @@ PxJoint * CCollider_PhysX::CreateDampedD6(PxRigidActor * a0, const PxTransform &
 
 #ifdef _DEBUG
 
-HRESULT CCollider_PhysX::Render()
+HRESULT CCollider_PhysX_Base::Render()
 {
 	NULL_CHECK_RETURN(mRigActor, E_FAIL);
 
@@ -320,7 +320,7 @@ HRESULT CCollider_PhysX::Render()
 }
 
 
-HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color)
+HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color)
 {
 	const PxGeometry& geom = h.any();
 	PxTransform worldTrans = PxTransform(world);
@@ -388,10 +388,10 @@ HRESULT CCollider_PhysX::RenderShape(const PxGeometryHolder & h, const PxMat44& 
 }
 #endif
 
-CCollider_PhysX * CCollider_PhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CCollider_PhysX_Base * CCollider_PhysX_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 
-	CCollider_PhysX* pInstance = new CCollider_PhysX(pDevice, pDeviceContext);
+	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -402,9 +402,9 @@ CCollider_PhysX * CCollider_PhysX::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CComponent * CCollider_PhysX::Clone(void * pArg)
+CComponent * CCollider_PhysX_Base::Clone(void * pArg)
 {
-	CCollider_PhysX* pInstance = new CCollider_PhysX((*this));
+	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base((*this));
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -414,7 +414,7 @@ CComponent * CCollider_PhysX::Clone(void * pArg)
 	return pInstance;
 }
 
-void CCollider_PhysX::Free()
+void CCollider_PhysX_Base::Free()
 {
 	__super::Free();
 

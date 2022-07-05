@@ -241,8 +241,17 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake">
       <UniqueIdentifier>{30e977db-f5f5-4f31-80ff-3760c24daecc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.PhysX\3.Com_PhyCom\Base">
+    <Filter Include="05.PhysX\3.Com_PhyCom\0.Base">
       <UniqueIdentifier>{192520f9-04e9-45d9-bc15-5831f45bd9e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\3.Joint">
+      <UniqueIdentifier>{103ba62f-cc39-41b6-8ba7-1afe069ad86a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\1.Static">
+      <UniqueIdentifier>{adee0b06-c986-4f19-8d1c-9ad39ffc002f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\2.Dynamic">
+      <UniqueIdentifier>{5bd47fb5-5012-4cf8-b8a9-194eb418fe75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -498,20 +507,17 @@
     <ClInclude Include="..\public\Snake.h">
       <Filter>01.GameObject\02.Monster\Boss\Snake</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
-      <Filter>05.PhysX\3.Com_PhyCom\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h">
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
+      <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -734,20 +740,17 @@
     <ClCompile Include="..\private\Snake.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Snake</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

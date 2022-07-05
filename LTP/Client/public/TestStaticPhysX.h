@@ -58,7 +58,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 
-	class CCollider_PhysX* m_pPhysX = nullptr;
+	class CCollider_PhysX_Base* m_Com_COlliderPhysX_Test = nullptr;
 
 	E_PHYTYPE			mePhyType = E_PHYTYPE_END;
 
