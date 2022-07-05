@@ -27,8 +27,11 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 {
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
+	
 
-
+	// 키나 외부 힘이 작용했을떄 예외처리
+	//PxRigidDynamic* dynamic;
+	//dynamic->setKinematicTarget();
 	return S_OK;
 }
 

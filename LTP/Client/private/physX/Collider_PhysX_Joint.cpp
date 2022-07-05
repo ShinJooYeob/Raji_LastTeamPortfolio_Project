@@ -44,7 +44,10 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 	if (mMainTransform == nullptr)
 		return E_FAIL;
 
-	mPxMainTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+	
+	;
+//	mPxMainTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+
 
 
 	return S_OK;
@@ -63,23 +66,23 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
 
 	// Pos
-
-	//PxMat44 mat = PxMat44(mVecActors[0]->getGlobalPose());
-	//_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-	//mVecHier[0]->Set_UpdateTransform(getPos);
-
-	_uint size = mVecActors.size();
-	for (int i =0; i<size;++i)
-	{
-	//	mMain_Actor->setGlobalPose(mPxMainTransform);
-		// PxMat44(PxMat33(t.q), t.p); // 회전 적용하는 법
-		/*mVecHier[i]->set*/
+	// #BUG 업데이트해도 같은 값이 나옴 
+	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
+	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+	mMainBone->Set_UpdateTransform(getPos);
+	int debig = 5;
 
 
-		PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
-		_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-		mVecHier[i]->Set_UpdateTransform(getPos);
-	}
+//	_uint size = mVecActors.size();
+//	for (int i =0; i<size;++i)
+//	{
+//	//	mMain_Actor->setGlobalPose(mPxMainTransform);
+//		// PxMat44(PxMat33(t.q), t.p); // 회전 적용하는 법
+//		/*mVecHier[i]->set*/
+//		PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
+//		_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+//		mVecHier[i]->Set_UpdateTransform(getPos);
+//	}
 
 	
 
@@ -162,6 +165,8 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	mMainBone = mVecHier.front();
 	mPxMainTransform = PxTransform(MAT4X4TOPXMAT(mMainBone->Get_UpdatedMatrix()));
 	GetSingle(CPhysXMgr)->CreateChain(mVecActors,mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateLimitedSpherical);
+	mMain_Actor = mVecActors[0];
+
 	Safe_Delete(gemo);
 	return S_OK;
 }

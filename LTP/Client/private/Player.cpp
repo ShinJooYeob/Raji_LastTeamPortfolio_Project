@@ -7,6 +7,7 @@
 #include "PlayerWeapon_Chakra.h"
 #include "Timer.h"
 #include "physx\Collider_PhysX_Joint.h"
+#include "physx\Collider_PhysX_Dynamic.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -3383,27 +3384,6 @@ void CPlayer::Set_HairPhysX()
 	//m_pModel->Find_HierarchyNode("skd_hairEnd");
 
 
-	//m_pCollider_HairPhysX
-
-	////// Create Player Hair //
-	//ATTACHEDESC eAttachedDesc;
-	//eAttachedDesc.Initialize_AttachedDesc(this, "skd_hair01", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
-
-	//// Chain Test
-	//m_pCollider_HairPhysX->CreateChain(eAttachedDesc, 10, PxSphereGeometry(1), 2, CCollider_PhysX::CreateLimitedSpherical);
-
-	//CHierarchyNode* Nodes;
-
-
-
-	// Create Actors
-//	m_pCollider_HairPhysX->CreateJoint();
-
-	// ConnectBones
-//	m_pTransformCom->Scaled_All(scale);
-
-//	m_pCollider_HairPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
-
 	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
 	string strs[8] =
 	{
@@ -3419,7 +3399,16 @@ void CPlayer::Set_HairPhysX()
 	createJoint.mScale = _Sfloat3::One * 0.5f;
 	createJoint.mSeparation = 1;
 
-	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
+//	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
+
+
+	// #TEST Dynamic
+	CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
+
+	createDynamic.bTrigger = false;
+	createDynamic.eShapeType = E_GEOMAT_BOX;
+	createDynamic.mTrnasform = m_pTransformCom;
+	static_cast<CCollider_PhysX_Dynamic*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createDynamic);
 
 
 }
@@ -3548,7 +3537,8 @@ HRESULT CPlayer::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	m_pCollider_HairPhysX = nullptr;
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
 
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
