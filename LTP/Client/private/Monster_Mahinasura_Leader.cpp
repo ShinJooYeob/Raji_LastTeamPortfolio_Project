@@ -228,7 +228,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
-		m_iInfinityPattern = rand() % 13;
+		m_iInfinityPattern = rand() % 6;
 
 
 		m_dInfinity_CoolTime = 0;
@@ -309,9 +309,9 @@ HRESULT CMonster_Mahinasura_Leader::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 13)
+	if (m_iOncePattern > 12)
 	{
-		m_iOncePattern = rand() % 6; //OncePattern Random
+		m_iOncePattern = 0;
 	}
 
 

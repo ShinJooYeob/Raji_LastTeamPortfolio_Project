@@ -275,7 +275,7 @@ HRESULT CMonster_Mahinasura_Minion::Pattern_Change()
 
 	if (m_iOncePattern > 5)
 	{
-		m_iOncePattern = rand() % 6; //OncePattern Random
+		m_iOncePattern = rand() % 5; //OncePattern Random
 	}
 
 

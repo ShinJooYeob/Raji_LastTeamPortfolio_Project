@@ -236,7 +236,7 @@ HRESULT CMonster_Vayusura_Leader::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 2)
+	if (m_iOncePattern > 1)
 	{
 		m_iOncePattern = 0;
 	}

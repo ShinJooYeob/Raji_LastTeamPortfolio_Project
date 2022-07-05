@@ -11,7 +11,8 @@ const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_
 	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
-	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx")
+	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
+	TEXT("Ninjasura_Knife.fbx")
 
 };
 
@@ -225,6 +226,9 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 	case TEZABSURA_LANDMINE_INSTALL:
 		Tezabsura_Landmine_Install(dDeltaTime);
 		break;
+	case NINJASURA_KNIFE:
+		Ninjasura_Knife(dDeltaTime);
+		break;
 	default:
 		MSGBOX("Not BulletMeshNumber");
 		break;
@@ -409,6 +413,23 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime
 	_Vector BezierPos = ((1 - (_float)m_dBezierTime)*(1 - (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPos)) + (2 * (_float)m_dBezierTime*(1 - (_float)m_dBezierTime) *XMLoadFloat4(&TempCenter)) + ((_float)m_dBezierTime* (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPlayerPos);
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Ninjasura_Knife(_double dDeltaTime)
+{
+
+	_float fPosY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+	
+	if (m_fTempPlayerPos.y <= fPosY)
+	{
+		_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
+
+		vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	}
 	return S_OK;
 }
 

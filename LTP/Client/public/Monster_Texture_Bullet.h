@@ -86,6 +86,12 @@ private:
 private:
 	_bool				m_bOnceSwtich = false;
 
+
+
+private: //Jalsura Dis
+	_float				m_fTempDis = 0;
+	_bool				m_bHitOn = false;
+
 public:
 	static CMonster_Texture_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

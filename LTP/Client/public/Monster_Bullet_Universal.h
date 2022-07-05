@@ -15,6 +15,7 @@ public:
 		TEZABSURA_BOMBER_HOWITZER_BULLET,
 		TEZABSURA_LANDMINE_DEFAULT_BULLET,
 		TEZABSURA_LANDMINE_INSTALL,
+		NINJASURA_KNIFE,
 		MONSTER_BULLET_UNIVERSAL_END,
 	};
 public:
@@ -74,6 +75,7 @@ private:
 	HRESULT Tezabsura_Bomber_Howitzer_Bullet(_double dDeltaTime);
 	HRESULT Tezabsura_Landmine_Default_Bullet(_double dDeltaTime);
 	HRESULT Tezabsura_Landmine_Install(_double dDeltaTime);
+	HRESULT	Ninjasura_Knife(_double dDeltaTime);
 
 private:
 	MONSTER_BULLET_UNIVERSALDESC m_Monster_Bullet_UniversalDesc; //Monster_Bullet_Universal Desc;
@@ -90,7 +92,7 @@ private:
 
 private:
 	_float4				m_fTempPos;
-	_float3				m_fTempLook;
+	_float3				m_fTempLook;  //본인이 바라보고 있던 룩 방향
 	_float4				m_fTempPlayerPos;
 
 private:
@@ -100,7 +102,6 @@ private:
 
 private:
 	_double				m_dBezierTime = 0;
-
 public:
 	static CMonster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

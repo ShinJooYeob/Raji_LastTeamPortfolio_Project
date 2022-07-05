@@ -227,6 +227,45 @@ HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 		m_bOnceSwtich = true;
 	}
 
+	///////////////////////
+	_float fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat4(&m_fTempPlayerPos));
+
+	_float fDispersec = 2;
+
+
+	m_fTempDis += fDispersec;
+
+	m_pTransformCom->Scaled(CTransform::STATE_RIGHT, m_fTempDis);
+
+	_Vector vPosition = XMLoadFloat4(&m_fTempPos);
+
+	vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5);
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	/////////////////////////////
+
+
+	//_float fDispersec = 2;
+
+	//if(m_bHitOn == false)
+	//	m_fTempDis += fDispersec;
+
+	//m_pTransformCom->Scaled(CTransform::STATE_RIGHT, m_fTempDis);
+
+	//_Vector vPosition = XMLoadFloat4(&m_fTempPos);
+
+	//_Vector CollisionPos = vPosition + XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis);
+
+	//vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5f);
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	//_float vPlayerHitPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(CollisionPos);
+
+	//if (vPlayerHitPos <= 1)
+	//{
+	//	m_bHitOn = true;
+	//}
 
 	return S_OK;
 }

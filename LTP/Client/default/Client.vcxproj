@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\PlayerWeapon_Chakra.h" />
     <ClInclude Include="..\public\Chiedtian.h" />
     <ClInclude Include="..\public\Chiedtuan_Weapon.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp" />
     <ClCompile Include="..\private\Chiedtian.cpp" />
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp" />
