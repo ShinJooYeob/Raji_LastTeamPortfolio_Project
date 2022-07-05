@@ -56,10 +56,14 @@ public:
 
 	typedef struct Tag_PhysXDesc_Joint
 	{
-		//CTransform*			mTrnasform = nullptr;
-		//E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
-		//_float3				mVelocity = _float3::Zero();
-		//_bool				bTrigger = false;
+		string				mBoneName;
+		CGameObject*		mTargetObject;
+		_uint				mLength = 0;
+		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+		_float3				mScale = _float3::Zero();
+		_float				mSeparation = 2;
+
+
 
 	}PHYSXDESC_JOINT;
 
@@ -102,7 +106,7 @@ public:
 protected:
 	//	CTransform*					mTransform = nullptr;
 	PxRigidActor*					mMain_Actor= nullptr;
-	PxTransform						mPxTransform;
+	PxTransform						mPxMainTransform;
 	CTransform*						mMainTransform = nullptr;
 
 protected:

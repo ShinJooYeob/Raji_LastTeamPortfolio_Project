@@ -77,7 +77,7 @@ HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
 	if (mMainTransform == nullptr)
 		return E_FAIL;
 
-		mPxTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+		mPxMainTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
 
 	//if (mePhysxType == E_PHYSXTYPE_JOINT)
 	//{
@@ -96,23 +96,6 @@ HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 	if (mMainTransform == nullptr)
 		return E_FAIL;
 
-	//if (mePhysxType == E_PHYSXTYPE_JOINT)
-	//	Trans = mAttachDesc.Get_AttachObjectTransform();
-
-	//if (mePhysxType == E_PHYSXTYPE_JOINT)
-	//{
-	//	//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
-	//	//
-
-	//	//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
-	//	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
-
-	//	mRigActor->setGlobalPose(mPxTransform);
-
-	//	return S_OK;
-	//}
-
-
 	// 시뮬레이션 후 충돌체를 업데이트 해준다.
 	//if (mbKeyUpdate)
 	//{
@@ -122,8 +105,8 @@ HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 	//}
 
 		// Pos
-		mPxTransform = mMain_Actor->getGlobalPose();
-		_float3 vec3 = *(_float3*)&mPxTransform.p;
+		mPxMainTransform = mMain_Actor->getGlobalPose();
+		_float3 vec3 = *(_float3*)&mPxMainTransform.p;
 		mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 	
 
@@ -151,22 +134,6 @@ void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
 {
 	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
 }
-
-
-//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
-//{
-//	if (mMain_Actor)
-//		return S_FALSE;
-//
-//	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_JOINT;
-//	ATTACHEDESC mAttachDesc;
-//	mAttachDesc = attach;
-//	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
-//	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
-//	return S_OK;
-//}
-
-
 
 #ifdef _DEBUG
 
@@ -296,11 +263,13 @@ void CCollider_PhysX_Base::Free()
 
 	if (m_bIsClone)
 	{
+		
 		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
 		if (scene)
-			scene->removeActor(*mMain_Actor);
-		mMain_Actor = nullptr;
-
+		{
+			mMain_Actor->release();
+			mMain_Actor = nullptr;
+		}
 	}
 
 

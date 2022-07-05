@@ -37,15 +37,42 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
-	if (FAILED(__super::Update_BeforeSimulation()))
+	
+	if (mbPhysXUpdate == false)
+		return S_OK;
+
+	if (mMainTransform == nullptr)
 		return E_FAIL;
+
+	mPxMainTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+
+
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 {
-	if (FAILED(__super::Update_AfterSimulation()))
-		return E_FAIL;
+	
+	//	mPxMainTransform = mAttachDesc.Get_AttachObjectTransform();
+
+	//mPxMainTransform = mMainTransform;
+
+	//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
+
+
+	//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
+	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
+
+
+
+
+
+	// Pos
+	mMain_Actor->setGlobalPose(mPxMainTransform);
+//	_float3 vec3 = *(_float3*)&mPxMainTransform.p;
+//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+
+
 	return S_OK;
 }
 
@@ -68,57 +95,56 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 {
 	// 충돌 모델 초기화
 
-	//memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_JOINT));
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_JOINT));
+	if (desc.mTargetObject == nullptr)
+		return E_FAIL;
 
+//	mAttachDesc.Initialize_AttachedDesc(desc.mTargetObject, desc.mBoneName.c_str(), _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 
 	//// 위 정보로 콜라이더 초기화
 
 	//// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
-	//if (mMain_Actor)
-	//	return E_FAIL;
+	if (mMain_Actor)
+		return E_FAIL;
 
-	//PxGeometry* gemo = nullptr;
+	PxGeometry* gemo = nullptr;
+	mMainTransform = (CTransform*)desc.mTargetObject->Get_Component(TAG_COM(Com_Transform)); 
+	 //Get_AttachObjectTransform();
 
-	//mMainTransform = mPhysXDesc.mTrnasform;
+	_float3 scale = mPhysXDesc.mScale;
+	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
+	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
 
-	//_float3 scale = mMainTransform->Get_Scale();
-	//_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
+	switch (mPhysXDesc.eShapeType)
+	{
+	case Client::E_GEOMAT_BOX:
+		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
+		break;
+	case Client::E_GEOMAT_SPEHE:
+		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
+		break;
+	case Client::E_GEOMAT_CAPSULE:
+		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
+		break;
+	case Client::E_GEOMAT_SHAPE:
 
-	//_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+		break;
+	case Client::E_GEOMAT_VERTEX:
+		break;
+	case Client::E_GEOMAT_TRIANGLE:
+		break;
+	case Client::E_GEOMAT_END:
+		break;
 
-	//switch (mPhysXDesc.eShapeType)
-	//{
-	//case Client::E_GEOMAT_BOX:
-	//	gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-	//	break;
-	//case Client::E_GEOMAT_SPEHE:
-	//	gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-	//	break;
-	//case Client::E_GEOMAT_CAPSULE:
-	//	gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-	//	break;
-	//case Client::E_GEOMAT_SHAPE:
+	default:
+		break;
+	}
+	NULL_CHECK_BREAK(gemo);
 
-	//	break;
-	//case Client::E_GEOMAT_VERTEX:
-	//	break;
-	//case Client::E_GEOMAT_TRIANGLE:
-	//	break;
-	//case Client::E_GEOMAT_END:
-	//	break;
-
-	//default:
-	//	break;
-	//}
-	//NULL_CHECK_BREAK(gemo);
-
-	//PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
-	//_Sfloat4x4 float4x4 = mMainTransform->Get_WorldFloat4x4();
-	//_Squternion q = _Squternion::CreateFromRotationMatrix(float4x4);
-	//pxtrans.q = *(PxQuat*)&q;
-	//mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(pxtrans, *gemo, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
-	//NULL_CHECK_BREAK(mMain_Actor);
-	//Safe_Delete(gemo);
+	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS)));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateLimitedSpherical);
+	NULL_CHECK_BREAK(mMain_Actor);
+	Safe_Delete(gemo);
 	return S_OK;
 }
 
@@ -149,6 +175,19 @@ PxJoint * CCollider_PhysX_Joint::CreateDampedD6(PxRigidActor * a0, const PxTrans
 	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
 	return j;
 }
+
+HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
+{
+	if (mMain_Actor)
+		return S_FALSE;
+
+	ATTACHEDESC mAttachDesc;
+	mAttachDesc = attach;
+	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+	return S_OK;
+}
+
 
 
 

@@ -41,6 +41,7 @@ public:
 
 protected:
 	PHYSXDESC_JOINT mPhysXDesc;
+	ATTACHEDESC mAttachDesc;
 
 public:
 	static CCollider_PhysX_Joint* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
