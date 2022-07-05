@@ -33,14 +33,14 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
 
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 {
 
 	return S_OK;

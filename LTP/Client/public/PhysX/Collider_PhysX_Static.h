@@ -17,8 +17,8 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation(CTransform* objTransform)override;
-	virtual HRESULT Update_AfterSimulation(CTransform* objTransform)override;
+	virtual HRESULT Update_BeforeSimulation()override;
+	virtual HRESULT Update_AfterSimulation()override;
 
 
 public:

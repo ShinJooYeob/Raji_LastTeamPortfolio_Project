@@ -33,14 +33,14 @@ HRESULT CCollider_PhysX_Static::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Static::Update_BeforeSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 {
 
 	
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Static::Update_AfterSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
 
 	return S_OK;
@@ -48,7 +48,6 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation(CTransform* objTransform)
 
 
 #ifdef _DEBUG
-
 HRESULT CCollider_PhysX_Static::Render()
 {
 	FAILED_CHECK(__super::Render());
@@ -57,7 +56,6 @@ HRESULT CCollider_PhysX_Static::Render()
 
 	return S_OK;
 }
-
 #endif
 
 CCollider_PhysX_Static * CCollider_PhysX_Static::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)

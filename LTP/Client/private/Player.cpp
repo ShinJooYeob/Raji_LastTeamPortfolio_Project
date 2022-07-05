@@ -132,7 +132,7 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
-	m_pCollider_HairPhysX->Update_BeforeSimulation(nullptr);
+	m_pCollider_HairPhysX->Update_BeforeSimulation();
 
 	return _int();
 }
@@ -148,7 +148,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-	m_pCollider_HairPhysX->Update_AfterSimulation(nullptr);
+	m_pCollider_HairPhysX->Update_AfterSimulation();
 
 	return _int();
 }

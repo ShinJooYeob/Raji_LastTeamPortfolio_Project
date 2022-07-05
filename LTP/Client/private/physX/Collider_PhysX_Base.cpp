@@ -23,28 +23,6 @@ CCollider_PhysX_Base::CCollider_PhysX_Base(const CCollider_PhysX_Base & rhs)
 	Safe_AddRef(m_pInputLayout);
 #endif // _DEBUG
 
-	// 액터 복사 
-
-	//for (_uint i = 0; i < BOUNDING_END; ++i)
-	//{
-	//	switch (m_eColliderType)
-	//	{
-	//	case Engine::COLLIDER_AABB:
-	//		if (nullptr != rhs.m_pAABB[BOUNDING_ORIGINAL])
-	//			m_pAABB[i] = new BoundingBox(*rhs.m_pAABB[BOUNDING_ORIGINAL]);
-	//		break;
-	//	case Engine::COLLIDER_OBB:
-	//		if (nullptr != rhs.m_pOBB[BOUNDING_ORIGINAL])
-	//			m_pOBB[i] = new BoundingOrientedBox(*rhs.m_pOBB[BOUNDING_ORIGINAL]);
-	//		break;
-	//	case Engine::COLLIDER_SPHERE:
-	//		if (nullptr != rhs.m_pSphere[BOUNDING_ORIGINAL])
-	//			m_pSphere[i] = new BoundingSphere(*rhs.m_pSphere[BOUNDING_ORIGINAL]);
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
 }
 
 
@@ -81,103 +59,100 @@ HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
 
-	mRigActor = nullptr;
+	mMain_Actor = nullptr;
 
 	return S_OK;
 }
 
 
-HRESULT CCollider_PhysX_Base::Update_BeforeSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
 {
 
 	// 시뮬레이션 전의 충돌체 위치
 	// 현재 오브젝트 위치를 받아온다.
 	if (mbPhysXUpdate == false)
 		return S_OK;
-	if (mbKeyUpdate)
-		return S_OK;
-	
-	CTransform* Trans = objTransform;
-	if (Trans)
-		mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
 
-	if (mePhysxType == E_PHYSXTYPE_JOINT)
-	{
-		_float4x4 mat =  mAttachDesc.Caculate_AttachedBoneMatrix();
-		mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
-	}
+	if (mMainTransform == nullptr)
+		return E_FAIL;
+
+		mPxTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+
+	//if (mePhysxType == E_PHYSXTYPE_JOINT)
+	//{
+	//	_float4x4 mat =  mAttachDesc.Caculate_AttachedBoneMatrix();
+	//	mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
+	//}
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Base::Update_AfterSimulation(CTransform* objTransform)
+HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 {
 	if (mbPhysXUpdate == false)
 		return S_OK;
 
-	CTransform* Trans = objTransform;
-	if (mePhysxType == E_PHYSXTYPE_JOINT)
-		Trans = mAttachDesc.Get_AttachObjectTransform();
+	if (mMainTransform == nullptr)
+		return E_FAIL;
 
-	if (mePhysxType == E_PHYSXTYPE_JOINT)
-	{
-		//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
-		//
+	//if (mePhysxType == E_PHYSXTYPE_JOINT)
+	//	Trans = mAttachDesc.Get_AttachObjectTransform();
 
-		//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
-		//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
+	//if (mePhysxType == E_PHYSXTYPE_JOINT)
+	//{
+	//	//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
+	//	//
 
-		mRigActor->setGlobalPose(mPxTransform);
+	//	//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
+	//	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
 
-		return S_OK;
-	}
+	//	mRigActor->setGlobalPose(mPxTransform);
+
+	//	return S_OK;
+	//}
 
 
 	// 시뮬레이션 후 충돌체를 업데이트 해준다.
-	if (mbKeyUpdate)
-	{
-		
-		mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
-		mRigActor->setGlobalPose(mPxTransform);
-	}
-	else
-	{
+	//if (mbKeyUpdate)
+	//{
+	//	
+	//	mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
+	//	mRigActor->setGlobalPose(mPxTransform);
+	//}
+
 		// Pos
-		mPxTransform = mRigActor->getGlobalPose();
+		mPxTransform = mMain_Actor->getGlobalPose();
 		_float3 vec3 = *(_float3*)&mPxTransform.p;
-		Trans->Set_MatrixState(CTransform::STATE_POS, vec3);
-	}
+		mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Base::Set_PhysXScale(_float3 scaleVec)
-{
-	mActorScale  =  FLOAT3TOPXVEC3(scaleVec);
-	return S_OK;
-}
+//HRESULT CCollider_PhysX_Base::Set_PhysXScale(_float3 scaleVec)
+//{
+//	mActorScale  =  FLOAT3TOPXVEC3(scaleVec);
+//	return S_OK;
+//}
 
 HRESULT CCollider_PhysX_Base::CreateDynamicActor(PxVec3 scale)
 {
-	if (mRigActor)
+	if (mMain_Actor)
 		return S_FALSE;
 
-	mActorScale = scale;
-
-	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(mActorScale.x));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxSphereGeometry(scale.x));
 
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Base::CreateStaticActor(PxVec3 scale)
 {
-	if (mRigActor)
+	if (mMain_Actor)
 		return S_FALSE;
 
 	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
 
-	mActorScale = scale;
-	mRigActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxBoxGeometry(mActorScale));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(mPxTransform, PxBoxGeometry(scale));
 
 	return S_OK;
 
@@ -185,24 +160,24 @@ HRESULT CCollider_PhysX_Base::CreateStaticActor(PxVec3 scale)
 
 HRESULT CCollider_PhysX_Base::CreateChain(const PxTransform & t, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 {
-	if (mRigActor)
+	if (mMain_Actor)
 		return S_FALSE;
 	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_STATIC;
-
-	mRigActor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
 	return S_OK;
 }
 
 
 HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint)
 {
-	if (mRigActor)
+	if (mMain_Actor)
 		return S_FALSE;
 
 	mePhysxType = CCollider_PhysX_Base::E_PHYSXTYPE_JOINT;
+	ATTACHEDESC mAttachDesc;
 	mAttachDesc = attach;
 	PxTransform t = PxTransform(FLOAT3TOPXVEC3(mAttachDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::STATE_POS)));
-	mRigActor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(t, length, g, separation, createJoint);
 	return S_OK;
 }
 
@@ -210,13 +185,13 @@ HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, cons
 
 HRESULT CCollider_PhysX_Base::Add_Shape(PxGeometry& gemo, PxTransform offset)
 {
-	if (mRigActor)
+	// 메인 액터에 충돌체 추가
+	if (mMain_Actor)
 	{
 		PxShape* shape = CPhysXMgr::gPhysics->createShape(gemo, *CPhysXMgr::gMaterial);
 		shape->setLocalPose(offset);
-
 		NULL_CHECK_BREAK(shape);
-		mRigActor->attachShape(*shape);
+		mMain_Actor->attachShape(*shape);
 	}
 
 	return S_OK;
@@ -224,7 +199,7 @@ HRESULT CCollider_PhysX_Base::Add_Shape(PxGeometry& gemo, PxTransform offset)
 
 void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
 {
-	mRigActor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
+	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
 }
 
 PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
@@ -262,7 +237,7 @@ PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransf
 
 HRESULT CCollider_PhysX_Base::Render()
 {
-	NULL_CHECK_RETURN(mRigActor, E_FAIL);
+	NULL_CHECK_RETURN(mMain_Actor, E_FAIL);
 
 	// 모양에 따라 드로잉
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
@@ -283,18 +258,18 @@ HRESULT CCollider_PhysX_Base::Render()
 
 
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
-	const PxU32 numShapes = mRigActor->getNbShapes();
+	const PxU32 numShapes = mMain_Actor->getNbShapes();
 	if (numShapes >= MAX_NUM_ACTOR_SHAPES)
 		return E_FAIL;
 
-	mRigActor->getShapes(shapes, numShapes);
+	mMain_Actor->getShapes(shapes, numShapes);
 
 	// 모양 마다 그려준다.
 	XMVECTORF32 color = DirectX::Colors::Cyan;
 
 	for (PxU32 j = 0; j < numShapes; j++)
 	{
-		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *mRigActor));
+		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *mMain_Actor));
 		const PxGeometryHolder h = shapes[j]->getGeometry();
 		RenderShape(h, shpaeWorld, color);
 	}

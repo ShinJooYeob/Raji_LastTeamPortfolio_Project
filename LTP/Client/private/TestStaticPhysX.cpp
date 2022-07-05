@@ -96,8 +96,8 @@ _int CTestStaticPhysX::Update(_double fDeltaTime)
 		}
 
 	}
-	m_Com_COlliderPhysX_Test->Set_KeyUpdate(isKey);
-	m_Com_COlliderPhysX_Test->Update_BeforeSimulation(m_pTransformCom);
+//	m_Com_COlliderPhysX_Test->Set_KeyUpdate(isKey);
+	m_Com_COlliderPhysX_Test->Update_BeforeSimulation();
 
 
 	return _int();
@@ -111,7 +111,7 @@ _int CTestStaticPhysX::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-	m_Com_COlliderPhysX_Test->Update_AfterSimulation(m_pTransformCom);
+	m_Com_COlliderPhysX_Test->Update_AfterSimulation();
 
 	return _int();
 }

@@ -28,35 +28,8 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation(CTransform* objTransform);
-	virtual HRESULT Update_AfterSimulation(CTransform* objTransform);
-	HRESULT Set_PhysXScale(_float3 pxvec);
-
-
-public:
-	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-	HRESULT CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-
-
-
-	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
-
-
-	PxRigidActor*	Get_ColliderActor() const { return mRigActor; }
-	void			Set_Postiotn(_float3 positiotn);
-	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
-	void			Set_KeyUpdate(_bool b) { mbKeyUpdate = b; };
-
-
-
-public:
-	// CreateLimitedSpherical
-	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-	static PxJoint* CreateBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-
+	virtual HRESULT Update_BeforeSimulation();
+	virtual HRESULT Update_AfterSimulation();
 
 public:
 #ifdef _DEBUG
@@ -65,20 +38,40 @@ public:
 
 #endif // _DEBUG
 
+public:
+	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
+	void			Set_Postiotn(_float3 positiotn);
+	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
+	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
+//	void			Set_KeyUpdate(_bool b) { mbKeyUpdate = b; };
+
+
+	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
+
+public:
+	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
+	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
+	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	HRESULT CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
+	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+
 private:
 	//	CTransform*					mTransform = nullptr;
-	ATTACHEDESC					mAttachDesc;
-
-	PxRigidActor*				mRigActor = nullptr;
+	// ATTACHEDESC					mAttachDesc;
+	PxRigidActor*				mMain_Actor= nullptr;
 	PxTransform					mPxTransform;
-	PxVec3						mActorScale = PxVec3(1, 1, 1);
+	CTransform*					mMainTransform = nullptr;
+//	PxVec3						mActorScale = PxVec3(1, 1, 1);
 	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_STATIC;
 
 private:
 	// 물리충돌 해제
 	bool						mbPhysXUpdate = true;
 	// 외부 입력 업데이트
-	bool						mbKeyUpdate = false;
+	// bool						mbKeyUpdate = false;
 
 private:
 
