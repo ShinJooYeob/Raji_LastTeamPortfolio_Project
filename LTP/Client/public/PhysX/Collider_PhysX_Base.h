@@ -2,10 +2,12 @@
 
 #include "Component.h"
 
+
 BEGIN(Engine)
 class CTransform;
 END
 BEGIN(Client)
+
 
 class CCollider_PhysX_Base : public CComponent
 {
@@ -64,7 +66,6 @@ private:
 	PxRigidActor*				mMain_Actor= nullptr;
 	PxTransform					mPxTransform;
 	CTransform*					mMainTransform = nullptr;
-//	PxVec3						mActorScale = PxVec3(1, 1, 1);
 	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_STATIC;
 
 private:
@@ -83,9 +84,9 @@ private:
 #endif // _DEBUG
 
 public:
-	static CCollider_PhysX_Base* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
-	virtual CComponent* Clone(void* pArg)override;
+	virtual CComponent* Clone(void* pArg)=0;
 	virtual void Free()override;
 };
+
 
 END

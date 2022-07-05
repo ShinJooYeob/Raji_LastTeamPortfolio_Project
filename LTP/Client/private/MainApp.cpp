@@ -6,7 +6,9 @@
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
-#include "PhysX/Collider_PhysX_Base.h"
+#include "PhysX/Collider_PhysX_Static.h"
+#include "PhysX/Collider_PhysX_Dynamic.h"
+#include "PhysX/Collider_PhysX_Joint.h"
 //#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
@@ -317,8 +319,14 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
 		CCollider::Create(m_pDevice, m_pDeviceContext)));
 
-	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
-		CCollider_PhysX_Base::Create(m_pDevice, m_pDeviceContext)));
+	//FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
+	//	CCollider_PhysX_Base::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static),
+		CCollider_PhysX_Static::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic),
+		CCollider_PhysX_Dynamic::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint),
+		CCollider_PhysX_Joint::Create(m_pDevice, m_pDeviceContext)));
 
 
 	return S_OK;

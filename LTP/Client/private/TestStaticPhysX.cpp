@@ -168,7 +168,9 @@ HRESULT CTestStaticPhysX::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider), (CComponent**)&m_Com_COlliderPhysX_Test));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider), (CComponent**)&m_Com_COlliderPhysX_Test));
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider), (CComponent**)&m_Com_COlliderPhysX_Test));
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider), (CComponent**)&m_Com_COlliderPhysX_Test));
 
 	
 	CTransform::TRANSFORMDESC tDesc = {};

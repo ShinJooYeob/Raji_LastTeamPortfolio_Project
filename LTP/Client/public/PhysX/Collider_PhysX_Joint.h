@@ -3,12 +3,12 @@
 #include "Collider_PhysX_Base.h"
 
 BEGIN(Client)
-class CCollider_PhysX_Joit: public CCollider_PhysX_Base
+class CCollider_PhysX_Joint: public CCollider_PhysX_Base
 {
 private:
-	explicit CCollider_PhysX_Joit(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
-	explicit CCollider_PhysX_Joit(const CCollider_PhysX_Joit& rhs);
-	virtual ~CCollider_PhysX_Joit() = default;
+	explicit CCollider_PhysX_Joint(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
+	explicit CCollider_PhysX_Joint(const CCollider_PhysX_Joint& rhs);
+	virtual ~CCollider_PhysX_Joint() = default;
 
 public:
 	HRESULT Initialize_Prototype(void * pArg);
@@ -26,7 +26,7 @@ public:
 
 
 public:
-	static CCollider_PhysX_Joit* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
+	static CCollider_PhysX_Joint* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
 	virtual CComponent* Clone(void* pArg)override;
 	virtual void Free()override;
 };

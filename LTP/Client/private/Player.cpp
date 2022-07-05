@@ -74,8 +74,6 @@ _int CPlayer::Update(_double fDeltaTime)
 		}
 	}
 
-
-
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
 
@@ -132,7 +130,7 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
-	m_pCollider_HairPhysX->Update_BeforeSimulation();
+//	m_pCollider_HairPhysX->Update_BeforeSimulation();
 
 	return _int();
 }
@@ -148,7 +146,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-	m_pCollider_HairPhysX->Update_AfterSimulation();
+//	m_pCollider_HairPhysX->Update_AfterSimulation();
 
 	return _int();
 }
@@ -3527,7 +3525,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
+	m_pCollider_HairPhysX = nullptr;
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
 
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 

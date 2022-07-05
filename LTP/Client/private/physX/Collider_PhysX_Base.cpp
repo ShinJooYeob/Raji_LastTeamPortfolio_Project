@@ -12,9 +12,9 @@ CCollider_PhysX_Base::CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceC
 }
 
 CCollider_PhysX_Base::CCollider_PhysX_Base(const CCollider_PhysX_Base & rhs)
-	: CComponent(rhs),
+	: CComponent(rhs)
 #ifdef _DEBUG
-	m_pBasicEffect(rhs.m_pBasicEffect),
+	,m_pBasicEffect(rhs.m_pBasicEffect),
 	m_pBatch(rhs.m_pBatch),
 	m_pInputLayout(rhs.m_pInputLayout)
 #endif // _DEBUG
@@ -214,23 +214,23 @@ PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const 
 
 PxJoint * CCollider_PhysX_Base::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
-	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setBreakForce(1000, 100000);
-	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
-	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+	//PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	//j->setBreakForce(1000, 100000);
+	//j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
+	//j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+	//return j;
 
-	return j;
 }
 
 PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
 
-	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
-	return j;
+	//PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	//j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+	//j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+	//j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+	//j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
+	//return j;
 }
 
 #ifdef _DEBUG
@@ -363,31 +363,31 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 }
 #endif
 
-CCollider_PhysX_Base * CCollider_PhysX_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
-{
-
-	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base(pDevice, pDeviceContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(pArg)))
-	{
-		MSGBOX("Failed to Create Transform Prototype");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CComponent * CCollider_PhysX_Base::Clone(void * pArg)
-{
-	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base((*this));
-
-	if (FAILED(pInstance->Initialize_Clone(pArg)))
-	{
-		MSGBOX("Failed to Create Transform");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
+//CCollider_PhysX_Base * CCollider_PhysX_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+//{
+//
+//	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base(pDevice, pDeviceContext);
+//
+//	if (FAILED(pInstance->Initialize_Prototype(pArg)))
+//	{
+//		MSGBOX("Failed to Create Transform Prototype");
+//		Safe_Release(pInstance);
+//	}
+//
+//	return pInstance;
+//}
+//
+//CComponent * CCollider_PhysX_Base::Clone(void * pArg)
+//{
+//	CCollider_PhysX_Base* pInstance = new CCollider_PhysX_Base((*this));
+//
+//	if (FAILED(pInstance->Initialize_Clone(pArg)))
+//	{
+//		MSGBOX("Failed to Create Transform");
+//		Safe_Release(pInstance);
+//	}
+//	return pInstance;
+//}
 
 void CCollider_PhysX_Base::Free()
 {
@@ -399,10 +399,10 @@ void CCollider_PhysX_Base::Free()
 		Safe_Delete(m_pBasicEffect);
 		Safe_Delete(m_pBatch);
 	}
-#endif // _DEBUG
 
 	Safe_Release(m_pInputLayout);
 
+#endif // _DEBUG
 
 
 }
