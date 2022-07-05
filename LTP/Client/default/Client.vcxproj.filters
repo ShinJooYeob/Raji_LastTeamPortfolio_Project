@@ -468,9 +468,6 @@
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestStaticPhysX.h">
-      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>01.GameObject\01.Player</Filter>
     </ClInclude>
@@ -518,6 +515,9 @@
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestObject_PhysX.h">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -704,9 +704,6 @@
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TestStaticPhysX.cpp">
-      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
@@ -751,6 +748,9 @@
     </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject_PhysX.cpp">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,6 @@ CCollider_PhysX_Dynamic ::CCollider_PhysX_Dynamic (const CCollider_PhysX_Dynamic
 
 }
 
-
 HRESULT CCollider_PhysX_Dynamic ::Initialize_Prototype(void * pArg)
 {
 	if (FAILED(__super::Initialize_Prototype(pArg)))

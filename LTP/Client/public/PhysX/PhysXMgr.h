@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Base.h"
-#include "TestStaticPhysX.h"
 
 BEGIN(Engine)
 

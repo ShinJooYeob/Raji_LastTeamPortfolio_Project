@@ -202,36 +202,32 @@ void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
 	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
 }
 
-PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-{
-	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.1f));
-	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
-	return j;
-
-}
-
-
-PxJoint * CCollider_PhysX_Base::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-{
-	//PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	//j->setBreakForce(1000, 100000);
-	//j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
-	//j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
-	//return j;
-
-}
-
-PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
-{
-
-	//PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	//j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-	//j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-	//j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-	//j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
-	//return j;
-}
+//PxJoint * CCollider_PhysX_Base::CreateLimitedSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+//{
+//	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+//	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.1f));
+//	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+//	return j;
+//}
+//
+//PxJoint * CCollider_PhysX_Base::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+//{
+//	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+//	j->setBreakForce(1000, 100000);
+//	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
+//	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+//	return j;
+//}
+//
+//PxJoint * CCollider_PhysX_Base::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+//{
+//	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+//	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+//	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+//	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+//	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
+//	return j;
+//}
 
 #ifdef _DEBUG
 
@@ -403,6 +399,11 @@ void CCollider_PhysX_Base::Free()
 	Safe_Release(m_pInputLayout);
 
 #endif // _DEBUG
+	if (mMain_Actor)
+	{
+		mMain_Actor->release();
+		int debug = 5;
+	}
 
 
 }

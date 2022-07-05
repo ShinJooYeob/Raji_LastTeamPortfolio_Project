@@ -115,6 +115,11 @@ enum OBJECTPROTOTYPEID
 	Prototype_Obejct_Monster_Tezabsura_Landmine,
 	Prototype_Object_Monster_Jalsura,
 
+	// PhyTest
+	Prototype_Object_Static_PhysX,
+	Prototype_Object_Dynamic_PhysX,
+	Prototype_Object_Joint_PhysX,
+
 
 	//JJB
 	Prototype_Object_Boss_Rangda,
@@ -255,6 +260,16 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Texture_Bullet:
 		return TEXT("Prototype_Object_Monster_Texture_Bullet");
+
+		///////////////////////////////////////////////////////////////
+	case Prototype_Object_Static_PhysX:
+		return TEXT("Prototype_Object_Static_PhysX");
+
+	case Prototype_Object_Dynamic_PhysX:
+		return TEXT("Prototype_Object_Dynamic_PhysX");
+
+	case Prototype_Object_Joint_PhysX:
+		return TEXT("Prototype_Object_Joint_PhysX");
 
 	default:
 		MSGBOX("Wrong Type Object Prototype");

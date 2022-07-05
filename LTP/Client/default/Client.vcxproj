@@ -242,7 +242,7 @@
     <ClInclude Include="..\public\StaticMapObject.h" />
     <ClInclude Include="..\public\TestObject.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
-    <ClInclude Include="..\public\TestStaticPhysX.h" />
+    <ClInclude Include="..\public\TestObject_PhysX.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -295,7 +295,7 @@
     <ClCompile Include="..\private\Snake.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
     <ClCompile Include="..\private\NaviPoint.cpp" />
-    <ClCompile Include="..\private\TestStaticPhysX.cpp" />
+    <ClCompile Include="..\private\TestObject_PhysX.cpp" />
     <ClCompile Include="..\private\TestObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Scene_Loading.cpp" />

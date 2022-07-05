@@ -177,17 +177,17 @@ namespace Engine
 	struct tagMyFloat3 : public XMFLOAT3
 	{
 
-		tagMyFloat3() :XMFLOAT3(0, 0, 0) { };
-		tagMyFloat3(const XMFLOAT4& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) { };
-		tagMyFloat3(const XMFLOAT3& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) { };
-		tagMyFloat3(const XMFLOAT2& _Param) :XMFLOAT3(_Param.x, _Param.y, 0) { };
-		
+		tagMyFloat3() :XMFLOAT3(0, 0, 0) {};
+		tagMyFloat3(const XMFLOAT4& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) {};
+		tagMyFloat3(const XMFLOAT3& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) {};
+		tagMyFloat3(const XMFLOAT2& _Param) :XMFLOAT3(_Param.x, _Param.y, 0) {};
 
-		explicit tagMyFloat3(const aiVector3D& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) { };
-		explicit tagMyFloat3(const _float& _Param) :XMFLOAT3(_Param, _Param, _Param) { };
-		tagMyFloat3(float _X, float _Y, float _Z) : XMFLOAT3(_X,_Y,_Z) { };
 
-		tagMyFloat3(const FXMVECTOR& _Param) { XMStoreFloat3(this,_Param); };
+		explicit tagMyFloat3(const aiVector3D& _Param) :XMFLOAT3(_Param.x, _Param.y, _Param.z) {};
+		explicit tagMyFloat3(const _float& _Param) :XMFLOAT3(_Param, _Param, _Param) {};
+		tagMyFloat3(float _X, float _Y, float _Z) : XMFLOAT3(_X, _Y, _Z) {};
+
+		tagMyFloat3(const FXMVECTOR& _Param) { XMStoreFloat3(this, _Param); };
 
 
 		_bool operator==(tagMyFloat3& _Param)
@@ -203,7 +203,7 @@ namespace Engine
 
 		/*
 		//////////////////////연산자 오버로딩/////////////////
-		
+
 		//_float3 operator-(_float3& _Param)
 		//{
 		//	return tagMyVector3(x - _Param.x, y - _Param.y, z - _Param.z);
@@ -238,7 +238,9 @@ namespace Engine
 		XMVECTOR InverseXMVector() { return (XMLoadFloat3(this) * -1.f); }
 
 		_float Get_Lenth()
-		{ return XMVectorGetX(XMVector3Length(this->XMVector())); }
+		{
+			return XMVectorGetX(XMVector3Length(this->XMVector()));
+		}
 
 		_float Get_LenthSq()
 		{
@@ -260,7 +262,7 @@ namespace Engine
 		//자기자신 X 매개 변수 순서로 외적(XMVector3Cross)된 벡터(XMVECTOR) 반환
 		XMVECTOR Get_Cross(const XMVECTOR& _Param)
 		{
-			return XMVector3Cross(this->XMVector(),_Param);
+			return XMVector3Cross(this->XMVector(), _Param);
 		}
 
 
@@ -272,14 +274,25 @@ namespace Engine
 
 
 		//자신을 위치 벡터로 가정하고 (매개변수)행렬과 곱하여 결과값 반환
-		XMVECTOR Multiply_Matrix_AsPosVector(const FXMMATRIX& _XMatrix) 
-		{return XMVector3TransformCoord(this->XMVector(), _XMatrix);}
+		XMVECTOR Multiply_Matrix_AsPosVector(const FXMMATRIX& _XMatrix)
+		{
+			return XMVector3TransformCoord(this->XMVector(), _XMatrix);
+		}
 
 		//자신을 방향 벡터로 가정하고 (매개변수)행렬과 곱하여 결과값 반환
 		XMVECTOR Multiply_Matrix_AsDirVector(const FXMMATRIX& _XMatrix)
 		{
 			return XMVector3TransformNormal(this->XMVector(), _XMatrix);
 		}
+
+		static tagMyFloat3 One() { return _float3(1, 1, 1); }
+		static tagMyFloat3 Zero() { return _float3(0, 0, 0); }
+		static tagMyFloat3 Left() { return _float3(-1, 0, 0); }
+		static tagMyFloat3 Right() { return _float3(1, 0, 0); }
+		static tagMyFloat3 Up() { return _float3(0, 1, 0); }
+		static tagMyFloat3 Down() { return _float3(0, -1, 0); }
+		static tagMyFloat3 Front() { return _float3(0, 0, 1); }
+		static tagMyFloat3 Back() { return _float3(0, 0, -1); }
 
 	};
 	struct tagMyFloat2 : public XMFLOAT2
