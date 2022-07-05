@@ -35,6 +35,16 @@ namespace Engine
 
 
 
+
+	typedef struct SimpleMath::Vector2				_Sfloat2;
+	typedef struct SimpleMath::Vector3				_Sfloat3;
+	typedef struct SimpleMath::Vector4				_Sfloat4;
+	typedef struct SimpleMath::Matrix				_Sfloat4x4;
+	typedef struct SimpleMath::Quaternion			_Squternion;
+	typedef struct SimpleMath::Plane				_Splane;
+	typedef struct SimpleMath::Rectangle			_Srectangle;
+
+
 	typedef XMVECTOR					_Vector;
 	typedef FXMVECTOR					_fVector;
 	typedef GXMVECTOR					_gVector;

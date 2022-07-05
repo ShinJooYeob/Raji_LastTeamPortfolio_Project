@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\public\TestObject_PhysX.h"
-#include "..\public\PhysX\Collider_PhysX_Base.h"
 #include "..\public\PhysX\Collider_PhysX_Static.h"
 #include "..\public\PhysX\Collider_PhysX_Dynamic.h"
 #include "..\public\PhysX\Collider_PhysX_Joint.h"
@@ -30,79 +29,11 @@ HRESULT CTestObject_PhysX::Initialize_Clone(void * pArg)
 	
 	FAILED_CHECK(SetUp_Components());
 
-	if (pArg != nullptr)
-	{
-		TESTPHYSXDESC desc;
-		memcpy(&desc, pArg, sizeof(TESTPHYSXDESC));
-
-		memcpy(&desc, pArg, sizeof(TESTPHYSXDESC));
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, desc.pos);
-		m_pTransformCom->Scaled_All(desc.scale);
-
-		Set_ColliderType(desc.ePhyType);
-		Set_InitPhyType(desc.ePhyDetailType);
-		Set_Trigger(desc.bTrigger);
-	}
-
-	return S_OK;
-}
-
-HRESULT CTestObject_PhysX::Set_ColliderType(E_PHYTYPE e)
-{
-	mePhyType = e;
-	if (m_Com_ColliderBase)
-		return S_FALSE;
-
-	switch (e)
-	{
-	case Client::CTestObject_PhysX::E_PHYTYPE_STATIC:
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
-		break;
-	case Client::CTestObject_PhysX::E_PHYTYPE_DYNAMIC:
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
-		break;
-	case Client::CTestObject_PhysX::E_PHYTYPE_JOINT:
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
-		break;
-	case Client::CTestObject_PhysX::E_PHYTYPE_END:
-		break;
-	default:
-		break;
-	}
 	return S_OK;
 }
 
 
-HRESULT CTestObject_PhysX::Set_InitPhyType(E_PHYDETAIL_TYPE e)
-{
-	mePhydetailType = e;
 
-	switch (mePhydetailType)
-	{
-	case Client::CTestObject_PhysX::E_PHYDETAIL_STATIC_BOX:
-		Set_StaticBox();
-		return S_OK;
-		break;
-	case Client::CTestObject_PhysX::E_PHYDETAIL_STATIC_MESH:
-		break;
-	case Client::CTestObject_PhysX::E_PHYDETAIL_STATIC_TRIIGER:
-		break;
-	case Client::CTestObject_PhysX::E_PHYDETAIL_DYNAMIC_BULLET:
-		Set_DynamicBullet();
-		return S_OK;
-		break;
-	case Client::CTestObject_PhysX::E_PHYDETAIL_DYNAMIC_CIRCLE:
-		break;
-	case Client::CTestObject_PhysX::E_PHYDETAIL_JOINT_TEST:
-		Set_ChainTest();
-		return S_OK;
-
-	default:
-		return E_FAIL;
-
-	}
-	return S_OK;
-}
 
 _int CTestObject_PhysX::Update(_double fDeltaTime)
 {
@@ -194,6 +125,14 @@ _int CTestObject_PhysX::LateRender()
 	return _int();
 }
 
+HRESULT CTestObject_PhysX::SetUp_ColliderDesc(CCollider_PhysX_Base::PHYSXDESC desc)
+{
+	if (m_Com_ColliderBase)
+	return	m_Com_ColliderBase->Setup_PhysXDesc(desc);
+
+	return E_FAIL;
+}
+
 
 
 HRESULT CTestObject_PhysX::SetUp_Components()
@@ -204,6 +143,7 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider), (CComponent**)&m_Com_ColliderBase));
 
 	
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -217,31 +157,6 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 
 	return S_OK;
 }
-
-void CTestObject_PhysX::Set_StaticBox()
-{
-	// 충돌체 달기
-	_float3 scale = m_pTransformCom->Get_Scale();
-	_float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-
-	m_Com_ColliderBase->CreateStaticActor(FLOAT3TOPXVEC3(scale));
-	m_pTransformCom->Scaled_All(scale);
-	m_Com_ColliderBase->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
-
-}
-
-void CTestObject_PhysX::Set_DynamicBullet()
-{
-	_float3 scale = m_pTransformCom->Get_Scale();
-	_float3 position = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-
-	m_Com_ColliderBase->CreateDynamicActor(FLOAT3TOPXVEC3(scale));
-	m_pTransformCom->Scaled_All(scale);
-
-	m_Com_ColliderBase->Set_Postiotn(position);
-
-}
-
 
 void CTestObject_PhysX::Set_ChainTest()
 {

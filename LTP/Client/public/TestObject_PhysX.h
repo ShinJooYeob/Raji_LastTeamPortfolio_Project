@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Collider_PhysX_Base.h"
 
 
 
@@ -9,37 +10,6 @@ BEGIN(Client)
 
 class CTestObject_PhysX final : public CGameObject
 {
-public:
-	enum E_PHYTYPE
-	{
-		E_PHYTYPE_STATIC,
-		E_PHYTYPE_DYNAMIC,
-		E_PHYTYPE_JOINT,
-		E_PHYTYPE_END
-
-	};
-
-	enum E_PHYDETAIL_TYPE
-	{
-		E_PHYDETAIL_STATIC_BOX,
-		E_PHYDETAIL_STATIC_MESH,
-		E_PHYDETAIL_STATIC_TRIIGER,
-		E_PHYDETAIL_DYNAMIC_BULLET,
-		E_PHYDETAIL_DYNAMIC_CIRCLE,
-		E_PHYDETAIL_JOINT_TEST,
-		E_PHYDETAIL_END,
-	};
-	
-	typedef struct Tag_CTestStaticPhysXDesc
-	{
-		_float3				pos = _float3(0, 0, 0);
-		_float3				scale = _float3(0, 0, 0);
-		E_PHYTYPE			ePhyType = E_PHYTYPE_STATIC;
-		E_PHYDETAIL_TYPE	ePhyDetailType = E_PHYDETAIL_STATIC_BOX;
-		_bool				bTrigger = false;
-
-	}TESTPHYSXDESC; 
-
 
 private:
 	CTestObject_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -49,8 +19,6 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
 	virtual HRESULT Initialize_Clone(void* pArg)override;
-	virtual HRESULT Set_ColliderType(E_PHYTYPE e);
-	virtual HRESULT Set_InitPhyType(E_PHYDETAIL_TYPE e);
 
 public:
 	virtual _int Update(_double fDeltaTime)override;
@@ -59,8 +27,8 @@ public:
 	virtual _int LateRender()override;
 
 public:
+	HRESULT	SetUp_ColliderDesc(CCollider_PhysX_Base::PHYSXDESC desc);
 	void	Set_Trigger(bool b) { mbTrigger = b; };
-
 
 private:
 	// 피직스 관련
@@ -76,14 +44,18 @@ private:
 //	class CCollider_PhysX_Dynamic*	m_Com_ColliderDynamic = nullptr;
 //	class CCollider_PhysX_Joint*	m_Com_ColliderJoint = nullptr;
 
-	E_PHYTYPE			mePhyType = E_PHYTYPE_END;
-	E_PHYDETAIL_TYPE	mePhydetailType = E_PHYDETAIL_END;
 	bool				mbTrigger = false;
 
 private:
 	HRESULT SetUp_Components();
-	void Set_StaticBox();
-	void Set_DynamicBullet();
+
+	// SetActor
+	void SetUp_Physx_Collider();
+//	void Set_Actor_Joint();
+
+
+	// 각각 모양에 따라 정의
+
 	void Set_ChainTest();
 	
 

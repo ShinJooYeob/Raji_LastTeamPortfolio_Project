@@ -56,16 +56,6 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (KEYDOWN(DIK_C))
-	{
-		CTestObject_PhysX::TESTPHYSXDESC tagbullet;
-		tagbullet.ePhyType = CTestObject_PhysX::E_PHYTYPE_JOINT;
-		tagbullet.ePhyDetailType = CTestObject_PhysX::E_PHYDETAIL_JOINT_TEST;
-		tagbullet.pos = _float3(0, yy += 1, 0);
-		tagbullet.bTrigger = false;
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), TAG_OP(Prototype_Object_Joint_PhysX), &tagbullet));
-	}
-
 	return 0;
 }
 

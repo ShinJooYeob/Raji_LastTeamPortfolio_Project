@@ -52,7 +52,7 @@ public:
 	void KEYTEST();
 
 private:
-	HRESULT CreateTest_Base();
+	HRESULT CreateBase_Plane(PxVec3 point);
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
 	HRESULT Create_Cook();
@@ -86,7 +86,6 @@ private:
 	PxPvd*						mPvd = nullptr;
 
 	// TESTCODE
-
 
 	PxActor*						mTestActor = nullptr;
 	PxRigidActor*					mTestRigActor = nullptr;

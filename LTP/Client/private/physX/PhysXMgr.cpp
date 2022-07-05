@@ -30,9 +30,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDeviceContext);
 
 	FAILED_CHECK(Initialize_PhysXLib());
-
-
-
+	CreateBase_Plane(PxVec3(0, -5, 0));
 	return S_OK;
 
 }
@@ -147,11 +145,10 @@ void CPhysXMgr::KEYTEST()
 
 }
 
-HRESULT CPhysXMgr::CreateTest_Base()
+HRESULT CPhysXMgr::CreateBase_Plane(PxVec3 point)
 {
-	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
+	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(point, PxVec3(0,1,0)), *mMaterial);
 	mScene->addActor(*groundPlane);
-
 	return S_OK;
 }
 

@@ -9,17 +9,43 @@ END
 BEGIN(Client)
 
 
+enum E_PHYTYPE
+{
+	E_PHYTYPE_STATIC,
+	E_PHYTYPE_DYNAMIC,
+	E_PHYTYPE_JOINT,
+	E_PHYTYPE_END
+
+};
+
+enum E_GEOMAT_TYPE
+{
+	E_GEOMAT_BOX,
+	E_GEOMAT_SPEHE,
+	E_GEOMAT_CAPSULE,
+	E_GEOMAT_SHAPE,
+	E_GEOMAT_VERTEX,
+	E_GEOMAT_TRIANGLE,
+	E_GEOMAT_END,
+};
+
+
+
 class CCollider_PhysX_Base : public CComponent
 {
 public:
-	enum E_PHYSXTYPE
-	{
-		E_PHYSXTYPE_STATIC,
-		E_PHYSXTYPE_DYNAMIC,
-		E_PHYSXTYPE_JOINT,
-		E_PHYSXTYPE_END,
 
-	};
+	typedef struct Tag_PhysXDesc
+	{
+		CTransform*			mTrnasform = nullptr;
+		E_PHYTYPE			ePhyType = E_PHYTYPE_STATIC;
+		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+		_float3				mVelocity = _float3::Zero();
+		_bool				bTrigger = false;
+
+	}PHYSXDESC;
+
+
 
 protected:
 	explicit CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -40,6 +66,7 @@ public:
 #endif // _DEBUG
 
 public:
+	HRESULT			Setup_PhysXDesc(PHYSXDESC desc);
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
 	void			Set_Postiotn(_float3 positiotn);
 	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
@@ -50,6 +77,8 @@ public:
 	HRESULT Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 public:
+
+
 	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
 	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
 	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
@@ -61,11 +90,10 @@ public:
 
 private:
 	//	CTransform*					mTransform = nullptr;
-	// ATTACHEDESC					mAttachDesc;
+	PHYSXDESC					mPhysXDesc;
 	PxRigidActor*				mMain_Actor= nullptr;
 	PxTransform					mPxTransform;
 	CTransform*					mMainTransform = nullptr;
-	E_PHYSXTYPE					mePhysxType = E_PHYSXTYPE_STATIC;
 
 private:
 	// 물리충돌 해제
