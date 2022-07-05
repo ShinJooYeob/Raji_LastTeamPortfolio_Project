@@ -6,7 +6,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "Timer.h"
-#include "physx\Collider_PhysX_Base.h"
+#include "physx\Collider_PhysX_Joint.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -130,7 +130,7 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
-//	m_pCollider_HairPhysX->Update_BeforeSimulation();
+	m_pCollider_HairPhysX->Update_BeforeSimulation();
 
 	return _int();
 }
@@ -146,7 +146,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-//	m_pCollider_HairPhysX->Update_AfterSimulation();
+	m_pCollider_HairPhysX->Update_AfterSimulation();
 
 	return _int();
 }
@@ -3368,36 +3368,58 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 
 void CPlayer::Set_HairPhysX()
 {
-	//// #HAIR
-	//// Hair PhysX Test
-	//NULL_CHECK_BREAK(m_pCollider_HairPhysX);
+	// #HAIR
+	// Hair PhysX Test
+	NULL_CHECK_BREAK(m_pCollider_HairPhysX);
+
+	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
+	//m_pModel->Find_HierarchyNode("skd_hair01");
+	//m_pModel->Find_HierarchyNode("skd_hair02");
+	//m_pModel->Find_HierarchyNode("skd_hair03");
+	//m_pModel->Find_HierarchyNode("skd_hair04");
+	//m_pModel->Find_HierarchyNode("skd_hair05");
+	//m_pModel->Find_HierarchyNode("skd_hair06");
+	//m_pModel->Find_HierarchyNode("skd_hair07");
+	//m_pModel->Find_HierarchyNode("skd_hairEnd");
+
+
+	//m_pCollider_HairPhysX
 
 	////// Create Player Hair //
 	//ATTACHEDESC eAttachedDesc;
 	//eAttachedDesc.Initialize_AttachedDesc(this, "skd_hair01", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 
-
 	//// Chain Test
 	//m_pCollider_HairPhysX->CreateChain(eAttachedDesc, 10, PxSphereGeometry(1), 2, CCollider_PhysX::CreateLimitedSpherical);
 
+	//CHierarchyNode* Nodes;
 
 
 
-	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
-//	CHierarchyNode* Nodes;
-//
-//	m_pModel->Find_HierarchyNode("skd_hair01");
-//	m_pModel->Find_HierarchyNode("skd_hair01");
-//	m_pModel->Find_HierarchyNode("skd_hair01");
-//
-//
-//	_float3 scale = _float3(1, 1, 1);
-//	// Create Actors
+	// Create Actors
 //	m_pCollider_HairPhysX->CreateJoint();
-//
-//	// ConnectBones
-////	m_pTransformCom->Scaled_All(scale);
+
+	// ConnectBones
+//	m_pTransformCom->Scaled_All(scale);
+
 //	m_pCollider_HairPhysX->Set_Postiotn((m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS)));
+
+	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
+	string strs[8] =
+	{
+		"skd_hair01","skd_hair02","skd_hair03","skd_hair04","skd_hair05",
+		"skd_hair06","skd_hair07","skd_hairEnd"
+	};
+
+	createJoint.mBoneNames = strs;
+	createJoint.mLength = 8;
+	createJoint.mAttachModel = m_pModel;
+	createJoint.eShapeType = E_GEOMAT_SPEHE;
+//	createJoint.mMainTransform = m_pTransformCom;
+	createJoint.mScale = _Sfloat3::One * 0.5f;
+	createJoint.mSeparation = 1;
+
+	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
 
 
 }
@@ -3526,7 +3548,7 @@ HRESULT CPlayer::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	m_pCollider_HairPhysX = nullptr;
-//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
 
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 

@@ -1344,25 +1344,25 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	// Joint Å×½ºÆ®
 	if (ImGui::Button("Joint_Sphere"))
 	{
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Joint_PhysX)));
-		CTestObject_PhysX* obj =
-			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
-		obj->Set_ColSetID(E_PHYTYPE_JOINT);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		//(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Joint_PhysX)));
+		//CTestObject_PhysX* obj =
+		//	static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		//obj->Set_ColSetID(E_PHYTYPE_JOINT);
 
-		CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-		objTrans->Scaled_All(Scale);
+		//CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+		//CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		//objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		//objTrans->Scaled_All(Scale);
 
-		createJoint.mBoneName = "skd_hair01";
-		createJoint.mTargetObject = obj;
-		createJoint.mLength = 5;
-		createJoint.eShapeType = E_GEOMAT_SPEHE;
-		createJoint.mScale = _float3::One();
-		createJoint.mSeparation = 4;
-		
-		coljoint->Set_ColiiderDesc(createJoint);
+		//createJoint.mBoneName = "skd_hair01";
+		//createJoint.mTargetObject = obj;
+		//createJoint.mLength = 5;
+		//createJoint.eShapeType = E_GEOMAT_SPEHE;
+		//createJoint.mScale = _float3::One();
+		//createJoint.mSeparation = 4;
+		//
+		//coljoint->Set_ColiiderDesc(createJoint);
 	}
 
 	ImGui::Separator();

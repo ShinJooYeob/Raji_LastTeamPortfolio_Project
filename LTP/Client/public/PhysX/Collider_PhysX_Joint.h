@@ -2,6 +2,9 @@
 
 #include "Collider_PhysX_Base.h"
 
+BEGIN(Engine)
+class CHierarchyNode;
+END
 BEGIN(Client)
 class CCollider_PhysX_Joint: public CCollider_PhysX_Base
 {
@@ -37,11 +40,13 @@ public:
 	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT desc);
 
 
-
-
 protected:
-	PHYSXDESC_JOINT mPhysXDesc;
-	ATTACHEDESC mAttachDesc;
+	PHYSXDESC_JOINT				mPhysXDesc;
+	ATTACHEDESC					mAttachDesc;
+	CHierarchyNode*				mMainBone = nullptr;
+	vector<CHierarchyNode*>		mVecHier;
+	vector<PxRigidDynamic*>		mVecActors;
+
 
 public:
 	static CCollider_PhysX_Joint* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

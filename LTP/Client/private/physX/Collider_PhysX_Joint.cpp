@@ -59,19 +59,32 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 
 	//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
 
-
 	//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
 	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
 
-
-
-
-
 	// Pos
-	mMain_Actor->setGlobalPose(mPxMainTransform);
+
+	//PxMat44 mat = PxMat44(mVecActors[0]->getGlobalPose());
+	//_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+	//mVecHier[0]->Set_UpdateTransform(getPos);
+
+	_uint size = mVecActors.size();
+	for (int i =0; i<size;++i)
+	{
+	//	mMain_Actor->setGlobalPose(mPxMainTransform);
+		// PxMat44(PxMat33(t.q), t.p); // 회전 적용하는 법
+		/*mVecHier[i]->set*/
+
+
+		PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
+		_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+		mVecHier[i]->Set_UpdateTransform(getPos);
+	}
+
+	
+
 //	_float3 vec3 = *(_float3*)&mPxMainTransform.p;
 //	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-
 
 	return S_OK;
 }
@@ -95,25 +108,29 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 {
 	// 충돌 모델 초기화
 
+//	mAttachDesc.Initialize_AttachedDesc(desc.mTargetObject, desc.mBoneName.c_str(), _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_JOINT));
-	if (desc.mTargetObject == nullptr)
+
+	if (desc.mAttachModel == nullptr || desc.mLength == 0 || desc.mBoneNames == nullptr)
 		return E_FAIL;
 
-//	mAttachDesc.Initialize_AttachedDesc(desc.mTargetObject, desc.mBoneName.c_str(), _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
-
-	//// 위 정보로 콜라이더 초기화
-
-	//// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
+	// 위 정보로 콜라이더 초기화
+	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
 	if (mMain_Actor)
 		return E_FAIL;
 
 	PxGeometry* gemo = nullptr;
-	mMainTransform = (CTransform*)desc.mTargetObject->Get_Component(TAG_COM(Com_Transform)); 
-	 //Get_AttachObjectTransform();
+	
 
 	_float3 scale = mPhysXDesc.mScale;
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	for (int i = 0; i < desc.mLength; ++i)
+	{
+		CHierarchyNode* findBone = desc.mAttachModel->Find_HierarchyNode(desc.mBoneNames[i].c_str());
+		NULL_CHECK_BREAK(findBone);
+		mVecHier.push_back(findBone);
+	}
 
 	switch (mPhysXDesc.eShapeType)
 	{
@@ -141,9 +158,10 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	}
 	NULL_CHECK_BREAK(gemo);
 
-	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS)));
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateChain(mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateLimitedSpherical);
-	NULL_CHECK_BREAK(mMain_Actor);
+	// m_matUpdatedTransform 여기다 박아서 사용해보자
+	mMainBone = mVecHier.front();
+	mPxMainTransform = PxTransform(MAT4X4TOPXMAT(mMainBone->Get_UpdatedMatrix()));
+	GetSingle(CPhysXMgr)->CreateChain(mVecActors,mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateLimitedSpherical);
 	Safe_Delete(gemo);
 	return S_OK;
 }

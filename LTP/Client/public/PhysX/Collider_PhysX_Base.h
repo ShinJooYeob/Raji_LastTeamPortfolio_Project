@@ -56,9 +56,10 @@ public:
 
 	typedef struct Tag_PhysXDesc_Joint
 	{
-		string				mBoneName;
-		CGameObject*		mTargetObject;
+		string*				mBoneNames = nullptr;
 		_uint				mLength = 0;
+		CModel*				mAttachModel = nullptr;
+
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mScale = _float3::Zero();
 		_float				mSeparation = 2;
