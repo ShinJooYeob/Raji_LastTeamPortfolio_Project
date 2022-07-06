@@ -6,13 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-
-class CMonster_Gadasura_Black final : public CMonster
+class CMonster_Ninjasura_Minion final : public CMonster
 {
 private:
-	explicit CMonster_Gadasura_Black(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Gadasura_Black(const CMonster_Gadasura_Black& rhs);
-	virtual ~CMonster_Gadasura_Black() = default;
+	explicit CMonster_Ninjasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Ninjasura_Minion(const CMonster_Ninjasura_Minion& rhs);
+	virtual ~CMonster_Ninjasura_Minion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -24,6 +23,7 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+private:
 	HRESULT				SetUp_Info();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
@@ -81,6 +81,17 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
+private: //MoveNumber
+	_int				m_iMoveNumber = -1;
+
+	_float4				m_fDirection;
+
+private: //MotionTrail
+	_double				m_MotionTrailTime = 0;
+	_bool				m_bTurnMotion = false;
+	_bool				m_MotionTrailOn = false;
+
+
 
 
 private:
@@ -88,7 +99,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Gadasura_Black* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Ninjasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

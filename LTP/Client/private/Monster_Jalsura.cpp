@@ -402,12 +402,12 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.5f);
 
 				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_Texture_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f,1.2f, -0.3f);
 
 
 				Monster_Texture_BulletDesc.Object = this;
 
-				Monster_Texture_BulletDesc.dDuration = 15;
+				Monster_Texture_BulletDesc.dDuration = 1;
 
 				Monster_Texture_BulletDesc.bBornAttachOn = true;
 				Monster_Texture_BulletDesc.pBoneName = "sk_eye";

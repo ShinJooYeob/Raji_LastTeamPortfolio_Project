@@ -256,6 +256,15 @@
     <Filter Include="01.GameObject\97.TestObject\02.TestNonAnimInstancing">
       <UniqueIdentifier>{d6460056-55d5-4787-8e35-03b45af5b1d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Ninjasura">
+      <UniqueIdentifier>{71240fc7-2578-4db2-9c6b-b6cca43a4761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Ninjasura_Minion">
+      <UniqueIdentifier>{0a8ba767-4020-42e5-8224-b0d8ae536f95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Weapon_Universal">
+      <UniqueIdentifier>{c19fe9f4-fae0-4c83-a0cb-71aca287e7f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -519,6 +528,15 @@
     <ClInclude Include="..\public\TestNonAnimInstancing.h">
       <Filter>01.GameObject\97.TestObject\02.TestNonAnimInstancing</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster_Ninjasura.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Ninjasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Ninjasura_Minion.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Ninjasura_Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Weapon_Universal.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -748,6 +766,15 @@
     </ClCompile>
     <ClCompile Include="..\private\TestNonAnimInstancing.cpp">
       <Filter>01.GameObject\97.TestObject\02.TestNonAnimInstancing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Ninjasura.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Ninjasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Ninjasura_Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,13 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-
-class CMonster_Gadasura_Black final : public CMonster
+class CMonster_Ninjasura final : public CMonster
 {
 private:
-	explicit CMonster_Gadasura_Black(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Gadasura_Black(const CMonster_Gadasura_Black& rhs);
-	virtual ~CMonster_Gadasura_Black() = default;
+	explicit CMonster_Ninjasura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Ninjasura(const CMonster_Ninjasura& rhs);
+	virtual ~CMonster_Ninjasura() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -24,6 +23,7 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+private:
 	HRESULT				SetUp_Info();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
@@ -71,7 +71,7 @@ private://애니메이션 동작 및 이벤트
 	//Anim Special Pattern
 	_double				m_dSpecial_CoolTime = 0;
 
-	_double				m_dAcceleration = 1;
+	_double				m_dAcceleration =1;
 
 private:
 	_float				m_fDistance = 0;
@@ -81,6 +81,17 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
+private: //MoveNumber
+	_uint				m_iMoveNumber = 0;
+
+	_float4				m_fDirection;
+
+private: //MotionTrail
+	_double				m_MotionTrailTime = 0;
+	_bool				m_bTurnMotion = false;
+	_bool				m_MotionTrailOn = false;
+
+
 
 
 private:
@@ -88,7 +99,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Gadasura_Black* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Ninjasura* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

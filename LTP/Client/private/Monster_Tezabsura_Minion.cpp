@@ -235,7 +235,7 @@ HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
-		m_iInfinityPattern = rand() % 13;
+		m_iInfinityPattern = rand() % 7;
 
 
 		m_dInfinity_CoolTime = 0;
