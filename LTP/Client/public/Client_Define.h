@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable : 4099)
 
 static const int g_iWinCX = 1280;
 static const int g_iWinCY = 720;

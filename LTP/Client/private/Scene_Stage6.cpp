@@ -5,6 +5,8 @@
 #include "Player.h"
 
 #include "physX/PhyxSampleTest.h"
+#include "TestObject_PhysX.h"
+
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -53,28 +55,6 @@ _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
-
-	if (KEYDOWN(DIK_V))
-	{
-		CTestStaticPhysX::TESTPHYSXDESC tagBox;
-		tagBox.ePhyType = CTestStaticPhysX::E_PHYTYPE_TESTBOX;
-		tagBox.pos = _float3(0,0, Z1 += 1);
-
-
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj), L"PhysX_Test",&tagBox));
-
-	}
-
-	if (KEYDOWN(DIK_Z))
-	{
-		CTestStaticPhysX::TESTPHYSXDESC tagbullet;
-		tagbullet.ePhyType = CTestStaticPhysX::E_PHYTYPE_BULLET;
-		tagbullet.pos = _float3(0, yy+=1, 0);
-
-
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_Bullet), L"PhysX_Test", &tagbullet));
-
-	}
 
 	return 0;
 }

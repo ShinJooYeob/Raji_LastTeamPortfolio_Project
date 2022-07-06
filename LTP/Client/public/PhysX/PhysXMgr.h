@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Base.h"
-#include "TestStaticPhysX.h"
 
 BEGIN(Engine)
+
 
 // 두 엑터를 연결해서 사용한다.
 typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
@@ -16,35 +16,30 @@ public:
 	virtual ~CPhysXMgr() = default;
 
 public:
-	HRESULT Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	HRESULT Update_PhysX(_double timedelta);
-	HRESULT LateUpdate_PhysX(_double timedelta);
-	HRESULT Renderer();
+	HRESULT					Initialize_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	HRESULT					Update_PhysX(_double timedelta);
+	HRESULT					LateUpdate_PhysX(_double timedelta);
+	HRESULT					Renderer();
 
 
-	PxFoundation*	Get_Foundation();
-	PxPhysics*		Get_PhysicsCreater();
-	PxCooking*		Get_PhysicsCooking();
-	PxScene*		Get_PhysicsScene();
+	PxFoundation*			Get_Foundation();
+	PxPhysics*				Get_PhysicsCreater();
+	PxCooking*				Get_PhysicsCooking();
+	PxScene*				Get_PhysicsScene();
 	
 public:
 	// Shape Test
-	HRESULT CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
-	HRESULT CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
+	HRESULT					CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
+	HRESULT					CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
 	
 	// Create Chain
-	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-
-
-
 
 public:
 	// Actor Test
-	PxRigidDynamic* CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidDynamic*			CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 
-	PxRigidDynamic* CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
-	PxRigidStatic* CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
-
+	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidStatic*			CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
 
 
 	HRESULT Create_Plane();
@@ -52,7 +47,7 @@ public:
 	void KEYTEST();
 
 private:
-	HRESULT CreateTest_Base();
+	HRESULT CreateBase_Plane(PxVec3 point);
 	HRESULT CreateStack_Test(const PxTransform& trans, PxU32 size, PxReal halfExtent);
 	HRESULT Clean_Phyics();
 	HRESULT Create_Cook();
@@ -66,8 +61,8 @@ private:
 
 
 private:
-	ID3D11Device*			m_pDevice = nullptr;
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
+	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
 
 	PxDefaultAllocator			mAllocCallback;
 	PxDefaultErrorCallback		mErrorCallback;
@@ -87,18 +82,24 @@ private:
 
 	// TESTCODE
 
-
 	PxActor*						mTestActor = nullptr;
 	PxRigidActor*					mTestRigActor = nullptr;
 	PxTransform*					mTestTransfrom1 = nullptr;
 
 public:
-
 	static PxPhysics*			gPhysics;
 	static PxCooking*			gCooking;
 	static PxFoundation*		gFoundation;
 	static PxMaterial*			gMaterial;
 
+	static PxMaterial*			gMaterial1;
+	static PxMaterial*			gMaterial2;
+
+
+	static _float3 gDebugValue1;
+	static _float3 gDebugValue2;
+	static _float3 gDebugValue3;
+	static _float3 gDebugValue4;
 
 
 public:

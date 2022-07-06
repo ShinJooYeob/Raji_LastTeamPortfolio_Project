@@ -9,10 +9,16 @@
 IMPLEMENT_SINGLETON(CPhysXMgr)
 
 PxMaterial* CPhysXMgr::gMaterial = nullptr;
+PxMaterial* CPhysXMgr::gMaterial1 = nullptr;
+PxMaterial* CPhysXMgr::gMaterial2 = nullptr;
 PxPhysics* CPhysXMgr::gPhysics = nullptr;
 PxCooking* CPhysXMgr::gCooking = nullptr;
 PxFoundation* CPhysXMgr::gFoundation = nullptr;
 
+_float3 CPhysXMgr::gDebugValue1 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
 static CDemoCallback gDemoCallback;
 
@@ -30,8 +36,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDeviceContext);
 
 	FAILED_CHECK(Initialize_PhysXLib());
-
-
+	CreateBase_Plane(PxVec3(0, -10, 0));
 
 	return S_OK;
 
@@ -94,29 +99,14 @@ HRESULT CPhysXMgr::Renderer()
 }
 
 
+static float stackZ = 0.f;
+
 void CPhysXMgr::KEYTEST()
 {
 	if (KEYDOWN(DIK_C))
-	{
-		// CreatePlayer
-		CPlayer* pPlayer = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
-		NULL_CHECK_BREAK(pPlayer);
-		CTransform* pTransPos = pPlayer->Get_Transform();
-		PxVec3 PlayerPos = *(PxVec3*)&pTransPos->Get_MatrixState_Float3(CTransform::STATE_POS);
-		PxTransform PlayerTrans = PxTransform(PlayerPos);
-
-		// mTestRigActor = mPhysics->createRigidDynamic(PlayerTrans);
-		// CreateSphere_Actor(mTestRigActor, mMaterial, 1);
-
-		mTestRigActor = CreateDynamic(PlayerTrans, PxSphereGeometry(3.0f), PxVec3(1, 1, 1));
-
-
-		// CreateChain
-
-		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, 0.0f)), 10, PxBoxGeometry(1.0f, 0.5f, 1.0f), 4.0f,
-		// 	CPhysXMgr::CreateLimitedSpherical);
-		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createBreakableFixed);
-		// CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
+	{	
+		for (PxU32 i = 0; i < 5; i++)
+			CreateStack_Test(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, 2.0f);
 	}
 
 
@@ -141,17 +131,16 @@ void CPhysXMgr::KEYTEST()
 		NULL_CHECK_BREAK(pCamTransform);
 		PxVec3 CamPos = *(PxVec3*)&pCamTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 		PxTransform trans3 = PxTransform(CamPos);
-		CreateDynamic(trans3, PxSphereGeometry(3.0f), PxVec3(0, 0, -1) * 200);
+		CreateDynamic(trans3, PxSphereGeometry(3), PxVec3(0, -50, -100));
 	}
 
 
 }
 
-HRESULT CPhysXMgr::CreateTest_Base()
+HRESULT CPhysXMgr::CreateBase_Plane(PxVec3 point)
 {
-	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(0, 1, 0, 0), *mMaterial);
+	PxRigidStatic* groundPlane = PxCreatePlane(*mPhysics, PxPlane(point, PxVec3(0,1,0)), *mMaterial);
 	mScene->addActor(*groundPlane);
-
 	return S_OK;
 }
 
@@ -224,8 +213,7 @@ HRESULT CPhysXMgr::Create_Cook()
 	PxConvexMesh* convexMesh = mPhysics->createConvexMesh(input);
 
 	// 메시 인스턴스를 엑터한테 추가하는 개념
-	PxRigidActor* aConvexActor = mPhysics->createRigidStatic(PxTransform(0,0,0));
-
+	PxRigidActor* aConvexActor = mPhysics->createRigidStatic(PxTransform(0, 0, 0));
 
 	PxShape* aConvexShape = PxRigidActorExt::createExclusiveShape(*aConvexActor,
 		PxConvexMeshGeometry(convexMesh), *mMaterial);
@@ -383,7 +371,7 @@ PxFoundation * CPhysXMgr::Get_Foundation()
 
 PxPhysics * CPhysXMgr::Get_PhysicsCreater()
 {
-	NULL_CHECK_BREAK(mPhysics);
+//	NULL_CHECK_BREAK(mPhysics);
 	return mPhysics;
 }
 
@@ -395,7 +383,7 @@ PxCooking * CPhysXMgr::Get_PhysicsCooking()
 
 PxScene * CPhysXMgr::Get_PhysicsScene()
 {
-	NULL_CHECK_BREAK(mScene);
+//	NULL_CHECK_BREAK(mScene);
 	return mScene;
 }
 
@@ -466,6 +454,9 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 	gMaterial = mMaterial;
 
+	gMaterial1 = mPhysics->createMaterial(0.3f, 0.3f, 0.5f);
+	gMaterial2 = mPhysics->createMaterial(0.8f, 0.8f, 1.0f);
+
 	return S_OK;
 }
 
@@ -507,9 +498,9 @@ PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const 
 {
 	PxTransform testrans = PxTransform(PxVec3(0,0,0));
 
-	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, testrans, geometry, *mMaterial, 1.f);
+	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, testrans, geometry, *gMaterial1, 1.f);
 	NULL_CHECK_BREAK(actor);
-	actor->setAngularDamping(0.5f);
+	actor->setAngularDamping(0);
 	actor->setLinearVelocity(velocity);
 	mScene->addActor(*actor);
 	return actor;
@@ -517,32 +508,13 @@ PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const 
 
 PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const PxGeometry& geometry)
 {
-	PxRigidStatic* actor = PxCreateStatic(*mPhysics, t, geometry, *mMaterial);
+	PxRigidStatic* actor = PxCreateStatic(*mPhysics, t, geometry, *gMaterial2);
 	NULL_CHECK_BREAK(actor);
 	mScene->addActor(*actor);
 	return actor;
 }
 
-HRESULT CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
-{
-	// 관절 오브젝트 생성
 
-	PxVec3 offset(separation / 2, 0, 0);
-	PxTransform localTm(offset);
-	PxRigidDynamic* prev = NULL;
-
-	// N개의 관절 연결
-	for (PxU32 i = 0; i < length; i++)
-	{
-		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
-		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
-		mScene->addActor(*current);
-		prev = current;
-		localTm.p.x += separation;
-	}
-
-	return S_OK;
-}
 
 void CPhysXMgr::Free()
 {

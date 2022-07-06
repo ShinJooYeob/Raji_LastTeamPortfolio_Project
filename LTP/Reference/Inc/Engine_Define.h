@@ -36,6 +36,7 @@
 #include <DirectXTK/DDSTextureLoader.h>
 #include <DirectXTK/WICTextureLoader.h>
 #include <DirectXTK/ScreenGrab.h>
+#include <DirectXTK/SimpleMath.h>
 #include <wincodec.h>
 
 // Assimp

@@ -10,6 +10,10 @@
 #include "InstanceEffect.h"
 
 
+#include "PhysX/Collider_PhysX_Static.h"
+#include "PhysX/Collider_PhysX_Dynamic.h"
+#include "PhysX/Collider_PhysX_Joint.h"
+//#include "LoadingUI.h"
 
 #ifdef USE_IMGUI
 #include "ImguiMgr.h"
@@ -359,7 +363,7 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	////텍스처 프로토타입 생성
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_DefaultUI),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Default.txt" )));
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Default.txt")));
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
@@ -374,8 +378,14 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
 		CCollider::Create(m_pDevice, m_pDeviceContext)));
 
-	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
-		CCollider_PhysX::Create(m_pDevice, m_pDeviceContext)));
+	//FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX),
+	//	CCollider_PhysX_Base::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static),
+		CCollider_PhysX_Static::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic),
+		CCollider_PhysX_Dynamic::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint),
+		CCollider_PhysX_Joint::Create(m_pDevice, m_pDeviceContext)));
 
 
 	return S_OK;
