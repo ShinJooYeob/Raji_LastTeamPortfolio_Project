@@ -47,9 +47,9 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 
 	if (bTestflag == 0)
 	{
-		mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-		mPxMainTransform.p += mOffsetVec;
-		mMain_Actor->setGlobalPose(mPxMainTransform);
+	//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	//	mPxMainTransform.p += mOffsetVec;
+	//	mMain_Actor->setGlobalPose(mPxMainTransform);
 	}
 	else if (bTestflag == 1)
 	{
@@ -94,9 +94,9 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//hier1->Set_UpdateTransform(XMLoadFloat4x4(&ffMat));
 	if (bTestflag == 0)
 	{
-		PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
-		_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-		mMainBone->Set_UpdateTransform(getPos);
+	//	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
+	//	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+	//	mMainBone->Set_UpdateTransform(getPos);
 	}
 	else if(bTestflag == 1)
 	{
