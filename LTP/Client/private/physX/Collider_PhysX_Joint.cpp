@@ -61,7 +61,6 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 			mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
 			mMain_Actor->setGlobalPose(mPxMainTransform);
 			bool ss = ((PxRigidDynamic*)mMain_Actor)->getKinematicTarget(mPxMainTransform);
-			int debug = 5;
 		}
 		else
 		{
@@ -104,7 +103,17 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	}
 	else if (bTestflag == 2)
 	{
-		mPxMainTransform = mMain_Actor->getGlobalPose();
+		if (mbKeyUpdate)
+		{
+			//mPxMainTransform = mMain_Actor->getGlobalPose();
+			//_float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
+			//mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+		}
+		else
+		{
+			mPxMainTransform = mMain_Actor->getGlobalPose();
+		}
+
 		// _float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
 		// mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 
@@ -364,9 +373,9 @@ PxJoint* CCollider_PhysX_Joint::CreateNomalJoint(PxRigidActor* a0, const PxTrans
 
 
 	PxRevoluteJoint* j = PxRevoluteJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setDriveForceLimit(1.f);
-	j->setDriveGearRatio(1.f);
-	j->setDriveVelocity(0.5f);
+	j->setDriveForceLimit(20.f);
+	j->setDriveGearRatio(0.5f);
+	j->setDriveVelocity(0.1f);
 	
 	j->setConstraintFlag(PxConstraintFlag::eBROKEN, false);
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECT_TO_ACTOR0, true);
