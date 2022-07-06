@@ -6,7 +6,7 @@
 #include "UtilityMgr.h"
 #include "AssimpCreateMgr.h"
 #include "PhysX/PhysXMgr.h"
-#include "PhysX/Collider_PhysX.h"
+#include "TestObject_PhysX.h"
 #include "InstanceEffect.h"
 
 

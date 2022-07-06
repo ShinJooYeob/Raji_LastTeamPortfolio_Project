@@ -3609,7 +3609,7 @@ void CPlayer::Set_HairPhysX()
 {
 	// #HAIR
 	// Hair PhysX Test
-	NULL_CHECK_RETURN(m_pCollider_HairPhysX);
+	NULL_CHECK_BREAK(m_pCollider_HairPhysX);
 
 	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
 	// m_pModel->Find_HierarchyNode("skd_hair01");

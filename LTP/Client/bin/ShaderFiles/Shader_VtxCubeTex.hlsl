@@ -82,7 +82,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-	pass Cube
+	pass Cube	//1
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -93,7 +93,7 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass SkyBox
+	pass SkyBox//2
 	{
 		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(NonZTestAndWriteState, 0);

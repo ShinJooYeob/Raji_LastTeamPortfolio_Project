@@ -444,7 +444,6 @@ HRESULT CMonster_Ninjasura::SetUp_Components()
 	tMotionDesc.iNumTrailCount = 6;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
-	tMotionDesc.vLimLight = _float4(0.45f, 0.f, 1.f, 1.f);
 	tMotionDesc.iPassIndex = 5;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
@@ -505,7 +504,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 						m_bTurnMotion = false;
 					}
 
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), 1.f);
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
 					m_MotionTrailTime = 0;
 				}
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat4(&m_fDirection), 60.f, dDeltaTime);
@@ -547,7 +546,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_MotionTrailTime += dDeltaTime;
 				if (m_MotionTrailTime > 0.05)
 				{
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), 1.f);
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
 					m_MotionTrailTime = 0;
 				}
 				///////////////

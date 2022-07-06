@@ -239,7 +239,7 @@ HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 
 	_Vector vPosition = XMLoadFloat4(&m_fTempPos);
 
-	vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5);
+	vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5f);
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 	/////////////////////////////

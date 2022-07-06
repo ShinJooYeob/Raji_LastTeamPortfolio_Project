@@ -29,7 +29,6 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CVIBuffer_Cube*		m_pVIBufferCom = nullptr;
-	CTexture*			m_pTextureCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 
 	_float4				m_vColor = _float4(1, 0, 0, 1);

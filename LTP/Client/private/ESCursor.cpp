@@ -70,7 +70,7 @@ _int CESCursor::Render()
 	m_pShaderCom->Set_RawValue("g_ViewMatrix", &ViewFloat4x4, sizeof(_float4x4));
 	m_pShaderCom->Set_RawValue("g_ProjMatrix", &ProjFloat4x4, sizeof(_float4x4));
 
-	FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime));
+	//FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture"));
 
 	FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 3));
 
@@ -103,8 +103,6 @@ HRESULT CESCursor::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Cube), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Texture_EditScene), TAG_COM(Com_Texture), (CComponent**)&m_pTextureCom));
-	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"Cursor"));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -153,6 +151,5 @@ void CESCursor::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
 	
 }

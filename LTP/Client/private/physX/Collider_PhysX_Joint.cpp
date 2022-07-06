@@ -231,7 +231,7 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	_float3 scale = mPhysXDesc.mScale;
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
 
-	for (int i = 0; i < desc.mLength; ++i)
+	for (int i = 0; i < int(desc.mLength); ++i)
 	{
 		CHierarchyNode* findBone = desc.mAttachModel->Find_HierarchyNode(desc.mBoneNames[i].c_str());
 		NULL_CHECK_BREAK(findBone);

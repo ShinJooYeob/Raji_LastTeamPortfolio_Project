@@ -414,7 +414,6 @@ HRESULT CMonster_Gadasura_Black::SetUp_Components()
 	tMotionDesc.iNumTrailCount = 6;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
-	tMotionDesc.vLimLight = _float4(1.f, 0.f, 0.f, 1.f);
 	tMotionDesc.iPassIndex = 5;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
@@ -447,6 +446,12 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		switch (iNowAnimIndex)
 		{
+		case 1:
+			break;
+
+		default:
+			break;
+
 		}
 
 	}
