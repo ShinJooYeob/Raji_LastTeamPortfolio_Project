@@ -118,9 +118,15 @@ enum OBJECTPROTOTYPEID
 
 	//JJB
 	Prototype_Object_Boss_Rangda,
+	Prototype_Object_Boss_Rangda_Finger,
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Boss_ChiedtianWeapon,
 	Prototype_Object_Boss_Snake,
+	Prototype_Object_Boss_Mahabalasura,
+	Prototype_Object_Boss_MahabalasuraArms,
+	Prototype_Object_Boss_MahabalasuraAttackArms,
+	Prototype_Object_Boss_MahabalasuraWeapon,
+	Prototype_Object_Boss_MahabalasuraCopy,
 	Prototype_Object_Effect_MagicCircle,
 
 	//Monster_Bullet
@@ -235,6 +241,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Object_Boss_Rangda");
 		break;
 
+	case Prototype_Object_Boss_Rangda_Finger:
+		return TEXT("Prototype_Object_Boss_Rangda_Finger");
+		break;
+
 	case Prototype_Object_Boss_Chiedtian:
 		return TEXT("Prototype_Object_Boss_Chiedtian");
 		break;
@@ -245,6 +255,26 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Boss_Snake:
 		return TEXT("Prototype_Object_Boss_Snake");
+		break;
+
+	case Prototype_Object_Boss_Mahabalasura:
+		return TEXT("Prototype_Object_Boss_Mahabalasura");
+		break;
+
+	case Prototype_Object_Boss_MahabalasuraArms:
+		return TEXT("Prototype_Object_Boss_MahabalasuraArms");
+		break;
+		
+	case Prototype_Object_Boss_MahabalasuraAttackArms:
+		return TEXT("Prototype_Object_Boss_MahabalasuraAttackArms");
+		break;
+
+	case Prototype_Object_Boss_MahabalasuraWeapon:
+		return TEXT("Prototype_Object_Boss_MahabalasuraWeapon");
+		break;
+
+	case Prototype_Object_Boss_MahabalasuraCopy:
+		return TEXT("Prototype_Object_Boss_MahabalasuraCopy");
 		break;
 
 	case Prototype_Object_Effect_MagicCircle:
@@ -600,12 +630,18 @@ enum COMPONENTPROTOTYPEID
 
 
 	Prototype_Mesh_Boss_Rangda,
+	Prototype_Mesh_Boss_Rangda_Finger,
 	Prototype_Mesh_Boss_Chieftian,
 	Prototype_Mesh_Boss_ChieftianWeapon,
 	Prototype_Mesh_Boss_ChieftianWeapon2,
 	Prototype_Mesh_Boss_ChieftianWeapon3,
 	Prototype_Mesh_Boss_ChieftianWeapon4,
 	Prototype_Mesh_Boss_Snake,
+	Prototype_Mesh_Boss_Mahabalasura,
+	Prototype_Mesh_Boss_MahabalasuraArms,
+	Prototype_Mesh_Boss_MahabalasuraAttackArms,
+	Prototype_Mesh_Boss_MahabalasurWeapon,
+	Prototype_Mesh_Boss_MahabalasurCopy,
 
 
 	Prototype_Mesh_SkyBox,
@@ -801,6 +837,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Boss_Randa.fbx");
 		break;
 
+	case Prototype_Mesh_Boss_Rangda_Finger:
+		return TEXT("Finger.fbx");
+		break;
+
 	case Prototype_Mesh_Boss_Chieftian:
 		return TEXT("Boss_Chiedtian.fbx");
 		break;
@@ -823,6 +863,26 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Boss_Snake:
 		return TEXT("Boss_Snake.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_Mahabalasura:
+		return TEXT("Boss_Mahabalasura.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_MahabalasuraArms:
+		return TEXT("Arms.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_MahabalasuraAttackArms:
+		return TEXT("AttackArms.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_MahabalasurWeapon:
+		return TEXT("NoAni_MahabalasuraWeapone.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_MahabalasurCopy:
+		return TEXT("Copy_Boss.fbx");
 		break;
 
 	case Prototype_Mesh_TestObject:

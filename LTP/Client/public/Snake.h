@@ -40,9 +40,14 @@ private:
 	_float				m_fRotTime = 0.f;
 
 	_bool				m_bTestHodeing = false;
+	_bool				m_bHiding = false;
+	_float3				m_StartPos;
+	_Vector				m_vAngle;
 
 
 	CGameObject*		m_pPlayerObj;
+
+	_bool				TestBool = false;
 
 private:
 	HRESULT SetUp_Components();

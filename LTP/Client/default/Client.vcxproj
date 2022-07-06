@@ -182,6 +182,11 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\CopyMahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura_Arms.h" />
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
     <ClInclude Include="..\public\PlayerWeapon_Chakra.h" />
     <ClInclude Include="..\public\Chiedtian.h" />
     <ClInclude Include="..\public\Chiedtuan_Weapon.h" />
@@ -220,6 +225,7 @@
     <ClInclude Include="..\public\PlayerWeapon_Spear.h" />
     <ClInclude Include="..\public\PlayerWeapon_Sword.h" />
     <ClInclude Include="..\public\Rangda.h" />
+    <ClInclude Include="..\public\Rangda_Finger.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
@@ -250,6 +256,11 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\CopyMahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp" />
     <ClCompile Include="..\private\Chiedtian.cpp" />
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp" />
@@ -283,6 +294,7 @@
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
+    <ClCompile Include="..\private\Rangda_Finger.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />

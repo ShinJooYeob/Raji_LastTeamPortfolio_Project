@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
-
+BEGIN(Client)
 class CMonsterWeapon abstract : public CGameObject
 {
 protected:
@@ -20,7 +20,6 @@ public:
 	virtual _int LateRender()override;
 
 protected:
-protected:
 	_bool		m_bIsHit = false;
 	_bool		m_bIsAttack = false;
 	_float		m_fAttackCoolTime = 3.f;
@@ -33,3 +32,4 @@ public:
 
 };
 
+END

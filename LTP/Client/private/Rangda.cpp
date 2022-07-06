@@ -31,7 +31,7 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
+	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 
 	m_pModel->Change_AnimIndex(0);
 
@@ -41,6 +41,11 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum,
 		TEXT("Layer_Player"));
+
+	for (_int i = 0; i < 8; ++i)
+	{
+		m_vFingerPoss[i] = Get_FingerPos(i);
+	}
 
 	return S_OK;
 }
@@ -76,7 +81,12 @@ _int CRangda::Update(_double fDeltaTime)
 	{
 		m_fTestHPIndex += 0.2f;
 	}
-	if (m_fTestHPIndex >= 1.4f)
+	//if (m_fTestHPIndex >= 1.4f)
+	//	m_bIsHalf = true;
+
+	//m_bIsHalf = true;
+
+	if(m_iMaterialCount == 7)
 		m_bIsHalf = true;
 
 	//맞았을때
@@ -85,6 +95,14 @@ _int CRangda::Update(_double fDeltaTime)
 		m_bIsHit = false;
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 0);
+
+		if (m_iMaterialCount - 3 < 8)
+		{
+			_float3 vPos = m_vFingerPoss[m_iMaterialCount - 3];
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Finger"), TAG_OP(Prototype_Object_Boss_Rangda_Finger), &vPos);
+		}
+
+		++m_iMaterialCount;
 	}
 	//일반 공격
 	else if (m_fAttackCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
@@ -149,8 +167,14 @@ _int CRangda::Render()
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
+		//if(i == 10)continue;
+
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+
+		if(i > 3 && i <= m_iMaterialCount )
+			continue;
+
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
 
@@ -162,6 +186,67 @@ _int CRangda::LateRender()
 	if (__super::LateRender() < 0)		return -1;
 
 	return _int();
+}
+
+_fVector CRangda::Get_BonePos(const char * pBoneName)
+{
+	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
+	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
+	_Vector vPos, vRot, vScale;
+	XMMatrixDecompose(&vScale, &vRot, &vPos, TransformMatrix);
+
+	return vPos;
+}
+
+_fMatrix CRangda::Get_BoneMatrix(const char * pBoneName)
+{
+	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
+	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	return TransformMatrix;
+}
+
+_float3 CRangda::Get_FingerPos(_int Num)
+{
+	_float3 BonePos;
+
+	switch (Num)
+	{
+	case 0:
+		//_float3 HandPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 8.6f);
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(-0.780f, 1.485f, -10.206f, 0.f);
+		return BonePos;
+		break;
+	case 1:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(-0.390f, 1.485f, -10.871f, 0.f);
+		return BonePos;
+		break;
+	case 2:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(+0.435f, 1.485f, -10.871f, 0.f);
+		return BonePos;
+		break;
+	case 3:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(+1.455f, 1.485f, -10.451f, 0.f);
+		return BonePos;
+		break;
+	case 4:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(+0.615f, 1.485f, -10.966f, 0.f);
+		return BonePos;
+		break;
+	case 5:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(+0.315f, 1.485f, -11.721f, 0.f);
+		return BonePos;
+		break;
+	case 6:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(-0.570f, 1.485f, -11.736f, 0.f);
+		return BonePos;
+		break;
+	case 7:
+		BonePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(-1.200f, 1.485f, -10.761f, 0.f);
+		return BonePos;
+		break;
+	}
+	return _float3();
 }
 
 HRESULT CRangda::SetUp_Components()

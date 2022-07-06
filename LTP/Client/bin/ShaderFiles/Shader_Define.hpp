@@ -69,6 +69,24 @@ SrcBlend = Src_Alpha;
 DestBlend = Inv_Src_Alpha;
 };
 
+
+BlendState	TestBlending
+{
+	BlendEnable[0] = true;
+BlendEnable[1] = true;
+BlendEnable[2] = true;
+BlendEnable[3] = false;
+BlendEnable[4] = true;
+BlendEnable[5] = true;
+BlendEnable[6] = false;
+BlendEnable[7] = false;
+
+BlendOp = Add;
+SrcBlend = Src_Alpha;
+DestBlend = Inv_Src_Alpha;
+};
+
+
 /*
 BOOL DepthEnable;
 D3D11_DEPTH_WRITE_MASK DepthWriteMask;
@@ -143,3 +161,11 @@ RasterizerState CullMode_ccw
 	FrontCounterClockwise = false;
 
 };
+
+
+
+
+
+
+
+
