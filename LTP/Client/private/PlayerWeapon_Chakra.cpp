@@ -127,19 +127,31 @@ _int CPlayerWeapon_Chakra::Update_MovState(_double fDeltaTime)
 {
 	_Vector vTurnDir = m_fAttackTargetPoint.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	vTurnDir = XMVectorSetY(vTurnDir, 0);
-	
-	//if (0.95f <= XMVectorGetX(XMVector3Dot(vTurnDir, m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK))))
-	//{
-		m_pTransformCom->Set_MoveSpeed(XMVectorGetX(XMVector3Length(vTurnDir)) + 5.f);
-	//}
-	//else
-	//{
-		//m_pTransformCom->Set_MoveSpeed(5.f);
-	//}
-	
+	m_pTransformCom->Move_Forward(fDeltaTime);
+	m_pTransformCom->Turn_Dir(vTurnDir, 0.9f);
 
-	m_pTransformCom->Move_Forward(fDeltaTime); 
-	m_pTransformCom->Turn_Dir(vTurnDir, 0.5f);
+	if (0.95f <= XMVectorGetX(XMVector3Dot(XMVector3Normalize(vTurnDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)))))
+	{
+		_float fSpeed = m_pTransformCom->Get_MoveSpeed();
+		_float Length = XMVectorGetX(XMVector3Length(vTurnDir));
+
+		if (fSpeed < Length)
+		{
+			m_pTransformCom->Set_MoveSpeed(fSpeed + 0.2f);
+		}
+		else if (fSpeed > 5.f)
+		{
+			m_pTransformCom->Set_MoveSpeed(fSpeed - 0.2f);
+		}
+		else
+		{
+			m_pTransformCom->Set_MoveSpeed(5.f);
+		}
+	}
+	else
+	{
+		m_pTransformCom->Set_MoveSpeed(5.f);
+	}
 	
 	if (XMVectorGetX(XMVector3Length(vTurnDir)) <= 0.5f)
 	{

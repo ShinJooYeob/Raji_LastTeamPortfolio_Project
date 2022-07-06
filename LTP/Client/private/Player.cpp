@@ -5,6 +5,7 @@
 #include "PlayerWeapon_Bow.h"
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
+#include "PlayerWeapon_Arrow.h"
 #include "Timer.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -728,7 +729,10 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 	if (WEAPON_CHAKRA == m_eCurWeapon)
 	{
 		if (CPlayerWeapon_Chakra::EChakraState::CHAKRA_IDLE != static_cast<CPlayerWeapon_Chakra*>(m_pPlayerWeapons[WEAPON_CHAKRA - 1])->Get_ChakraState())
+		{
+			RELEASE_INSTANCE(CGameInstance);
 			return false;
+		}
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
@@ -1773,10 +1777,23 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 		case BOWMAINATK_START:
 			m_fAnimSpeed = 1.f;
-			if (0.98f <= m_pModel->Get_PlayRate())
+
+			if (0.307f < m_pModel->Get_PlayRate() && false == m_bAnimChangeSwitch)
+			{
+				m_bAnimChangeSwitch = true;
+
+				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+				pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_NormalReady);
+			}
+			else if (0.98f <= m_pModel->Get_PlayRate())
 			{
 				m_eCurBowMainAtkState = BOWMAINATK_LOOP;
 				m_pModel->Change_AnimIndex(BOW_ANIM_MAIN_ATK_LOOP, 0.1f, false);
+				m_bAnimChangeSwitch = false;
 			}
 			LookAt_MousePos();
 
@@ -1788,6 +1805,9 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			{
 				m_eCurBowMainAtkState = BOWMAINATK_SHOT;
 				m_pModel->Change_AnimIndex(BOW_ANIM_MAIN_ATK_SHOT, 0.1f, false);
+
+				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+				pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_NormalShot);
 			}
 			else
 			{
@@ -1828,7 +1848,6 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 1.5f;
 
-
 			// Bow Anim Control
 			if (false == m_bAnimChangeSwitch && 0.1 > fAnimPlayRate)
 			{
@@ -1836,10 +1855,32 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
 				m_bAnimChangeSwitch = true;
 			}
-			else if(true == m_bAnimChangeSwitch && 0.2 < fAnimPlayRate)
+			else if (true == m_bAnimChangeSwitch && 0.2 < fAnimPlayRate)
 			{
-				m_bAnimChangeSwitch = false;
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+				m_bAnimChangeSwitch = false;
+
+				// Shot Arrow //
+				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 0);
+
+				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 1);
+
+				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 2);
+				//
+
 			}
 			else if(0.3 < fAnimPlayRate)
 			{
@@ -1862,6 +1903,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					m_pModel->Set_BlockAnim(false);
 					m_bAttackEnd = true;
 					static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+					m_bAnimChangeSwitch = false;
+					m_bActionSwitch = false;
 				}
 			}
 
@@ -1873,7 +1916,11 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				if (0.86f <= fAnimPlayRate)
 				{
 					m_bPlayJumpAttack = false;
-					Change_NextCombo();
+					if (true == Change_NextCombo())
+					{
+						m_bAnimChangeSwitch = false;
+						m_bActionSwitch = false;
+					}
 				}
 				else if (0.68f <= fAnimPlayRate)
 				{
@@ -1886,6 +1933,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
 						static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+						m_bAnimChangeSwitch = false;
+						m_bActionSwitch = false;
 					}
 				}
 			}
@@ -1894,10 +1943,11 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 
 			// Look At Mouse Pos 
-			if (0.555f >= fAnimPlayRate)
+			if (0.2f >= fAnimPlayRate)
 			{
 				LookAt_MousePos();
 			}
+			
 			//
 		}
 		break;
@@ -1917,10 +1967,23 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			else if (true == m_bAnimChangeSwitch && 0.806f < fAnimPlayRate)
 			{
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+
+				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+
+				if (false == m_bActionSwitch)
+				{
+					m_bActionSwitch = true;
+					eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+					eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+					pBowArrow->Set_State_PowerShot_Combo_1(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				}
 			}
 			else if(0.806f < fAnimPlayRate)
 			{
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+				m_bActionSwitch = false;
 			}
 			//
 
@@ -1935,6 +1998,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					m_bAttackEnd = true;
 					m_bAnimChangeSwitch = false;
 					static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+					m_bActionSwitch = false;
 					return;
 				}
 			}
@@ -1947,7 +2011,10 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				if (0.85f <= fAnimPlayRate)
 				{
 					m_bPlayJumpAttack = false;
-					Change_NextCombo();
+					if (true == Change_NextCombo())
+					{
+						m_bActionSwitch = false;
+					}
 				}
 				else if (0.8f <= fAnimPlayRate)
 				{
@@ -1960,6 +2027,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
 						m_bAnimChangeSwitch = false;
+						m_bActionSwitch = false;
 						static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 					}
 				}
@@ -1983,13 +2051,24 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 
 			// Bow Anim Control
-			if (true == m_bAnimChangeSwitch && 0.525 < fAnimPlayRate)
+			if (true == m_bAnimChangeSwitch && 0.625 < fAnimPlayRate)
 			{
 				m_bAnimChangeSwitch = false;
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+
+				if (false == m_bActionSwitch)
+				{
+					CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+					m_bActionSwitch = true;
+					eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+					eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 10.f);
+				}
 			}
-			else if (false == m_bAnimChangeSwitch && 0.5 < fAnimPlayRate)
+			else if (false == m_bAnimChangeSwitch && 0.6 < fAnimPlayRate)
 			{
 				m_bAnimChangeSwitch = true;
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
@@ -2000,6 +2079,17 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_bAnimChangeSwitch = false;
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+
+				if (true == m_bActionSwitch)
+				{
+					CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+					m_bActionSwitch = false;
+					eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+					eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 15.f);
+				}
 			}
 			else if (false == m_bAnimChangeSwitch && 0.5 < fAnimPlayRate)
 			{
@@ -2012,6 +2102,17 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_bAnimChangeSwitch = false;
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(5.f);
+
+				if (false == m_bActionSwitch)
+				{
+					CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+					m_bActionSwitch = true;
+					eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+					eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 20.f);
+				}
 			}
 			else if (false == m_bAnimChangeSwitch && 0.375 < fAnimPlayRate)
 			{
@@ -2035,6 +2136,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					m_pModel->Set_BlockAnim(false);
 					m_bAttackEnd = true;
 					m_bAnimChangeSwitch = false;
+					m_bActionSwitch = false;
 				}
 			}
 
@@ -2046,7 +2148,10 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				if (0.86f <= fAnimPlayRate)
 				{
 					m_bPlayJumpAttack = false;
-					Change_NextCombo();
+					if (true == Change_NextCombo())
+					{
+						m_bActionSwitch = false;
+					}
 				}
 				else if (0.68f <= fAnimPlayRate)
 				{
@@ -2059,6 +2164,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 						m_bPlayDodgeCombo = true;
 						m_bPlayJumpAttack = false;
 						m_bAnimChangeSwitch = false;
+						m_bActionSwitch = false;
 					}
 				}
 			}
@@ -2858,14 +2964,32 @@ void CPlayer::Shelling(_double fDeltaTime)
 	{
 	case UTILITY_START:
 		m_fAnimSpeed = 1.f;
+
+		if (false == m_bAnimChangeSwitch && 0.44f < m_pModel->Get_PlayRate())
+		{
+			m_bAnimChangeSwitch = true;
+
+			CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+			eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+			eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+			g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityReady);
+		}
+
 		if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 		{
 			m_eCurUtilityState = UTILITY_LOOP;
+			m_bAnimChangeSwitch = false;
 		}
 		else if (false == m_bPressedUtilityKey)
 		{
 			m_eCurUtilityState = UTILITY_END;
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+			m_bAnimChangeSwitch = false;
+
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			pBowArrow->Set_IsDead();
 			return;
 		}
 		
@@ -2881,6 +3005,9 @@ void CPlayer::Shelling(_double fDeltaTime)
 			m_fCurTime_ShellingDelay = 0.f;
 			m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_SHOT, 0.1f);
 			m_eCurUtilityState = UTILITY_END; 
+
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			pBowArrow->Set_IsDead();
 		}
 		else if (m_fCurTime_ShellingDelay >= m_fMaxTime_ShellingDelay && true == m_bPressedMainAttackKey)
 		{
@@ -2888,6 +3015,9 @@ void CPlayer::Shelling(_double fDeltaTime)
 			m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_SHOT, 0.1f, true);
 			m_eCurUtilityState = UTILITY_ACTIVE;
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
+
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityShot);
 		}
 		LookAt_MousePos();
 		break;
@@ -2914,6 +3044,14 @@ void CPlayer::Shot_Shelling(_double fDeltaTime)
 		m_eCurUtilityState = UTILITY_LOOP;
 		m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_LOOP);
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Loop();
+
+		
+		CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+		eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+		eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+		pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityReady);
 	}
 }
 
@@ -2935,22 +3073,42 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		m_bAnimChangeSwitch = false;
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(1.f);
+
+		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+		pBowArrow->Set_State_Ultimate_Post_Shot();
 	}
 	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
 	{
 		m_bAnimChangeSwitch = true;
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(2.f);
+
+		CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+		eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+		eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+		pBowArrow->Set_State_Ultimate_Post_Ready();
 	}
 	else if (true == m_bAnimChangeSwitch && 0.191f <= m_pModel->Get_PlayRate() && 0.446f >= m_pModel->Get_PlayRate())
 	{
 		m_bAnimChangeSwitch = false;
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Shot();
+
+		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+		pBowArrow->Set_State_Ultimate_Pre_Shot();
 	}
 	else if (false == m_bAnimChangeSwitch && 0.106f <= m_pModel->Get_PlayRate() && 0.191f >= m_pModel->Get_PlayRate())
 	{
 		m_bAnimChangeSwitch = true;
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
+
+		CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
+		eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+		eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
+		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+		pBowArrow->Set_State_Ultimate_Pre_Ready();
 	}
 }
 
@@ -3468,9 +3626,9 @@ _bool CPlayer::Change_NextCombo()
 	return false;
 }
 
-_fVector CPlayer::LookAt_MousePos()
+void CPlayer::LookAt_MousePos()
 {
-	_Vector		vResult = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	/*_Vector		vResult = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 	_float3		fRayDir;
 	_float3		fRayPos;
 
@@ -3534,8 +3692,44 @@ _fVector CPlayer::LookAt_MousePos()
 	vNewLook = XMVectorSetY(vNewLook, XMVectorGetY(vMyLook));
 	m_pTransformCom->Turn_Dir(vNewLook, 0.85f);
 
-	Safe_Delete_Array(ViewPortDesc);
-	return vResult;
+	Safe_Delete_Array(ViewPortDesc);*/
+
+	POINT ptMouse;
+	GetCursorPos(&ptMouse);
+	ScreenToClient(g_hWnd, &ptMouse);
+
+
+	_Vector vCursorPos = XMVectorSet(
+		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+		0, 1.f);
+
+	_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+
+	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+	_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+	CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+	_float3 fResult;
+	if (XMVectorGetY(vCamPos) * XMVectorGetY(vRayDir) < 0)
+	{
+		_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
+
+		_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
+
+		fResult.x = vTargetPos.x;
+		fResult.y = fPos_Y;
+		fResult.z = vTargetPos.z;
+	}
+
+	_Vector vTargetDir = XMVector3Normalize(XMLoadFloat3(&fResult) - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	m_pTransformCom->Turn_Dir(vTargetDir, 0.85f);
 }
 
 _fVector CPlayer::Get_MousePos()
@@ -3647,6 +3841,14 @@ HRESULT CPlayer::SetUp_PlayerWeapons()
 	m_pPlayerWeapons[WEAPON_SHIELD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 4));
 	m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
 
+
+	// Test
+	//eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
+	//eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc));
+	//auto iter = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 5));
+	//iter->Set_BlockUpdate(false);
+	//static_cast<CPlayerWeapon_Arrow*>(iter)->Set_State_PowerShot(XMVectorSet(0.f, 0.f, 0.f, 0.f));
 	return S_OK;
 }
 

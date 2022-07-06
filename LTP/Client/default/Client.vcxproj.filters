@@ -61,9 +61,6 @@
     <Filter Include="01.GameObject\98.TriggerObject">
       <UniqueIdentifier>{cc515ead-bb04-41b8-aadc-3e855ee22769}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\99.UI">
-      <UniqueIdentifier>{7283bfda-be09-4504-a6b1-d4294a912b6f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Scene\01.Scene_Loby">
       <UniqueIdentifier>{ba7a4ca4-6126-4de3-a1bf-c9af0b593e19}</UniqueIdentifier>
     </Filter>
@@ -264,6 +261,12 @@
     </Filter>
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Weapon_Universal">
       <UniqueIdentifier>{c19fe9f4-fae0-4c83-a0cb-71aca287e7f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow">
+      <UniqueIdentifier>{c268ea9a-cb67-44da-8f54-0a31749309d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI">
+      <UniqueIdentifier>{7283bfda-be09-4504-a6b1-d4294a912b6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -536,6 +539,8 @@
     </ClInclude>
     <ClInclude Include="..\public\Monster_Weapon_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -775,6 +780,8 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

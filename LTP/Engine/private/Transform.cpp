@@ -166,6 +166,25 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime)
 	Set_MatrixState(CTransform::STATE_POS, vPos);
 }
 
+_bool CTransform::MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos)
+{
+	_bool	bResult = false;
+	
+	if (1.f < fTimeAcc)
+	{
+		fTimeAcc = 1.f;
+		bResult = true;
+	}
+
+	_Vector vPos = (pow((1 - fTimeAcc), 2) * vStartPos + 2 * (1 - fTimeAcc) * fTimeAcc * vControlPos + fTimeAcc * fTimeAcc * vEndPos);
+
+	vPos = XMVectorSetW(vPos, 1.f);
+
+	Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+
+	return _bool();
+}
+
 void CTransform::LookAt(_fVector vTarget)
 {
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);

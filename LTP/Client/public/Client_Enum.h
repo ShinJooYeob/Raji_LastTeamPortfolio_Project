@@ -152,6 +152,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerWeapon_Sword,
 	Prototype_PlayerWeapon_Shield,
 	Prototype_PlayerWeapon_Chakra,
+	Prototype_PlayerWeapon_Arrow,
 
 	Prototype_SkyBox,
 
@@ -247,6 +248,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_PlayerWeapon_Chakra:
 		return TEXT("Prototype_PlayerWeapon_Chakra");
+		break;
+	case Prototype_PlayerWeapon_Arrow:
+		return TEXT("Prototype_PlayerWeapon_Arrow");
 		break;
 
 
@@ -690,7 +694,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Sword,
 	Prototype_Mesh_PlayerWeapon_Shield,
 	Prototype_Mesh_PlayerWeapon_Chakra,
-
+	Prototype_Mesh_PlayerWeapon_Arrow,
 
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
@@ -929,6 +933,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_PlayerWeapon_Chakra:
 		return TEXT("PlayerChakra.fbx");
+		break;
+	case Prototype_Mesh_PlayerWeapon_Arrow:
+		return TEXT("PlayerWeapon_Arrow.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:

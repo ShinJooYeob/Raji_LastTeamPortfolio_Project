@@ -186,6 +186,7 @@
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
     <ClInclude Include="..\public\Monster_Weapon_Universal.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\PlayerWeapon_Chakra.h" />
     <ClInclude Include="..\public\Chiedtian.h" />
     <ClInclude Include="..\public\Chiedtuan_Weapon.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp" />
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Chakra.cpp" />
     <ClCompile Include="..\private\Chiedtian.cpp" />
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp" />
