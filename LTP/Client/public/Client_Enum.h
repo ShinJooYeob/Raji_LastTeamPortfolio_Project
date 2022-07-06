@@ -114,8 +114,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Obejct_Monster_Tezabsura_Bomber,
 	Prototype_Obejct_Monster_Tezabsura_Landmine,
 	Prototype_Object_Monster_Jalsura,
-	Prototype_Obejct_Monster_Ninjasura,
-	Prototype_Obejct_Monster_Ninjasura_Minion,
+	Prototype_Object_Monster_Ninjasura,
+	Prototype_Object_Monster_Ninjasura_Minion,
+	Prototype_Object_Monster_Gadasura_Black,
+	Prototype_Object_Monster_Gadasura_Rage,
 
 
 	//JJB
@@ -233,12 +235,17 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Jalsura:
 		return TEXT("Prototype_Object_Monster_Jalsura");
 
-	case Prototype_Obejct_Monster_Ninjasura:
+	case Prototype_Object_Monster_Ninjasura:
 		return TEXT("Prototype_Object_Monster_Ninjasura");
 
-	case Prototype_Obejct_Monster_Ninjasura_Minion:
-		return TEXT("Prototype_Obejct_Monster_Ninjasura_Minion");
+	case Prototype_Object_Monster_Ninjasura_Minion:
+		return TEXT("Prototype_Object_Monster_Ninjasura_Minion");
 
+	case Prototype_Object_Monster_Gadasura_Black:
+		return TEXT("Prototype_Object_Monster_Gadasura_Black");
+
+	case Prototype_Object_Monster_Gadasura_Rage:
+		return TEXT("Prototype_Object_Monster_Gadasura_Rage");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");

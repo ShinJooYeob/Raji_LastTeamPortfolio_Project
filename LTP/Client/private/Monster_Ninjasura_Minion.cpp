@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "..\public\Monster_Ninjasura.h"
+#include "..\public\Monster_Ninjasura_Minion.h"
 #include "Monster_Bullet_Universal.h"
 
-CMonster_Ninjasura::CMonster_Ninjasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Ninjasura_Minion::CMonster_Ninjasura_Minion(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Ninjasura::CMonster_Ninjasura(const CMonster_Ninjasura & rhs)
+CMonster_Ninjasura_Minion::CMonster_Ninjasura_Minion(const CMonster_Ninjasura_Minion & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Ninjasura::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Ninjasura_Minion::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +20,7 @@ HRESULT CMonster_Ninjasura::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
+HRESULT CMonster_Ninjasura_Minion::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -40,7 +40,7 @@ HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CMonster_Ninjasura::Update(_double dDeltaTime)
+_int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
@@ -67,7 +67,7 @@ _int CMonster_Ninjasura::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Ninjasura::LateUpdate(_double dDeltaTime)
+_int CMonster_Ninjasura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -86,7 +86,7 @@ _int CMonster_Ninjasura::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Ninjasura::Render()
+_int CMonster_Ninjasura_Minion::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
@@ -114,7 +114,7 @@ _int CMonster_Ninjasura::Render()
 	return _int();
 }
 
-_int CMonster_Ninjasura::LateRender()
+_int CMonster_Ninjasura_Minion::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
@@ -122,7 +122,7 @@ _int CMonster_Ninjasura::LateRender()
 	return _int();
 }
 
-HRESULT CMonster_Ninjasura::SetUp_Info()
+HRESULT CMonster_Ninjasura_Minion::SetUp_Info()
 {
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
@@ -138,7 +138,7 @@ HRESULT CMonster_Ninjasura::SetUp_Info()
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::SetUp_Fight(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
@@ -176,7 +176,7 @@ HRESULT CMonster_Ninjasura::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
 
@@ -188,12 +188,12 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 		_uint i = m_pModel->Get_NowAnimIndex();
 		switch (i)
 		{
-		//case 1:
-		//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-		//	break;
-		//case 2:
-		//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-		//	break;
+			//case 1:
+			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			//	break;
+			//case 2:
+			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			//	break;
 		case 11:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -207,7 +207,7 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
 		default:
-			m_pModel->Change_AnimIndex(m_iOnceAnimNumber,0.15f);
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.15f);
 			break;
 		}
 	}
@@ -220,7 +220,7 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
@@ -258,96 +258,68 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 19; //throw Knife
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 2; //Rush Ready
+		m_bComboAnimSwitch = true;
 		break;
 	case 1:
-		m_iOnceAnimNumber = 2; //Rush Ready
+		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
 		break;
 	case 2:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 3:
 		m_iOnceAnimNumber = 11; //Attack1 Ready
 		m_bComboAnimSwitch = true;
 		break;
-	case 4:
+	case 3:
 		m_iOnceAnimNumber = 12; //Attack1 Fire
 		m_bComboAnimSwitch = false;
 		break;
-	case 5:
+	case 4:
 		m_iOnceAnimNumber = 2; //Rush Ready
+		m_bComboAnimSwitch = true;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
 		break;
 	case 6:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 7:
 		m_iOnceAnimNumber = 15; //Spinning start
 		m_bComboAnimSwitch = true;
 		break;
-	case 8:
+	case 7:
 		m_iOnceAnimNumber = 16; //Spinning start
 		m_bComboAnimSwitch = true;
 		break;
-	case 9:
+	case 8:
 		m_iOnceAnimNumber = 17; //Spinning start
 		m_bComboAnimSwitch = true;
 		break;
-	case 10:
+	case 9:
 		m_iOnceAnimNumber = 16; //Spinning start
 		m_bComboAnimSwitch = true;
 		break;
-	case 11:
+	case 10:
 		m_iOnceAnimNumber = 18; //Spinning start
 		m_bComboAnimSwitch = false;
 		break;
-	case 12:
+	case 11:
 		m_iOnceAnimNumber = 2; //Rush Ready
 		m_bComboAnimSwitch = true;
 		break;
-	case 13:
+	case 12:
 		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
-		break;
-	case 14:
-		m_iOnceAnimNumber = 19; //throw Knife
-		m_bComboAnimSwitch = false;
 		break;
 	case 15:
-		m_iOnceAnimNumber = 2; //Rush Ready
-		m_bComboAnimSwitch = true;
-		break;
-	case 16:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 17:
 		m_iOnceAnimNumber = 13; //Attack2 Ready
 		m_bComboAnimSwitch = true;
 		break;
-	case 18:
+	case 16:
 		m_iOnceAnimNumber = 14; //Attack2 Fire
-		m_bComboAnimSwitch = false;
-		break;
-	case 19:
-		m_iOnceAnimNumber = 20; //Healing Start
-		m_bComboAnimSwitch = true;
-		break;
-	case 20:
-		m_iOnceAnimNumber = 21; //Healing~
-		m_bComboAnimSwitch = true;
-		break;
-	case 21:
-		m_iOnceAnimNumber = 22;//Healing End
 		m_bComboAnimSwitch = false;
 		break;
 	}
@@ -355,7 +327,7 @@ HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Pattern_Change()
+HRESULT CMonster_Ninjasura_Minion::Pattern_Change()
 {
 
 	m_iOncePattern += 1;
@@ -369,7 +341,7 @@ HRESULT CMonster_Ninjasura::Pattern_Change()
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Infinity_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iInfinityPattern)
 	{
@@ -402,7 +374,7 @@ HRESULT CMonster_Ninjasura::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Special_Trigger(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::Special_Trigger(_double dDeltaTime)
 {
 
 
@@ -419,13 +391,13 @@ HRESULT CMonster_Ninjasura::Special_Trigger(_double dDeltaTime)
 
 	return S_OK;
 }
-HRESULT CMonster_Ninjasura::SetUp_Components()
+HRESULT CMonster_Ninjasura_Minion::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Ninjasura), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Ninjasura_Minion), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -444,7 +416,7 @@ HRESULT CMonster_Ninjasura::SetUp_Components()
 	tMotionDesc.iNumTrailCount = 6;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
-	tMotionDesc.vLimLight = _float4(0.45f, 0.f, 1.f, 1.f);
+	tMotionDesc.vLimLight = _float4(1.f, 0.f, 0.f, 1.f);
 	tMotionDesc.iPassIndex = 5;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
@@ -454,7 +426,7 @@ HRESULT CMonster_Ninjasura::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
+HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
@@ -493,22 +465,10 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				{
 					m_MotionTrailOn = true;
 
-					CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
-					if (false == m_bTurnMotion)
-					{
-						XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(0, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 0)));
-						m_bTurnMotion = true;
-					}
-					else {
-						XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(0, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(0, 1)));
-						m_bTurnMotion = false;
-					}
-
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), 1.f);
 					m_MotionTrailTime = 0;
 				}
-				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat4(&m_fDirection), 60.f, dDeltaTime);
+				m_pTransformCom->Move_Forward(dDeltaTime * 5);
 			}
 			else {
 				m_bIOnceAnimSwitch = false;
@@ -610,7 +570,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				fPos.y += 3.f;
 
 
-				_Vector vLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - XMLoadFloat3(&fPos) );
+				_Vector vLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - XMLoadFloat3(&fPos));
 
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.15f));
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
@@ -634,31 +594,31 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 	return S_OK;
 }
 
-CMonster_Ninjasura * CMonster_Ninjasura::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Ninjasura_Minion * CMonster_Ninjasura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Ninjasura*	pInstance = new CMonster_Ninjasura(pDevice, pDeviceContext);
+	CMonster_Ninjasura_Minion*	pInstance = new CMonster_Ninjasura_Minion(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Ninjasura");
+		MSGBOX("Failed to Created CMonster_Ninjasura_Minion");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Ninjasura::Clone(void * pArg)
+CGameObject * CMonster_Ninjasura_Minion::Clone(void * pArg)
 {
-	CMonster_Ninjasura*	pInstance = new CMonster_Ninjasura(*this);
+	CMonster_Ninjasura_Minion*	pInstance = new CMonster_Ninjasura_Minion(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Ninjasura");
+		MSGBOX("Failed to Created CMonster_Ninjasura_Minion");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Ninjasura::Free()
+void CMonster_Ninjasura_Minion::Free()
 {
 	__super::Free();
 

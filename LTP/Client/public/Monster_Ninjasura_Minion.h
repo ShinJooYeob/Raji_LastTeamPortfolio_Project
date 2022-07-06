@@ -6,12 +6,12 @@ class CNavigation;
 END
 
 BEGIN(Client)
-class CMonster_Ninjasura final : public CMonster
+class CMonster_Ninjasura_Minion final : public CMonster
 {
 private:
-	explicit CMonster_Ninjasura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Ninjasura(const CMonster_Ninjasura& rhs);
-	virtual ~CMonster_Ninjasura() = default;
+	explicit CMonster_Ninjasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Ninjasura_Minion(const CMonster_Ninjasura_Minion& rhs);
+	virtual ~CMonster_Ninjasura_Minion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -71,7 +71,7 @@ private://애니메이션 동작 및 이벤트
 	//Anim Special Pattern
 	_double				m_dSpecial_CoolTime = 0;
 
-	_double				m_dAcceleration =1;
+	_double				m_dAcceleration = 1;
 
 private:
 	_float				m_fDistance = 0;
@@ -82,7 +82,7 @@ private:
 	_uint				m_iBoolOnce = 0;
 
 private: //MoveNumber
-	_uint				m_iMoveNumber = 0;
+	_int				m_iMoveNumber = -1;
 
 	_float4				m_fDirection;
 
@@ -99,7 +99,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Ninjasura* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Ninjasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 
