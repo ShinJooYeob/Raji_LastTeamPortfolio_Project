@@ -128,8 +128,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		tDesc.ParticleStartRandomPosMax = _float3(0);
 
 
-		tDesc.m_bIsUI = false;
-		tDesc.m_bEmissive = false;
+		tDesc.bEmissive = false;
 		tDesc.AlphaBlendON = true;
 
 		tDesc.m_fAlphaTestValue = 0.1f;

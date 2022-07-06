@@ -12,6 +12,34 @@ enum eInstanceEffectID
 
 	InstanceEffect_End
 };
+static const char* Tag_TextureInstanceEffect(eInstanceEffectID eTag)
+{
+
+	switch (eTag)
+	{
+	case InstanceEffect_Ball:
+		return "InstanceEffect_Ball";
+	case InstanceEffect_Straight:
+		return "InstanceEffect_Straight";
+	case InstanceEffect_Cone:
+		return "InstanceEffect_Cone";
+	case InstanceEffect_Spread:
+		return "InstanceEffect_Spread";
+	case InstanceEffect_Fountain:
+		return "InstanceEffect_Fountain";
+	case InstanceEffect_Suck:
+		return "InstanceEffect_Suck";
+	default:
+		MSGBOX("Wrong Type SceneNumber");
+		return nullptr;
+		break;
+	}
+}
+
+#define  TAG_TEXINSTEFFECT Tag_TextureInstanceEffect
+
+
+
 enum eInstancePassID
 {
 	InstancePass_OriginColor,
@@ -19,6 +47,25 @@ enum eInstancePassID
 
 	InstancePass_End
 };
+
+static const char* Tag_InstancePass(eInstancePassID eTag)
+{
+	switch (eTag)
+	{
+	case InstancePass_OriginColor:
+		return "InstancePass_OriginColor";
+	case InstancePass_BrightColor:
+		return "InstancePass_BrightColor";
+	default:
+		MSGBOX("Wrong Type SceneNumber");
+		return nullptr;
+		break;
+	}
+
+}
+
+#define  TAG_INSTPASS Tag_InstancePass
+
 
 
 enum ECameraMode
@@ -583,6 +630,19 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Shader_VAM,
 	Prototype_Shader_VNAM,
 	Prototype_Shader_VTXPOINTINST,
+	Prototype_Shader_VTXANIMINST,
+	Prototype_Shader_VTXNONANIMINST,
+
+	Prototype_ModelInstance_2,
+	Prototype_ModelInstance_4,
+	Prototype_ModelInstance_8,
+	Prototype_ModelInstance_16,
+	Prototype_ModelInstance_32,
+	Prototype_ModelInstance_64,
+	Prototype_ModelInstance_128,
+	Prototype_ModelInstance_256,
+	Prototype_ModelInstance_512,
+
 
 	//////////////버퍼////////////////////////////////////////////////////////////
 	Prototype_VIBuffer_Rect,
@@ -596,6 +656,9 @@ enum COMPONENTPROTOTYPEID
 	Prototype_VIBuffer_Point_Instance_16,
 	Prototype_VIBuffer_Point_Instance_32,
 	Prototype_VIBuffer_Point_Instance_64,
+	Prototype_VIBuffer_Point_Instance_128,
+	Prototype_VIBuffer_Point_Instance_256,
+	Prototype_VIBuffer_Point_Instance_512,
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
@@ -690,6 +753,38 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_Navigation");
 		break;
 
+
+	case Prototype_ModelInstance_2:
+		return TEXT("Prototype_ModelInstance_2");
+		break;
+	case Prototype_ModelInstance_4:
+		return TEXT("Prototype_ModelInstance_4");
+		break;
+	case Prototype_ModelInstance_8:
+		return TEXT("Prototype_ModelInstance_8");
+		break;
+	case Prototype_ModelInstance_16:
+		return TEXT("Prototype_ModelInstance_16");
+		break;
+	case Prototype_ModelInstance_32:
+		return TEXT("Prototype_ModelInstance_32");
+		break;
+	case Prototype_ModelInstance_64:
+		return TEXT("Prototype_ModelInstance_64");
+		break;
+	case Prototype_ModelInstance_128:
+		return TEXT("Prototype_ModelInstance_128");
+		break;
+	case Prototype_ModelInstance_256:
+		return TEXT("Prototype_ModelInstance_256");
+		break;
+	case Prototype_ModelInstance_512:
+		return TEXT("Prototype_ModelInstance_512");
+		break;
+
+
+
+
 	case Prototype_Shader_VT:
 		return TEXT("Prototype_Component_Shader_VTXTEX");
 		break;
@@ -713,6 +808,17 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Shader_VTXPOINTINST:
 		return TEXT("Prototype_Component_Shader_VTXPOINTINST");
 		break;
+
+	case Prototype_Shader_VTXANIMINST:
+		return TEXT("Prototype_Component_Shader_VTXANIMINST");
+		break;
+	case Prototype_Shader_VTXNONANIMINST:
+		return TEXT("Prototype_Component_Shader_VTXNONANIMINST");
+		break;
+
+
+	
+
 	case Prototype_VIBuffer_Rect:
 		return TEXT("Prototype_Component_VIBuffer_Rect");
 		break;
@@ -742,7 +848,15 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_VIBuffer_Point_Instance_64:
 		return TEXT("Prototype_VIBuffer_Point_Instance_64");
 		break;
-
+	case Prototype_VIBuffer_Point_Instance_128:
+		return TEXT("Prototype_VIBuffer_Point_Instance_128");
+		break;
+	case Prototype_VIBuffer_Point_Instance_256:
+		return TEXT("Prototype_VIBuffer_Point_Instance_256");
+		break;
+	case Prototype_VIBuffer_Point_Instance_512:
+		return TEXT("Prototype_VIBuffer_Point_Instance_512");
+		break;
 
 		//메쉬////////////////////////////////////////////////////////////////////////
 
@@ -1008,6 +1122,7 @@ enum COMPONENTID
 	Com_SubSwordTrail,
 	Com_MotionTrail,
 	Com_Navaigation,
+	Com_ModelInstance,
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -1063,11 +1178,15 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 	case Com_MotionTrail:
 		return TEXT("Com_MotionTrail");
 		break;
-		
+
 	case Com_Navaigation:
 		return TEXT("Com_Navigation");
 		break;
-		
+
+	case Com_ModelInstance:
+		return TEXT("Com_ModelInstance");
+		break;
+
 		
 
 		//////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@ class CHierarchyNode;
 
 class CMeshContainer final : public CVIBuffer
 {
+
 private:
 	explicit CMeshContainer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMeshContainer(const CMeshContainer& rhs);
@@ -25,9 +26,12 @@ public:
 	aiMesh*		Get_AiMesh() { return m_pAIMesh; };
 	HRESULT		Add_AffectingBoneIndex(_uint iHierarchyIndex);
 	//void		Set_OffSetMatrix(_float4x4* OffSetMatrix);
+	void		Get_InstancingData(FORINSTDATA* pOut);
+	void		Get_IndexBufferData(FORINDEXDATA* pOut);
 
 	void		Set_TargetPararntNodeIndex(_uint iNodeIndex) { m_iParantHierarchyNodeIndex = iNodeIndex; }
 	//_uint		Get_TargetPararntNodeIndex() {return m_iParantHierarchyNodeIndex ; }
+	
 
 	const vector<_uint>& Get_AffectingBoneIndes() const
 	{
@@ -44,7 +48,7 @@ private:
 
 	/* 현재 메시에 영향을 주는 노드들. */
 	vector<_uint>		m_vecAffectingBoneIndex;
-
+	FACEINDICES32*		m_pIndices = nullptr;
 
 	//_float4x4		m_matOffSet = XMMatrixIdentity();
 private:

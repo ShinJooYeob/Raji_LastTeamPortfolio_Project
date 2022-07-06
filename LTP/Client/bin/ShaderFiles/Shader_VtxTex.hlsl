@@ -1,7 +1,6 @@
 
 #include "Shader_Define.hpp"
 
-texture2D			g_DiffuseTexture;
 texture2D			g_SourTexture;
 texture2D			g_BackBufferTexture;
 texture2D			g_BlurTargetTexture;

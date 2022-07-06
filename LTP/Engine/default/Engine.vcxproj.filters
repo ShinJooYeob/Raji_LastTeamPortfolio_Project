@@ -94,9 +94,6 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\02.Cube">
       <UniqueIdentifier>{6d0f073b-c81a-4457-a20a-c9e58830b5e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Point_Instance">
-      <UniqueIdentifier>{7804ea5f-e04d-46f9-a145-1538841a0f46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\03.Terrain">
       <UniqueIdentifier>{bb862365-a579-4759-b1ed-c6ac83f9dbef}</UniqueIdentifier>
     </Filter>
@@ -181,6 +178,18 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\08.MotionTrail\00.TrailBuffer">
       <UniqueIdentifier>{5ddf9634-e0da-429e-9543-8ed3072e7322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance">
+      <UniqueIdentifier>{7804ea5f-e04d-46f9-a145-1538841a0f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\01.Point_Instance">
+      <UniqueIdentifier>{2e5c43f9-2c24-45a6-bab9-72e2ba8264d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance">
+      <UniqueIdentifier>{29200828-38c1-4733-bf12-0935a8b92b01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance\00.ModelInstanceBuffer">
+      <UniqueIdentifier>{2d271cd2-4b66-4713-b5d3-5f3f67689f63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -230,9 +239,6 @@
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Cube.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\02.Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Point_Instance.h">
-      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Point_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Rect.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\01.Rect</Filter>
@@ -360,6 +366,15 @@
     <ClInclude Include="..\public\SwordTrail.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\09.SwordTrail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Point_Instance.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\01.Point_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Model_Instance.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance\00.ModelInstanceBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ModelInstance.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -391,9 +406,6 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cube.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\02.Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Point_Instance.cpp">
-      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Point_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\01.Rect</Filter>
@@ -520,6 +532,15 @@
     </ClCompile>
     <ClCompile Include="..\private\SwordTrail.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\09.SwordTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Point_Instance.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\01.Point_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Model_Instance.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance\00.ModelInstanceBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ModelInstance.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

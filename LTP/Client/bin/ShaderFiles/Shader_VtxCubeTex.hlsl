@@ -1,6 +1,5 @@
 
 #include "Shader_Define.hpp"
-textureCUBE			g_DiffuseTexture;
 
 cbuffer Hidden
 {

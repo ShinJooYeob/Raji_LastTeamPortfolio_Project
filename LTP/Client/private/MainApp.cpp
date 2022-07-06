@@ -300,6 +300,36 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 32)));
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_64),
 		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 64)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_128),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 128)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_256),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 256)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_512),
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pDeviceContext, 512)));
+
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_2),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 2)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_4),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 4)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_8),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 8)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_16),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 16)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_32),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 32)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_64),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 64)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_128),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 128)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_256),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 256)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 512)));
+
+
+
+	
 
 	////쉐이더
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VT),
@@ -319,7 +349,13 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VTXPOINTINST),
 		CShader::Create(m_pDevice, m_pDeviceContext, TEXT("Shader_VtxPointInstance.hlsl"), VTXPOINT_INSTMAT_DECLARATION::Elements, VTXPOINT_INSTMAT_DECLARATION::iNumElements)));
+	
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VTXNONANIMINST),
+		CShader::Create(m_pDevice, m_pDeviceContext, TEXT("Shader_VtxNonAnimMeshInstance.hlsl"), VTXNONANIM_INSTMAT_DECLARATION::Elements, VTXNONANIM_INSTMAT_DECLARATION::iNumElements)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST),
+		CShader::Create(m_pDevice, m_pDeviceContext, TEXT("Shader_VtxAnimMeshInstance.hlsl"), VTXANIM_INSTMAT_DECLARATION::Elements, VTXANIM_INSTMAT_DECLARATION::iNumElements)));
+	
 
 	////텍스처 프로토타입 생성
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_DefaultUI),

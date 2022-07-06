@@ -134,8 +134,7 @@ typedef struct tagInstanceParticleDesc
 	_float3 ParticleStartRandomPosMax = _float3(1.f, 1.f, 1.f);
 
 
-	_bool   m_bIsUI = false;
-	_bool	m_bEmissive = false;
+	_bool	bEmissive = false;
 	_bool	AlphaBlendON = true;
 
 	_float	m_fAlphaTestValue = 0.1f;

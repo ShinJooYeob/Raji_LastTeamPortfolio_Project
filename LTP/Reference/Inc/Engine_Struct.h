@@ -88,6 +88,29 @@ namespace Engine
 	}VTXMODEL_DECLARATION;
 
 
+	typedef struct tagVertex_InstacneMatrix
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vPosition;
+	}VTXINSTMATRIX;
+
+
+	typedef struct ENGINE_DLL tagNonAnim_InstanceMatrix_Declaration
+	{
+		static const unsigned int iNumElements = 8;
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+
+	}VTXNONANIM_INSTMAT_DECLARATION;
+
+	typedef struct ENGINE_DLL tagAnim_InstanceMatrix_Declaration
+	{
+		static const unsigned int iNumElements = 10;
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXANIM_INSTMAT_DECLARATION;
+
+
 	typedef struct tagVertex_Animation_Model
 	{
 		XMFLOAT3			vPosition;
@@ -322,18 +345,18 @@ namespace Engine
 			mKeyFrames = new KEYFRAME[mNumKeyFrames];
 		}
 
-	//	void clone(const tag_AnimationBoneDesc& rhs)
-	//	{
-	//		strcpy_s(mBoneName, rhs.mBoneName);
-	//		mNumKeyFrames = rhs.mNumKeyFrames;
-	//		mHierarchyNodeIndex = rhs.mHierarchyNodeIndex;
-	//		mKeyFrames = new KEYFRAME[mNumKeyFrames];
-	//		for (_uint i = 0; i < mNumKeyFrames; ++i)
-	//		{
-	//			mKeyFrames[i] = rhs.mKeyFrames[i];
-	//		}
-	//	}
-	//
+		//	void clone(const tag_AnimationBoneDesc& rhs)
+		//	{
+		//		strcpy_s(mBoneName, rhs.mBoneName);
+		//		mNumKeyFrames = rhs.mNumKeyFrames;
+		//		mHierarchyNodeIndex = rhs.mHierarchyNodeIndex;
+		//		mKeyFrames = new KEYFRAME[mNumKeyFrames];
+		//		for (_uint i = 0; i < mNumKeyFrames; ++i)
+		//		{
+		//			mKeyFrames[i] = rhs.mKeyFrames[i];
+		//		}
+		//	}
+		//
 
 
 		char 		mBoneName[MAX_PATH] = "";
@@ -416,4 +439,22 @@ namespace Engine
 
 
 
+	typedef struct tagForInstanceData
+	{
+		ID3D11Buffer*				pVB = nullptr;
+
+		D3D11_BUFFER_DESC			VBDesc;
+		//버텍스 버퍼가 몇개인가(한번에 여러개의 버퍼를 바인드하여 그릴수있다)
+		_uint						iNumVertexBuffers = 0;
+
+	}FORINSTDATA;
+	typedef struct tagForIndexData
+	{
+		_uint						iNumPrimitive;
+		DXGI_FORMAT					eIndexFormat;
+		D3D11_PRIMITIVE_TOPOLOGY	eTopology;
+		D3D11_BUFFER_DESC			IBDesc;
+		FACEINDICES32*				pIndices;
+
+	}FORINDEXDATA;
 }

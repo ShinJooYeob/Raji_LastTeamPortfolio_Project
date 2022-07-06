@@ -18,6 +18,7 @@
 #include "HierarchyNode.h"
 #include "MotionTrail.h"
 #include "SwordTrail.h"
+#include "ModelInstance.h"
 
 
 BEGIN(Engine)

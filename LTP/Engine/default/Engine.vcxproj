@@ -200,6 +200,7 @@
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\ClipBone.h" />
+    <ClInclude Include="..\public\ModelInstance.h" />
     <ClInclude Include="..\public\MotionTrail.h" />
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\public\ColliderBuffer.h" />
@@ -250,6 +251,7 @@
     <ClInclude Include="..\public\VIBuffer.h" />
     <ClInclude Include="..\public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_EditorTerrain.h" />
+    <ClInclude Include="..\public\VIBuffer_Model_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Point_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Terrain.h" />
@@ -261,6 +263,7 @@
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\ClipBone.cpp" />
+    <ClCompile Include="..\private\ModelInstance.cpp" />
     <ClCompile Include="..\private\MotionTrail.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\private\ColliderBuffer.cpp" />
@@ -307,6 +310,7 @@
     <ClCompile Include="..\private\VIBuffer_EditorTerrain.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Model_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Terrain.cpp" />
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>

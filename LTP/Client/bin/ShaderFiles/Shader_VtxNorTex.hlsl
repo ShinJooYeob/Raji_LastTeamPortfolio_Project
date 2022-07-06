@@ -2,7 +2,6 @@
 #include "Shader_Define.hpp" 
 
 
-texture2D		g_DiffuseTexture;
 
 
 texture2D		g_SourDiffuseTexture;

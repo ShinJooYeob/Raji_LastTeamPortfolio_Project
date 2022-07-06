@@ -253,6 +253,9 @@
     <Filter Include="01.GameObject\08.Effect\02.InstanceEffect">
       <UniqueIdentifier>{85d654cf-7d79-4526-9c40-c83925b8a64a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\97.TestObject\02.TestNonAnimInstancing">
+      <UniqueIdentifier>{d6460056-55d5-4787-8e35-03b45af5b1d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -513,6 +516,9 @@
     <ClInclude Include="..\public\InstanceEffect.h">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TestNonAnimInstancing.h">
+      <Filter>01.GameObject\97.TestObject\02.TestNonAnimInstancing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -740,6 +746,9 @@
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TestNonAnimInstancing.cpp">
+      <Filter>01.GameObject\97.TestObject\02.TestNonAnimInstancing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -776,6 +785,12 @@
       <Filter>04.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\bin\ShaderFiles\Shader_AnimModel.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxNonAnimMeshInstance.hlsl">
+      <Filter>04.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxAnimMeshInstance.hlsl">
       <Filter>04.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

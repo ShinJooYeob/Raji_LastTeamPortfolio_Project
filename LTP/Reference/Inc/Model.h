@@ -44,6 +44,8 @@ public:
 	HRESULT Bind_OnShader(class CShader* pShader, _uint iMaterialIndex , _uint eTextureType, const char* pHlslConstValueName);
 	HRESULT Update_AnimationClip(_double fDeltaTime, _bool IsUpdateAll = true);	
 	HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, const char* szBoneValueName = nullptr);
+	HRESULT Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer, 
+		vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName = nullptr, _float fFrustumsize = 0);
 
 	ATTACHBONEMATRIX_PTR Find_AttachMatrix_InHirarchyNode(const char* pName);
 	_uint Get_HaveAnimNum();

@@ -11,7 +11,7 @@ CMeshContainer::CMeshContainer(ID3D11Device * pDevice, ID3D11DeviceContext * pDe
 
 CMeshContainer::CMeshContainer(const CMeshContainer & rhs)
 	: CVIBuffer(rhs),
-	m_MaterialIndex(rhs.m_MaterialIndex),
+	m_MaterialIndex(rhs.m_MaterialIndex), m_pIndices(rhs.m_pIndices),
 	m_pAIMesh(rhs.m_pAIMesh), m_iNumAffectingBones(rhs.m_iNumAffectingBones)
 
 {
@@ -48,23 +48,22 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, aiMesh
 	m_IBDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	m_IBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	FACEINDICES32* pIndices = new FACEINDICES32[m_iNumPrimitive];
-	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+	m_pIndices = new FACEINDICES32[m_iNumPrimitive];
+	ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
 
 	for (_uint i = 0; i < m_iNumPrimitive; ++i)
 	{
-		pIndices[i]._0 = pAIMesh->mFaces[i].mIndices[0];
-		pIndices[i]._1 = pAIMesh->mFaces[i].mIndices[1];
-		pIndices[i]._2 = pAIMesh->mFaces[i].mIndices[2];
+		m_pIndices[i]._0 = pAIMesh->mFaces[i].mIndices[0];
+		m_pIndices[i]._1 = pAIMesh->mFaces[i].mIndices[1];
+		m_pIndices[i]._2 = pAIMesh->mFaces[i].mIndices[2];
 	}
 
 	ZeroMemory(&m_IBSubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-	m_IBSubResourceData.pSysMem = pIndices;
+	m_IBSubResourceData.pSysMem = m_pIndices;
 
 	if (FAILED(Create_IndexBuffer()))
 		return E_FAIL;
 
-	Safe_Delete_Array(pIndices);
 
 
 #pragma endregion
@@ -109,23 +108,22 @@ HRESULT CMeshContainer::Initialize_Prototype(CModel::MODELTYPE eMeshtype, MESHDE
 	m_IBDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	m_IBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	FACEINDICES32* pIndices = new FACEINDICES32[m_iNumPrimitive];
-	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+	m_pIndices = new FACEINDICES32[m_iNumPrimitive];
+	ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
 
 	for (_uint i = 0; i < m_iNumPrimitive; ++i)
 	{
-		pIndices[i]._0 = meshdesc->mFaces[i]._0;
-		pIndices[i]._1 = meshdesc->mFaces[i]._1;
-		pIndices[i]._2 = meshdesc->mFaces[i]._2;
+		m_pIndices[i]._0 = meshdesc->mFaces[i]._0;
+		m_pIndices[i]._1 = meshdesc->mFaces[i]._1;
+		m_pIndices[i]._2 = meshdesc->mFaces[i]._2;
 	}
 
 	ZeroMemory(&m_IBSubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-	m_IBSubResourceData.pSysMem = pIndices;
+	m_IBSubResourceData.pSysMem = m_pIndices;
 
 	if (FAILED(Create_IndexBuffer()))
 		return E_FAIL;
 
-	Safe_Delete_Array(pIndices);
 
 
 #pragma endregion
@@ -222,6 +220,25 @@ HRESULT CMeshContainer::Add_AffectingBoneIndex(_uint iHierarchyIndex)
 
 
 	return S_OK;
+}
+
+void CMeshContainer::Get_InstancingData(FORINSTDATA * pOut)
+{
+	pOut->pVB = m_pVB;
+
+	pOut->VBDesc = m_VBDesc;
+	//버텍스 버퍼가 몇개인가(한번에 여러개의 버퍼를 바인드하여 그릴수있다)
+	pOut->iNumVertexBuffers = m_iNumVertexBuffers;
+
+}
+
+void CMeshContainer::Get_IndexBufferData(FORINDEXDATA * pOut)
+{
+	pOut->iNumPrimitive = m_iNumPrimitive;
+	pOut->eIndexFormat = m_eIndexFormat;
+	pOut->eTopology = m_eTopology;
+	pOut->IBDesc = m_IBDesc;
+	pOut->pIndices = m_pIndices;
 }
 
 //void CMeshContainer::Set_OffSetMatrix(_float4x4 * OffSetMatrix)
@@ -517,5 +534,6 @@ void CMeshContainer::Free()
 
 
 	m_vecAffectingBoneIndex.clear();
-
+	if (!m_bIsClone)
+		Safe_Delete_Array(m_pIndices);
 }

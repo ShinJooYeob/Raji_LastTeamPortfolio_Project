@@ -27,10 +27,7 @@ HRESULT CTestObject::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
-	if (pArg != nullptr)
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
-	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 	//Set_LimLight_N_Emissive(_float4(0.2f, 0.5f, 1.f,1.f ));
 
@@ -48,10 +45,11 @@ _int CTestObject::Update(_double fDeltaTime)
 	//OutputDebugStringW(tt.c_str());
 
 
-	//if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Forward(fDeltaTime);
-	//}
+	if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+	{
+		static bool  t = false;	t = !t;
+		m_pModel->Change_AnimIndex((t) ? 0: 10);
+	}
 	//if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
 	//{
 	//	m_pTransformCom->Move_Backward(fDeltaTime);
@@ -77,12 +75,13 @@ _int CTestObject::Update(_double fDeltaTime)
 
 	if (KEYDOWN(DIK_F))
 	{
-		const wchar_t* name =  GetSingle(CAssimpCreateMgr)->GetName_Iter_Plus();
-		FAILED_CHECK(Change_Component_by_NewAssign(SCENE_STATIC, name,TAG_COM(Com_Model)));
+		const wchar_t* name = GetSingle(CAssimpCreateMgr)->GetName_Iter_Plus();
+		FAILED_CHECK(Change_Component_by_NewAssign(SCENE_STATIC, name, TAG_COM(Com_Model)));
 	}
 
-	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, m_bIsOnScreen));
+	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
 	return _int();
@@ -92,10 +91,13 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_vecInstancedTransform[i], m_pShaderCom, m_pModel));
+	}
+	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	return _int();
@@ -111,17 +113,8 @@ _int CTestObject::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
 
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
 
 	return _int();
 }
@@ -137,23 +130,22 @@ HRESULT CTestObject::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 	// MODELCOM_NAME
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-//	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-//	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+	for (_uint i = 0; i < 512; i++)
+	{
+		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+		NULL_CHECK_RETURN(pTransform, E_FAIL);
+		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(-256 + _float(i)*1.f, 0, 2));
+		m_vecInstancedTransform.push_back(pTransform);
+	}
 
-
-	CTransform::TRANSFORMDESC tDesc = {};
-
-	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
-	tDesc.fScalingPerSec = 1;
-	tDesc.vPivot = _float3(0, 0, 0);
-
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+	CModelInstance::MODELINSTDESC tModelIntDsec;
+	tModelIntDsec.m_pTargetModel = m_pModel;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
 
 
 	return S_OK;
@@ -225,7 +217,11 @@ void CTestObject::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTransformCom);
+	for (auto& pTransform : m_vecInstancedTransform)
+		Safe_Release(pTransform);
+	m_vecInstancedTransform.clear();
+	Safe_Release(m_pModelInstance);
+
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);

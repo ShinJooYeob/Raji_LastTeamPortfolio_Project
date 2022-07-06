@@ -8,7 +8,6 @@ cbuffer InstanceDesc
 	float			g_fAlphaTestValue;
 };
 
-texture2D			g_DiffuseTexture;
 texture2D			g_DepthTexture;
 
 struct VS_IN

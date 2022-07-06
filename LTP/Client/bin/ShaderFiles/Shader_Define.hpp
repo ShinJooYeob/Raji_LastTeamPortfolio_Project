@@ -1,4 +1,35 @@
 
+texture2D			g_DiffuseTexture;
+texture2D			g_SpecularTexture;
+texture2D			g_AmbientTexture;
+texture2D			g_EmissiveTexture;
+texture2D			g_HeightTexture;
+texture2D			g_NormalTexture;
+texture2D			g_ShininessTexture;
+texture2D			g_OpacityTexture;
+texture2D			g_DisplaceTexture;
+texture2D			g_LightMapTexture;
+texture2D			g_ReflectTexture;
+texture2D			g_BaseColorTexture;
+texture2D			g_NormalCamTexture;
+texture2D			g_EmissionColorTexture;
+texture2D			g_MetalTexture;
+texture2D			g_DiffuseRoughTexture;
+texture2D			g_AmbientOcculusionTexture;
+
+
+
+struct BoneMatrixArray
+{
+	matrix				BoneMatrices[150];
+};
+
+cbuffer Matrices
+{
+	BoneMatrixArray		g_BoneMatrices;
+};
+
+
 cbuffer	RenderingPipeLine
 {
 	matrix			g_WorldMatrix;

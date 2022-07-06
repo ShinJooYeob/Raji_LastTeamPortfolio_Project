@@ -79,12 +79,6 @@ _int CInstanceEffect::Render()
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), matInvView.r[1]  * m_vecParticleAttribute[i]._size.y);
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), matInvView.r[2] * m_vecParticleAttribute[i]._size.z);
 
-			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), XMVectorSet(1,0,0,0));
-			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), XMVectorSet(0, 1, 0, 0));
-			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), XMVectorSet(0, 0, 1, 0));
-			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation), XMVectorSet(0, 1.5f, 0, 1.f));
-
-
 
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
 				((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_vecParticleAttribute[i]._TargetParentPosition.XMVector());
@@ -165,7 +159,8 @@ HRESULT CInstanceEffect::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXPOINTINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 
-	if (m_tInstanceDesc.eInstanceCount < Prototype_VIBuffer_Point_Instance_1 || m_tInstanceDesc.eInstanceCount > Prototype_VIBuffer_Point_Instance_64) return E_FAIL;
+	if (m_tInstanceDesc.eInstanceCount < Prototype_VIBuffer_Point_Instance_1 || m_tInstanceDesc.eInstanceCount > Prototype_VIBuffer_Point_Instance_512) 
+		return E_FAIL;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(m_tInstanceDesc.eInstanceCount), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 	m_iNumInstance = m_pVIBufferCom->Get_NumInstance();
 
@@ -272,9 +267,7 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 
 	if (!m_tInstanceDesc.bBillboard)
 	{
-
 		_Vector vRight, vUp, vLook;
-
 
 		vUp = attribute->_velocity.Get_Nomalize();
 		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
@@ -283,7 +276,6 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[0])), vRight);
 		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[1])), vUp);
 		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[2])), vLook);
-
 
 	}
 
@@ -727,7 +719,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -745,7 +737,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime * pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -843,7 +835,7 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -862,7 +854,7 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime * pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -959,8 +951,8 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 		{
 
 			part._LocalMatirx = XMMatrixIdentity();
-			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-0.5f, 0.f);
+			ResetParticle(&part);	
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -978,8 +970,7 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-
-			part._age = part._lifeTime * pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1066,12 +1057,12 @@ void CInstanceEffect_Fountain::Update_Position_by_Velocity(INSTANCEATT * tPartic
 
 	if (Rate < 0.7f)
 	{
-		Dir.y = g_pGameInstance->Easing(TYPE_SinOut, Dir.y, 0, Rate, tParticleAtt->_lifeTime* 0.7f);
+		Dir.y = g_pGameInstance->Easing(TYPE_SinOut, Dir.y, 0, tParticleAtt->_age, tParticleAtt->_lifeTime* 0.7f);
 		position = position.XMVector() + Dir.Get_Nomalize() * tParticleAtt->_force * _float(fTimeDelta);
 	}
 	else
 	{
-		Dir.y = g_pGameInstance->Easing(TYPE_SinIn,  0, -Dir.y * 0.3f, Rate - tParticleAtt->_lifeTime* 0.7f, tParticleAtt->_lifeTime * 0.3f);
+		Dir.y = g_pGameInstance->Easing(TYPE_SinIn,  0, -Dir.y * 0.3f, tParticleAtt->_age - tParticleAtt->_lifeTime* 0.7f, tParticleAtt->_lifeTime * 0.3f);
 		position = position.XMVector() + Dir.Get_Nomalize()* tParticleAtt->_force * _float(fTimeDelta);
 	}
 
@@ -1079,11 +1070,11 @@ void CInstanceEffect_Fountain::Update_Position_by_Velocity(INSTANCEATT * tPartic
 
 	if (!m_tInstanceDesc.bBillboard)
 	{
-
 		_Vector vRight, vUp, vLook;
 
 
 		vUp = Dir.Get_Nomalize();
+		//vUp = XMVector3Normalize(((_float3*)(&tParticleAtt->_LocalMatirx.m[1]))->Get_Nomalize() * 0.7f + Dir.Get_Nomalize() * 0.3f);
 		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
 		vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
 
@@ -1110,8 +1101,8 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 		{
 
 			part._LocalMatirx = XMMatrixIdentity();
-			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-0.5f, 0.f);
+			ResetParticle(&part);	
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1129,8 +1120,7 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-
-			part._age = part._lifeTime * pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1205,10 +1195,25 @@ void CInstanceEffect_Suck::Update_Position_by_Velocity(INSTANCEATT * tParticleAt
 	memcpy(&tParticleAtt->_LocalMatirx._41, &position, sizeof(_float3));
 	
 
-	if (Oldposition.x * position.x < 0)
+	if (Oldposition.x * position.x <= 0)
 	{
 		if (m_PassedTime < m_tInstanceDesc.TotalParticleTime)
+		{
 			ResetParticle(tParticleAtt);
+
+			_Vector vRight, vUp, vLook;
+
+
+			vUp = (*(_float3*)&tParticleAtt->_LocalMatirx._41).Get_Nomalize() * -1.f;
+			vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
+			vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
+
+			XMStoreFloat4(((_float4*)(&tParticleAtt->_LocalMatirx.m[0])), vRight);
+			XMStoreFloat4(((_float4*)(&tParticleAtt->_LocalMatirx.m[1])), vUp);
+			XMStoreFloat4(((_float4*)(&tParticleAtt->_LocalMatirx.m[2])), vLook);
+
+
+		}
 		else
 			tParticleAtt->_isAlive = false;
 	}
@@ -1233,7 +1238,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1243,8 +1248,8 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 		{
 
 			ResetParticle(&part);
-
-			vUp = part._velocity.Get_Nomalize();
+			//position.Get_Nomalize()
+			vUp = (*(_float3*)&part._LocalMatirx._41).Get_Nomalize() * -1.f;
 			vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
 			vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
 
@@ -1252,7 +1257,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime * pUtil->RandomFloat(-0.5f, 0.f);
+			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
 			m_vecParticleAttribute.push_back(part);
 		}
 	}

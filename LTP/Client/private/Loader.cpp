@@ -65,6 +65,11 @@
 #include "Monster_Texture_Bullet.h"
 ////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////////
+#include "TestNonAnimInstancing.h"
+//////////////////////////////////////////////////////////////////////////
+
 _uint CALLBACK LoadingThread(void* _Prameter)
 {
 	THREADARG tThreadArg{};
@@ -519,6 +524,8 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(L"TestNonAnimInstance", CTestNonAnimInstancing::Create(m_pDevice, m_pDeviceContext)));
+	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Player), CPlayer::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerWeapon_Spear), CPlayerWeapon_Spear::Create(m_pDevice, m_pDeviceContext)));

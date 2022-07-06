@@ -237,6 +237,7 @@
     <ClInclude Include="..\public\Scene_Stage3.h" />
     <ClInclude Include="..\public\SkyBox.h" />
     <ClInclude Include="..\public\Snake.h" />
+    <ClInclude Include="..\public\TestNonAnimInstancing.h" />
     <ClInclude Include="..\public\StaticMapObject.h" />
     <ClInclude Include="..\public\TestObject.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\Snake.cpp" />
+    <ClCompile Include="..\private\TestNonAnimInstancing.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
     <ClCompile Include="..\private\NaviPoint.cpp" />
     <ClCompile Include="..\private\TestStaticPhysX.cpp" />
@@ -333,7 +335,9 @@
   <ItemGroup>
     <FxCompile Include="..\bin\ShaderFiles\Shader_AnimModel.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_NonAnimModel.hlsl" />
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxAnimMeshInstance.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
+    <FxCompile Include="..\bin\ShaderFiles\Shader_VtxNonAnimMeshInstance.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\bin\ShaderFiles\Shader_VtxTex.hlsl" />
