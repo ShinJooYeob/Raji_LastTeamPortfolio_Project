@@ -34,19 +34,12 @@ public:
 	
 	// Create Chain
 
-
-
-
 public:
 	// Actor Test
 	PxRigidDynamic*			CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 
 	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 	PxRigidStatic*			CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
-	PxRigidDynamic*			CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-	PxRigidDynamic*			CreateChain(vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-
-
 
 
 	HRESULT Create_Plane();
@@ -94,7 +87,6 @@ private:
 	PxTransform*					mTestTransfrom1 = nullptr;
 
 public:
-
 	static PxPhysics*			gPhysics;
 	static PxCooking*			gCooking;
 	static PxFoundation*		gFoundation;
@@ -104,6 +96,10 @@ public:
 	static PxMaterial*			gMaterial2;
 
 
+	static _float3 gDebugValue1;
+	static _float3 gDebugValue2;
+	static _float3 gDebugValue3;
+	static _float3 gDebugValue4;
 
 
 public:

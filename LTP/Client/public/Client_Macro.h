@@ -28,5 +28,13 @@
 #define MAT4X4TOPXMAT(x) *((PxMat44*)&x)
 #define PXMATTOMAT4x4(x) *((_float4x4*)&x)
 
+#define DEBUGVALUE1	GetSingle(CPhysXMgr)->gDebugValue1
+#define DEBUGVALUE2	GetSingle(CPhysXMgr)->gDebugValue2
+#define DEBUGVALUE3	GetSingle(CPhysXMgr)->gDebugValue3
+#define DEBUGVALUE4	GetSingle(CPhysXMgr)->gDebugValue4
+
+
+
+
 
 

@@ -142,7 +142,7 @@ private:
 
 
 private: /* Key Input */
-	void				Check_PlayerKeyInput(_double fDeltaTime);
+	_bool				Check_PlayerKeyInput(_double fDeltaTime);
 
 	_bool				Check_Mov_KeyInput(_double fDeltaTime);
 	_bool				Check_Action_KeyInput(_double fDeltaTime);

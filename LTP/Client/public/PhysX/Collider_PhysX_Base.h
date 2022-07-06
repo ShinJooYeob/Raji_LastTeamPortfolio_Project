@@ -59,15 +59,24 @@ public:
 		string*				mBoneNames = nullptr;
 		_uint				mLength = 0;
 		CModel*				mAttachModel = nullptr;
+		CGameObject*		mGameObject = nullptr;
 
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
-		_float3				mScale = _float3::Zero();
+		_float3				mScale = _float3::One();
 		_float				mSeparation = 2;
-
-
 
 	}PHYSXDESC_JOINT;
 
+	typedef struct Tag_PhysXDesc_Joint_TEST
+	{
+		CTransform*			mTrnasform = nullptr;
+		_uint				mLength = 0;
+		_float3				mScale = _float3::One();
+		_float				mSeparation = 2;
+		
+		// E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+
+	}PHYSXDESC_JOINT_TEST;
 
 
 protected:
@@ -93,6 +102,7 @@ public:
 	void			Set_Postiotn(_float3 positiotn);
 	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
 	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
+	void			Set_KeyDonw(_bool b) { mbKeyUpdate = b; };
 
 	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
 	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
@@ -115,11 +125,15 @@ protected:
 	// 물리충돌 해제
 	bool							mbPhysXUpdate = true;
 	// 외부 입력 업데이트
-	// bool							mbKeyUpdate = false;
+	bool							mbKeyUpdate = false;
+
+	PxPhysics*						mPhysics = nullptr;
+	PxMaterial*						mNormalMaterial = nullptr;
+	PxScene*						mScene = nullptr;
 
 
 #ifdef _DEBUG
-private:
+protected:
 	BasicEffect*									m_pBasicEffect = nullptr;
 	ID3D11InputLayout*								m_pInputLayout = nullptr;
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = nullptr;

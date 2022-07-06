@@ -1344,16 +1344,18 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	// Joint Å×½ºÆ®
 	if (ImGui::Button("Joint_Sphere"))
 	{
-		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-		//(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Joint_PhysX)));
-		//CTestObject_PhysX* obj =
-		//	static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
-		//obj->Set_ColSetID(E_PHYTYPE_JOINT);
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Joint_PhysX)));
+		CTestObject_PhysX* obj =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_JOINT);
 
-		//CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-		//CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-		//objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-		//objTrans->Scaled_All(Scale);
+		CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		objTrans->Scaled_All(Scale);
+
+		
 
 		//createJoint.mBoneName = "skd_hair01";
 		//createJoint.mTargetObject = obj;
@@ -1361,9 +1363,34 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		//createJoint.eShapeType = E_GEOMAT_SPEHE;
 		//createJoint.mScale = _float3::One();
 		//createJoint.mSeparation = 4;
-		//
-		//coljoint->Set_ColiiderDesc(createJoint);
+
+		coljoint->Set_NomalJoint(objTrans,5);
 	}
+
+	if (ImGui::Button("Joint_TEST"))
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Joint_PhysX)));
+		CTestObject_PhysX* obj =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ColSetID(E_PHYTYPE_JOINT);
+
+		CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		objTrans->Scaled_All(Scale);
+
+		CCollider_PhysX_Base::PHYSXDESC_JOINT_TEST createJointTest;
+		createJointTest.mLength = 5;
+		createJointTest.mSeparation = 2;
+		createJointTest.mScale = _float3(1,1,1);
+		createJointTest.mTrnasform = objTrans;
+
+		coljoint->Set_ColiiderDesc(createJointTest);
+	}
+
+	
+
 
 	ImGui::Separator();
 
@@ -1375,6 +1402,14 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			obj->Set_IsDead();
 		}
 	}
+	ImGui::Separator();
+	ImGui::DragFloat3("DebugValue1:", (float*)&GetSingle(CPhysXMgr)->gDebugValue1, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue2:", (float*)&GetSingle(CPhysXMgr)->gDebugValue2, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue3:", (float*)&GetSingle(CPhysXMgr)->gDebugValue3, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue4:", (float*)&GetSingle(CPhysXMgr)->gDebugValue4, 0.1f, -1000, 1000);
+
+
+
 
 	return _int();
 }

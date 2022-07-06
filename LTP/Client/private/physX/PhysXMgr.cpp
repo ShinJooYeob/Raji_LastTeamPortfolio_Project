@@ -15,6 +15,10 @@ PxPhysics* CPhysXMgr::gPhysics = nullptr;
 PxCooking* CPhysXMgr::gCooking = nullptr;
 PxFoundation* CPhysXMgr::gFoundation = nullptr;
 
+_float3 CPhysXMgr::gDebugValue1 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
+_float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
 static CDemoCallback gDemoCallback;
 
@@ -62,7 +66,7 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 	if (mScene)
 	{
 		// 결과 업데이트
-		mScene->fetchResults();
+		mScene->fetchResults(true);
 	}
 
 	return S_OK;
@@ -510,53 +514,6 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 	return actor;
 }
 
-PxRigidDynamic* CPhysXMgr::CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
-{
-	// 관절 오브젝트 생성
-	
-	PxVec3 offset(separation / 2, 0, 0);
-	PxTransform localTm(offset);
-	PxRigidDynamic* prev = NULL;
-	PxRigidDynamic* first = NULL;
-
-	// N개의 관절 연결
-	// 엑터에 
-	for (PxU32 i = 0; i < length; i++)
-	{
-		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
-		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
-		mScene->addActor(*current);
-		if (prev == nullptr)
-			first = current;
-		prev = current;
-		localTm.p.x += separation;
-	}
-
-	return first;
-}
-
-PxRigidDynamic* CPhysXMgr::CreateChain(vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
-{
-	// 관절 오브젝트 생성
-	listPxRig.clear();
-	PxVec3 offset(separation / 2, 0, 0);
-	PxTransform localTm(offset);
-	PxRigidDynamic* prev = NULL;
-
-	// N개의 관절 연결
-	// 엑터에 
-	for (PxU32 i = 0; i < length; i++)
-	{
-		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, t*localTm, g, *gMaterial, 1.0f);
-		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
-		mScene->addActor(*current);
-		listPxRig.push_back(current);
-		prev = current;
-		localTm.p.x += separation;
-	}
-
-	return nullptr;
-}
 
 
 void CPhysXMgr::Free()

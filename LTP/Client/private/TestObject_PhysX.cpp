@@ -40,33 +40,46 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	bool isKey = false;
 	// ÀÌµ¿ 
-	//bool isKey = false;
-	//if (KEYPRESS(DIK_W))
-	//{
-	//	isKey = true;
-	//	m_pTransformCom->Move_Forward(fDeltaTime);
-	//}
-	//if (KEYPRESS(DIK_S))
-	//{
-	//	isKey = true;
-	//	m_pTransformCom->Move_Backward(fDeltaTime);
-	//}
-	//if (KEYPRESS(DIK_D))
-	//{
-	//	isKey = true;
-	//	m_pTransformCom->Move_Right(fDeltaTime);
-	//}
-	//if (KEYPRESS(DIK_A))
-	//{
-	//	isKey = true;
-	//	m_pTransformCom->Move_Left(fDeltaTime);
-	//}
+	if (m_Com_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_JOINT)
+	{
+		
+		if (KEYPRESS(DIK_W))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Forward(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_S))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Backward(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_D))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Right(fDeltaTime);
+		}
+		if (KEYPRESS(DIK_A))
+		{
+			isKey = true;
+			m_pTransformCom->Move_Left(fDeltaTime);
+		}
 
+		if (KEYPRESS(DIK_E))
+		{
+			isKey = true;
+			_float3 vec = _float3(0, 10, 0);
+
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vec);;
+		}
+	}
 
 	if (m_Com_ColliderBase)
+	{
+		m_Com_ColliderBase->Set_KeyDonw(isKey);
 		m_Com_ColliderBase->Update_BeforeSimulation();
-
+	}
 	return _int();
 }
 
@@ -90,7 +103,6 @@ _int CTestObject_PhysX::Render()
 
 	if (mbTrigger == false)
 	{
-
 		NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 		CGameInstance* pInstance = GetSingle(CGameInstance);

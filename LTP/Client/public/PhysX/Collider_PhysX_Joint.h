@@ -24,12 +24,23 @@ public:
 	const PHYSXDESC_JOINT& Get_PhysXDesc() const { return mPhysXDesc; }
 
 public:
-	HRESULT CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-	HRESULT CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	
+	PxRigidDynamic* CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
+	PxRigidDynamic* CreateChain(vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	PxRigidDynamic* CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
+	PxRigidDynamic* Create_TestJoint(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
+
+
+
+
+	static PxJoint* CreateNomalJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 	static PxJoint* CreateLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 	static PxJoint* CreateBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+
+
 
 
 public:
@@ -38,7 +49,8 @@ public:
 
 #endif // _DEBUG
 	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT desc);
-
+	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT_TEST desc);
+	HRESULT Set_NomalJoint(CTransform* trans, _uint lent);
 
 protected:
 	PHYSXDESC_JOINT				mPhysXDesc;
@@ -46,7 +58,9 @@ protected:
 	CHierarchyNode*				mMainBone = nullptr;
 	vector<CHierarchyNode*>		mVecHier;
 	vector<PxRigidDynamic*>		mVecActors;
+	vector<PxJoint*>			mVecJoints;
 
+	_uint						bTestflag = 0;
 
 public:
 	static CCollider_PhysX_Joint* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

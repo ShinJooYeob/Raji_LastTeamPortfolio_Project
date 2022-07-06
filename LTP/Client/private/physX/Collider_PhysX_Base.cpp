@@ -62,6 +62,10 @@ HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 
 	mMain_Actor = nullptr;
 
+	mPhysics = GetSingle(CPhysXMgr)->gPhysics;
+	mNormalMaterial = GetSingle(CPhysXMgr)->gMaterial;
+	mScene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+
 	return S_OK;
 }
 
@@ -105,12 +109,11 @@ HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 	//}
 
 		// Pos
-		mPxMainTransform = mMain_Actor->getGlobalPose();
-		_float3 vec3 = *(_float3*)&mPxMainTransform.p;
-		mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-	
+	mPxMainTransform = mMain_Actor->getGlobalPose();
+	_float3 vec3 = *(_float3*)&mPxMainTransform.p;
+	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 
-		return S_OK;
+	return S_OK;
 }
 
 
