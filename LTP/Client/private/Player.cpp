@@ -49,8 +49,6 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(true);
 
-	Set_HairPhysX();
-
 	return S_OK;
 }
 
@@ -58,9 +56,6 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 	
-
-	// Check Player Key Input
-	bool keycheck = Check_PlayerKeyInput(fDeltaTime);
 
 	static bool TestBool = false;
 	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
@@ -200,12 +195,6 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
-	if (m_pCollider_HairPhysX)
-	{
-		m_pCollider_HairPhysX->Set_KeyDonw(keycheck);
-		m_pCollider_HairPhysX->Update_BeforeSimulation();
-	}
-
 	return _int();
 }
 
@@ -221,8 +210,6 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
-	if (m_pCollider_HairPhysX)
-		m_pCollider_HairPhysX->Update_AfterSimulation();
 
 	return _int();
 }
@@ -3605,56 +3592,6 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	}
 }
 
-void CPlayer::Set_HairPhysX()
-{
-	// #HAIR
-	// Hair PhysX Test
-	NULL_CHECK_BREAK(m_pCollider_HairPhysX);
-
-	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
-	// m_pModel->Find_HierarchyNode("skd_hair01");
-	// m_pModel->Find_HierarchyNode("skd_hairEnd");
-
-
-	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
-	string strs[8] =
-	{
-		"skd_hair01","skd_hair02","skd_hair03","skd_hair04","skd_hair05",
-		"skd_hair06","skd_hair07","skd_hairEnd"
-	};
-
-	createJoint.mBoneNames = strs;
-	createJoint.mLength = 8;
-	createJoint.mAttachModel = m_pModel;
-	createJoint.eShapeType = E_GEOMAT_SPEHE;
-	createJoint.mGameObject = this;
-	createJoint.mScale = _Sfloat3::One * 2;
-	createJoint.mSeparation = 2;
-
-	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
-
-
-	// #TEST Dynamic
-	//CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
-	//
-	//createDynamic.bTrigger = false;
-	//createDynamic.eShapeType = E_GEOMAT_BOX;
-	//createDynamic.mTrnasform = m_pTransformCom;
-	//static_cast<CCollider_PhysX_Dynamic*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createDynamic);
-
-
-	// #TEST Hair
-
-//	CCollider_PhysX_Base::PHYSXDESC_JOINT_TEST createJoint;
-//	createJoint.mTrnasform = m_pTransformCom;
-//	createJoint.mLength = 4;
-//	createJoint.mScale = _Sfloat3::One;
-//	createJoint.mSeparation = 1.0f;
-//	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
-
-
-}
-
 void CPlayer::Check_NextComboCommand()
 {
 	if (true == m_bPressedPowerAttackKey)
@@ -3814,9 +3751,6 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	m_pCollider_HairPhysX = nullptr;
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
-//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pCollider_HairPhysX));
 
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
@@ -4107,6 +4041,5 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
-	Safe_Release(m_pCollider_HairPhysX);
 	
 }

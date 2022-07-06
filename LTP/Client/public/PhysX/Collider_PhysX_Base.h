@@ -6,9 +6,8 @@
 BEGIN(Engine)
 class CTransform;
 END
+
 BEGIN(Client)
-
-
 enum E_PHYTYPE
 {
 	E_PHYTYPE_STATIC,
@@ -99,33 +98,44 @@ public:
 
 public:
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
-	void			Set_Postiotn(_float3 positiotn);
-	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
-	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
-	void			Set_KeyDonw(_bool b) { mbKeyUpdate = b; };
+	void			Set_Transform(CTransform* trans);
+
+	void			Set_(_bool b) { mbTrigger = b; };
 
 	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
 	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
+	PxGeometry*		Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
+	HRESULT			Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
+	HRESULT			Set_GeoMatScale(PxShape* shape, PxVec3 scale);
+	PxVec3			Get_Scale_MainTrans();
+	void			Set_Scale_MainTrans(_float4 f);
+
+	HRESULT			CreateNewShape(PxGeometry* gemo);
+
+
+
 public:
-	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
+	//HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
+	//HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
+	//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
 
 
 
 protected:
-	//	CTransform*					mTransform = nullptr;
-	PxRigidActor*					mMain_Actor= nullptr;
-	PxTransform						mPxMainTransform;
+	// 충돌체 메인 Actor
+	PxRigidActor*					mMain_Actor= nullptr; 
+	// 충돌체 위치 / 연결된 위치 저장
+	PxMat44							mPxMainMatrix4x4;
 	CTransform*						mMainTransform = nullptr;
+	PxShape*						mMainShape = nullptr;
 
 protected:
 	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
-	// 물리충돌 해제
-	bool							mbPhysXUpdate = true;
-	// 외부 입력 업데이트
-	bool							mbKeyUpdate = false;
+
+	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
+	_bool							mbTrigger = false;
+
 
 	PxPhysics*						mPhysics = nullptr;
 	PxMaterial*						mNormalMaterial = nullptr;

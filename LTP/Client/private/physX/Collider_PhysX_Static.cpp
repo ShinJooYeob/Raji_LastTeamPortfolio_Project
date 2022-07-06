@@ -29,25 +29,53 @@ HRESULT CCollider_PhysX_Static::Initialize_Clone(void * pArg)
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
 
-
+	
 	return S_OK;
 }
 
 
 HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 {
-
-	if (FAILED(__super::Update_BeforeSimulation()))
+	if (mbTrigger)
+		return S_OK;
+	if (mMain_Actor == nullptr || mMainTransform == nullptr)
 		return E_FAIL;
 
+	//mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	//mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
-	if (FAILED(__super::Update_AfterSimulation()))
-		return E_FAIL;
+	if (mbTrigger)
+		return S_OK;
 
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	PxTransform ptrans = PxTransform(mPxMainMatrix4x4);
+	mMain_Actor->setGlobalPose(ptrans);
+
+	if (E_STATIC_BUFFER == mStaticID)
+	{
+		// #TODO 모양 새로 만들어야함
+		PxVec3 newScale = Get_Scale_MainTrans();
+	//	Set_GeoMatScale(mMainShape, newScale);
+
+		PxGeometry* gemo = Create_Geometry(mPhysXDesc.eShapeType,newScale);
+		Create_Geometry(*gemo);
+
+		mMain_Actor->setGlobalPose()
+
+	}
+
+
+	
+
+
+	
+
+//	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
+//	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
 
 	return S_OK;
 }
@@ -57,9 +85,6 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 HRESULT CCollider_PhysX_Static::Render()
 {
 	FAILED_CHECK(__super::Render());
-
-	
-
 	return S_OK;
 }
 #endif
@@ -94,9 +119,6 @@ void CCollider_PhysX_Static::Free()
 {
 	__super::Free();
 
-
-
-
 }
 
 HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
@@ -110,50 +132,57 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
+	
 	PxGeometry* gemo = nullptr;
 
 	mMainTransform = mPhysXDesc.mTrnasform;
 
 	_float3 scale = mMainTransform->Get_Scale();
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
 
-	switch (mPhysXDesc.eShapeType)
-	{
-	case Client::E_GEOMAT_BOX:
-		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-		break;
-	case Client::E_GEOMAT_SPEHE:
-		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-		break;
-	case Client::E_GEOMAT_CAPSULE:
-		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-		break;
-	case Client::E_GEOMAT_SHAPE:
-
-		break;
-	case Client::E_GEOMAT_VERTEX:
-		break;
-	case Client::E_GEOMAT_TRIANGLE:
-		break;
-	case Client::E_GEOMAT_END:
-		break;
-
-	default:
-		break;
-	}
-
-	PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
-	_Sfloat4x4 float4x4 = mMainTransform->Get_WorldFloat4x4();
-	_Squternion q = _Squternion::CreateFromRotationMatrix(float4x4);
-	pxtrans.q = *(PxQuat*)&q;
-
+	gemo = Create_Geometry(desc.eShapeType, scale);
 	NULL_CHECK_BREAK(gemo);
 
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(pxtrans, *gemo);
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(PxTransform(mPxMainMatrix4x4), *gemo);
 	NULL_CHECK_BREAK(mMain_Actor);
+
+	PxShape* shapes[1];
+	const PxU32 numShapes = 1;
+	mMain_Actor->getShapes(shapes, numShapes);
+	mMainShape = shapes[0];
+	NULL_CHECK_BREAK(mMainShape);
+
 	Safe_Delete(gemo);
 
+	mMain_Actor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	mMain_Actor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, false);
+
+
+	return S_OK;
+}
+
+HRESULT CCollider_PhysX_Static::Set_ActorFlag(PxActorFlag::Enum e, bool b)
+{
+	// 시각화
+	// eVISUALIZATION = (1 << 0),
+
+	// 중력비활성화
+	// eDISABLE_GRAVITY = (1 << 1),
+
+	// 알림이벤트 On Off
+	// eSEND_SLEEP_NOTIFIES = (1 << 2),
+
+	// 충돌 비활성화
+	// eDISABLE_SIMULATION = (1 << 3)
+
+	mMain_Actor->setActorFlag(e, b);
+	return S_OK;
+}
+
+HRESULT CCollider_PhysX_Static::Set_eDISABLE_SIMULATION(bool b)
+{
+	mMain_Actor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, b);
 	return S_OK;
 }

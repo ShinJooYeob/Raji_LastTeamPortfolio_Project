@@ -39,40 +39,40 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
 
-	if (mbPhysXUpdate == false)
-		return S_OK;
+	//if (mbUpdate_PhysX == false)
+	//	return S_OK;
+	//
+	//if (mMainTransform == nullptr)
+	//	return E_FAIL;
 
-	if (mMainTransform == nullptr)
-		return E_FAIL;
-
-	if (bTestflag == 0)
-	{
+	//if (bTestflag == 0)
+	//{
+	////	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	////	mPxMainTransform.p += mOffsetVec;
+	////	mMain_Actor->setGlobalPose(mPxMainTransform);
+	//}
+	//else if (bTestflag == 1)
+	//{
 	//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-	//	mPxMainTransform.p += mOffsetVec;
 	//	mMain_Actor->setGlobalPose(mPxMainTransform);
-	}
-	else if (bTestflag == 1)
-	{
-		mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-		mMain_Actor->setGlobalPose(mPxMainTransform);
-	}
-	else if (bTestflag == 2)
-	{
-		if (mbKeyUpdate)
-		{
-			mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-			mMain_Actor->setGlobalPose(mPxMainTransform);
-		}
-		else
-		{
-			mMain_Actor->setGlobalPose(mPxMainTransform);
+	//}
+	//else if (bTestflag == 2)
+	//{
+	//	if (mbKeyUpdate)
+	//	{
+	//		mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	//		mMain_Actor->setGlobalPose(mPxMainTransform);
+	//	}
+	//	else
+	//	{
+	//		mMain_Actor->setGlobalPose(mPxMainTransform);
 
-		//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	//	//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
 
-		}
+	//	}
 
 
-	}
+	//}
 
 	return S_OK;
 }
@@ -91,41 +91,43 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//memcpy((_float3*)(&ffMat.m[2][0]), &DEBUGVALUE3, sizeof(_float3));
 	//memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
 
-	//hier1->Set_UpdateTransform(XMLoadFloat4x4(&ffMat));
-	if (bTestflag == 0)
-	{
-	//	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
-	//	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-	//	mMainBone->Set_UpdateTransform(getPos);
-	}
-	else if(bTestflag == 1)
-	{
-		mPxMainTransform = mMain_Actor->getGlobalPose();
-		_float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
-		mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	//
+	//if (bTestflag == 0)
+	//{
+	////	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
+	////	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+	////	mMainBone->Set_UpdateTransform(getPos);
+	//}
+	//else if(bTestflag == 1)
+	//{
+	//	mPxMainTransform = mMain_Actor->getGlobalPose();
+	//	_float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
+	//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	//
+	//}
+	//else if (bTestflag == 2)
+	//{
+	//
+	//	if (mbKeyUpdate)
+	//	{
+	//		mMain_Actor->setGlobalPose(mPxMainTransform);
+	//
+	//		//mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+	//		//mMain_Actor->setGlobalPose(mPxMainTransform);
+	//		//_float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
+	//	//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	//	}
+	//	else
+	//	{
+	//	//	mPxMainTransform = mMain_Actor->getGlobalPose();
+	//	}
+	//
+	//	// _float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
+	//	// mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
+	//
+	//}
+	//int debig = 5;
 
-	}
-	else if (bTestflag == 2)
-	{
-
-		if (mbKeyUpdate)
-		{
-			mMain_Actor->setGlobalPose(mPxMainTransform);
-
-			//mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-			//mMain_Actor->setGlobalPose(mPxMainTransform);
-			//_float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
-		//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-		}
-		else
-		{
-		//	mPxMainTransform = mMain_Actor->getGlobalPose();
-		}
-
-		// _float3 vec3 = PXVEC3TOFLOAT3(mPxMainTransform.p);
-		// mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-
-	}
 	//_uint size = mVecActors.size();
 	//for (int i =0; i<size;++i)
 	//{
@@ -142,7 +144,6 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//	hier2->Set_UpdateTransform(XMLoadFloat4x4(&DMat2));
 	//	hier3->Set_UpdateTransform(XMLoadFloat4x4(&DMat3));
 
-	int debig = 5;
 	//	mPxMainTransform = mAttachDesc.Get_AttachObjectTransform();
 
 	//mPxMainTransform = mMainTransform;
@@ -267,8 +268,10 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	mMainTransform = (CTransform*)desc.mGameObject->Get_Component(TAG_COM(Com_Transform));
 
 	mMainBone = mVecHier.front();
-	mPxMainTransform = PxTransform(MAT4X4TOPXMAT(mMainBone->Get_UpdatedMatrix()));
-	mMain_Actor = CreateChain(mVecActors, mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateNomalJoint);
+	_float4x4 bonemat;
+	XMStoreFloat4x4(&bonemat, mMainBone->Get_UpdatedMatrix());
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(bonemat);
+	mMain_Actor = CreateChain(mVecActors, PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateNomalJoint);
 	Safe_Delete(gemo);
 
 	return S_OK;
@@ -289,10 +292,9 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT_TEST desc)
 	NULL_CHECK_BREAK(gemo);
 
 	mMainTransform = desc.mTrnasform;
-	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS)));
+	mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
 
-	mMain_Actor = Create_TestJoint(mPxMainTransform, desc.mLength, *gemo, desc.mSeparation, CreateNomalJoint);
-	((PxRigidDynamic*)mMain_Actor)->setKinematicTarget(mPxMainTransform);
+	mMain_Actor = Create_TestJoint(PxTransform(mPxMainMatrix4x4), desc.mLength, *gemo, desc.mSeparation, CreateNomalJoint);
 	Safe_Delete(gemo);
 	return S_OK;
 }
@@ -339,8 +341,8 @@ HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans, _uint length)
 	NULL_CHECK_BREAK(gemo);
 	mMainTransform = trans;
 
-	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS)));
-	mMain_Actor = CreateChain(mPxMainTransform, 5, *gemo, 2, CreateLimitedSpherical);
+	mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
+	mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), 5, *gemo, 2, CreateLimitedSpherical);
 	Safe_Delete(gemo);
 	return S_OK;
 }

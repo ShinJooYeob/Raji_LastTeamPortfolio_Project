@@ -9,6 +9,12 @@ BEGIN(Client)
 class CCollider_PhysX_Static : public CCollider_PhysX_Base
 {
 public:
+	enum E_STATICTYPE
+	{
+		E_STATIC_BUFFER,
+		E_STATIC_STATIC,
+		E_STATIC_END,
+	};
 
 private:
 	explicit CCollider_PhysX_Static(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -24,8 +30,10 @@ public:
 
 public:
 	const PHYSXDESC_STATIC& Get_PhysXDesc() const { return mPhysXDesc; }
-
 	HRESULT Set_ColiiderDesc(PHYSXDESC_STATIC desc);
+	HRESULT Set_ActorFlag(PxActorFlag::Enum e, bool b);
+	HRESULT	Set_eDISABLE_SIMULATION(bool b = true);
+	
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
@@ -34,6 +42,7 @@ public:
 	// static 中宜端 持失
 
 protected:
+	E_STATICTYPE			mStaticID = E_STATIC_END;
 	PHYSXDESC_STATIC		mPhysXDesc;
 
 

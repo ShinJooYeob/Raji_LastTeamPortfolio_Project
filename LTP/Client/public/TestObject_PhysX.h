@@ -10,6 +10,15 @@ BEGIN(Client)
 
 class CTestObject_PhysX final : public CGameObject
 {
+public:
+	enum E_MODEL
+	{
+		MODEL_GEMETRY,
+		MODEL_PLAYER,
+		MODEL_STATIC,
+		MODEL_MONSTER,
+		MODEL_END,
+	};
 
 private:
 	CTestObject_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -26,39 +35,41 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+
+	CCollider_PhysX_Base* Get_ComCollider() { return mCom_ColliderBase; }
 public:
 	void	Set_Trigger(bool b) { mbTrigger = b; };
+	void	Set_Postition(_float3 position);
+	void	Set_Scale(_float3 scale);
+
+
 
 	// 피직스 테스트시만 사용
 	HRESULT	Set_ColSetID(E_PHYTYPE id);
 
+	// Model Setting
+	HRESULT	Set_ModelSetting(E_MODEL id);
+
+private:
+	HRESULT Set_PlayerMeshair();
+
 private:
 	// 피직스 관련
-	CTransform*			m_pTransformCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CModel*				m_pModel = nullptr;
+	CTransform*			mCom_Transform = nullptr;
+	CShader*			mCom_Shader = nullptr;
+	CRenderer*			mCom_Renderer = nullptr;
+	CModel*				mCom_Model = nullptr;
 
-	class CCollider_PhysX_Base*	m_Com_ColliderBase = nullptr;
-
-
-//	class CCollider_PhysX_Static*	m_Com_ColliderStatic = nullptr;
-//	class CCollider_PhysX_Dynamic*	m_Com_ColliderDynamic = nullptr;
-//	class CCollider_PhysX_Joint*	m_Com_ColliderJoint = nullptr;
+	class CCollider_PhysX_Base*	mCom_ColliderBase = nullptr;
+	class CCollider_PhysX_Base*	mCom_ColliderHair = nullptr;
 
 	bool				mbTrigger = false;
 	int					mColID = 0;
+	E_MODEL				meModelID= MODEL_END;
 
 private:
 	HRESULT SetUp_Components();
-
-	// SetActor
-	void SetUp_Physx_Collider();
-//	void Set_Actor_Joint();
-
-
 	// 각각 모양에 따라 정의
-
 	void Set_ChainTest();
 	
 

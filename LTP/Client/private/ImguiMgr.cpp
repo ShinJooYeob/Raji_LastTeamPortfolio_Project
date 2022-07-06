@@ -1202,6 +1202,8 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 {
+	static bool bTestObject = false;
+	
 
 	// static 오브젝트 배치
 	static _float3 Position = _float3::Zero();
@@ -1214,6 +1216,43 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
 	CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
 	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
+
+	static CTestObject_PhysX* PhysX_Testobj = nullptr;
+
+	if (bTestObject == false)
+	{
+		bTestObject = true;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
+
+		PhysX_Testobj =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		PhysX_Testobj->Set_ColSetID(E_PHYTYPE_STATIC);
+		PhysX_Testobj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+
+		CCollider_PhysX_Static* colCom = (CCollider_PhysX_Static*)PhysX_Testobj->Get_ComCollider();
+		CTransform* objTrans = (CTransform*)PhysX_Testobj->Get_Component(TAG_COM(Com_Transform));
+
+		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		objTrans->Scaled_All(Scale);
+
+		createStatic.bTrigger = false;
+		createStatic.eShapeType = E_GEOMAT_BOX;
+		createStatic.mTrnasform = objTrans;
+		NULL_CHECK_BREAK(createStatic.mTrnasform);
+		// createDesc.mVelocity;
+		colCom->Set_ColiiderDesc(createStatic);
+		colCom->Set_eDISABLE_SIMULATION();
+	}
+
+	{
+		if (PhysX_Testobj == nullptr)
+			return 0;
+
+		PhysX_Testobj->Set_Postition(Position);
+		PhysX_Testobj->Set_Scale(Scale);
+
+	}
 
 	if (ImGui::Button("Static_Box"))
 	{

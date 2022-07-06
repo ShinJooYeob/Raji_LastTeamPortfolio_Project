@@ -50,6 +50,9 @@ HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 	if (FAILED(__super::Update_AfterSimulation()))
 		return E_FAIL;
 
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
+
 	return S_OK;
 }
 
@@ -60,7 +63,8 @@ HRESULT CCollider_PhysX_Dynamic ::Render()
 {
 	FAILED_CHECK(__super::Render());
 
-
+	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
+	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
 
 	return S_OK;
 }
@@ -82,38 +86,11 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 		return E_FAIL;
 
 	PxGeometry* gemo = nullptr;
-
 	mMainTransform = mPhysXDesc.mTrnasform;
-
 	_float3 scale = mMainTransform->Get_Scale();
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
-
-	switch (mPhysXDesc.eShapeType)
-	{
-	case Client::E_GEOMAT_BOX:
-		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-		break;
-	case Client::E_GEOMAT_SPEHE:
-		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-		break;
-	case Client::E_GEOMAT_CAPSULE:
-		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-		break;
-	case Client::E_GEOMAT_SHAPE:
-
-		break;
-	case Client::E_GEOMAT_VERTEX:
-		break;
-	case Client::E_GEOMAT_TRIANGLE:
-		break;
-	case Client::E_GEOMAT_END:
-		break;
-
-	default:
-		break;
-	}
+	gemo = Create_Geometry(desc.eShapeType, scale);
 	NULL_CHECK_BREAK(gemo);
 
 	PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
