@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Gadasura_Black.h"
 #include "Monster_Bullet_Universal.h"
+#include "Monster_Weapon_Universal.h"
 
 CMonster_Gadasura_Black::CMonster_Gadasura_Black(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -29,9 +30,6 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
-
-	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
-	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
 	SetUp_Info();

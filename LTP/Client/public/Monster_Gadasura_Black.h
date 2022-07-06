@@ -24,7 +24,6 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-private:
 	HRESULT				SetUp_Info();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);

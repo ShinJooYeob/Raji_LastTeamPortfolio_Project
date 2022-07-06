@@ -125,6 +125,7 @@ HRESULT CMonster_Weapon_Universal::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+
 	return S_OK;
 }
 
