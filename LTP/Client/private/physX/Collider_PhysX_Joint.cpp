@@ -30,6 +30,7 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
 
+	mOffsetVec = PxVec3(0, 2, 0);
 
 	return S_OK;
 }
@@ -47,6 +48,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 	if (bTestflag == 0)
 	{
 		mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
+		mPxMainTransform.p += mOffsetVec;
 		mMain_Actor->setGlobalPose(mPxMainTransform);
 	}
 	else if (bTestflag == 1)
@@ -266,10 +268,9 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 
 	mMainBone = mVecHier.front();
 	mPxMainTransform = PxTransform(MAT4X4TOPXMAT(mMainBone->Get_UpdatedMatrix()));
-	CreateChain(mVecActors, mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateNomalJoint);
-	mMain_Actor = mVecActors[0];
-
+	mMain_Actor = CreateChain(mVecActors, mPxMainTransform, mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateNomalJoint);
 	Safe_Delete(gemo);
+
 	return S_OK;
 }
 
@@ -310,8 +311,6 @@ HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans, _uint length)
 	PxGeometry* gemo = nullptr;
 	_float3 scale = _float3(2.0f);
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-
-
 
 	switch (mPhysXDesc.eShapeType)
 	{

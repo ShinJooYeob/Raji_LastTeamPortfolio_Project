@@ -60,6 +60,9 @@ protected:
 	vector<PxRigidDynamic*>		mVecActors;
 	vector<PxJoint*>			mVecJoints;
 
+	PxVec3						mOffsetVec;
+
+
 	_uint						bTestflag = 0;
 
 public:

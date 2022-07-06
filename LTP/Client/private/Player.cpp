@@ -3386,26 +3386,26 @@ void CPlayer::Set_HairPhysX()
 	NULL_CHECK_RETURN(m_pCollider_HairPhysX);
 
 	// skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
-	//m_pModel->Find_HierarchyNode("skd_hair01");
-	//m_pModel->Find_HierarchyNode("skd_hairEnd");
+	// m_pModel->Find_HierarchyNode("skd_hair01");
+	// m_pModel->Find_HierarchyNode("skd_hairEnd");
 
 
-	//CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
-	//string strs[8] =
-	//{
-	//	"skd_head","skd_hair01","skd_hair02","skd_hair03","skd_hair04","skd_hair05",
-	//	"skd_hair06","skd_hair07"//,"skd_hairEnd"
-	//};
+	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
+	string strs[8] =
+	{
+		"skd_hair01","skd_hair02","skd_hair03","skd_hair04","skd_hair05",
+		"skd_hair06","skd_hair07","skd_hairEnd"
+	};
 
-	//createJoint.mBoneNames = strs;
-	//createJoint.mLength = 8;
-	//createJoint.mAttachModel = m_pModel;
-	//createJoint.eShapeType = E_GEOMAT_SPEHE;
-	//createJoint.mGameObject = this;
-	//createJoint.mScale = _Sfloat3::One * 5;
-	//createJoint.mSeparation = 4;
+	createJoint.mBoneNames = strs;
+	createJoint.mLength = 8;
+	createJoint.mAttachModel = m_pModel;
+	createJoint.eShapeType = E_GEOMAT_SPEHE;
+	createJoint.mGameObject = this;
+	createJoint.mScale = _Sfloat3::One * 2;
+	createJoint.mSeparation = 2;
 
-//	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
+	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
 
 
 	// #TEST Dynamic
@@ -3419,12 +3419,12 @@ void CPlayer::Set_HairPhysX()
 
 	// #TEST Hair
 
-	CCollider_PhysX_Base::PHYSXDESC_JOINT_TEST createJoint;
-	createJoint.mTrnasform = m_pTransformCom;
-	createJoint.mLength = 4;
-	createJoint.mScale = _Sfloat3::One;
-	createJoint.mSeparation = 1.0f;
-	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
+//	CCollider_PhysX_Base::PHYSXDESC_JOINT_TEST createJoint;
+//	createJoint.mTrnasform = m_pTransformCom;
+//	createJoint.mLength = 4;
+//	createJoint.mScale = _Sfloat3::One;
+//	createJoint.mSeparation = 1.0f;
+//	static_cast<CCollider_PhysX_Joint*>(m_pCollider_HairPhysX)->Set_ColiiderDesc(createJoint);
 
 
 }
