@@ -268,6 +268,24 @@
     <Filter Include="01.GameObject\99.UI">
       <UniqueIdentifier>{7283bfda-be09-4504-a6b1-d4294a912b6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger">
+      <UniqueIdentifier>{71f5f8dc-979d-45d5-9eeb-1f58afd2001a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura">
+      <UniqueIdentifier>{75254317-6fd0-4e89-9a0a-2f878455bd10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Arms">
+      <UniqueIdentifier>{73106a42-9c18-4c08-8472-53214baf4c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackArms">
+      <UniqueIdentifier>{9d0776bb-89a3-40a6-911c-2b481696eda5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon">
+      <UniqueIdentifier>{e5ff7953-24a3-4823-b0ae-3eb2c10eb4cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Copy">
+      <UniqueIdentifier>{e18a2cec-09d0-4ce1-907d-e84055ff68f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -542,6 +560,24 @@
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rangda_Finger.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Arms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Arms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CopyMahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Copy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -782,6 +818,24 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda_Finger.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Arms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackArms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CopyMahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Copy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

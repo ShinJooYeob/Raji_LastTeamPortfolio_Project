@@ -1,19 +1,17 @@
 #include "stdafx.h"
-#include "..\public\Chiedtuan_Weapon.h"
+#include "..\public\Mahabalasura_Weapon.h"
 
-
-
-CChiedtuan_Weapon::CChiedtuan_Weapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMahabalasura_Weapon::CMahabalasura_Weapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonsterWeapon(pDevice, pDeviceContext)
 {
 }
 
-CChiedtuan_Weapon::CChiedtuan_Weapon(const CChiedtuan_Weapon & rhs)
+CMahabalasura_Weapon::CMahabalasura_Weapon(const CMahabalasura_Weapon & rhs)
 	: CMonsterWeapon(rhs)
 {
 }
 
-HRESULT CChiedtuan_Weapon::Initialize_Prototype(void * pArg)
+HRESULT CMahabalasura_Weapon::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -21,14 +19,14 @@ HRESULT CChiedtuan_Weapon::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CChiedtuan_Weapon::Initialize_Clone(void * pArg)
+HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
-	ZeroMemory(&m_WeaponDesc, sizeof(WEAPOPNDESC));
+	ZeroMemory(&m_eAttachedDesc, sizeof(ATTACHEDESC));
 	if (nullptr != pArg)
 	{
-		memcpy(&m_WeaponDesc, pArg, sizeof(WEAPOPNDESC));
+		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
 	}
 
 	FAILED_CHECK(SetUp_Components());
@@ -38,7 +36,7 @@ HRESULT CChiedtuan_Weapon::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CChiedtuan_Weapon::Update(_double fDeltaTime)
+_int CMahabalasura_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
@@ -46,24 +44,17 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 	return _int();
 }
 
-_int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
+_int CMahabalasura_Weapon::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 	Update_AttachMatrix();
 	//m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
-
-
-	_Matrix mat = m_fAttachedMatrix.XMatrix();
-
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
-
-
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 
@@ -81,7 +72,7 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 	return _int();
 }
 
-_int CChiedtuan_Weapon::Render()
+_int CMahabalasura_Weapon::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -111,38 +102,23 @@ _int CChiedtuan_Weapon::Render()
 	return _int();
 }
 
-_int CChiedtuan_Weapon::LateRender()
+_int CMahabalasura_Weapon::LateRender()
 {
 	return _int();
 }
 
-void CChiedtuan_Weapon::Update_AttachMatrix()
+void CMahabalasura_Weapon::Update_AttachMatrix()
 {
-	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
-HRESULT CChiedtuan_Weapon::SetUp_Components()
+HRESULT CMahabalasura_Weapon::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TR)
-	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
-	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TL)
-	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon2), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
-	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR)
-	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon3), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
-	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
-	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-	}
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_MahabalasurWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -158,9 +134,9 @@ HRESULT CChiedtuan_Weapon::SetUp_Components()
 	return S_OK;
 }
 
-CChiedtuan_Weapon * CChiedtuan_Weapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMahabalasura_Weapon * CMahabalasura_Weapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CChiedtuan_Weapon*	pInstance = new CChiedtuan_Weapon(pDevice, pDeviceContext);
+	CMahabalasura_Weapon*	pInstance = new CMahabalasura_Weapon(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -170,20 +146,19 @@ CChiedtuan_Weapon * CChiedtuan_Weapon::Create(ID3D11Device * pDevice, ID3D11Devi
 	return pInstance;
 }
 
-CGameObject * CChiedtuan_Weapon::Clone(void * pArg)
+CGameObject * CMahabalasura_Weapon::Clone(void * pArg)
 {
-	CChiedtuan_Weapon*	pInstance = new CChiedtuan_Weapon(*this);
+	CMahabalasura_Weapon*	pInstance = new CMahabalasura_Weapon(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created  Clone CChiedtuan_Weapon");
+		MSGBOX("Failed to Created  Clone CMahabalasura_Weapon");
 		Safe_Release(pInstance);
 	}
-
 	return pInstance;
 }
 
-void CChiedtuan_Weapon::Free()
+void CMahabalasura_Weapon::Free()
 {
 	__super::Free();
 

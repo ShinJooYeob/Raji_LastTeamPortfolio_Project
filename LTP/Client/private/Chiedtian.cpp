@@ -229,7 +229,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		_int iRandom = rand() & 2;
 		m_bIsAttack = true;
 		m_bISkill = true;
-		iRandom = 1;
+		//iRandom = 1;
 
 		switch (iRandom)
 		{
