@@ -181,6 +181,7 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(nomalTransform, *gemo);
 	NULL_CHECK_BREAK(mMain_Actor);
+	mPxRigStaticActor = static_cast<PxRigidStatic*>(mPxRigStaticActor);
 
 	PxShape* shapes[1];
 	const PxU32 numShapes = 1;
@@ -189,9 +190,12 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	NULL_CHECK_BREAK(mMainShape);
 
 	Safe_Delete(gemo);
-
+	
+	// Flag
 	mMain_Actor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
 	mMain_Actor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, false);
+	// DebugName
+	// mMain_Actor->setName("NONE");
 
 
 	return S_OK;

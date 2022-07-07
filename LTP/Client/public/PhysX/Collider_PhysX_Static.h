@@ -34,7 +34,7 @@ public:
 	HRESULT Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc);
 	HRESULT Set_ActorFlag(PxActorFlag::Enum e, bool b);
 	HRESULT	Set_eDISABLE_SIMULATION(bool b = true);
-
+	
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
@@ -45,6 +45,7 @@ public:
 protected:
 	E_STATICTYPE			mStaticID = E_STATIC_END;
 	PHYSXDESC_STATIC		mPhysXDesc;
+	PxRigidStatic*			mPxRigStaticActor;
 
 
 public:

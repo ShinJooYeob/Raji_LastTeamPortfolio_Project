@@ -132,6 +132,7 @@ protected:
 	PxRigidActor*					mMain_Actor= nullptr; 
 	// 충돌체 위치 / 연결된 위치 저장
 	PxMat44							mPxMainMatrix4x4;
+	PxVec3							mScale = PxVec3(1,1,1);
 	CTransform*						mMainTransform = nullptr;
 	PxShape*						mMainShape = nullptr;
 

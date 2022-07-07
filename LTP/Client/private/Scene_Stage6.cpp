@@ -22,7 +22,7 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
-	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+//	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 
 
 	// Assimp Test
