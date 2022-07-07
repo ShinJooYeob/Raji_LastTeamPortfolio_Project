@@ -155,16 +155,10 @@ void CTestObject_PhysX::Set_Scale(_float3 scale)
 
 }
 
-void CTestObject_PhysX::ColliderFuncEnter(CTestObject_PhysX * other)
+void CTestObject_PhysX::CollisionPhysX_Trigger(CGameObject * pTriggerObj, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
 {
-}
+	OutputDebugStringW(L"TriggerObjectOnOnON\n");
 
-void CTestObject_PhysX::ColliderFuncStay(CTestObject_PhysX * other)
-{
-}
-
-void CTestObject_PhysX::ColliderFuncExit(CTestObject_PhysX * other)
-{
 }
 
 HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)
@@ -283,7 +277,6 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 	// 모델과 충돌 컴포넌트는 후 지정
 	mCom_Model = nullptr;
 	mCom_ColliderBase = nullptr;
-	
 	CTransform::TRANSFORMDESC tDesc = {};
 
 	tDesc.fMovePerSec = 5;

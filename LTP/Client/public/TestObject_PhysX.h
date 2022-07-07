@@ -43,9 +43,7 @@ public:
 	void	Set_Postition(_float3 position);
 	void	Set_Scale(_float3 scale);
 
-	void	ColliderFuncEnter(CTestObject_PhysX* other);
-	void	ColliderFuncStay(CTestObject_PhysX* other);
-	void	ColliderFuncExit(CTestObject_PhysX* other);
+	virtual void CollisionPhysX_Trigger(CGameObject* pTriggerObj, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)override;
 
 
 

@@ -37,6 +37,7 @@ public:
 	typedef struct Tag_PhysXDesc_Static
 	{
 		CTransform*			mTrnasform = nullptr;
+		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_bool				bTrigger = false;
 
@@ -46,6 +47,7 @@ public:
 	typedef struct Tag_PhysXDesc_Dynamic
 	{
 		CTransform*			mTrnasform = nullptr;
+		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mVelocity = _float3::Zero();
 		_bool				bTrigger = false;
@@ -111,6 +113,8 @@ public:
 	HRESULT			Set_GeoMatScale(PxShape* shape, PxVec3 scale);
 	PxVec3			Get_Scale_MainTrans();
 	void			Set_Scale_MainTrans(_float4 f);
+	CGameObject*	Get_GameObject() { return mMainGameObject; };
+
 
 	HRESULT			CreateNewShape(PxGeometry* gemo);
 
@@ -134,6 +138,7 @@ protected:
 	PxMat44							mPxMainMatrix4x4;
 	PxVec3							mScale = PxVec3(1,1,1);
 	CTransform*						mMainTransform = nullptr;
+	CGameObject*					mMainGameObject = nullptr;
 	PxShape*						mMainShape = nullptr;
 
 protected:

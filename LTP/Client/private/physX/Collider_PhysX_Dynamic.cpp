@@ -38,8 +38,8 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
-	if (FAILED(__super::Update_BeforeSimulation()))
-		return E_FAIL;
+	FAILED_CHECK(__super::Update_BeforeSimulation());
+
 
 
 
@@ -50,8 +50,8 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 
 HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 {
-	if (FAILED(__super::Update_AfterSimulation()))
-		return E_FAIL;
+	FAILED_CHECK(__super::Update_AfterSimulation());
+
 
 	PxTransform trans =  mMain_Actor->getGlobalPose();
 	mPxMainMatrix4x4 = PxMat44(trans);
@@ -90,6 +90,8 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 
 	PxGeometry* gemo = nullptr;
 	mMainTransform = mPhysXDesc.mTrnasform;
+	mMainGameObject = mPhysXDesc.mGameObect;
+
 
 	_float3 scale = mMainTransform->Get_Scale();
 	mScale = FLOAT3TOPXVEC3(scale);

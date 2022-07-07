@@ -37,13 +37,16 @@ HRESULT CCollider_PhysX_Static::Initialize_Clone(void * pArg)
 HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 {
 	
+	FAILED_CHECK(__super::Update_BeforeSimulation());
+
+
 
 	if (E_STATIC_BUFFER == mStaticID)
 	{
 		if (mMainTransform == nullptr)
 			return E_FAIL;
-
 	}
+
 	else
 	{
 		if (mbTrigger)
@@ -59,7 +62,7 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 
 HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
-	
+	FAILED_CHECK(__super::Update_AfterSimulation());
 
 
 
@@ -167,6 +170,8 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	
 	
 	mMainTransform = mPhysXDesc.mTrnasform;
+	mMainGameObject = mPhysXDesc.mGameObect;
+
 	_float3 scale = mMainTransform->Get_Scale();
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
 
@@ -215,6 +220,7 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc)
 	mStaticID = CCollider_PhysX_Static::E_STATIC_BUFFER;
 	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_STATIC));
 	mMainTransform = mPhysXDesc.mTrnasform;
+	mMainGameObject = mPhysXDesc.mGameObect;
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	return S_OK;
 

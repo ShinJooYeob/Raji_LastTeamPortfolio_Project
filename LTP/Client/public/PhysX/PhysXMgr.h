@@ -2,6 +2,10 @@
 
 #include "Base.h"
 
+BEGIN(Client)
+class CCollider_PhysX_Base;
+END
+
 BEGIN(Engine)
 
 
@@ -11,16 +15,21 @@ typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0,
 
 enum E_SHAPE_TYPE
 {
+	// 기본 도형
 	SHAPE_NONE,
 	// 기본 트리거
 	SHAPE_BASE_TRIGGER,
-	// 필터 트리거
-	SHAPE_FITTER_TRIGGER,
-	// 콜백 트리거
-	SHAPE_CALLBACK_TRIGGER,
 	SHAPE_END,
 };
 
+//enum E_PSHYS_COL_TYPE
+//{
+//	COLLISION_NONE,
+//	//	COLLISION_STATIC,
+//	//	COLLISION_DYNAMIC,
+//	COLLISION_END,
+//};
+//
 
 class CPhysXMgr final : public CBase
 {
@@ -53,14 +62,15 @@ public: // Create
 	PxRigidStatic*			CreateStatic_Base_ShapeActor(const PxTransform& t, PxShape& shape);
 
 	// Shape
-	PxShape* CreateDemoShape(E_SHAPE_TYPE type,const PxGeometry& geom, bool isExclusive = false);
+	PxShape*				CreateDemoShape(E_SHAPE_TYPE type,const PxGeometry& geom, bool isExclusive = false);
 
 	// Plane
 	HRESULT					Create_Plane();
 
 public: // Message
-	HRESULT Send_Message_Trigger(PxTriggerPair* msg);
-	HRESULT Send_Message_Contect(PxContactPairHeader* msg);
+	HRESULT Add_TriggerMsg(PxTriggerPair* msg);
+	HRESULT Add_ContactMsg(PxContactPairHeader* msg);
+	HRESULT Add_CollisionObject(CCollider_PhysX_Base* ComPhysX);
 
 
 	// ANY
@@ -78,8 +88,11 @@ private:
 	
 
 private:
-	HRESULT Initialize_PhysXLib();
-	
+	HRESULT				Initialize_PhysXLib();
+	HRESULT				Call_CollisionFunc_Trigger();
+	HRESULT				Call_CollisionFunc_Contect();
+	CGameObject*		Find_GameObject(PxRigidActor* searchActor);
+	HRESULT				ReleasePhysXCom();
 
 
 private:
@@ -103,7 +116,9 @@ private:
 	PxPvd*						mPvd = nullptr;
 
 	// MessageContainer
-	list<PxTriggerPair*>		mListPxTriggerPair;
+	list<PxTriggerPair*>	mListPxTriggerPair;
+	list<PxContactPairHeader*>	mListContactPairHeader;
+	list<CCollider_PhysX_Base*>	mListPshysXComColiders;
 
 
 public:
@@ -125,6 +140,7 @@ public:
 public:
 	HRESULT	CreateDemoMap();	
 	HRESULT	CreateDemoMap_StaticBox(PxTransform px,PxVec3 scale, _bool trigger = false);
+//	HRESULT Add_TriggerMsg(const PxTriggerPair& msg);
 
 public:
 	virtual void Free() override;

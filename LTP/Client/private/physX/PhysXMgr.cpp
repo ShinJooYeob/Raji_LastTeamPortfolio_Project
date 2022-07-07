@@ -35,7 +35,7 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	PX_UNUSED(constantBlockSize);
 	PX_UNUSED(constantBlock);
 
-	// all initial and persisting reports for everything, with per-point data
+	// 감지할 충돌 세팅
 	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
@@ -88,6 +88,10 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 		// 결과 업데이트
 		mScene->fetchResults(true);
 	}
+	// 충돌이 끝나면 메세지를 받는다.
+	// 현재 컴포넌트로 검사하고 맞는 명령을 실행.
+	Call_CollisionFunc_Trigger();
+	ReleasePhysXCom();
 
 	return S_OK;
 }
@@ -306,8 +310,6 @@ HRESULT CPhysXMgr::Create_Cook()
 		hfGeom, *mMaterial);
 
 	mScene->addActor(*aHieightFieldActor);
-
-
 	return S_OK;
 }
 
@@ -319,18 +321,33 @@ HRESULT CPhysXMgr::Create_Plane()
 
 }
 
-HRESULT CPhysXMgr::Send_Message_Trigger(PxTriggerPair* msg)
+HRESULT CPhysXMgr::Add_TriggerMsg(PxTriggerPair* msg)
 {
 	// 충돌체 검사해줌
-
+	mListPxTriggerPair.push_back(msg);
 
 	return S_OK;
 }
 
-HRESULT CPhysXMgr::Send_Message_Contect(PxContactPairHeader* msg)
+HRESULT CPhysXMgr::Add_ContactMsg(PxContactPairHeader* msg)
 {
+	// 충돌체 검사해줌
+	mListContactPairHeader.push_back(msg);
 	return S_OK;
 }
+
+HRESULT CPhysXMgr::Add_CollisionObject(CCollider_PhysX_Base * ComPhysX)
+{
+	// 충돌체 컴포넌트에서 추가해준다.
+	if (ComPhysX)
+	{
+		mListPshysXComColiders.push_back(ComPhysX);
+		Safe_AddRef(ComPhysX);
+	}
+
+	return S_OK;
+}
+
 
 HRESULT CPhysXMgr::Render_Actor(const PxRigidActor* actor )
 {
@@ -509,6 +526,62 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	return S_OK;
 }
 
+HRESULT CPhysXMgr::Call_CollisionFunc_Trigger()
+{
+	if (mListPxTriggerPair.empty())
+		return S_OK;
+
+	PxTriggerPair* triggerdata = mListPxTriggerPair.front();
+	mListPxTriggerPair.pop_front();
+
+	COLLIDERTYPE_PhysXID type = COLLIDER_PHYSX_END;
+
+	if (triggerdata->status &PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		type = COLLIDER_PHYSX_TRIGGERIN;
+
+	else if (triggerdata->status &PxPairFlag::eNOTIFY_TOUCH_LOST)
+		type = COLLIDER_PHYSX_TRIGGEROUT;
+
+	if (type == COLLIDER_PHYSX_END)
+		return S_OK;
+
+	CGameObject* actorObject = Find_GameObject(triggerdata->otherActor);
+	CGameObject* triggerObject = Find_GameObject(triggerdata->triggerActor);
+	Safe_Delete(triggerdata);
+
+	if (actorObject == nullptr || triggerObject == nullptr)
+		return E_FAIL;
+
+	actorObject->CollisionPhysX_Trigger(triggerObject, type);
+	
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::Call_CollisionFunc_Contect()
+{
+	return S_OK;
+}
+
+CGameObject * CPhysXMgr::Find_GameObject(PxRigidActor * searchActor)
+{
+	for (auto& obj: mListPshysXComColiders)
+	{
+		if (searchActor == obj->Get_ColliderActor())
+			return obj->Get_GameObject();
+	}
+
+	return nullptr;
+}
+
+HRESULT CPhysXMgr::ReleasePhysXCom()
+{
+	for (auto& com : mListPshysXComColiders)
+		Safe_Release(com);
+	mListPshysXComColiders.clear();
+	return S_OK;
+}
+
 
 HRESULT CPhysXMgr::CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent)
 {
@@ -624,7 +697,6 @@ HRESULT CPhysXMgr::CreateDemoMap()
 
 HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool triger)
 {
-
 	_uint nowScene = g_pGameInstance->Get_TargetSceneNum();
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
@@ -642,6 +714,7 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool t
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
 	createStatic.bTrigger = triger;
 	createStatic.eShapeType = E_GEOMAT_BOX;
+	createStatic.mGameObect = obj;
 	createStatic.mTrnasform = objTrans;
 	NULL_CHECK_BREAK(createStatic.mTrnasform);
 	colStatic->Set_ColiiderDesc(createStatic);
@@ -653,6 +726,8 @@ void CPhysXMgr::Free()
 	Clean_Phyics();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
+
+	ReleasePhysXCom();
 }
 
 
@@ -684,7 +759,16 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 	// 접촉 이벤트 발생 시 호출
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
-	OutputDebugStringW(L"onContact\n");
+//	OutputDebugStringW(L"onContact\n");
+
+	//while (count--)
+	//{
+	//	const PxTriggerPair& current = *pairs++;
+	//	// #TODO: MSG
+	//	// if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+	//	OutputDebugStringW(L"Add Trigger volume\n");
+	//	GetSingle(CPhysXMgr)->Send_Message_Trigger(pairs);
+	//}
 
 	
 }
@@ -697,11 +781,24 @@ void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	// PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
 	while (count--)		
 	{
-		const PxTriggerPair& current = *pairs++;
-		// #TODO: MSG
-		// if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-		OutputDebugStringW(L"Add Trigger volume\n");
-		GetSingle(CPhysXMgr)->Send_Message_Trigger(pairs);
+		PxTriggerPair current = *pairs++;
+		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			OutputDebugStringW(L"Add Trigger 1\n");
+			PxTriggerPair* Currentt = NEW PxTriggerPair;
+
+			memcpy(Currentt,&current,sizeof(PxTriggerPair));
+			GetSingle(CPhysXMgr)->Add_TriggerMsg(Currentt);
+
+		}
+		if (current.status & PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			OutputDebugStringW(L"Add Trigger 2\n");
+
+			GetSingle(CPhysXMgr)->Add_TriggerMsg(pairs);
+
+		}
+
 
 	}
 }

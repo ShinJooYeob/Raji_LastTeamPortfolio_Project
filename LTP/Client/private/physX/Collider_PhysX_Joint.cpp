@@ -38,6 +38,8 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
+	FAILED_CHECK(__super::Update_BeforeSimulation());
+
 
 	//if (mbUpdate_PhysX == false)
 	//	return S_OK;
@@ -79,6 +81,9 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 
 HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 {
+	FAILED_CHECK(__super::Update_AfterSimulation());
+
+
 	// #TEST Bone Test Code
 
 	//CHierarchyNode* hier1 = mVecHier[0];

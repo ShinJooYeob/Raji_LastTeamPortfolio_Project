@@ -1240,6 +1240,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		createStatic.bTrigger = false;
 		createStatic.eShapeType = E_GEOMAT_BOX;
 		createStatic.mTrnasform = objTrans;
+		createStatic.mGameObect = PhysX_Testobj;
 		// createDesc.mVelocity;
 		colCom->Set_ColiiderBufferDesc(createStatic);
 	}
@@ -1274,6 +1275,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createStatic.bTrigger = false;
 			createStatic.eShapeType = E_GEOMAT_BOX;
 			createStatic.mTrnasform = objTrans;
+			createStatic.mGameObect = obj;
 			NULL_CHECK_BREAK(createStatic.mTrnasform);
 			colStatic->Set_ColiiderDesc(createStatic);
 
@@ -1299,6 +1301,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createStatic.bTrigger = false;
 			createStatic.eShapeType = E_GEOMAT_SPEHE;
 			createStatic.mTrnasform = objTrans;
+			createStatic.mGameObect = obj;
 			NULL_CHECK_BREAK(createStatic.mTrnasform);
 			colStatic->Set_ColiiderDesc(createStatic);
 
@@ -1323,6 +1326,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createStatic.bTrigger = false;
 			createStatic.eShapeType = E_GEOMAT_CAPSULE;
 			createStatic.mTrnasform = objTrans;
+			createStatic.mGameObect = obj;
 			NULL_CHECK_BREAK(createStatic.mTrnasform);
 			colStatic->Set_ColiiderDesc(createStatic);
 		}
@@ -1358,14 +1362,16 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createDynamic.bTrigger = false;
 			createDynamic.eShapeType = E_GEOMAT_BOX;
 			createDynamic.mTrnasform = objTrans;
+			createDynamic.mGameObect = obj;
 			NULL_CHECK_BREAK(createDynamic.mTrnasform);
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
 		}
+
 		ImGui::SameLine();
+
 		if (ImGui::Button("Dynamic_Sphere"))
 		{
-
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
 			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
 			CTestObject_PhysX* obj =
@@ -1383,6 +1389,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createDynamic.bTrigger = false;
 			createDynamic.eShapeType = E_GEOMAT_SPEHE;
 			createDynamic.mTrnasform = objTrans;
+			createDynamic.mGameObect = obj;
 			NULL_CHECK_BREAK(createDynamic.mTrnasform);
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
