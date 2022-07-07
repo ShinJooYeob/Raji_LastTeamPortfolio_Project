@@ -1391,7 +1391,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	}
 
 
-	IMGUITREE("PHYSX_DYMAMIC")
+	IMGUITREE("PHYSX_DYMAMIC_SET")
 	{
 
 

@@ -16,6 +16,15 @@ public:
 		E_STATIC_END,
 	};
 
+	// 트리거 적용 타입
+	enum TriggerImpl
+	{
+		REAL_TRIGGERS,	// 내장 트리거
+		FILTER_SHADER,	// 핉터 트리거
+		FILTER_CALLBACK,// 콜백 트리거
+	};
+
+
 private:
 	explicit CCollider_PhysX_Static(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	explicit CCollider_PhysX_Static(const CCollider_PhysX_Static& rhs);

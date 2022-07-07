@@ -232,6 +232,40 @@ HRESULT CCollider_PhysX_Static::Set_ActorFlag(PxActorFlag::Enum e, bool b)
 	return S_OK;
 }
 
+
+//bool isTrigger(const PxFilterData& data)
+//{
+//	if (data.word0 != 0xffffffff)
+//		return false;
+//	if (data.word1 != 0xffffffff)
+//		return false;
+//	if (data.word2 != 0xffffffff)
+//		return false;
+//	if (data.word3 != 0xffffffff)
+//		return false;
+//	return true;
+//}
+//
+//bool isTriggerShape(PxShape* shape)
+//{
+//	const TriggerImpl impl = getImpl();
+//
+//	// Detects native built-in triggers.
+//	if (impl == REAL_TRIGGERS && (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
+//		return true;
+//
+//	// Detects our emulated triggers using the simulation filter data. See createTriggerShape() function.
+//	if (impl == FILTER_SHADER && ::isTrigger(shape->getSimulationFilterData()))
+//		return true;
+//
+//	// Detects our emulated triggers using the simulation filter callback. See createTriggerShape() function.
+//	if (impl == FILTER_CALLBACK && shape->userData)
+//		return true;
+//
+//	return false;
+//}
+
+
 HRESULT CCollider_PhysX_Static::Set_eDISABLE_SIMULATION(bool b)
 {
 	mMain_Actor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, b);

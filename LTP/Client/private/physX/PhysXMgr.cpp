@@ -24,7 +24,7 @@ _float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
-static CDemoCallback gDemoCallback;
+static CContactReportCallback gContactReportCallback; // 충돌 콜백 Scene에 연결
 
 
 CPhysXMgr::CPhysXMgr()
@@ -139,6 +139,16 @@ void CPhysXMgr::KEYTEST()
 	}
 
 
+}
+
+HRESULT CPhysXMgr::ResetScene()
+{
+	if (mScene)
+	{
+		PX_RELEASE(mScene);
+		FAILED_CHECK(Initialize_PhysXLib());
+	}
+	
 }
 
 HRESULT CPhysXMgr::CreateBase_Plane(PxVec3 point)
@@ -398,7 +408,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mToleranceScale.length = 100;
 	mToleranceScale.speed = 981;
 
-	
+	// 트리거 타입
 
 	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, 
 		mAllocCallback,
@@ -435,12 +445,13 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0, -9.81f, 0.0f);
-	sceneDesc.simulationEventCallback = &gDemoCallback;
+	sceneDesc.simulationEventCallback = &gContactReportCallback;
+	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+
 
 #ifdef  _DEBUG
 	mDisPatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = mDisPatcher;
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 #endif
 
 	mScene = mPhysics->createScene(sceneDesc);
@@ -485,6 +496,28 @@ HRESULT CPhysXMgr::CreateSphere_Actor(PxRigidActor * actor, PxMaterial * Materia
 	mScene->addActor(*actor);
 	shape->release();
 	return S_OK;
+}
+
+PxShape * CPhysXMgr::CreateDemoShape(E_SHAPE_TYPE type, const PxGeometry & geom, bool isExclusive)
+{
+
+	PxShape* shape = nullptr;
+	if (type == SHAPE_NONE)
+	{
+		const PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE;
+		shape = mPhysics->createShape(geom, *mMaterial, isExclusive, shapeFlags);
+		return shape;
+	}
+	else if (type == SHAPE_BASE_TRIGGER)
+	{
+		const PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eTRIGGER_SHAPE;
+		shape = mPhysics->createShape(geom, *mMaterial, isExclusive, shapeFlags);
+		return shape;
+
+	}
+	
+
+
 }
 
 PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
@@ -578,65 +611,91 @@ void CPhysXMgr::Free()
 	Safe_Release(m_pDeviceContext);
 }
 
-void CDemoCallback::onConstraintBreak(PxConstraintInfo * constraints, PxU32 count)
+
+void CContactReportCallback::onConstraintBreak(PxConstraintInfo* /*constraints*/, PxU32 /*count*/)
 {
-	OutputDebugStringW(L"onConstraintBreak_Demo");
+	// PxConstraintInfo 의 제약 조건이 꺠졌을때 호출
+	OutputDebugStringW(L"onConstraintBreak");
+	OutputDebugStringW(L"\n");
+
+}
+
+void CContactReportCallback::onWake(PxActor** /*actors*/, PxU32 /*count*/)
+{
+	// 꺠어난 엑터 호출 // eSEND_SLEEP_NOTIFIES 설정시 
+	// A->wakeUp()
+	OutputDebugStringW(L"onWake");
 	OutputDebugStringW(L"\n");
 }
 
-void CDemoCallback::onWake(PxActor ** actors, PxU32 count)
+void CContactReportCallback::onSleep(PxActor** /*actors*/, PxU32 /*count*/)
 {
-	OutputDebugStringW(L"onWake_Demo");
+	// A->putToSleep() 시에 호출
+	OutputDebugStringW(L"onSleep");
 	OutputDebugStringW(L"\n");
 }
 
-void CDemoCallback::onSleep(PxActor ** actors, PxU32 count)
+void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/, const PxContactPair* pairs, PxU32 count)
 {
-	OutputDebugStringW(L"onSleep_Demo");
+	// 접촉 이벤트 발생 시 호출
+	// pair로 호출 한쌍의 액터에 대한 호출된다.
+	// #PxSimulationFilterCallback 참조
+
+	OutputDebugStringW(L"onContact");
+	OutputDebugStringW(L"\n");
+
+	while (count--)
+	{
+		
+		const PxContactPair& current = *pairs++;
+		// 트리거 이벤트 체크해서 들어오는지 나가는지 확인.
+		// #TODO : PxPairFlag 확인해서 강체 처리 확인좀
+		if (current.events & (PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_CCD))
+			printf("Shape is entering trigger volume\n");
+		if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+			printf("Shape is leaving trigger volume\n");
+
+		//if (isTriggerShape(current.shapes[0]) && isTriggerShape(current.shapes[1]))
+		//	printf("Trigger-trigger overlap detected\n");
+	}
+}
+
+void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
+{
+	OutputDebugStringW(L"onTrigger");
+	OutputDebugStringW(L"\n");
+
+	// PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
+	while (count--)
+	{
+		const PxTriggerPair& current = *pairs++;
+		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			printf("Shape is entering trigger volume\n");
+		if (current.status & PxPairFlag::eNOTIFY_TOUCH_LOST)
+			printf("Shape is leaving trigger volume\n");
+	}
+}
+
+void CContactReportCallback::onAdvance(const PxRigidBody*const*, const PxTransform*, const PxU32)
+{
+	// flush 일때만 호출
+	OutputDebugStringW(L"onAdvance");
 	OutputDebugStringW(L"\n");
 }
 
-void CDemoCallback::onContact(const PxContactPairHeader & pairHeader, const PxContactPair * pairs, PxU32 nbPairs)
+static	PxFilterFlags triggersUsingFilterCallback(PxFilterObjectAttributes /*attributes0*/, PxFilterData /*filterData0*/,
+	PxFilterObjectAttributes /*attributes1*/, PxFilterData /*filterData1*/,
+	PxPairFlags& pairFlags, const void* /*constantBlock*/, PxU32 /*constantBlockSize*/)
 {
-	OutputDebugStringW(L"onContact_Demo");
-	OutputDebugStringW(L"\n");
+	//	printf("contactReportFilterShader\n");
 
-	//for (PxU32 i = 0; i < nbPairs; i++)
-	//{
-	//	const PxContactPair& cp = pairs[i];
+	PX_ASSERT(getImpl() == FILTER_CALLBACK);
 
-	//	if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-	//	{
-	//		if ((pairHeader.actors[0] == mSubmarineActor) || (pairHeader.actors[1] == mSubmarineActor))
-	//		{
-	//			PxActor* otherActor = (mSubmarineActor == pairHeader.actors[0]) ? pairHeader.actors[1] : pairHeader.actors[0];
-	//			Seamine* mine = reinterpret_cast<Seamine*>(otherActor->userData);
-	//			// insert only once
-	//			if (std::find(mMinesToExplode.begin(), mMinesToExplode.end(), mine) == mMinesToExplode.end())
-	//				mMinesToExplode.push_back(mine);
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
-	//			break;
-	//		}
-	//	}
-	//}
+	//if (usesCCD())
+	//	pairFlags |= PxPairFlag::eDETECT_CCD_CONTACT | PxPairFlag::eNOTIFY_TOUCH_CCD;
 
+	return PxFilterFlag::eCALLBACK;
 }
 
-void CDemoCallback::onTrigger(PxTriggerPair * pairs, PxU32 count)
-{
-	OutputDebugStringW(L"onTrigger_Demo");
-	OutputDebugStringW(L"\n");
-}
-
-void CDemoCallback::onAdvance(const PxRigidBody * const * bodyBuffer, const PxTransform * poseBuffer, const PxU32 count)
-{
-	OutputDebugStringW(L"onAdvance_Demo");
-	OutputDebugStringW(L"\n");
-}
-
-void CDemoConectCallback::onContactModify(PxContactModifyPair * const pairs, PxU32 count)
-{
-	// #TEST Contact Callback
-
-
-}
