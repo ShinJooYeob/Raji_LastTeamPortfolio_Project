@@ -209,6 +209,19 @@ PxVec3 CCollider_PhysX_Base::GetScale(PxMat44 mat)
 	return PxVec3(x,y,z);
 }
 
+PxTransform CCollider_PhysX_Base::GetPxTransform(PxMat44 m)
+{
+	// 스케일값을 제외하고 반환
+	PxVec3 p = PxVec3(m.column3.x, m.column3.y, m.column3.z);
+
+	PxVec3 column0 = PxVec3(m.column0.x, m.column0.y, m.column0.z);
+	PxVec3 column1 = PxVec3(m.column1.x, m.column1.y, m.column1.z);
+	PxVec3 column2 = PxVec3(m.column2.x, m.column2.y, m.column2.z);
+
+	PxQuat q = PxQuat(PxMat33(column0.getNormalized(), column1.getNormalized(), column2.getNormalized()));
+	return PxTransform(p,q);
+}
+
 PxVec3 CCollider_PhysX_Base::Get_Scale_MainTrans()
 {
 	return PxVec3(mPxMainMatrix4x4.column0.normalize(), 

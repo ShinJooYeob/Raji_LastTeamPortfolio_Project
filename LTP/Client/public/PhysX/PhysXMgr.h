@@ -38,7 +38,7 @@ public:
 	// Actor Test
 	PxRigidDynamic*			CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
 
-	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
+	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, PxReal density, const PxVec3& velocity = PxVec3(0));
 	PxRigidStatic*			CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
 
 
@@ -103,7 +103,9 @@ public:
 
 
 public:
-	HRESULT	CreateDemoMap();
+	HRESULT	CreateDemoMap();	
+	HRESULT	CreateDemoMap_StaticBox(PxTransform px,PxVec3 scale);
+
 public:
 	virtual void Free() override;
 };

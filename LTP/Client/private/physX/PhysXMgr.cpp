@@ -2,6 +2,10 @@
 #include "..\Public\PhysX\PhysXMgr.h"
 #include "..\Public\Player.h"
 #include "..\Public\Camera_Main.h"
+#include "..\TestObject_PhysX.h"
+#include "..\PhysX\Collider_PhysX_Static.h"
+
+
 
 #define							PVD_HOST "127.0.0.1"
 #define							MAX_NUM_ACTOR_SHAPES 128
@@ -36,7 +40,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDeviceContext);
 
 	FAILED_CHECK(Initialize_PhysXLib());
-	CreateBase_Plane(PxVec3(0, -10, 0));
+//	CreateBase_Plane(PxVec3(0, -10, 0));
 
 	return S_OK;
 
@@ -494,11 +498,10 @@ PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry&
 	return dynamic;
 }
 
-PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,  const PxVec3 & velocity)
+PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,PxReal density,  const PxVec3 & velocity)
 {
-	PxTransform testrans = PxTransform(PxVec3(0,0,0));
 
-	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, testrans, geometry, *gMaterial1, 1.f);
+	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, t, geometry, *gMaterial1,density);
 	NULL_CHECK_BREAK(actor);
 	actor->setAngularDamping(0);
 	actor->setLinearVelocity(velocity);
@@ -519,8 +522,48 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 HRESULT CPhysXMgr::CreateDemoMap()
 {
 	// 충돌 테스트용 데모 맵 생성
+	PxTransform pxTrnas;
+	PxVec3		pxScale = PxVec3(1,1,1);
 
+	pxTrnas.p = PxVec3(0, -1, 0);
+	pxScale = PxVec3(10, 1, 10);
+	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+	
+	pxTrnas.p = PxVec3(-4, 0, 0);
+	pxScale = PxVec3(2, 2, 2);
 
+	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+	
+	pxTrnas.p = PxVec3(3, 0, 0);
+	pxScale = PxVec3(1, 3, 1);
+	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+//	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+//	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+//
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale)
+{
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+	(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
+	CTestObject_PhysX* obj =
+		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+	obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+	obj->Set_ColSetID(E_PHYTYPE_STATIC);
+
+	CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+	CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+	objTrans->Set_MatrixState(CTransform::STATE_POS, PXVEC3TOFLOAT3(px.p));
+	objTrans->Scaled_All(PXVEC3TOFLOAT3(scale));
+
+	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
+	createStatic.bTrigger = false;
+	createStatic.eShapeType = E_GEOMAT_BOX;
+	createStatic.mTrnasform = objTrans;
+	NULL_CHECK_BREAK(createStatic.mTrnasform);
+	colStatic->Set_ColiiderDesc(createStatic);
 
 
 	return S_OK;

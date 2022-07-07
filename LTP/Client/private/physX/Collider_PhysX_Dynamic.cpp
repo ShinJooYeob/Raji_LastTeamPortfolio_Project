@@ -42,6 +42,7 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 		return E_FAIL;
 
 
+
 	return S_OK;
 }
 
@@ -50,8 +51,9 @@ HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 	if (FAILED(__super::Update_AfterSimulation()))
 		return E_FAIL;
 
-	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-	mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
+	PxTransform trans =  mMain_Actor->getGlobalPose();
+	mMainTransform->Set_MatrixState(CTransform::STATE_POS, PXVEC3TOFLOAT3(trans.p));
+//	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 
 	return S_OK;
 }
@@ -75,31 +77,36 @@ HRESULT CCollider_PhysX_Dynamic ::Render()
 HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 {
 	// 충돌 모델 초기화
-
 	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_DYNAMIC));
 
-
 	// 위 정보로 콜라이더 초기화
-
 	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
 	if (mMain_Actor)
 		return E_FAIL;
 
+
 	PxGeometry* gemo = nullptr;
 	mMainTransform = mPhysXDesc.mTrnasform;
+
 	_float3 scale = mMainTransform->Get_Scale();
-	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+
 	gemo = Create_Geometry(desc.eShapeType, scale);
 	NULL_CHECK_BREAK(gemo);
 
-	PxTransform pxtrans = PxTransform(FLOAT3TOPXVEC3(pos));
-	_Sfloat4x4 float4x4 = mMainTransform->Get_WorldFloat4x4();
-	_Squternion q = _Squternion::CreateFromRotationMatrix(float4x4);
-	pxtrans.q = *(PxQuat*)&q;
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(pxtrans, *gemo, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
+	// 초기휘치 오류
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
+
+	PxReal density = 5.f;
+
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
 	NULL_CHECK_BREAK(mMain_Actor);
+
 	Safe_Delete(gemo);
+	mMain_Actor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
+	mMain_Actor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
+	
 	return S_OK;
 }
 

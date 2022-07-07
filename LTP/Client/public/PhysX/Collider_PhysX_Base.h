@@ -115,7 +115,8 @@ public:
 	HRESULT			CreateNewShape(PxGeometry* gemo);
 
 	PxVec3			GetScale(PxMat44 mat);
-
+	PxTransform		GetPxTransform(PxMat44 mat);
+	
 
 
 

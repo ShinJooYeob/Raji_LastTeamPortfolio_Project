@@ -52,8 +52,6 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 			return E_FAIL;
 
 
-		//mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-		//mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
 	}
 
 	return S_OK;
@@ -75,7 +73,7 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 		if (mbTrigger)
 			return S_OK;
 
-		// #TODO 모양 새로 만들어야함
+		// 최초 생성 후 고정
 		//PxVec3 newScale = Get_Scale_MainTrans();
 		////	Set_GeoMatScale(mMainShape, newScale);
 
@@ -83,14 +81,7 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 		//Create_Geometry(*gemo);
 
 		//mMain_Actor->setGlobalPose()
-	}
-	
-
-
-	
-
-
-	
+	}	
 
 //	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
 //	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
@@ -179,14 +170,16 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	mMainTransform = mPhysXDesc.mTrnasform;
 
 	_float3 scale = mMainTransform->Get_Scale();
-	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
+//	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
 
 	gemo = Create_Geometry(desc.eShapeType, scale);
 	NULL_CHECK_BREAK(gemo);
 
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(PxTransform(mPxMainMatrix4x4), *gemo);
+	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
+
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(nomalTransform, *gemo);
 	NULL_CHECK_BREAK(mMain_Actor);
 
 	PxShape* shapes[1];

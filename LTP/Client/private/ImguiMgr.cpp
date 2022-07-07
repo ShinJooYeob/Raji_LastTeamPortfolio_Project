@@ -1260,20 +1260,18 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 		obj->Set_ColSetID(E_PHYTYPE_STATIC);
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-
 		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 		objTrans->Scaled_All(Scale);
-
 
 		createStatic.bTrigger = false;
 		createStatic.eShapeType = E_GEOMAT_BOX;
 		createStatic.mTrnasform = objTrans;
 		NULL_CHECK_BREAK(createStatic.mTrnasform);
-		// createDesc.mVelocity;
 		colStatic->Set_ColiiderDesc(createStatic);
 
 	}
@@ -1286,6 +1284,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 		obj->Set_ColSetID(E_PHYTYPE_STATIC);
 		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
@@ -1298,7 +1297,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		createStatic.eShapeType = E_GEOMAT_SPEHE;
 		createStatic.mTrnasform = objTrans;
 		NULL_CHECK_BREAK(createStatic.mTrnasform);
-		// createDesc.mVelocity;
 		colStatic->Set_ColiiderDesc(createStatic);
 
 	}
@@ -1310,7 +1308,9 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 		obj->Set_ColSetID(E_PHYTYPE_STATIC);
+
 		CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
@@ -1321,7 +1321,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		createStatic.eShapeType = E_GEOMAT_CAPSULE;
 		createStatic.mTrnasform = objTrans;
 		NULL_CHECK_BREAK(createStatic.mTrnasform);
-		// createDesc.mVelocity;
 		colStatic->Set_ColiiderDesc(createStatic);
 	}
 
@@ -1337,6 +1336,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+
+		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
 		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
@@ -1360,6 +1361,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Dynamic_PhysX)));
 		CTestObject_PhysX* obj =
 			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
+
+		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
 		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
