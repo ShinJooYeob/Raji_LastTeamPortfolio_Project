@@ -43,6 +43,11 @@ public:
 	void	Set_Postition(_float3 position);
 	void	Set_Scale(_float3 scale);
 
+	void	ColliderFuncEnter(CTestObject_PhysX* other);
+	void	ColliderFuncStay(CTestObject_PhysX* other);
+	void	ColliderFuncExit(CTestObject_PhysX* other);
+
+
 
 
 	// 피직스 테스트시만 사용

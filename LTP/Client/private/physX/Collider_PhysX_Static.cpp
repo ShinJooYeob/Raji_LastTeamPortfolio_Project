@@ -165,21 +165,29 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 		return E_FAIL;
 
 	
-	PxGeometry* gemo = nullptr;
 
 	mMainTransform = mPhysXDesc.mTrnasform;
-
 	_float3 scale = mMainTransform->Get_Scale();
-//	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
 
+	// 지오메트리 생성
+	PxGeometry* gemo = nullptr;
 	gemo = Create_Geometry(desc.eShapeType, scale);
 	NULL_CHECK_BREAK(gemo);
 
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
 
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_BaseActor(nomalTransform, *gemo);
+	// 모양 생성
+	PxShape* shape = nullptr;
+	if (desc.bTrigger)
+		shape = GetSingle(CPhysXMgr)->CreateDemoShape(SHAPE_BASE_TRIGGER, *gemo, false);
+	else
+		shape = GetSingle(CPhysXMgr)->CreateDemoShape(SHAPE_NONE,*gemo,false);
+	NULL_CHECK_BREAK(shape);
+
+	// 엑터 생성
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateStatic_Base_ShapeActor(nomalTransform, *shape);
 	NULL_CHECK_BREAK(mMain_Actor);
 	mPxRigStaticActor = static_cast<PxRigidStatic*>(mPxRigStaticActor);
 

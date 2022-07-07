@@ -303,6 +303,19 @@ HRESULT CPhysXMgr::Create_Plane()
 
 }
 
+HRESULT CPhysXMgr::Send_Message_Trigger(PxTriggerPair* msg)
+{
+	// 충돌체 검사해줌
+
+
+	return S_OK;
+}
+
+HRESULT CPhysXMgr::Send_Message_Contect(PxContactPairHeader* msg)
+{
+	return S_OK;
+}
+
 HRESULT CPhysXMgr::Render_Actor(const PxRigidActor* actor )
 {
 	bool sleeping = actor->is<PxRigidDynamic>() ? actor->is<PxRigidDynamic>()->isSleeping() : false;
@@ -500,7 +513,6 @@ HRESULT CPhysXMgr::CreateSphere_Actor(PxRigidActor * actor, PxMaterial * Materia
 
 PxShape * CPhysXMgr::CreateDemoShape(E_SHAPE_TYPE type, const PxGeometry & geom, bool isExclusive)
 {
-
 	PxShape* shape = nullptr;
 	if (type == SHAPE_NONE)
 	{
@@ -516,7 +528,7 @@ PxShape * CPhysXMgr::CreateDemoShape(E_SHAPE_TYPE type, const PxGeometry & geom,
 
 	}
 	
-
+	return nullptr;
 
 }
 
@@ -550,6 +562,15 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 	return actor;
 }
 
+PxRigidStatic * CPhysXMgr::CreateStatic_Base_ShapeActor(const PxTransform & t, PxShape& shape)
+{
+	PxRigidStatic* actor = PxCreateStatic(*mPhysics, t, shape);
+	NULL_CHECK_BREAK(actor);
+	mScene->addActor(*actor);
+	return actor;
+}
+
+
 
 
 HRESULT CPhysXMgr::CreateDemoMap()
@@ -569,14 +590,18 @@ HRESULT CPhysXMgr::CreateDemoMap()
 	
 	pxTrnas.p = PxVec3(3, 0, 0);
 	pxScale = PxVec3(1, 3, 1);
-	CreateDemoMap_StaticBox(pxTrnas,pxScale);
+	CreateDemoMap_StaticBox(pxTrnas, pxScale);
+
+	pxTrnas.p = PxVec3(1, 1, 3);
+	pxScale = PxVec3(5, 5, 5);
+	CreateDemoMap_StaticBox(pxTrnas, pxScale,true);
 //	CreateDemoMap_StaticBox(pxTrnas,pxScale);
 //	CreateDemoMap_StaticBox(pxTrnas,pxScale);
 //
 	return S_OK;
 }
 
-HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale)
+HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool triger)
 {
 
 	_uint nowScene = g_pGameInstance->Get_TargetSceneNum();
@@ -594,13 +619,11 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale)
 	objTrans->Scaled_All(PXVEC3TOFLOAT3(scale));
 
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
-	createStatic.bTrigger = false;
+	createStatic.bTrigger = triger;
 	createStatic.eShapeType = E_GEOMAT_BOX;
 	createStatic.mTrnasform = objTrans;
 	NULL_CHECK_BREAK(createStatic.mTrnasform);
 	colStatic->Set_ColiiderDesc(createStatic);
-
-
 	return S_OK;
 }
 
@@ -641,8 +664,8 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
 
-	OutputDebugStringW(L"onContact");
-	OutputDebugStringW(L"\n");
+	//OutputDebugStringW(L"onContact");
+	//OutputDebugStringW(L"\n");
 
 	while (count--)
 	{
@@ -651,9 +674,9 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 		// 트리거 이벤트 체크해서 들어오는지 나가는지 확인.
 		// #TODO : PxPairFlag 확인해서 강체 처리 확인좀
 		if (current.events & (PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_CCD))
-			printf("Shape is entering trigger volume\n");
+			OutputDebugStringW(L"Con Shape is entering trigger volume\n");
 		if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
-			printf("Shape is leaving trigger volume\n");
+			OutputDebugStringW(L"Con Shape is leaving trigger volume\n");
 
 		//if (isTriggerShape(current.shapes[0]) && isTriggerShape(current.shapes[1]))
 		//	printf("Trigger-trigger overlap detected\n");
@@ -662,17 +685,17 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 
 void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
-	OutputDebugStringW(L"onTrigger");
-	OutputDebugStringW(L"\n");
+	//OutputDebugStringW(L"onTrigger");
+	//OutputDebugStringW(L"\n");
 
 	// PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
 	while (count--)
 	{
 		const PxTriggerPair& current = *pairs++;
-		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			printf("Shape is entering trigger volume\n");
-		if (current.status & PxPairFlag::eNOTIFY_TOUCH_LOST)
-			printf("Shape is leaving trigger volume\n");
+		// #TODO: MSG
+		// if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		OutputDebugStringW(L"Add Trigger volume\n");
+		GetSingle(CPhysXMgr)->Send_Message_Trigger(pairs);
 	}
 }
 

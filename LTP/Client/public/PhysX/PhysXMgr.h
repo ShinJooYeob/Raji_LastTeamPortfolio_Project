@@ -43,26 +43,28 @@ public:
 	PxCooking*				Get_PhysicsCooking();
 	PxScene*				Get_PhysicsScene();
 	
-public:
-	// Shape Test
+public: // Create
+	// Actor
 	HRESULT					CreateBox_Actor(PxRigidActor* actor, PxMaterial* Material, PxVec3 halfExtent);
 	HRESULT					CreateSphere_Actor(PxRigidActor* actor, PxMaterial* Material, _float halfExtent);
-	
-	// Create Shape
-	PxShape* CreateDemoShape(E_SHAPE_TYPE type,const PxGeometry& geom, bool isExclusive = false);
-	// Create Chain
-
-public:
-	// Actor Test
 	PxRigidDynamic*			CreateDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity = PxVec3(0));
-
 	PxRigidDynamic*			CreateDynamic_BaseActor(const PxTransform& t, const PxGeometry& geometry, PxReal density, const PxVec3& velocity = PxVec3(0));
 	PxRigidStatic*			CreateStatic_BaseActor(const PxTransform& t, const PxGeometry& geometry);
+	PxRigidStatic*			CreateStatic_Base_ShapeActor(const PxTransform& t, PxShape& shape);
 
+	// Shape
+	PxShape* CreateDemoShape(E_SHAPE_TYPE type,const PxGeometry& geom, bool isExclusive = false);
+
+	// Plane
 	HRESULT					Create_Plane();
 
-	void					KEYTEST();
+public: // Message
+	HRESULT Send_Message_Trigger(PxTriggerPair* msg);
+	HRESULT Send_Message_Contect(PxContactPairHeader* msg);
 
+
+	// ANY
+	void					KEYTEST();
 	HRESULT					ResetScene();
 
 private:
@@ -100,11 +102,9 @@ private:
 
 	PxPvd*						mPvd = nullptr;
 
-	// TESTCODE
+	// MessageContainer
+	list<PxTriggerPair*>		mListPxTriggerPair;
 
-	PxActor*						mTestActor = nullptr;
-	PxRigidActor*					mTestRigActor = nullptr;
-	PxTransform*					mTestTransfrom1 = nullptr;
 
 public:
 	static PxPhysics*			gPhysics;
@@ -124,7 +124,7 @@ public:
 
 public:
 	HRESULT	CreateDemoMap();	
-	HRESULT	CreateDemoMap_StaticBox(PxTransform px,PxVec3 scale);
+	HRESULT	CreateDemoMap_StaticBox(PxTransform px,PxVec3 scale, _bool trigger = false);
 
 public:
 	virtual void Free() override;

@@ -155,6 +155,18 @@ void CTestObject_PhysX::Set_Scale(_float3 scale)
 
 }
 
+void CTestObject_PhysX::ColliderFuncEnter(CTestObject_PhysX * other)
+{
+}
+
+void CTestObject_PhysX::ColliderFuncStay(CTestObject_PhysX * other)
+{
+}
+
+void CTestObject_PhysX::ColliderFuncExit(CTestObject_PhysX * other)
+{
+}
+
 HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)
 {
 	// Collider Set;
