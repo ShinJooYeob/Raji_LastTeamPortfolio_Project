@@ -40,6 +40,8 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 		| PxPairFlag::eNOTIFY_CONTACT_POINTS;
+
+
 	return PxFilterFlag::eDEFAULT;
 }
 
@@ -168,6 +170,7 @@ HRESULT CPhysXMgr::ResetScene()
 		PX_RELEASE(mScene);
 		FAILED_CHECK(Initialize_PhysXLib());
 	}
+	return S_OK;
 	
 }
 
@@ -329,7 +332,7 @@ HRESULT CPhysXMgr::Add_TriggerMsg(PxTriggerPair* msg)
 	return S_OK;
 }
 
-HRESULT CPhysXMgr::Add_ContactMsg(PxContactPairHeader* msg)
+HRESULT CPhysXMgr::Add_ContactMsg(PxContactPair* msg)
 {
 	// 충돌체 검사해줌
 	mListContactPairHeader.push_back(msg);
@@ -560,6 +563,45 @@ HRESULT CPhysXMgr::Call_CollisionFunc_Trigger()
 
 HRESULT CPhysXMgr::Call_CollisionFunc_Contect()
 {
+
+	if (mListContactPairHeader.empty())
+		return S_OK;
+
+	// 정적 오브젝트 / 동적 오브젝트 충돌 판단
+	// #TODO: 동적 오브젝트 충돌처리
+
+	PxContactPair* contectData = mListContactPairHeader.front();
+	mListPxTriggerPair.pop_front();
+
+	COLLIDERTYPE_PhysXID type = COLLIDER_PHYSX_END;
+
+	if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		type = COLLIDER_PHYSX_CONECTIN;
+
+	else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+		type = COLLIDER_PHYSX_CONECTSTAY;
+
+
+	else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_LOST)
+		type = COLLIDER_PHYSX_CONECTOUT;
+
+
+	if (type == COLLIDER_PHYSX_END)
+		return S_OK;
+
+	/*
+	CGameObject* actorObject = Find_GameObject(contectData->otherActor);
+	CGameObject* triggerObject = Find_GameObject(contectData->triggerActor);
+	Safe_Delete(triggerdata);
+
+	if (actorObject == nullptr || triggerObject == nullptr)
+		return E_FAIL;
+
+	actorObject->CollisionPhysX_Trigger(triggerObject, type);
+	*/
+
+
+
 	return S_OK;
 }
 
@@ -754,52 +796,68 @@ void CContactReportCallback::onSleep(PxActor** /*actors*/, PxU32 /*count*/)
 	OutputDebugStringW(L"\n");
 }
 
+
 void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/, const PxContactPair* pairs, PxU32 count)
 {
 	// 접촉 이벤트 발생 시 호출
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
-//	OutputDebugStringW(L"onContact\n");
+	OutputDebugStringW(L"onContact\n");
 
-	//while (count--)
-	//{
-	//	const PxTriggerPair& current = *pairs++;
-	//	// #TODO: MSG
-	//	// if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-	//	OutputDebugStringW(L"Add Trigger volume\n");
-	//	GetSingle(CPhysXMgr)->Send_Message_Trigger(pairs);
-	//}
+	while (count--)
+	{
+		const PxContactPair& current = *pairs++;
+
+		if (current.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			OutputDebugStringW(L"Add Trigger 1\n");
+			PxContactPair* Currentt = NEW PxContactPair;
+			memcpy(Currentt, &current, sizeof(PxContactPair));
+			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
+
+
+		}
+		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+		{
+
+
+		}
+		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			OutputDebugStringW(L"Add Trigger 1\n");
+			PxContactPair* Currentt = NEW PxContactPair;
+			memcpy(Currentt, &current, sizeof(PxContactPair));
+			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
+
+		}
+
+	}
 
 	
 }
 
 void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
-	//OutputDebugStringW(L"onTrigger");
-	//OutputDebugStringW(L"\n");
-
-	// PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
-	while (count--)		
+	//PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
+	while (count--)
 	{
-		PxTriggerPair current = *pairs++;
+		const PxTriggerPair& current = *pairs++;
 		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			OutputDebugStringW(L"Add Trigger 1\n");
 			PxTriggerPair* Currentt = NEW PxTriggerPair;
-
-			memcpy(Currentt,&current,sizeof(PxTriggerPair));
+			memcpy(Currentt, &current, sizeof(PxTriggerPair));
 			GetSingle(CPhysXMgr)->Add_TriggerMsg(Currentt);
 
 		}
 		if (current.status & PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
 			OutputDebugStringW(L"Add Trigger 2\n");
-
-			GetSingle(CPhysXMgr)->Add_TriggerMsg(pairs);
+			PxTriggerPair* Currentt = NEW PxTriggerPair;
+			memcpy(Currentt, &current, sizeof(PxTriggerPair));
+			GetSingle(CPhysXMgr)->Add_TriggerMsg(Currentt);
 
 		}
-
-
 	}
 }
 
@@ -839,3 +897,4 @@ bool CFiterCallback::statusChange(PxU32 & pairID, PxPairFlags & pairFlags, PxFil
 {
 	return false;
 }
+

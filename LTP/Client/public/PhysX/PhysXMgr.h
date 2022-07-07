@@ -69,7 +69,7 @@ public: // Create
 
 public: // Message
 	HRESULT Add_TriggerMsg(PxTriggerPair* msg);
-	HRESULT Add_ContactMsg(PxContactPairHeader* msg);
+	HRESULT Add_ContactMsg(PxContactPair* msg);
 	HRESULT Add_CollisionObject(CCollider_PhysX_Base* ComPhysX);
 
 
@@ -116,8 +116,8 @@ private:
 	PxPvd*						mPvd = nullptr;
 
 	// MessageContainer
-	list<PxTriggerPair*>	mListPxTriggerPair;
-	list<PxContactPairHeader*>	mListContactPairHeader;
+	list<PxTriggerPair*>		mListPxTriggerPair;
+	list<PxContactPair*>		mListContactPairHeader;
 	list<CCollider_PhysX_Base*>	mListPshysXComColiders;
 
 
