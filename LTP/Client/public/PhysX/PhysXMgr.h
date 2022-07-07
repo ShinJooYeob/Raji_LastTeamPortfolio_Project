@@ -103,6 +103,8 @@ public:
 
 
 public:
+	HRESULT	CreateDemoMap();
+public:
 	virtual void Free() override;
 };
 

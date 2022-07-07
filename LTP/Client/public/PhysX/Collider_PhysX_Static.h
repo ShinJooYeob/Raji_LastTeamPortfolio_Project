@@ -31,9 +31,10 @@ public:
 public:
 	const PHYSXDESC_STATIC& Get_PhysXDesc() const { return mPhysXDesc; }
 	HRESULT Set_ColiiderDesc(PHYSXDESC_STATIC desc);
+	HRESULT Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc);
 	HRESULT Set_ActorFlag(PxActorFlag::Enum e, bool b);
 	HRESULT	Set_eDISABLE_SIMULATION(bool b = true);
-	
+
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;

@@ -196,8 +196,17 @@ HRESULT CCollider_PhysX_Base::Set_GeoMatScale(PxShape* shape, PxVec3 scale)
 
 void CCollider_PhysX_Base::Set_Scale_MainTrans(_float4 ff)
 {
-	mbScaleChange = true;
 	mPxMainMatrix4x4.scale(*(PxVec4*)(&ff));
+}
+
+PxVec3 CCollider_PhysX_Base::GetScale(PxMat44 mat)
+{
+	_float x = mat.column0.normalize();
+	_float y = mat.column1.normalize();
+	_float z = mat.column2.normalize();
+
+
+	return PxVec3(x,y,z);
 }
 
 PxVec3 CCollider_PhysX_Base::Get_Scale_MainTrans()
@@ -324,6 +333,68 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 
 
 }
+HRESULT CCollider_PhysX_Base::RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color)
+{
+	PxTransform pxtrans = PxTransform(world);
+	PxVec3		scale = GetScale(world) * 0.5f;
+
+	switch (e)
+	{
+
+	case Client::E_GEOMAT_BOX:
+	{
+		const BoundingOrientedBox& obbBox = BoundingOrientedBox(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			PXVEC3TOFLOAT3(scale),
+			PXVEC4TOFLOAT4(pxtrans.q));
+		DX::Draw(m_pBatch, obbBox, color);
+	}
+		break;
+	case Client::E_GEOMAT_SPEHE:
+	{
+		const BoundingSphere& s = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		DX::Draw(m_pBatch, s, color);
+	}
+		break;
+	case Client::E_GEOMAT_CAPSULE:
+	{
+		const BoundingBox& box = BoundingBox(
+			PXVEC3TOFLOAT3(world),
+			_float3(scale.x, scale.y, scale.z));
+
+		_float3 upSph1 = PXVEC3TOFLOAT3(pxtrans.p); upSph1.y += scale.x;
+		_float3 downSph2 = PXVEC3TOFLOAT3(pxtrans.p); downSph2.y -= scale.x;
+		const BoundingSphere& s1 = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		const BoundingSphere& s2 = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		DX::Draw(m_pBatch, box, color);
+		DX::Draw(m_pBatch, s1, color);
+		DX::Draw(m_pBatch, s2, color);
+	}
+		break;
+	case Client::E_GEOMAT_SHAPE:
+		break;
+	case Client::E_GEOMAT_VERTEX:
+		break;
+	case Client::E_GEOMAT_TRIANGLE:
+		break;
+	case Client::E_GEOMAT_END:
+		break;
+
+	default:
+		break;
+	}
+
+	return S_OK;
+
+
+}
+
 #endif
 
 void CCollider_PhysX_Base::Free()

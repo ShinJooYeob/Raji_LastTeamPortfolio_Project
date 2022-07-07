@@ -36,37 +36,55 @@ HRESULT CCollider_PhysX_Static::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 {
-	if (mbTrigger)
-		return S_OK;
-	if (mMain_Actor == nullptr || mMainTransform == nullptr)
-		return E_FAIL;
+	
 
-	//mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-	//mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
+	if (E_STATIC_BUFFER == mStaticID)
+	{
+		if (mMainTransform == nullptr)
+			return E_FAIL;
+
+	}
+	else
+	{
+		if (mbTrigger)
+			return S_OK;
+		if (mMain_Actor == nullptr || mMainTransform == nullptr)
+			return E_FAIL;
+
+
+		//mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+		//mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
+	}
+
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
-	if (mbTrigger)
-		return S_OK;
+	
 
-	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-	PxTransform ptrans = PxTransform(mPxMainMatrix4x4);
-	mMain_Actor->setGlobalPose(ptrans);
+
 
 	if (E_STATIC_BUFFER == mStaticID)
 	{
-		// #TODO 모양 새로 만들어야함
-		PxVec3 newScale = Get_Scale_MainTrans();
-	//	Set_GeoMatScale(mMainShape, newScale);
-
-		PxGeometry* gemo = Create_Geometry(mPhysXDesc.eShapeType,newScale);
-		Create_Geometry(*gemo);
-
-		mMain_Actor->setGlobalPose()
+		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 
 	}
+	else
+	{
+		if (mbTrigger)
+			return S_OK;
+
+		// #TODO 모양 새로 만들어야함
+		//PxVec3 newScale = Get_Scale_MainTrans();
+		////	Set_GeoMatScale(mMainShape, newScale);
+
+		//PxGeometry* gemo = Create_Geometry(mPhysXDesc.eShapeType, newScale);
+		//Create_Geometry(*gemo);
+
+		//mMain_Actor->setGlobalPose()
+	}
+	
 
 
 	
@@ -84,7 +102,30 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 #ifdef _DEBUG
 HRESULT CCollider_PhysX_Static::Render()
 {
+	if (E_STATIC_BUFFER == mStaticID)
+	{
+		
+		// 모양에 따라 드로잉
+		m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
+		m_pDeviceContext->IASetInputLayout(m_pInputLayout);
+		m_pBasicEffect->SetWorld(XMMatrixIdentity());
+
+		m_pBasicEffect->SetView(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
+		m_pBasicEffect->SetProjection(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+		m_pBasicEffect->Apply(m_pDeviceContext);
+
+		m_pBatch->Begin();
+		// 모양 마다 그려준다.
+		XMVECTORF32 color = DirectX::Colors::White;
+		RenderBuffer(mPhysXDesc.eShapeType, mPxMainMatrix4x4, color);
+		m_pBatch->End();
+
+	}
+	else
+	{
+
 	FAILED_CHECK(__super::Render());
+	}
 	return S_OK;
 }
 #endif
@@ -162,6 +203,19 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 
 	return S_OK;
 }
+
+HRESULT CCollider_PhysX_Static::Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc)
+{
+	mMain_Actor = nullptr;
+	mStaticID = CCollider_PhysX_Static::E_STATIC_BUFFER;
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_STATIC));
+	mMainTransform = mPhysXDesc.mTrnasform;
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	return S_OK;
+
+}
+
+
 
 HRESULT CCollider_PhysX_Static::Set_ActorFlag(PxActorFlag::Enum e, bool b)
 {

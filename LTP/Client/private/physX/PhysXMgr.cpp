@@ -516,6 +516,16 @@ PxRigidStatic * CPhysXMgr::CreateStatic_BaseActor(const PxTransform & t, const P
 
 
 
+HRESULT CPhysXMgr::CreateDemoMap()
+{
+	// 충돌 테스트용 데모 맵 생성
+
+
+
+
+	return S_OK;
+}
+
 void CPhysXMgr::Free()
 {
 	Clean_Phyics();

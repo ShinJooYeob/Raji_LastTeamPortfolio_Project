@@ -93,7 +93,8 @@ public:
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
-	HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
 #endif // _DEBUG
 
 public:
@@ -112,6 +113,9 @@ public:
 	void			Set_Scale_MainTrans(_float4 f);
 
 	HRESULT			CreateNewShape(PxGeometry* gemo);
+
+	PxVec3			GetScale(PxMat44 mat);
+
 
 
 

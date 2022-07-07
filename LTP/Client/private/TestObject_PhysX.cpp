@@ -100,25 +100,31 @@ _int CTestObject_PhysX::Render()
 {
 	if (__super::Render() < 0)		
 		return -1;
-
-	if (mbTrigger == false)
+	if (meModelID == MODEL_EMPTY)
 	{
-		NULL_CHECK_RETURN(mCom_Model, E_FAIL);
 
-		CGameInstance* pInstance = GetSingle(CGameInstance);
-		FAILED_CHECK(mCom_Shader->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-		FAILED_CHECK(mCom_Shader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
-		FAILED_CHECK(mCom_Transform->Bind_OnShader(mCom_Shader, "g_WorldMatrix"));
-
-		_uint NumMaterial = mCom_Model->Get_NumMaterial();
-
-		for (_uint i = 0; i < NumMaterial; i++)
+	}
+	else
+	{
+		if (mbTrigger == false)
 		{
-			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-				FAILED_CHECK(mCom_Model->Bind_OnShader(mCom_Shader, i, j, MODLETEXTYPE(j)));
+			NULL_CHECK_RETURN(mCom_Model, E_FAIL);
 
-			FAILED_CHECK(mCom_Model->Render(mCom_Shader, 2, i, "g_BoneMatrices"));
+			CGameInstance* pInstance = GetSingle(CGameInstance);
+			FAILED_CHECK(mCom_Shader->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+			FAILED_CHECK(mCom_Shader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+			FAILED_CHECK(mCom_Transform->Bind_OnShader(mCom_Shader, "g_WorldMatrix"));
+
+			_uint NumMaterial = mCom_Model->Get_NumMaterial();
+
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+					FAILED_CHECK(mCom_Model->Bind_OnShader(mCom_Shader, i, j, MODLETEXTYPE(j)));
+
+				FAILED_CHECK(mCom_Model->Render(mCom_Shader, 2, i, "g_BoneMatrices"));
+			}
 		}
 	}
 
@@ -186,7 +192,7 @@ HRESULT CTestObject_PhysX::Set_ModelSetting(E_MODEL id)
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		return S_OK;
 		break;
-	case Client::CTestObject_PhysX::MODEL_STATIC:
+	case Client::CTestObject_PhysX::MODEL_STATICMAPOBJ:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		return S_OK;
 		break;
@@ -194,6 +200,10 @@ HRESULT CTestObject_PhysX::Set_ModelSetting(E_MODEL id)
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Boss_Rangda_Finger), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		return S_OK;
 		break;
+	case Client::CTestObject_PhysX::MODEL_EMPTY:
+		mCom_Model = nullptr;
+		return S_OK;
+
 	default:
 		break;
 	}
