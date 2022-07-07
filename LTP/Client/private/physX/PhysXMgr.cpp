@@ -24,7 +24,27 @@ _float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
-static CContactReportCallback gContactReportCallback; // 충돌 콜백 Scene에 연결
+PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+	PX_UNUSED(attributes0);
+	PX_UNUSED(attributes1);
+	PX_UNUSED(filterData0);
+	PX_UNUSED(filterData1);
+	PX_UNUSED(constantBlockSize);
+	PX_UNUSED(constantBlock);
+
+	// all initial and persisting reports for everything, with per-point data
+	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
+		| PxPairFlag::eNOTIFY_TOUCH_FOUND
+		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+		| PxPairFlag::eNOTIFY_CONTACT_POINTS;
+	return PxFilterFlag::eDEFAULT;
+}
+
+static CContactReportCallback gContactReportCallback; // 충돌 이벤트 콜백 Scene에 연결
+static CFiterCallback gFiterCallback; // 충돌 정의 콜백
 
 
 CPhysXMgr::CPhysXMgr()
@@ -50,10 +70,6 @@ static float Z = 0;
 
 HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 {
-	// #TEST
-	// 플레이어 위치 받아서 테스트
-	// KEYTEST();
-
 	// Tick
 	if (mScene)
 	{
@@ -83,7 +99,7 @@ HRESULT CPhysXMgr::Renderer()
 //	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 
 	// 모든 객체 가져오기
-	PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+	// PxU32 numActor = mScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 	//if (numActor)
 	//{
 	//	// 모든 피직스 객체 Get
@@ -458,8 +474,13 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0, -9.81f, 0.0f);
+
+
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = &contactReportFilterShader;
+	sceneDesc.filterCallback = &gFiterCallback;
+
+//	sceneDesc.contactModifyCallback = PxDefaultSimulationFilterShader;
 
 
 #ifdef  _DEBUG
@@ -663,24 +684,9 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 	// 접촉 이벤트 발생 시 호출
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
+	OutputDebugStringW(L"onContact\n");
 
-	//OutputDebugStringW(L"onContact");
-	//OutputDebugStringW(L"\n");
-
-	while (count--)
-	{
-		
-		const PxContactPair& current = *pairs++;
-		// 트리거 이벤트 체크해서 들어오는지 나가는지 확인.
-		// #TODO : PxPairFlag 확인해서 강체 처리 확인좀
-		if (current.events & (PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_CCD))
-			OutputDebugStringW(L"Con Shape is entering trigger volume\n");
-		if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
-			OutputDebugStringW(L"Con Shape is leaving trigger volume\n");
-
-		//if (isTriggerShape(current.shapes[0]) && isTriggerShape(current.shapes[1]))
-		//	printf("Trigger-trigger overlap detected\n");
-	}
+	
 }
 
 void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
@@ -689,13 +695,14 @@ void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	//OutputDebugStringW(L"\n");
 
 	// PxShapeFlag::eTRIGGER_SHAPE 에 대한 이벤트 전달
-	while (count--)
+	while (count--)		
 	{
 		const PxTriggerPair& current = *pairs++;
 		// #TODO: MSG
 		// if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		OutputDebugStringW(L"Add Trigger volume\n");
 		GetSingle(CPhysXMgr)->Send_Message_Trigger(pairs);
+
 	}
 }
 
@@ -722,3 +729,16 @@ static	PxFilterFlags triggersUsingFilterCallback(PxFilterObjectAttributes /*attr
 	return PxFilterFlag::eCALLBACK;
 }
 
+PxFilterFlags CFiterCallback::pairFound(PxU32 pairID, PxFilterObjectAttributes attributes0, PxFilterData filterData0, const PxActor * a0, const PxShape * s0, PxFilterObjectAttributes attributes1, PxFilterData filterData1, const PxActor * a1, const PxShape * s1, PxPairFlags & pairFlags)
+{
+	return PxFilterFlags();
+}
+
+void CFiterCallback::pairLost(PxU32 pairID, PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1, PxFilterData filterData1, bool objectRemoved)
+{
+}
+
+bool CFiterCallback::statusChange(PxU32 & pairID, PxPairFlags & pairFlags, PxFilterFlags & filterFlags)
+{
+	return false;
+}

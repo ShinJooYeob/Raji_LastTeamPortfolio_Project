@@ -151,11 +151,24 @@ public:
 	virtual void onAdvance(const PxRigidBody * const * bodyBuffer, const PxTransform * poseBuffer, const PxU32 count) override;
 };
 
-//class CDemoConectCallback :
-//	public PxContactModifyCallback
-//{
-//	// PxContactModifyCallback을(를) 통해 상속됨
-//	virtual void onContactModify(PxContactModifyPair * const pairs, PxU32 count) override;
-//};
+
+
+class CFiterCallback :
+	public PxSimulationFilterCallback
+{
+	// PxSimulationFilterCallback을(를) 통해 상속됨
+	virtual PxFilterFlags pairFound(PxU32 pairID, PxFilterObjectAttributes attributes0, PxFilterData filterData0, const PxActor * a0, const PxShape * s0, PxFilterObjectAttributes attributes1, PxFilterData filterData1, const PxActor * a1, const PxShape * s1, PxPairFlags & pairFlags) override;
+	virtual void pairLost(PxU32 pairID, PxFilterObjectAttributes attributes0, PxFilterData filterData0, PxFilterObjectAttributes attributes1, PxFilterData filterData1, bool objectRemoved) override;
+	virtual bool statusChange(PxU32 & pairID, PxPairFlags & pairFlags, PxFilterFlags & filterFlags) override;
+};
+
+
+class CContactModifyCallback :
+	public PxContactModifyCallback
+{
+public:
+	// 접촉 제약 수정
+	virtual void onContactModify(PxContactModifyPair * const pairs, PxU32 count) override;
+};
 
 END

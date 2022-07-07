@@ -165,7 +165,7 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 		return E_FAIL;
 
 	
-
+	
 	mMainTransform = mPhysXDesc.mTrnasform;
 	_float3 scale = mMainTransform->Get_Scale();
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
