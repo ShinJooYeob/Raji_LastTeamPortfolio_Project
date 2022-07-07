@@ -546,12 +546,14 @@ HRESULT CPhysXMgr::CreateDemoMap()
 HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale)
 {
 
+	_uint nowScene = g_pGameInstance->Get_TargetSceneNum();
+
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-	(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
+	(nowScene, TAG_LAY(Layer_StaticMapObj), TAG_OP(Prototype_Object_Static_PhysX)));
 	CTestObject_PhysX* obj =
-		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_StaticMapObj)));
-	obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(nowScene, TAG_LAY(Layer_StaticMapObj)));
 	obj->Set_ColSetID(E_PHYTYPE_STATIC);
+	obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 
 	CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 	CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
