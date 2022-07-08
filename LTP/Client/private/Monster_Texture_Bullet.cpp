@@ -47,6 +47,21 @@ HRESULT CMonster_Texture_Bullet::Initialize_Clone(void * pArg)
 
 
 
+	
+	switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
+	{
+	case Client::CMonster_Texture_Bullet::JALSURA_BULLET:
+		break;
+	case Client::CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET:
+	{
+		Gadasura_Terrain_Particle();
+
+		break;
+	}
+	default:
+		break;
+	}
+
 	return S_OK;
 }
 
@@ -294,30 +309,49 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fTempLook, vTempLook);
 
 
-
-		//test
-		CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
-
-		Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET;
-		Monster_BulletDesc.fSpeedPerSec = 10;
-		Monster_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
-
-		Monster_BulletDesc.Object_Transform = m_pTransformCom;
-		Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
-
-
-		Monster_BulletDesc.Object = this;
-
-		Monster_BulletDesc.dDuration = 15;
-
-		Monster_BulletDesc.bBornAttachOn = false;
-
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_MeshEffectDesc);
 	}
 
 	m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fTempLook), m_Monster_Texture_BulletDesc.fSpeedPerSec, dDeltaTime);
 
 
+	return S_OK;
+}
+
+HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
+{
+	m_MeshEffectDesc.eParticleTypeID = InstanceEffect_Cone;
+	m_MeshEffectDesc.eInstanceCount = Prototype_ModelInstance_64;
+	m_MeshEffectDesc.ePassID = MeshPass_BrightColor;
+
+	/*m_MeshEffectDesc.vFixedPosition = _float3(0);
+	m_MeshEffectDesc.vPowerDirection = _float3(0, 1, 0);*/
+
+	m_MeshEffectDesc.FollowingTarget = m_pTransformCom;
+	m_MeshEffectDesc.iFollowingDir = 0;
+
+	m_MeshEffectDesc.szModelMeshProtoTypeTag = TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain);
+	m_MeshEffectDesc.szNoiseTextureLayerTag = nullptr;
+	m_MeshEffectDesc.iNoiseTextureIndex = 0;
+	m_MeshEffectDesc.TotalParticleTime = 5.f;
+	m_MeshEffectDesc.EachParticleLifeTime = 1.f;
+
+	m_MeshEffectDesc.SizeChageFrequency = 1;
+	m_MeshEffectDesc.ParticleSize = _float3(0.1f, 0.1f, 0.1f);
+	m_MeshEffectDesc.ParticleSize2 = _float3(0, 0, 0);
+	m_MeshEffectDesc.ColorChageFrequency = 0; //이미시블 색깔 교체
+	m_MeshEffectDesc.TargetColor = _float4(1.f, 1.f, 1.f, 0.f); //w값은 림라이트
+	m_MeshEffectDesc.TargetColor2 = _float4(0.f, 1.f, .0f, 0.f); //w값은 림라이트
+	m_MeshEffectDesc.fMaxBoundaryRadius = 999999.f;
+	m_MeshEffectDesc.Particle_Power = 0.f;
+	m_MeshEffectDesc.PowerRandomRange = _float2(0.5f, 1.5f);
+	m_MeshEffectDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	m_MeshEffectDesc.ParticleStartRandomPosMin = _float3(0, 0, 0); //Positioning
+	m_MeshEffectDesc.ParticleStartRandomPosMax = _float3(0, 0, 0); //Positioning
+
+	m_MeshEffectDesc.bEmissive = false;
+	m_MeshEffectDesc.bAutoTurn = false;
+	m_MeshEffectDesc.bIsOclusion = true;
 	return S_OK;
 }
 

@@ -784,7 +784,6 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_TEST_STATIC,
 
 
-
 	Prototype_Mesh_AlgaeRock_Ledge,
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,

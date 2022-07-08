@@ -3,6 +3,7 @@
 #include "Monster_Bullet_Universal.h"
 #include "Monster_Weapon_Universal.h"
 #include "Gadasura_Rage_Hollogram.h"
+#include "Monster_Texture_Bullet.h"
 
 CMonster_Gadasura_Rage::CMonster_Gadasura_Rage(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -240,7 +241,7 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 	m_dOnceCoolTime += dDeltaTime;
 	m_dSpecial_CoolTime += dDeltaTime;
 
-	if (m_dOnceCoolTime > 2 && m_fDistance < 4 || m_bComboAnimSwitch == true)
+	if (m_dOnceCoolTime > 2 && m_fDistance < 5 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
@@ -262,7 +263,7 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-	//if (m_bComboAnimSwitch == false || m_bIOnceAnimSwitch == false)
+	//if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
 	//{
 	//	Special_Trigger(dDeltaTime);
 	//}
@@ -274,73 +275,85 @@ HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 26; //Attack1 
+		m_iOnceAnimNumber = 26; //Hollogram start
 		m_bComboAnimSwitch = true;
 		break;
 	case 1:
-		m_iOnceAnimNumber = 27; //Attack1 
+		m_iOnceAnimNumber = 27; //Hollogram Run
 		m_bComboAnimSwitch = true;
 		break;
 	case 2:
-		m_iOnceAnimNumber = 28; //Attack1 
+		m_iOnceAnimNumber = 28; //Hollogram Run
 		m_bComboAnimSwitch = true;
 		break;
 	case 3:
-		m_iOnceAnimNumber = 29; //Attack1 
+		m_iOnceAnimNumber = 29; //Hollogram End
 		m_bComboAnimSwitch = false;
 		break;
-	//case 0:
-	//	m_iOnceAnimNumber = 17; //Attack1 
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 1:
-	//	m_iOnceAnimNumber = 3; //Right Move
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 2:
-	//	m_iOnceAnimNumber = 19; //smash Attack
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 3:
-	//	m_iOnceAnimNumber = 25; //Rage Run
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 4:
-	//	m_iOnceAnimNumber = 14; //Rage Run
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 5:
-	//	m_iOnceAnimNumber = 15; //Rage Run
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 6:
-	//	m_iOnceAnimNumber = 21; //Rage Run Attack
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 7:
-	//	m_iOnceAnimNumber = 4; //Left Move
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 8:
-	//	m_iOnceAnimNumber = 18; //Attack2
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 9:
-	//	m_iOnceAnimNumber = 19; //smash Attack
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 10:
-	//	m_iOnceAnimNumber = 5; //Back
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 50:
-	//	m_iOnceAnimNumber = 22; //Taunt
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 51:
-	//	m_iOnceAnimNumber = 20; //stomp Attack
-	//	m_bComboAnimSwitch = false;
-	//	break;
+	case 4:
+		m_iOnceAnimNumber = 23; //TripleSmash
+		m_bComboAnimSwitch = true;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 5; //Back
+		m_bComboAnimSwitch = false;
+		break;
+	case 6:
+		m_iOnceAnimNumber = 25; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 7:
+		m_iOnceAnimNumber = 14; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 8:
+		m_iOnceAnimNumber = 15; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 9:
+		m_iOnceAnimNumber = 21; //Rage Run Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 10:
+		m_iOnceAnimNumber = 3; //Right Move
+		m_bComboAnimSwitch = false;
+		break;
+	case 11:
+		m_iOnceAnimNumber = 17; //Attack1 
+		m_bComboAnimSwitch = true;
+		break;
+	case 12:
+		m_iOnceAnimNumber = 25; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 13:
+		m_iOnceAnimNumber = 14; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 14:
+		m_iOnceAnimNumber = 15; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 15:
+		m_iOnceAnimNumber = 21; //Rage Run Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 16:
+		m_iOnceAnimNumber = 4; //Left Move
+		m_bComboAnimSwitch = false;
+		break;
+	case 17:
+		m_iOnceAnimNumber = 18; //Attack2
+		m_bComboAnimSwitch = false;
+		break;
+	case 50:
+		m_iOnceAnimNumber = 22; //Taunt
+		m_bComboAnimSwitch = false;
+		break;
+	case 51:
+		m_iOnceAnimNumber = 20; //stomp Attack
+		m_bComboAnimSwitch = false;
+		break;
 
 	}
 
@@ -352,7 +365,7 @@ HRESULT CMonster_Gadasura_Rage::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 4)
+	if (m_iOncePattern >= 18)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -397,7 +410,7 @@ HRESULT CMonster_Gadasura_Rage::Infinity_AnimMotion(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 {
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 15)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -408,7 +421,7 @@ HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 	}
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 15)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -522,6 +535,25 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			//메쉬 인스턴스 사용하자
 			m_bLookAtOn = false;
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.539215)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
+				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.3f, 2.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.7;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+				m_iAdjMovedIndex++;
+			}
 			break;
 		}
 		case 20:
@@ -565,6 +597,71 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			break;
 		}
+		case 23:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.2)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
+				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.3f, 2.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.7;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4689655)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
+				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.3f, 2.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.7;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.751724)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
+				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.3f, 2.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.7;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				m_iAdjMovedIndex++;
+			}
+
+			break;
+		}
 		case 24:
 		{
 			m_pTransformCom->Move_Forward(dDeltaTime * 0.8);
@@ -582,6 +679,21 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				HollogramDesc.dDuration = 5;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram),&HollogramDesc));
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 28:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4347826)
+			{
+
+				CGadasura_Rage_Hollogram::GADASURA_HOLLOGRAMDESC HollogramDesc;
+
+				HollogramDesc.Object = this;
+				HollogramDesc.dDuration = 5;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram), &HollogramDesc));
 				m_iAdjMovedIndex++;
 			}
 			break;

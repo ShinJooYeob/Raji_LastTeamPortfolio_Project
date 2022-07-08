@@ -856,6 +856,8 @@
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

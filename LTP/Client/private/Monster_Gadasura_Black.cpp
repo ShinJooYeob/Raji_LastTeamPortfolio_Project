@@ -262,7 +262,7 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-	if (m_bComboAnimSwitch == false || m_bIOnceAnimSwitch == false)
+	if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
 	{
 		Special_Trigger(dDeltaTime);
 	}
@@ -271,7 +271,6 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 2;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -337,9 +336,9 @@ HRESULT CMonster_Gadasura_Black::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 10)
+	if (m_iOncePattern >= 11)
 	{
-		m_iOncePattern = 0; //OncePattern Random
+		m_iOncePattern = 3; //OncePattern Random
 	}
 
 
@@ -382,7 +381,7 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 {
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 15)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -393,7 +392,7 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 	}
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 15)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -520,7 +519,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_Texture_BulletDesc.Object = this;
 
-				Monster_Texture_BulletDesc.dDuration = 3;
+				Monster_Texture_BulletDesc.dDuration = 0.7;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 				m_iAdjMovedIndex++;
