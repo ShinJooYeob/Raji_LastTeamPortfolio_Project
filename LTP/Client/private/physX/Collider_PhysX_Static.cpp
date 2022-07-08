@@ -34,10 +34,10 @@ HRESULT CCollider_PhysX_Static::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Static::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
+HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 {
 	
-	FAILED_CHECK(__super::Update_BeforeSimulation(id));
+	FAILED_CHECK(__super::Update_BeforeSimulation());
 
 	if (E_STATIC_BUFFER == mStaticID)
 	{

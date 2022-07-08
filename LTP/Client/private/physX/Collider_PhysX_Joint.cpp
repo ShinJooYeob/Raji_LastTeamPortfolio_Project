@@ -30,15 +30,18 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 	if (FAILED(__super::Initialize_Clone(pArg)))
 		return E_FAIL;
 
+	if (pArg != nullptr)
+		memcpy(&mColDesc, pArg, sizeof(CColider_PX_Desc));
+
 	mOffsetVec = PxVec3(0, 2, 0);
 
 	return S_OK;
 }
 
 
-HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
+HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
-	FAILED_CHECK(__super::Update_BeforeSimulation(id));
+	FAILED_CHECK(__super::Update_BeforeSimulation());
 
 
 	//if (mbUpdate_PhysX == false)

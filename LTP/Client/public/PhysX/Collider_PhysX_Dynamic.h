@@ -41,11 +41,14 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation(OBJECTPROTOTYPEID id = Object_Prototype_End)override;
+	virtual HRESULT Update_BeforeSimulation()override;
 	virtual HRESULT Update_AfterSimulation()override;
 
 public:
 	const PHYSXDESC_DYNAMIC& Get_PhysXDesc() const { return mPhysXDesc; }
+	_bool	Get_KeyDown() { return mbKeyDown; }
+	void	Set_KeyDown(_bool b) { mbKeyDown = b; };
+	void	Set_Kinecmatic(_bool b);
 
 public:
 #ifdef _DEBUG
@@ -69,8 +72,9 @@ private:
 protected:
 	PHYSXDESC_DYNAMIC	mPhysXDesc;
 	PxRigidDynamic*		mPxDynamicActor = nullptr;
-
 	PxReal				mfForce=5;
+
+	_bool				mbKeyDown = false;
 
 public:
 	static CCollider_PhysX_Dynamic * Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

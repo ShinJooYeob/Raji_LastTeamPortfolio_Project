@@ -53,6 +53,7 @@ public:
 
 	// Model Setting
 	HRESULT	Set_ModelSetting(E_MODEL id);
+	HRESULT	Set_Kinect(bool b);
 
 private:
 	HRESULT Set_PlayerMeshair();

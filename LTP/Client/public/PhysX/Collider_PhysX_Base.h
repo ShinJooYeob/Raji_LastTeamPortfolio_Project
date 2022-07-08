@@ -46,6 +46,13 @@ enum E_GEOMAT_TYPE
 class CCollider_PhysX_Base : public CComponent
 {
 public:
+	struct CColider_PX_Desc
+	{
+		OBJECTPROTOTYPEID mObjid = Object_Prototype_End;
+
+	};
+
+public:
 	// 각각 생성하는 콜라이더에 따른 DESC
 	typedef struct Tag_PhysXDesc_Static
 	{
@@ -102,7 +109,7 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation(OBJECTPROTOTYPEID id = Object_Prototype_End);
+	virtual HRESULT Update_BeforeSimulation();
 	virtual HRESULT Update_AfterSimulation();
 
 public:
@@ -116,7 +123,10 @@ public:
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
 	void			Set_Transform(CTransform* trans);
 
-	void			Set_(_bool b) { mbTrigger = b; };
+//	void			Set_(_bool b) { mbTrigger = b; };
+
+	// 테스트용 
+	void			Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
 
 	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
 	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
@@ -127,7 +137,7 @@ public:
 	PxVec3				Get_Scale_MainTrans();
 	void				Set_Scale_MainTrans(_float4 f);
 	CGameObject*		Get_GameObject() { return mMainGameObject; };
-	OBJECTPROTOTYPEID	Get_ObjectID() { return mObjectID; };
+	OBJECTPROTOTYPEID	Get_ObjectID() { return mColDesc.mObjid; };
 
 	HRESULT			CreateNewShape(PxGeometry* gemo);
 
@@ -156,7 +166,7 @@ protected:
 protected:
 	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
 	// 콜라이더의 오브젝트 아이디
-	OBJECTPROTOTYPEID				mObjectID = Object_Prototype_End;
+	CColider_PX_Desc				mColDesc;
 
 	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
 	_bool							mbTrigger = false;

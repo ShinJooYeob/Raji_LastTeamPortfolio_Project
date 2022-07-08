@@ -70,14 +70,13 @@ HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Base::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
+HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
 {
 	// 시뮬레이션 전의 충돌체 위치
 	// 현재 오브젝트 위치를 받아온다.
 	if (mMainGameObject == nullptr)
 		return E_FAIL;
 
-	mObjectID = id;
 	GetSingle(CPhysXMgr)->Add_CollisionObject(this);
 
 

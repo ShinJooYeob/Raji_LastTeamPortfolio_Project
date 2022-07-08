@@ -36,11 +36,9 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation(OBJECTPROTOTYPEID id )
+HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
-	FAILED_CHECK(__super::Update_BeforeSimulation(id));
-
-
+	FAILED_CHECK(__super::Update_BeforeSimulation());
 
 
 
@@ -51,25 +49,39 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation(OBJECTPROTOTYPEID id )
 HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 {
 	FAILED_CHECK(__super::Update_AfterSimulation());
+	if (mbKeyDown)
+	{
+		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
+		mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4.column3.x, mPxMainMatrix4x4.column3.y, mPxMainMatrix4x4.column3.z));
+	}
+	// PxTransform trans = mMain_Actor->getGlobalPose();
+	// mPxMainMatrix4x4 = PxMat44(trans);
+	// mPxMainMatrix4x4.scale(PxVec4(mScale, 1));
+	// mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
 
+	else
+	{
 
-//	PxTransform trans =  mMain_Actor->getGlobalPose();
-//	mPxMainMatrix4x4 = PxMat44(trans);
-//	mPxMainMatrix4x4.scale(PxVec4(mScale,1));
-//	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+		mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
+		mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	}
 
 	return S_OK;
 }
 
 
-#ifdef _DEBUG
+void CCollider_PhysX_Dynamic::Set_Kinecmatic(_bool b)
+{
+	Set_RigidbodyFlag(PxRigidBodyFlag::eKINEMATIC, b);
+}
 
+
+#ifdef _DEBUG
 HRESULT CCollider_PhysX_Dynamic ::Render()
 {
 	FAILED_CHECK(__super::Render());
 
-	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
-	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	
 
 	return S_OK;
 }
@@ -111,7 +123,7 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	Safe_Delete(gemo);
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
 
-//	SetBaseFlag();	
+	SetBaseFlag();	
 
 	return S_OK;
 }
@@ -152,14 +164,14 @@ void CCollider_PhysX_Dynamic::SetBaseFlag()
 	DYNAMICFLAG flag;
 	flag.fSleepValue = 1;
 	flag.fStabValue = 1;
-	flag.fContactReportThreshold = 5;
-	flag.fWakeCounter = 5;
+	flag.fContactReportThreshold = 1;
+	flag.fWakeCounter = 10;
 	Set_DynamicFlag(flag);
 
 	DYNAMICFORCE force;
 	force.fMass = 1.0f;
-	force.fMaxLinearSpeed = 10;
-	force.fMaxAngleSpeed = 10;
+	force.fMaxLinearSpeed = 100;
+	force.fMaxAngleSpeed = 100;
 	Set_DynamicValue(force);
 }
 

@@ -1264,8 +1264,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_STATIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 
 			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 			CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
@@ -1289,8 +1289,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_STATIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 
@@ -1314,8 +1314,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_STATIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 
 			CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
@@ -1350,8 +1350,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 
@@ -1377,8 +1377,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 
@@ -1402,10 +1402,9 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
 			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-
 
 			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
@@ -1418,7 +1417,9 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			NULL_CHECK_BREAK(createDynamic.mTrnasform);
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
+			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, true);
 		}
+		
 		IMGUITREE_END
 	}
 

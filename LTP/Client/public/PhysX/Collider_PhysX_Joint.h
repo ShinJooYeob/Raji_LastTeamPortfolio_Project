@@ -17,7 +17,7 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation(OBJECTPROTOTYPEID id = Object_Prototype_End)override;
+	virtual HRESULT Update_BeforeSimulation()override;
 	virtual HRESULT Update_AfterSimulation()override;
 
 public:
