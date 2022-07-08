@@ -8,6 +8,7 @@ class CMonster_Texture_Bullet  final : public CMonster_Bullet
 public:
 	enum Monster_TextureType {
 		JALSURA_BULLET,
+		GADASURA_TERRAIN_BULLET,
 		MONSTER_TEXUTRE_BULLET_END
 	};
 public:
@@ -25,9 +26,6 @@ public:
 		void*			Object = nullptr;
 
 		_double			dDuration;
-
-		_bool			bBornAttachOn = false;
-		const char*		pBoneName = nullptr;
 
 	}MONSTER_TEXTURE_BULLETDESC;
 private:
@@ -52,12 +50,12 @@ private:
 
 private:
 	HRESULT	SetUp_Info();
-	HRESULT	SetUp_BoneMatrix();
 	HRESULT SetUp_Fire(_double dDeltaTime);
 
 
 private:
 	HRESULT Jalsura_Bullet(_double dDeltaTime);
+	HRESULT	Gadasura_Terrain_Bullet(_double dDeltaTime);
 
 
 private:

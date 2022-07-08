@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "..\public\Monster_Gadasura_Black.h"
+#include "..\public\Monster_Gadasura_Rage.h"
 #include "Monster_Bullet_Universal.h"
 #include "Monster_Weapon_Universal.h"
-#include "Monster_Texture_Bullet.h"
+#include "Gadasura_Rage_Hollogram.h"
 
-CMonster_Gadasura_Black::CMonster_Gadasura_Black(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Gadasura_Rage::CMonster_Gadasura_Rage(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Gadasura_Black::CMonster_Gadasura_Black(const CMonster_Gadasura_Black & rhs)
+CMonster_Gadasura_Rage::CMonster_Gadasura_Rage(const CMonster_Gadasura_Rage & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Gadasura_Black::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Gadasura_Rage::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -22,7 +22,7 @@ HRESULT CMonster_Gadasura_Black::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
+HRESULT CMonster_Gadasura_Rage::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -41,7 +41,7 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CMonster_Gadasura_Black::Update(_double dDeltaTime)
+_int CMonster_Gadasura_Rage::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
@@ -68,7 +68,7 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
+_int CMonster_Gadasura_Rage::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -87,7 +87,7 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Gadasura_Black::Render()
+_int CMonster_Gadasura_Rage::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
@@ -115,7 +115,7 @@ _int CMonster_Gadasura_Black::Render()
 	return _int();
 }
 
-_int CMonster_Gadasura_Black::LateRender()
+_int CMonster_Gadasura_Rage::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
@@ -123,7 +123,7 @@ _int CMonster_Gadasura_Black::LateRender()
 	return _int();
 }
 
-HRESULT CMonster_Gadasura_Black::SetUp_Info()
+HRESULT CMonster_Gadasura_Rage::SetUp_Info()
 {
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
@@ -139,10 +139,10 @@ HRESULT CMonster_Gadasura_Black::SetUp_Info()
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::SetUp_Weapon()
+HRESULT CMonster_Gadasura_Rage::SetUp_Weapon()
 {
 	CMonster_Weapon_Universal::Monster_Weapon_UniversalDesc MonsterWeaponDesc;
-	MonsterWeaponDesc.iMonsterWeaponMeshNumber = CMonster_Weapon_Universal::GADASURA_BLACK_WEAPON;
+	MonsterWeaponDesc.iMonsterWeaponMeshNumber = CMonster_Weapon_Universal::GADASURA_RAGE_WEAPON;
 	MonsterWeaponDesc.Object = this;
 	MonsterWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_wrist", _float3(1, 1, 1), _float3(0, 0, 0), _float3(-1.690f, -0.050f, -2.020f));
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Monster_Weapon), TAG_OP(Prototype_Object_Monster_Weapon_Universal), &MonsterWeaponDesc));
@@ -151,7 +151,7 @@ HRESULT CMonster_Gadasura_Black::SetUp_Weapon()
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::SetUp_Fight(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
@@ -189,7 +189,7 @@ HRESULT CMonster_Gadasura_Black::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
 
@@ -233,7 +233,7 @@ HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
@@ -262,82 +262,97 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-	if (m_bComboAnimSwitch == false || m_bIOnceAnimSwitch == false)
-	{
-		Special_Trigger(dDeltaTime);
-	}
+	//if (m_bComboAnimSwitch == false || m_bIOnceAnimSwitch == false)
+	//{
+	//	Special_Trigger(dDeltaTime);
+	//}
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 2;
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 17; //Attack1 
+		m_iOnceAnimNumber = 26; //Attack1 
 		m_bComboAnimSwitch = true;
 		break;
 	case 1:
-		m_iOnceAnimNumber = 3; //Right Move
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 27; //Attack1 
+		m_bComboAnimSwitch = true;
 		break;
 	case 2:
-		m_iOnceAnimNumber = 19; //smash Attack
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 28; //Attack1 
+		m_bComboAnimSwitch = true;
 		break;
 	case 3:
-		m_iOnceAnimNumber = 25; //Rage Run
-		m_bComboAnimSwitch = true;
-		break;
-	case 4:
-		m_iOnceAnimNumber = 14; //Rage Run
-		m_bComboAnimSwitch = true;
-		break;
-	case 5:
-		m_iOnceAnimNumber = 15; //Rage Run
-		m_bComboAnimSwitch = true;
-		break;
-	case 6:
-		m_iOnceAnimNumber = 21; //Rage Run Attack
-		m_bComboAnimSwitch = true;
-		break;
-	case 7:
-		m_iOnceAnimNumber = 4; //Left Move
+		m_iOnceAnimNumber = 29; //Attack1 
 		m_bComboAnimSwitch = false;
 		break;
-	case 8:
-		m_iOnceAnimNumber = 18; //Attack2
-		m_bComboAnimSwitch = false;
-		break;
-	case 9:
-		m_iOnceAnimNumber = 19; //smash Attack
-		m_bComboAnimSwitch = true;
-		break;
-	case 10:
-		m_iOnceAnimNumber = 5; //Back
-		m_bComboAnimSwitch = false;
-		break;
-	case 50:
-		m_iOnceAnimNumber = 22; //Taunt
-		m_bComboAnimSwitch = false;
-		break;
-	case 51:
-		m_iOnceAnimNumber = 20; //stomp Attack
-		m_bComboAnimSwitch = false;
-		break;
+	//case 0:
+	//	m_iOnceAnimNumber = 17; //Attack1 
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 1:
+	//	m_iOnceAnimNumber = 3; //Right Move
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 2:
+	//	m_iOnceAnimNumber = 19; //smash Attack
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 3:
+	//	m_iOnceAnimNumber = 25; //Rage Run
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 4:
+	//	m_iOnceAnimNumber = 14; //Rage Run
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 5:
+	//	m_iOnceAnimNumber = 15; //Rage Run
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 6:
+	//	m_iOnceAnimNumber = 21; //Rage Run Attack
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 7:
+	//	m_iOnceAnimNumber = 4; //Left Move
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 8:
+	//	m_iOnceAnimNumber = 18; //Attack2
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 9:
+	//	m_iOnceAnimNumber = 19; //smash Attack
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 10:
+	//	m_iOnceAnimNumber = 5; //Back
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 50:
+	//	m_iOnceAnimNumber = 22; //Taunt
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 51:
+	//	m_iOnceAnimNumber = 20; //stomp Attack
+	//	m_bComboAnimSwitch = false;
+	//	break;
 
 	}
 
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Pattern_Change()
+HRESULT CMonster_Gadasura_Rage::Pattern_Change()
 {
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 10)
+	if (m_iOncePattern >= 4)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -346,7 +361,7 @@ HRESULT CMonster_Gadasura_Black::Pattern_Change()
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::Infinity_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iInfinityPattern)
 	{
@@ -379,7 +394,7 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 {
 
 	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
@@ -408,13 +423,13 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 
 	return S_OK;
 }
-HRESULT CMonster_Gadasura_Black::SetUp_Components()
+HRESULT CMonster_Gadasura_Rage::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Gadasura_Black), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Gadasura_Rage), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -442,7 +457,7 @@ HRESULT CMonster_Gadasura_Black::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
+HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
@@ -505,26 +520,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 19:
 		{
+			//메쉬 인스턴스 사용하자
 			m_bLookAtOn = false;
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.539215)
-			{
-				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
-
-				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET;
-				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
-				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
-
-				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.3f, 2.f);
-
-
-				Monster_Texture_BulletDesc.Object = this;
-
-				Monster_Texture_BulletDesc.dDuration = 3;
-
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
-				m_iAdjMovedIndex++;
-			}
 			break;
 		}
 		case 20:
@@ -574,9 +571,20 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			break;
 		}
-		case 28:
+		case 27:
 		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4347826)
+			{
 
+				CGadasura_Rage_Hollogram::GADASURA_HOLLOGRAMDESC HollogramDesc;
+
+				HollogramDesc.Object = this;
+				HollogramDesc.dDuration = 5;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram),&HollogramDesc));
+				m_iAdjMovedIndex++;
+			}
+			break;
 		}
 
 		default:
@@ -590,31 +598,31 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	return S_OK;
 }
 
-CMonster_Gadasura_Black * CMonster_Gadasura_Black::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Gadasura_Rage * CMonster_Gadasura_Rage::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Gadasura_Black*	pInstance = new CMonster_Gadasura_Black(pDevice, pDeviceContext);
+	CMonster_Gadasura_Rage*	pInstance = new CMonster_Gadasura_Rage(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Gadasura_Black");
+		MSGBOX("Failed to Created CMonster_Gadasura_Rage");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Gadasura_Black::Clone(void * pArg)
+CGameObject * CMonster_Gadasura_Rage::Clone(void * pArg)
 {
-	CMonster_Gadasura_Black*	pInstance = new CMonster_Gadasura_Black(*this);
+	CMonster_Gadasura_Rage*	pInstance = new CMonster_Gadasura_Rage(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Gadasura_Black");
+		MSGBOX("Failed to Created CMonster_Gadasura_Rage");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Gadasura_Black::Free()
+void CMonster_Gadasura_Rage::Free()
 {
 	__super::Free();
 

@@ -187,6 +187,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Ninjasura_Minion,
 	Prototype_Object_Monster_Gadasura_Black,
 	Prototype_Object_Monster_Gadasura_Rage,
+	Prototype_Object_Monster_Gadasura_Rage_Hollogram,
 
 	// PhyTest
 	Prototype_Object_Static_PhysX,
@@ -210,6 +211,7 @@ enum OBJECTPROTOTYPEID
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
 	Prototype_Object_Monster_Texture_Bullet,
+	Prototype_Object_Monster_Weapon_Universal,
 
 	Object_Prototype_End
 };
@@ -330,6 +332,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Gadasura_Rage:
 		return TEXT("Prototype_Object_Monster_Gadasura_Rage");
 
+	case Prototype_Object_Monster_Gadasura_Rage_Hollogram:
+		return TEXT("Prototype_Object_Monster_Gadasura_Rage_Hollogram");
+
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
 		break;
@@ -378,6 +383,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Texture_Bullet:
 		return TEXT("Prototype_Object_Monster_Texture_Bullet");
+
+	case Prototype_Object_Monster_Weapon_Universal:
+		return TEXT("Prototype_Object_Monster_Weapon_Universal");
 
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -475,6 +483,7 @@ enum LAYERID
 	Layer_ClockBomb,
 
 	Layer_Monster,
+	Layer_Monster_Weapon,
 	Layer_MonsterBullet,
 	Layer_MonsterBullet1,
 	Layer_MonsterBullet2,
@@ -569,7 +578,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_Monster:
 		return TEXT("Layer_Monster");
 		break;
-
+	case Layer_Monster_Weapon:
+		return TEXT("Layer_Monster_Weapon");
+		break;
 	case Layer_MonsterBullet:
 		return TEXT("Layer_MonsterBullet");
 		break;
@@ -1388,6 +1399,8 @@ enum BULLETMESHID
 	Prototype_Mesh_Monster_Bullet_Tezabsura_Bomber,
 	Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine,
 	Prototype_Mesh_Monster_Bullet_Ninjasura_Knife,
+	Prototype_Mesh_Monster_Bullet_Gadasura_Sinkhole,
+	Prototype_Mesh_Monster_Bullet_Gadasura_Terrain,
 	BULLET_END
 };
 
@@ -1407,6 +1420,10 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 		return TEXT("Monster_Bullet_Tezabsura_Landmine.fbx");
 	case Prototype_Mesh_Monster_Bullet_Ninjasura_Knife:
 		return TEXT("Ninjasura_Knife.fbx");
+	case Prototype_Mesh_Monster_Bullet_Gadasura_Sinkhole:
+		return TEXT("sinkhole.fbx");
+	case Prototype_Mesh_Monster_Bullet_Gadasura_Terrain:
+		return TEXT("Gadasura_Terrain_Bullet.fbx");
 	default:
 		MSGBOX("Not Prototype_Component_Model_Bullet");
 		return TEXT("ha! ha!");

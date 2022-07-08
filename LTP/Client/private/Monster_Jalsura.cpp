@@ -409,9 +409,6 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_Texture_BulletDesc.dDuration = 1;
 
-				Monster_Texture_BulletDesc.bBornAttachOn = true;
-				Monster_Texture_BulletDesc.pBoneName = "sk_eye";
-
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
 				m_iAdjMovedIndex++;
