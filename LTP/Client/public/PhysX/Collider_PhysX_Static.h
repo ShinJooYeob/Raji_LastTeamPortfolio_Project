@@ -16,14 +16,6 @@ public:
 		E_STATIC_END,
 	};
 
-	// 트리거 적용 타입
-	enum TriggerImpl
-	{
-		REAL_TRIGGERS,	// 내장 트리거
-		FILTER_SHADER,	// 핉터 트리거
-		FILTER_CALLBACK,// 콜백 트리거
-	};
-
 
 private:
 	explicit CCollider_PhysX_Static(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -41,7 +33,6 @@ public:
 	const PHYSXDESC_STATIC& Get_PhysXDesc() const { return mPhysXDesc; }
 	HRESULT Set_ColiiderDesc(PHYSXDESC_STATIC desc);
 	HRESULT Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc);
-	HRESULT Set_ActorFlag(PxActorFlag::Enum e, bool b);
 	HRESULT	Set_eDISABLE_SIMULATION(bool b = true);
 	
 public:
@@ -55,6 +46,9 @@ protected:
 	E_STATICTYPE			mStaticID = E_STATIC_END;
 	PHYSXDESC_STATIC		mPhysXDesc;
 	PxRigidStatic*			mPxRigStaticActor;
+
+	// 트리거 객체
+	_bool					mbTrigger = false;
 
 
 public:

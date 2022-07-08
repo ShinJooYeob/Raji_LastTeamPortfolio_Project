@@ -242,6 +242,23 @@ void CCollider_PhysX_Base::Set_Transform(CTransform * trans)
 	mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
 }
 
+HRESULT CCollider_PhysX_Base::Set_ActorFlag(PxActorFlag::Enum e, bool b)
+{
+	// 시각화
+	// eVISUALIZATION = (1 << 0),
+
+	// 중력비활성화
+	// eDISABLE_GRAVITY = (1 << 1),
+
+	// 알림이벤트 On Off
+	// eSEND_SLEEP_NOTIFIES = (1 << 2),
+
+	// 충돌 비활성화
+	// eDISABLE_SIMULATION = (1 << 3)
+
+	mMain_Actor->setActorFlag(e, b);
+	return S_OK;
+}
 
 #ifdef _DEBUG
 

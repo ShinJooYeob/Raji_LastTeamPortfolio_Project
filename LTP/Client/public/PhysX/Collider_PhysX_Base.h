@@ -70,7 +70,6 @@ public:
 		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mVelocity = _float3::Zero();
-		_bool				bTrigger = false;
 
 	}PHYSXDESC_DYNAMIC;
 
@@ -122,8 +121,7 @@ public:
 public:
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
 	void			Set_Transform(CTransform* trans);
-
-//	void			Set_(_bool b) { mbTrigger = b; };
+	HRESULT			Set_ActorFlag(PxActorFlag::Enum e, bool b);
 
 	// 테스트용 
 	void			Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
@@ -167,9 +165,6 @@ protected:
 	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
 	// 콜라이더의 오브젝트 아이디
 	CColider_PX_Desc				mColDesc;
-
-	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
-	_bool							mbTrigger = false;
 
 
 	PxPhysics*						mPhysics = nullptr;

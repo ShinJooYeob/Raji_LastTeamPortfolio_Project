@@ -1398,7 +1398,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
-			createDynamic.bTrigger = false;
 			createDynamic.eShapeType = E_GEOMAT_BOX;
 			createDynamic.mTrnasform = objTrans;
 			createDynamic.mGameObect = obj;
@@ -1425,7 +1424,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
-			createDynamic.bTrigger = false;
 			createDynamic.eShapeType = E_GEOMAT_SPEHE;
 			createDynamic.mTrnasform = objTrans;
 			createDynamic.mGameObect = obj;
@@ -1449,7 +1447,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
-			createDynamic.bTrigger = false;
 			createDynamic.eShapeType = E_GEOMAT_SPEHE;
 			createDynamic.mTrnasform = objTrans;
 			createDynamic.mGameObect = obj;

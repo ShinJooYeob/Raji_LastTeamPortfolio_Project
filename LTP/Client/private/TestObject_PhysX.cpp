@@ -220,14 +220,14 @@ HRESULT CTestObject_PhysX::Set_ModelSetting(E_MODEL id)
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_PLAYER:
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Monster_Ninjasura_Minion), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
 		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)2);
 
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_STATICMAPOBJ:
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
 		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)3);
 
