@@ -187,7 +187,9 @@ void CTestObject_PhysX::CollisionPhysX_Trigger(CGameObject * pTriggerObj, _uint 
 
 void CTestObject_PhysX::CollisionPhysX_Rigid(CGameObject * pOtherObject, _uint id, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
 {
-
+	wstring a = Tag_Object_Prototype((OBJECTPROTOTYPEID)id);
+	OutputDebugStringW(to_wstring(id).c_str());
+	OutputDebugStringW(L"RigidObjectOnOnON\n");
 }
 
 HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)

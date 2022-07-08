@@ -39,8 +39,6 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
 	
 	FAILED_CHECK(__super::Update_BeforeSimulation(id));
 
-
-
 	if (E_STATIC_BUFFER == mStaticID)
 	{
 		if (mMainTransform == nullptr)
@@ -53,8 +51,6 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
 			return S_OK;
 		if (mMain_Actor == nullptr || mMainTransform == nullptr)
 			return E_FAIL;
-
-
 	}
 
 	return S_OK;

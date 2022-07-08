@@ -37,11 +37,19 @@ PxFilterFlags SampleSubmarineFilterShader(
 		return PxFilterFlag::eDEFAULT;
 	}
 	
-	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+//	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
-	// 충돌 필터 설정
-	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
-		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+	// 감지할 충돌 세팅
+	pairFlags = PxPairFlag::eSOLVE_CONTACT
+		| PxPairFlag::eDETECT_DISCRETE_CONTACT
+		| PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		//| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+	//	| PxPairFlag::eNOTIFY_CONTACT_POINTS;
+
+
+	// 충돌 필터 설정 / 나중에
+	// if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
 
 	return PxFilterFlag::eDEFAULT;
 }
@@ -820,21 +828,16 @@ void CContactReportCallback::onSleep(PxActor** /*actors*/, PxU32 /*count*/)
 }
 
 
-void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/, const PxContactPair* pairs, PxU32 count)
+void CContactReportCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 count)
 {
 	// 접촉 이벤트 발생 시 호출
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
-	// OutputDebugStringW(L"onContact\n");
+//	 OutputDebugStringW(L"onContact\n");
 
 	while (count--)
 	{
 		const PxContactPair& current = *pairs++;
-		//_uint flags = current.events;
-		//wstring buf = L"Flag: " + to_wstring(flags);
-		//OutputDebugStringW(buf.c_str());
-		//OutputDebugStringW(L"\n");
-
 
 		if (current.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
@@ -842,29 +845,26 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 			PxContactPair* Currentt = NEW PxContactPair;
 			memcpy(Currentt, &current, sizeof(PxContactPair));
 			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
-
-
 		}
-		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
-		{
-			OutputDebugStringW(L"Add onContact 2\n");
-			PxContactPair* Currentt = NEW PxContactPair;
-			memcpy(Currentt, &current, sizeof(PxContactPair));
-			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
 
-		}
-		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
-		{
-			OutputDebugStringW(L"Add onContact 3\n");
+		//else if (current.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+		//{
+		//	OutputDebugStringW(L"Add onContact 2\n");
 		//	PxContactPair* Currentt = NEW PxContactPair;
 		//	memcpy(Currentt, &current, sizeof(PxContactPair));
 		//	GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
 
-		}
+		//}
+		//else if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+		//{
+		//	OutputDebugStringW(L"Add onContact 3\n");
+		//	PxContactPair* Currentt = NEW PxContactPair;
+		//	memcpy(Currentt, &current, sizeof(PxContactPair));
+		//	GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
+		//}
+		
 
 	}
-
-	
 }
 
 void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
@@ -874,6 +874,9 @@ void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	{
 		const PxTriggerPair& current = *pairs++;
 
+		// ignore pairs when shapes have been deleted
+		if (current.flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+			continue;
 
 		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
