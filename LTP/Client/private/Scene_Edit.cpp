@@ -3359,6 +3359,18 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	ImGui::Checkbox("bIsOclusion", &m_tMeshDesc.bIsOclusion); ImGui::SameLine();
 	ImGui::Checkbox("bAutoTurn", &m_tMeshDesc.bAutoTurn); 
 
+	if (m_tMeshDesc.bEmissive)
+	{
+		memcpy(TempFloatArr, &(m_tMeshDesc.vEmissive_SBB), sizeof(_float) * 3);
+		ImGui::Text("Shade /Blur /Bright");
+
+		ImGui::DragFloat3("  ", TempFloatArr, 0.0073f, 0, 1.f);
+
+		memcpy(&(m_tMeshDesc.vEmissive_SBB), TempFloatArr, sizeof(_float) * 3);
+
+
+	}
+
 	if (m_tMeshDesc.bAutoTurn)
 	{
 		_float Angle = XMConvertToDegrees(m_tMeshDesc.fRotSpeed_Radian);
@@ -5506,6 +5518,7 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tMeshDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
 	m_tMeshDesc.ParticleStartRandomPosMin = _float3(0, 0, 0);
 	m_tMeshDesc.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
 	m_tMeshDesc.bEmissive = false;
 	m_tMeshDesc.bAutoTurn = false;
 	m_tMeshDesc.bIsOclusion = true;

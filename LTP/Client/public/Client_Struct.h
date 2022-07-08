@@ -180,9 +180,10 @@ typedef struct tagInstanceMeshDesc
 	_float3 ParticleStartRandomPosMin = _float3(-1.0f, -1.0f, -1.0f);
 	_float3 ParticleStartRandomPosMax = _float3(1.f, 1.f, 1.f);
 
-	_bool	bEmissive = false;
 	_bool	bAutoTurn = false;
 	_bool	bIsOclusion = true;
+	_bool	bEmissive = false;
+	_float3 vEmissive_SBB = _float3(0);
 	_float	fRotSpeed_Radian = XMConvertToRadians(1080);
 
 

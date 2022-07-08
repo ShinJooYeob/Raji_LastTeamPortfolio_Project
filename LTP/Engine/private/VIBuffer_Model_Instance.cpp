@@ -48,7 +48,6 @@ HRESULT CVIBuffer_Model_Instance::Initialize_Prototype(_uint iNumInstance)
 
 		pInstanceMatrix[i].vLimLight = _float4(0);
 		pInstanceMatrix[i].vEmissive= _float4(0);
-
 	}	
 
 	ZeroMemory(&m_VBInstSubResource, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -185,8 +184,13 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 
 			if (pvecLimLight)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0, 0, 0, 0));
+
 			if (pvecEmissive)
-				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 
 
 
@@ -209,8 +213,13 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 
 			if (pvecLimLight)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0, 0, 0, 0));
+
 			if (pvecEmissive)
-				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}
@@ -292,8 +301,13 @@ HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPass
 
 			if (pvecLimLight)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0,0,0,0));
+
 			if (pvecEmissive)
-				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}

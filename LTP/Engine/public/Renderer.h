@@ -169,7 +169,7 @@ private:
 	HRESULT Render_BlurShadow();
 	HRESULT Caculate_AvgLuminence();
 	HRESULT Render_Bloom();
-	HRESULT Make_BluredDeffered();
+	HRESULT Make_BluredDeffered(_float TexelSize = 2.f);
 	HRESULT Render_DDFog();
 	HRESULT Render_GodRay();
 	HRESULT Render_LesnFlare();

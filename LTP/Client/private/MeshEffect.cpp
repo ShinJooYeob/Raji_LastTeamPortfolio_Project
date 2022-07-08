@@ -55,10 +55,13 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 		return -1;
 	
 
-
 	m_vecWorld.clear();
+	m_vecWorld.swap(vector<_float4x4>());
 	m_vecLimLight.clear();
+	m_vecLimLight.swap(vector<_float4>());
 	m_vecEmisive.clear();
+	m_vecLimLight.swap(vector<_float4>());
+
 	m_vecWorld.reserve(m_iNumInstance);
 	m_vecLimLight.reserve(m_iNumInstance);
 	m_vecEmisive.reserve(m_iNumInstance);
@@ -67,12 +70,15 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
-		if (m_vecParticleAttribute[i]._age < 0 || !m_vecParticleAttribute[i]._isAlive) 
+		if (m_vecParticleAttribute[i]._age <= 0 || !m_vecParticleAttribute[i]._isAlive) 
 			continue;
 
 		mat = m_vecParticleAttribute[i]._LocalMatirx.XMatrix();
 		mat.r[3] = mat.r[3] + m_vecParticleAttribute[i]._TargetParentPosition.XMVector();
 
+
+		if (m_tInstanceDesc.bEmissive)
+			m_vecEmisive.push_back(_float4(m_tInstanceDesc.vEmissive_SBB, 1));
 		m_vecLimLight.push_back(m_vecParticleAttribute[i]._color);
 		m_vecWorld.push_back(mat);
 	}
@@ -99,7 +105,16 @@ _int CMeshEffect::Render()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
-	FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, 2, &m_vecWorld ,0, &m_vecLimLight));
+	if (m_tInstanceDesc.bEmissive)
+	{
+		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, 2, &m_vecWorld, 0, &m_vecLimLight, &m_vecEmisive));
+
+	}
+	else
+	{
+		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, 2, &m_vecWorld, 0, &m_vecLimLight));
+	}
+
 
 
 
@@ -138,7 +153,6 @@ HRESULT CMeshEffect::SetUp_Components()
 	tModelDesc.m_pTargetModel = m_pModel;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(m_tInstanceDesc.eInstanceCount), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance,&tModelDesc));
-	
 	m_iNumInstance = _uint(pow(2,m_tInstanceDesc.eInstanceCount - Prototype_ModelInstance_2 + 1));
 
 
@@ -209,7 +223,7 @@ void CMeshEffect::ResetParticle(INSTMESHATT * attribute)
 
 	attribute->_Targetforce = attribute->_force = m_tInstanceDesc.Particle_Power * pUtil->RandomFloat(m_tInstanceDesc.PowerRandomRange.x, m_tInstanceDesc.PowerRandomRange.y);
 	attribute->_size = m_tInstanceDesc.ParticleSize;
-
+	attribute->_color = m_tInstanceDesc.TargetColor;
 
 
 	if (m_tInstanceDesc.FollowingTarget)
@@ -490,6 +504,7 @@ HRESULT CMeshEffect_Ball::Initialize_Child_Clone()
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
 
+		part._color = m_tInstanceDesc.TargetColor;
 
 		m_vecParticleAttribute.push_back(part);
 	}
@@ -701,6 +716,7 @@ HRESULT CMeshEffect_Cone::Initialize_Child_Clone()
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
 
+		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
 	}
 
@@ -807,6 +823,7 @@ HRESULT CMeshEffect_Spread::Initialize_Child_Clone()
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
 
+		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
 	}
 
@@ -1098,6 +1115,7 @@ HRESULT CMeshEffect_Suck::Initialize_Child_Clone()
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
 
+		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
 	}
 

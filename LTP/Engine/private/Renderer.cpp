@@ -79,6 +79,8 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledEmissiveMask"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredEmissiveMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledMulMaskBluredEmissive"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_MulMaskBluredEmissive"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_AvgLuminece"), (_uint)1, (_uint)1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -149,7 +151,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveVBlur_N_DownScaling"), TEXT("Target_DownScaledEmissiveMask")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveHBlur_N_UpScaling"), TEXT("Target_BluredEmissiveMask")));
-
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownSclaedMulMaskBluredEmissive"), TEXT("Target_DownScaledMulMaskBluredEmissive")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MulMaskBluredEmissive"), TEXT("Target_MulMaskBluredEmissive")));
+	
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_AvgLuminece"), TEXT("Target_AvgLuminece")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MakeLumiMask"), TEXT("Target_LumineceMask")));
 
@@ -898,7 +902,7 @@ HRESULT CRenderer::Caculate_AvgLuminence()
 
 HRESULT CRenderer::Render_Bloom()
 {
-	FAILED_CHECK(Make_BluredDeffered());
+	FAILED_CHECK(Make_BluredDeffered(2.f));
 	FAILED_CHECK(Caculate_AvgLuminence());
 
 	m_fTexleSize = 2.f;
@@ -952,7 +956,7 @@ HRESULT CRenderer::Render_Bloom()
 	return S_OK;
 }
 
-HRESULT CRenderer::Make_BluredDeffered()
+HRESULT CRenderer::Make_BluredDeffered(_float TexelSize)
 {
 	//Target_BluredDefferred
 	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_BluredDefferred")));
@@ -961,6 +965,9 @@ HRESULT CRenderer::Make_BluredDeffered()
 	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
 
 	wstring TargetMrt = L"MRT_DownScaled_By" + to_wstring((_uint)(2));
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &TexelSize, sizeof(_float)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TargetMrt.c_str()));
 
@@ -1263,32 +1270,65 @@ HRESULT CRenderer::Render_SwordTrail()
 
 HRESULT CRenderer::Render_EmissiveBlur()
 {
-	FAILED_CHECK(Make_BluredDeffered());
-
 	m_fTexleSize = 3.f;
-	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+
+	FAILED_CHECK(Make_BluredDeffered(m_fTexleSize));
 
 
+	//Target_BluredDefferred
 	//ILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveVBlur_N_DownScaling"), TEXT("Target_DownScaledEmissiveMask")));
 	//ILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveHBlur_N_UpScaling"), TEXT("Target_BluredEmissiveMask")));3
 
 	D3D11_VIEWPORT OldVp;
 	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
 
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_EmissiveVBlur_N_DownScaling"), m_DownScaledDepthStencil[0]));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
 
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
-
-
 	m_pDeviceContext->RSSetViewports(1, &OldVp);
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_EmissiveVBlur_N_DownScaling")));
 
 	
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_EmissiveHBlur_N_UpScaling")));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledEmissiveMask"))));
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_EmissiveHBlur_N_UpScaling")));
+
+
+
+
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownSclaedMulMaskBluredEmissive"), TEXT("Target_DownScaledMulMaskBluredEmissive")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MulMaskBluredEmissive"), TEXT("Target_MulMaskBluredEmissive")));
+
+
+
+	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DownSclaedMulMaskBluredEmissive"), m_DownScaledDepthStencil[0]));
+	
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 12));
+	m_pDeviceContext->RSSetViewports(1, &OldVp);
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DownSclaedMulMaskBluredEmissive")));
+	
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_MulMaskBluredEmissive")));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledMulMaskBluredEmissive"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_MulMaskBluredEmissive")));
+
+
+
+
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));
@@ -1298,6 +1338,9 @@ HRESULT CRenderer::Render_EmissiveBlur()
 	FAILED_CHECK(m_pShader->Set_Texture("g_EmissiveTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_BluredTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_BluredDefferred"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_UpScaledTexture1", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MulMaskBluredEmissive"))));
+	
+	
 
 	
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 19));
@@ -1368,7 +1411,7 @@ HRESULT CRenderer::Render_DepthOfField()
 
 	*/
 
-	FAILED_CHECK(Make_BluredDeffered());
+	FAILED_CHECK(Make_BluredDeffered(2));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));

@@ -724,15 +724,15 @@ PS_OUT PS_Masking_Blur(PS_IN_BLUR In)
 	
 	
 	// 수평선상의 아홉 픽셀값들을 가중치를 곱해 더합니다.
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd1) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd1), 2.2f) * weight4;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd2) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd2), 2.2f) * weight3;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd3) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd3), 2.2f) * weight2;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd4) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd4), 2.2f) * weight1;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd5) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd5), 2.2f) * weight0;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd6) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd6), 2.2f) * weight1;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd7) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd7), 2.2f) * weight2;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd8) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd8), 2.2f) * weight3;
-	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd9) * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd9), 2.2f) * weight4;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd1).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd1), 2.2f) * weight4;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd2).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd2), 2.2f) * weight3;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd3).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd3), 2.2f) * weight2;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd4).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd4), 2.2f) * weight1;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd5).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd5), 2.2f) * weight0;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd6).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd6), 2.2f) * weight1;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd7).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd7), 2.2f) * weight2;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd8).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd8), 2.2f) * weight3;
+	color += g_MaskTexture.Sample(DefaultSampler, In.texCrd9).b * pow(g_TargetTexture.Sample(DefaultSampler, In.texCrd9), 2.2f) * weight4;
 	color /= normalization;
 	// 알파 채널을 1로 설정합니다.
 
@@ -1086,19 +1086,16 @@ PS_OUT PS_Emissive(PS_IN In)
 	vector		NonBlurEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		BluredDeferredDesc = pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
 	vector		NonBluredDeferredDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	vector MaskedNBluredDeferedDesc = pow(g_UpScaledTexture1.Sample(DefaultSampler, In.vTexUV), 2.2f);
 
 
-	if (BluredEmissiveMaskDesc.z > 0  && NonBlurEmissiveDesc.z == 0)
+	if (MaskedNBluredDeferedDesc.a && NonBlurEmissiveDesc.z == 0)
 	{
-		Out.vColor = pow(
 
+		Out.vColor =
+			pow(MaskedNBluredDeferedDesc + NonBluredDeferredDesc, 1.f / 2.2f);
+				
 
-			(BluredDeferredDesc * BluredEmissiveMaskDesc.y + NonBluredDeferredDesc * (1 - BluredEmissiveMaskDesc.y))
-			*  (BluredEmissiveMaskDesc.z *1.3f + 1)
-
-
-
-			, 1.f / 2.2f);
 
 	}
 	else
@@ -1108,10 +1105,6 @@ PS_OUT PS_Emissive(PS_IN In)
 
 
 			(BluredDeferredDesc * BluredEmissiveMaskDesc.y + NonBluredDeferredDesc * (1 - BluredEmissiveMaskDesc.y))
-
-
-
-
 			, 1.f / 2.2f);
 
 
