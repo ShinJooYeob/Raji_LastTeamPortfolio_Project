@@ -40,6 +40,9 @@ public:
 	void				Lock_CamLook(_bool bCamLock, _fVector vFixDir = {0.f, 0.f, 1.f, 0.f});
 
 
+
+
+
 public: /* Get Camera Transform State */
 	_fVector			Get_CameraState(CTransform::TransformState eState);
 	_fVector			Get_CameraState_Normalize(CTransform::TransformState eState);
@@ -82,6 +85,8 @@ private:
 
 private:
 	_int				Update_NormalMode(_double fDeltaTime);
+
+
 
 
 private:

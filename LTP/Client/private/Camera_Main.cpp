@@ -604,5 +604,5 @@ void CCamera_Main::Free()
 	__super::Free();
 
 
-	Safe_Release(m_pFocusTarget);
+ 	Safe_Release(m_pFocusTarget);
 }

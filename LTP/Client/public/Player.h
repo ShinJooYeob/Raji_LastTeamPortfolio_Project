@@ -141,6 +141,8 @@ private:
 	HRESULT Update_State_Dead(_double fDeltaTime);
 
 
+
+
 private: /* Key Input */
 	_bool				Check_PlayerKeyInput(_double fDeltaTime);
 

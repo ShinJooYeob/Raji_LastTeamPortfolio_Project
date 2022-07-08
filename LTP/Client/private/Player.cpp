@@ -4258,7 +4258,7 @@ HRESULT CPlayer::SetUp_EtcInfo()
 	// Setting Camera
 	m_iMaxCamViewIndex = 4;
 	m_pMainCamera = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	Safe_AddRef(m_pMainCamera);
+	//Safe_AddRef(m_pMainCamera);
 	m_pMainCamera->Lock_CamLook(false);
 	m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
 	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
@@ -4499,7 +4499,7 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
-	Safe_Release(m_pMainCamera);
+	//Safe_Release(m_pMainCamera);
 
 
 
