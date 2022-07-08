@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Monster_Weapon_Universal.h"
+#include "Monster_Gadasura_Black.h"
 
 const _tchar* m_pMonster_Weapon_UniversalTag[CMonster_Weapon_Universal::MONSTER_WEAPON_UNIVERSAL_END]
 {
@@ -43,7 +44,7 @@ HRESULT CMonster_Weapon_Universal::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 	SetUp_BoneMatrix();
-
+	m_fAttachedMatrix = XMMatrixIdentity();
 
 
 	return S_OK;
@@ -52,6 +53,11 @@ HRESULT CMonster_Weapon_Universal::Initialize_Clone(void * pArg)
 _int CMonster_Weapon_Universal::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	Update_AttachMatrix();
+
+
+	Update_Weapon(dDeltaTime);
 
 	return _int();
 }
@@ -62,6 +68,20 @@ _int CMonster_Weapon_Universal::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+
+
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+	//Caculate_AttachedBone //µðÆúÆ®ÇÇ¹þ*  »ÀÀÇ µðÆúÆ® »À *  »ÀÀÇ ¿ÀÇÂ¼Â * ÄÄ¹ÙÀÎµå * ºÎ¸ðÀÇ Æ®·£½ºÆû,
 
 	return _int();
 }
@@ -76,17 +96,30 @@ _int CMonster_Weapon_Universal::Render()
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint iNumMaterials = m_pModel->Get_NumMaterial();
+	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < iNumMaterials; ++i)
+	for (_uint i = 0; i < NumMaterial; i++)
 	{
-		m_pModel->Bind_OnShader(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-
-		m_pModel->Render(m_pShaderCom, 3, i);
+		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+		{
+			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+		}
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
 	}
+
+
+	//_uint iNumMaterials = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < iNumMaterials; ++i)
+	//{
+	//	m_pModel->Bind_OnShader(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+
+	//	m_pModel->Render(m_pShaderCom, 3, i);
+	//}
 
 	return _int();
 }
@@ -129,14 +162,195 @@ HRESULT CMonster_Weapon_Universal::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CMonster_Weapon_Universal::SetUp_Info()
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Weapon_Universal::SetUp_BoneMatrix()
 {
 	return S_OK;
 }
 
-HRESULT CMonster_Weapon_Universal::SetUp_Info()
+void CMonster_Weapon_Universal::Update_AttachMatrix()
 {
+	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_Monster_Weapon_UniversalDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 
+//	_Matrix tt = m_pTransformCom->Get_WorldMatrix()  * m_Monster_Weapon_UniversalDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+//	_Matrix t2 = m_fAttachedMatrix.TransposeXMatrix();
+//
+//#define Rate 0.8f
+//
+//
+//	tt.r[0] = tt.r[0] * (1.f - Rate) + t2.r[0] * Rate;
+//	tt.r[1] = tt.r[1] * (1.f - Rate) + t2.r[1] * Rate;
+//	tt.r[2] = tt.r[2] * (1.f - Rate) + t2.r[2] * Rate;
+//	tt.r[3] = tt.r[3];
+//
+//	m_fAttachedMatrix = tt;
+
+
+}
+
+HRESULT CMonster_Weapon_Universal::Update_Weapon(_double dDeltaTime)
+{
+	switch (m_Monster_Weapon_UniversalDesc.iMonsterWeaponMeshNumber)
+	{
+	case GADASURA_BLACK_WEAPON:
+		Gadasura_Black_Weapon(dDeltaTime);
+		break;
+	case GADASURA_RAGE_WEAPON:
+		Gadasura_Rage_Weapon(dDeltaTime);
+		break;
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Weapon_Universal::Gadasura_Black_Weapon(_double dDeltaTime)
+{
+	CMonster_Gadasura_Black* pMonsterOpject = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
+
+	CModel* pModel =static_cast<CModel*>(pMonsterOpject->Get_Component(TAG_COM(Com_Model)));
+
+	_double PlayRate = pModel->Get_PlayRate();
+
+	if (pModel->Get_NowAnimIndex()== 20)
+	{
+		/*
+			//_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+			//mat.r[0] = XMVectorSet(1, 0, 0, 0) * XMVector3Length(mat.r[0]);
+			//mat.r[1] = XMVectorSet(0, 1, 0, 0) * XMVector3Length(mat.r[1]);
+			//mat.r[2] = XMVectorSet(0, 0, 1, 0) * XMVector3Length(mat.r[2]);
+
+			//m_fAttachedMatrix = mat;
+
+			//if (PlayRate <= 0.1588785046)
+			//{
+
+			//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(110));
+
+			//}
+			//else if (PlayRate < 0.214953271)
+			//{
+
+			//	_float Angle = g_pGameInstance->Easing(TYPE_Linear, 110, 0, PlayRate - 0.1588785046f, 0.0560747664);
+
+			//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(Angle));
+
+			//}
+			//else if (PlayRate <= 0.654205607)
+			//{
+			//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(0));
+
+			//}
+			//else if (PlayRate <= 0.8130841121495327)
+			//{
+			//	_float Angle = g_pGameInstance->Easing(TYPE_SinInOut, 0, 110, PlayRate - 0.654205607, 0.1588785051495327);
+			//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(Angle));
+			//}
+			//else
+			//{
+			//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(110));
+
+			//}
+			//m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() *mat;
+
+
+
+			*/
+
+		
+		if (PlayRate > 0.1495327102803738 && PlayRate <= 0.7383177570093458)
+		{
+			_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+			mat.r[0] = XMVectorSet(1, 0, 0, 0) * XMVector3Length(mat.r[0]);
+			mat.r[1] = XMVectorSet(0, 1, 0, 0) * XMVector3Length(mat.r[1]);
+			mat.r[2] = XMVectorSet(0, 0, 1, 0) * XMVector3Length(mat.r[2]);
+
+
+			m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()* mat;
+
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Weapon_Universal::Gadasura_Rage_Weapon(_double dDeltaTime)
+{
+	CMonster_Gadasura_Black* pMonsterOpject = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
+
+	CModel* pModel = static_cast<CModel*>(pMonsterOpject->Get_Component(TAG_COM(Com_Model)));
+
+	_double PlayRate = pModel->Get_PlayRate();
+
+	if (pModel->Get_NowAnimIndex() == 20)
+	{
+		/*
+		//_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+		//mat.r[0] = XMVectorSet(1, 0, 0, 0) * XMVector3Length(mat.r[0]);
+		//mat.r[1] = XMVectorSet(0, 1, 0, 0) * XMVector3Length(mat.r[1]);
+		//mat.r[2] = XMVectorSet(0, 0, 1, 0) * XMVector3Length(mat.r[2]);
+
+		//m_fAttachedMatrix = mat;
+
+		//if (PlayRate <= 0.1588785046)
+		//{
+
+		//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(110));
+
+		//}
+		//else if (PlayRate < 0.214953271)
+		//{
+
+		//	_float Angle = g_pGameInstance->Easing(TYPE_Linear, 110, 0, PlayRate - 0.1588785046f, 0.0560747664);
+
+		//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(Angle));
+
+		//}
+		//else if (PlayRate <= 0.654205607)
+		//{
+		//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(0));
+
+		//}
+		//else if (PlayRate <= 0.8130841121495327)
+		//{
+		//	_float Angle = g_pGameInstance->Easing(TYPE_SinInOut, 0, 110, PlayRate - 0.654205607, 0.1588785051495327);
+		//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(Angle));
+		//}
+		//else
+		//{
+		//	m_pTransformCom->Rotation_CCW(XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMConvertToRadians(110));
+
+		//}
+		//m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() *mat;
+
+
+
+		*/
+
+
+		if (PlayRate > 0.1495327102803738 && PlayRate <= 0.7383177570093458)
+		{
+			_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+			mat.r[0] = XMVectorSet(1, 0, 0, 0) * XMVector3Length(mat.r[0]);
+			mat.r[1] = XMVectorSet(0, 1, 0, 0) * XMVector3Length(mat.r[1]);
+			mat.r[2] = XMVectorSet(0, 0, 1, 0) * XMVector3Length(mat.r[2]);
+
+
+			m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()* mat;
+
+		}
+
+	}
 	return S_OK;
 }
 

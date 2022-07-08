@@ -12,7 +12,8 @@ const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_
 	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
-	TEXT("Ninjasura_Knife.fbx")
+	TEXT("Ninjasura_Knife.fbx"),
+	TEXT("sinkhole.fbx")
 
 };
 
@@ -229,6 +230,9 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 	case NINJASURA_KNIFE:
 		Ninjasura_Knife(dDeltaTime);
 		break;
+	case GADASURA_SINKHOLE:
+		Gadasura_Black(dDeltaTime);
+		break;
 	default:
 		MSGBOX("Not BulletMeshNumber");
 		break;
@@ -430,6 +434,27 @@ HRESULT CMonster_Bullet_Universal::Ninjasura_Knife(_double dDeltaTime)
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 	}
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Gadasura_Black(_double dDeltaTime)
+{
+	//if (m_bIsFired == false)
+	//{
+	//	_float4x4 fWorldMatrix = m_pTransformCom->Get_WorldFloat4x4();
+
+	//	fWorldMatrix = XMMatrixIdentity();
+
+	//	m_pTransformCom->Set_Matrix(XMLoadFloat4x4(&fWorldMatrix));
+
+
+	//	m_pTransformCom->Scaled_All(m_Monster_Bullet_UniversalDesc.fScale);
+
+	//	m_bIsFired = true;
+	//}
+
+	m_pTransformCom->LookDir(XMVectorSet(1.f, 0.f, 0.f, 0.f));
+	
 	return S_OK;
 }
 

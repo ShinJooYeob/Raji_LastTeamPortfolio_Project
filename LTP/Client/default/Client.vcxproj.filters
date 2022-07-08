@@ -265,6 +265,12 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Weapon_Universal">
       <UniqueIdentifier>{c19fe9f4-fae0-4c83-a0cb-71aca287e7f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage">
+      <UniqueIdentifier>{6bab3c6c-9cbc-49e4-b7dd-22711c3c9df4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram">
+      <UniqueIdentifier>{085924aa-ea79-4ffe-9126-bab5b087fea1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -546,6 +552,12 @@
     <ClInclude Include="..\public\MeshEffect.h">
       <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Rage.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -749,9 +761,6 @@
     <ClCompile Include="..\private\Monster_Jalsura.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Jalsura</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
@@ -793,6 +802,15 @@
     <ClCompile Include="..\private\TestObject_PhysX.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Rage.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

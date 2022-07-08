@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "..\public\Monster_Texture_Bullet.h"
+#include "Monster_Bullet_Universal.h"
 
 const _tchar* m_pMonster_Texture_BulletTag[CMonster_Texture_Bullet::MONSTER_TEXUTRE_BULLET_END]
 {
-	L"Jalsura_Bullet"
+	L"Jalsura_Bullet",
+	L"Gadasura_Terrain_Bullet"
 
 };
 
@@ -42,7 +44,6 @@ HRESULT CMonster_Texture_Bullet::Initialize_Clone(void * pArg)
 
 
 	SetUp_Info();
-	SetUp_BoneMatrix();
 
 
 
@@ -136,18 +137,6 @@ HRESULT CMonster_Texture_Bullet::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Texture_Bullet::SetUp_BoneMatrix()
-{
-	if (m_Monster_Texture_BulletDesc.bBornAttachOn)
-	{
-		m_AttachedDesc.Initialize_AttachedDesc(static_cast<CGameObject*>(m_Monster_Texture_BulletDesc.Object),
-			m_Monster_Texture_BulletDesc.pBoneName,
-			m_Monster_Texture_BulletDesc.fScale,
-			_float3(0.f, 0.f, 0.f), m_Monster_Texture_BulletDesc.fPositioning);
-	}
-	return S_OK;
-}
-
 HRESULT CMonster_Texture_Bullet::SetUp_Info()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -194,6 +183,9 @@ HRESULT CMonster_Texture_Bullet::SetUp_Fire(_double dDeltaTime)
 	{
 	case JALSURA_BULLET:
 		Jalsura_Bullet(dDeltaTime);
+		break;
+	case GADASURA_TERRAIN_BULLET:
+		Gadasura_Terrain_Bullet(dDeltaTime);
 		break;
 	default:
 		MSGBOX("Not BulletTextureNumber");
@@ -266,6 +258,65 @@ HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 	//{
 	//	m_bHitOn = true;
 	//}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Bullet(_double dDeltaTime)
+{
+	if (false == m_bOnceSwtich)
+	{
+		_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vTarPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+		vTempPos = XMVectorSetY(vTempPos, 0.f);
+		vTarPos = XMVectorSetY(vTarPos, 0.f);
+
+		_Vector vLook = vTarPos - vTempPos;
+
+		vLook = XMVector3Normalize(vLook);
+
+		_Vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+
+		_Vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_RIGHT, vLook * XMVectorGetZ(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_UP, -vRight *XMVectorGetX(m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT)));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, -vUp * XMVectorGetY(m_pTransformCom->Get_MatrixScale(CTransform::STATE_UP)));
+
+		m_bOnceSwtich = true;
+
+
+		//위치 재지정
+		CTransform* Monster_Transform = static_cast<CTransform*>( static_cast<CGameObject*>(m_Monster_Texture_BulletDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
+		_Vector vTempLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - Monster_Transform->Get_MatrixState(CTransform::STATE_POS));
+
+		XMStoreFloat3(&m_fTempLook, vTempLook);
+
+
+
+		//test
+		CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
+
+		Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET;
+		Monster_BulletDesc.fSpeedPerSec = 10;
+		Monster_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+		Monster_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+
+
+		Monster_BulletDesc.Object = this;
+
+		Monster_BulletDesc.dDuration = 15;
+
+		Monster_BulletDesc.bBornAttachOn = false;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+	}
+
+	m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fTempLook), m_Monster_Texture_BulletDesc.fSpeedPerSec, dDeltaTime);
+
 
 	return S_OK;
 }

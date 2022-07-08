@@ -16,6 +16,7 @@ public:
 	{
 		_uint			iMonsterWeaponMeshNumber;
 		ATTACHEDESC		eAttachedDesc;
+		void*			Object = nullptr;
 	}Monster_Weapon_UniversalDesc;
 
 private:
@@ -41,6 +42,18 @@ private:
 private:
 	HRESULT	SetUp_Info();
 	HRESULT	SetUp_BoneMatrix();
+
+	void	Update_AttachMatrix();
+
+private:
+	HRESULT Update_Weapon(_double dDeltaTime);
+
+
+	HRESULT	Gadasura_Black_Weapon(_double dDeltaTime);
+	HRESULT	Gadasura_Rage_Weapon(_double dDeltaTime);
+
+
+
 private:
 	Monster_Weapon_UniversalDesc m_Monster_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
@@ -51,6 +64,12 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
+
+
+
+private:
+	_float4x4			m_fAttachedMatrix;
+	CHierarchyNode*		m_pAttachedNode = nullptr;
 
 public:
 	static CMonster_Weapon_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

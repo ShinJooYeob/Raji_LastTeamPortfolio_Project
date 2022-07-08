@@ -7,12 +7,12 @@ END
 
 BEGIN(Client)
 
-class CMonster_Gadasura_Black final : public CMonster
+class CMonster_Gadasura_Rage final : public CMonster
 {
 private:
-	explicit CMonster_Gadasura_Black(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Gadasura_Black(const CMonster_Gadasura_Black& rhs);
-	virtual ~CMonster_Gadasura_Black() = default;
+	explicit CMonster_Gadasura_Rage(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMonster_Gadasura_Rage(const CMonster_Gadasura_Rage& rhs);
+	virtual ~CMonster_Gadasura_Rage() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -93,7 +93,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Gadasura_Black* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Gadasura_Rage* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

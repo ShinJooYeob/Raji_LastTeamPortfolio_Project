@@ -16,6 +16,7 @@ public:
 		TEZABSURA_LANDMINE_DEFAULT_BULLET,
 		TEZABSURA_LANDMINE_INSTALL,
 		NINJASURA_KNIFE,
+		GADASURA_SINKHOLE,
 		MONSTER_BULLET_UNIVERSAL_END,
 	};
 public:
@@ -76,6 +77,7 @@ private:
 	HRESULT Tezabsura_Landmine_Default_Bullet(_double dDeltaTime);
 	HRESULT Tezabsura_Landmine_Install(_double dDeltaTime);
 	HRESULT	Ninjasura_Knife(_double dDeltaTime);
+	HRESULT	Gadasura_Black(_double dDeltaTime);
 
 private:
 	MONSTER_BULLET_UNIVERSALDESC m_Monster_Bullet_UniversalDesc; //Monster_Bullet_Universal Desc;
