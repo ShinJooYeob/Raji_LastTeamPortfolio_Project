@@ -53,14 +53,17 @@ private:
 	HRESULT SetUp_Fire(_double dDeltaTime);
 
 
-private:
+private: //Monster Skill
 	HRESULT Jalsura_Bullet(_double dDeltaTime);
 	HRESULT	Gadasura_Terrain_Bullet(_double dDeltaTime);
 
+private://Paticle
+	HRESULT Gadasura_Terrain_Particle();
 
 private:
 	MONSTER_TEXTURE_BULLETDESC m_Monster_Texture_BulletDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
+	INSTMESHDESC		m_MeshEffectDesc; //Mesh Effect
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -72,7 +75,6 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr;
 
 	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
-
 private:
 	_float4				m_fTempPos;
 	_float3				m_fTempLook;

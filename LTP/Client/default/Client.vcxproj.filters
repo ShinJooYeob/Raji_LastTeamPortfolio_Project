@@ -812,6 +812,7 @@
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
