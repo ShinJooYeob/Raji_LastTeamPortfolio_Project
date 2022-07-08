@@ -558,6 +558,7 @@ enum LAYERID
 	Layer_UI_INPUT,
 
 	Layer_TestObject,
+	Layer_Boss,
 	Layer_TestEffect,
 
 };
@@ -713,6 +714,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_TestObject:
 		return TEXT("Layer_TestObject");
+		break;
+
+	case Layer_Boss:
+		return TEXT("Layer_Boss");
 		break;
 
 	case Layer_TestEffect:

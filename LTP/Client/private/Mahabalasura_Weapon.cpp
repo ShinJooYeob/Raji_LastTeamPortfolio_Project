@@ -23,16 +23,41 @@ HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
-	ZeroMemory(&m_eAttachedDesc, sizeof(ATTACHEDESC));
+	ZeroMemory(&m_WeaponDesc, sizeof(WEAPONDESC));
 	if (nullptr != pArg)
 	{
-		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
+		memcpy(&m_WeaponDesc, pArg, sizeof(WEAPONDESC));
+	}
+
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		CGameObject* BossObj = g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss), 0);
+		CTransform* BossTransform = (CTransform*)BossObj->Get_Component(TAG_COM(Com_Transform));
+
+
+		m_pBossPos = m_WeaponDesc.Pos;
+		m_mBossMatrix = BossTransform->Get_WorldMatrix();
 	}
 
 	FAILED_CHECK(SetUp_Components());
 
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
+	{
+		m_pTransformCom->Scaled_All(_float3(0.8f));
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+		m_pTransformCom->Scaled_All(XMVectorSet(100.f, 200.f, 150.f, 0.f));
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_WeaponDesc.Pos);
+	}
+
+
+	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	m_PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS); 
+
 	//m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
-	m_pTransformCom->Scaled_All(_float3(0.8f));
 	return S_OK;
 }
 
@@ -41,6 +66,59 @@ _int CMahabalasura_Weapon::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+		if (m_dAliveTime > 4)
+		{
+			Set_IsDead();
+			return _int();
+		}
+		m_dAliveTime += fDeltaTime;
+		m_fUpSpeed += (_float)fDeltaTime * 30.0f;
+		_float3 fThisPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		fThisPos.y = m_PlayerPos.y - 3.0f;
+		
+		_float3 Pos = g_pGameInstance->Easing_Vector(TYPE_Linear, fThisPos, m_PlayerPos, m_fUpSpeed, 4.f);
+		if (m_fUpSpeed > 4.f)
+		{
+			m_PlayerPos.y = -1.f;
+			Pos = m_PlayerPos;
+		}
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+
+		if (m_bIsAliveTimeStart)
+		{
+			if (m_dAliveTime > 3)
+			{
+				Set_IsDead();
+				return _int();
+			}
+
+			m_dAliveTime += fDeltaTime;
+		}
+
+		if (m_bIsStab && !m_bIsAliveTimeStart)
+		{
+			for (_int i = 0; i < m_vInstanceTransformComs.size(); ++i)
+			{
+				_float3 Pos = m_vInstanceTransformComs[i]->Get_MatrixState(CTransform::STATE_POS);
+
+				if (m_PlayerPos.y + 2 < Pos.y)
+				{
+					Pos.y -= 2.f;
+					m_vInstanceTransformComs[i]->Set_MatrixState(CTransform::STATE_POS, Pos);
+				}
+				else
+				{
+					m_bIsAliveTimeStart = true;
+				}
+			}
+		}
+	}
+
 	return _int();
 }
 
@@ -48,26 +126,23 @@ _int CMahabalasura_Weapon::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-	Update_AttachMatrix();
-	//m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
-	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
+	{
+		Update_AttachMatrix();
+		m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
-
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-
-
-
-	//_Matrix mat =
-	//	XMMatrixRotationX(XMConvertToRadians(0))*
-	//	XMMatrixRotationY(XMConvertToRadians(0))*
-	//	XMMatrixRotationZ(XMConvertToRadians(0));
-
-	//m_pTransformCom->Set_Matrix(mat);
-
-
-
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	}
 
 	return _int();
 }
@@ -80,23 +155,47 @@ _int CMahabalasura_Weapon::Render()
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
-
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-
-
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
 	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
+
+		_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+		for (_uint i = 0; i < NumMaterial; i++)
 		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			{
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+			}
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
 		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+		_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			{
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+			}
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i));
+		}
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		FAILED_CHECK(m_pInstanceShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(m_pInstanceShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+		FAILED_CHECK(m_pModelInstance->Render(m_pInstanceShaderCom, 2, &m_vInstanceTransformComs));
 	}
 
 	return _int();
@@ -107,9 +206,72 @@ _int CMahabalasura_Weapon::LateRender()
 	return _int();
 }
 
+HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
+{
+	if (iCount == 0)
+	{
+		for (_uint i = 0; i < 6; i++)
+		{
+			_float Angle = (_float)i*(360.f / 6.f);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 4.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			m_vInstanceTransformComs.push_back(pTransform);
+		}
+	}
+	else if (iCount == 1)
+	{
+		for (_uint i = 0; i < 12; i++)
+		{
+			_float Angle = (_float)i*(360.f / 12.f);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 8.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			m_vInstanceTransformComs.push_back(pTransform);
+		}
+	}
+	else if (iCount == 2)
+	{
+		for (_uint i = 0; i < 24; i++)
+		{
+			_float Angle = (_float)i*(360.f / 24.f);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 12.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			m_vInstanceTransformComs.push_back(pTransform);
+		}
+	}
+	return S_OK;
+}
+
 void CMahabalasura_Weapon::Update_AttachMatrix()
 {
-	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
 HRESULT CMahabalasura_Weapon::SetUp_Components()
@@ -117,6 +279,8 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXNONANIMINST), TAG_COM(Com_ShaderSub), (CComponent**)&m_pInstanceShaderCom));
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_MahabalasurWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
@@ -129,6 +293,64 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		/*for (_uint i = 0; i < 6; i++)
+		{
+			_float Angle = (_float)i*(360.f / 6.f);
+			
+			_Matrix Mat =  XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 4.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			m_vInstanceTransformComs.push_back(pTransform);
+		}
+		for (_uint i = 0; i < 12; i++)
+		{
+			_float Angle = (_float)i*(360.f / 12.f);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 8.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			m_vInstanceTransformComs.push_back(pTransform);
+		}
+		for (_uint i = 0; i < 24; i++)
+		{
+			_float Angle = (_float)i*(360.f / 24.f);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 12.f);
+			Pos.y += 10.f;
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+			pTransform->Scaled_All(_float3(100, 200, 150));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
+			m_vInstanceTransformComs.push_back(pTransform);
+		}*/
+
+		CModelInstance::MODELINSTDESC tModelIntDsec;
+		tModelIntDsec.m_pTargetModel = m_pModel;
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_64), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
+
+	}
 
 
 	return S_OK;
@@ -165,5 +387,11 @@ void CMahabalasura_Weapon::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pInstanceShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pModelInstance);
+	
+	for (auto& pTransform : m_vInstanceTransformComs)
+		Safe_Release(pTransform);
+	m_vInstanceTransformComs.clear();
 }

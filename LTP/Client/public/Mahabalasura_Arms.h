@@ -20,6 +20,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	void		Reset_AttackTime() {m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);}
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -33,6 +36,8 @@ private:
 	ATTACHEDESC			m_eAttachedDesc;
 
 	_float4x4			m_fAttachedMatrix;
+
+	_float				m_fAttackTime = 0.f;
 
 private:
 	void				Update_AttachMatrix();
