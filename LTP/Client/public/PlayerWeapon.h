@@ -31,6 +31,9 @@ public:
 	virtual _int		LateRender() override;
 
 public:
+	virtual void		Active_Trail(_bool bActivate);
+
+public:
 	void				Set_BlockUpdate(_bool bBlock);
 
 private:
@@ -40,6 +43,7 @@ private:
 protected:
 	PlayerWeaponDesc			m_tPlayerWeaponDesc;
 	_bool						m_bBlockUpdate = false;
+	_bool						m_bActiveTrail = false;
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

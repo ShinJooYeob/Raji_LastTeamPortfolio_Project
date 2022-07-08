@@ -44,11 +44,12 @@ HRESULT CCamera_Main::Initialize_Prototype(void * pArg)
 
 HRESULT CCamera_Main::Initialize_Clone(void * pArg)
 {
-
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
-
 	if (FAILED(SetUp_Components()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_EtcInfo()))
 		return E_FAIL;
 
 	m_fMin_TargetArmLength = -10.f;
@@ -81,6 +82,12 @@ _bool CCamera_Main::CamActionStart(CAMERAACTION Act)
 
 
 	return true;
+}
+
+void CCamera_Main::Lock_CamLook(_bool bCamLock, _fVector vFixDir)
+{
+	m_bCamLock = bCamLock;
+	m_fFixLookDir = vFixDir;
 }
 
 _fVector CCamera_Main::Get_CameraState(CTransform::TransformState eState)
@@ -135,7 +142,15 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 	
 	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * 0.9f + m_pFocusTarget->Get_AttachCamPos() * 0.1f;
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
-	m_pTransform->Turn_Dir(m_pFocusTarget->Get_AttachCamLook(), 0.9f);
+
+	if (true == m_bCamLock)
+	{
+		m_pTransform->Turn_Dir(m_fFixLookDir.XMVector(), 0.98f); 
+	}
+	else
+	{
+		m_pTransform->Turn_Dir(m_pFocusTarget->Get_AttachCamLook(), 0.9f);
+	}
 }
 
 _int CCamera_Main::Update(_double fDeltaTime)
@@ -143,33 +158,6 @@ _int CCamera_Main::Update(_double fDeltaTime)
 	__super::Update(fDeltaTime);
 
 	FAILED_CHECK(Update_CamAction(fDeltaTime));
-
-
-	//if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press)
-	//{
-	//	m_pTransform->Move_Forward(fDeltaTime * 10.);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
-	//{
-	//	m_pTransform->Move_Backward(fDeltaTime* 10.);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press)
-	//{
-	//	m_pTransform->Move_Right(fDeltaTime* 10.);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
-	//{
-	//	m_pTransform->Move_Left(fDeltaTime* 10.);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_PGUP) & DIS_Press)
-	//{
-	//	m_pTransform->MovetoDir(XMVectorSet(0, 1, 0, 0), fDeltaTime);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_PGDN) & DIS_Press)
-	//{
-	//	m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
-	//}
-
 
 	switch (m_eCurCamMode)
 	{
@@ -263,6 +251,24 @@ _int CCamera_Main::Update(_double fDeltaTime)
 		break;
 	}
 
+
+	// Fov Shaking
+	if (true == m_bFovShaking)
+	{
+		m_fFovCurTime_Shaking += (_float)fDeltaTime;
+		if (m_fFovMaxTime_Shaking <= m_fFovCurTime_Shaking) 
+		{
+			m_CameraDesc.fFovy = XMConvertToRadians(60.f);
+			m_fFovCurTime_Shaking = 0.f;
+			m_bFovShaking = false;
+		}
+		else
+		{
+			ShakingCamera_Damage();
+		}
+	}
+	//
+
 	return _int();
 }
 
@@ -322,8 +328,6 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 		if (*_IsClientQuit == true)
 			return S_OK;
 
-		//if (m_bCamActionStart )	break;
-
 		NowTick = GetTickCount();
 		if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
 			continue;
@@ -368,6 +372,35 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 	return S_OK;
 }
 
+void CCamera_Main::Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime)
+{
+	if (fTargetFov >= 60.f)
+	{
+		return;
+	}
+
+	m_CameraDesc.fFovy = XMConvertToRadians(60.f);
+	m_fFovMaxTime_Shaking = fDuraionTime;
+	m_bFovShaking_ChangeArrow = 1.f;
+	m_fFovTarget = fTargetFov;
+	m_fFovSpeed = fSpeed;
+	m_bFovShaking = true;
+}
+
+void CCamera_Main::ShakingCamera_Damage()
+{
+	if (XMConvertToRadians(60.f) <= m_CameraDesc.fFovy)
+	{
+		m_bFovShaking_ChangeArrow = -1.f;
+	}
+	else if(XMConvertToRadians(m_fFovTarget) >= m_CameraDesc.fFovy)
+	{
+		m_bFovShaking_ChangeArrow = 1.f;
+	}
+
+	m_CameraDesc.fFovy += XMConvertToRadians(m_bFovShaking_ChangeArrow * m_fFovSpeed);
+}
+
 HRESULT CCamera_Main::Set_ViewMatrix()
 {
 	CGameInstance* pIsntance = GetSingle(CGameInstance);
@@ -388,6 +421,10 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) < 0)
 	{
 		m_fTargetArmLength += 1.f;
+		if (m_fTargetArmLength > 10.f)
+		{
+			m_fTargetArmLength = 10.f;
+		}
 		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
 		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
@@ -395,6 +432,10 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
 	{
 		m_fTargetArmLength -= 1.f;
+		if (m_fTargetArmLength < 3.f)
+		{
+			m_fTargetArmLength = 3.f;
+		}
 		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
 		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
@@ -408,6 +449,12 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 }
 
 HRESULT CCamera_Main::SetUp_Components()
+{
+
+	return S_OK;
+}
+
+HRESULT CCamera_Main::SetUp_EtcInfo()
 {
 
 	return S_OK;

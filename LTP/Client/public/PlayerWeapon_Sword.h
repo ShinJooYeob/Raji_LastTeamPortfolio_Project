@@ -24,6 +24,8 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+	virtual void		Active_Trail(_bool bActivate) override;
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
@@ -37,6 +39,7 @@ private:
 	_int				LateUpdate_NoEquip(_double fDeltaTime);
 
 	void				Update_AttachMatrix();
+	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 
 public:
 	void				Change_Pivot(ESwordPivot ePitvot);
@@ -48,12 +51,15 @@ private:
 private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
+	_float				m_fMaxTime_ClearTrail = 0.f;
+	_float				m_fCurTime_ClearTrail = 0.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CSwordTrail*		m_pSwordTrail = nullptr;
 
 public:
 	static CPlayerWeapon_Sword*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

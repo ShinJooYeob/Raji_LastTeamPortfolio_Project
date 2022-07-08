@@ -283,6 +283,9 @@
     <Filter Include="05.PhysX\3.Com_PhyCom\3.Joint">
       <UniqueIdentifier>{0d978ed4-8e78-4c50-9b01-62351f968987}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow">
+      <UniqueIdentifier>{74595be7-532f-47ad-829e-f54b21ba9d6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -586,6 +589,9 @@
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -857,6 +863,9 @@
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

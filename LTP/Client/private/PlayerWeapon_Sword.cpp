@@ -26,6 +26,7 @@ HRESULT CPlayerWeapon_Sword::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
+
 	return S_OK;
 }
 
@@ -52,9 +53,9 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(90, -170, -10), _float3(0.0, 0.0, 0.0));
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.4f, 1.19f, 0.09f));
 
-	// 0.4, 1.1, 0.4
 	m_pModel->Change_AnimIndex(0); 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
+	
 	return _int();
 }
 
@@ -78,10 +79,35 @@ _int CPlayerWeapon_Sword::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+
+	
+	
+	if (true == m_bActiveTrail)
+	{
+		Update_Trail(&mat, fDeltaTimer);
+		m_fCurTime_ClearTrail = 0.f;
+	}
+	else
+	{
+		m_fCurTime_ClearTrail += (_float)fDeltaTimer;
+		if (m_fCurTime_ClearTrail >= m_fMaxTime_ClearTrail)
+		{
+			m_fCurTime_ClearTrail = 0.f;
+			m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+		}
+	}
+
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
 }
 
@@ -116,6 +142,28 @@ _int CPlayerWeapon_Sword::Render()
 _int CPlayerWeapon_Sword::LateRender()
 {
 	return _int();
+}
+
+void CPlayerWeapon_Sword::Active_Trail(_bool bActivate)
+{
+	__super::Active_Trail(bActivate);
+
+	if (true == m_bActiveTrail)
+	{
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+		m_pSwordTrail->Set_TrailTurnOn(true, 
+			mat.r[3] + mat.r[2] * 1.31f - mat.r[0] * 0.33f + mat.r[1] * 0.05f,
+			mat.r[3] + mat.r[2] * 1.2f - mat.r[0] * 0.1f + mat.r[1] * 0.015f
+		);
+	}
+	/*else
+	{
+		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	}*/
 }
 
 _fVector CPlayerWeapon_Sword::Get_BonePos(const char * pBoneName)
@@ -171,6 +219,12 @@ void CPlayerWeapon_Sword::Update_AttachMatrix()
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
+void CPlayerWeapon_Sword::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
+{
+	m_pSwordTrail->Update_SwordTrail(((*pMat).r[3] + (*pMat).r[2] * 1.31f - (*pMat).r[0] * 0.33f + (*pMat).r[1] * 0.05f),
+		((*pMat).r[3] + (*pMat).r[2] * 1.2f - (*pMat).r[0] * 0.1f + (*pMat).r[1] * 0.015f),	fDeltaTime, 0.5f);
+}
+
 void CPlayerWeapon_Sword::Change_Pivot(ESwordPivot ePitvot)
 {
 	switch (ePitvot)
@@ -205,11 +259,19 @@ HRESULT CPlayerWeapon_Sword::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
+	tSwordDesc.iTextureIndex = 3;
+	tSwordDesc.NoiseSpeed = 0;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
 	return S_OK;
 }
 
 HRESULT CPlayerWeapon_Sword::SetUp_EtcInfo()
 {
+	m_fMaxTime_ClearTrail = 0.2f;
 	return S_OK;
 }
 
@@ -245,4 +307,5 @@ void CPlayerWeapon_Sword::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pSwordTrail);
 }

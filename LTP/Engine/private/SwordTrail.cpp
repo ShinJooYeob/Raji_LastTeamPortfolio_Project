@@ -81,7 +81,7 @@ void CSwordTrail::Set_TrailTurnOn(_bool bBool, _float3 tSourPoint, _float3 tDest
 
 }
 
-_uint CSwordTrail::Update_SwordTrail(_float3 tSourPoint, _float3 tDestPoint,_double fDeltaTime)
+_uint CSwordTrail::Update_SwordTrail(_float3 tSourPoint, _float3 tDestPoint,_double fDeltaTime, _float Rate)
 {
 	if (!m_bDrawTrail)return 0;
 
@@ -110,8 +110,8 @@ _uint CSwordTrail::Update_SwordTrail(_float3 tSourPoint, _float3 tDestPoint,_dou
 #define TargetRate 0.5f
 	for (_uint i = 1; i < m_TrailPointList.size() - 2; i++)
 	{
-		Points1->vDestPoint = XMVectorCatmullRom(Points0->vDestPoint.XMVector(), Points1->vDestPoint.XMVector(), Points2->vDestPoint.XMVector(), Points3->vDestPoint.XMVector(), TargetRate);
-		Points1->vSourPoint = XMVectorCatmullRom(Points0->vSourPoint.XMVector(), Points1->vSourPoint.XMVector(), Points2->vSourPoint.XMVector(), Points3->vSourPoint.XMVector(), TargetRate);
+		Points1->vDestPoint = XMVectorCatmullRom(Points0->vDestPoint.XMVector(), Points1->vDestPoint.XMVector(), Points2->vDestPoint.XMVector(), Points3->vDestPoint.XMVector(), Rate);
+		Points1->vSourPoint = XMVectorCatmullRom(Points0->vSourPoint.XMVector(), Points1->vSourPoint.XMVector(), Points2->vSourPoint.XMVector(), Points3->vSourPoint.XMVector(), Rate);
 
 		Points0++;
 		Points1++;

@@ -5,6 +5,13 @@ sampler DefaultSampler = sampler_state
 	AddressU = wrap;
 	AddressV = wrap;
 };
+sampler ClampSampler = sampler_state
+{
+	// D3D11_SAMPLER_DESC
+	filter = min_mag_mip_linear;
+	AddressU = clamp;
+	AddressV = clamp;
+};
 BlendState	AlphaBlending
 {
 	BlendEnable[0] = true;
@@ -269,7 +276,7 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(ClampSampler, In.vTexUV);
 
 
 	Out.vDiffuse = (Out.vDiffuse) * In.vColor;
@@ -288,7 +295,7 @@ PS_OUT PS_MAIN_INSTINVERSE(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(ClampSampler, In.vTexUV);
 
 
 	float Alpha = max(max(Out.vDiffuse.r, Out.vDiffuse.g), Out.vDiffuse.b);
@@ -306,7 +313,7 @@ PS_OUT PS_MAIN_INST_DISORT(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 
-	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(ClampSampler, In.vTexUV);
 
 
 	float Alpha = max(max(Out.vDiffuse.r, Out.vDiffuse.g), Out.vDiffuse.b);

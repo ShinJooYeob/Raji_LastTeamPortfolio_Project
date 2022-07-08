@@ -24,8 +24,11 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+	virtual void		Active_Trail(_bool bActivate) override;
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
+	virtual _fMatrix	Get_BoneMatrix(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
 
 public:				
@@ -44,6 +47,7 @@ private:
 	_int				LateUpdate_NoEquip(_double fDeltaTime);
 
 	void				Update_AttachMatrix();
+	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 
 private:
 	HRESULT				SetUp_Components();
