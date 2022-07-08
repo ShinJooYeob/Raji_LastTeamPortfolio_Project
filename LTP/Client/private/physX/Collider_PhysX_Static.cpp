@@ -242,20 +242,6 @@ HRESULT CCollider_PhysX_Static::Set_ActorFlag(PxActorFlag::Enum e, bool b)
 	return S_OK;
 }
 
-
-//bool isTrigger(const PxFilterData& data)
-//{
-//	if (data.word0 != 0xffffffff)
-//		return false;
-//	if (data.word1 != 0xffffffff)
-//		return false;
-//	if (data.word2 != 0xffffffff)
-//		return false;
-//	if (data.word3 != 0xffffffff)
-//		return false;
-//	return true;
-//}
-//
 //bool isTriggerShape(PxShape* shape)
 //{
 //	const TriggerImpl impl = getImpl();
