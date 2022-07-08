@@ -8,7 +8,7 @@ class CTimer;
 END
 
 BEGIN(Client)
-
+class CCamera_Main;
 class CPlayer final : public CGameObject
 {
 private:
@@ -145,6 +145,7 @@ private: /* Key Input */
 	_bool				Check_PlayerKeyInput(_double fDeltaTime);
 
 	_bool				Check_Mov_KeyInput(_double fDeltaTime);
+	_bool				Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime);
 	_bool				Check_Action_KeyInput(_double fDeltaTime);
 	_bool				Check_SwapWeapon_KeyInput(_double fDeltaTime);
 
@@ -211,6 +212,9 @@ private: /* Key Input State */
 	_bool				m_bPressedUtilityKey = false;
 	_bool				m_bPressedUltimateKey = false;
 
+private: /* For TurnBack Timing*/
+	_float				m_fCurTime_PressedMoveKeyDuration = 0.f;
+	_float				m_fMaxTime_PressedMoveKeyDuration = 3.f;
 
 private: /* Enum Stats */
 	_uint					m_eCurAnim = BASE_ANIM_IDLE;
@@ -255,9 +259,16 @@ private: /* Animation Control */
 
 	_bool				m_bAnimChangeSwitch = false;
 	_bool				m_bActionSwitch = false;
+	_bool				m_bTrailSwitch = false;
+	_float				m_fChargingTime = 0.f;
+	_float				m_fArrowRange = 0.f;
 
 private: /* Activate */
 	_bool				m_bActivateLookDir = false;
+
+private: /* Cam View */
+	_int				m_iMaxCamViewIndex = 0;
+	_int				m_iCurCamViewIndex = 0;
 
 private: /* Timer */
 	_float				m_fMaxTime_ShellingDelay = 0.f;
@@ -269,6 +280,8 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
+	CCamera_Main*		m_pMainCamera = nullptr;
+	
 	class CCollider_PhysX_Base*	m_pCollider_HairPhysX = nullptr;
 
 private:

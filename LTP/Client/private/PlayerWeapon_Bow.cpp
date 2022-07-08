@@ -78,15 +78,11 @@ _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-	_Matrix mat = m_fAttachedMatrix.XMatrix();
 
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
 }

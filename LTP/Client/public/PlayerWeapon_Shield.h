@@ -25,6 +25,8 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+	virtual void		Active_Trail(_bool bActivate) override;
+
 public:
 	void				Start_UltimateMode(_fVector fStartPos, _float fUltimateTargetHeight);
 	void				End_UltimateMode();
@@ -72,11 +74,13 @@ private:
 	_float					m_fTargetDist;
 	EShieldUltimateState	m_eUltimateState = SHIELDULTIMATE_MOV;
 
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CMotionTrail*		m_pMotionTrail = nullptr;
 
 public:
 	static CPlayerWeapon_Shield*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

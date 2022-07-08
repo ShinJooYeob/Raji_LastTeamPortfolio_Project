@@ -24,6 +24,8 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+	virtual void		Active_Trail(_bool bActivate) override;
+
 public:
 	void				Set_ChakraState(EChakraState eChakraState);
 	EChakraState		Get_ChakraState();
@@ -32,6 +34,7 @@ private:
 	_int				Update_IdleState(_double fDeltaTime);
 	_int				Update_MovState(_double fDeltaTime);
 	_int				Update_GoBackState(_double fDeltaTime);
+	void				Update_Trail(_double fDeltaTime);
 
 private:
 	void				Check_AttackStart();
@@ -45,12 +48,14 @@ private:
 	_float3				m_fAttackTargetPoint;
 	_bool				m_bAttackStart = false;
 	_float				m_fAnimSpeed = 1.f;
+	_float				m_fTurnDirWeight = 0.9f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CSwordTrail*		m_pSwordTrail = nullptr;
 
 public:
 	static CPlayerWeapon_Chakra*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

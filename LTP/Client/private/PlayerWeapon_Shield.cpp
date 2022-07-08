@@ -26,6 +26,7 @@ HRESULT CPlayerWeapon_Shield::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
+
 	return S_OK;
 }
 
@@ -60,6 +61,7 @@ _int CPlayerWeapon_Shield::Update(_double fDeltaTime)
 	}
 
 	m_pModel->Change_AnimIndex(m_iCurAnim, 0.f);
+	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 	return _int();
 }
@@ -70,6 +72,9 @@ _int CPlayerWeapon_Shield::LateUpdate(_double fDeltaTimer)
 		return 0;
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
+
+
+
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
 	{
@@ -84,10 +89,14 @@ _int CPlayerWeapon_Shield::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+
+
 	return _int();
 }
 
@@ -122,6 +131,18 @@ _int CPlayerWeapon_Shield::Render()
 _int CPlayerWeapon_Shield::LateRender()
 {
 	return _int();
+}
+
+void CPlayerWeapon_Shield::Active_Trail(_bool bActivate)
+{
+	__super::Active_Trail(bActivate);
+
+
+
+	if (true == m_bActiveTrail)
+	{
+	}
+
 }
 
 void CPlayerWeapon_Shield::Start_UltimateMode(_fVector fStartPos, _float fUltimateTargetHeight)
@@ -165,6 +186,7 @@ void CPlayerWeapon_Shield::End_SmashMode()
 	m_iPassNum = 4;
 	m_iCurAnim = 0;
 	m_bSmashMode = false;
+	Change_Pivot(EShieldPivot::SHIELD_PIVOT_NORMAL);
 }
 
 void CPlayerWeapon_Shield::Start_ThrowMode(_fVector vStartPos, _float fThrowDist)
@@ -175,8 +197,6 @@ void CPlayerWeapon_Shield::Start_ThrowMode(_fVector vStartPos, _float fThrowDist
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vStartPos);
 	m_pTransformCom->Scaled_All(_float3(1.2f, 1.2f, 1.2f));
 	 
-	//m_pTransformCom->Rotation_CCW(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT), XMConvertToRadians(90.f));
-
 	m_iPassNum = 3;
 	m_iCurAnim = 1;
 	m_bThrowMode = true;
@@ -219,9 +239,18 @@ void CPlayerWeapon_Shield::Update_ThrowPos(_fVector vStartPos, _fVector vThrowDi
 	if (fAnimRate >= 0.7f)
 	{
 		End_ThrowMode();
+		m_pMotionTrail->Update_MotionTrail(100.f);
 	}
 	else
 	{
+		static double Timer = 0;
+		Timer -= g_fDeltaTime;
+		if (Timer < 0)
+		{
+			Timer = 0.005f;
+			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 1.f, 1.f, 1),g_fDeltaTime * 10.f);
+		}
+
 		_float vUpdatedDist = g_pGameInstance->Easing_Return(TYPE_ExpoOut, TYPE_ExpoOut, 0, m_fTargetDist, fAnimRate, 1.f);
 		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, (vStartPos + (vThrowDir * vUpdatedDist)));
 		m_pTransformCom->LookDir(vThrowDir);
@@ -317,6 +346,14 @@ HRESULT CPlayerWeapon_Shield::SetUp_Components()
 
 	m_iPassNum = 4;
 	m_iCurAnim = 0;
+
+
+	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
+	tMotionDesc.iNumTrailCount = 6;
+	tMotionDesc.pModel = m_pModel;
+	tMotionDesc.pShader = m_pShaderCom;
+	tMotionDesc.iPassIndex = 5;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
 	return S_OK;
 }
 
@@ -357,4 +394,5 @@ void CPlayerWeapon_Shield::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pMotionTrail);
 }

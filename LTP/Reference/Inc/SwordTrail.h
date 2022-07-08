@@ -35,7 +35,7 @@ private:
 
 
 public:
-	_uint Update_SwordTrail(_float3 tSourPoint, _float3 tDestPoint, _double fDeltaTime);
+	_uint Update_SwordTrail(_float3 tSourPoint, _float3 tDestPoint, _double fDeltaTime,_float Rate = 0.5f);
 	virtual HRESULT Render() override;
 
 

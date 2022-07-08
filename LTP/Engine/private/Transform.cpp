@@ -182,7 +182,7 @@ _bool CTransform::MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVecto
 
 	Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
 
-	return _bool();
+	return bResult;
 }
 
 void CTransform::LookAt(_fVector vTarget)

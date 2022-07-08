@@ -44,15 +44,19 @@ _int CPlayerWeapon_Chakra::Update(_double fDeltaTime)
 		Update_IdleState(fDeltaTime);
 		break;
 	case EChakraState::CHAKRA_MOV:
+		Update_Trail(fDeltaTime);
 		Update_MovState(fDeltaTime);
 		break;
 	case EChakraState::CHAKRA_GOBACK:
+		Update_Trail(fDeltaTime);
 		Update_GoBackState(fDeltaTime);
 		break;
 	}
 
 	Check_AttackStart();
 
+	m_pSwordTrail->Set_TextureIndex(6);
+	m_pSwordTrail->Set_Color(_float4(1.f, 1.f, 0.6f, 1.f));
 	m_pModel->Change_AnimIndex(0, 0.f);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	return _int();
@@ -65,8 +69,10 @@ _int CPlayerWeapon_Chakra::LateUpdate(_double fDeltaTimer)
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 	return _int();
 }
 
@@ -102,6 +108,25 @@ _int CPlayerWeapon_Chakra::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon_Chakra::Active_Trail(_bool bActivate)
+{
+	__super::Active_Trail(bActivate);
+
+	if (true == m_bActiveTrail)
+	{
+		m_pSwordTrail->Set_TrailTurnOn(
+			true,
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.5f),
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.5f)
+		);
+
+	}
+	else
+	{
+		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	}
+}
+
 void CPlayerWeapon_Chakra::Set_ChakraState(EChakraState eChakraState)
 {
 	m_eCurState = eChakraState;
@@ -119,7 +144,10 @@ _int CPlayerWeapon_Chakra::Update_IdleState(_double fDeltaTime)
 	m_pTransformCom->Turn_Revolution_CW(vCenterPos, 0.9f, fDeltaTime * 0.8f);
 	 
 	m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - vCenterPos));
-	
+
+	Active_Trail(false);
+
+	Set_LimLight_N_Emissive();
 	return _int();
 }
 
@@ -128,7 +156,12 @@ _int CPlayerWeapon_Chakra::Update_MovState(_double fDeltaTime)
 	_Vector vTurnDir = m_fAttackTargetPoint.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	vTurnDir = XMVectorSetY(vTurnDir, 0);
 	m_pTransformCom->Move_Forward(fDeltaTime);
-	m_pTransformCom->Turn_Dir(vTurnDir, 0.9f);
+	m_pTransformCom->Turn_Dir(vTurnDir, m_fTurnDirWeight);
+	m_fTurnDirWeight -= (_float)fDeltaTime;
+	if (0.1f > m_fTurnDirWeight)
+	{
+		m_fTurnDirWeight = 0.1f;
+	}
 
 	if (0.95f <= XMVectorGetX(XMVector3Dot(XMVector3Normalize(vTurnDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)))))
 	{
@@ -137,28 +170,31 @@ _int CPlayerWeapon_Chakra::Update_MovState(_double fDeltaTime)
 
 		if (fSpeed < Length)
 		{
-			m_pTransformCom->Set_MoveSpeed(fSpeed + 0.2f);
+			m_pTransformCom->Set_MoveSpeed(fSpeed + 0.6f);
 		}
-		else if (fSpeed > 5.f)
+		else if (fSpeed > 20.f)
 		{
-			m_pTransformCom->Set_MoveSpeed(fSpeed - 0.2f);
+			m_pTransformCom->Set_MoveSpeed(fSpeed - 0.4f);
 		}
 		else
 		{
-			m_pTransformCom->Set_MoveSpeed(5.f);
+			m_pTransformCom->Set_MoveSpeed(20.f);
 		}
 	}
 	else
 	{
-		m_pTransformCom->Set_MoveSpeed(5.f);
+		m_pTransformCom->Set_MoveSpeed(20.f);
 	}
 	
 	if (XMVectorGetX(XMVector3Length(vTurnDir)) <= 0.5f)
 	{
 		m_eCurState = CHAKRA_GOBACK;
+		m_fTurnDirWeight = 0.9f;
 	}
 
 	m_fAnimSpeed = 2.f;
+
+	Set_LimLight_N_Emissive(_float4(1.f, 1.f, 0.2f, 1.f), 0.f);
 	return _int();
 }
 
@@ -167,7 +203,12 @@ _int CPlayerWeapon_Chakra::Update_GoBackState(_double fDeltaTime)
 	_Vector vTurnDir = m_tPlayerWeaponDesc.eAttachedDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::TransformState::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);//m_fAttackTargetPoint.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	vTurnDir = XMVectorSetY(vTurnDir, 0);
 	m_pTransformCom->Move_Forward(fDeltaTime);
-	m_pTransformCom->Turn_Dir(vTurnDir, 0.9f);
+	m_pTransformCom->Turn_Dir(vTurnDir, m_fTurnDirWeight);
+	m_fTurnDirWeight -= (_float)fDeltaTime;
+	if (0.1f > m_fTurnDirWeight)
+	{
+		m_fTurnDirWeight = 0.1f;
+	}
 
 	if (0.95f <= XMVectorGetX(XMVector3Dot(XMVector3Normalize(vTurnDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)))))
 	{
@@ -176,20 +217,20 @@ _int CPlayerWeapon_Chakra::Update_GoBackState(_double fDeltaTime)
 
 		if (fSpeed < Length)
 		{
-			m_pTransformCom->Set_MoveSpeed(fSpeed + 0.2f);
+			m_pTransformCom->Set_MoveSpeed(fSpeed + 0.6f);
 		}
-		else if (fSpeed > 5.f)
+		else if (fSpeed > 20.f)
 		{
-			m_pTransformCom->Set_MoveSpeed(fSpeed - 0.2f);
+			m_pTransformCom->Set_MoveSpeed(fSpeed - 0.4f);
 		}
 		else
 		{
-			m_pTransformCom->Set_MoveSpeed(5.f);
+			m_pTransformCom->Set_MoveSpeed(20.f);
 		}
 	}
 	else
 	{
-		m_pTransformCom->Set_MoveSpeed(5.f);
+		m_pTransformCom->Set_MoveSpeed(20.f);
 	}
 
 	if (XMVectorGetX(XMVector3Length(vTurnDir)) <= 1.f)
@@ -201,6 +242,15 @@ _int CPlayerWeapon_Chakra::Update_GoBackState(_double fDeltaTime)
 	}
 
 	return _int();
+}
+
+void CPlayerWeapon_Chakra::Update_Trail(_double fDeltaTime)
+{
+	m_pSwordTrail->Update_SwordTrail(
+		m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.25f),
+		m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.25f),
+		fDeltaTime
+	);
 }
 
 void CPlayerWeapon_Chakra::Check_AttackStart()
@@ -230,7 +280,7 @@ void CPlayerWeapon_Chakra::Check_AttackStart()
 
 		if (XMVectorGetY(vCamPos) * XMVectorGetY(vRayDir) < 0)
 		{
-			_float fPos_Y = XMVectorGetY(m_tPlayerWeaponDesc.eAttachedDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 0.5f;
+			_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));//XMVectorGetY(m_tPlayerWeaponDesc.eAttachedDesc.Get_AttachObjectTransform()->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 0.5f;
 			_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
 
 			_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
@@ -246,6 +296,12 @@ void CPlayerWeapon_Chakra::Check_AttackStart()
 			m_pTransformCom->LookAt(XMLoadFloat3(&m_fAttackTargetPoint));
 		}
 
+		if (CHAKRA_IDLE == m_eCurState)
+		{
+			Active_Trail(true);
+		}
+
+		m_fTurnDirWeight = 0.9f;
 		m_eCurState = CHAKRA_MOV;
 	}
 }
@@ -266,6 +322,14 @@ HRESULT CPlayerWeapon_Chakra::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
 	return S_OK;
 }
 
@@ -306,4 +370,5 @@ void CPlayerWeapon_Chakra::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pSwordTrail);
 }

@@ -57,6 +57,11 @@ _int CPlayerWeapon::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon::Active_Trail(_bool bActivate)
+{
+	m_bActiveTrail = bActivate;
+}
+
 void CPlayerWeapon::Set_BlockUpdate(_bool bBlock)
 {
 	m_bBlockUpdate = bBlock;

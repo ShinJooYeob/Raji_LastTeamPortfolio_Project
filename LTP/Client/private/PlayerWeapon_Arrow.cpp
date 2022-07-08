@@ -86,21 +86,23 @@ _int CPlayerWeapon_Arrow::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	// Center Pos //
-	/*m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-100, -180, 70), _float3(0.0, 0.0, 0.0));
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.283f, -1.04f, 0.497f));
-	m_iPassNum = 8;*/
-	//
-
-
-	//m_iPassNum = 8;
-	//m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.1f, 1.1f, 1.1f), _float3(38, -50, -32), _float3(0, 0, 0));
-	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-1.11f, -0.43f, -0.02f));
-
-
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
-	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	if (true == m_bActiveTrail)
+	{
+		Update_Trail(&mat, fDeltaTimer);
+	}
+
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail2));
+
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
 }
 
@@ -137,7 +139,7 @@ _int CPlayerWeapon_Arrow::LateRender()
 	return _int();
 }
 
-void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState)
+void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 {
 	m_eCurState = eNewState;
 
@@ -147,11 +149,19 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState)
 		m_iPassNum = 8;
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-98, -80, 115), _float3(0.0, 0.0, 0.0));
 		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-1.087f, 0.36f, 0.667f));
+		m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+		m_pSwordTrail2->Set_Color(_float4(1.f, 0.7745f, 0.9745f, 1.f));
+		Active_Trail(true);
 		break;
 	case EArrowState::Arrow_State_NormalShot:
+		Active_Trail(false);
 		m_iPassNum = 2;
 		m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 		m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
+		m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+		m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+		m_fStartPos_y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		m_pTransformCom->Set_MoveSpeed(fSpeed);
 		break;
 	case EArrowState::Arrow_State_UtilityReady:
 		m_iPassNum = 8;
@@ -162,6 +172,9 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState)
 		m_iPassNum = 2;
 		m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 		m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
+		m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
+		Active_Trail(true);
+		m_pTransformCom->Set_MoveSpeed(fSpeed);
 		break;
 	}
 
@@ -169,6 +182,8 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState)
 
 void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint iArrowIndex)
 {
+	m_eCurState = Arrow_State_PowerShot_Combo_0;
+
 	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-100, -180, 70), _float3(0.0, 0.0, 0.0));
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.283f, -0.85f, 0.497f));
 	
@@ -176,7 +191,6 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint i
 	m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
 
 	m_iPassNum = 2;
-	m_eCurState = Arrow_State_PowerShot_Combo_0;
 
 	_Vector vFinalShotDir = XMVectorSetY(vShotDir, 0);
 	vFinalShotDir = XMVectorSetY(vFinalShotDir, 0);
@@ -191,6 +205,12 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint i
 	}
 
 	m_bFired = true;
+
+	// Setting Trail Color
+	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	Active_Trail(true);
+	//
 }
 
 void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_1(_fVector vShotDir)
@@ -207,6 +227,12 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_1(_fVector vShotDir)
 	_Vector vFinalShotDir = XMVectorSetY(vShotDir, 0);
 	m_pTransformCom->LookDir(vFinalShotDir);
 	m_bFired = true;
+
+	// Setting Trail Color
+	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	Active_Trail(true);
+	//
 }
 
 void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_2(_fVector vShotDir, _float fSpeed)
@@ -227,6 +253,12 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_2(_fVector vShotDir, _float 
 
 	m_pTransformCom->Set_MoveSpeed(fSpeed);
 	m_bFired = true;
+
+	// Setting Trail Color
+	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	Active_Trail(true);
+	//
 }
 
 void CPlayerWeapon_Arrow::Set_State_Ultimate_Pre_Ready()
@@ -246,6 +278,7 @@ void CPlayerWeapon_Arrow::Set_State_Ultimate_Pre_Shot()
 
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	m_eCurState = Arrow_State_UltimateShot_Pre_Shot;
+	Active_Trail(true);
 }
 
 void CPlayerWeapon_Arrow::Set_State_Ultimate_Post_Ready()
@@ -265,6 +298,7 @@ void CPlayerWeapon_Arrow::Set_State_Ultimate_Post_Shot()
 
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	m_eCurState = Arrow_State_UltimateShot_Post_Shot;
+	Active_Trail(true);
 }
 
 _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
@@ -274,9 +308,26 @@ _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_NormalShot(_double fDeltaTime)
 {
-	m_pTransformCom->Move_Forward(fDeltaTime);
-	m_pTimer_Destroy->Get_DeltaTime();
-	m_bFired = true;
+	if (30.f <= m_pTransformCom->Get_MoveSpeed())
+	{
+		m_pTransformCom->Move_Forward(fDeltaTime);
+		m_pTimer_Destroy->Get_DeltaTime();
+		m_bFired = true;
+	}
+	else
+	{
+		_float fPos_y = m_fStartPos_y + (0.f * m_fTimeAcc - 9.8f * m_fTimeAcc * m_fTimeAcc * 0.5f);
+		m_fTimeAcc += 0.015f;
+
+		_Vector vMyPos_Before = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		m_pTransformCom->Move_Forward(fDeltaTime);
+		_Vector vMyPos_After = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+		vMyPos_After = XMVectorSetY(vMyPos_After, fPos_y);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos_After);
+
+		m_pTransformCom->LookDir(XMVector3Normalize(vMyPos_After - vMyPos_Before));
+	}
 	return _int();
 }
 
@@ -287,7 +338,9 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityReady(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 {
-	m_pTransformCom->Move_Forward(fDeltaTime);
+	//m_pTransformCom->Move_Forward(fDeltaTime);
+	m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
+	m_pTransformCom->MovetoDir(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
 	m_pTimer_Destroy->Get_DeltaTime();
 	m_bFired = true;
 	return _int();
@@ -386,6 +439,125 @@ void CPlayerWeapon_Arrow::Update_AttachMatrix()
 {
 }
 
+void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
+{
+	switch (m_eCurState)
+	{
+	case EArrowState::Arrow_State_NormalReady:
+		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
+		break;
+	case EArrowState::Arrow_State_NormalShot:
+	case EArrowState::Arrow_State_PowerShot_Combo_0:
+	case EArrowState::Arrow_State_PowerShot_Combo_1:
+	case EArrowState::Arrow_State_PowerShot_Combo_2:
+		m_pSwordTrail->Set_TextureIndex(3);
+		m_pSwordTrail->Update_SwordTrail(
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP)) * 0.015f),
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP)) * 0.03f),
+			fDeltaTime
+		);
+
+		m_pSwordTrail2->Set_TextureIndex(3);
+		m_pSwordTrail2->Update_SwordTrail(
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * 0.015f),
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * 0.03f),
+			fDeltaTime
+		);
+		break;
+
+	case EArrowState::Arrow_State_UtilityShot:
+	case EArrowState::Arrow_State_UltimateShot_Pre_Shot:
+	case EArrowState::Arrow_State_UltimateShot_Post_Shot:
+		m_pSwordTrail->Set_TextureIndex(3);
+		m_pSwordTrail->Update_SwordTrail(
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.3f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.1f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+			fDeltaTime
+		);
+
+		m_pSwordTrail2->Set_TextureIndex(3);
+		m_pSwordTrail2->Update_SwordTrail(
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.3f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+			m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.1f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+			fDeltaTime
+		);
+		break;
+	}
+
+}
+
+void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
+{
+	__super::Active_Trail(bActivate);
+
+	if (true == m_bActiveTrail)
+	{
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+		switch (m_eCurState)
+		{
+		case EArrowState::Arrow_State_NormalReady:
+			m_pSwordTrail->Set_TrailTurnOn(true, mat.r[3] + mat.r[2] * 0.62f, mat.r[3] + mat.r[2] * 0.75f);
+			break;
+		case EArrowState::Arrow_State_NormalShot:
+			m_pSwordTrail->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f)
+			);
+
+			m_pSwordTrail2->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
+			);
+			break;
+		case EArrowState::Arrow_State_PowerShot_Combo_0:
+		case EArrowState::Arrow_State_PowerShot_Combo_1:
+		case EArrowState::Arrow_State_PowerShot_Combo_2:
+			m_pSwordTrail->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 1.f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.8f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
+			);
+
+			m_pSwordTrail2->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 1.f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.8f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f)
+			);
+			break;
+		case EArrowState::Arrow_State_UtilityShot:
+		case EArrowState::Arrow_State_UltimateShot_Pre_Shot:
+		case EArrowState::Arrow_State_UltimateShot_Post_Shot:
+			m_pSwordTrail->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.6f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.1f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f)
+			);
+
+			m_pSwordTrail->Set_TrailTurnOn(
+				true,
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.6f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
+				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.1f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
+			);
+			break;
+		}
+	}
+	else
+	{
+		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	}
+}
+
+void CPlayerWeapon_Arrow::LookAtDir(_fVector fDir)
+{
+	m_pTransformCom->LookDir(fDir);
+}
+
 HRESULT CPlayerWeapon_Arrow::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -395,15 +567,28 @@ HRESULT CPlayerWeapon_Arrow::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerWeapon_Arrow), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {}; 
-
 	tDesc.fMovePerSec = 30;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
-
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
+	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
+	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
+	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
+	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SubSwordTrail), (CComponent**)&m_pSwordTrail2, &tSwordDesc));
 	return S_OK;
 }
 
@@ -449,4 +634,6 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pSwordTrail);
+	Safe_Release(m_pSwordTrail2);
 }

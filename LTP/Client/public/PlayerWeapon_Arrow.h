@@ -34,8 +34,13 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+	virtual void		Active_Trail(_bool bActivate) override;
+
 public:
-	void				Set_State(EArrowState eNewState);
+	void				LookAtDir(_fVector fDir);
+
+public:
+	void				Set_State(EArrowState eNewState, _float fSpeed = 30.f);
 	void				Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint iArrowIndex);
 	void				Set_State_PowerShot_Combo_1(_fVector vShotDir);
 	void				Set_State_PowerShot_Combo_2(_fVector vShotDir, _float fSpeed);
@@ -71,6 +76,7 @@ private:
 	virtual void		Update_AttachCamPos() override;
 
 	void				Update_AttachMatrix();
+	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 
 private:
 	HRESULT				SetUp_Components();
@@ -96,6 +102,8 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CSwordTrail*		m_pSwordTrail = nullptr;
+	CSwordTrail*		m_pSwordTrail2 = nullptr;
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

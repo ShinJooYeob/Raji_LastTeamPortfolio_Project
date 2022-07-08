@@ -265,6 +265,9 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Weapon_Universal">
       <UniqueIdentifier>{c19fe9f4-fae0-4c83-a0cb-71aca287e7f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow">
+      <UniqueIdentifier>{74595be7-532f-47ad-829e-f54b21ba9d6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -480,12 +483,6 @@
     <ClInclude Include="..\public\PlayerWeapon_Sword.h">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PhysX\Collider_PhysX.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TestStaticPhysX.h">
-      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>01.GameObject\01.Player</Filter>
     </ClInclude>
@@ -536,6 +533,20 @@
     </ClInclude>
     <ClInclude Include="..\public\Monster_Weapon_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CopyMahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura_Arms.h" />
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h" />
+    <ClInclude Include="..\public\Rangda_Finger.h" />
+    <ClInclude Include="..\public\TestObject_PhysX.h" />
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -722,12 +733,6 @@
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\02. Sword</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TestStaticPhysX.cpp">
-      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
@@ -775,6 +780,20 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CopyMahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp" />
+    <ClCompile Include="..\private\Rangda_Finger.cpp" />
+    <ClCompile Include="..\private\TestObject_PhysX.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

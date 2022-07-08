@@ -78,6 +78,7 @@ protected:
 	_float3						m_fAttachCamPos = _float3(0, 0, 0);
 	_float3						m_fAttachCamPos_Offset = _float3(0, 0, 0);
 	_float3						m_fAttachCamLook = _float3(0, 0, 0);
+	_float3						m_fAttachCamLook_Offset  = _float3(0, 0, 0);
 
 	_float4						m_vLimLight = _float3(0);
 	_float						m_fEmissiveIntensive = _float(0);
