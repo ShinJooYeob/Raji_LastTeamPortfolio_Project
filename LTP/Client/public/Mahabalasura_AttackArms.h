@@ -31,6 +31,14 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 	_uint				m_iAniNum = 0;
 
+	CGameObject*		m_pPlayerObj;
+	_float3				m_PlayerPos;
+
+	_float3				m_BezierStartPos;
+	_float				m_fProgressTime = 0;
+	_float				m_fTotalTime = 1.f;
+	_float3				m_CenterPoint;
+
 private:
 	HRESULT		SetUp_Components();
 	HRESULT		Adjust_AnimMovedTransform(_double fDeltatime);

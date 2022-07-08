@@ -182,7 +182,26 @@ _bool CTransform::MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVecto
 
 	Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
 
-	return _bool();
+	return bResult;
+}
+
+_bool CTransform::MovetoBezierCurve(_float Total_Time, _float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos)
+{
+	_bool	bResult = false;
+
+	if (Total_Time < fTimeAcc)
+	{
+		fTimeAcc = Total_Time;
+		bResult = true;
+	}
+
+	_Vector vPos = (pow((Total_Time - fTimeAcc), 2) * vStartPos + 2 * (Total_Time - fTimeAcc) * fTimeAcc * vControlPos + fTimeAcc * fTimeAcc * vEndPos);
+
+	vPos = XMVectorSetW(vPos, 1.f);
+
+	Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+
+	return bResult;
 }
 
 void CTransform::LookAt(_fVector vTarget)

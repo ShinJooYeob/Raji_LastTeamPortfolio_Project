@@ -5,7 +5,7 @@ BEGIN(Client)
 class CMahabalasura final : public CBoss
 {
 public:
-	enum SkillAttackName {SKILL_SPEAR, SKILL_HAND, SKILL_SPEAR_RAIN, SKILL_COPY, SKILL_TELEPORT, SKILL_END};
+	enum SkillAttackName {SKILL_SPEAR, SKILL_HAND, SKILL_SPEAR_RAIN, SKILL_COPY, SKILL_END};
 private:
 	CMahabalasura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CMahabalasura(const CMahabalasura& rhs);
@@ -21,6 +21,15 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	void		Set_CopyOff(_bool State) 
+	{
+		m_bIsTeleport = State; 
+		m_bIsCopySkill = State;
+	}
+
+	void		Set_Hit() { m_bIsHit = true; }
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -35,7 +44,31 @@ private:
 	_bool				m_bIsWalk = true;
 	_bool				m_bIsLookAt = true;
 
-	CGameObject*		m_pPlayerObj;
+	CGameObject*		m_pPlayerObj = nullptr;
+	CTransform*			m_pPlayerTransform = nullptr;
+	_bool				m_bIsSpearTurn = false;
+
+	_int				TestNumber = 0;
+
+	//Weapon
+	class CMahabalasura_Weapon*				m_pSpear = nullptr;
+
+	//Arm
+	_float									m_fArmAttackTime = 10.f;
+	_bool									m_bIsArmAttack = false;
+	vector<class CMahabalasura_Arms*>		m_pArms;
+
+	//COPY
+	_bool									m_bIsCopySkill = false;
+
+	//TELEPORT
+	_bool									m_bIsStartTeleport = true;
+	_bool									m_bIsTeleport = false;
+	_float									m_fTeleportDelay = 0.5f;
+	_float									m_fTeleporCoolTime = 7.f;
+
+
+
 
 private:
 	HRESULT SetUp_Components();

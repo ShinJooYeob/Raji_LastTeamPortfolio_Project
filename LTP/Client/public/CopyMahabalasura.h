@@ -25,7 +25,10 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
-	CTransform*			m_pTransformCom = nullptr;
+	//CTransform*			m_pTransformCom = nullptr;
+
+	CModelInstance*		m_pModelInstance = nullptr;
+	vector<CTransform*> m_vecInstancedTransform;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -33,7 +36,11 @@ private:
 
 	_bool				m_bIsLookAt = true;
 
-	CGameObject*		m_pPlayerObj;
+
+
+	CGameObject*				m_pPlayerObj;
+	class CMahabalasura*		m_pBossObj;
+	_int						m_iRandomIndex = 0;
 
 private:
 	HRESULT SetUp_Components();

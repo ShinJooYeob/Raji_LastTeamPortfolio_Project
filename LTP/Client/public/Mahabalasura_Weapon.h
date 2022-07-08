@@ -4,6 +4,15 @@
 BEGIN(Client)
 class CMahabalasura_Weapon final : public CMonsterWeapon
 {
+public:
+	enum CloneType {CLONE_BOSS, CLONE_SKILL, CLONE_INSTANCE, CLONE_END};
+
+	typedef struct WeaponDesc
+	{
+		CloneType m_CloneType = CLONE_END;
+		ATTACHEDESC m_eAttachedDesc;
+		_float3 Pos = _float3(0.f);
+	}WEAPONDESC;
 private:
 	CMahabalasura_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CMahabalasura_Weapon(const CMahabalasura_Weapon& rhs);
@@ -20,14 +29,37 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	HRESULT		Set_InstanceWeapon(_int iCount = 0);
+	void		Set_IsStab() { m_bIsStab = true; }
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	
+	CGameObject*		m_pPlayerObj;
+	_float3				m_PlayerPos;
 
-	ATTACHEDESC			m_eAttachedDesc;
+	//ATTACHEDESC			m_eAttachedDesc;
 	_float4x4			m_fAttachedMatrix;
+
+	WEAPONDESC			m_WeaponDesc;
+
+	_double				m_dAliveTime = 0.0;
+	_float				m_fUpSpeed = 0.f;
+
+
+	//InstanceCom
+	CShader*			m_pInstanceShaderCom = nullptr;
+	CModelInstance*		m_pModelInstance = nullptr;
+	vector<CTransform*>	m_vInstanceTransformComs;
+	_float3				m_pBossPos;
+	_Matrix				m_mBossMatrix;
+	_bool				m_bIsStab = false;
+	_bool				m_bIsAliveTimeStart = false;
+	
 
 private:
 	void				Update_AttachMatrix();

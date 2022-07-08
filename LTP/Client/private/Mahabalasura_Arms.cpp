@@ -26,14 +26,17 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	ZeroMemory(&m_eAttachedDesc, sizeof(ATTACHEDESC));
+
 	if (pArg != nullptr)
 	{
-		_float3 Pos = *(_float3*)pArg;
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
-
+		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
 	}
 
-	m_pTransformCom->Scaled_All(_float3(1.f));
+	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), 0);
+
+	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);
+
 	return S_OK;
 }
 
@@ -42,8 +45,18 @@ _int CMahabalasura_Arms::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 
-	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
+	if (m_fAttackTime <= 0 && !m_bIsAttack)
+	{
+		m_bIsAttack = true;
+		m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);
+		m_pModel->Change_AnimIndex_ReturnTo(1, 0);
+	}
+
+	if(!m_bIsAttack)
+		m_fAttackTime -= (_float)fDeltaTime;
+
+	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple),true));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
 	return _int();
@@ -53,9 +66,25 @@ _int CMahabalasura_Arms::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
-	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	Update_AttachMatrix();
+	
+	
+	_Matrix mat = m_fAttachedMatrix.XMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+	//_Matrix Testmat =
+	//	XMMatrixRotationX(XMConvertToRadians(-20))*
+	//	XMMatrixRotationY(XMConvertToRadians(180))*
+	//	XMMatrixRotationZ(XMConvertToRadians(0));
+
+	//m_pTransformCom->Set_Matrix(Testmat);
 
 	return _int();
 }
@@ -72,19 +101,17 @@ _int CMahabalasura_Arms::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
 
-
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
-		//if(i == 10)continue;
-
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+		{
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+		}
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
 	}
 
 	return _int();
@@ -132,11 +159,23 @@ HRESULT CMahabalasura_Arms::Adjust_AnimMovedTransform(_double fDeltatime)
 
 	if (PlayRate <= 0.98)
 	{
-
+		if (iNowAnimIndex == 1)
+		{
+			if (PlayRate > 0.56f && m_iAdjMovedIndex == 0)
+			{
+				_float3 TempPos;
+				XMStoreFloat3(&TempPos, m_eAttachedDesc.Get_AttachedBoneWorldPosition());
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TEXT("Layer_AttackArms"), TAG_OP(Prototype_Object_Boss_MahabalasuraAttackArms), &TempPos));
+				++m_iAdjMovedIndex;
+			}
+		}
 	}
 	else
 	{
-
+		if (iNowAnimIndex == 1)
+		{
+			m_bIsAttack = false;
+		}
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;
