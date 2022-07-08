@@ -834,7 +834,7 @@ HRESULT CModel::Render(CShader * pShader, _uint iPassIndex,_uint iMaterialIndex,
 }
 
 HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer,
-									vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName, _float fFrustumsize)
+									vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
 {
 	if (iMaterialIndex >= m_iNumMaterials || nullptr == m_MeshMaterialDesc.pTexture)
 		return E_FAIL;
@@ -851,7 +851,7 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 		{
 			FAILED_CHECK(pMeshContainer->Bind_AffectingBones_OnShader(pShader, matDefualtPivot, BoneMatrices, szBoneValueName, &m_vecHierarchyNode));
 
-			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize));
+			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
 			iMeshConstainerIndex++;
 		}
 	}
@@ -861,7 +861,7 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
-			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize));
+			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
 			iMeshConstainerIndex++;
 		}
 
@@ -869,6 +869,46 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 	}
 
 
+
+
+
+	return S_OK;
+}
+
+HRESULT CModel::Render_ForInstancing_float4x4(CShader * pShader, _uint iPassIndex, _uint iMaterialIndex, CVIBuffer_Model_Instance * pInstacneBuffer,
+	vector<_float4x4>* pvecWorldMatrixs, const char * szBoneValueName, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
+{
+	if (iMaterialIndex >= m_iNumMaterials || nullptr == m_MeshMaterialDesc.pTexture)
+		return E_FAIL;
+
+	if (TYPE_ANIM == m_eModelType)
+	{
+		NULL_CHECK_RETURN(szBoneValueName, E_FAIL);
+		_float4x4		BoneMatrices[150];
+		_Matrix matDefualtPivot = m_DefaultPivotMatrix.XMatrix();
+
+		_uint iMeshConstainerIndex = 0;
+
+		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
+		{
+			FAILED_CHECK(pMeshContainer->Bind_AffectingBones_OnShader(pShader, matDefualtPivot, BoneMatrices, szBoneValueName, &m_vecHierarchyNode));
+
+			FAILED_CHECK(pInstacneBuffer->Render_float4x4(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
+			iMeshConstainerIndex++;
+		}
+	}
+	else
+	{
+		_uint iMeshConstainerIndex = 0;
+
+		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
+		{
+			FAILED_CHECK(pInstacneBuffer->Render_float4x4(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
+			iMeshConstainerIndex++;
+		}
+
+
+	}
 
 
 

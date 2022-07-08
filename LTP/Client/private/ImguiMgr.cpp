@@ -724,7 +724,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 
 						_float4 ObjectLimLight = pObject->Get_LimLightValue();
-						_float ObjectEmissive = pObject->Get_EmissiveValue();
+						_float4 ObjectEmissive = pObject->Get_EmissiveValue();
 
 
 						color = ImVec4(ObjectLimLight.x, ObjectLimLight.y, ObjectLimLight.z, ObjectLimLight.w);
@@ -745,13 +745,17 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 
 
-						Make_VerticalSpacing(2);
+						Make_VerticalSpacing(4);
 
+						float ObjectEmissiveArr[3] = { 0,0,0 };
+						ImGui::Text("Shade / Blur / Bright");
+						memcpy(ObjectEmissiveArr, &ObjectEmissive, sizeof(_float) * 3);
 
-						ImGui::DragFloat("EmissiveIntensive", &ObjectEmissive, 0.01f, 0, 1.f);
+						ImGui::DragFloat3(" ", ObjectEmissiveArr, 0.0073f, 0, 1.f);
 
-						ObjectEmissive = min(max(ObjectEmissive, 0), 1);
+						memcpy(&ObjectEmissive, ObjectEmissiveArr, sizeof(_float) * 3);
 
+					
 
 						pObject->Set_LimLight_N_Emissive(_float4(color.x, color.y, color.z, color.w), ObjectEmissive);
 
@@ -966,7 +970,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		{
 			_float Value = pUtil->Get_Renderer()->Get_ShadowIntensive();
 			ImGui::DragFloat("ShadowIntensive", &Value, 0.001f, 0.001f, 1.f);
-			Value = max(min(Value, 1.f), 0.01f);
+			Value = max(min(Value, 1.f), 0.0001f);
 			pUtil->Get_Renderer()->Set_ShadowIntensive(Value);
 
 			Make_VerticalSpacing(1);
@@ -976,7 +980,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			ImGui::Checkbox("GodRay", &bGodRayBool);
 			pUtil->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, bGodRayBool);
 
-			if (bBool)
+			if (bGodRayBool)
 			{
 				if (ImGui::TreeNode("GodRay Color"))
 				{
@@ -1009,6 +1013,15 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 					ImGui::TreePop();
 				}
 
+
+
+				Value = pUtil->Get_Renderer()->Get_SunSize() * 0.05f;
+				ImGui::DragFloat("GodraySunSize", &Value, 0.06f, 0.01f, 1.f);
+				Value = max(min(Value, 1.f), 0.06f);
+				pUtil->Get_Renderer()->Set_SunSize(Value* 20.f);
+
+
+
 				Value = pUtil->Get_Renderer()->Get_GodrayLength();
 				ImGui::DragFloat("GodrayLength", &Value, 1.f, 1.f, 64.f);
 				Value = _float(_int(max(min(Value, 64.f), 1.f)));
@@ -1035,6 +1048,32 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 				ImGui::DragFloat("MaxDeltaLen", &Value, 0.0001f, 0.001f, 1.f);
 				Value = max(min(Value, 1.f), 0.0001f);
 				pUtil->Get_Renderer()->Set_MaxDeltaLen(Value);
+
+			}
+
+			ImGui::Separator();
+			bGodRayBool = pUtil->Get_Renderer()->Get_IsOnPostPorcessing(POSTPROCESSING_LENSEFLARE);
+			ImGui::Checkbox("LenseFlare", &bGodRayBool);
+			pUtil->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, bGodRayBool);
+
+			if (bGodRayBool)
+			{
+				 
+				//Value = (128 - pUtil->Get_Renderer()->Get_LensfalreSupportSunSize()) / 128.f;
+
+				Value =pUtil->Get_Renderer()->Get_LensfalreSupportSunSize();
+				Value = 1 - ((Value - 16) / 344.f);
+				ImGui::DragFloat("Support Sun Flare", &Value, 0.01f, 0.01f, 1.f);
+				Value = max(min(Value, 1.f), 0.f);
+				Value = (1 - Value) * 344.f + 16.f;
+
+				pUtil->Get_Renderer()->Set_LensfalreSupportSunSize(Value);
+
+
+				_int iValue = _int(pUtil->Get_Renderer()->Get_LensefalreNoiseTexIndex());
+				ImGui::InputInt("Sun Noise", &iValue);
+				iValue = _int(max(min(iValue, 360), 0));
+				pUtil->Get_Renderer()->Set_LensefalreNoiseTexIndex(_uint(iValue));
 
 			}
 
@@ -1089,7 +1128,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		ImGui::Separator();
 
 		bBool = pUtil->Get_Renderer()->Get_IsOnPostPorcessing(POSTPROCESSING_DDFOG);
-		ImGui::Checkbox("Distance Depth Fog", &bBool);
+		ImGui::Checkbox("DDFog", &bBool);
 		pUtil->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, bBool);
 
 		if (bBool)

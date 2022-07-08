@@ -162,7 +162,7 @@ void CObjectLayer::Free()
 {
 	for (auto& pGameObject : m_ObjectList)
 	{
-		//pGameObject->Release();
+		pGameObject->Set_IsOwerDead(true);
 		Safe_Release(pGameObject);
 	}
 	m_ObjectList.clear();

@@ -3,16 +3,18 @@
 #include "Camera.h"
 
 #include "RenderTargetMgr.h"
+#include "Graphic_Device.h"
+#include "Input_Device.h"
+#include "ComponentMgr.h"
+#include "PipeLineMgr.h"
 #include "LightMgr.h"
+
 #include "VIBuffer_Rect.h"
+#include "VIBuffer.h"
+#include "Texture.h"
 #include "Shader.h"
 #include "Model.h"
-#include "VIBuffer.h"
 
-#include "Input_Device.h"
-#include "PipeLineMgr.h"
-#include "Graphic_Device.h"
-#include "LightMgr.h"
 
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
@@ -26,7 +28,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 	ZeroMemory(m_PostProcessingOn, sizeof(_bool) * POSTPROCESSING_END);
 }
-#define ShadowMapQuality 1
+#define ShadowMapQuality 3
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -70,28 +72,34 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaledBluredShadow"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Defferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Defferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledEmissiveMask"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredEmissiveMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_AvgLuminece"), (_uint)1, (_uint)1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_GodRay"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledRefOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Oclussion"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LenseFlare"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By2"), (_uint)(Viewport.Width / 2), (_uint)(Viewport.Height / 2), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By3"), (_uint)(Viewport.Width / 3), (_uint)(Viewport.Height / 3), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By2"), (_uint)(Viewport.Width / 2), (_uint)(Viewport.Height / 2), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By3"), (_uint)(Viewport.Width / 3), (_uint)(Viewport.Height / 3), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By4"), (_uint)(Viewport.Width / 4), (_uint)(Viewport.Height / 4), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By5"), (_uint)(Viewport.Width / 5), (_uint)(Viewport.Height / 5), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By6"), (_uint)(Viewport.Width / 6), (_uint)(Viewport.Height / 6), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By2"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By3"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By2"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By3"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By4"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By5"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By6"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -139,6 +147,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ShadowHBlur_N_UpScaling"), TEXT("Target_UpScaledBluredShadow")));
 
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveVBlur_N_DownScaling"), TEXT("Target_DownScaledEmissiveMask")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveHBlur_N_UpScaling"), TEXT("Target_BluredEmissiveMask")));
+
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_AvgLuminece"), TEXT("Target_AvgLuminece")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_MakeLumiMask"), TEXT("Target_LumineceMask")));
 
@@ -146,6 +157,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_GodRay"), TEXT("Target_GodRay")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Oclussion"), TEXT("Target_Oclussion")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceOclussion"), TEXT("Target_ReferenceOclussion")));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_LenseFlareNDefferd"), TEXT("Target_Defferred")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_LenseFlareNDefferd"), TEXT("Target_LenseFlare")));
 	
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By2"), TEXT("Target_DownScaled_By2")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By3"), TEXT("Target_DownScaled_By3")));
@@ -186,10 +201,13 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_UpScaledBluredShadow"), 1280 - 150, 350, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_AvgLuminece"), 1280 - 150, 450, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_LumineceMask"), 1280 - 150, 550, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_BluredEmissiveMask"), 1280 - 150, 650, 100, 100));
 	
+
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_Oclussion"), 1280 - 250, 50, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_GodRay"), 1280 - 250, 150, 100, 100));
-
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_LenseFlare"), 1280 - 250, 250, 100, 100));
+	
 	
 	
 #endif
@@ -255,6 +273,18 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	}
 
 
+	FAILED_CHECK(GetSingle(CComponentMgr)->Add_Component_Prototype(0, L"Prototype_Texture_Noise",
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"NoiseTexture.txt")));
+
+
+	m_pTexture = (CTexture*)GetSingle(CComponentMgr)->Clone_Component(0, L"Prototype_Texture_Noise",nullptr);
+	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
+	FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+
+
+
+
+
 	return S_OK;
 }
 
@@ -295,7 +325,7 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 		return E_FAIL;
 	}
 
-	if (eShadowID >= SHADOW_ANIMMODEL && eShadowID <= SHADOW_NONANIMMODEL_ATTACHED && pModel == nullptr)
+	if (eShadowID < SHADOW_ANIMMODEL || eShadowID >= SHADOW_END || pModel == nullptr)
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -329,6 +359,53 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 	return S_OK;
 }
 
+HRESULT CRenderer::Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, CGameObject * pGameObject,
+	vector<CTransform*>* pvecTransform, CModelInstance* pModelInst, CShader * pShader, CModel * pModel, vector<_float4x4>* pvecTransformfloat4x4)
+{
+	if (pGameObject == nullptr || pShader == nullptr || pModelInst == nullptr)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (eShadowID < INSTSHADOW_ANIMINSTANCE || eShadowID >= INSTSHADOW_END || pModel == nullptr)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (pvecTransform == nullptr && pvecTransformfloat4x4 == nullptr)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
+	INSTSHADOWDESC tDesc;
+
+
+	tDesc.pGameObject = pGameObject;
+	tDesc.pvecTransform = pvecTransform;
+	tDesc.pvecTransformfloat4x4 = pvecTransformfloat4x4;
+	tDesc.pModel = pModel;
+	tDesc.pShader = pShader;
+	tDesc.pModelInstance = pModelInst;
+
+	if (tDesc.pGameObject->Get_IsOcllusion())
+		tDesc.fIsOcllusion = 0.9f;
+	else
+		tDesc.fIsOcllusion = 1.f;
+
+
+
+	Safe_AddRef(tDesc.pGameObject);
+	m_InstanceShadowList[eShadowID].push_back(tDesc);
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Add_TrailGroup(TRAILGROUP eTrailID, CComponent * pTrailComponent)
 {
 	if (eTrailID >= TRAILGROUP::TRAIL_END)
@@ -357,6 +434,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 {
 	FAILED_CHECK(m_pRenderTargetMgr->Clear_All_RenderTargetColor());
 
+	FAILED_CHECK(Ready_For_Update(fDeltaTime));
+	
 
 	FAILED_CHECK(Render_ShadowMap());
 
@@ -383,14 +462,16 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_SwordTrail());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
 	FAILED_CHECK(Copy_DeferredToReference());
+	FAILED_CHECK(Render_EmissiveBlur());
 
 
 
-
-	if (m_PostProcessingOn[POSTPROCESSING_GODRAY])
+	if (m_PostProcessingOn[POSTPROCESSING_SHADOW] && m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
 		FAILED_CHECK(Render_DepthOfField());
+	if (m_PostProcessingOn[POSTPROCESSING_SHADOW] && m_PostProcessingOn[POSTPROCESSING_LENSEFLARE])
+		FAILED_CHECK(Render_LesnFlare());
 	if (m_PostProcessingOn[POSTPROCESSING_DDFOG])
 		FAILED_CHECK(Render_DDFog());
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
@@ -441,6 +522,17 @@ HRESULT CRenderer::Clear_RenderGroup_forSceneChaging()
 		}
 		m_ShadowObjectList[i].clear();
 	}
+
+	for (_uint i = 0; i < INSTSHADOW_END; i++)
+	{
+		for (auto& ShadowDesc : m_InstanceShadowList[i])
+		{
+			Safe_Release(ShadowDesc.pGameObject);
+		}
+		m_InstanceShadowList[i].clear();
+	}
+
+	
 
 	for (_uint i = 0; i < TRAIL_END; ++i)
 	{
@@ -932,6 +1024,8 @@ HRESULT CRenderer::Render_DDFog()
 	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_GodRay"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_UpScaledTexture1", m_pRenderTargetMgr->Get_SRV(TEXT("Target_LenseFlare"))));
+	
 	
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 15));
 
@@ -978,13 +1072,14 @@ HRESULT CRenderer::Render_GodRay()
 	//_float3 vSunPosSS = XMVector3TransformCoord(XMVectorSetW(vSunPos.XMVector(), 1), mView);
 	//
 	//vSunPosSS = XMVector3TransformCoord(vSunPosSS.XMVector(),mProj);
-	_float3 vSunPosSS =	vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
+	m_vSunPosSS  =	vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
 
-	vSunPosSS.x = (vSunPosSS.x * 0.5f) + 0.5f;
-	vSunPosSS.y = (vSunPosSS.y * -0.5f) + 0.5f;
+	m_vSunPosSS.x = (m_vSunPosSS.x * 0.5f) + 0.5f;
+	m_vSunPosSS.y = (m_vSunPosSS.y * -0.5f) + 0.5f;
+	m_vSunPosSS.w = 1.;
 
 	static const float fMaxSunDist = 2.f;
-	float fMaxDist = max(abs(vSunPosSS.x), abs(vSunPosSS.y));
+	float fMaxDist = max(abs(m_vSunPosSS.x), abs(m_vSunPosSS.y));
 
 	//_float SunDist = _float3(vSunPosSS.x, vSunPosSS.y,0).Get_Lenth();
 	//if (SunDist >= fMaxSunDist)
@@ -1015,7 +1110,7 @@ HRESULT CRenderer::Render_GodRay()
 	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldViewPortDesc));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_ReferenceOclussion"), m_DownScaledDepthStencil[0]));
-	m_fTexleSize = 1.f;
+	m_fTexleSize = 2.f;
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledRefOclussion"))));
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
@@ -1040,14 +1135,16 @@ HRESULT CRenderer::Render_GodRay()
 
 	_float fGodRayNumDelta = 1.f / (m_fGodrayLength - 1.f); 
 
-	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &vSunPosSS, sizeof(_float2)));
+	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &m_vSunPosSS, sizeof(_float2)));
 	FAILED_CHECK(m_pShader->Set_RawValue("InitDecay", &m_fInitDecay, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("DistDecay", &m_fDistDecay, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("RayColor", &m_vGodRayColor, sizeof(_float3)));
 	FAILED_CHECK(m_pShader->Set_RawValue("MaxDeltaLen", &m_fMaxDeltaLen, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayLength", &m_fGodrayLength, sizeof(_float)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fGodRayNumDelta", &fGodRayNumDelta, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_SunSize", &m_SunSize, sizeof(_float)));
 
+	
 
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Oclussion"))));
 
@@ -1071,7 +1168,61 @@ HRESULT CRenderer::Render_GodRay()
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 17));
 
 
+
+
 	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
+	FAILED_CHECK(Copy_DeferredToReference());
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_LesnFlare()
+{
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_LenseFlareNDefferd")));
+
+	if (m_vSunPosSS.w == 0)
+	{
+		LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+		if (!pLightDesc) return S_FALSE;
+
+		_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
+
+		CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+		_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
+		_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
+
+		_float3 vSunPos = pLightDesc->vVector.XMVector();
+		//_float3 vSunPos = -200.0f * vSunDir;
+		//_float3 vEyePos = vCamWorldMat.r[3];
+		//vSunPos.x += vEyePos.x;
+		//vSunPos.z += vEyePos.z;
+
+		_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
+		_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+
+		_Matrix mViewProjection = mView * mProj;
+
+		m_vSunPosSS = vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
+
+		m_vSunPosSS.x = (m_vSunPosSS.x * 0.5f) + 0.5f;
+		m_vSunPosSS.y = (m_vSunPosSS.y * -0.5f) + 0.5f;
+		m_vSunPosSS.w = 1.f;
+	}
+
+	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &m_vSunPosSS, sizeof(_float2)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_LensfaleSupportSunSize", &m_LensfalreSupportSunSize, sizeof(_float)));
+	
+
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", m_iLensefalreNoiseTexIndex));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 18));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_LenseFlareNDefferd"));
 	FAILED_CHECK(Copy_DeferredToReference());
 
 
@@ -1106,6 +1257,59 @@ HRESULT CRenderer::Render_SwordTrail()
 		Safe_Release(pSwordTrailComponet);
 	}
 	m_TrailList[TRAIL_SWORD].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_EmissiveBlur()
+{
+	FAILED_CHECK(Make_BluredDeffered());
+
+	m_fTexleSize = 3.f;
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
+
+
+	//ILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveVBlur_N_DownScaling"), TEXT("Target_DownScaledEmissiveMask")));
+	//ILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EmissiveHBlur_N_UpScaling"), TEXT("Target_BluredEmissiveMask")));3
+
+	D3D11_VIEWPORT OldVp;
+	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_EmissiveVBlur_N_DownScaling"), m_DownScaledDepthStencil[0]));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
+
+
+	m_pDeviceContext->RSSetViewports(1, &OldVp);
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_EmissiveVBlur_N_DownScaling")));
+
+	
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_EmissiveHBlur_N_UpScaling")));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DownScaledEmissiveMask"))));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_EmissiveHBlur_N_UpScaling")));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_BluredEmissiveMask"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_EmissiveTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlEmissive"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_BluredTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_BluredDefferred"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+
+	
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 19));
+
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
+	FAILED_CHECK(Copy_DeferredToReference());
+
+
+
+
 
 	return S_OK;
 }
@@ -1215,9 +1419,6 @@ HRESULT CRenderer::Render_ShadowMap()
 
 
 
-
-
-
 	m_pDeviceContext->RSSetViewports(iNumViewports, &ViewPortDesc);
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Shadow"), m_LightDepthStencil));
 
@@ -1252,22 +1453,25 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL])
 		{
-			if (!m_bShadowLightMatBindedChecker)
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 			{
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-				m_bShadowLightMatBindedChecker = true;
-			}
-			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 
-			
-			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-			for (_uint i = 0; i < NumMaterial; i++)
-			{
-				FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i, "g_BoneMatrices"));
+				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+
+				for (_uint i = 0; i < NumMaterial; i++)
+				{
+					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i, "g_BoneMatrices"));
+				}
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 		}
@@ -1281,21 +1485,24 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED])
 		{
-			if (!m_bShadowLightMatBindedChecker)
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 			{
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-				m_bShadowLightMatBindedChecker = true;
-			}
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
-			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
+				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-			for (_uint i = 0; i < NumMaterial; i++)
-			{
-				FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i, "g_BoneMatrices"));
+				for (_uint i = 0; i < NumMaterial; i++)
+				{
+					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i, "g_BoneMatrices"));
+				}
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 
@@ -1311,22 +1518,24 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_NONANIMMODEL])
 		{
-			if (!m_bShadowLightMatBindedChecker)
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 			{
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-				m_bShadowLightMatBindedChecker = true;
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+
+				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+
+				for (_uint i = 0; i < NumMaterial; i++)
+				{
+					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i));
+				}
 			}
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
-			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
-
-			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
-
-			for (_uint i = 0; i < NumMaterial; i++)
-			{
-				FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i));
-			}
-
 			Safe_Release(ShadowDesc.pGameObject);
 		}
 		m_ShadowObjectList[SHADOW_NONANIMMODEL].clear();
@@ -1339,22 +1548,24 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED])
 		{
-
-			if (!m_bShadowLightMatBindedChecker)
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 			{
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-				m_bShadowLightMatBindedChecker = true;
-			}
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
-			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
+				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-			_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-			for (_uint i = 0; i < NumMaterial; i++)
-			{
-				FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i));
+				for (_uint i = 0; i < NumMaterial; i++)
+				{
+					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i));
+				}
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 
@@ -1369,25 +1580,98 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_TERRAIN])
 		{
-			if (!m_bShadowLightMatBindedChecker)
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 			{
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-				m_bShadowLightMatBindedChecker = true;
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+				CVIBuffer* pVIBuffer = (CVIBuffer*)ShadowDesc.pGameObject->Get_Component(L"Com_VIBuffer");
+				NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
+
+				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+				FAILED_CHECK(pVIBuffer->Render(ShadowDesc.pShader, 0));
 			}
-
-			FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
-			CVIBuffer* pVIBuffer = (CVIBuffer*)ShadowDesc.pGameObject->Get_Component(L"Com_VIBuffer");
-			NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
-
-			FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
-			FAILED_CHECK(pVIBuffer->Render(ShadowDesc.pShader, 0));
-
 			Safe_Release(ShadowDesc.pGameObject);
 		}
 		m_ShadowObjectList[SHADOW_TERRAIN].clear();
 
 #pragma endregion 
+
+
+#pragma region SHADOW_INSTANIMMODEL
+
+		m_bShadowLightMatBindedChecker = false;
+		for (auto& ShadowDesc : m_InstanceShadowList[INSTSHADOW_ANIMINSTANCE])
+		{
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+			{
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+
+
+				if (!ShadowDesc.pvecTransformfloat4x4)
+				{
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform));
+
+				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0, ShadowDesc.pvecTransformfloat4x4));
+
+				}
+			}
+
+			Safe_Release(ShadowDesc.pGameObject);
+		}
+		m_InstanceShadowList[INSTSHADOW_ANIMINSTANCE].clear();
+
+#pragma endregion
+
+#pragma region SHADOW_INSTNONANIMMODEL
+
+		m_bShadowLightMatBindedChecker = false;
+		for (auto& ShadowDesc : m_InstanceShadowList[INSTSHADOW_NONANIMINSTANCE])
+		{
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+			{
+				if (!m_bShadowLightMatBindedChecker)
+				{
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+					m_bShadowLightMatBindedChecker = true;
+				}
+
+				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+
+				if (!ShadowDesc.pvecTransformfloat4x4)
+				{
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform));
+
+				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0, ShadowDesc.pvecTransformfloat4x4));
+
+				}
+
+			}
+			Safe_Release(ShadowDesc.pGameObject);
+		}
+		m_InstanceShadowList[INSTSHADOW_NONANIMINSTANCE].clear();
+
+#pragma endregion
+
 	}
 	else
 	{
@@ -1398,6 +1682,15 @@ HRESULT CRenderer::Render_ShadowGroup()
 				Safe_Release(ShadowDesc.pGameObject);
 			}
 			m_ShadowObjectList[i].clear();
+		}
+
+		for (_uint i = 0; i < INSTSHADOW_END; i++)
+		{
+			for (auto& ShadowDesc : m_InstanceShadowList[i])
+			{
+				Safe_Release(ShadowDesc.pGameObject);
+			}
+			m_InstanceShadowList[i].clear();
 		}
 	}
 
@@ -1414,6 +1707,13 @@ HRESULT CRenderer::Add_DebugRenderTarget(const _tchar * szTargetTag, _float fX, 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), szTargetTag));
 
 	m_szDebugRenderTargetList.push_back(szTargetTag);
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Ready_For_Update(_double fDelataTimme)
+{
+	m_vSunPosSS = _float4(0);
 
 	return S_OK;
 }
@@ -1604,6 +1904,8 @@ void CRenderer::Free()
 	
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pTexture);
+	
 	
 
 	Safe_Release(m_pRenderTargetMgr);
@@ -1627,6 +1929,16 @@ void CRenderer::Free()
 		}
 		m_ShadowObjectList[i].clear();
 	}
+	for (_uint i = 0; i < INSTSHADOW_END; i++)
+	{
+		for (auto& ShadowDesc : m_InstanceShadowList[i])
+		{
+			Safe_Release(ShadowDesc.pGameObject);
+		}
+		m_InstanceShadowList[i].clear();
+	}
+
+
 
 	for (_uint i = 0; i < TRAIL_END; ++i)
 	{

@@ -26,7 +26,11 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint LayerSceneNum, _uint iNumInstance);
 	virtual HRESULT Initialize_Clone(void* pArg)override;
 
-	HRESULT Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize = 0);
+	HRESULT Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize = 0, 
+		vector<_float4>*  pvecLimLight = nullptr, vector<_float4>*  pvecEmissive = nullptr);
+
+	HRESULT Render_By_float4x4(class CShader* pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs,
+		_float fFrustumsize = 0, vector<_float4>*  pvecLimLight = nullptr, vector<_float4>*  pvecEmissive = nullptr);
 
 private:
 	wstring									m_szInstancePrototypeTag = L"";

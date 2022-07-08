@@ -22,6 +22,8 @@ CGameObject::CGameObject(const CGameObject & rhs)
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 	m_eNowSceneNum = GetSingle(CGameInstance)->Get_TargetSceneNum();
+
+	m_bIsOwnerDead = false;
 }
 
 HRESULT CGameObject::Initialize_Prototype(void * pArg)
@@ -55,7 +57,7 @@ _int CGameObject::Render()
 	if (m_pEngineShader)
 	{
 		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float4)));
-		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float)));
+		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float4)));
 	}
 
 
@@ -91,7 +93,7 @@ _float CGameObject::Compute_RenderSortValue()
 
 
 
-void CGameObject::Set_LimLight_N_Emissive(_float4 vLimLight, _float fEmissive)
+void CGameObject::Set_LimLight_N_Emissive(_float4 vLimLight, _float4 fEmissive)
 {
 	m_vLimLight = vLimLight;
 	m_fEmissiveIntensive = fEmissive;
@@ -242,8 +244,10 @@ void CGameObject::Free()
 	for (auto& ComponentPair : m_mapComponets)
 	{
 		pForRelease = *(ComponentPair.second);
+		pForRelease->Set_IsOwnerDead(true);
 		Safe_Release(pForRelease);
 	}
+
 
 	m_mapComponets.clear();
 

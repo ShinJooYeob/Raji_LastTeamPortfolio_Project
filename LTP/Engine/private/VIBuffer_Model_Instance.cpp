@@ -45,6 +45,10 @@ HRESULT CVIBuffer_Model_Instance::Initialize_Prototype(_uint iNumInstance)
 		pInstanceMatrix[i].vUp = _float4(0.f, 1.f, 0.f, 0.f);
 		pInstanceMatrix[i].vLook = _float4(0.f, 0.f, 1.f, 0.f);
 		pInstanceMatrix[i].vPosition = _float4(0, 0.f, 0, 1.f);
+
+		pInstanceMatrix[i].vLimLight = _float4(0);
+		pInstanceMatrix[i].vEmissive= _float4(0);
+
 	}	
 
 	ZeroMemory(&m_VBInstSubResource, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -125,14 +129,26 @@ HRESULT CVIBuffer_Model_Instance::Initialize_Clone(void * pArg)
 }
 
 HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex ,
-	CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs ,_float fFrustumsize)
+	CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs ,_float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
 {
 	if (nullptr == m_pDeviceContext)
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
+	if(pvecLimLight && pvecLimLight->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (pvecEmissive && pvecEmissive->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	_uint iNeedToRenderingCount = ((*pvecWorldMatrixs).size() < m_iNumInstance) ? (_uint)(*pvecWorldMatrixs).size() : m_iNumInstance;
 	
 	CFrustumMgr*	pFrustum = GetSingle(CFrustumMgr);
@@ -166,6 +182,14 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vUp), TempVec[i]->Get_MatrixState(CTransform::STATE_UP));
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLook), TempVec[i]->Get_MatrixState(CTransform::STATE_LOOK));
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), TempVec[i]->Get_MatrixState(CTransform::STATE_POS));
+
+			if (pvecLimLight)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			if (pvecEmissive)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
+
+
+
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}
@@ -181,6 +205,12 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vUp), (*pvecWorldMatrixs)[i]->Get_MatrixState(CTransform::STATE_UP));
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLook), (*pvecWorldMatrixs)[i]->Get_MatrixState(CTransform::STATE_LOOK));
 			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecWorldMatrixs)[i]->Get_MatrixState(CTransform::STATE_POS));
+
+
+			if (pvecLimLight)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			if (pvecEmissive)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}
@@ -207,6 +237,89 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 	};
 
 	
+
+	m_pDeviceContext->IASetVertexBuffers(0, 2, pVertexBuffers, iStrides, iOffsets);
+	m_pDeviceContext->IASetIndexBuffer((m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].pIB, (m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].eIndexFormat, 0);
+	m_pDeviceContext->IASetPrimitiveTopology((m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].eTopology);
+
+	FAILED_CHECK(pShader->Set_InputLayout(iPassIndex));
+	FAILED_CHECK(pShader->Apply(iPassIndex));
+
+	m_pDeviceContext->DrawIndexedInstanced((m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].iIndexCountPerInstance, iNeedToRenderingCount, 0, 0, 0);
+	//m_pDeviceContext->DrawIndexedInstanced(3 * asdasdasd, m_iNumInstance, 0, 0, 0);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex, CMeshContainer * pMeshContainer, 
+	vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
+{
+	if (nullptr == m_pDeviceContext)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (pvecLimLight && pvecLimLight->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (pvecEmissive && pvecEmissive->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	_uint iNeedToRenderingCount = ((*pvecWorldMatrixs).size() < m_iNumInstance) ? (_uint)(*pvecWorldMatrixs).size() : m_iNumInstance;
+	CFrustumMgr*	pFrustum = GetSingle(CFrustumMgr);
+
+
+	{
+		D3D11_MAPPED_SUBRESOURCE		SubResource;
+
+		m_pDeviceContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+
+		for (_uint i = 0; i < iNeedToRenderingCount; ++i)
+		{
+			_Matrix mat = (*pvecWorldMatrixs)[i].XMatrix();
+
+			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vRight),		mat.r[0]);
+			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vUp),		mat.r[1]);
+			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLook),		mat.r[2]);
+			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition),	mat.r[3]);
+
+
+			if (pvecLimLight)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
+			if (pvecEmissive)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vPosition), (*pvecEmissive)[i].XMVector());
+		}
+		m_pDeviceContext->Unmap(m_pVBInstance, 0);
+	}
+
+
+
+	FORINSTDATA tInstancingData;
+	pMeshContainer->Get_InstancingData(&tInstancingData);
+
+
+	ID3D11Buffer*	pVertexBuffers[] = {
+		tInstancingData.pVB,
+		m_pVBInstance
+	};
+
+	_uint			iStrides[] = {
+		tInstancingData.VBDesc.StructureByteStride,
+		m_VBInstDesc.StructureByteStride
+	};
+
+	_uint			iOffsets[] = {
+		0,
+		0
+	};
+
+
 
 	m_pDeviceContext->IASetVertexBuffers(0, 2, pVertexBuffers, iStrides, iOffsets);
 	m_pDeviceContext->IASetIndexBuffer((m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].pIB, (m_vecIndexBufferArr[iMatreialIndex])[iMeshContainerIndex].eIndexFormat, 0);

@@ -1,4 +1,13 @@
 
+#define FloatCorrectionValue 0.00000125f
+#define XTexelSize		0.00078125f
+#define YTexelSize		0.00138889f
+#define	DiagTexelSize	0.00159353f
+#define vec2			float2
+#define vec3			float3
+#define vec4			float4
+#define mix				lerp
+
 texture2D			g_TargetTexture;
 texture2D			g_DiffuseTexture;
 texture2D			g_NormalTexture;
@@ -60,6 +69,8 @@ cbuffer ScreenSizeBuffer
 {
 	float				fScreemWidth = 1280;
 	float				fScreemHeight = 720;
+	float2				iResolution = float2(1280, 720);
+	float2				iMouse = float2(100, 10);
 };
 
 cbuffer ForPostProcessing
@@ -95,6 +106,9 @@ cbuffer RayTraceConstants
 	float DistDecay;
 	float3 RayColor;
 	float MaxDeltaLen;
+
+	float	g_SunSize =  10.f;
+	float	g_LensfaleSupportSunSize = 128.f;
 }
 
 
@@ -113,7 +127,14 @@ sampler WrapSampler = sampler_state
 	AddressV = wrap;
 };
 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+float2 UV2FragCoord(float2 UV)
+{
+	return float2(1.f - UV.x, UV.y);
+}
+
 float3 ApplyFog(float3 originalColor, float eyePosY, float3 eyeToPixel)
 {
 	float pixelDist = length(eyeToPixel);
@@ -164,6 +185,80 @@ float3 Calculate_ClipUV_N_CurrentDepth(texture2D WorldTexture, float2 UVPos, mat
 	return Out;
 }
 
+
+float2 iChannelResolution = float2(256, 256);
+
+float noise(float t)
+{
+	return g_NoiseTexture.Sample(DefaultSampler, UV2FragCoord( float2(t, .0) )/ iChannelResolution.xy).x;
+}
+float noise(float2 t)
+{
+	return g_NoiseTexture.Sample(DefaultSampler, UV2FragCoord(t) / iChannelResolution.xy).x;
+}
+
+vec3 lensflare(vec2 uv, vec2 pos)
+{
+	float2 main = uv - pos;
+	float2 uvd = uv*(length(uv));
+
+	float ang = atan2(main.x, main.y);
+	float dist = length(main); dist = pow(dist, .1);
+	float n = noise(vec2(ang*16.0, dist*32.0));
+
+	float f0 = 1.0 / (length(uv - pos)* g_LensfaleSupportSunSize + 1.0);
+	//float f0 = 1.0 / (length(uv - pos)*16.0 + 1.0);
+
+	//제일 큰 해모양
+	f0 = f0 + f0*(sin(noise(sin(ang*2. + pos.x)*4.0 - cos(ang*3. + pos.y))*16.)*.1 + dist*.1 + .8);
+	//f0 = 0;
+
+
+	//제일 멀리있는 찌부된 원
+	float f1 = max(0.01 - pow(length(uv + 1.2*pos), 1.9), .0)*7.0;
+
+	float f2 = max(1.0 / (1.0 + 32.0*pow(length(uvd + 0.8*pos), 2.0)), .0)*00.25;
+	float f22 = max(1.0 / (1.0 + 32.0*pow(length(uvd + 0.85*pos), 2.0)), .0)*00.23;
+	float f23 = max(1.0 / (1.0 + 32.0*pow(length(uvd + 0.9*pos), 2.0)), .0)*00.21;
+
+
+	vec2 uvx = mix(uv, uvd, -0.5);
+
+	float f4 = max(0.01 - pow(length(uvx + 0.4*pos), 2.4), .0)*6.0;
+	float f42 = max(0.01 - pow(length(uvx + 0.45*pos), 2.4), .0)*5.0;
+	float f43 = max(0.01 - pow(length(uvx + 0.5*pos), 2.4), .0)*3.0;
+
+	uvx = mix(uv, uvd, -.4);
+
+	float f5 = max(0.01 - pow(length(uvx + 0.2*pos), 5.5), .0)*2.0;
+	float f52 = max(0.01 - pow(length(uvx + 0.4*pos), 5.5), .0)*2.0;
+	float f53 = max(0.01 - pow(length(uvx + 0.6*pos), 5.5), .0)*2.0;
+
+	uvx = mix(uv, uvd, -0.5);
+
+	//제일 가까이에 있는 찌부된 원
+	float f6 = max(0.01 - pow(length(uvx - 0.3*pos), 1.6), .0)*6.0;
+	float f62 = max(0.01 - pow(length(uvx - 0.325*pos), 1.6), .0)*3.0;
+	float f63 = max(0.01 - pow(length(uvx - 0.35*pos), 1.6), .0)*5.0;
+
+	//f6 = f62 = f63 = 0;
+
+	vec3 c = vec3(0.0,0.0, 0.0);
+
+	c.r += f2 + f4 + f5 + f6; c.g += f22 + f42 + f52 + f62; c.b += f23 + f43 + f53 + f63;
+	float temp = length(uvd)*.05;
+	c = c*1.3 - vec3(temp, temp, temp);
+	c += vec3(f0, f0, f0);
+
+	return c;
+}
+
+vec3 cc(vec3 color, float factor, float factor2) // color modifier
+{
+	float w = color.x + color.y + color.z;
+	return mix(color, vec3(w, w, w)*factor, w*factor2);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct VS_IN
@@ -178,6 +273,12 @@ struct VS_OUT
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
+};
+struct VS_OUT_ForAvgLumi
+{
+	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float		fNeedToDraw : TEXCOORD1;
 };
 struct VS_OUT_BLUR
 {
@@ -207,6 +308,29 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
+
+	return Out;
+}
+VS_OUT_ForAvgLumi VS_ForLumi(VS_IN In)
+{
+	VS_OUT_ForAvgLumi			Out = (VS_OUT_ForAvgLumi)0;
+
+	matrix			matWV, matWVP;
+
+	matWV = mul(g_WorldMatrix, g_ViewMatrix);
+	matWVP = mul(matWV, g_ProjMatrix);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+	Out.vTexUV = In.vTexUV;
+
+	if (In.vPosition.x < 0 && In.vPosition.y > 0)
+	{
+		Out.fNeedToDraw = 0;
+	}
+	else
+	{
+		Out.fNeedToDraw = 1;
+	}
 
 	return Out;
 }
@@ -280,6 +404,15 @@ struct PS_IN
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 };
+
+struct PS_IN_ForAvgLumi
+{
+	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float		fNeedToDraw : TEXCOORD1;
+};
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -377,10 +510,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (g_vLightSpecular * 1.f) * pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30);
 	Out.vSpecular.a = 0.f;
 
-	if (vEmissiveDesc.a > 0)
+	if (vEmissiveDesc.x > 0)
 	{
-		Out.vShade = Out.vShade + vEmissiveDesc.a;
-		Out.vSpecular = max(Out.vSpecular - vEmissiveDesc.a,0);
+		Out.vShade = Out.vShade + vEmissiveDesc.x;
+		Out.vSpecular = max(Out.vSpecular - vEmissiveDesc.x,0);
 		Out.vSpecular.a = 0.f;
 	}
 
@@ -435,10 +568,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	Out.vSpecular = (g_vLightSpecular * 1.f) * pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30) * fAtt;
 	Out.vSpecular.a = 0.f;
 
-	if (vEmissiveDesc.a > 0)
+	if (vEmissiveDesc.x > 0)
 	{
-		Out.vShade = Out.vShade + vEmissiveDesc.a;
-		Out.vSpecular = Out.vSpecular + vEmissiveDesc.a;
+		Out.vShade = Out.vShade + vEmissiveDesc.x;
+		Out.vSpecular = Out.vSpecular + vEmissiveDesc.x;
 		Out.vSpecular.a = 0.f;
 	}
 
@@ -629,14 +762,12 @@ PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 	//if ()
 	//	discard;
 
-#define FloatCorrectionValue 0.00000125f
-#define XTexelSize		0.00078125f
-#define YTexelSize		0.00138889f
-#define	DiagTexelSize	0.00159353f
 
 	float ShadowDepth = vShadowDesc.r;
 
-	if (length(SunPos - In.vTexUV)  < DiagTexelSize * 3.f)
+
+	if (length(float2(SunPos.x *iResolution.x / iResolution.y, SunPos.y ) - 
+		float2(In.vTexUV.x  *iResolution.x / iResolution.y, In.vTexUV.y))  < DiagTexelSize * g_SunSize)
 	{
 		//(vWorldPosition.x == 1 && )
 		Out.vColor2 = 1.f;
@@ -722,13 +853,15 @@ PS_OUT PS_MAIN_DepthOfFiled(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_CaculateAvgLumi(PS_IN In)
+PS_OUT PS_CaculateAvgLumi(PS_IN_ForAvgLumi In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+	if (In.fNeedToDraw != 0.5f) discard;
+	 
 	double vAvgColor = 0;
-
-
+	 
+	 
 	int count = 0;
 	[unroll(225)]
 	for (int i = 0; i < 1280; i += 64)
@@ -739,6 +872,15 @@ PS_OUT PS_CaculateAvgLumi(PS_IN In)
 			count++;
 		}
 	}
+	//[unroll(921600)]
+	//for (int i = 0; i < 1280; i ++)
+	//{
+	//	for (int j = 0; j < 720; j ++)
+	//	{
+	//		vAvgColor += dot(pow(g_TargetTexture.Sample(DefaultSampler, float2(i / 1280.f, j / 780.f)), 2.2f).xyz, float3(0.2125f, 0.7154f, 0.0721f));
+	//		count++;
+	//	}
+	//}
 	vAvgColor = vAvgColor / float(count);
 	Out.vColor = float(vAvgColor);
 
@@ -753,6 +895,7 @@ PS_OUT PS_LumineceMask(PS_IN In)
 
 
 	vector		vTargetDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	//vector		vAvgLumineceMapDesc = g_MaskTexture.Sample(DefaultSampler, float2(0.5f, 0.5f));
 	vector		vAvgLumineceMapDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
 
 	if (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) > vAvgLumineceMapDesc.r * g_fOverLuminence)
@@ -779,6 +922,9 @@ PS_OUT PS_Bloom(PS_IN In)
 
 		(pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) * BluredMaskDesc + vTargetDesc * (1 - BluredMaskDesc))
 		* g_fBloomMul * (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) / vAvgLumineceMapDesc.r) * 0.5f
+
+		//(g_BluredTexture.Sample(DefaultSampler, In.vTexUV) * BluredMaskDesc + vTargetDesc * (1 - BluredMaskDesc))
+		//* g_fBloomMul * (dot(vTargetDesc.xyz, float3(0.2125f, 0.7154f, 0.0721f)) / vAvgLumineceMapDesc.r) * 0.5f
 
 
 		, 1.f / 2.2f);
@@ -820,6 +966,33 @@ PS_OUT PS_AddMaskToTarget(PS_IN In)
 }
 
 
+PS_OUT_AfterDeferred PS_LensFlare(PS_IN In)
+{
+	PS_OUT_AfterDeferred Out = (PS_OUT_AfterDeferred)0;
+
+
+	float2 fragCoord = UV2FragCoord(In.vTexUV);
+	vec2 uv = fragCoord.xy - 0.5;
+	uv.x *= iResolution.x / iResolution.y; //fix aspect ratio
+
+
+	vec2 mouse = (UV2FragCoord(SunPos.xy)) - 0.5;
+	mouse.x *= iResolution.x / iResolution.y; //fix aspect ratio
+
+
+	vec3 color = vec3(1.4, 1.2, 1.0)*lensflare(uv, mouse.xy);
+	color -= noise(fragCoord.xy)*.015;
+	color = cc(color, .5, .1);
+	color = max(color, 0);
+
+	Out.vColor = pow(pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f) + pow(vec4(color, 1.0), 2.2f), 1.f / 2.2f);
+	Out.vColor2 = vec4(color, 1.0);
+
+	return Out;
+	//}
+}
+
+
 PS_OUT PS_VolumeMatricFog(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
@@ -827,21 +1000,26 @@ PS_OUT PS_VolumeMatricFog(PS_IN In)
 
 
 	float3 WorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV).xyz;
-	vector GodRayDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
 	
 	if (WorldPosition.x == 1)
 	{
-		if (GodRayDesc.r == 0)
-		{
-			Out.vColor = vector(FogColor.xyz, 1.f);
+		vector GodRayDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
+		vector LensflareDesc = g_UpScaledTexture1.Sample(DefaultSampler, In.vTexUV);
 
-		}
-		else
+		Out.vColor = vector(FogColor.xyz, 1.f);
+		if (length(LensflareDesc.xyz) > 0)
 		{
-			Out.vColor = pow(pow(GodRayDesc, 2.2f) * g_fGodRayIntensity
-				+ pow(vector(FogColor.xyz, 1.f), 2.2f), 1.f / 2.2f);
-			Out.vColor.a = 1.f;
+			Out.vColor += pow(LensflareDesc, 2.2f);
 		}
+		if (GodRayDesc.r != 0)
+		{
+			Out.vColor += pow(GodRayDesc, 2.2f) * g_fGodRayIntensity;
+		}
+
+
+		Out.vColor = pow(Out.vColor, 1.f / 2.2f);
+		Out.vColor.a = 1.f;
+		
 	}
 	else
 	{
@@ -898,6 +1076,64 @@ PS_OUT PS_GodRay(PS_IN In)
 
 	return Out;
 }
+
+PS_OUT PS_Emissive(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	 
+	vector		BluredEmissiveMaskDesc = g_MaskTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		NonBlurEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		BluredDeferredDesc = pow(g_BluredTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	vector		NonBluredDeferredDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+
+
+	if (BluredEmissiveMaskDesc.z > 0  && NonBlurEmissiveDesc.z == 0)
+	{
+		Out.vColor = pow(
+
+
+			(BluredDeferredDesc * BluredEmissiveMaskDesc.y + NonBluredDeferredDesc * (1 - BluredEmissiveMaskDesc.y))
+			*  (BluredEmissiveMaskDesc.z *1.3f + 1)
+
+
+
+			, 1.f / 2.2f);
+
+	}
+	else
+	{
+
+		Out.vColor = pow(
+
+
+			(BluredDeferredDesc * BluredEmissiveMaskDesc.y + NonBluredDeferredDesc * (1 - BluredEmissiveMaskDesc.y))
+
+
+
+
+			, 1.f / 2.2f);
+
+
+
+	}
+
+
+	//Out.vColor = pow(
+	//
+	//
+	//	(BluredDeferredDesc * BluredEmissiveMaskDesc.y + NonBluredDeferredDesc * (1 - BluredEmissiveMaskDesc.y))
+	//	*  (BluredEmissiveMaskDesc.z  + 1)
+	//
+	//
+	//
+	//	, 1.f / 2.2f);
+
+
+
+	return Out;
+}
+
 
 
 
@@ -1064,7 +1300,7 @@ technique11		DefaultTechnique
 		SetDepthStencilState(NonZTestAndWriteState, 0);
 		SetRasterizerState(CullMode_ccw);
 
-		VertexShader = compile vs_5_0 VS_MAIN();
+		VertexShader = compile vs_5_0 VS_ForLumi();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_CaculateAvgLumi();
 	}
@@ -1143,8 +1379,25 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_AddMaskToTarget();
 	}
 
+	pass LensFlare // 18
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
 
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_LensFlare();
+	}
 
-	
+	pass Emissive// 19
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
 
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Emissive();
+	}
 }

@@ -48,6 +48,14 @@ enum eInstancePassID
 	InstancePass_End
 };
 
+enum eMeshInstancePassID
+{
+	MeshPass_OriginColor,
+	MeshPass_BrightColor,
+
+	MeshPass_End
+};
+
 static const char* Tag_InstancePass(eInstancePassID eTag)
 {
 	switch (eTag)
@@ -65,6 +73,26 @@ static const char* Tag_InstancePass(eInstancePassID eTag)
 }
 
 #define  TAG_INSTPASS Tag_InstancePass
+
+
+static const char* Tag_MeshPass(eMeshInstancePassID eTag)
+{
+	switch (eTag)
+	{
+	case InstancePass_OriginColor:
+		return "InstancePass_OriginColor";
+	case InstancePass_BrightColor:
+		return "InstancePass_BrightColor";
+	default:
+		MSGBOX("Wrong Type SceneNumber");
+		return nullptr;
+		break;
+	}
+
+}
+
+#define  TAG_MESHINSTPASS Tag_MeshPass
+
 
 
 

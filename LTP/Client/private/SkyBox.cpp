@@ -27,6 +27,8 @@ HRESULT CSkyBox::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	Set_LimLight_N_Emissive(_float4(0), _float4(1, 0, 0, 1));
+
 	return S_OK;
 }
 

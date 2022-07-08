@@ -8,7 +8,7 @@
 #include "PhysX/PhysXMgr.h"
 #include "TestObject_PhysX.h"
 #include "InstanceEffect.h"
-
+#include "MeshEffect.h"
 
 #include "PhysX/Collider_PhysX_Static.h"
 #include "PhysX/Collider_PhysX_Dynamic.h"
@@ -333,7 +333,6 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 
 
-	
 
 	////½¦ÀÌ´õ
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Shader_VT),
@@ -367,10 +366,6 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
-
-	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_Noise),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"NoiseTexture.txt")));
-
 
 
 	//TestEffect.txt;
@@ -426,6 +421,16 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Spread"), CInstanceEffect_Spread::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Fountain"), CInstanceEffect_Fountain::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_InstanceEffect_Suck"), CInstanceEffect_Suck::Create(m_pDevice, m_pDeviceContext)));
+
+
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Ball"),		CMeshEffect_Ball::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Straight"),	CMeshEffect_Straight::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Cone"),		CMeshEffect_Cone::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Spread"),	CMeshEffect_Spread::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Fountain"),	CMeshEffect_Fountain::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Suck"),		CMeshEffect_Suck::Create(m_pDevice, m_pDeviceContext)));
+	//
+
 	//
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));

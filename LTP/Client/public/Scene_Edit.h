@@ -143,8 +143,10 @@ private:
 #pragma region ParticleTab
 	HRESULT Update_ParticleTab(_double fDeltatime);
 	HRESULT Widget_SettingParticleDesc(_double fDeltatime);
+	HRESULT Widget_ModelParticleDesc(_double fDeltatime);
 
 	INSTPARTICLEDESC m_tParticleDesc;
+	INSTMESHDESC m_tMeshDesc;
 
 #pragma endregion ParticleTab
 

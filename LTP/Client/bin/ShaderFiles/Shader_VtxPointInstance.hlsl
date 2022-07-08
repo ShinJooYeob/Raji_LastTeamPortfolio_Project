@@ -197,7 +197,7 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 
 
 	Out.vWorldPosition = In.vWorldPos;
-	Out.vEmissive = Out.vDiffuse.a;
+	Out.vEmissive = vector(Out.vDiffuse.a,0,0,1);
 	Out.vLimLight = 0.f;
 
 	return Out;
@@ -227,7 +227,7 @@ PS_OUT PS_BrightColor(PS_IN In)
 		discard;
 
 	Out.vWorldPosition = In.vWorldPos;
-	Out.vEmissive = Out.vDiffuse.a;
+	Out.vEmissive = vector(Out.vDiffuse.a,0,0,1);
 	Out.vLimLight = 0.f;
 
 	return Out;

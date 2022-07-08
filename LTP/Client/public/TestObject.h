@@ -29,6 +29,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
 	CModel*				m_pModel = nullptr;
+
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
 

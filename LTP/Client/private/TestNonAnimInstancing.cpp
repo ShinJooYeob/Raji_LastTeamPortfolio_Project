@@ -31,6 +31,8 @@ HRESULT CTestNonAnimInstancing::Initialize_Clone(void * pArg)
 	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPos);
 	//}
 
+	Set_IsOcllusion(true);
+
 	m_iPassIndex = 3;
 
 	return S_OK;
@@ -55,11 +57,8 @@ _int CTestNonAnimInstancing::LateUpdate(_double fDeltaTime)
 
 
 
-	//for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
-	//{
-	//	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_vecInstancedTransform[i], m_pShaderCom, m_pModel));
-	//}
 
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	
 
@@ -78,13 +77,9 @@ _int CTestNonAnimInstancing::Render()
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 
-	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-
 	FAILED_CHECK(__super::SetUp_ConstTable(m_pShaderCom));
 
-	//FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform, 0.5f));
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
 
 	return 0;
 }
@@ -123,7 +118,7 @@ HRESULT CTestNonAnimInstancing::SetUp_Components()
 
 	tModelIntDsec.m_pTargetModel = m_pModel;
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance,&tModelIntDsec));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_32), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance,&tModelIntDsec));
 
 	
 

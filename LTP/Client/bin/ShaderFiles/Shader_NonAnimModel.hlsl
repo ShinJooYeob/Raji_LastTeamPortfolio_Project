@@ -190,7 +190,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = g_fEmissive;
+	Out.vEmissive = vector(g_fEmissive.xyz, 1);;
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
@@ -216,7 +216,7 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = g_fEmissive;
+	Out.vEmissive = vector(g_fEmissive.xyz, 1);;
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
@@ -232,7 +232,7 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 	Out.vDepth = vector(1, 0, 0, 1);
 	Out.vSpecular = vector(0, 0, 1, 0);
 	Out.vWorldPosition = vector(1, 0, 0, 1);
-	Out.vEmissive = vector(1.f, 1.f, 1.f, 1.f);
+	Out.vEmissive = vector(g_fEmissive.xyz, 1);
 	Out.vLimLight = vector(0.f, 0.f, 0.f, 0.f);
 
 	return Out;

@@ -2887,8 +2887,37 @@ HRESULT CScene_Edit::LoadTextureByAssimp(const _tchar * FileFullPath)
 
 HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 {
+	static int open_action = -1;
 
-	FAILED_CHECK(Widget_SettingParticleDesc(fDeltatime));
+	if (open_action != -1)	ImGui::SetNextItemOpen(open_action == 0);
+
+	if (ImGui::TreeNode("Texture Instance Particle"))
+	{
+
+		FAILED_CHECK(Widget_SettingParticleDesc(fDeltatime));
+
+		open_action = 0;
+		ImGui::TreePop();
+	}
+	else
+	{
+		open_action = -1;
+	}
+	if (open_action != -1)	ImGui::SetNextItemOpen(open_action == 1);
+	if (ImGui::TreeNode("Mesh Instance Particle"))
+	{
+		open_action = 1;
+		FAILED_CHECK(Widget_ModelParticleDesc(fDeltatime));
+
+		ImGui::TreePop();
+	}
+	else
+	{
+		open_action = -1;
+	}
+	
+
+	
 
 	return S_OK;
 }
@@ -2902,6 +2931,8 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	_int TempIntArr[4];
 	ZeroMemory(TempIntArr, sizeof(_int) * 4);
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+
+
 
 	{
 
@@ -3064,6 +3095,14 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.PowerRandomRange.x = TempFloatArr[0];
 	m_tParticleDesc.PowerRandomRange.y = TempFloatArr[1];
 
+	TempFloatArr[0] = m_tParticleDesc.SubPowerRandomRange.x;
+	TempFloatArr[1] = m_tParticleDesc.SubPowerRandomRange.y;
+	TempFloatArr[2] = m_tParticleDesc.SubPowerRandomRange.z;
+	ImGui::DragFloat3("Power Weight by RUL", TempFloatArr, 0.03f); 
+	m_tParticleDesc.SubPowerRandomRange.x = TempFloatArr[0];
+	m_tParticleDesc.SubPowerRandomRange.y = TempFloatArr[1];
+	m_tParticleDesc.SubPowerRandomRange.z = TempFloatArr[2];
+
 
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 	TempFloatArr[0] = m_tParticleDesc.vPowerDirection.x;
@@ -3107,12 +3146,6 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
 	m_tParticleDesc.m_fAlphaTestValue = TempFloatArr[3];
 
-	//ZeroMemory(TempIntArr, sizeof(_int) * 4);
-	//TempIntArr[0] = _int(m_tParticleDesc.m_iPassIndex);
-	//ImGui::InputInt("PassIndex", &TempIntArr[0]);
-	//m_tParticleDesc.m_iPassIndex = TempIntArr[0];
-
-
 
 
 	if (ImGui::Button("Play Partlcle", ImVec2(-FLT_MIN, 30)))
@@ -3124,6 +3157,226 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 
 
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
+{
+
+	_float TempFloatArr[4];
+	_int TempIntArr[4];
+	ZeroMemory(TempIntArr, sizeof(_int) * 4);
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+
+
+	{
+
+		if (ImGui::Button("-", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.eParticleTypeID = (eInstanceEffectID)(m_tMeshDesc.eParticleTypeID - 1);
+			if (m_tMeshDesc.eParticleTypeID < InstanceEffect_Ball) m_tMeshDesc.eParticleTypeID = InstanceEffect_Ball;
+		}ImGui::SameLine(0, 10);
+		if (ImGui::Button("+", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.eParticleTypeID = (eInstanceEffectID)(m_tMeshDesc.eParticleTypeID + 1);
+			if (m_tMeshDesc.eParticleTypeID >= InstanceEffect_End) m_tMeshDesc.eParticleTypeID = (eInstanceEffectID)(InstanceEffect_End - 1);
+		}
+		ImGui::SameLine(0, 10);
+		ImGui::Text(TAG_TEXINSTEFFECT(m_tMeshDesc.eParticleTypeID));
+
+		//////////////////////////////////////////////////////////////////////////
+		if (ImGui::Button("- ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.eInstanceCount = (COMPONENTPROTOTYPEID)(m_tMeshDesc.eInstanceCount - 1);
+			if (m_tMeshDesc.eInstanceCount < Prototype_ModelInstance_2) m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_2;
+		}ImGui::SameLine(0, 10);
+		if (ImGui::Button("+ ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.eInstanceCount = (COMPONENTPROTOTYPEID)(m_tMeshDesc.eInstanceCount + 1);
+			if (m_tMeshDesc.eInstanceCount > Prototype_ModelInstance_512) m_tMeshDesc.eInstanceCount = (Prototype_ModelInstance_512);
+		}
+		ImGui::SameLine(0, 10);
+		{	wstring tt = TAG_CP(m_tMeshDesc.eInstanceCount);	ImGui::Text(string(tt.begin(), tt.end()).c_str()); }
+
+		//////////////////////////////////////////////////////////////////////////
+		if (ImGui::Button("-  ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.ePassID = (eMeshInstancePassID)(m_tMeshDesc.ePassID - 1);
+			if (m_tMeshDesc.ePassID < MeshPass_OriginColor) m_tMeshDesc.ePassID = MeshPass_OriginColor;
+		}ImGui::SameLine(0, 10);
+		if (ImGui::Button("+  ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.ePassID = (eMeshInstancePassID)(m_tMeshDesc.ePassID + 1);
+			if (m_tMeshDesc.ePassID >= InstancePass_End) m_tMeshDesc.ePassID = (eMeshInstancePassID)(InstancePass_End - 1);
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text(TAG_MESHINSTPASS(m_tMeshDesc.ePassID));
+	}
+
+
+
+
+	TempFloatArr[0] = m_tMeshDesc.vFixedPosition.x;
+	TempFloatArr[1] = m_tMeshDesc.vFixedPosition.y;
+	TempFloatArr[2] = m_tMeshDesc.vFixedPosition.z;
+	ImGui::InputFloat3("SwpanPosition", TempFloatArr);
+	m_tMeshDesc.vFixedPosition.x = TempFloatArr[0];
+	m_tMeshDesc.vFixedPosition.y = TempFloatArr[1];
+	m_tMeshDesc.vFixedPosition.z = TempFloatArr[2];
+
+
+	static ImGuiTextFilter filter = "Prototype_Mesh_AlgaeRock_Ledge";
+	filter.Draw("Input MeshProtoTypeTag");
+
+	string Temp = string(filter.InputBuf);
+	wstring wtemp;
+	wtemp.assign(Temp.begin(), Temp.end());
+	m_tMeshDesc.szModelMeshProtoTypeTag = wtemp.c_str();
+
+
+	TempFloatArr[2] = m_tMeshDesc.TotalParticleTime;
+	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2]);
+	m_tMeshDesc.TotalParticleTime = TempFloatArr[2];
+
+
+	TempFloatArr[3] = m_tMeshDesc.EachParticleLifeTime;
+	ImGui::DragFloat("Each PaticleLifeTime", &TempFloatArr[3]);
+	m_tMeshDesc.EachParticleLifeTime = TempFloatArr[3];
+
+
+
+	TempIntArr[3] = (_int)m_tMeshDesc.SizeChageFrequency;
+	ImGui::InputInt("SizeChageFrequency", &TempIntArr[3]);
+	m_tMeshDesc.SizeChageFrequency = TempIntArr[3];
+
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.ParticleSize.x;
+	TempFloatArr[1] = m_tMeshDesc.ParticleSize.y;
+	TempFloatArr[2] = m_tMeshDesc.ParticleSize.z;
+	ImGui::InputFloat3("ParticleSize1", TempFloatArr);
+	m_tMeshDesc.ParticleSize.x = TempFloatArr[0];
+	m_tMeshDesc.ParticleSize.y = TempFloatArr[1];
+	m_tMeshDesc.ParticleSize.z = TempFloatArr[2];
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.ParticleSize2.x;
+	TempFloatArr[1] = m_tMeshDesc.ParticleSize2.y;
+	TempFloatArr[2] = m_tMeshDesc.ParticleSize2.z;
+	ImGui::InputFloat3("ParticleSize2", TempFloatArr);
+	m_tMeshDesc.ParticleSize2.x = TempFloatArr[0];
+	m_tMeshDesc.ParticleSize2.y = TempFloatArr[1];
+	m_tMeshDesc.ParticleSize2.z = TempFloatArr[2];
+
+
+	ZeroMemory(TempIntArr, sizeof(_int) * 4);
+	TempIntArr[0] = _int(m_tMeshDesc.ColorChageFrequency);
+	ImGui::InputInt("ColorChageFrequency", &TempIntArr[0]);
+	m_tMeshDesc.ColorChageFrequency = TempIntArr[0];
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.TargetColor.x;
+	TempFloatArr[1] = m_tMeshDesc.TargetColor.y;
+	TempFloatArr[2] = m_tMeshDesc.TargetColor.z;
+	TempFloatArr[3] = m_tMeshDesc.TargetColor.w;
+	ImGui::InputFloat4("TargetColor1", TempFloatArr);
+	m_tMeshDesc.TargetColor.x = TempFloatArr[0];
+	m_tMeshDesc.TargetColor.y = TempFloatArr[1];
+	m_tMeshDesc.TargetColor.z = TempFloatArr[2];
+	m_tMeshDesc.TargetColor.w = TempFloatArr[3];
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.TargetColor2.x;
+	TempFloatArr[1] = m_tMeshDesc.TargetColor2.y;
+	TempFloatArr[2] = m_tMeshDesc.TargetColor2.z;
+	TempFloatArr[3] = m_tMeshDesc.TargetColor2.w;
+	ImGui::InputFloat4("TargetColor2", TempFloatArr);
+	m_tMeshDesc.TargetColor2.x = TempFloatArr[0];
+	m_tMeshDesc.TargetColor2.y = TempFloatArr[1];
+	m_tMeshDesc.TargetColor2.z = TempFloatArr[2];
+	m_tMeshDesc.TargetColor2.w = TempFloatArr[3];
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[3] = m_tMeshDesc.Particle_Power;
+	ImGui::DragFloat("Particle_Power", &TempFloatArr[3]);
+	m_tMeshDesc.Particle_Power = TempFloatArr[3];
+
+
+	TempFloatArr[0] = m_tMeshDesc.PowerRandomRange.x;
+	TempFloatArr[1] = m_tMeshDesc.PowerRandomRange.y;
+	ImGui::InputFloat2("PowerRandomRange", TempFloatArr);
+	m_tMeshDesc.PowerRandomRange.x = TempFloatArr[0];
+	m_tMeshDesc.PowerRandomRange.y = TempFloatArr[1];
+
+	TempFloatArr[0] = m_tMeshDesc.SubPowerRandomRange.x;
+	TempFloatArr[1] = m_tMeshDesc.SubPowerRandomRange.y;
+	TempFloatArr[2] = m_tMeshDesc.SubPowerRandomRange.z;
+	ImGui::DragFloat3("Power Weight by RUL", TempFloatArr,0.03f);
+	m_tMeshDesc.SubPowerRandomRange.x = TempFloatArr[0];
+	m_tMeshDesc.SubPowerRandomRange.y = TempFloatArr[1];
+	m_tMeshDesc.SubPowerRandomRange.z = TempFloatArr[2];
+
+	
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.vPowerDirection.x;
+	TempFloatArr[1] = m_tMeshDesc.vPowerDirection.y;
+	TempFloatArr[2] = m_tMeshDesc.vPowerDirection.z;
+	ImGui::InputFloat3("Force Direct", TempFloatArr);
+	m_tMeshDesc.vPowerDirection.x = TempFloatArr[0];
+	m_tMeshDesc.vPowerDirection.y = TempFloatArr[1];
+	m_tMeshDesc.vPowerDirection.z = TempFloatArr[2];
+
+
+	TempFloatArr[3] = m_tMeshDesc.fMaxBoundaryRadius;
+	ImGui::DragFloat("MaxBoundaryRadius", &TempFloatArr[3]);
+	m_tMeshDesc.fMaxBoundaryRadius = TempFloatArr[3];
+
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.ParticleStartRandomPosMin.x;
+	TempFloatArr[1] = m_tMeshDesc.ParticleStartRandomPosMin.y;
+	TempFloatArr[2] = m_tMeshDesc.ParticleStartRandomPosMin.z;
+	ImGui::InputFloat3("StartRandomPos  Min", TempFloatArr);
+	m_tMeshDesc.ParticleStartRandomPosMin.x = TempFloatArr[0];
+	m_tMeshDesc.ParticleStartRandomPosMin.y = TempFloatArr[1];
+	m_tMeshDesc.ParticleStartRandomPosMin.z = TempFloatArr[2];
+
+
+	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+	TempFloatArr[0] = m_tMeshDesc.ParticleStartRandomPosMax.x;
+	TempFloatArr[1] = m_tMeshDesc.ParticleStartRandomPosMax.y;
+	TempFloatArr[2] = m_tMeshDesc.ParticleStartRandomPosMax.z;
+	ImGui::InputFloat3("StartRandomPos  Max", TempFloatArr);
+	m_tMeshDesc.ParticleStartRandomPosMax.x = TempFloatArr[0];
+	m_tMeshDesc.ParticleStartRandomPosMax.y = TempFloatArr[1];
+	m_tMeshDesc.ParticleStartRandomPosMax.z = TempFloatArr[2];
+
+	ImGui::Checkbox("Emissive", &m_tMeshDesc.bEmissive); ImGui::SameLine();
+	ImGui::Checkbox("bIsOclusion", &m_tMeshDesc.bIsOclusion); ImGui::SameLine();
+	ImGui::Checkbox("bAutoTurn", &m_tMeshDesc.bAutoTurn); 
+
+	if (m_tMeshDesc.bAutoTurn)
+	{
+		_float Angle = XMConvertToDegrees(m_tMeshDesc.fRotSpeed_Radian);
+		ImGui::DragFloat("Rot Speed", &Angle,0.5f,0,FLT_MAX);
+		m_tMeshDesc.fRotSpeed_Radian = XMConvertToRadians(max(Angle, 0));
+	}
+
+
+	//TempFloatArr[3] = m_tMeshDesc.m_fAlphaTestValue;
+	//ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
+	//m_tMeshDesc.m_fAlphaTestValue = TempFloatArr[3];
+
+
+
+		if (ImGui::Button("Play Partlcle", ImVec2(-FLT_MIN, 30)))
+	{
+		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_tMeshDesc);
+	}
 
 
 
@@ -5178,6 +5431,7 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 
 	m_tParticleDesc.szNoiseTextureLayerTag = nullptr;
 	m_tParticleDesc.iNoiseTextureIndex = 0;
+	m_tParticleDesc.iFollowingDir = 0;
 
 	m_tParticleDesc.TextureChageFrequency = 1;
 	//텍스쳐 안에 그림의 가로 세로 개수
@@ -5213,6 +5467,49 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tParticleDesc.AlphaBlendON = true;
 
 	m_tParticleDesc.m_fAlphaTestValue = 0.1f;
+
+
+
+
+
+
+
+
+
+
+
+	m_tMeshDesc.eParticleTypeID = InstanceEffect_Cone;
+	m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_32;
+	m_tMeshDesc.ePassID = MeshPass_BrightColor;
+
+	m_tMeshDesc.vFixedPosition = _float3(0);
+	m_tMeshDesc.vPowerDirection = _float3(0, 1, 0);
+
+	m_tMeshDesc.FollowingTarget = nullptr;
+	m_tMeshDesc.iFollowingDir = 0;
+
+	m_tMeshDesc.szModelMeshProtoTypeTag = TAG_CP(Prototype_Mesh_AlgaeRock_Ledge);
+	m_tMeshDesc.szNoiseTextureLayerTag = nullptr;
+	m_tMeshDesc.iNoiseTextureIndex = 0;
+	m_tMeshDesc.TotalParticleTime = 5.f;
+	m_tMeshDesc.EachParticleLifeTime = 1.f;
+
+	m_tMeshDesc.SizeChageFrequency = 1;
+	m_tMeshDesc.ParticleSize = _float3(0.1f, 0.1f, 0.1f);
+	m_tMeshDesc.ParticleSize2 = _float3(0, 0, 0);
+	m_tMeshDesc.ColorChageFrequency = 5;
+	m_tMeshDesc.TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
+	m_tMeshDesc.TargetColor2 = _float4(0.f, 1.f, .0f, .2f);
+	m_tMeshDesc.fMaxBoundaryRadius = 999999.f;
+	m_tMeshDesc.Particle_Power = 1.f;
+	m_tMeshDesc.PowerRandomRange = _float2(0.5f, 1.5f);
+	m_tMeshDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	m_tMeshDesc.ParticleStartRandomPosMin = _float3(0, 0, 0);
+	m_tMeshDesc.ParticleStartRandomPosMax = _float3(0, 0, 0);
+	m_tMeshDesc.bEmissive = false;
+	m_tMeshDesc.bAutoTurn = false;
+	m_tMeshDesc.bIsOclusion = true;
+	//m_tMeshDesc.m_fAlphaTestValue = 0.1f;
 
 
 	return S_OK;

@@ -54,7 +54,7 @@ cbuffer ScreenSizeBuffer
 cbuffer EmissiveNLimLight
 {
 	float4			g_vLimLight = 0;
-	float			g_fEmissive = 0;
+	float4			g_fEmissive = 0;
 };
 
 

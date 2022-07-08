@@ -42,7 +42,7 @@ public:
 
 	/*For Particle*/
 	HRESULT Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc);
-	//HRESULT Create_MeshInstance(_uint eSceneID, INSTPARTICLEDESC tParticleDesc);
+	HRESULT Create_MeshInstance(_uint eSceneID, INSTMESHDESC& tParticleDesc);
 
 
 

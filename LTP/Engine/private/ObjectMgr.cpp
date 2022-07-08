@@ -189,7 +189,9 @@ HRESULT CObjectMgr::Clear_Scene_GameObjects(_uint eSceneNum)
 	}
 
 	for (auto& pair : m_mapLayer[eSceneNum])
+	{
 		Safe_Release(pair.second);
+	}
 
 
 	m_mapLayer[eSceneNum].clear();

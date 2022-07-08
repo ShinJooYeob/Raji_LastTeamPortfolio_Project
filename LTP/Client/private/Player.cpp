@@ -76,71 +76,12 @@ _int CPlayer::Update(_double fDeltaTime)
 		}
 	}
 
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
 	{
-		INSTPARTICLEDESC tDesc;
-
-		tDesc.eParticleTypeID = InstanceEffect_Spread;
-		tDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-		tDesc.ePassID = InstancePass_BrightColor;
-
-		tDesc.bBillboard = false;
-		  
-
-		//둘중 하나만 써야함	
-		tDesc.vFixedPosition = _float3(0);
-		tDesc.vPowerDirection = _float3(0,1, 0); 
-		//팔로잉 타겟을 쓰면 해당 타겟의 룩을 기준으로 파워 디렉션이 잡힘
-		tDesc.FollowingTarget = m_pTransformCom;
-
-		tDesc.szTextureProtoTypeTag = TAG_CP(Prototype_Texture_TestEffect);
-		tDesc.szTextureLayerTag = L"Test";
-		tDesc.iTextureLayerIndex = 0;
-
-		tDesc.szNoiseTextureLayerTag = nullptr;
-		tDesc.iNoiseTextureIndex = 0;
-
-		tDesc.TextureChageFrequency = 1;
-		//텍스쳐 안에 그림의 가로 세로 개수
-		tDesc.vTextureXYNum = _float2(8, 6);
-		//텍스쳐 안에 형태가 몇개 있는지 -1이면 간격 기준으로 꽉차있는거
-		//tDesc.iFigureCount_In_Texture = -1;
-		tDesc.iFigureCount_In_Texture = 46;
 
 
-
-
-		tDesc.TotalParticleTime = 3;
-		tDesc.EachParticleLifeTime = 0.35f;
-
-		tDesc.SizeChageFrequency = 1;
-		tDesc.ParticleSize = _float3(0.1f, 0.4f, 0.1f);
-		tDesc.ParticleSize2 = _float3(0.1f);
-
-
-		tDesc.ColorChageFrequency = 0;
-		tDesc.TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
-		tDesc.TargetColor2 = _float4(1.f, 1.f, 1.f, 1.f);
-
-		tDesc.fMaxBoundaryRadius = 999.f;
-
-		tDesc.Particle_Power = 10.f;
-		tDesc.PowerRandomRange = _float2(0.8f, 1.2f);
-		//콘 형태나 파운틴 형태일때 라업룩 파워 조절 용
-		tDesc.SubPowerRandomRange = _float3(1.f,1.f,1.f);
-
-		tDesc.ParticleStartRandomPosMin = _float3(0);
-		tDesc.ParticleStartRandomPosMax = _float3(0);
-
-
-		tDesc.bEmissive = false;
-		tDesc.AlphaBlendON = true;
-
-		tDesc.m_fAlphaTestValue = 0.1f;
-
-		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
 	}
-
 
 
 

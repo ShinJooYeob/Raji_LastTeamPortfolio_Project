@@ -279,7 +279,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz,0);
-	Out.vEmissive = g_fEmissive;
+	Out.vEmissive = vector(g_fEmissive.xyz,1);
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
@@ -339,7 +339,7 @@ PS_OUT PS_Test(PS_IN In)
 	Out.vDepth = vector(0, 0, 0, 0.f);
 	Out.vSpecular = vector(0, 0, 0, 0.f);
 	Out.vWorldPosition = vector(0, 0, 0, 0.f);
-	Out.vEmissive = g_fEmissive;
+	Out.vEmissive = vector(g_fEmissive.xyz, 1);
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }

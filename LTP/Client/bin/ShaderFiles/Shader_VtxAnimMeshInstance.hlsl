@@ -29,6 +29,8 @@ struct VS_IN
 	float4		vUp : TEXCOORD2;
 	float4		vLook : TEXCOORD3;
 	float4		vTranslation : TEXCOORD4;
+	float4		vLimLightColor : TEXCOORD5;
+	float4		vEmissive : TEXCOORD6;
 };
 
 struct VS_OUT
@@ -40,6 +42,9 @@ struct VS_OUT
 	float4		vProjPos : TEXCOORD2;
 	float4		vTangent : TANGENT;
 	float4		vBinormal : BINORMAL;
+
+	float4		vLimLightColor : TEXCOORD3;
+	float4		vEmissive : TEXCOORD4;
 };
 struct VS_OUT_SHADOW
 {
@@ -103,6 +108,8 @@ VS_OUT VS_MAIN_DEFAULT(VS_IN In)
 
 	Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), TransformMatrix));
 	Out.vBinormal = normalize(vector(cross(Out.vNormal.xyz, Out.vTangent.xyz), 0.f));
+	Out.vLimLightColor = In.vLimLightColor;
+	Out.vEmissive = In.vEmissive;
 
 	return Out;
 }
@@ -139,6 +146,8 @@ VS_OUT VS_MAIN_NOWEIGHTW(VS_IN In)
 
 	Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), TransformMatrix));
 	Out.vBinormal = normalize(vector(cross(Out.vNormal.xyz, Out.vTangent.xyz), 0.f));
+	Out.vLimLightColor = In.vLimLightColor;
+	Out.vEmissive = In.vEmissive;
 	return Out;
 }
 
@@ -152,6 +161,10 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD2;
 	float4		vTangent : TANGENT;
 	float4		vBinormal : BINORMAL;
+
+
+	float4		vLimLightColor : TEXCOORD3;
+	float4		vEmissive : TEXCOORD4;
 };
 struct PS_IN_SHADOW
 {
@@ -215,8 +228,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = g_fEmissive;
-	Out.vLimLight = g_vLimLight;
+	Out.vEmissive = In.vEmissive;
+	Out.vLimLight = In.vLimLightColor;
 	return Out;
 }
 

@@ -96,7 +96,7 @@ HRESULT CModelInstance::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize)
+HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -111,10 +111,38 @@ HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
 
-		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i,  m_pInstanceBuffer, pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize));
+		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i,  m_pInstanceBuffer,
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive));
 	}
 
 	return 0;
+}
+
+HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive )
+{
+
+	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
+	_float4x4		mat = XMMatrixIdentity();
+	FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &mat, sizeof(_float4x4)));
+
+
+	_uint NumMaterial = m_tDesc.m_pTargetModel->Get_NumMaterial();
+
+	for (_uint i = 0; i < NumMaterial; i++)
+	{
+		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+
+		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive));
+	}
+
+
+
+
+
+	return S_OK;
 }
 
 

@@ -33,8 +33,10 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 	virtual HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMatreialIndex ,_uint iMeshContainerIndex 
-		,CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize);
+		,CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
 
+	virtual HRESULT Render_float4x4(class CShader* pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex
+		, CMeshContainer* pMeshContainer, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
 
 private:
 	/* 인스턴스하나당 표현되어야할 행렬을 정점으로서 인스턴스의 갯수만큼 가지고 있는 정점 버퍼 . */

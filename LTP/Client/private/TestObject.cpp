@@ -91,11 +91,10 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
-	{
-		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_vecInstancedTransform[i], m_pShaderCom, m_pModel));
-	}
-	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance,m_pShaderCom, m_pModel));
+
+
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	//m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
@@ -135,17 +134,17 @@ HRESULT CTestObject::SetUp_Components()
 	// MODELCOM_NAME
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	for (_uint i = 0; i < 512; i++)
+	for (_uint i = 0; i <4; i++)
 	{
 		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(-256 + _float(i)*1.f, 0, 2));
+		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3( 0+ _float(i)*1.f, 0, 2));
 		m_vecInstancedTransform.push_back(pTransform);
 	}
 
 	CModelInstance::MODELINSTDESC tModelIntDsec;
 	tModelIntDsec.m_pTargetModel = m_pModel;
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_4), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
 
 
 	return S_OK;

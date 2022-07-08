@@ -97,6 +97,7 @@ typedef struct tagInstanceParticleDesc
 	_float3		vFixedPosition = _float3(0);
 	_float3		vPowerDirection = _float3(0, 1, 0);
 	CTransform* FollowingTarget = nullptr;
+	_uint		iFollowingDir = 0;
 
 	const _tchar* szTextureProtoTypeTag = nullptr;
 	const _tchar* szTextureLayerTag = nullptr;
@@ -140,6 +141,53 @@ typedef struct tagInstanceParticleDesc
 	_float	m_fAlphaTestValue = 0.1f;
 
 }INSTPARTICLEDESC;
+
+typedef struct tagInstanceMeshDesc
+{
+	eInstanceEffectID		eParticleTypeID = InstanceEffect_End;
+	COMPONENTPROTOTYPEID	eInstanceCount = Prototype_ModelInstance_32;
+	eMeshInstancePassID			ePassID = MeshPass_BrightColor;
+
+
+	_float3		vFixedPosition = _float3(0);
+	_float3		vPowerDirection = _float3(0, 1, 0);
+	CTransform* FollowingTarget = nullptr;
+	_uint		iFollowingDir = 0;
+
+	const _tchar* szModelMeshProtoTypeTag = nullptr;
+
+	const _tchar* szNoiseTextureLayerTag = nullptr;
+	_uint		iNoiseTextureIndex = 0;
+
+
+	_float		TotalParticleTime = 0;
+	_float		EachParticleLifeTime = 0;
+
+	_uint		SizeChageFrequency = 0;
+	_float3		ParticleSize = _float3(1, 1, 1);
+	_float3		ParticleSize2 = _float3(0, 0, 0);
+
+	_uint		ColorChageFrequency = 0;
+	_float4		TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4		TargetColor2 = _float4(1.f, 1.f, 1.f, 1.f);
+
+	_float		fMaxBoundaryRadius = 15.f;
+
+	_float Particle_Power = 1.f;
+	_float2 PowerRandomRange = _float2(0.5f, 1.5f);
+	_float3 SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+
+	_float3 ParticleStartRandomPosMin = _float3(-1.0f, -1.0f, -1.0f);
+	_float3 ParticleStartRandomPosMax = _float3(1.f, 1.f, 1.f);
+
+	_bool	bEmissive = false;
+	_bool	bAutoTurn = false;
+	_bool	bIsOclusion = true;
+	_float	fRotSpeed_Radian = XMConvertToRadians(1080);
+
+
+}INSTMESHDESC;
+
 
 
 typedef struct tagObjectElement

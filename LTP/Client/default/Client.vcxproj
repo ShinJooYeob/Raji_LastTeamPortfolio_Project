@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp" />

@@ -94,19 +94,21 @@ namespace Engine
 		XMFLOAT4			vUp;
 		XMFLOAT4			vLook;
 		XMFLOAT4			vPosition;
+		XMFLOAT4			vLimLight;
+		XMFLOAT4			vEmissive;
 	}VTXINSTMATRIX;
 
 
 	typedef struct ENGINE_DLL tagNonAnim_InstanceMatrix_Declaration
 	{
-		static const unsigned int iNumElements = 8;
+		static const unsigned int iNumElements = 10;
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 
 	}VTXNONANIM_INSTMAT_DECLARATION;
 
 	typedef struct ENGINE_DLL tagAnim_InstanceMatrix_Declaration
 	{
-		static const unsigned int iNumElements = 10;
+		static const unsigned int iNumElements = 12;
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXANIM_INSTMAT_DECLARATION;
 

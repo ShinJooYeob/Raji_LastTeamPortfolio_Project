@@ -100,7 +100,9 @@ void CCamera_Main::Set_TargetArmLength(_float fTargetArmLength)
 
 void CCamera_Main::Set_FocusTarget(CGameObject * pFocusTarget)
 {
+	Safe_Release(m_pFocusTarget);
 	m_pFocusTarget = pFocusTarget;
+	Safe_AddRef(m_pFocusTarget);
 }
 
 void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
@@ -122,6 +124,13 @@ _float CCamera_Main::Get_TargetArmLength()
 
 void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 {
+	if (!m_pFocusTarget || m_pFocusTarget->Get_IsOwerDead())
+	{
+		Safe_Release(m_pFocusTarget);
+		return;
+	}
+
+
 	CTransform* pTarget_TransformCom =  static_cast<CTransform*>(m_pFocusTarget->Get_Component(Tag_Component(Com_Transform)));
 	
 	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * 0.9f + m_pFocusTarget->Get_AttachCamPos() * 0.1f;
@@ -548,4 +557,5 @@ void CCamera_Main::Free()
 	__super::Free();
 
 
+	Safe_Release(m_pFocusTarget);
 }

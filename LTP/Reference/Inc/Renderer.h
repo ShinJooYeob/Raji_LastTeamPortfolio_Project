@@ -19,6 +19,10 @@ public:
 	{
 		SHADOW_ANIMMODEL, SHADOW_ANIMMODEL_ATTACHED, SHADOW_NONANIMMODEL, SHADOW_NONANIMMODEL_ATTACHED, SHADOW_TERRAIN, SHADOW_END
 	};
+	enum INSTANCESHADOWGROUP
+	{
+		INSTSHADOW_ANIMINSTANCE, INSTSHADOW_NONANIMINSTANCE, INSTSHADOW_END
+	};
 	enum TRAILGROUP
 	{
 		TRAIL_MOTION, TRAIL_SWORD, TRAIL_END
@@ -35,6 +39,18 @@ private:
 		_float4x4 AttacehdMatrix = XMMatrixIdentity();
 	}SHADOWDESC;
 
+	typedef struct tagInstanceShdowRenderDesc
+	{
+		CGameObject* pGameObject = nullptr;
+		vector<class CTransform*>* pvecTransform = nullptr;
+		vector<_float4x4>*		   pvecTransformfloat4x4 = nullptr;
+		class CShader* pShader = nullptr;
+		class CModel* pModel = nullptr;
+		class CModelInstance* pModelInstance = nullptr;
+		_float fIsOcllusion = 1.f;
+	}INSTSHADOWDESC;
+
+
 private:
 	explicit CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual ~CRenderer() = default;
@@ -46,7 +62,9 @@ private:
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderID, CGameObject* pGameObject);
-	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, class CModel* pModel = nullptr,_float4x4* AttacehdMatrix = nullptr);
+	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, class CModel* pModel = nullptr, _float4x4* AttacehdMatrix = nullptr);
+	HRESULT Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, CGameObject* pGameObject, vector<CTransform*>* pvecTransform, 
+		CModelInstance* pModelInst ,CShader* pShader, class CModel* pModel, vector<_float4x4>* pvecTransformfloat4x4 = nullptr);
 	HRESULT Add_TrailGroup(TRAILGROUP eTrailID, CComponent* pTrailComponent);
 	HRESULT Add_DebugGroup(class CComponent* pComponent);
 	HRESULT Render_RenderGroup(_double fDeltaTime);
@@ -55,19 +73,19 @@ public:
 
 
 private:
-	list<CGameObject*>				m_RenderObjectList[RENDER_END];
-	typedef list<CGameObject*>		RENDEROBJECTS;
+	list<CGameObject*>					m_RenderObjectList[RENDER_END];
+	typedef list<CGameObject*>			RENDEROBJECTS;
 
-private:
-	list<SHADOWDESC>				m_ShadowObjectList[SHADOW_END];
-	typedef list<SHADOWDESC>		SHADOWOBJECTS;
+	list<SHADOWDESC>					m_ShadowObjectList[SHADOW_END];
+	typedef list<SHADOWDESC>			SHADOWOBJECTS;
 
-private:
+	list<INSTSHADOWDESC>				m_InstanceShadowList[INSTSHADOW_END];
+	typedef list<INSTSHADOWDESC>		SHADOWINSTOBJECTS;
+
+
 	list<class CComponent*>					m_DebugObjectList;
 	typedef list<class CComponent*>			DEBUGOBJECT;
 
-
-private:
 	list<class CComponent*>					m_TrailList[TRAIL_END];
 	typedef list<class CComponent*>			DEBUGOBJECT;
 
@@ -83,6 +101,7 @@ private:
 
 	class CVIBuffer_Rect*					m_pVIBuffer = nullptr;
 	class CShader*							m_pShader = nullptr;
+	class CTexture*							m_pTexture = nullptr;
 
 
 private:
@@ -121,6 +140,14 @@ private:
 	_float3						m_vSunAtPoint = _float3(32, -10, 32);
 
 
+	_float4						m_vSunPosSS = _float4(0);
+
+
+	_float						m_SunSize  = 10.f;
+	_float						m_LensfalreSupportSunSize = 128.f;
+	_uint						m_iLensefalreNoiseTexIndex = 352;
+
+
 	_bool						m_PostProcessingOn[POSTPROCESSING_END];
 
 private:
@@ -145,9 +172,11 @@ private:
 	HRESULT Make_BluredDeffered();
 	HRESULT Render_DDFog();
 	HRESULT Render_GodRay();
+	HRESULT Render_LesnFlare();
 
 	HRESULT Render_MotionTrail();
 	HRESULT Render_SwordTrail();
+	HRESULT Render_EmissiveBlur();
 
 private:
 	HRESULT Render_DepthOfField();
@@ -155,7 +184,7 @@ private:
 	HRESULT Render_ShadowGroup();
 
 	HRESULT Add_DebugRenderTarget(const _tchar* szTargetTag, _float fX, _float fY, _float fCX, _float fCY);
-
+	HRESULT Ready_For_Update(_double fDelataTimme);
 
 public:
 	void OnOff_PostPorcessing(POSTPROCESSINGID eID) { m_PostProcessingOn[eID] = !m_PostProcessingOn[eID]; };
@@ -203,6 +232,16 @@ public:
 
 	_float3		Get_GodRayColor() { return m_vGodRayColor; }
 	void		Set_GodRayColor(_float3 vVector) { m_vGodRayColor = vVector; }
+
+
+
+	_float		Get_SunSize() { return m_SunSize; }
+	void		Set_SunSize(_float vVector) { m_SunSize = vVector; }
+	_float		Get_LensfalreSupportSunSize() { return m_LensfalreSupportSunSize; }
+	void		Set_LensfalreSupportSunSize(_float vVector) { m_LensfalreSupportSunSize = vVector; }
+	_uint		Get_LensefalreNoiseTexIndex() { return m_iLensefalreNoiseTexIndex; }
+	void		Set_LensefalreNoiseTexIndex(_uint vVector) { m_iLensefalreNoiseTexIndex = vVector; }
+
 
 #ifdef _DEBUG
 	HRESULT Render_Debug();

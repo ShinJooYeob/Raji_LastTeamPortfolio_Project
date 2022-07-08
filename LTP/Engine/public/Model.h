@@ -44,11 +44,18 @@ public:
 	HRESULT Bind_OnShader(class CShader* pShader, _uint iMaterialIndex , _uint eTextureType, const char* pHlslConstValueName);
 	HRESULT Update_AnimationClip(_double fDeltaTime, _bool IsUpdateAll = true);	
 	HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, const char* szBoneValueName = nullptr);
+
+
+
 	HRESULT Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer, 
-		vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName = nullptr, _float fFrustumsize = 0);
+		vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName , _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
+	HRESULT Render_ForInstancing_float4x4(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer,
+		vector<_float4x4>* pvecWorldMatrixs, const char* szBoneValueName , _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
 
 	ATTACHBONEMATRIX_PTR Find_AttachMatrix_InHirarchyNode(const char* pName);
 	_uint Get_HaveAnimNum();
+
+	_bool	Get_IsAnimModel() { return (m_eModelType == TYPE_ANIM); };
 
 #ifdef _DEBUG
 	_float Get_DebugAnimSpeed() { return m_fDebugAnimPlaySpeed; };

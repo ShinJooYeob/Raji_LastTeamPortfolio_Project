@@ -255,9 +255,6 @@
     <ClInclude Include="..\public\Transform.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\01.Transform</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Renderer.h">
-      <Filter>01.Utillity\01.ComponentMgr\01.Components\02.Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Shader.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\04.Shader</Filter>
     </ClInclude>
@@ -374,6 +371,9 @@
     </ClInclude>
     <ClInclude Include="..\public\ModelInstance.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\04.Instance\02.Model_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Renderer.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\02.Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,12 +32,21 @@ public:
 	virtual _float	Get_RenderSortValue() { return m_fRenderSortValue; };
 	virtual _float	Compute_RenderSortValue();
 
-	virtual void Set_IsDead() { m_bIsDead = true; }
-	_bool Get_IsDead() { return m_bIsDead; }
+	virtual void Set_IsDead()
+	{
+		m_bIsDead = true;
+		m_bIsOwnerDead = true;
+	}
+	_bool Get_IsDead() {
+		return m_bIsDead;
+		m_bIsOwnerDead = true;
+	}
+	_bool	Get_IsOwerDead() { return m_bIsOwnerDead; };
+	void	Set_IsOwerDead(_bool bBool) { m_bIsOwnerDead = bBool; };
 
-	void Set_LimLight_N_Emissive(_float4 vLimLight = _float4(0), _float fEmissive = _float(0));
+	void Set_LimLight_N_Emissive(_float4 vLimLight = _float4(0), _float4 fEmissive = _float4(0));
 	_float4 Get_LimLightValue() { return m_vLimLight; };
-	_float	Get_EmissiveValue() { return m_fEmissiveIntensive; };
+	_float4	Get_EmissiveValue() { return m_fEmissiveIntensive; };
 
 	virtual HRESULT ReInitialize(void* pArg = nullptr) { return S_OK; };
 
@@ -80,7 +89,7 @@ protected:
 	_float3						m_fAttachCamLook = _float3(0, 0, 0);
 
 	_float4						m_vLimLight = _float3(0);
-	_float						m_fEmissiveIntensive = _float(0);
+	_float4						m_fEmissiveIntensive = _float4(0);
 
 	_float						m_fFrustumRadius = 1.f; 
 
@@ -89,6 +98,7 @@ protected:
 
 private:
 	class CShader*				m_pEngineShader = nullptr;
+	_bool						m_bIsOwnerDead = false;
 
 protected:
 	HRESULT Add_Component(_uint iScenenNum, const _tchar* tagPrototype,const _tchar* tagComponent, CComponent** ppOut , void* pArg =nullptr);
