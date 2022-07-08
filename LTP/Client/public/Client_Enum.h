@@ -541,7 +541,10 @@ enum LAYERID
 
 
 	Layer_StaticMapObj,
-	Layer_TriggerCollider,
+	Layer_ColBase,
+	Layer_ColStatic,
+	Layer_ColTrigger,
+	Layer_ColDynamic,
 
 
 	Layer_UI_GamePlay,
@@ -577,12 +580,22 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_ScreenEffect:
 		return TEXT("Layer_ScreenEffect");
 		break;
-	case Layer_TriggerCollider:
-		return TEXT("Layer_TriggerCollider");
-		break;
-		
-		
 
+	case Layer_ColBase:
+		return TEXT("Layer_ColBase");
+		break;
+
+	case Layer_ColStatic:
+		return TEXT("Layer_ColStatic");
+		break;
+
+	case Layer_ColTrigger:
+		return TEXT("Layer_ColTrigger");
+		break;
+
+	case Layer_ColDynamic:
+		return TEXT("Layer_ColDynamic");
+		
 	case Layer_Bullet:
 		return TEXT("Layer_Bullet");
 		break;

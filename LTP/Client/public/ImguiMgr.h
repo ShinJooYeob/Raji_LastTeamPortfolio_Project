@@ -11,6 +11,9 @@
 
 BEGIN(Client)
 
+#define IMGUITREE(X) if (ImGui::TreeNode(X))
+#define IMGUITREE_END ImGui::TreePop();
+
 class CImguiMgr :public CBase
 {
 	DECLARE_SINGLETON(CImguiMgr)

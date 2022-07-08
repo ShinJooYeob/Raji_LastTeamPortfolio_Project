@@ -72,47 +72,22 @@ HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 
 HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
 {
-
 	// 시뮬레이션 전의 충돌체 위치
 	// 현재 오브젝트 위치를 받아온다.
-	if (mbPhysXUpdate == false)
-		return S_OK;
-
-	if (mMainTransform == nullptr)
+	if (mMainGameObject == nullptr)
 		return E_FAIL;
 
-		mPxMainTransform = PxTransform(*(PxVec3*)&mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
+	GetSingle(CPhysXMgr)->Add_CollisionObject(this);
 
-	//if (mePhysxType == E_PHYSXTYPE_JOINT)
-	//{
-	//	_float4x4 mat =  mAttachDesc.Caculate_AttachedBoneMatrix();
-	//	mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
-	//}
+
+
 
 	return S_OK;
 }
 
 HRESULT CCollider_PhysX_Base::Update_AfterSimulation()
 {
-	if (mbPhysXUpdate == false)
-		return S_OK;
-
-	if (mMainTransform == nullptr)
-		return E_FAIL;
-
-	// 시뮬레이션 후 충돌체를 업데이트 해준다.
-	//if (mbKeyUpdate)
-	//{
-	//	
-	//	mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
-	//	mRigActor->setGlobalPose(mPxTransform);
-	//}
-
-		// Pos
-	mPxMainTransform = mMain_Actor->getGlobalPose();
-	_float3 vec3 = *(_float3*)&mPxMainTransform.p;
-	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-
+	// 시뮬레이션 후의 충돌체 위치
 	return S_OK;
 }
 
@@ -133,10 +108,140 @@ HRESULT CCollider_PhysX_Base::Add_Shape(PxGeometry& gemo, PxTransform offset)
 	return S_OK;
 }
 
-void CCollider_PhysX_Base::Set_Postiotn(_float3 positiotn)
+PxGeometry * CCollider_PhysX_Base::Create_Geometry(E_GEOMAT_TYPE e,_float3 scale)
 {
-	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(positiotn)));
+	PxGeometry* gemo = nullptr;
+
+	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f,scale.z*0.5f);
+
+	switch (e)
+	{
+	case Client::E_GEOMAT_BOX:
+		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
+		break;
+	case Client::E_GEOMAT_SPEHE:
+		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
+		break;
+	case Client::E_GEOMAT_CAPSULE:
+		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
+		break;
+	case Client::E_GEOMAT_SHAPE:
+
+		break;
+	case Client::E_GEOMAT_VERTEX:
+		break;
+	case Client::E_GEOMAT_TRIANGLE:
+		break;
+	case Client::E_GEOMAT_END:
+		break;
+	default:
+		break;
+	}
+
+	NULL_CHECK_BREAK(gemo);
+	return gemo;
 }
+
+HRESULT CCollider_PhysX_Base::Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale)
+{
+	shape->setGeometry(geo);
+	return S_OK;
+}
+
+
+
+HRESULT CCollider_PhysX_Base::Set_GeoMatScale(PxShape* shape, PxVec3 scale)
+{
+	PxGeometryHolder h = shape->getGeometry();
+
+	switch (h.getType())
+	{
+	case physx::PxGeometryType::eSPHERE:
+	{	
+		PxSphereGeometry s;
+		shape->getSphereGeometry(s);
+		s.radius = scale.x;
+		shape->setGeometry(s);
+	}
+	break;
+	case physx::PxGeometryType::eCAPSULE:
+	{
+		PxCapsuleGeometry c;
+		shape->getCapsuleGeometry(c);
+		c.radius = scale.x;
+		c.halfHeight = scale.y;
+		shape->setGeometry(c);
+	}
+	break;
+	case physx::PxGeometryType::eBOX:
+	{
+		PxBoxGeometry b;
+		shape->getBoxGeometry(b);
+		b.halfExtents = scale;
+		shape->setGeometry(b);
+	}
+		break;
+	case physx::PxGeometryType::eCONVEXMESH:
+		break;
+	case physx::PxGeometryType::eTRIANGLEMESH:
+		break;
+	case physx::PxGeometryType::eHEIGHTFIELD:
+		break;
+	case physx::PxGeometryType::eGEOMETRY_COUNT:
+		break;
+	case physx::PxGeometryType::eINVALID:
+		break;
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
+void CCollider_PhysX_Base::Set_Scale_MainTrans(_float4 ff)
+{
+	mPxMainMatrix4x4.scale(*(PxVec4*)(&ff));
+}
+
+PxVec3 CCollider_PhysX_Base::GetScale(PxMat44 mat)
+{
+	_float x = mat.column0.normalize();
+	_float y = mat.column1.normalize();
+	_float z = mat.column2.normalize();
+
+
+	return PxVec3(x,y,z);
+}
+
+PxTransform CCollider_PhysX_Base::GetPxTransform(PxMat44 m)
+{
+	// 스케일값을 제외하고 반환
+	PxVec3 p = PxVec3(m.column3.x, m.column3.y, m.column3.z);
+
+	PxVec3 column0 = PxVec3(m.column0.x, m.column0.y, m.column0.z);
+	PxVec3 column1 = PxVec3(m.column1.x, m.column1.y, m.column1.z);
+	PxVec3 column2 = PxVec3(m.column2.x, m.column2.y, m.column2.z);
+
+	PxQuat q = PxQuat(PxMat33(column0.getNormalized(), column1.getNormalized(), column2.getNormalized()));
+	return PxTransform(p,q);
+}
+
+
+
+PxVec3 CCollider_PhysX_Base::Get_Scale_MainTrans()
+{
+	return PxVec3(mPxMainMatrix4x4.column0.normalize(), 
+		mPxMainMatrix4x4.column1.normalize(),
+		mPxMainMatrix4x4.column2.normalize());
+}
+
+void CCollider_PhysX_Base::Set_Transform(CTransform * trans)
+{
+	mMainTransform = trans;
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
+	mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
+}
+
 
 #ifdef _DEBUG
 
@@ -247,6 +352,68 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 
 
 }
+HRESULT CCollider_PhysX_Base::RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color)
+{
+	PxTransform pxtrans = PxTransform(world);
+	PxVec3		scale = GetScale(world) * 0.5f;
+
+	switch (e)
+	{
+
+	case Client::E_GEOMAT_BOX:
+	{
+		const BoundingOrientedBox& obbBox = BoundingOrientedBox(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			PXVEC3TOFLOAT3(scale),
+			PXVEC4TOFLOAT4(pxtrans.q));
+		DX::Draw(m_pBatch, obbBox, color);
+	}
+		break;
+	case Client::E_GEOMAT_SPEHE:
+	{
+		const BoundingSphere& s = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		DX::Draw(m_pBatch, s, color);
+	}
+		break;
+	case Client::E_GEOMAT_CAPSULE:
+	{
+		const BoundingBox& box = BoundingBox(
+			PXVEC3TOFLOAT3(world),
+			_float3(scale.x, scale.y, scale.z));
+
+		_float3 upSph1 = PXVEC3TOFLOAT3(pxtrans.p); upSph1.y += scale.x;
+		_float3 downSph2 = PXVEC3TOFLOAT3(pxtrans.p); downSph2.y -= scale.x;
+		const BoundingSphere& s1 = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		const BoundingSphere& s2 = BoundingSphere(
+			PXVEC3TOFLOAT3(pxtrans.p),
+			scale.x);
+		DX::Draw(m_pBatch, box, color);
+		DX::Draw(m_pBatch, s1, color);
+		DX::Draw(m_pBatch, s2, color);
+	}
+		break;
+	case Client::E_GEOMAT_SHAPE:
+		break;
+	case Client::E_GEOMAT_VERTEX:
+		break;
+	case Client::E_GEOMAT_TRIANGLE:
+		break;
+	case Client::E_GEOMAT_END:
+		break;
+
+	default:
+		break;
+	}
+
+	return S_OK;
+
+
+}
+
 #endif
 
 void CCollider_PhysX_Base::Free()

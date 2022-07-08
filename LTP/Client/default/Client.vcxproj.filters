@@ -271,6 +271,18 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram">
       <UniqueIdentifier>{085924aa-ea79-4ffe-9126-bab5b087fea1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\0.Base">
+      <UniqueIdentifier>{2436d29e-4cac-4e50-8de6-138da7258f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\1.Static">
+      <UniqueIdentifier>{a41be25d-a03e-45ea-ad3b-a72ad709db0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\2.Dynamic">
+      <UniqueIdentifier>{681683ba-c976-4073-bc9d-d38512fb3d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.PhysX\3.Com_PhyCom\3.Joint">
+      <UniqueIdentifier>{0d978ed4-8e78-4c50-9b01-62351f968987}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -558,6 +570,22 @@
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rangda_Finger.h" />
+    <ClInclude Include="..\public\TestObject_PhysX.h">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h">
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h">
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h">
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
+      <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -811,6 +839,22 @@
     </ClCompile>
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda_Finger.cpp" />
+    <ClCompile Include="..\private\TestObject_PhysX.cpp">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

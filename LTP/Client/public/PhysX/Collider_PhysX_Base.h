@@ -6,9 +6,8 @@
 BEGIN(Engine)
 class CTransform;
 END
+
 BEGIN(Client)
-
-
 enum E_PHYTYPE
 {
 	E_PHYTYPE_STATIC,
@@ -29,15 +28,36 @@ enum E_GEOMAT_TYPE
 	E_GEOMAT_END,
 };
 
+//enum CollisionTypeID
+//{
+//	CollisionType_Player,
+//	CollisionType_PlayerWeapon,
+//	CollisionType_Monster,
+//	CollisionType_MonsterWeapon,
+//	CollisionType_NPC,
+//	CollisionType_DynaicObject,
+//	CollisionType_Terrain,
+//	CollisionType_END
+//};
+
+
 
 
 class CCollider_PhysX_Base : public CComponent
 {
 public:
+	struct CColider_PX_Desc
+	{
+		OBJECTPROTOTYPEID mObjid = Object_Prototype_End;
+
+	};
+
+public:
 	// 각각 생성하는 콜라이더에 따른 DESC
 	typedef struct Tag_PhysXDesc_Static
 	{
 		CTransform*			mTrnasform = nullptr;
+		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_bool				bTrigger = false;
 
@@ -47,6 +67,7 @@ public:
 	typedef struct Tag_PhysXDesc_Dynamic
 	{
 		CTransform*			mTrnasform = nullptr;
+		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mVelocity = _float3::Zero();
 		_bool				bTrigger = false;
@@ -94,38 +115,62 @@ public:
 public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
-	HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
 #endif // _DEBUG
 
 public:
 	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
-	void			Set_Postiotn(_float3 positiotn);
-	void			Set_Transform(CTransform* trans) { mMainTransform = trans; };
-	void			Set_PhysXUpdate(_bool b) { mbPhysXUpdate = b; };
-	void			Set_KeyDonw(_bool b) { mbKeyUpdate = b; };
+	void			Set_Transform(CTransform* trans);
+
+//	void			Set_(_bool b) { mbTrigger = b; };
+
+	// 테스트용 
+	void			Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
 
 	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
 	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
+	PxGeometry*			Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
+	HRESULT				Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
+	HRESULT				Set_GeoMatScale(PxShape* shape, PxVec3 scale);
+	PxVec3				Get_Scale_MainTrans();
+	void				Set_Scale_MainTrans(_float4 f);
+	CGameObject*		Get_GameObject() { return mMainGameObject; };
+	OBJECTPROTOTYPEID	Get_ObjectID() { return mColDesc.mObjid; };
+
+	HRESULT			CreateNewShape(PxGeometry* gemo);
+
+	PxVec3			GetScale(PxMat44 mat);
+	PxTransform		GetPxTransform(PxMat44 mat);
+
+
+
 public:
-	HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
+	//HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
+	//HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
+	//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
 
 
 
 protected:
-	//	CTransform*					mTransform = nullptr;
-	PxRigidActor*					mMain_Actor= nullptr;
-	PxTransform						mPxMainTransform;
+	// 충돌체 메인 Actor
+	PxRigidActor*					mMain_Actor= nullptr; 
+	// 충돌체 위치 / 연결된 위치 저장
+	PxMat44							mPxMainMatrix4x4;
+	PxVec3							mScale = PxVec3(1,1,1);
 	CTransform*						mMainTransform = nullptr;
+	CGameObject*					mMainGameObject = nullptr;
+	PxShape*						mMainShape = nullptr;
 
 protected:
 	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
-	// 물리충돌 해제
-	bool							mbPhysXUpdate = true;
-	// 외부 입력 업데이트
-	bool							mbKeyUpdate = false;
+	// 콜라이더의 오브젝트 아이디
+	CColider_PX_Desc				mColDesc;
+
+	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
+	_bool							mbTrigger = false;
+
 
 	PxPhysics*						mPhysics = nullptr;
 	PxMaterial*						mNormalMaterial = nullptr;

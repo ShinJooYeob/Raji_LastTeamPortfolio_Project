@@ -35,9 +35,6 @@ public:
 	list<CGameObject*>*			Get_ObjectList_from_Layer(_uint iSceneNum, const _tchar* tagLayer);
 
 
-
-
-
 public:
 	_int Update(_double fDeltaTime);
 	_int LateUpdate(_double fDeltaTime);
