@@ -161,6 +161,12 @@ void CTestObject_PhysX::CollisionPhysX_Trigger(CGameObject * pTriggerObj, COLLID
 
 }
 
+void CTestObject_PhysX::CollisionPhysX_Rigid(CGameObject * pOtherObject, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
+{
+	OutputDebugStringW(L"RigidObjectOnOnON\n");
+
+}
+
 HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)
 {
 	// Collider Set;

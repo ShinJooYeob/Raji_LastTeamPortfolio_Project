@@ -117,7 +117,7 @@ private:
 
 	// MessageContainer
 	list<PxTriggerPair*>		mListPxTriggerPair;
-	list<PxContactPair*>		mListContactPairHeader;
+	list<PxContactPair*>		mListContactPair;
 	list<CCollider_PhysX_Base*>	mListPshysXComColiders;
 
 

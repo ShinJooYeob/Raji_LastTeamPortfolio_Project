@@ -44,7 +44,7 @@ public:
 	void	Set_Scale(_float3 scale);
 
 	virtual void CollisionPhysX_Trigger(CGameObject* pTriggerObj, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)override;
-
+	virtual void CollisionPhysX_Rigid(CGameObject* pOtherObject, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)override;
 
 
 

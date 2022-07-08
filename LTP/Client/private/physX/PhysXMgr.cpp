@@ -93,6 +93,7 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 	// 충돌이 끝나면 메세지를 받는다.
 	// 현재 컴포넌트로 검사하고 맞는 명령을 실행.
 	Call_CollisionFunc_Trigger();
+	Call_CollisionFunc_Contect();
 	ReleasePhysXCom();
 
 	return S_OK;
@@ -335,7 +336,7 @@ HRESULT CPhysXMgr::Add_TriggerMsg(PxTriggerPair* msg)
 HRESULT CPhysXMgr::Add_ContactMsg(PxContactPair* msg)
 {
 	// 충돌체 검사해줌
-	mListContactPairHeader.push_back(msg);
+	mListContactPair.push_back(msg);
 	return S_OK;
 }
 
@@ -564,41 +565,47 @@ HRESULT CPhysXMgr::Call_CollisionFunc_Trigger()
 HRESULT CPhysXMgr::Call_CollisionFunc_Contect()
 {
 
-	if (mListContactPairHeader.empty())
+	if (mListContactPair.empty())
 		return S_OK;
 
 	// 정적 오브젝트 / 동적 오브젝트 충돌 판단
 	// #TODO: 동적 오브젝트 충돌처리
 
-	PxContactPair* contectData = mListContactPairHeader.front();
-	mListPxTriggerPair.pop_front();
+	while (mListContactPair.empty() == false)
+	{
+		PxContactPair* contectData = mListContactPair.front();
+		mListContactPair.pop_front();
 
-	COLLIDERTYPE_PhysXID type = COLLIDER_PHYSX_END;
+		COLLIDERTYPE_PhysXID type = COLLIDER_PHYSX_END;
 
-	if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_FOUND)
-		type = COLLIDER_PHYSX_CONECTIN;
+		if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			type = COLLIDER_PHYSX_CONECTIN;
 
-	else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
-		type = COLLIDER_PHYSX_CONECTSTAY;
+		else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+			type = COLLIDER_PHYSX_CONECTSTAY;
 
+		else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_LOST)
+			type = COLLIDER_PHYSX_CONECTOUT;
 
-	else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_LOST)
-		type = COLLIDER_PHYSX_CONECTOUT;
+		else if (type == COLLIDER_PHYSX_END)
+			return E_FAIL;
 
+		PxRigidActor* act1 = contectData->shapes[0]->getActor();
+		PxRigidActor* act2 = contectData->shapes[1]->getActor();
 
-	if (type == COLLIDER_PHYSX_END)
-		return S_OK;
+		CGameObject* actorObject1 = Find_GameObject(act1);
+		CGameObject* actorObject2 = Find_GameObject(act2);
 
-	/*
-	CGameObject* actorObject = Find_GameObject(contectData->otherActor);
-	CGameObject* triggerObject = Find_GameObject(contectData->triggerActor);
-	Safe_Delete(triggerdata);
+		Safe_Delete(contectData);
 
-	if (actorObject == nullptr || triggerObject == nullptr)
-		return E_FAIL;
+		if (actorObject1 == nullptr || actorObject2 == nullptr)
+			return E_FAIL;
 
-	actorObject->CollisionPhysX_Trigger(triggerObject, type);
-	*/
+		actorObject1->CollisionPhysX_Rigid(actorObject2, type);
+
+	}
+
+	
 
 
 
@@ -802,15 +809,20 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 	// 접촉 이벤트 발생 시 호출
 	// pair로 호출 한쌍의 액터에 대한 호출된다.
 	// #PxSimulationFilterCallback 참조
-	OutputDebugStringW(L"onContact\n");
+	// OutputDebugStringW(L"onContact\n");
 
 	while (count--)
 	{
 		const PxContactPair& current = *pairs++;
+		//_uint flags = current.events;
+		//wstring buf = L"Flag: " + to_wstring(flags);
+		//OutputDebugStringW(buf.c_str());
+		//OutputDebugStringW(L"\n");
+
 
 		if (current.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			OutputDebugStringW(L"Add Trigger 1\n");
+			OutputDebugStringW(L"Add onContact 1\n");
 			PxContactPair* Currentt = NEW PxContactPair;
 			memcpy(Currentt, &current, sizeof(PxContactPair));
 			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
@@ -819,12 +831,15 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 		}
 		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
 		{
-
+			OutputDebugStringW(L"Add onContact 2\n");
+			PxContactPair* Currentt = NEW PxContactPair;
+			memcpy(Currentt, &current, sizeof(PxContactPair));
+			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
 
 		}
 		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
-			OutputDebugStringW(L"Add Trigger 1\n");
+			OutputDebugStringW(L"Add onContact 3\n");
 			PxContactPair* Currentt = NEW PxContactPair;
 			memcpy(Currentt, &current, sizeof(PxContactPair));
 			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
@@ -842,6 +857,8 @@ void CContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	while (count--)
 	{
 		const PxTriggerPair& current = *pairs++;
+
+
 		if (current.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			OutputDebugStringW(L"Add Trigger 1\n");
