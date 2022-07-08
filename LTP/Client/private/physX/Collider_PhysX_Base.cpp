@@ -70,16 +70,17 @@ HRESULT CCollider_PhysX_Base::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
+HRESULT CCollider_PhysX_Base::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
 {
+	// 시뮬레이션 전의 충돌체 위치
+	// 현재 오브젝트 위치를 받아온다.
 	if (mMainGameObject == nullptr)
 		return E_FAIL;
 
+	mObjectID = id;
 	GetSingle(CPhysXMgr)->Add_CollisionObject(this);
 
 
-	// 시뮬레이션 전의 충돌체 위치
-	// 현재 오브젝트 위치를 받아온다.
 
 
 	return S_OK;
@@ -225,6 +226,8 @@ PxTransform CCollider_PhysX_Base::GetPxTransform(PxMat44 m)
 	PxQuat q = PxQuat(PxMat33(column0.getNormalized(), column1.getNormalized(), column2.getNormalized()));
 	return PxTransform(p,q);
 }
+
+
 
 PxVec3 CCollider_PhysX_Base::Get_Scale_MainTrans()
 {

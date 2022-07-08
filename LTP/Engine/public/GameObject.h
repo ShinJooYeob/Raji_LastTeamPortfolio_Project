@@ -20,8 +20,8 @@ public:
 
 	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) {};
 
-	virtual void CollisionPhysX_Trigger(CGameObject* pTriggerObj,  COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
-	virtual void CollisionPhysX_Rigid(CGameObject* pOtherObject, COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
+	virtual void CollisionPhysX_Trigger(CGameObject* pTriggerObj, _uint id , COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
+	virtual void CollisionPhysX_Rigid(CGameObject* pOtherObject, _uint id , COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
 
 public:
 	virtual void Set_NowSceneNum(_uint eNowSceneNum) {	m_eNowSceneNum = eNowSceneNum; };

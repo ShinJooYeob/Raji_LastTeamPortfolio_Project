@@ -36,9 +36,9 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
+HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation(OBJECTPROTOTYPEID id)
 {
-	FAILED_CHECK(__super::Update_BeforeSimulation());
+	FAILED_CHECK(__super::Update_BeforeSimulation(id));
 
 
 	//if (mbUpdate_PhysX == false)

@@ -88,11 +88,12 @@ private:
 	
 
 private:
-	HRESULT				Initialize_PhysXLib();
-	HRESULT				Call_CollisionFunc_Trigger();
-	HRESULT				Call_CollisionFunc_Contect();
-	CGameObject*		Find_GameObject(PxRigidActor* searchActor);
-	HRESULT				ReleasePhysXCom();
+	HRESULT					Initialize_PhysXLib();
+	HRESULT					Call_CollisionFunc_Trigger();
+	HRESULT					Call_CollisionFunc_Contect();
+	CGameObject*			Find_GameObject(PxRigidActor* searchActor);
+	CCollider_PhysX_Base*	Find_ComPxCollider(PxRigidActor* searchActor);
+	HRESULT					ReleasePhysXCom();
 
 
 private:

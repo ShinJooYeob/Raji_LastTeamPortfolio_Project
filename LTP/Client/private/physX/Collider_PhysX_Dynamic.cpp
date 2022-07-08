@@ -36,9 +36,9 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
+HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation(OBJECTPROTOTYPEID id )
 {
-	FAILED_CHECK(__super::Update_BeforeSimulation());
+	FAILED_CHECK(__super::Update_BeforeSimulation(id));
 
 
 
@@ -53,10 +53,10 @@ HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 	FAILED_CHECK(__super::Update_AfterSimulation());
 
 
-	PxTransform trans =  mMain_Actor->getGlobalPose();
-	mPxMainMatrix4x4 = PxMat44(trans);
-	mPxMainMatrix4x4.scale(PxVec4(mScale,1));
-	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+//	PxTransform trans =  mMain_Actor->getGlobalPose();
+//	mPxMainMatrix4x4 = PxMat44(trans);
+//	mPxMainMatrix4x4.scale(PxVec4(mScale,1));
+//	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
 
 	return S_OK;
 }
@@ -91,7 +91,7 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	PxGeometry* gemo = nullptr;
 	mMainTransform = mPhysXDesc.mTrnasform;
 	mMainGameObject = mPhysXDesc.mGameObect;
-
+	
 
 	_float3 scale = mMainTransform->Get_Scale();
 	mScale = FLOAT3TOPXVEC3(scale);
@@ -104,14 +104,14 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
 
-	PxReal density = 5.f;
+	PxReal density = 0.05f;
 
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
 
-	SetBaseFlag();	
+//	SetBaseFlag();	
 
 	return S_OK;
 }

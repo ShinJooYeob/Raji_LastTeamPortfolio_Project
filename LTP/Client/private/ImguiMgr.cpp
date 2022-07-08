@@ -1394,6 +1394,31 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
 		}
+
+		if (ImGui::Button("Dynamic_Player"))
+		{
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
+			CTestObject_PhysX* obj =
+				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
+
+			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+			objTrans->Scaled_All(Scale);
+
+			createDynamic.bTrigger = false;
+			createDynamic.eShapeType = E_GEOMAT_SPEHE;
+			createDynamic.mTrnasform = objTrans;
+			createDynamic.mGameObect = obj;
+			NULL_CHECK_BREAK(createDynamic.mTrnasform);
+			createDynamic.mVelocity = Force;
+			coldynamic->Set_ColiiderDesc(createDynamic);
+		}
 		IMGUITREE_END
 	}
 

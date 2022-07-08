@@ -78,7 +78,29 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	if (mCom_ColliderBase)
 	{
 	//	mCom_ColliderBase->Set_KeyDonw(isKey);
-		mCom_ColliderBase->Update_BeforeSimulation();
+		switch (meModelID)
+		{
+		case Client::CTestObject_PhysX::MODEL_GEMETRY:
+			mCom_ColliderBase->Update_BeforeSimulation(Prototype_StaticMapObject);
+
+			break;
+		case Client::CTestObject_PhysX::MODEL_STATICMAPOBJ:
+			mCom_ColliderBase->Update_BeforeSimulation(Prototype_Rect);
+
+			break;
+		case Client::CTestObject_PhysX::MODEL_PLAYER:
+			mCom_ColliderBase->Update_BeforeSimulation(Prototype_Player);
+			break;
+		case Client::CTestObject_PhysX::MODEL_MONSTER:
+			mCom_ColliderBase->Update_BeforeSimulation(Prototype_Object_Monster_Jalsura);
+			break;
+		case Client::CTestObject_PhysX::MODEL_EMPTY:
+			mCom_ColliderBase->Update_BeforeSimulation(Prototype_Object_Monster_Jalsura);
+
+			break;
+		default:
+			break;
+		}
 	}
 	return _int();
 }
@@ -155,15 +177,16 @@ void CTestObject_PhysX::Set_Scale(_float3 scale)
 
 }
 
-void CTestObject_PhysX::CollisionPhysX_Trigger(CGameObject * pTriggerObj, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
+void CTestObject_PhysX::CollisionPhysX_Trigger(CGameObject * pTriggerObj, _uint id, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
 {
+	wstring a = Tag_Object_Prototype((OBJECTPROTOTYPEID)id);
+	OutputDebugStringW(to_wstring(id).c_str());
 	OutputDebugStringW(L"TriggerObjectOnOnON\n");
 
 }
 
-void CTestObject_PhysX::CollisionPhysX_Rigid(CGameObject * pOtherObject, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
+void CTestObject_PhysX::CollisionPhysX_Rigid(CGameObject * pOtherObject, _uint id, COLLIDERTYPE_PhysXID eConflictedObjCollisionType)
 {
-	OutputDebugStringW(L"RigidObjectOnOnON\n");
 
 }
 
@@ -192,24 +215,32 @@ HRESULT CTestObject_PhysX::Set_ModelSetting(E_MODEL id)
 {
 	if (mCom_Model)
 		return E_FAIL;
-	meModelID = id;
 
+	meModelID = id;
 	switch (id)
 	{
 	case Client::CTestObject_PhysX::MODEL_GEMETRY:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
+
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_PLAYER:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
+
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_STATICMAPOBJ:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_TestObject), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
+
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_MONSTER:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Boss_Rangda_Finger), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
+
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_EMPTY:
@@ -278,9 +309,9 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&mCom_Renderer));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
 
 	// 모델과 충돌 컴포넌트는 후 지정
+	mCom_Shader = nullptr;
 	mCom_Model = nullptr;
 	mCom_ColliderBase = nullptr;
 	CTransform::TRANSFORMDESC tDesc = {};

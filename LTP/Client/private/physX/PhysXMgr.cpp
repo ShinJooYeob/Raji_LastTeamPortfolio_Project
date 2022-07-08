@@ -24,23 +24,24 @@ _float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
-PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+// Scene의 충돌 감지 세팅
+PxFilterFlags SampleSubmarineFilterShader(
+	PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
 	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	PX_UNUSED(attributes0);
-	PX_UNUSED(attributes1);
-	PX_UNUSED(filterData0);
-	PX_UNUSED(filterData1);
-	PX_UNUSED(constantBlockSize);
-	PX_UNUSED(constantBlock);
+	// 트리거 충돌시 세팅
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+	
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
-	// 감지할 충돌 세팅
-	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
-		| PxPairFlag::eNOTIFY_TOUCH_FOUND
-		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-		| PxPairFlag::eNOTIFY_CONTACT_POINTS;
-
+	// 충돌 필터 설정
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
 	return PxFilterFlag::eDEFAULT;
 }
@@ -498,8 +499,10 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
-	sceneDesc.filterShader = &contactReportFilterShader;
+	sceneDesc.filterShader = SampleSubmarineFilterShader;
 	sceneDesc.filterCallback = &gFiterCallback;
+	
+//	sceneDesc.filterShader = &contactReportFilterShader;
 
 //	sceneDesc.contactModifyCallback = PxDefaultSimulationFilterShader;
 
@@ -549,14 +552,15 @@ HRESULT CPhysXMgr::Call_CollisionFunc_Trigger()
 	if (type == COLLIDER_PHYSX_END)
 		return S_OK;
 
-	CGameObject* actorObject = Find_GameObject(triggerdata->otherActor);
-	CGameObject* triggerObject = Find_GameObject(triggerdata->triggerActor);
+	CCollider_PhysX_Base* col1 = Find_ComPxCollider(triggerdata->otherActor);
+	CCollider_PhysX_Base* col2 = Find_ComPxCollider(triggerdata->triggerActor);
+
 	Safe_Delete(triggerdata);
 
-	if (actorObject == nullptr || triggerObject == nullptr)
+	if (col1 == nullptr || col2 == nullptr)
 		return E_FAIL;
 
-	actorObject->CollisionPhysX_Trigger(triggerObject, type);
+	col1->Get_GameObject()->CollisionPhysX_Trigger(col2->Get_GameObject(), col2->Get_ObjectID(), type);
 	
 
 	return S_OK;
@@ -576,32 +580,32 @@ HRESULT CPhysXMgr::Call_CollisionFunc_Contect()
 		PxContactPair* contectData = mListContactPair.front();
 		mListContactPair.pop_front();
 
-		COLLIDERTYPE_PhysXID type = COLLIDER_PHYSX_END;
+		COLLIDERTYPE_PhysXID colType = COLLIDER_PHYSX_END;
 
 		if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			type = COLLIDER_PHYSX_CONECTIN;
+			colType = COLLIDER_PHYSX_CONECTIN;
 
 		else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
-			type = COLLIDER_PHYSX_CONECTSTAY;
+			colType = COLLIDER_PHYSX_CONECTSTAY;
 
 		else if (contectData->events &PxPairFlag::eNOTIFY_TOUCH_LOST)
-			type = COLLIDER_PHYSX_CONECTOUT;
+			colType = COLLIDER_PHYSX_CONECTOUT;
 
-		else if (type == COLLIDER_PHYSX_END)
+		else if (colType == COLLIDER_PHYSX_END)
 			return E_FAIL;
 
 		PxRigidActor* act1 = contectData->shapes[0]->getActor();
 		PxRigidActor* act2 = contectData->shapes[1]->getActor();
 
-		CGameObject* actorObject1 = Find_GameObject(act1);
-		CGameObject* actorObject2 = Find_GameObject(act2);
+		CCollider_PhysX_Base* col1 = Find_ComPxCollider(act1);
+		CCollider_PhysX_Base* col2 = Find_ComPxCollider(act2);
 
 		Safe_Delete(contectData);
 
-		if (actorObject1 == nullptr || actorObject2 == nullptr)
+		if (col1 == nullptr || col2 == nullptr)
 			return E_FAIL;
 
-		actorObject1->CollisionPhysX_Rigid(actorObject2, type);
+		col1->Get_GameObject()->CollisionPhysX_Rigid(col2->Get_GameObject(), col2->Get_ObjectID(), colType);
 
 	}
 
@@ -622,6 +626,18 @@ CGameObject * CPhysXMgr::Find_GameObject(PxRigidActor * searchActor)
 
 	return nullptr;
 }
+
+
+CCollider_PhysX_Base * CPhysXMgr::Find_ComPxCollider(PxRigidActor * searchActor)
+{
+	for (auto& obj : mListPshysXComColiders)
+	{
+		if (searchActor == obj->Get_ColliderActor())
+			return obj;
+	}
+	return nullptr;
+}
+
 
 HRESULT CPhysXMgr::ReleasePhysXCom()
 {
@@ -691,7 +707,7 @@ PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const 
 
 	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, t, geometry, *gMaterial1,density);
 	NULL_CHECK_BREAK(actor);
-	actor->setAngularDamping(0);
+	actor->setAngularDamping(0.05f);
 	actor->setLinearVelocity(velocity);
 	mScene->addActor(*actor);
 	return actor;
@@ -840,9 +856,9 @@ void CContactReportCallback::onContact(const PxContactPairHeader& /*pairHeader*/
 		else if (current.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
 			OutputDebugStringW(L"Add onContact 3\n");
-			PxContactPair* Currentt = NEW PxContactPair;
-			memcpy(Currentt, &current, sizeof(PxContactPair));
-			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
+		//	PxContactPair* Currentt = NEW PxContactPair;
+		//	memcpy(Currentt, &current, sizeof(PxContactPair));
+		//	GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
 
 		}
 

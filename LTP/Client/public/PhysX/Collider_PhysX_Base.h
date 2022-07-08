@@ -28,6 +28,19 @@ enum E_GEOMAT_TYPE
 	E_GEOMAT_END,
 };
 
+//enum CollisionTypeID
+//{
+//	CollisionType_Player,
+//	CollisionType_PlayerWeapon,
+//	CollisionType_Monster,
+//	CollisionType_MonsterWeapon,
+//	CollisionType_NPC,
+//	CollisionType_DynaicObject,
+//	CollisionType_Terrain,
+//	CollisionType_END
+//};
+
+
 
 
 class CCollider_PhysX_Base : public CComponent
@@ -89,7 +102,7 @@ public:
 	HRESULT Initialize_Prototype(void * pArg);
 	HRESULT Initialize_Clone(void * pArg);
 
-	virtual HRESULT Update_BeforeSimulation();
+	virtual HRESULT Update_BeforeSimulation(OBJECTPROTOTYPEID id = Object_Prototype_End);
 	virtual HRESULT Update_AfterSimulation();
 
 public:
@@ -108,19 +121,18 @@ public:
 	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
 	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
-	PxGeometry*		Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
-	HRESULT			Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
-	HRESULT			Set_GeoMatScale(PxShape* shape, PxVec3 scale);
-	PxVec3			Get_Scale_MainTrans();
-	void			Set_Scale_MainTrans(_float4 f);
-	CGameObject*	Get_GameObject() { return mMainGameObject; };
-
+	PxGeometry*			Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
+	HRESULT				Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
+	HRESULT				Set_GeoMatScale(PxShape* shape, PxVec3 scale);
+	PxVec3				Get_Scale_MainTrans();
+	void				Set_Scale_MainTrans(_float4 f);
+	CGameObject*		Get_GameObject() { return mMainGameObject; };
+	OBJECTPROTOTYPEID	Get_ObjectID() { return mObjectID; };
 
 	HRESULT			CreateNewShape(PxGeometry* gemo);
 
 	PxVec3			GetScale(PxMat44 mat);
 	PxTransform		GetPxTransform(PxMat44 mat);
-	
 
 
 
@@ -143,6 +155,8 @@ protected:
 
 protected:
 	E_PHYTYPE						mePhysX_ID = E_PHYTYPE_END;
+	// 콜라이더의 오브젝트 아이디
+	OBJECTPROTOTYPEID				mObjectID = Object_Prototype_End;
 
 	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
 	_bool							mbTrigger = false;
