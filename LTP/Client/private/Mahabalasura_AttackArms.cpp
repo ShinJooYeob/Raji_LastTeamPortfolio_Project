@@ -44,7 +44,7 @@ HRESULT CMahabalasura_AttackArms::Initialize_Clone(void * pArg)
 	m_CenterPoint.y = 15.f;
 
 
-	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 20.f, 255.f), 0);
+	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 20.f, 255.f), _float4(0));
 	m_pTransformCom->LookAt(XMLoadFloat3(&m_PlayerPos));
 
 	return S_OK;

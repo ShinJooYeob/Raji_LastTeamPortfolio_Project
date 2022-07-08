@@ -774,7 +774,7 @@ HRESULT CRenderer::Render_BlurShadow()
 
 
 
-		LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+		LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 		if (!pLightDesc) return S_FALSE;
 
 		_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
@@ -995,7 +995,7 @@ HRESULT CRenderer::Make_BluredDeffered(_float TexelSize)
 HRESULT CRenderer::Render_DDFog()
 {
 
-	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 	if (!pLightDesc) return S_FALSE;
 
 	_float3 vToSunDir = - XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
@@ -1049,7 +1049,7 @@ HRESULT CRenderer::Render_GodRay()
 {
 
 
-	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 	if (!pLightDesc) return S_FALSE;
 
 	_Vector vSunDir =  XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1) );
@@ -1193,7 +1193,7 @@ HRESULT CRenderer::Render_LesnFlare()
 
 	if (m_vSunPosSS.w == 0)
 	{
-		LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+		LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 		if (!pLightDesc) return S_FALSE;
 
 		_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
@@ -1465,7 +1465,7 @@ HRESULT CRenderer::Render_ShadowMap()
 	m_pDeviceContext->RSSetViewports(iNumViewports, &ViewPortDesc);
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Shadow"), m_LightDepthStencil));
 
-	LIGHTDESC* pLightDesc = GetSingle(CLightMgr)->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
 
 
 	if (pLightDesc)
@@ -1949,8 +1949,6 @@ void CRenderer::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pTexture);
 	
-	
-
 	Safe_Release(m_pRenderTargetMgr);
 	Safe_Release(m_pLightMgr);
 	Safe_Release(m_pGraphicDevice);

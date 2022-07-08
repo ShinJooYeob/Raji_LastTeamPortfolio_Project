@@ -19,7 +19,6 @@ HRESULT CScene_Stage4::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
 	FAILED_CHECK(Ready_Light());
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));

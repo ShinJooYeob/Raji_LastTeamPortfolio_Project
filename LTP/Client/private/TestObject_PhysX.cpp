@@ -181,19 +181,19 @@ HRESULT CTestObject_PhysX::Set_ColSetID(E_PHYTYPE id)
 	desc.mObjid = Prototype_Player;
 	if (id == E_PHYTYPE_DYNAMIC)
 	{
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase),&desc);
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Dynamic), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase, &desc));
 		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)1);
 		return S_OK;
 	}
 	if (id == E_PHYTYPE_STATIC)
 	{
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase), &desc);
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Static), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase, &desc));
 		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)1);
 		return S_OK;
 	}
 	if (id == E_PHYTYPE_JOINT)
 	{
-		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase), &desc);
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&mCom_ColliderBase, &desc));
 		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)1);
 		return S_OK;
 	}

@@ -900,7 +900,6 @@
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
-    </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClCompile>

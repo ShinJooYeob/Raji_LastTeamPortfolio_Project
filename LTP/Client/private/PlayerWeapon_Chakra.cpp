@@ -194,7 +194,7 @@ _int CPlayerWeapon_Chakra::Update_MovState(_double fDeltaTime)
 
 	m_fAnimSpeed = 2.f;
 
-	Set_LimLight_N_Emissive(_float4(1.f, 1.f, 0.2f, 1.f), 0.f);
+	Set_LimLight_N_Emissive(_float4(1.f, 1.f, 0.2f, 1.f), _float4(0));
 	return _int();
 }
 

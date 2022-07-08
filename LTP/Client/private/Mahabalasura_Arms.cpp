@@ -33,7 +33,7 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
 	}
 
-	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), 0);
+	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
 
 	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);
 

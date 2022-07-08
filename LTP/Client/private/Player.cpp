@@ -49,13 +49,16 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(true);
 
+
 	return S_OK;
 }
 
 _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
-	
+
+	// Check Player Key Input
+	bool keycheck = Check_PlayerKeyInput(fDeltaTime);
 
 	static bool TestBool = false;
 	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
@@ -64,19 +67,18 @@ _int CPlayer::Update(_double fDeltaTime)
 	{
 		static double Timer = 0;
 		Timer -= fDeltaTime;
-		if (Timer < 0) 
+		if (Timer < 0)
 		{
 			Timer = 0.1f;
-			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(),_float4(0.5f,0.8f,0.2f,1));
+			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.5f, 0.8f, 0.2f, 1));
 		}
 	}
 
-
 	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
 	{
-
-
+	
 	}
+
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
 
@@ -125,7 +127,13 @@ _int CPlayer::Update(_double fDeltaTime)
 	Update_AttachCamPos();
 
 
-	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
+	// CameraShake Test
+	if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
+	{
+		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f);
+		//m_pMainCamera->Start_CameraShaking_Thread(0.2f, 0.5f);
+	}
+	//
 	return _int();
 }
 
@@ -247,7 +255,7 @@ void CPlayer::Set_State_MainAttackStart(_double fDeltaTime)
 	if (WEAPON_CHAKRA == m_eCurWeapon || WEAPON_NONE == m_eCurWeapon)
 		return;
 
-	if(EWEAPON_TYPE::WEAPON_BOW != m_eCurWeapon)
+	if (EWEAPON_TYPE::WEAPON_BOW != m_eCurWeapon)
 		m_bPressedMainAttackKey = false;
 
 	if (true == m_bPressedPowerAttackKey)
@@ -428,7 +436,7 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 		}
 		//
 	}
-	
+
 	return _int();
 }
 
@@ -439,7 +447,7 @@ HRESULT CPlayer::Update_State_Attack(_double fDeltaTime)
 	case EWEAPON_TYPE::WEAPON_SPEAR:
 		if (true == m_bAttackEnd && true == m_bPressedPowerAttackKey)
 		{
-			m_bPlayPowerAttack = true; 
+			m_bPlayPowerAttack = true;
 		}
 
 		if (true == m_bAttackEnd)
@@ -663,8 +671,8 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
-	m_bPressedUltimateKey = false ;
+
+	m_bPressedUltimateKey = false;
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
 	{
@@ -674,7 +682,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 	{
 		m_bPressedDodgeKey = false;
 	}
-	
+
 	if (EWEAPON_TYPE::WEAPON_BOW == m_eCurWeapon)
 	{
 		if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
@@ -802,7 +810,7 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 
 
 void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
-{	
+{
 	if (MOVDIR_END == eMoveDir)
 		return;
 
@@ -882,8 +890,8 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 		break;
 	}
 	}
-	
-	if(false == m_bPlayTurnBackAnim)
+
+	if (false == m_bPlayTurnBackAnim)
 	{
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
@@ -982,7 +990,7 @@ void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 void CPlayer::Turn_Back(_double fDeltaTime)
 {
 	_float fRate = (_float)m_pModel->Get_PlayRate();
-	
+
 	if (0.f <= fRate && 0.384615384615384f >= fRate)
 	{
 		m_fAnimSpeed = 1.5f;
@@ -1002,8 +1010,8 @@ void CPlayer::Dodge(_double fDeltaTime)
 			m_fAnimSpeed = 4.f;
 		}
 		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && 0.148148f <= fAnimPlayRate && 0.5925925f >= fAnimPlayRate)
-		{	
-			_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn,  0.f, 2.0f, fAnimPlayRate - 0.148148f, 0.4444445f);
+		{
+			_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 2.0f, fAnimPlayRate - 0.148148f, 0.4444445f);
 			m_fAnimSpeed = 1.6f;
 
 			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
@@ -1020,8 +1028,8 @@ void CPlayer::Dodge(_double fDeltaTime)
 		Check_NextComboCommand();
 
 		// 2) Check to Next Combo Behavior
-		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.45f <= fAnimPlayRate && 0.52f >= fAnimPlayRate) || 
-			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_BOW && 0.51f <= fAnimPlayRate) || 
+		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.45f <= fAnimPlayRate && 0.52f >= fAnimPlayRate) ||
+			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_BOW && 0.51f <= fAnimPlayRate) ||
 			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_SWORD && 0.45f <= fAnimPlayRate && 0.52f >= fAnimPlayRate))
 		{
 			if (false == m_bPlayNextCombo)
@@ -1052,7 +1060,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			if (0.22f > fAnimPlayRate)			fMoveSpeed = 1.f;
 			else if (0.4f > fAnimPlayRate)		fMoveSpeed = 0.2f;
 			else if (0.66f >= fAnimPlayRate)	fMoveSpeed = 2.5f;
-			
+
 			//_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 2.0f, fAnimPlayRate - 0.12f, 0.58f);
 
 			m_pTransformCom->Move_Forward(fDeltaTime * fMoveSpeed);
@@ -1069,7 +1077,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 		Check_NextComboCommand();
 
 		// 2) Check to Next Combo Behavior
-		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.5f <= fAnimPlayRate && 0.65f >= fAnimPlayRate) || 
+		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.5f <= fAnimPlayRate && 0.65f >= fAnimPlayRate) ||
 			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_BOW && 0.65f <= fAnimPlayRate) ||
 			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_SWORD && 0.5f <= fAnimPlayRate && 0.65f >= fAnimPlayRate))
 		{
@@ -1113,7 +1121,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 		// Next Combo Check
 		Check_NextComboCommand();
 
-		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.5f <= fAnimPlayRate && 0.8f >= fAnimPlayRate) || 
+		if ((m_eCurWeapon == EWEAPON_TYPE::WEAPON_SPEAR && 0.5f <= fAnimPlayRate && 0.8f >= fAnimPlayRate) ||
 			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_BOW && 0.55f <= fAnimPlayRate) ||
 			(m_eCurWeapon == EWEAPON_TYPE::WEAPON_SWORD && 0.55f <= fAnimPlayRate && 0.8f >= fAnimPlayRate))
 		{
@@ -1212,7 +1220,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1:
 	{
 		if (fAnimPlayRate <= 0.6666f)
@@ -1251,7 +1259,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				if (true == Change_NextCombo())
 				{
 					m_bTrailSwitch = false;
-					m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Trail(false); 
+					m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Trail(false);
 				}
 			}
 			else if (0.85f <= fAnimPlayRate)
@@ -1276,7 +1284,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2:
 	{
 		// Turn On Weapon Trail
@@ -1348,7 +1356,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
 		// Turn On Weapon Trail
@@ -1410,7 +1418,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
 		// Turn On Weapon Trail
@@ -1473,7 +1481,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
 		// Turn On Weapon Trail
@@ -1537,7 +1545,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_0_RECORVERY:
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1_RECORVERY:
 	{
@@ -1548,10 +1556,10 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			m_bAttackEnd = true;
 		}
 	}
-		break;
+	break;
 
 
-		//// Power Attack ////
+	//// Power Attack ////
 	case SPEAR_ANIM_POWER_ATK_COMBO_0:
 	{
 		if (fAnimPlayRate <= 0.409f)
@@ -1607,7 +1615,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_1:
 	{
 		// Turn On Weapon Trail
@@ -1676,7 +1684,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2:
 	{
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
@@ -1731,7 +1739,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
 		m_fAnimSpeed = 1.f;
@@ -1779,7 +1787,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
 		// Turn On Weapon Trail
@@ -1840,7 +1848,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
@@ -1889,7 +1897,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		//
 	}
-		break;
+	break;
 	}
 	m_bMainAttacking = true;
 }
@@ -1927,7 +1935,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
 			break;
 		case BOWMAINATK_LOOP:
-			m_fAnimSpeed = 0.8f; 
+			m_fAnimSpeed = 0.8f;
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
@@ -2051,7 +2059,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				//
 
 			}
-			else if(0.3 < fAnimPlayRate)
+			else if (0.3 < fAnimPlayRate)
 			{
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 			}
@@ -2116,7 +2124,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			{
 				LookAt_MousePos();
 			}
-			
+
 			//
 		}
 		break;
@@ -2149,7 +2157,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					pBowArrow->Set_State_PowerShot_Combo_1(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 				}
 			}
-			else if(0.806f < fAnimPlayRate)
+			else if (0.806f < fAnimPlayRate)
 			{
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 				m_bActionSwitch = false;
@@ -2212,7 +2220,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			}
 			//
 		}
-			break;
+		break;
 		case BOW_ANIM_POWER_COMBO_2:
 		{
 			m_fAnimSpeed = 1.3f;
@@ -2347,7 +2355,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			}
 			//
 		}
-			break;
+		break;
 		case BOW_ANIM_POWER_COMBO_2_JUMP:
 		{
 			if (false == m_bActionSwitch && 0.12f <= fAnimPlayRate)
@@ -2469,7 +2477,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			}
 			////
 		}
-			break;
+		break;
 		}
 	}
 
@@ -2491,13 +2499,13 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		}
 		else if (false == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.339f)
 		{
-			m_bTrailSwitch = true; 
+			m_bTrailSwitch = true;
 			m_pPlayerWeapons[WEAPON_SWORD - 1]->Active_Trail(true);
 		}
 		////
 
 		m_fAnimSpeed = 1.5f;
-		
+
 		if (0.9f < fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.5f;
@@ -2565,7 +2573,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		////
 
 		m_fAnimSpeed = 1.f;
-		
+
 		if (0.16f >= fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.5f;
@@ -2854,7 +2862,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.454f)
 		{
 			m_pPlayerWeapons[WEAPON_SWORD - 1]->Active_Trail(false);
-		}  
+		}
 		else if (false == m_bTrailSwitch && m_pModel->Get_PlayRate() > 0.15f)
 		{
 			m_bTrailSwitch = true;
@@ -2921,7 +2929,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	case SWORD_ANIM_POWER_ATK_COMBO_0:
 	{
 		m_fAnimSpeed = 1.f;
-		
+
 		if (0.f < fAnimPlayRate && 0.277f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_QuadOut, 2.5f, 0.f, fAnimPlayRate, 0.277f);
@@ -2932,7 +2940,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 2.f;
 		}
-		else if (0.9f < fAnimPlayRate) 
+		else if (0.9f < fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.5f;
 			m_pModel->Set_BlockAnim(false);
@@ -3046,7 +3054,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_SmashMode(vPutOnPos);
 			m_bAnimChangeSwitch = true;
 		}
-		
+
 		if (fAnimPlayRate <= 0.425f)
 		{
 			m_fAnimSpeed = 1.5f;
@@ -3300,7 +3308,7 @@ void CPlayer::Javelin(_double fDeltaTime)
 		}
 		m_pTransformCom->Set_MoveSpeed(1.4f);
 		break;
-	case UTILITY_LOOP: 
+	case UTILITY_LOOP:
 		m_fAnimSpeed = 1.12f;
 
 		if (false == m_bPressedUtilityKey)
@@ -3438,19 +3446,19 @@ void CPlayer::Shelling(_double fDeltaTime)
 			pBowArrow->Set_IsDead();
 			return;
 		}
-		
+
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 		break;
 	case UTILITY_LOOP:
 		m_fCurTime_ShellingDelay += (_float)g_pGameInstance->Get_DeltaTime(TEXT("Player_Timer_ShellingShot_Delay"));
-		
+
 		m_fAnimSpeed = 1.f;
 
 		if (false == m_bPressedUtilityKey)
 		{
 			m_fCurTime_ShellingDelay = 0.f;
 			m_pModel->Change_AnimIndex(BOW_ANIM_UTILITY_SHOT, 0.1f);
-			m_eCurUtilityState = UTILITY_END; 
+			m_eCurUtilityState = UTILITY_END;
 
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			pBowArrow->Set_IsDead();
@@ -3471,7 +3479,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 		m_fAnimSpeed = 1.5f;
 		Shot_Shelling(fDeltaTime);
 		break;
-	case UTILITY_END: 
+	case UTILITY_END:
 		m_fAnimSpeed = 2.f;
 		if (0.9f <= m_pModel->Get_PlayRate())
 		{
@@ -3565,7 +3573,7 @@ void CPlayer::Shield_Mode(_double fDeltaTime)
 		m_fAnimSpeed = 1.f;
 		if (0.f < m_pModel->Get_PlayRate())
 		{
-			m_pTransformCom->Set_MoveSpeed(1.f); 
+			m_pTransformCom->Set_MoveSpeed(1.f);
 			m_eCurUtilityState = UTILITY_LOOP;
 		}
 		break;
@@ -3631,7 +3639,7 @@ void CPlayer::LookAtInputDir(_double fDeltaTime)
 	_Vector vMyNormalizedLook = m_pTransformCom->Get_MatrixState_Normalized(CTransform::TransformState::STATE_LOOK);
 
 	_float fDiagonalSpeed = 1.f;
-	_float fTurnRate = 0.9f; 
+	_float fTurnRate = 0.9f;
 	_float fMoveRate = (_float)fDeltaTime;
 
 	_Vector vMovDir;
@@ -3767,7 +3775,7 @@ void CPlayer::Set_InputDir(_int iAxis_F, _int iAxis_R, _double fDeltaTime)
 
 void CPlayer::Set_PlayerState(EPLAYER_STATE eState)
 {
-	/**	
+	/**
 	*		Player State enums
 	*		STATE_IDLE, STATE_MOV, STATE_COMBO_ACTION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	*/
@@ -3891,7 +3899,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	switch (m_eCurWeapon)
 	{
 	case EWEAPON_TYPE::WEAPON_SPEAR:
-		if (1 == m_iCurCombo)	
+		if (1 == m_iCurCombo)
 		{
 			if (false == m_bPlayPowerAttack)
 			{
@@ -3936,7 +3944,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 			}
 			else
 			{
-				if (true == bJumpAttack) 
+				if (true == bJumpAttack)
 					m_pModel->Change_AnimIndex(SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK, 0.2f, true);
 				else
 					m_pModel->Change_AnimIndex(SPEAR_ANIM_POWER_ATK_COMBO_2, 0.1f, true);
@@ -4032,6 +4040,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	}
 }
 
+
 void CPlayer::Check_NextComboCommand()
 {
 	if (true == m_bPressedPowerAttackKey)
@@ -4080,7 +4089,7 @@ void CPlayer::LookAt_MousePos()
 	POINT		ptMouse;
 	GetCursorPos(&ptMouse);
 	ScreenToClient(g_hWnd, &ptMouse);
-	
+
 	_uint		iViewportsNum = 0;
 	m_pDeviceContext->RSGetViewports(&iViewportsNum, NULL);
 
@@ -4096,9 +4105,9 @@ void CPlayer::LookAt_MousePos()
 
 	_Vector vecMousePos = XMLoadFloat4(&vMousePos);
 
-	
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
+
 	_Matrix		ProjMatrixInverse;
 	ProjMatrixInverse = pGameInstance->Get_Transform_Matrix(PLM_PROJ);
 	ProjMatrixInverse = XMMatrixInverse(nullptr, ProjMatrixInverse);
@@ -4179,7 +4188,7 @@ void CPlayer::LookAt_MousePos()
 
 _fVector CPlayer::Get_MousePos()
 {
-	
+
 	return _fVector();
 }
 
@@ -4194,7 +4203,7 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
-	
+
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -4215,7 +4224,7 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
 
-	
+
 	return S_OK;
 }
 
@@ -4367,7 +4376,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 				LookAtInputDir(fDeltatime);
 			}
 		}
-			break;
+		break;
 		case SPEAR_ANIM_MAIN_ATK_COMBO_0:
 		case SPEAR_ANIM_MAIN_ATK_COMBO_0_RECORVERY:
 		case SPEAR_ANIM_MAIN_ATK_COMBO_1:
@@ -4447,7 +4456,7 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 				}
 			}
 		}
-			break;
+		break;
 		}
 	}
 
@@ -4490,6 +4499,8 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
-	
 	Safe_Release(m_pMainCamera);
+
+
+
 }

@@ -462,6 +462,8 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging();
+
 	m_pGameInstance->Get_NowScene()->Free();
 
 #ifdef _DEBUG

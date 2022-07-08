@@ -86,25 +86,25 @@ _int CScene_Stage7::Change_to_NextScene()
 HRESULT CScene_Stage7::Ready_Light()
 {
 
-	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	//const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 
-	if (pLightDesc == nullptr)
-	{
+	//if (pLightDesc == nullptr)
+	//{
 
-		LIGHTDESC LightDesc;
+	//	LIGHTDESC LightDesc;
 
-		LightDesc.eLightType = tagLightDesc::TYPE_DIRECTIONAL;
-		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-		LightDesc.vAmbient = _float4(1.0f);
-		LightDesc.vSpecular = _float4(1);
-		LightDesc.vVector = DefalutSunPosition;
+	//	LightDesc.eLightType = tagLightDesc::TYPE_DIRECTIONAL;
+	//	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	//	LightDesc.vAmbient = _float4(1.0f);
+	//	LightDesc.vSpecular = _float4(1);
+	//	LightDesc.vVector = DefalutSunPosition;
 
-		g_pGameInstance->Add_Light(LightDesc);
-	}
-	else
-	{
-		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, DefalutSunPosition.XMVector());
-	}
+	//	g_pGameInstance->Add_Light(LightDesc);
+	//}
+	//else
+	//{
+	//	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, DefalutSunPosition.XMVector());
+	//}
 
 
 	return S_OK;
