@@ -279,40 +279,69 @@ HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 
 HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Bullet(_double dDeltaTime)
 {
+	//if (false == m_bOnceSwtich)
+	//{
+	//	_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//	_Vector vTarPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	//	vTempPos = XMVectorSetY(vTempPos, 0.f);
+	//	vTarPos = XMVectorSetY(vTarPos, 0.f);
+
+	//	_Vector vLook = vTarPos - vTempPos;
+
+	//	vLook = XMVector3Normalize(vLook);
+
+	//	_Vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+
+	//	_Vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_RIGHT, vLook * XMVectorGetZ(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)));
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_UP, -vRight *XMVectorGetX(m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT)));
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, -vUp * XMVectorGetY(m_pTransformCom->Get_MatrixScale(CTransform::STATE_UP)));
+
+	//	m_bOnceSwtich = true;
+
+
+	//	//위치 재지정
+	//	CTransform* Monster_Transform = static_cast<CTransform*>( static_cast<CGameObject*>(m_Monster_Texture_BulletDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
+	//	_Vector vTempLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - Monster_Transform->Get_MatrixState(CTransform::STATE_POS));
+
+	//	XMStoreFloat3(&m_fTempLook, vTempLook);
+
+
+	//	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_MeshEffectDesc);
+	//}
+
+	//m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fTempLook), m_Monster_Texture_BulletDesc.fSpeedPerSec, dDeltaTime);
+
+
+
 	if (false == m_bOnceSwtich)
 	{
-		_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		_Vector vTarPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+		CTransform* Monster_Transform = static_cast<CTransform*>(static_cast<CGameObject*>(m_Monster_Texture_BulletDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
 
-		vTempPos = XMVectorSetY(vTempPos, 0.f);
-		vTarPos = XMVectorSetY(vTarPos, 0.f);
-
-		_Vector vLook = vTarPos - vTempPos;
-
-		vLook = XMVector3Normalize(vLook);
-
-		_Vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
-
-		_Vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
-
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_RIGHT, vLook * XMVectorGetZ(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)));
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_UP, -vRight *XMVectorGetX(m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT)));
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, -vUp * XMVectorGetY(m_pTransformCom->Get_MatrixScale(CTransform::STATE_UP)));
-
-		m_bOnceSwtich = true;
-
-
-		//위치 재지정
-		CTransform* Monster_Transform = static_cast<CTransform*>( static_cast<CGameObject*>(m_Monster_Texture_BulletDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
-		_Vector vTempLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - Monster_Transform->Get_MatrixState(CTransform::STATE_POS));
-
-		XMStoreFloat3(&m_fTempLook, vTempLook);
-
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, Monster_Transform->Get_MatrixState(CTransform::STATE_LOOK));
 
 		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_MeshEffectDesc);
+
+		m_bOnceSwtich = true;
 	}
 
-	m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fTempLook), m_Monster_Texture_BulletDesc.fSpeedPerSec, dDeltaTime);
+	//m_fTempDis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+	//if (m_fTempDis <= 0.5)
+	//{
+	//	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), dDeltaTime);
+	//}
+	//m_pTransformCom->Turn_Dir()
+	if (m_dDeltaTime >= 0.21963)
+	{
+		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		m_pTransformCom->Turn_Dir(vTarget, 0.95f);
+	}
+
+	m_pTransformCom->Move_Forward(dDeltaTime);
+
 
 
 	return S_OK;

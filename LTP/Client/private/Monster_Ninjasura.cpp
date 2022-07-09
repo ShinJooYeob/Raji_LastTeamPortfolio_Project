@@ -165,10 +165,10 @@ HRESULT CMonster_Ninjasura::SetUp_Fight(_double dDeltaTime)
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 
-		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		//_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
-		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+		////m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
+		//m_pTransformCom->Turn_Dir(vTarget, 0.9f);
 	}
 
 
@@ -360,7 +360,7 @@ HRESULT CMonster_Ninjasura::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 19)
+	if (m_iOncePattern >= 22)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -482,7 +482,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_iMoveNumber = rand() % 5;
-
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate <= 0.1)
@@ -542,14 +542,22 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				default:
 					break;
 				}
-				////////////Motion Test
+			}
+			break;
+		}
+		case 11:
+		{
+			if (PlayRate <= 0.75)
+			{
+				m_MotionTrailOn = true;
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
 				m_MotionTrailTime += dDeltaTime;
-				if (m_MotionTrailTime > 0.05)
+				if (m_MotionTrailTime > 0.1)
 				{
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
 					m_MotionTrailTime = 0;
 				}
-				///////////////
 			}
 			break;
 		}
@@ -558,7 +566,38 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			if (PlayRate <= 0.20)
 			{
+				m_MotionTrailTime += dDeltaTime;
+				if (m_MotionTrailTime > 0.05)
+				{
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
+					m_MotionTrailTime = 0;
+				}
+
 				m_pTransformCom->Move_Forward(dDeltaTime * 10);
+			}
+			else {
+				m_MotionTrailOn = false;
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+					m_iAdjMovedIndex++;
+				}
+			}
+			break;
+		}
+		case 13:
+		{
+			if (PlayRate <= 0.83333)
+			{
+				m_MotionTrailOn = true;
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+				m_MotionTrailTime += dDeltaTime;
+				if (m_MotionTrailTime > 0.1)
+				{
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
+					m_MotionTrailTime = 0;
+				}
 			}
 			break;
 		}
@@ -567,7 +606,22 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			if (PlayRate <= 0.20)
 			{
+				m_MotionTrailTime += dDeltaTime;
+				if (m_MotionTrailTime > 0.05)
+				{
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
+					m_MotionTrailTime = 0;
+				}
+
 				m_pTransformCom->Move_Forward(dDeltaTime * 5);
+			}
+			else {
+				m_MotionTrailOn = false;
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+					m_iAdjMovedIndex++;
+				}
 			}
 			break;
 		}

@@ -202,12 +202,12 @@ HRESULT CMonster_Gadasura_Rage::PlayAnim(_double dDeltaTime)
 		_uint i = m_pModel->Get_NowAnimIndex();
 		switch (i)
 		{
-			//case 1:
-			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-			//	break;
-			//case 2:
-			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-			//	break;
+		case 14:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 15:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
 		case 11:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -263,10 +263,10 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-	//if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
-	//{
-	//	Special_Trigger(dDeltaTime);
-	//}
+	if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
+	{
+		Special_Trigger(dDeltaTime);
+	}
 	return S_OK;
 }
 
@@ -339,15 +339,19 @@ HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = true;
 		break;
 	case 16:
+		m_iOnceAnimNumber = 23; //TripleSmash
+		m_bComboAnimSwitch = true;
+		break;
+	case 17:
 		m_iOnceAnimNumber = 4; //Left Move
 		m_bComboAnimSwitch = false;
 		break;
-	case 17:
-		m_iOnceAnimNumber = 18; //Attack2
+	case 18:
+		m_iOnceAnimNumber = 22; //Taunt
 		m_bComboAnimSwitch = false;
 		break;
-	case 50:
-		m_iOnceAnimNumber = 22; //Taunt
+	case 19:
+		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = false;
 		break;
 	case 51:
@@ -365,7 +369,7 @@ HRESULT CMonster_Gadasura_Rage::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 18)
+	if (m_iOncePattern >= 20)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -420,15 +424,14 @@ HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 		m_iOncePattern = 51;
 	}
 
-
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 15)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 7)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
 		m_bIOnceAnimSwitch = true;
-		m_iOncePattern = 50;
+		m_iOncePattern = 12;
 	}
 
 
@@ -506,9 +509,12 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			break;
 		}
 		case 5:
-		{
-			if (PlayRate >= 0.3333 && PlayRate <= 0.5)
-				m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
+		{//속도 늦추는건 인
+			if (PlayRate >= 0.266666 && PlayRate <= 0.5)
+			{
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 1.8f, 0.8f, (_float)PlayRate - 0.266666f, 0.2334f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed);
+			}
 			break;
 		}
 		case 14:
@@ -568,7 +574,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.fScale = _float3(5.f, 5.f, 5.f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.75f);
+				Monster_BulletDesc.fPositioning = _float3(0.f, 0.f, 1.2f);
 
 
 				Monster_BulletDesc.Object = this;
@@ -664,13 +670,13 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 24:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 0.8);
+			m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
 
 			break;
 		}
 		case 27:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4347826)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0) //0.4347826
 			{
 
 				CGadasura_Rage_Hollogram::GADASURA_HOLLOGRAMDESC HollogramDesc;
@@ -685,7 +691,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 28:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4347826)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.7826)
 			{
 
 				CGadasura_Rage_Hollogram::GADASURA_HOLLOGRAMDESC HollogramDesc;

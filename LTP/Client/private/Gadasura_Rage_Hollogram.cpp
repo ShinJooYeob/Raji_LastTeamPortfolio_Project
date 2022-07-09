@@ -44,7 +44,7 @@ HRESULT CGadasura_Rage_Hollogram::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-	Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(0));
+	Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1,0.5f,1,1));
 
 	return S_OK;
 }

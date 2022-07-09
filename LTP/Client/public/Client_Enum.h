@@ -511,6 +511,7 @@ enum LAYERID
 	Layer_ClockBomb,
 
 	Layer_Monster,
+	Layer_Unique_Monster,
 	Layer_Monster_Weapon,
 	Layer_MonsterBullet,
 	Layer_MonsterBullet1,
@@ -620,6 +621,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_Monster:
 		return TEXT("Layer_Monster");
 		break;
+
+	case Layer_Unique_Monster:
+		return TEXT("Layer_Unique_Monster");
+
 	case Layer_Monster_Weapon:
 		return TEXT("Layer_Monster_Weapon");
 		break;

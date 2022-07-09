@@ -201,12 +201,12 @@ HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
 		_uint i = m_pModel->Get_NowAnimIndex();
 		switch (i)
 		{
-			//case 1:
-			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-			//	break;
-			//case 2:
-			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-			//	break;
+		case 14:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 15:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
 		case 11:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -271,6 +271,7 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -302,23 +303,47 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = true;
 		break;
 	case 7:
-		m_iOnceAnimNumber = 4; //Left Move
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 19; //smash Attack
+		m_bComboAnimSwitch = true;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = false;
 		break;
 	case 9:
+		m_iOnceAnimNumber = 4; //Left Move
+		m_bComboAnimSwitch = false;
+		break;
+	case 10:
+		m_iOnceAnimNumber = 25; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 11:
+		m_iOnceAnimNumber = 14; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 12:
+		m_iOnceAnimNumber = 15; //Rage Run
+		m_bComboAnimSwitch = true;
+		break;
+	case 13:
+		m_iOnceAnimNumber = 21; //Rage Run Attack
+		m_bComboAnimSwitch = true;
+		break;
+	case 14:
+		m_iOnceAnimNumber = 22; //Taunt
+		m_bComboAnimSwitch = false;
+		break;
+	case 15:
+		m_iOnceAnimNumber = 18; //Attack2
+		m_bComboAnimSwitch = false;
+		break;
+	case 16:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = true;
 		break;
-	case 10:
+	case 17:
 		m_iOnceAnimNumber = 5; //Back
-		m_bComboAnimSwitch = false;
-		break;
-	case 50:
-		m_iOnceAnimNumber = 22; //Taunt
 		m_bComboAnimSwitch = false;
 		break;
 	case 51:
@@ -336,9 +361,9 @@ HRESULT CMonster_Gadasura_Black::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 11)
+	if (m_iOncePattern >= 17)
 	{
-		m_iOncePattern = 3; //OncePattern Random
+		m_iOncePattern = 0; //OncePattern Random
 	}
 
 
@@ -350,7 +375,7 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_iInfinityAnimNumber = 0;
+		m_iInfinityAnimNumber = 24;
 		break;
 	case 1:
 		m_iInfinityAnimNumber = 24;
@@ -392,14 +417,14 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 	}
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 15)
+	if (m_fDistance > 10 && m_dSpecial_CoolTime > 20)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
 		m_bIOnceAnimSwitch = true;
-		m_iOncePattern = 50;
+		m_iOncePattern = 8;
 	}
 
 
@@ -538,7 +563,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.fScale = _float3(5.f, 5.f, 5.f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.75f);
+				Monster_BulletDesc.fPositioning = _float3(0.f, 0.f, 1.2f);
 
 
 				Monster_BulletDesc.Object = this;
@@ -569,7 +594,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 24:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 0.8);
+			m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
 
 			break;
 		}
