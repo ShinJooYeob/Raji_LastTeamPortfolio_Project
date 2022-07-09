@@ -87,19 +87,19 @@ public:
 
 	}PHYSXDESC_JOINT;
 
-	typedef struct Tag_PhysXDesc_JointHAIR
-	{
-		string				mActorBone;
-		string*				mBones = nullptr;
-		_uint				mLength = 0;
-		CModel*				mAttachModel = nullptr;
-		CGameObject*		mGameObject = nullptr;
+	//typedef struct Tag_PhysXDesc_JointHAIR
+	//{
+	//	string				mActorBone;
+	//	string*				mBones = nullptr;
+	//	_uint				mLength = 0;
+	//	CModel*				mAttachModel = nullptr;
+	//	CGameObject*		mGameObject = nullptr;
 
-		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
-		_float3				mScale = _float3::One();
-		_float				mSeparation = 2;
+	//	E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+	//	_float3				mScale = _float3::One();
+	//	_float				mSeparation = 2;
 
-	}PHYSXDESC_JOINT_HAIR;
+	//}PHYSXDESC_JOINT_HAIR;
 
 
 

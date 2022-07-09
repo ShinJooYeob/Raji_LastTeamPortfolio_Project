@@ -21,18 +21,13 @@ public:
 	virtual HRESULT Update_AfterSimulation()override;
 
 public:
-	const PHYSXDESC_JOINT_HAIR& Get_PhysXDescHAIR() const { return mPhysXDesc; }
+	const PHYSXDESC_JOINT& Get_PhysXDescHAIR() const { return mPhysXDesc; }
 
 
 public:
 	PxRigidDynamic* CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* CreateChain(vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* CreateChain(PxRigidActor* baseActor, vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-
-	PxRigidDynamic* CreateChain_Offset(PxRigidActor* baseActor, 
-		vector<PxRigidDynamic*>& listPxRig, vector<CHierarchyNode*>& hiervec, PxU32 length, const PxGeometry & g,
-		JointCreateFunction createJoint);
-
 	PxRigidDynamic* CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 
@@ -54,11 +49,10 @@ public:
 #endif // _DEBUG
 	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT desc);
 	HRESULT Set_NomalJoint(CTransform* trans,CGameObject* obj, _uint lent);
-	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT_HAIR desc);
 
 
 protected:
-	PHYSXDESC_JOINT_HAIR		mPhysXDesc;
+	PHYSXDESC_JOINT				mPhysXDesc;
 	CHierarchyNode*				mMainBone = nullptr;
 	CModel*						mAttachModel = nullptr;
 

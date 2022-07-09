@@ -87,12 +87,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 
 			_Sfloat4x4 DirMat = _Sfloat4x4::CreateTranslation(PXVEC3TOFLOAT3(DIr));
 
-
-
-
-
 			mVecHier[i]->Set_UpdateTransform(DirMat* mat);
-
 
 
 
@@ -359,10 +354,6 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 
 	if (desc.mAttachModel == nullptr || desc.mLength == 0 || desc.mBoneNames == nullptr || desc.mGameObject == nullptr)
 		return E_FAIL;
-
-	mAttachDesc.Initialize_AttachedDesc(desc.mGameObject, desc.mBoneNames[0].c_str(),
-		_float3(1, 1, 1), _float3(0, 0, 0), _float3(0, 0, -0));
-	//_float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, -.058f, -1.32f));
 
 	mAttachModel = desc.mAttachModel;
 
