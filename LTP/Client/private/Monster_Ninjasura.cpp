@@ -165,10 +165,10 @@ HRESULT CMonster_Ninjasura::SetUp_Fight(_double dDeltaTime)
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 
-		//_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-		////m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
-		//m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
+		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
 	}
 
 
@@ -194,6 +194,9 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 		//case 2:
 		//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 		//	break;
+		case 3:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
 		case 11:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -204,7 +207,7 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
 		case 21:
-			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.2f);
 			break;
 		default:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber,0.15f);
@@ -249,10 +252,11 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
-		m_iInfinityPattern = rand() % 7;
+		//m_iInfinityPattern = rand() % 7;
 
 
 		m_dInfinity_CoolTime = 0;
+		m_dOnceCoolTime += 10;
 	}
 
 	return S_OK;
@@ -263,8 +267,8 @@ HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 	switch (m_iOncePattern)
 	{
 	case 0:
-		m_iOnceAnimNumber = 19; //throw Knife
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 20;
+		m_bComboAnimSwitch = true;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 2; //Rush Ready
@@ -283,71 +287,71 @@ HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = false;
 		break;
 	case 5:
-		m_iOnceAnimNumber = 2; //Rush Ready
+		m_iOnceAnimNumber = 20;
 		m_bComboAnimSwitch = true;
 		break;
 	case 6:
-		m_iOnceAnimNumber = 3; //Rush start
+		m_iOnceAnimNumber = 2; //Rush Ready
 		m_bComboAnimSwitch = true;
 		break;
 	case 7:
-		m_iOnceAnimNumber = 15; //Spinning start
+		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
 		break;
 	case 8:
-		m_iOnceAnimNumber = 16; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 9:
-		m_iOnceAnimNumber = 17; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 10:
-		m_iOnceAnimNumber = 16; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 11:
-		m_iOnceAnimNumber = 18; //Spinning start
-		m_bComboAnimSwitch = false;
-		break;
-	case 12:
-		m_iOnceAnimNumber = 2; //Rush Ready
-		m_bComboAnimSwitch = true;
-		break;
-	case 13:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 14:
 		m_iOnceAnimNumber = 19; //throw Knife
 		m_bComboAnimSwitch = false;
 		break;
-	case 15:
+	case 9:
+		m_iOnceAnimNumber = 20;
+		m_bComboAnimSwitch = true;
+		break;
+	case 10:
 		m_iOnceAnimNumber = 2; //Rush Ready
 		m_bComboAnimSwitch = true;
 		break;
-	case 16:
+	case 11:
 		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
 		break;
+	case 12:
+		m_iOnceAnimNumber = 15; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 13:
+		m_iOnceAnimNumber = 16; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 14:
+		m_iOnceAnimNumber = 17; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 15:
+		m_iOnceAnimNumber = 16; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 16:
+		m_iOnceAnimNumber = 18; //Spinning start
+		m_bComboAnimSwitch = false;
+		break;
 	case 17:
-		m_iOnceAnimNumber = 13; //Attack2 Ready
+		m_iOnceAnimNumber = 20;
 		m_bComboAnimSwitch = true;
 		break;
 	case 18:
-		m_iOnceAnimNumber = 14; //Attack2 Fire
-		m_bComboAnimSwitch = false;
+		m_iOnceAnimNumber = 2; //Rush Ready
+		m_bComboAnimSwitch = true;
 		break;
 	case 19:
-		m_iOnceAnimNumber = 20; //Healing Start
+		m_iOnceAnimNumber = 3; //Rush start
 		m_bComboAnimSwitch = true;
 		break;
 	case 20:
-		m_iOnceAnimNumber = 21; //Healing~
+		m_iOnceAnimNumber = 13; //Attack2 Ready
 		m_bComboAnimSwitch = true;
 		break;
 	case 21:
-		m_iOnceAnimNumber = 22;//Healing End
+		m_iOnceAnimNumber = 14; //Attack2 Fire
 		m_bComboAnimSwitch = false;
 		break;
 	}
@@ -377,25 +381,25 @@ HRESULT CMonster_Ninjasura::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 1:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 2:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 3:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 4:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 5:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	case 6:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	default:
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 0;
 		break;
 	}
 
@@ -462,7 +466,9 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		m_iAdjMovedIndex = 0;
 
-		m_bLookAtOn = true;
+		m_bLookAtOn = false;
+
+		m_dAcceleration = 1;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
@@ -627,16 +633,34 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 16:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
 			break;
 		}
 		case 17:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
 			break;
 		}
 		case 19:
 		{
+			if (PlayRate > 0)
+			{
+				_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+				m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+			}
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.60714)
 			{
 
@@ -678,6 +702,16 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iAdjMovedIndex++;
 			}
 			break;
+		}
+		case 20:
+		{
+			if (PlayRate >= 0.35714 && PlayRate <= 0.76785)
+			{
+				m_bLookAtOn = true;
+			}
+			else {
+				m_bLookAtOn = false;
+			}
 		}
 		}
 

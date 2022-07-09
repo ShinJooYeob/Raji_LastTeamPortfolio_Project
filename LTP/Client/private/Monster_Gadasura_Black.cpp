@@ -503,8 +503,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 5:
 		{
-			if (PlayRate >= 0.3333 && PlayRate <= 0.5)
-				m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
+			if (PlayRate >= 0.266666 && PlayRate <= 0.5)
+			{
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 1.8f, 0.8f, (_float)PlayRate - 0.266666f, 0.2334f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed);
+			}
 			break;
 		}
 		case 14:

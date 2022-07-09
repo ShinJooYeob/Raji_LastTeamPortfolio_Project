@@ -59,6 +59,16 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+	/*
+	if (m_pModel->Get_NowAnimIndex() == 9 || m_pModel->Get_NowAnimIndex() == 10)
+	{
+	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration * 1.6452f, m_bIsOnScreen));
+	}
+	else
+	{
+	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	}
+	*/
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
@@ -195,7 +205,24 @@ HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
 	{
 		Once_AnimMotion(dDeltaTime);
 		_uint i = m_pModel->Get_NowAnimIndex();
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber,(i == 1 || i == 8 || i == 9 || i == 10)?0:0.15f); //1도 넣으면 좋을듯
+		switch (i)
+		{
+		case 1:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 8:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 9:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 10:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		default:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.15f); //1도 넣으면 좋을듯 // (i == 1 || i == 8 || i == 9 || i == 10) ? 0 :
+			break;
+		}
 	}
 	else
 	{
@@ -451,6 +478,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_bLookAtOn = true;
 
+		m_dAcceleration = 1;
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -488,7 +516,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 1:
 			if (PlayRate > 0)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime);
+				m_pTransformCom->Move_Forward(dDeltaTime * 0.7);
 			}
 			break;
 		case 11:

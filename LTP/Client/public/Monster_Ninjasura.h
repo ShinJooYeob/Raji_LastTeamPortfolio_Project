@@ -77,10 +77,6 @@ private:
 	_float				m_fDistance = 0;
 	_bool				m_bLookAtOn = true; //LookAt On/Off
 
-	_float3				m_TempLook;
-
-	_uint				m_iBoolOnce = 0;
-
 private: //MoveNumber
 	_uint				m_iMoveNumber = 0;
 
