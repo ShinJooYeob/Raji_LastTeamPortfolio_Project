@@ -1250,7 +1250,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
 	CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
-	CCollider_PhysX_Base::PHYSXDESC_JOINT createJoint;
 
 	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
 	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
@@ -1476,6 +1475,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 		// Joint Å×½ºÆ®
 		if (ImGui::Button("Joint_HairBoneSphere"))
 		{
+
+			 CCollider_PhysX_Base::PHYSXDESC_JOINT_HAIR  createJoint;
 			//	skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
 			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Joint_PhysX)));
@@ -1485,27 +1486,29 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			obj->Set_ColSetID(E_PHYTYPE_JOINT);
 			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
 
-			string mBoneNames[9] =
+			string mBoneNames[8] =
 			{
-				"skd_head","skd_hair01", 
+				"skd_hair01",
 				"skd_hair02", "skd_hair03",
 				"skd_hair04","skd_hair05", 
 				"skd_hair06",
 				"skd_hair07", "skd_hairEnd"
 			};
 
+			
 			CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 			CModel* objModel = (CModel*)obj->Get_Component(TAG_COM(Com_Model));
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
-			createJoint.mBoneNames = mBoneNames;
-			createJoint.mLength = 9;
+			createJoint.mActorBone = "skd_head";
+			createJoint.mBones = mBoneNames;
+			createJoint.mLength = 8;
 			createJoint.mGameObject = obj;
-			createJoint.eShapeType = E_GEOMAT_SPEHE;
-			createJoint.mScale = _Sfloat3::One*0.05f;
-			createJoint.mSeparation = 0.0001f;
+			createJoint.eShapeType = E_GEOMAT_BOX;
+			createJoint.mScale = _Sfloat3::One*0.5f;
+			createJoint.mSeparation = 1.0f;
 			createJoint.mAttachModel = objModel;
 
 			coljoint->Set_ColiiderDesc(createJoint);

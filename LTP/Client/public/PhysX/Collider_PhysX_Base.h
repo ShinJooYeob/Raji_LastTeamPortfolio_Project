@@ -87,6 +87,21 @@ public:
 
 	}PHYSXDESC_JOINT;
 
+	typedef struct Tag_PhysXDesc_JointHAIR
+	{
+		string				mActorBone;
+		string*				mBones = nullptr;
+		_uint				mLength = 0;
+		CModel*				mAttachModel = nullptr;
+		CGameObject*		mGameObject = nullptr;
+
+		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+		_float3				mScale = _float3::One();
+		_float				mSeparation = 2;
+
+	}PHYSXDESC_JOINT_HAIR;
+
+
 
 protected:
 	explicit CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);

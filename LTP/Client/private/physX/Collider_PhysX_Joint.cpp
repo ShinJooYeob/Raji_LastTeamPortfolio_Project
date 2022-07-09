@@ -49,53 +49,34 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 	if (mType == 0)
 	{
 
-		mVecActors[0]->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		((PxRigidDynamic*)mMain_Actor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
-		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
-		PxTransform trans = PxTransform(mPxMainMatrix4x4);
-		//PxTransform tt = mVecActors[0]->getGlobalPose();
-		trans.p += PxVec3(0, 1, 0);
-		mVecActors[0]->setGlobalPose(trans);
+		// mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+		// PxTransform trans = PxTransform(mPxMainMatrix4x4);
+		// PxTransform tt = mVecActors[0]->getGlobalPose();
 
-		for (_uint i = 1; i<mVecActors.size();++i)
+		_float4x4 ffffff = mMainBone->Get_CombinedMatrix();
+		PxTransform t = PxTransform(MAT4X4TOPXMAT(ffffff));
+		mMain_Actor->setGlobalPose(t);
+
+		//_Sfloat4x4 ffMat = _Sfloat4x4::Identity;
+		//memcpy((_float3*)(&ffMat.m[0][0]), &DEBUGVALUE1, sizeof(_float3));
+		//memcpy((_float3*)(&ffMat.m[1][0]), &DEBUGVALUE2, sizeof(_float3));
+		//memcpy((_float3*)(&ffMat.m[2][0]), &DEBUGVALUE3, sizeof(_float3));
+		//memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
+
+
+		// 매트릭스 곱하기
+		for (_uint i = 0; i < mVecActors.size(); ++i)
 		{
-			//if(i==0)
-			//	continue;;
-			PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
-		//	_Sfloat4x4 idy = _Sfloat4x4::Identity;
-			_fMatrix getPos = (PXMATTOMAT4x4(mat)).XMatrix();// *  mDebugMat.XMatrix();
-		//	mVecHier[i]->Set_UpdateTransform(idy);
-		}
 
-		_Sfloat4x4 ffMat = _Sfloat4x4::Identity;
-		memcpy((_float3*)(&ffMat.m[0][0]), &DEBUGVALUE1, sizeof(_float3));
-		memcpy((_float3*)(&ffMat.m[1][0]), &DEBUGVALUE2, sizeof(_float3));
-		memcpy((_float3*)(&ffMat.m[2][0]), &DEBUGVALUE3, sizeof(_float3));
-		memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
-
-		_Sfloat4x4 ffMat2 = _Sfloat4x4::Identity;
-
-		// 뼈위치만 업데이트
-		for (_uint i = 1; i < mVecActors.size(); ++i)
-		{
 			PxTransform Pxtrans = mVecActors[i]->getGlobalPose();
 			PxMat44 px4 = PxMat44(Pxtrans);
-			// _Sfloat4x4 mat = _Sfloat4x4::CreateFromQuaternion(*(_Squternion*)&Pxtrans.q);
-			// _Sfloat4x4 mat = _Sfloat4x4::CreateTranslation(*(_float3*)&Pxtrans.p);
-			//_Sfloat4x4 mMatSocket = mat * _Sfloat4x4(mVecHier[i]->Get_UpdatedMatrix());
-		//	PxTransform asd = mVecActors[i]->getCMassLocalPose();
 			_float4x4 mat = PXMATTOMAT4x4(px4);
 			mat = (mat.XMatrix() * mMainTransform->Get_InverseWorldMatrix())*
 				mAttachModel->Get_DefaiultPivotMat().InverseXMatrix()
 				* XMMatrixScaling(0.01f, 0.01f, 0.01f);
-		//	mat = mat.XMatrix();
 
-			//mMainTransform;
-			//mAttachModel->Get_DefaiultPivotMat();
-
-		//	_Sfloat4x4(mMainTransform->Get_WorldFloat4x4());
-		//	mMatSocket = (*mBoneMatrixPtr.pCombinedMatrix) * mSocketTransformMatrix * mSocketDESC.mTransform->GetWorldMatrix();
-		//	mVecBoneTestMat.push_back(mMatSocket);
 			mVecHier[i]->Set_UpdateTransform(mat.XMatrix());
 
 		}
@@ -168,7 +149,6 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	}
 
 	// #TEST Bone Test Code
-
 	//CHierarchyNode* hier1 = mVecHier[0];
 	//CHierarchyNode* hier2 = mVecHier[1];
 	//CHierarchyNode* hier3 = mVecHier[2];
@@ -178,8 +158,6 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//memcpy((_float3*)(&ffMat.m[1][0]), &DEBUGVALUE2, sizeof(_float3));
 	//memcpy((_float3*)(&ffMat.m[2][0]), &DEBUGVALUE3, sizeof(_float3));
 	//memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
-
-
 	//if (bTestflag == 0)
 	//{
 	////	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
@@ -215,7 +193,6 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//
 	//}
 	//int debig = 5;
-
 	//_uint size = mVecActors.size();
 	//for (int i =0; i<size;++i)
 	//{
@@ -223,61 +200,30 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
 	//	mVecHier[i]->Set_UpdateTransform(getPos);
 	//}
-
 	//	_float4x4 DMat1 = _Sfloat4x4::CreateTranslation(DEBUGVALUE1);
 //	_float4x4 DMat2 = _Sfloat4x4::CreateTranslation(DEBUGVALUE2);
 //	_float4x4 DMat3 = _Sfloat4x4::CreateTranslation(DEBUGVALUE3);
-
-
 	//	hier2->Set_UpdateTransform(XMLoadFloat4x4(&DMat2));
 	//	hier3->Set_UpdateTransform(XMLoadFloat4x4(&DMat3));
-
 	//	mPxMainTransform = mAttachDesc.Get_AttachObjectTransform();
-
 	//mPxMainTransform = mMainTransform;
-
 	//mPxTransform = PxTransform(*(PxVec3*)&Trans->Get_MatrixState_Float3(CTransform::STATE_POS));
-
 	//_float4x4 mat = mAttachDesc.Caculate_AttachedBoneMatrix();
 	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
-
 	// Pos
-	// #BUG 업데이트해도 같은 값이 나옴
 	//PxVec3 pxpos = mMain_Actor->getGlobalPose().p;
 	//
 	//mPxMainTransform = mMain_Actor->getGlobalPose();
 	//_float3 vec3 = *(_float3*)&mPxMainTransform.p;
 	//mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
-
 	// 애니메이션은 로테이션 영향을 받음
 //	_float4x4 DMat = _Sfloat4x4::CreateRotationX(DEBUGVALUE1.x);
-
 	//	_Sfloat4x4 DMat = _Sfloat4x4::CreateTranslation(DEBUGVALUE1);
 	//	_Sfloat4x4 DMat = _Sfloat4x4::CreateTranslation(DEBUGVALUE1);
-	//
-
 	//	_float3 pos = PXVEC3TOFLOAT3(pxpos);
 	//	_Sfloat4x4 matpos = _Sfloat4x4::CreateTranslation(pos);
-
 	//	PxMat44 mat = PxMat44(mMain_Actor->getGlobalPose());
 	//	_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-
-
-//	_uint size = mVecActors.size();
-//	for (int i =0; i<size;++i)
-//	{
-//	//	mMain_Actor->setGlobalPose(mPxMainTransform);
-//		// PxMat44(PxMat33(t.q), t.p); // 회전 적용하는 법
-//		/*mVecHier[i]->set*/
-//		PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
-//		_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
-//		mVecHier[i]->Set_UpdateTransform(getPos);
-//	}
-
-
-
-//	_float3 vec3 = *(_float3*)&mPxMainTransform.p;
-//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 
 	return S_OK;
 }
@@ -389,6 +335,57 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	return S_OK;
 }
 
+HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT_HAIR desc)
+{
+	//mType = 0;
+
+	// 충돌 모델 초기화
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_JOINT_HAIR));
+
+	if (desc.mAttachModel == nullptr || desc.mLength == 0 || desc.mBones == nullptr || desc.mGameObject == nullptr)
+		return E_FAIL;
+
+
+	// 위 정보로 콜라이더 초기화
+	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
+	if (mMain_Actor)
+		return E_FAIL;
+
+	mAttachModel = desc.mAttachModel;
+
+	_float3 scale = mPhysXDesc.mScale;
+	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
+
+
+	for (int i = 0; i < int(desc.mLength); ++i)
+	{
+		CHierarchyNode* findBone = desc.mAttachModel->Find_HierarchyNode(desc.mBones[i].c_str());
+		NULL_CHECK_BREAK(findBone);
+		mVecHier.push_back(findBone);
+	}
+
+	PxGeometry* gemo = nullptr;
+	gemo = Create_Geometry(mPhysXDesc.eShapeType, scale);
+	NULL_CHECK_BREAK(gemo);
+
+	mMainTransform = (CTransform*)desc.mGameObject->Get_Component(TAG_COM(Com_Transform));
+	mMainGameObject = desc.mGameObject;
+	mMainBone = desc.mAttachModel->Find_HierarchyNode(desc.mActorBone.c_str());
+
+	_float4x4 bonemat = mMainBone->Get_UpdatedMatrix();
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(bonemat);
+
+	// 기본 엑터를 생성후에 여기에 관절을 달아야한다.
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(PxTransform(mPxMainMatrix4x4), *gemo, 5.0f);
+	CreateChain_Offset(mMain_Actor, mVecActors, mVecHier,desc.mLength,*gemo, CreateHairSpherical);
+
+	NULL_CHECK_BREAK(mMain_Actor);
+	Safe_Delete(gemo);
+
+	return S_OK;
+}
+
+
 HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans,CGameObject* obj,  _uint length)
 {
 	// 충돌 모델 초기화
@@ -420,20 +417,20 @@ PxJoint * CCollider_PhysX_Joint::CreateLimitedSpherical(PxRigidActor * a0, const
 
 PxJoint * CCollider_PhysX_Joint::CreateHairSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
-	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, PxPi / 4));
-	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
-	j->setProjectionLinearTolerance(10.0f);
+//	PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+//	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, PxPi / 4));
+//	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+//	j->setProjectionLinearTolerance(10.0f);
 	
-	//PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	//j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
-	//j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
-	//j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
 
-	//j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-	//j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-	//j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-	//j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(10, 10, 10, true));
+	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(5, 5, 5, true));
 
 	return j;
 }
@@ -604,6 +601,40 @@ PxRigidDynamic * CCollider_PhysX_Joint::CreateChain(PxRigidActor* baseActor, vec
 	return nullptr;
 }
 
+PxRigidDynamic * CCollider_PhysX_Joint::CreateChain_Offset(PxRigidActor* baseActor, vector<PxRigidDynamic*>& listPxRig, vector<CHierarchyNode*>& hiervec, PxU32 length, const PxGeometry & g, JointCreateFunction createJoint)
+{
+	// 기본 오브젝트에 관절오브젝트를 연결해서 사용해야
+	// 관절 오브젝트 생성
+	listPxRig.clear();
+
+	PxTransform mainBone = baseActor->getGlobalPose();
+
+	PxRigidActor* prev = baseActor;
+
+	// 메인 관절 연결
+
+	// N개의 관절 연결
+	// 엑터에 
+	for (PxU32 i = 0; i < length; i++)
+	{
+		PxMat44		offsetMat = MAT4X4TOPXMAT(_float4x4(hiervec[i]->Get_OffsetMatrix()));
+		PxVec3		offset = mainBone.p - offsetMat.column3.getXYZ();
+		PxTransform localTm(offset);
+
+		PxRigidDynamic* current = PxCreateDynamic(*GetSingle(CPhysXMgr)->gPhysics, mainBone*localTm, g, *GetSingle(CPhysXMgr)->gMaterial, 1.0f);
+		(*createJoint)(prev, prev ? PxTransform(offset) : mainBone, current, PxTransform(-offset));
+
+		GetSingle(CPhysXMgr)->Get_PhysicsScene()->addActor(*current);
+		listPxRig.push_back(current);
+		prev = current;
+	//	localTm.p.x += separation;
+	}
+
+	return nullptr;
+}
+
+
+
 
 
 CCollider_PhysX_Joint * CCollider_PhysX_Joint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
@@ -634,6 +665,30 @@ CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 
 void CCollider_PhysX_Joint::Free()
 {
-	__super::Free();
 
+#ifdef _DEBUG
+	if (m_bIsClone == false)
+	{
+		Safe_Delete(m_pBasicEffect);
+		Safe_Delete(m_pBatch);
+	}
+
+	Safe_Release(m_pInputLayout);
+
+#endif // _DEBUG
+
+	if (m_bIsClone)
+	{
+
+		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+		if (scene)
+		{
+			for (auto& s : mVecActors)
+			{
+				s->release();
+			}
+			mMain_Actor->release();
+			mMain_Actor = nullptr;
+		}
+	}
 }
