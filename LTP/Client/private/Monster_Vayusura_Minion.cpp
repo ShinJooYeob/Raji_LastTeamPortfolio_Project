@@ -216,7 +216,7 @@ HRESULT CMonster_Vayusura_Minion::CoolTime_Manager(_double dDeltaTime)
 		if (m_fDistance > 7)
 		{
 			m_iInfinityPattern = 10;
-			m_TempPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+			//m_TempPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 			m_dAttackOn = true;
 		}
@@ -319,6 +319,9 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	case 10:
 		if (m_dAttackOn == true)
 		{
+			m_dSpeedTime = 0;
+
+			m_TempPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 			_float TempDis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat3(&m_TempPlayerPos));
 			if (TempDis > 1.f) //if (m_fDistance > 0.3f)
 			{
@@ -348,13 +351,35 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 			}
 		}
 		else {
+			//m_bLookAtOn = false;
+			//m_iInfinityAnimNumber = 2;
+			//m_pTransformCom->Move_Up(dDeltaTime * 0.6748241f);
+			//_float3 fLook = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+			//fLook.y = 0;
+
+			//m_pTransformCom->MovetoDir(fLook.Get_Nomalize(), dDeltaTime * 1.2345625f); //navi gogo
+
+			///////////test
+
 			m_bLookAtOn = false;
 			m_iInfinityAnimNumber = 2;
-			m_pTransformCom->Move_Up(dDeltaTime * 0.6748241f);
+
+			if (m_dSpeedTime <= 1)
+			{
+				m_dSpeedTime += dDeltaTime;
+			}
+			_float fSpeed = g_pGameInstance->Easing(TYPE_SinOut, 0.f, 1.f, m_dSpeedTime,1); // PlayRate - 0.266666 and 0.5 - 0.266666
+			m_pTransformCom->Move_Up(dDeltaTime * fSpeed);
+
+
 			_float3 fLook = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
 			fLook.y = 0;
 
-			m_pTransformCom->MovetoDir(fLook.Get_Nomalize(), dDeltaTime * 1.2345625f); //navi gogo
+			m_pTransformCom->MovetoDir(fLook.Get_Nomalize(), dDeltaTime * (1- fSpeed) * 4.f); //navi gogo
+
+			////////////////////////////////////
+
+
 			//m_pTransformCom->Move_Backward(dDeltaTime);
 		}
 		break;
