@@ -184,7 +184,18 @@ HRESULT CMonster_Tezabsura_Landmine::PlayAnim(_double dDeltaTime)
 	{
 		Once_AnimMotion(dDeltaTime);
 		_uint i = m_pModel->Get_NowAnimIndex();
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber, (i == 8 || i == 9 || i == 10 ) ? 0 : 0.15f); //1도 넣으면 좋을듯
+		switch (i)
+		{
+		case 1:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 9:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		default:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.15f); //1도 넣으면 좋을듯 // (i == 1 || i == 8 || i == 9 || i == 10) ? 0 :
+			break;
+		}
 	}
 	else
 	{
@@ -534,13 +545,13 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
 
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.95)
 	{
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
 
-		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
+		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
 			m_dOnceCoolTime = 0;
@@ -548,16 +559,43 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		}
 	}
 
-	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
+	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
 		switch (iNowAnimIndex)
 		{
 		case 1:
 			if (PlayRate > 0)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime);
+				m_pTransformCom->Move_Forward(dDeltaTime * 0.6524);
 			}
 			break;
+		case 8:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 9:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 10:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
 		case 11:
 			if (PlayRate >= 0.472222 && PlayRate <= 0.7222)
 			{
@@ -576,7 +614,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+				Monster_BulletDesc.fPositioning = _float3(0.f, 1.8f, 1.85f);
 
 
 				Monster_BulletDesc.Object = this;
@@ -585,6 +623,14 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "jaw_01";
+
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+				_float3 fTempLook = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+
+				fTempLook.y = fTempLook.y - 0.2f;
+
+				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(XMLoadFloat3(&fTempLook) * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f));
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
@@ -606,7 +652,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL;
 				Monster_BulletDesc.fSpeedPerSec = 10;
-				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
+				Monster_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
 				//Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);

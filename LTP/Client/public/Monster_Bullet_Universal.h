@@ -104,6 +104,11 @@ private:
 
 private:
 	_double				m_dBezierTime = 0;
+
+
+private:
+	_bool				m_bOnceSwtich = false;
+
 public:
 	static CMonster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
