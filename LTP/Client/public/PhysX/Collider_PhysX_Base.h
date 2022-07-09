@@ -104,6 +104,7 @@ public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 	HRESULT RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderDebugSphere(_float4x4 mat, _float scale, XMVECTORF32 color);
 	HRESULT RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
 #endif // _DEBUG
 

@@ -23,7 +23,7 @@ typedef struct tagAttachedDesc
 		m_DefaultBonePivot = XMMatrixScaling(vScale.x, vScale.y, vScale.z)
 			* XMMatrixRotationX(XMConvertToRadians(vRot.x))* XMMatrixRotationY(XMConvertToRadians(vRot.y))* XMMatrixRotationZ(XMConvertToRadians(vRot.z))
 			*XMMatrixTranslation(vPosition.x / vScale.x, vPosition.y/ vScale.y, vPosition.z /vScale.z);
-
+		m_vSize = vScale;
 		return S_OK;
 	}
 
@@ -68,12 +68,12 @@ public:
 		return pAttachingObjectTransform;
 	}
 
-private:
+public:
 	CTransform*			pAttachingObjectTransform = nullptr;
 	CModel*				pModel = nullptr;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
 	_float4x4			m_DefaultBonePivot;
-
+	_float3				m_vSize = _float3(0);
 }ATTACHEDESC;
 
 typedef struct tagFonts

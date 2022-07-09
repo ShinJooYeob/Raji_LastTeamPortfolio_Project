@@ -1454,6 +1454,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
 			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, false);
+			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eFORCE_STATIC_KINE_NOTIFICATIONS, false);
 		}
 		
 		IMGUITREE_END
@@ -1484,9 +1485,12 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			obj->Set_ColSetID(E_PHYTYPE_JOINT);
 			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
 
-			string mBoneNames[8] =
+			string mBoneNames[9] =
 			{
-				"skd_hair01", "skd_hair02", "skd_hair03","skd_hair04","skd_hair05", "skd_hair06",
+				"skd_head","skd_hair01", 
+				"skd_hair02", "skd_hair03",
+				"skd_hair04","skd_hair05", 
+				"skd_hair06",
 				"skd_hair07", "skd_hairEnd"
 			};
 
@@ -1497,11 +1501,11 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Scaled_All(Scale);
 
 			createJoint.mBoneNames = mBoneNames;
-			createJoint.mLength = 8;
+			createJoint.mLength = 9;
 			createJoint.mGameObject = obj;
 			createJoint.eShapeType = E_GEOMAT_SPEHE;
-			createJoint.mScale = _Sfloat3::One*0.3f;
-			createJoint.mSeparation = 0.3f;
+			createJoint.mScale = _Sfloat3::One*0.05f;
+			createJoint.mSeparation = 0.0001f;
 			createJoint.mAttachModel = objModel;
 
 			coljoint->Set_ColiiderDesc(createJoint);
@@ -1534,10 +1538,10 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	}
 	ImGui::Separator();
 
-	//	ImGui::DragFloat3("DebugValue1:", (float*)&GetSingle(CPhysXMgr)->gDebugValue1, 0.1f, -1000, 1000);
-	//	ImGui::DragFloat3("DebugValue2:", (float*)&GetSingle(CPhysXMgr)->gDebugValue2, 0.1f, -1000, 1000);
-	//	ImGui::DragFloat3("DebugValue3:", (float*)&GetSingle(CPhysXMgr)->gDebugValue3, 0.1f, -1000, 1000);
-	//	ImGui::DragFloat3("DebugValue4:", (float*)&GetSingle(CPhysXMgr)->gDebugValue4, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue1:", (float*)&GetSingle(CPhysXMgr)->gDebugValue1, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue2:", (float*)&GetSingle(CPhysXMgr)->gDebugValue2, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue3:", (float*)&GetSingle(CPhysXMgr)->gDebugValue3, 0.1f, -1000, 1000);
+	ImGui::DragFloat3("DebugValue4:", (float*)&GetSingle(CPhysXMgr)->gDebugValue4, 0.1f, -1000, 1000);
 
 
 

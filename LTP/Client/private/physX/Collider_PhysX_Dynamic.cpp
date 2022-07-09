@@ -30,6 +30,9 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 	
 
 	// 키나 외부 힘이 작용했을떄 예외처리
+	
+
+
 	//PxRigidDynamic* dynamic;
 	//dynamic->setKinematicTarget();
 	return S_OK;
@@ -40,6 +43,15 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
 	FAILED_CHECK(__super::Update_BeforeSimulation());
 
+
+	//if (mbKeyDown)
+	//	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS))));
+
+
+	//PxTransform trans =  mMain_Actor->getGlobalPose();
+	//_float4x4 f =_Sfloat4x4::CreateTranslation(PXVEC3TOFLOAT3(trans.p));
+	//mMainTransform->Set_Matrix(f);
+	 
 
 	//PxScene* scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
 	//PxSceneReadLock scopedLock(*scene);
@@ -139,7 +151,6 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
-
 	SetBaseFlag();	
 
 	return S_OK;
@@ -197,6 +208,8 @@ void CCollider_PhysX_Dynamic::SetBaseFlag()
 	force.fMaxLinearSpeed = 100;
 	force.fMaxAngleSpeed = 100;
 	Set_DynamicValue(force);
+
+
 }
 
 

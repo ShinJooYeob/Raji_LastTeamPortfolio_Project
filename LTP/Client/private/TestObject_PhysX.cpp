@@ -44,9 +44,8 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	// ÀÌµ¿ 
 	if (meModelID == CTestObject_PhysX::MODEL_PLAYER)
 	{
-		FAILED_CHECK(mCom_Model->Update_AnimationClip(fDeltaTime));
-	//	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
+		FAILED_CHECK(mCom_Model->Update_AnimationClip(fDeltaTime));
 		if (mCom_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_DYNAMIC )
 		{
 			if (KEYPRESS(DIK_W))
@@ -97,12 +96,12 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 			if (KEYPRESS(DIK_D))
 			{
 				isKey = true;
-				mCom_Transform->Move_Left(fDeltaTime);
+				mCom_Transform->Move_Right(fDeltaTime);
 			}
 			if (KEYPRESS(DIK_A))
 			{
 				isKey = true;
-				mCom_Transform->Move_Right(fDeltaTime);
+				mCom_Transform->Move_Left(fDeltaTime);
 			}
 
 			if (KEYPRESS(DIK_E))
@@ -116,7 +115,7 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 
 	if (mCom_ColliderBase)
 	{
-	//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
+		// ((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
 		mCom_ColliderBase->Update_BeforeSimulation();
 	}
 	return _int();

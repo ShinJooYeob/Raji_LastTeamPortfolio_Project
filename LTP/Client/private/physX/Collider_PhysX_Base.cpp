@@ -366,9 +366,18 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 	}
 
 	return S_OK;
-
-
 }
+
+HRESULT CCollider_PhysX_Base::RenderDebugSphere(_float4x4 mat,_float scale, XMVECTORF32 color)
+{
+	color = DirectX::Colors::Red;
+	PxTransform worldTrans = PxTransform(MAT4X4TOPXMAT(mat));
+	_float3 worldpos = PXVEC3TOFLOAT3(worldTrans.p);
+	BoundingSphere s = BoundingSphere(worldpos, scale);
+	DX::Draw(m_pBatch, s, color);
+	return S_OK;
+}
+
 HRESULT CCollider_PhysX_Base::RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color)
 {
 	PxTransform pxtrans = PxTransform(world);

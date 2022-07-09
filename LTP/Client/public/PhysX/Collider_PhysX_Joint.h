@@ -27,7 +27,10 @@ public:
 public:
 	PxRigidDynamic* CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* CreateChain(vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	PxRigidDynamic* CreateChain(PxRigidActor* baseActor, vector<PxRigidDynamic*>& listPxRig, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
 	PxRigidDynamic* CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+
 	PxRigidDynamic* Create_TestJoint(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 
 	static PxJoint* CreateNomalJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
@@ -51,6 +54,8 @@ public:
 protected:
 	PHYSXDESC_JOINT				mPhysXDesc;
 	CHierarchyNode*				mMainBone = nullptr;
+	CModel*						mAttachModel = nullptr;
+
 	vector<CHierarchyNode*>		mVecHier;
 	vector<PxRigidDynamic*>		mVecActors;
 //	vector<PxJoint*>			mVecJoints;
@@ -59,6 +64,8 @@ protected:
 	ATTACHEDESC					mAttachDesc;
 
 	_uint						mType = 0;
+
+	vector<_float4x4>			mVecBoneTestMat;
 
 	// DEBUG
 	
