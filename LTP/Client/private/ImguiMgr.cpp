@@ -1447,13 +1447,13 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
-			createDynamic.eShapeType = E_GEOMAT_SPEHE;
+			createDynamic.eShapeType = E_GEOMAT_CAPSULE;
 			createDynamic.mTrnasform = objTrans;
 			createDynamic.mGameObect = obj;
 			NULL_CHECK_BREAK(createDynamic.mTrnasform);
 			createDynamic.mVelocity = Force;
 			coldynamic->Set_ColiiderDesc(createDynamic);
-			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, true);
+			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, false);
 		}
 		
 		IMGUITREE_END
@@ -1473,54 +1473,43 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	{
 
 		// Joint Å×½ºÆ®
-		if (ImGui::Button("Joint_Sphere"))
+		if (ImGui::Button("Joint_HairBoneSphere"))
 		{
+			//	skd_hair01 skd_hair02 skd_hair03 skd_hair04 skd_hair05 skd_hair06 skd_hair07 skd_hairEnd
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
 			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Joint_PhysX)));
 			CTestObject_PhysX* obj =
 				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
 			obj->Set_ColSetID(E_PHYTYPE_JOINT);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
+
+			string mBoneNames[8] =
+			{
+				"skd_hair01", "skd_hair02", "skd_hair03","skd_hair04","skd_hair05", "skd_hair06",
+				"skd_hair07", "skd_hairEnd"
+			};
 
 			CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+			CModel* objModel = (CModel*)obj->Get_Component(TAG_COM(Com_Model));
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 
+			createJoint.mBoneNames = mBoneNames;
+			createJoint.mLength = 8;
+			createJoint.mGameObject = obj;
+			createJoint.eShapeType = E_GEOMAT_SPEHE;
+			createJoint.mScale = _Sfloat3::One*0.3f;
+			createJoint.mSeparation = 0.3f;
+			createJoint.mAttachModel = objModel;
 
-
-			//createJoint.mBoneName = "skd_hair01";
-			//createJoint.mTargetObject = obj;
-			//createJoint.mLength = 5;
-			//createJoint.eShapeType = E_GEOMAT_SPEHE;
-			//createJoint.mScale = _float3::One();
-			//createJoint.mSeparation = 4;
-
-			coljoint->Set_NomalJoint(objTrans, 5);
+			coljoint->Set_ColiiderDesc(createJoint);
 		}
 
-		if (ImGui::Button("Joint_TEST"))
-		{
-			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Joint_PhysX)));
-			CTestObject_PhysX* obj =
-				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
-			obj->Set_ColSetID(E_PHYTYPE_JOINT);
-
-			CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-			objTrans->Scaled_All(Scale);
-
-			CCollider_PhysX_Base::PHYSXDESC_JOINT_TEST createJointTest;
-			createJointTest.mLength = 5;
-			createJointTest.mSeparation = 2;
-			createJointTest.mScale = _float3(1, 1, 1);
-			createJointTest.mTrnasform = objTrans;
-
-			coljoint->Set_ColiiderDesc(createJointTest);
-		}
 		IMGUITREE_END
 	}
+	
 
 
 	ImGui::Separator();

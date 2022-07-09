@@ -66,6 +66,8 @@ public:
 	HRESULT Set_AddForce(PxVec3 foreVec, PxForceMode::Enum mode = PxForceMode::Enum::eFORCE);
 	HRESULT Clear_Force(PxForceMode::Enum mode = PxForceMode::Enum::eFORCE);
 
+	HRESULT	Move(PxVec3 velo);
+
 private:
 	void SetBaseFlag();
 

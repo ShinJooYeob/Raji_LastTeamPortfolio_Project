@@ -41,6 +41,23 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 	FAILED_CHECK(__super::Update_BeforeSimulation());
 
 
+	//PxScene* scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+	//PxSceneReadLock scopedLock(*scene);
+
+	//PxCapsuleController* capsuleCtrl = static_cast<PxCapsuleController*>(mController);
+
+	//PxReal r = capsuleCtrl->getRadius();
+	//PxReal dh = mStandingSize - mCrouchingSize - 2 * r;
+	//PxCapsuleGeometry geom(r, dh*.5f);
+
+	//PxExtendedVec3 position = mController->getPosition();
+	//PxVec3 pos((float)position.x, (float)position.y + mStandingSize * .5f + r, (float)position.z);
+	//PxQuat orientation(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f));
+
+	//PxOverlapBuffer hit;
+	//if (scene->overlap(geom, PxTransform(pos, orientation), hit, PxQueryFilterData(PxQueryFlag::eANY_HIT | PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC)))
+	//	return;
+
 
 
 	return S_OK;
@@ -150,6 +167,13 @@ HRESULT CCollider_PhysX_Dynamic::Set_AddForce(PxVec3 foreVec, PxForceMode::Enum 
 HRESULT CCollider_PhysX_Dynamic::Clear_Force(PxForceMode::Enum mode)
 {
 	mPxDynamicActor->clearForce();
+	return S_OK;
+}
+
+HRESULT CCollider_PhysX_Dynamic::Move(PxVec3 velo)
+{
+	mPxDynamicActor->wakeUp();
+	mPxDynamicActor->setLinearVelocity(velo);
 	return S_OK;
 }
 

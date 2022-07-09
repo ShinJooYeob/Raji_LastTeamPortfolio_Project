@@ -33,7 +33,7 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&mColDesc, pArg, sizeof(CColider_PX_Desc));
 
-	mOffsetVec = PxVec3(0, 2, 0);
+
 
 	return S_OK;
 }
@@ -43,41 +43,20 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 {
 	FAILED_CHECK(__super::Update_BeforeSimulation());
 
+	if (mMainTransform == nullptr)
+		return E_FAIL;
 
-	//if (mbUpdate_PhysX == false)
-	//	return S_OK;
-	//
-	//if (mMainTransform == nullptr)
-	//	return E_FAIL;
+	if (mType == 0)
+	{
+	//	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	//	PxTransform trans = PxTransform(mPxMainMatrix4x4);
+	//	mMain_Actor->setGlobalPose(trans);
 
-	//if (bTestflag == 0)
-	//{
-	////	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-	////	mPxMainTransform.p += mOffsetVec;
-	////	mMain_Actor->setGlobalPose(mPxMainTransform);
-	//}
-	//else if (bTestflag == 1)
-	//{
-	//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-	//	mMain_Actor->setGlobalPose(mPxMainTransform);
-	//}
-	//else if (bTestflag == 2)
-	//{
-	//	if (mbKeyUpdate)
-	//	{
-	//		mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-	//		mMain_Actor->setGlobalPose(mPxMainTransform);
-	//	}
-	//	else
-	//	{
-	//		mMain_Actor->setGlobalPose(mPxMainTransform);
+	}
 
-	//	//	mPxMainTransform = PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState_Float3(CTransform::STATE_POS)));
-
-	//	}
-
-
-	//}
+//	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+//	PxTransform trans = PxTransform(mPxMainMatrix4x4);
+//	mMain_Actor->setGlobalPose(trans);
 
 	return S_OK;
 }
@@ -85,7 +64,27 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 {
 	FAILED_CHECK(__super::Update_AfterSimulation());
+	if (mType == 0)
+	{
+		//	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
+		//	_float3 vec3 = PXVEC3TOFLOAT3(mPxMainMatrix4x4.getPosition());
+		//	mMainTransform->Set_MatrixState(CTransform::STATE_POS, vec3);
 
+
+		// 뼈에 업데이트
+		_uint size = mVecActors.size();
+		for (int i = 0; i < size; ++i)
+		{
+			//	mMain_Actor->setGlobalPose(mPxMainTransform);
+			// PxMat44(PxMat33(t.q), t.p); // 회전 적용하는 법
+
+			PxMat44 mat = PxMat44(mVecActors[i]->getGlobalPose());
+			_Sfloat4x4 getPos = PXMATTOMAT4x4(mat);
+			mVecHier[i]->Set_UpdateTransform(getPos);
+			int Debug = 5;
+		}
+		int Debug = 5;
+	}
 
 	// #TEST Bone Test Code
 
@@ -207,8 +206,34 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 
 HRESULT CCollider_PhysX_Joint::Render()
 {
-	FAILED_CHECK(__super::Render());
 
+	// 연결된 본 다 그리기
+
+	// 모양에 따라 드로잉
+	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
+	m_pDeviceContext->IASetInputLayout(m_pInputLayout);
+	m_pBasicEffect->SetWorld(XMMatrixIdentity());
+
+	m_pBasicEffect->SetView(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
+	m_pBasicEffect->SetProjection(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+	m_pBasicEffect->Apply(m_pDeviceContext);
+
+
+	m_pBatch->Begin();
+
+	PxShape* shapes[1];
+	XMVECTORF32 color = DirectX::Colors::Blue;
+
+	for (auto actor : mVecActors)
+	{
+		actor->getShapes(shapes, 1);
+		const PxShape& shape = *shapes[0];
+		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(shape, *actor));
+		const PxGeometryHolder h = shape.getGeometry();
+		RenderShape(h, shpaeWorld, color);
+	}
+
+	m_pBatch->End();
 
 
 	return S_OK;
@@ -219,10 +244,9 @@ HRESULT CCollider_PhysX_Joint::Render()
 
 HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 {
+	mType = 0;
+
 	// 충돌 모델 초기화
-
-	bTestflag = 0;
-
 //	mAttachDesc.Initialize_AttachedDesc(desc.mTargetObject, desc.mBoneName.c_str(), _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_JOINT));
 
@@ -234,9 +258,6 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
-	PxGeometry* gemo = nullptr;
-
-
 	_float3 scale = mPhysXDesc.mScale;
 	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
 
@@ -246,72 +267,28 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 		NULL_CHECK_BREAK(findBone);
 		mVecHier.push_back(findBone);
 	}
-	
 
-	switch (mPhysXDesc.eShapeType)
-	{
-	case Client::E_GEOMAT_BOX:
-		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-		break;
-	case Client::E_GEOMAT_SPEHE:
-		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-		break;
-	case Client::E_GEOMAT_CAPSULE:
-		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-		break;
-	case Client::E_GEOMAT_SHAPE:
-
-		break;
-	case Client::E_GEOMAT_VERTEX:
-		break;
-	case Client::E_GEOMAT_TRIANGLE:
-		break;
-	case Client::E_GEOMAT_END:
-		break;
-
-	default:
-		break;
-	}
+	PxGeometry* gemo = nullptr;
+	gemo = Create_Geometry(mPhysXDesc.eShapeType,scale);
 	NULL_CHECK_BREAK(gemo);
 	mMainTransform = (CTransform*)desc.mGameObject->Get_Component(TAG_COM(Com_Transform));
+	mMainGameObject = desc.mGameObject;
 
 	mMainBone = mVecHier.front();
 	_float4x4 bonemat;
 	XMStoreFloat4x4(&bonemat, mMainBone->Get_UpdatedMatrix());
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(bonemat);
-	mMain_Actor = CreateChain(mVecActors, PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateNomalJoint);
+//	mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateHairSpherical);
+	mMain_Actor = CreateChain(mVecActors, PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateHairSpherical);
+	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT_TEST desc)
-{
-	bTestflag = 2;
-	// 관절 테스트
-	if (mMain_Actor)
-		return E_FAIL;
-
-	PxGeometry* gemo = nullptr;
-	_float3 scale = desc.mScale;
-	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-//	gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-	gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-	NULL_CHECK_BREAK(gemo);
-
-	mMainTransform = desc.mTrnasform;
-	mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
-
-	mMain_Actor = Create_TestJoint(PxTransform(mPxMainMatrix4x4), desc.mLength, *gemo, desc.mSeparation, CreateNomalJoint);
-	Safe_Delete(gemo);
-	return S_OK;
-}
-
-HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans, _uint length)
+HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans,CGameObject* obj,  _uint length)
 {
 	// 충돌 모델 초기화
-
-	bTestflag = 1;
 
 	// 위 정보로 콜라이더 초기화
 	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
@@ -320,37 +297,12 @@ HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans, _uint length)
 
 	PxGeometry* gemo = nullptr;
 	_float3 scale = _float3(2.0f);
-	_float3 halfscale = _float3(scale.x*0.5f, scale.y*0.5f, scale.z*0.5f);
-
-	switch (mPhysXDesc.eShapeType)
-	{
-	case Client::E_GEOMAT_BOX:
-		gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(halfscale));
-		break;
-	case Client::E_GEOMAT_SPEHE:
-		gemo = NEW PxSphereGeometry(PxReal(halfscale.x));
-		break;
-	case Client::E_GEOMAT_CAPSULE:
-		gemo = NEW PxCapsuleGeometry(PxReal(halfscale.x), PxReal(halfscale.y));
-		break;
-	case Client::E_GEOMAT_SHAPE:
-
-		break;
-	case Client::E_GEOMAT_VERTEX:
-		break;
-	case Client::E_GEOMAT_TRIANGLE:
-		break;
-	case Client::E_GEOMAT_END:
-		break;
-
-	default:
-		break;
-	}
+	gemo = Create_Geometry(E_GEOMAT_SPEHE,scale);
 	NULL_CHECK_BREAK(gemo);
 	mMainTransform = trans;
-
+	mMainGameObject = obj;
 	mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
-	mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), 5, *gemo, 2, CreateLimitedSpherical);
+	mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), 5, *gemo, 2, CreateHairSpherical);
 	Safe_Delete(gemo);
 	return S_OK;
 }
@@ -362,6 +314,27 @@ PxJoint * CCollider_PhysX_Joint::CreateLimitedSpherical(PxRigidActor * a0, const
 	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
 	return j;
 }
+
+PxJoint * CCollider_PhysX_Joint::CreateHairSpherical(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
+{
+	//PxSphericalJoint* j = PxSphericalJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	//j->setLimitCone(PxJointLimitCone(0.1f, PxPi / 4, 0.1f));
+	//j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+	//j->setProjectionLinearTolerance(20.0f);
+	
+	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+
+	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(500, 100, 500, false));
+
+	return j;
+}
+
 
 PxJoint * CCollider_PhysX_Joint::CreateBreakableFixed(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
@@ -382,6 +355,7 @@ PxJoint * CCollider_PhysX_Joint::CreateDampedD6(PxRigidActor * a0, const PxTrans
 	return j;
 }
 
+
 PxJoint* CCollider_PhysX_Joint::CreateNomalJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
 {
 	//	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
@@ -392,7 +366,7 @@ PxJoint* CCollider_PhysX_Joint::CreateNomalJoint(PxRigidActor* a0, const PxTrans
 	j->setDriveGearRatio(0.5f);
 	j->setDriveVelocity(0.1f);
 	
-	j->setConstraintFlag(PxConstraintFlag::eBROKEN, false);
+	//j->setConstraintFlag(PxConstraintFlag::eBROKEN, false);
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECT_TO_ACTOR0, true);
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECT_TO_ACTOR1, true);
 	j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
@@ -402,7 +376,7 @@ PxJoint* CCollider_PhysX_Joint::CreateNomalJoint(PxRigidActor* a0, const PxTrans
 	j->setConstraintFlag(PxConstraintFlag::eIMPROVED_SLERP, false);
 	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
 	j->setConstraintFlag(PxConstraintFlag::eENABLE_EXTENDED_LIMITS, false);
-	j->setConstraintFlag(PxConstraintFlag::eGPU_COMPATIBLE, false);
+	//j->setConstraintFlag(PxConstraintFlag::eGPU_COMPATIBLE, false);
 
 
 	return j;
@@ -455,28 +429,28 @@ PxRigidDynamic* CCollider_PhysX_Joint::CreateChain(
 PxRigidDynamic* CCollider_PhysX_Joint::Create_TestJoint(const PxTransform& pxTrans, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
 {
 	// 관절 오브젝트 생성
-	mVecJoints.clear();
-	PxVec3 offset(separation / 2, 0, 0);
-	PxTransform localTm(offset);
-	PxRigidDynamic* prev = NULL;
-	PxRigidDynamic* first = NULL;
+	//mVecJoints.clear();
+	//PxVec3 offset(separation / 2, 0, 0);
+	//PxTransform localTm(offset);
+	//PxRigidDynamic* prev = NULL;
+	//PxRigidDynamic* first = NULL;
 
-	// N개의 관절 연결
-	// 엑터에 
-	for (PxU32 i = 0; i < length; i++)
-	{
-		PxRigidDynamic* current = PxCreateDynamic(*mPhysics, pxTrans*localTm, g, *mNormalMaterial, 1.0f);
-		PxJoint* j = (*createJoint)(prev, prev ? PxTransform(offset) : pxTrans, current, PxTransform(-offset));
-		mVecJoints.push_back(j);
+	//// N개의 관절 연결
+	//// 엑터에 
+	//for (PxU32 i = 0; i < length; i++)
+	//{
+	//	PxRigidDynamic* current = PxCreateDynamic(*mPhysics, pxTrans*localTm, g, *mNormalMaterial, 1.0f);
+	//	PxJoint* j = (*createJoint)(prev, prev ? PxTransform(offset) : pxTrans, current, PxTransform(-offset));
+	//	mVecJoints.push_back(j);
 
-		mScene->addActor(*current);
-		if (prev == nullptr)
-			first = current;
-		prev = current;
-		localTm.p.x += separation;
-	}
+	//	mScene->addActor(*current);
+	//	if (prev == nullptr)
+	//		first = current;
+	//	prev = current;
+	//	localTm.p.x += separation;
+	//}
 
-	return first;
+	return nullptr;
 }
 
 
@@ -502,6 +476,7 @@ PxRigidDynamic* CCollider_PhysX_Joint::CreateChain(vector<PxRigidDynamic*>& list
 
 	return prev;
 }
+
 
 
 CCollider_PhysX_Joint * CCollider_PhysX_Joint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)

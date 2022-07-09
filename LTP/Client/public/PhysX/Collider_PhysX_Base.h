@@ -87,17 +87,6 @@ public:
 
 	}PHYSXDESC_JOINT;
 
-	typedef struct Tag_PhysXDesc_Joint_TEST
-	{
-		CTransform*			mTrnasform = nullptr;
-		_uint				mLength = 0;
-		_float3				mScale = _float3::One();
-		_float				mSeparation = 2;
-		
-		// E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
-
-	}PHYSXDESC_JOINT_TEST;
-
 
 protected:
 	explicit CCollider_PhysX_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -141,15 +130,6 @@ public:
 
 	PxVec3			GetScale(PxMat44 mat);
 	PxTransform		GetPxTransform(PxMat44 mat);
-
-
-
-public:
-	//HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
-	//HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
-
-
 
 protected:
 	// 충돌체 메인 Actor
