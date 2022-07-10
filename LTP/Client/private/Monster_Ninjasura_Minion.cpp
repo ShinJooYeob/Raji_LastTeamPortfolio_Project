@@ -253,6 +253,9 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 
 		m_dInfinity_CoolTime = 0;
+
+		m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+		m_MotionTrailOn = false; //!@#!@#@!#!@#!@#!@#!@#@$@!Test 맞을떄 모션 트레일온 false 시켜야함
 	}
 
 	return S_OK;
@@ -278,67 +281,50 @@ HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 12; //Attack1 Fire
 		m_bComboAnimSwitch = false;
 		break;
-
-	//case 0:
-	//	m_iOnceAnimNumber = 2; //Rush Ready
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 1:
-	//	m_iOnceAnimNumber = 3; //Rush start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 2:
-	//	m_iOnceAnimNumber = 11; //Attack1 Ready
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 3:
-	//	m_iOnceAnimNumber = 12; //Attack1 Fire
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 4:
-	//	m_iOnceAnimNumber = 2; //Rush Ready
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 5:
-	//	m_iOnceAnimNumber = 3; //Rush start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 6:
-	//	m_iOnceAnimNumber = 15; //Spinning start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 7:
-	//	m_iOnceAnimNumber = 16; //Spinning start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 8:
-	//	m_iOnceAnimNumber = 17; //Spinning start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 9:
-	//	m_iOnceAnimNumber = 16; //Spinning start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 10:
-	//	m_iOnceAnimNumber = 18; //Spinning start
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 11:
-	//	m_iOnceAnimNumber = 2; //Rush Ready
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 12:
-	//	m_iOnceAnimNumber = 3; //Rush start
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 15:
-	//	m_iOnceAnimNumber = 13; //Attack2 Ready
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 16:
-	//	m_iOnceAnimNumber = 14; //Attack2 Fire
-	//	m_bComboAnimSwitch = false;
-	//	break;
+	case 4:
+		m_iOnceAnimNumber = 2; //Rush Ready
+		m_bComboAnimSwitch = true;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 3; //Rush start
+		m_bComboAnimSwitch = true;
+		break;
+	case 6:
+		m_iOnceAnimNumber = 15; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 7:
+		m_iOnceAnimNumber = 16; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 8:
+		m_iOnceAnimNumber = 17; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 9:
+		m_iOnceAnimNumber = 16; //Spinning start
+		m_bComboAnimSwitch = true;
+		break;
+	case 10:
+		m_iOnceAnimNumber = 18; //Spinning start
+		m_bComboAnimSwitch = false;
+		break;
+	case 11:
+		m_iOnceAnimNumber = 2; //Rush Ready
+		m_bComboAnimSwitch = true;
+		break;
+	case 12:
+		m_iOnceAnimNumber = 3; //Rush start
+		m_bComboAnimSwitch = true;
+		break;
+	case 15:
+		m_iOnceAnimNumber = 13; //Attack2 Ready
+		m_bComboAnimSwitch = true;
+		break;
+	case 16:
+		m_iOnceAnimNumber = 14; //Attack2 Fire
+		m_bComboAnimSwitch = false;
+		break;
 	}
 
 	return S_OK;
@@ -349,7 +335,7 @@ HRESULT CMonster_Ninjasura_Minion::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 4)
+	if (m_iOncePattern >= 17)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -430,7 +416,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Components()
 	////////////Motion Test
 	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
 
-	tMotionDesc.iNumTrailCount = 6;
+	tMotionDesc.iNumTrailCount = 1;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
 	tMotionDesc.iPassIndex = 5;
@@ -450,7 +436,6 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.95)
 	{
 		m_iAdjMovedIndex = 0;
-
 		m_bLookAtOn = false;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
@@ -470,82 +455,133 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_iMoveNumber = rand() % 5;
 				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
 				m_iAdjMovedIndex++;
 			}
 
-			if (PlayRate <= 0.1)
+			if (PlayRate > 0 && PlayRate <= 0.1)
 			{
-				m_MotionTrailTime += dDeltaTime;
-				if (m_MotionTrailTime > 0.03)
-				{
-					m_MotionTrailOn = true;
-					
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f),1.f);
-					m_MotionTrailTime = 0;
-				}
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+			}
+			else if (PlayRate >= 0.1 && PlayRate <= 0.8)
+			{
+				m_MotionTrailOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 5);
 			}
-			else {
-				m_bIOnceAnimSwitch = false;
-				m_MotionTrailOn = false;
+			else if (PlayRate >= 0.8)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 
 			break;
 		}
-		case 4:
+		case 11:
 		{
-			m_bLookAtOn = false;
-
-			if (m_iAdjMovedIndex == 0)
+			if (m_iAdjMovedIndex == 0 && PlayRate >0)
 			{
-				m_iMoveNumber = rand() % 2;
-
+				m_MotionTrailOn = true;
 				m_iAdjMovedIndex++;
-
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 			}
-			if (PlayRate <= 0.1)
+
+			if (PlayRate >= 0.85)
 			{
-
-				switch (m_iMoveNumber)
-				{
-				case 0:
-					m_pTransformCom->Move_Right(dDeltaTime * 4);
-					break;
-				case 1:
-					m_pTransformCom->Move_Left(dDeltaTime * 4);
-					break;
-				default:
-					break;
-				}
-				////////////Motion Test
-				m_MotionTrailTime += dDeltaTime;
-				if (m_MotionTrailTime > 0.05)
-				{
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
-					m_MotionTrailTime = 0;
-				}
-				///////////////
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
+
 			break;
 		}
 		case 12:
 		{
 			m_bLookAtOn = false;
-			if (PlayRate <= 0.20)
+			
+	
+			if (PlayRate>0 && PlayRate <= 0.4)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 10);
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_MotionTrailOn = false;
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+					m_iAdjMovedIndex++;
+				}
+				m_pTransformCom->Move_Forward(dDeltaTime * 5);
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			{
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+			
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+			
+			}
+			break;
+		}
+		case 13:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+				m_iAdjMovedIndex++;
+			}
+
+			if (PlayRate >= 0.66)
+			{
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 			break;
 		}
 		case 14:
 		{
 			m_bLookAtOn = false;
-			if (PlayRate <= 0.20)
+
+
+			if (PlayRate > 0 && PlayRate <= 0.4)
 			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_MotionTrailOn = false;
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+					m_iAdjMovedIndex++;
+				}
 				m_pTransformCom->Move_Forward(dDeltaTime * 5);
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			{
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+
 			}
 			break;
 		}
