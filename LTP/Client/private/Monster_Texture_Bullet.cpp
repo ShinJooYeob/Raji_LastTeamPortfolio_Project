@@ -322,7 +322,7 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Bullet(_double dDeltaTime)
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, Monster_Transform->Get_MatrixState(CTransform::STATE_LOOK));
 
-		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_MeshEffectDesc);
+		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE7, m_MeshEffectDesc);
 
 		m_bOnceSwtich = true;
 	}

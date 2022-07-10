@@ -278,50 +278,67 @@ HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 12; //Attack1 Fire
 		m_bComboAnimSwitch = false;
 		break;
-	case 4:
-		m_iOnceAnimNumber = 2; //Rush Ready
-		m_bComboAnimSwitch = true;
-		break;
-	case 5:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 6:
-		m_iOnceAnimNumber = 15; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 7:
-		m_iOnceAnimNumber = 16; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 8:
-		m_iOnceAnimNumber = 17; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 9:
-		m_iOnceAnimNumber = 16; //Spinning start
-		m_bComboAnimSwitch = true;
-		break;
-	case 10:
-		m_iOnceAnimNumber = 18; //Spinning start
-		m_bComboAnimSwitch = false;
-		break;
-	case 11:
-		m_iOnceAnimNumber = 2; //Rush Ready
-		m_bComboAnimSwitch = true;
-		break;
-	case 12:
-		m_iOnceAnimNumber = 3; //Rush start
-		m_bComboAnimSwitch = true;
-		break;
-	case 15:
-		m_iOnceAnimNumber = 13; //Attack2 Ready
-		m_bComboAnimSwitch = true;
-		break;
-	case 16:
-		m_iOnceAnimNumber = 14; //Attack2 Fire
-		m_bComboAnimSwitch = false;
-		break;
+
+	//case 0:
+	//	m_iOnceAnimNumber = 2; //Rush Ready
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 1:
+	//	m_iOnceAnimNumber = 3; //Rush start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 2:
+	//	m_iOnceAnimNumber = 11; //Attack1 Ready
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 3:
+	//	m_iOnceAnimNumber = 12; //Attack1 Fire
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 4:
+	//	m_iOnceAnimNumber = 2; //Rush Ready
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 5:
+	//	m_iOnceAnimNumber = 3; //Rush start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 6:
+	//	m_iOnceAnimNumber = 15; //Spinning start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 7:
+	//	m_iOnceAnimNumber = 16; //Spinning start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 8:
+	//	m_iOnceAnimNumber = 17; //Spinning start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 9:
+	//	m_iOnceAnimNumber = 16; //Spinning start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 10:
+	//	m_iOnceAnimNumber = 18; //Spinning start
+	//	m_bComboAnimSwitch = false;
+	//	break;
+	//case 11:
+	//	m_iOnceAnimNumber = 2; //Rush Ready
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 12:
+	//	m_iOnceAnimNumber = 3; //Rush start
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 15:
+	//	m_iOnceAnimNumber = 13; //Attack2 Ready
+	//	m_bComboAnimSwitch = true;
+	//	break;
+	//case 16:
+	//	m_iOnceAnimNumber = 14; //Attack2 Fire
+	//	m_bComboAnimSwitch = false;
+	//	break;
 	}
 
 	return S_OK;
@@ -332,7 +349,7 @@ HRESULT CMonster_Ninjasura_Minion::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 19)
+	if (m_iOncePattern >= 4)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -434,7 +451,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		m_iAdjMovedIndex = 0;
 
-		m_bLookAtOn = true;
+		m_bLookAtOn = false;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
@@ -533,12 +550,27 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 16:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
+			
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
 			break;
 		}
 		case 17:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
 			break;
 		}
 		case 19:

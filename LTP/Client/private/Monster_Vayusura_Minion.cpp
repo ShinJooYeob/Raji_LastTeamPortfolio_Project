@@ -262,7 +262,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 6)
 		{
 			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(0.f, 1.f, 0.f, 0.f)), dDeltaTime * 0.5);
 
@@ -282,7 +282,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 		m_bLookAtOn = true;
 		break;
 	case 2:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 6 ||
 			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
 		{
 			m_bLookAtOn = false;
@@ -300,7 +300,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 		}
 		break;
 	case 3:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 6 ||
 			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
 		{
 			m_bLookAtOn = false;
