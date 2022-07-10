@@ -471,9 +471,10 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_iMoveNumber = rand() % 5;
-
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 				m_iAdjMovedIndex++;
 			}
+
 			if (PlayRate <= 0.1)
 			{
 				m_MotionTrailTime += dDeltaTime;

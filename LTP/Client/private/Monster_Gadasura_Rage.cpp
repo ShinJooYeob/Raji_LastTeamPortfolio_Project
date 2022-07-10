@@ -481,6 +481,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
+		m_dAcceleration = 1;
 
 		m_bLookAtOn = true;
 
@@ -541,6 +542,15 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			//메쉬 인스턴스 사용하자
 			m_bLookAtOn = false;
+
+			if (PlayRate > 0 && PlayRate <= 0.539215)
+			{
+				m_dAcceleration = 2.5;
+			}
+			else {
+				m_dAcceleration = 1;
+			}
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.539215)
 			{
 				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;

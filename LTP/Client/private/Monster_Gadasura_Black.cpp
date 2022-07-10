@@ -271,7 +271,7 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
-
+	m_iOncePattern = 2;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -417,14 +417,14 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 	}
 
 
-	if (m_fDistance > 10 && m_dSpecial_CoolTime > 20)
+	if (m_fDistance > 10 && m_dSpecial_CoolTime > 10)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
 		m_bIOnceAnimSwitch = true;
-		m_iOncePattern = 8;
+		m_iOncePattern = 3;
 	}
 
 
@@ -474,6 +474,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
+		m_dAcceleration = 1;
 
 		m_bLookAtOn = true;
 
@@ -533,6 +534,15 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 19:
 		{
 			m_bLookAtOn = false;
+
+			if (PlayRate > 0 && PlayRate <= 0.539215)
+			{
+				m_dAcceleration = 2.5;
+			}
+			else {
+				m_dAcceleration = 1;
+			}
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.539215)
 			{
 				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
