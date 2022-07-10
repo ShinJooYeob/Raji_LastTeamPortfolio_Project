@@ -74,28 +74,31 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 		memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
 
 		// 뼈위치만 업데이트
+		//PxVec3 APos = mVecActors[1]->getGlobalPose().p;
+		//PxVec3 BPos = mVecActors[0]->getGlobalPose().p;
+		//PxVec3 DIr = APos - BPos;
+		//DIr = DIr.getNormalized();
 		for (_uint i = 1; i < mVecActors.size(); ++i)
 		{
-
 			_Sfloat4x4 mat = mVecHier[i]->Get_UpdatedMatrix();
-
 			PxVec3 APos = mVecActors[i - 1]->getGlobalPose().p;
 			PxVec3 BPos = mVecActors[i]->getGlobalPose().p;
-
 			PxVec3 DIr = APos - BPos;
-			DIr = DIr.getNormalized() * ffMat._11;
+			DIr *= ffMat._11;
 
 			_Sfloat4x4 DirMat = _Sfloat4x4::CreateTranslation(PXVEC3TOFLOAT3(DIr));
-
 			mVecHier[i]->Set_UpdateTransform(DirMat* mat);
 
 
 
 			// 로컬위치 보내기
+			//PxTransform trans = mVecActors[i]->getGlobalPose();
+			//PxMat44 px4 = PxMat44(trans);
 			//_float4x4 mat = PXMATTOMAT4x4(px4);
 			//mat = (mat.XMatrix() * mMainTransform->Get_InverseWorldMatrix())*
 			//	mAttachModel->Get_DefaiultPivotMat().InverseXMatrix()
 			//	* XMMatrixScaling(0.01f, 0.01f, 0.01f);
+			//mVecHier[i]->Set_UpdateTransform(mat.XMatrix());
 
 
 			//mMainTransform;
@@ -303,8 +306,6 @@ HRESULT CCollider_PhysX_Joint::Render()
 	m_pDeviceContext->IASetInputLayout(m_pInputLayout);
 	m_pBasicEffect->SetWorld(XMMatrixIdentity());
 
-
-
 	//	m_pBasicEffect->SetWorld(mDebugMat.XMatrix());
 	m_pBasicEffect->SetView(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
 	m_pBasicEffect->SetProjection(GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
@@ -373,19 +374,19 @@ HRESULT CCollider_PhysX_Joint::Set_ColiiderDesc(PHYSXDESC_JOINT desc)
 	}
 
 	PxGeometry* gemo = nullptr;
-	gemo = Create_Geometry(mPhysXDesc.eShapeType, scale);
+	gemo = Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_SPEHE, scale);
 	NULL_CHECK_BREAK(gemo);
 	mMainTransform = (CTransform*)desc.mGameObject->Get_Component(TAG_COM(Com_Transform));
 	mMainGameObject = desc.mGameObject;
 
 	mMainBone = mVecHier.front();
-	_float4x4 bonemat = mMainTransform->Get_WorldMatrix() * mMainBone->Get_OffsetMatrix().XMatrix();
+	_float4x4 bonemat = mMainTransform->Get_WorldMatrix() * mMainBone->Get_OffsetMatrix().TransposeXMatrix();
 	//	XMStoreFloat4x4(&bonemat, mMainBone->Get_OffsetMatrix());
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(bonemat);
 
 	// 기본 엑터를 생성후에 여기에 관절을 달아야한다.
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(PxTransform(mPxMainMatrix4x4), *gemo, 1.0f);
-	CreateChain(mMain_Actor, mVecActors, PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateHairSpherical);
+	CreateChain(mMain_Actor, mVecActors, PxTransform(mPxMainMatrix4x4), mPhysXDesc.mLength, *gemo, mPhysXDesc.mSeparation, CreateDampedD6);
 
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
@@ -399,18 +400,18 @@ HRESULT CCollider_PhysX_Joint::Set_NomalJoint(CTransform* trans, CGameObject* ob
 
 	// 위 정보로 콜라이더 초기화
 	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
-	if (mMain_Actor)
-		return E_FAIL;
+	//if (mMain_Actor)
+	//	return E_FAIL;
 
-	PxGeometry* gemo = nullptr;
-	_float3 scale = _float3(2.0f);
-	gemo = Create_Geometry(E_GEOMAT_SPEHE, scale);
-	NULL_CHECK_BREAK(gemo);
-	mMainTransform = trans;
-	mMainGameObject = obj;
-	mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
-	mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), 5, *gemo, 2, CreateHairSpherical);
-	Safe_Delete(gemo);
+	//PxGeometry* gemo = nullptr;
+	//_float3 scale = _float3(2.0f);
+	//gemo = Create_Geometry(E_GEOMAT_SPEHE, scale);
+	//NULL_CHECK_BREAK(gemo);
+	//mMainTransform = trans;
+	//mMainGameObject = obj;
+	//mPxMainMatrix4x4 = PxTransform(MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4()));
+	//mMain_Actor = CreateChain(PxTransform(mPxMainMatrix4x4), 5, *gemo, 2, CreateHairSpherical);
+	//Safe_Delete(gemo);
 	return S_OK;
 }
 
@@ -430,14 +431,19 @@ PxJoint * CCollider_PhysX_Joint::CreateHairSpherical(PxRigidActor * a0, const Px
 	//j->setProjectionLinearTolerance(10.0f);
 
 	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+	//j->setProjectionAngularTolerance(PxPi / 4);
+	//j->setProjectionLinearTolerance(0.5f);
+	//
 
-	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(10, 10, 10, true));
+	//j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+	//j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(5, 5, 5, false));
+	//j->setDistanceLimit(PxJointLinearLimit(1.0f, PxSpring(1,1)));
+
 
 	return j;
 }
@@ -589,15 +595,18 @@ PxRigidDynamic * CCollider_PhysX_Joint::CreateChain(PxRigidActor* baseActor, vec
 	// 기본 오브젝트에 관절오브젝트를 연결해서 사용해야
 	// 관절 오브젝트 생성
 	listPxRig.clear();
-	PxVec3 offset(-2 / separation, 0, 0);
+	PxVec3 offset(0.1f, 0, 0);
 	PxTransform localTm(offset);
 	PxRigidActor* prev = baseActor;
+
+	((PxRigidDynamic*)baseActor)->setMass(0);
 
 	// N개의 관절 연결
 	// 엑터에 
 	for (PxU32 i = 0; i < length; i++)
 	{
-		PxRigidDynamic* current = PxCreateDynamic(*GetSingle(CPhysXMgr)->gPhysics, t*localTm, g, *GetSingle(CPhysXMgr)->gMaterial, 1.0f);
+		PxRigidDynamic* current = PxCreateDynamic(*GetSingle(CPhysXMgr)->gPhysics, t, g, *GetSingle(CPhysXMgr)->gMaterial, 10000);
+	//	current->setMass(0);		
 		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
 		GetSingle(CPhysXMgr)->Get_PhysicsScene()->addActor(*current);
 		listPxRig.push_back(current);

@@ -1507,8 +1507,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createJoint.mLength = 9;
 			createJoint.mGameObject = obj;
 			createJoint.eShapeType = E_GEOMAT_BOX;
-			createJoint.mScale = _Sfloat3::One*0.5f;
-			createJoint.mSeparation = 0.5f;
+			createJoint.mScale = _Sfloat3::One*0.1f;
+			createJoint.mSeparation = 0.3f;
 			createJoint.mAttachModel = objModel;
 
 			coljoint->Set_ColiiderDesc(createJoint);
