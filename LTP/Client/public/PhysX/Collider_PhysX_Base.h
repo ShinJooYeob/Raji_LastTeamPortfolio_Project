@@ -173,6 +173,8 @@ protected:
 	BasicEffect*									m_pBasicEffect = nullptr;
 	ID3D11InputLayout*								m_pInputLayout = nullptr;
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = nullptr;
+	XMVECTORF32 mRenderColor = DirectX::Colors::Black;
+
 #endif // _DEBUG
 
 public:

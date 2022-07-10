@@ -140,7 +140,9 @@ public:
 
 public:
 	HRESULT	CreateDemoMap();	
-	HRESULT	CreateDemoMap_StaticBox(PxTransform px,PxVec3 scale, _bool trigger = false);
+	HRESULT	CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool trigger = false);
+	HRESULT	CreateDemoMap_StaticSphere(PxTransform px, PxVec3 scale, _bool trigger = false);
+	
 //	HRESULT Add_TriggerMsg(const PxTriggerPair& msg);
 
 public:

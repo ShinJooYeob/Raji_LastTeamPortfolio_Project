@@ -292,13 +292,12 @@ HRESULT CCollider_PhysX_Base::Render()
 	mMain_Actor->getShapes(shapes, numShapes);
 
 	// 모양 마다 그려준다.
-	XMVECTORF32 color = DirectX::Colors::Cyan;
 
 	for (PxU32 j = 0; j < numShapes; j++)
 	{
 		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *mMain_Actor));
 		const PxGeometryHolder h = shapes[j]->getGeometry();
-		RenderShape(h, shpaeWorld, color);
+		RenderShape(h, shpaeWorld, mRenderColor);
 	}
 	m_pBatch->End();
 

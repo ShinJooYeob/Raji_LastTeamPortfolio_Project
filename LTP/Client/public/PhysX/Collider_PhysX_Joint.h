@@ -58,14 +58,14 @@ protected:
 
 	vector<CHierarchyNode*>		mVecHier;
 	vector<PxRigidDynamic*>		mVecActors;
-//	vector<PxJoint*>			mVecJoints;
+	static vector<PxJoint*>			mVecJoints;
 
 	PxVec3						mOffsetVec;
 	ATTACHEDESC					mAttachDesc;
 
 	_uint						mType = 0;
 
-	vector<_float4x4>			mVecBoneTestMat;
+//	vector<_float4x4>			mVecBoneTestMat;
 
 	// DEBUG
 	

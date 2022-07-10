@@ -16,6 +16,23 @@ public:
 		E_STATIC_END,
 	};
 
+	//enum E_STATITRIGGERID
+	//{
+	//	E_STATITRIGGERID_0,
+	//	E_STATITRIGGERID_1,
+	//	E_STATITRIGGERID_2,
+	//	E_STATITRIGGERID_3,
+	//	E_STATITRIGGERID_END,
+	//};
+
+	//enum E_STATICID
+	//{
+	//	E_STATICID_STATIC,
+	//	E_STATICID_TRIGGER,
+	//	E_STATICID_END,
+	//};
+
+
 
 private:
 	explicit CCollider_PhysX_Static(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -46,10 +63,6 @@ protected:
 	E_STATICTYPE			mStaticID = E_STATIC_END;
 	PHYSXDESC_STATIC		mPhysXDesc;
 	PxRigidStatic*			mPxRigStaticActor;
-
-	// Æ®¸®°Å °´Ã¼
-	_bool					mbTrigger = false;
-
 
 public:
 	static CCollider_PhysX_Static* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

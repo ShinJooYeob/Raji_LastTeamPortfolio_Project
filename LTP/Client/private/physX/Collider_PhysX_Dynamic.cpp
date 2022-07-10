@@ -108,6 +108,7 @@ void CCollider_PhysX_Dynamic::Set_Kinecmatic(_bool b)
 #ifdef _DEBUG
 HRESULT CCollider_PhysX_Dynamic ::Render()
 {
+	mRenderColor = DirectX::Colors::Blue;
 	FAILED_CHECK(__super::Render());
 
 	

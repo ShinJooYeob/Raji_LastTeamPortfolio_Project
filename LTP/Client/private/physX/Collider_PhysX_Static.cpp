@@ -45,7 +45,7 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 			return E_FAIL;
 	}
 
-	if (mbTrigger)
+	if (mPhysXDesc.bTrigger)
 	{
 		if (mMain_Actor == nullptr || mMainTransform == nullptr)
 			return E_FAIL;
@@ -61,8 +61,6 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
 	FAILED_CHECK(__super::Update_AfterSimulation());
 
-
-
 	if (E_STATIC_BUFFER == mStaticID)
 	{
 		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
@@ -70,7 +68,7 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 	}
 	else
 	{
-		if (mbTrigger)
+		if (mPhysXDesc.bTrigger)
 			return S_OK;
 
 		// 최초 생성 후 고정
@@ -98,13 +96,17 @@ HRESULT CCollider_PhysX_Static::Render()
 
 		m_pBatch->Begin();
 		// 모양 마다 그려준다.
-		XMVECTORF32 color = DirectX::Colors::White;
-		RenderBuffer(mPhysXDesc.eShapeType, mPxMainMatrix4x4, color);
+		mRenderColor = DirectX::Colors::White;
+		RenderBuffer(mPhysXDesc.eShapeType, mPxMainMatrix4x4, mRenderColor);
 		m_pBatch->End();
 
 	}
 	else
 	{
+		if (mPhysXDesc.bTrigger)
+			mRenderColor = DirectX::Colors::Green;
+		else
+			mRenderColor = DirectX::Colors::Red;
 
 		FAILED_CHECK(__super::Render());
 	}
@@ -155,8 +157,6 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
-	
-	
 	mMainTransform = mPhysXDesc.mTrnasform;
 	mMainGameObject = mPhysXDesc.mGameObect;
 
@@ -197,7 +197,6 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	mMain_Actor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, false);
 	// DebugName
 	// mMain_Actor->setName("NONE");
-
 
 	return S_OK;
 }
