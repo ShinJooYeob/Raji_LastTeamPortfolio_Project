@@ -57,6 +57,7 @@ public:
 #endif // _DEBUG
 
 	HRESULT Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc);
+	HRESULT Set_ColliderDesc_Player(PHYSXDESC_DYNAMIC desc);
 	HRESULT	Set_DynamicFlag(DYNAMICFLAG flag);
 	HRESULT	Set_DynamicValue(DYNAMICFORCE  flag);
 	HRESULT Set_DynamicLock(PxRigidDynamicLockFlag::Enum e, bool value);

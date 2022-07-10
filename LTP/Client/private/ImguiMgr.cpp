@@ -1431,30 +1431,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			coldynamic->Set_ColiiderDesc(createDynamic);
 		}
 
-		if (ImGui::Button("Dynamic_Player"))
-		{
-			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
-			CTestObject_PhysX* obj =
-				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
-			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
-			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
-			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
-
-			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-			objTrans->Scaled_All(Scale);
-
-			createDynamic.eShapeType = E_GEOMAT_CAPSULE;
-			createDynamic.mTrnasform = objTrans;
-			createDynamic.mGameObect = obj;
-			NULL_CHECK_BREAK(createDynamic.mTrnasform);
-			createDynamic.mVelocity = Force;
-			coldynamic->Set_ColiiderDesc(createDynamic);
-			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, false);
-			coldynamic->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eFORCE_STATIC_KINE_NOTIFICATIONS, false);
-		}
 		
 		IMGUITREE_END
 	}
@@ -1462,8 +1439,45 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 	IMGUITREE("PHYSX_DYMAMIC_SET")
 	{
+		static CTestObject_PhysX* playerDynamic = nullptr;
+		static CCollider_PhysX_Dynamic* playerDynamicCol = nullptr;
+		// 엑터에 여러개의 충돌체 다는 것
+		// 엑터에 여러개 충돌체 체크 방법
+		// 엑터의 이동시 다른 메시와 충돌 
 
+		if (ImGui::Button("Dynamic_Player"))
+		{
+			if (playerDynamic == nullptr)
+			{
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+				(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
+				playerDynamic =
+					static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
+				playerDynamic->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+				playerDynamic->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
+				playerDynamicCol = (CCollider_PhysX_Dynamic*)playerDynamic->Get_Component(TAG_COM(Com_Collider_PhysX));
+
+				CTransform* objTrans = (CTransform*)playerDynamic->Get_Component(TAG_COM(Com_Transform));
+				objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+				objTrans->Scaled_All(Scale);
+
+				createDynamic.eShapeType = E_GEOMAT_CAPSULE;
+				createDynamic.mTrnasform = objTrans;
+				createDynamic.mGameObect = playerDynamic;
+				NULL_CHECK_BREAK(createDynamic.mTrnasform);
+				createDynamic.mVelocity = Force;
+
+				playerDynamicCol->Set_ColiiderDesc(createDynamic);
+				playerDynamicCol->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eKINEMATIC, true);
+				playerDynamicCol->Set_DynamicLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+				playerDynamicCol->Set_DynamicLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+				playerDynamicCol->Set_DynamicLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
+				playerDynamicCol->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
+				playerDynamicCol->Set_RigidbodyFlag(PxRigidBodyFlag::Enum::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
+			}
+		}
 		IMGUITREE_END
 	}
 
@@ -1512,6 +1526,49 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createJoint.mAttachModel = objModel;
 
 			coljoint->Set_ColiiderDesc(createJoint);
+			
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Joint_Demo"))
+		{
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Joint_PhysX)));
+			CTestObject_PhysX* obj =
+				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
+			obj->Set_ColSetID(E_PHYTYPE_JOINT);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+
+			CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+			CModel* objModel = (CModel*)obj->Get_Component(TAG_COM(Com_Model));
+			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+			objTrans->Scaled_All(Scale);
+			coljoint->Set_ColiderDesc_(PxTransform(Position.x, Position.y, Position.z),
+				PxVec3(Scale.x,Scale.y,Scale.z), Force.x,obj);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Joint_Demo_Default"))
+		{
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Joint_PhysX)));
+			CTestObject_PhysX* obj =
+				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
+			obj->Set_ColSetID(E_PHYTYPE_JOINT);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+
+			CCollider_PhysX_Joint* coljoint = (CCollider_PhysX_Joint*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+			CModel* objModel = (CModel*)obj->Get_Component(TAG_COM(Com_Model));
+			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+			objTrans->Scaled_All(Scale);
+			coljoint->Set_ColiderDesc_(PxTransform(Position.x, Position.y, Position.z),
+				PxVec3(2.0f, 0.5f, 0.5f), 4.f, obj);
 		}
 
 		IMGUITREE_END

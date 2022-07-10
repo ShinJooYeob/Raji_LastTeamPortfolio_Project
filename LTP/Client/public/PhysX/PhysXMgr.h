@@ -104,7 +104,6 @@ private:
 	PxDefaultErrorCallback		mErrorCallback;
 
 	PxDefaultCpuDispatcher*		mDisPatcher = nullptr;
-	PxTolerancesScale			mToleranceScale;
 
 	PxFoundation*				mFoundation = nullptr;
 	PxPhysics*					mPhysics = nullptr;
@@ -137,6 +136,7 @@ public:
 	static _float3 gDebugValue3;
 	static _float3 gDebugValue4;
 
+	static PxTolerancesScale			gToleranceScale;
 
 public:
 	HRESULT	CreateDemoMap();	

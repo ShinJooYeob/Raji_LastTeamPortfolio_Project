@@ -82,11 +82,11 @@ HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 	{
 		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
 		mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4.column3.x, mPxMainMatrix4x4.column3.y, mPxMainMatrix4x4.column3.z));
-	}
 	// PxTransform trans = mMain_Actor->getGlobalPose();
 	// mPxMainMatrix4x4 = PxMat44(trans);
 	// mPxMainMatrix4x4.scale(PxVec4(mScale, 1));
 	// mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	}
 
 	else
 	{
@@ -129,12 +129,10 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
-
 	PxGeometry* gemo = nullptr;
 	mMainTransform = mPhysXDesc.mTrnasform;
 	mMainGameObject = mPhysXDesc.mGameObect;
 	
-
 	_float3 scale = mMainTransform->Get_Scale();
 	mScale = FLOAT3TOPXVEC3(scale);
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -145,16 +143,49 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	// 초기휘치 오류
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
-
-	PxReal density = 0.05f;
+	PxReal density = 1.f;
 
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
 	SetBaseFlag();	
-
 	return S_OK;
+}
+
+HRESULT CCollider_PhysX_Dynamic::Set_ColliderDesc_Player(PHYSXDESC_DYNAMIC desc)
+{
+	// 충돌 모델 초기화
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_DYNAMIC));
+
+	// 위 정보로 콜라이더 초기화
+	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
+	if (mMain_Actor)
+		return E_FAIL;
+
+	PxGeometry* gemo = nullptr;
+	mMainTransform = mPhysXDesc.mTrnasform;
+	mMainGameObject = mPhysXDesc.mGameObect;
+
+	_float3 scale = mMainTransform->Get_Scale();
+	mScale = FLOAT3TOPXVEC3(scale);
+	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	gemo = Create_Geometry(desc.eShapeType, scale);
+	NULL_CHECK_BREAK(gemo);
+
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
+	PxReal density = 1.f;
+	nomalTransform.q = PxQuat(PxPi / 2, FLOAT3TOPXVEC3(_float3(0, 0, 1)));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
+	NULL_CHECK_BREAK(mMain_Actor);
+	Safe_Delete(gemo);
+
+	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
+	SetBaseFlag();
+	return S_OK;
+
 }
 
 HRESULT CCollider_PhysX_Dynamic::Set_RigidbodyFlag(PxRigidBodyFlag::Enum e, bool value)

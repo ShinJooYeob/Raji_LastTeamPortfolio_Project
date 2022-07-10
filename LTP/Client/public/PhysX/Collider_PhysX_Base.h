@@ -74,6 +74,16 @@ public:
 	}PHYSXDESC_DYNAMIC;
 
 
+	//typedef struct Tag_PhysXDesc_Dynamic
+	//{
+	//	CTransform*			mTrnasform = nullptr;
+	//	CGameObject*		mGameObect = nullptr;
+	//	E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+	//	_float3				mVelocity = _float3::Zero();
+
+	//}PHYSXDESC_DYNAMIC;
+
+
 	typedef struct Tag_PhysXDesc_Joint
 	{
 		string*				mBoneNames = nullptr;
@@ -124,15 +134,15 @@ public:
 #endif // _DEBUG
 
 public:
-	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
-	void			Set_Transform(CTransform* trans);
-	HRESULT			Set_ActorFlag(PxActorFlag::Enum e, bool b);
+	PxRigidActor*		Get_ColliderActor() const { return mMain_Actor; }
+	void				Set_Transform(CTransform* trans);
+	HRESULT				Set_ActorFlag(PxActorFlag::Enum e, bool b);
 
 	// 테스트용 
-	void			Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
+	void				Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
 
-	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
-	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
+	E_PHYTYPE			Get_PhysX_ID()const { return mePhysX_ID; }
+	HRESULT				Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 	PxGeometry*			Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
 	HRESULT				Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
@@ -142,10 +152,10 @@ public:
 	CGameObject*		Get_GameObject() { return mMainGameObject; };
 	OBJECTPROTOTYPEID	Get_ObjectID() { return mColDesc.mObjid; };
 
-	HRESULT			CreateNewShape(PxGeometry* gemo);
+	HRESULT				CreateNewShape(PxGeometry* gemo);
 
-	PxVec3			GetScale(PxMat44 mat);
-	PxTransform		GetPxTransform(PxMat44 mat);
+	PxVec3				GetScale(PxMat44 mat);
+	PxTransform			GetPxTransform(PxMat44 mat);
 
 protected:
 	// 충돌체 메인 Actor

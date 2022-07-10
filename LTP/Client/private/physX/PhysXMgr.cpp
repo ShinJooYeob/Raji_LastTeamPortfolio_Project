@@ -24,6 +24,9 @@ _float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
+PxTolerancesScale	CPhysXMgr::gToleranceScale;
+
+
 // Scene의 충돌 감지 세팅
 PxFilterFlags SampleSubmarineFilterShader(
 	PxFilterObjectAttributes attributes0, PxFilterData filterData0,
@@ -464,8 +467,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 {
 	
 	// Init
-	mToleranceScale.length = 100;
-	mToleranceScale.speed = 981;
+	gToleranceScale.length = 100;
+	gToleranceScale.speed = 981;
 
 	// 트리거 타입
 
@@ -477,7 +480,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	// 메시 베이크에 해당되는 인자 전달
 	// mPhysics->getPhysicsInsertionCallback();
-	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(mToleranceScale));
+	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(gToleranceScale));
 	NULL_CHECK_BREAK(mCooking);
 	gCooking = mCooking;
 
@@ -488,7 +491,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 	mPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
-	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale, true, mPvd);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale, true, mPvd);
 	NULL_CHECK_BREAK(mPhysics);
 	gPhysics = mPhysics;
 
@@ -497,7 +500,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 #endif // _DEBUG
 
 #else
-	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale);
 	NULL_CHECK_BREAK(mPhysics);
 #endif
 
