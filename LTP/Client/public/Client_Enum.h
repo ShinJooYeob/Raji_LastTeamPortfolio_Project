@@ -821,7 +821,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Ninjasura,
 	Prototype_Mesh_Monster_Gadasura_Black,
 	Prototype_Mesh_Monster_Gadasura_Rage,
-	Prototype_Mesh_Monster_Lamp,
+	Prototype_Mesh_Monster_Wasp,
 
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
 	Prototype_Mesh_Monster_Weapon_Gadasura_Black,
@@ -1116,8 +1116,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Monster_Gadasura_Rage_Hollogram.fbx");
 		break;
 
-	case Prototype_Mesh_Monster_Lamp:
-		return TEXT("2003.fbx");
+	case Prototype_Mesh_Monster_Wasp:
+		return TEXT("Monster_Wasp.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Weapon_Gadasura_Black:

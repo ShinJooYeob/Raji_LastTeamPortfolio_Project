@@ -243,7 +243,6 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 6;
 	switch (m_iOncePattern)
 	{
 	case 0:

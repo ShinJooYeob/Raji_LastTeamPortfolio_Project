@@ -117,7 +117,7 @@ HRESULT CMonster_Lamp::SetUp_Info()
 
 	for (_uint i = 0; i < ANIM_END; i++)
 	{
-		m_pModel[i] = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Minion));
+		m_pModel[i] = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Wasp));
 		NULL_CHECK_RETURN(m_pModel[i], E_FAIL);
 
 		CModelInstance::MODELINSTDESC tModelIntDsec;
@@ -128,10 +128,10 @@ HRESULT CMonster_Lamp::SetUp_Info()
 	}
 
 	m_pModel[ANIM_IDLE]->Change_AnimIndex(0);
-	m_pModel[ANIM_RUN]->Change_AnimIndex(1);
-	m_pModel[ANIM_ATTACK]->Change_AnimIndex(11);
-	m_pModel[ANIM_HIT]->Change_AnimIndex(5);
-	m_pModel[ANIM_DIE]->Change_AnimIndex(0);
+	m_pModel[ANIM_RUN]->Change_AnimIndex(0);
+	m_pModel[ANIM_ATTACK]->Change_AnimIndex(2);
+	m_pModel[ANIM_HIT]->Change_AnimIndex(3);
+	m_pModel[ANIM_DIE]->Change_AnimIndex(4);
 
 	return S_OK;
 }

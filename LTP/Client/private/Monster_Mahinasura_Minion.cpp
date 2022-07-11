@@ -239,7 +239,6 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 4;
 	switch (m_iOncePattern)
 	{
 	case 0:

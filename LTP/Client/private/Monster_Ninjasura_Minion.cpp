@@ -585,8 +585,43 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			break;
 		}
+		case 15:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 2);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate > 0.1)
+			{
+				m_MotionTrailOn = false;
+
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
 		case 16:
 		{
+			m_MotionTrailOn = false;
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
 			
@@ -600,6 +635,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 17:
 		{
+			m_MotionTrailOn = false;
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
 			if (PlayRate > 0 && PlayRate <= 0.95)
@@ -610,8 +646,32 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			break;
 		}
+		case 18:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.75)
+			{
+
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+
+			}
+			break;
+		}
 		case 19:
 		{
+			m_MotionTrailOn = false;
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.60714)
 			{
 
