@@ -1526,7 +1526,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createJoint.mAttachModel = objModel;
 
 			coljoint->Set_ColiiderDesc2(createJoint);
-			
+			//coljoint->Set_ColiderDesc_(PxTransform(Position.x, Position.y, Position.z),
+			//	PxVec3(Scale.x, Scale.y, Scale.z), Force.x, obj);
 		}
 
 		ImGui::SameLine();
@@ -1568,7 +1569,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
 			objTrans->Scaled_All(Scale);
 			coljoint->Set_ColiderDesc_(PxTransform(Position.x, Position.y, Position.z),
-				PxVec3(2.0f, 0.5f, 0.5f), 4.f, obj);
+				PxVec3(2.0f, 0.5f, 0.5f), 1.0f, obj);
 		}
 
 		IMGUITREE_END

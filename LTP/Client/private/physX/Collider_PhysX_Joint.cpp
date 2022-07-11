@@ -138,39 +138,80 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 			//	/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
 			//	XMMatrixTranspose((XMMatrixTranspose(mat.XMatrix()) * XMMatrixTranspose(mMainTransform->Get_InverseWorldMatrix())))
 			//	* mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
+			_Matrix HM = mVecHier[i]->Get_UpdatedMatrix();
+
+			mat.r[0] = XMVector3Normalize(HM.r[0]);
+			mat.r[1] = XMVector3Normalize(HM.r[1]);
+			mat.r[2] = XMVector3Normalize(HM.r[2]);
+
+			//mat.r[0] = HM.r[0];
+			//mat.r[1] = HM.r[1];
+			//mat.r[2] = HM.r[2];
 
 			//mat.r[0] = XMVector3Normalize(mat.r[0]);
 			//mat.r[1] = XMVector3Normalize(mat.r[1]);
 			//mat.r[2] = XMVector3Normalize(mat.r[2]);
 			//
 
-			_Matrix HM = mVecHier[i]->Get_UpdatedMatrix();
 
-			mat.r[0] = XMVectorSet(1,0,0,0);
-			mat.r[1] = XMVectorSet(0, 1, 0, 0);
-			mat.r[2] = XMVectorSet(0, 0, 1, 0);
+			//mat.r[0] = XMVectorSet(1, 0, 0, 0);
+			//mat.r[1] = XMVectorSet(0, 1, 0, 0);
+			//mat.r[2] = XMVectorSet(0, 0, 1, 0);
 
 			
 
 			mat = /*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
 				/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-				XMMatrixTranspose
+				
 				(
-					XMMatrixTranspose(mat) *
+					(mat) *
 
-					XMMatrixTranspose(mMainTransform->Get_InverseWorldMatrix())
+					(mMainTransform->Get_InverseWorldMatrix())
 				) 
 				* mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
 
 				//* XMMatrixScaling(ffMat._11, ffMat._11, ffMat._11);
 
-			mat.r[0] = HM.r[0];
-			mat.r[1] = HM.r[1];
-			mat.r[2] = HM.r[2];
+			//_Vector Position = mat.r[3];
 
+
+
+			mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(HM.r[0]);
+			mat.r[1] = XMVector3Normalize(mat.r[1])  * XMVector3Length(HM.r[1]);
+			mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(HM.r[2]);
 
 			mVecHier[i]->Set_UpdateTransform(mat);
 
+
+			//_Matrix forRot = (PXMATTOMAT4x4(px4)).XMatrix();
+
+			//forRot.r[0] = XMVector3Normalize(forRot.r[0]); 
+			//forRot.r[1] = XMVector3Normalize(forRot.r[1]); 
+			//forRot.r[2] = XMVector3Normalize(forRot.r[2]);
+			//forRot.r[3] = XMVectorSet(0,0,0,1);
+
+			//_Matrix test1 = mMainTransform->Get_InverseWorldMatrix();
+			//test1.r[3] = XMVectorSet(0, 0, 0, 1);
+			//_Matrix test2 = mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
+			//test2.r[3] = XMVectorSet(0, 0, 0, 1);
+
+			//forRot = /*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
+			//	/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
+			//	XMMatrixTranspose
+			//	(
+			//		XMMatrixTranspose(forRot) *
+
+			//		XMMatrixTranspose(test1)
+			//	)
+			//	* test2;
+
+			////* XMMatrixScaling(ffMat._11, ffMat._11, ffMat._11);
+
+
+			//mat.r[0] = forRot.r[0] * XMVector3Length(HM.r[0]);
+			//mat.r[1] = forRot.r[1] * XMVector3Length(HM.r[1]);
+			//mat.r[2] = forRot.r[2] *  XMVector3Length(HM.r[2]);
+			//mat.r[3] = mat.r[3];
 
 			//mMainTransform;
 			//mAttachModel->Get_DefaiultPivotMat();
@@ -540,7 +581,7 @@ HRESULT CCollider_PhysX_Joint::Set_ColiderDesc_(PxTransform trans,PxVec3 scale, 
 	PxGeometry* mainGemo = nullptr;
 	PxGeometry* gemo = nullptr;
 	mainGemo = Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_SPEHE, _float3(1,1,1));
-	gemo = Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_BOX, PXVEC3TOFLOAT3(scale));
+	gemo = Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_SPEHE, PXVEC3TOFLOAT3(scale));
 	NULL_CHECK_BREAK(mainGemo);
 	NULL_CHECK_BREAK(gemo);
 	//	mMainTransform = (CTransform*)desc.mGameObject->Get_Component(TAG_COM(Com_Transform));
@@ -612,19 +653,25 @@ PxJoint* createBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidAc
 
 PxJoint * CCollider_PhysX_Joint::CreateDampedD6(PxRigidActor * a0, const PxTransform & t0, PxRigidActor * a1, const PxTransform & t1)
 {
+//	PxFixedJoint* j = PxFixedJointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+//	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
+//	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+
 	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
 	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
 	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
 	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
 	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
+	j->setDistanceLimit(
+		PxJointLinearLimit(CPhysXMgr::gToleranceScale, 100.f, 15.f));
+
+
 
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECT_TO_ACTOR0, true);
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECT_TO_ACTOR1, false);
 	//j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);		 
 	//j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
 																	 
-	j->setDistanceLimit(
-		PxJointLinearLimit(CPhysXMgr::gToleranceScale, 100.f, 15.f));
 	//	j->setTwistLimit(
 	//		PxJointLinearLimit(CPhysXMgr::gToleranceScale, 100.f, 15.f));
 	
