@@ -1243,9 +1243,9 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	// static 오브젝트 배치
 	static _float3 Position = _float3::Zero();
 	ImGui::DragFloat3("POS:", (float*)&Position, 0.1f, -100, 100);
-	static  _float3 Scale = _float3::One();
+	static  _float3 Scale = _float3(0.3f, 0.3f, 0.3f);
 	ImGui::DragFloat3("SCALE:", (float*)&Scale, 0.1f, 0.1f, 100);
-	static  _float3 Force = _float3::Zero();
+	static  _float3 Force = _float3(0.15f, 0.3f, 0.3f);
 	ImGui::DragFloat3("FORCE:", (float*)&Force, 0.1f, -100, 100);
 
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
@@ -1515,17 +1515,17 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 			CModel* objModel = (CModel*)obj->Get_Component(TAG_COM(Com_Model));
 			objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-			objTrans->Scaled_All(Scale);
+		//	objTrans->Scaled_All(Scale);
 
 			createJoint.mBoneNames = mBoneNames;
 			createJoint.mLength = 9;
 			createJoint.mGameObject = obj;
 			createJoint.eShapeType = E_GEOMAT_BOX;
-			createJoint.mScale = _Sfloat3::One*0.1f;
-			createJoint.mSeparation = 0.3f;
+			createJoint.mScale = Scale;
+			createJoint.mSeparation = Force.x;
 			createJoint.mAttachModel = objModel;
 
-			coljoint->Set_ColiiderDesc(createJoint);
+			coljoint->Set_ColiiderDesc2(createJoint);
 			
 		}
 
