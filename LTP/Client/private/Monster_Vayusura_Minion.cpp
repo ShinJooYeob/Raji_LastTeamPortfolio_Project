@@ -368,7 +368,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 			{
 				m_dSpeedTime += dDeltaTime;
 			}
-			_float fSpeed = g_pGameInstance->Easing(TYPE_SinOut, 0.f, 1.f, m_dSpeedTime,1); // PlayRate - 0.266666 and 0.5 - 0.266666
+			_float fSpeed = g_pGameInstance->Easing(TYPE_SinOut, 0.f, 1.f, m_dSpeedTime,1.f); // PlayRate - 0.266666 and 0.5 - 0.266666
 			m_pTransformCom->Move_Up(dDeltaTime * fSpeed);
 
 

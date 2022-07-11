@@ -520,13 +520,13 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				m_bLookAtOn = false;
 
-				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.24f, 0.2);
+				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.24f, 0.2f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
 			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
 			{
-				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.49f, 0.35);
+				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.49f, 0.35f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
