@@ -6,6 +6,13 @@ BEGIN(Client)
 class CMonster_Lamp final : public CMonster
 {
 	enum AnimationType{ANIM_IDLE,ANIM_RUN,ANIM_ATTACK,ANIM_HIT,ANIM_DIE, ANIM_END};
+
+	typedef struct tagState
+	{
+		CTransform*	pTransform = nullptr;
+		AnimationType eType = ANIM_END;
+	}TRANSFORM_STATE;
+
 private:
 	CMonster_Lamp(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CMonster_Lamp(const CMonster_Lamp& rhs);
@@ -32,10 +39,13 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
-	CModel*				m_pModel = nullptr;
 
-	CModelInstance*		m_pModelInstance = nullptr;
-	vector<CTransform*> m_vecInstancedTransform;
+	CModel*				m_pModel[ANIM_END];
+	CModelInstance*		m_pModelInstance[ANIM_END];
+
+	vector<TRANSFORM_STATE> m_vecInstancedTransform;
+
+	vector<CTransform*> m_ModelTransGroup[ANIM_END];
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;

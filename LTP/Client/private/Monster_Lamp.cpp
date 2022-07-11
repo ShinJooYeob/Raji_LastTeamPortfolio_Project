@@ -28,7 +28,12 @@ HRESULT CMonster_Lamp::Initialize_Clone(void * pArg)
 
 
 
-	SetUp_Info();
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
+
+	RELEASE_INSTANCE(CGameInstance);
 
 
 	return S_OK;
@@ -40,8 +45,10 @@ _int CMonster_Lamp::Update(_double dDeltaTime)
 
 	FollowMe(dDeltaTime);
 
-
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime));
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		FAILED_CHECK(m_pModel[i]->Update_AnimationClip(dDeltaTime));
+	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	return _int();
@@ -52,7 +59,12 @@ _int CMonster_Lamp::LateUpdate(_double dDeltaTime)
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance, m_pShaderCom, m_pModel));
+
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i] , m_pModelInstance[i], m_pShaderCom, m_pModel[i]));
+	}
+
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
@@ -69,7 +81,10 @@ _int CMonster_Lamp::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i]));
+	}
 
 	return _int();
 }
@@ -81,25 +96,101 @@ _int CMonster_Lamp::LateRender()
 
 HRESULT CMonster_Lamp::SetUp_Info()
 {
+	for (_uint i = 0; i < 4; i++)
+	{
+		TRANSFORM_STATE tDesc;
+		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+		NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
+		tDesc.eType = ANIM_IDLE;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
+		_float fSpeed = pUtil->RandomFloat(1, 2);
 
-	RELEASE_INSTANCE(CGameInstance);
+		tDesc.pTransform->Set_MoveSpeed(fSpeed);
+		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(0 + _float(i)*1.f, 0, 2));
+
+
+
+		m_vecInstancedTransform.push_back(tDesc);
+	}
+
+	for (_uint i = 0; i < ANIM_END; i++)
+	{
+		m_pModel[i] = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Tezabsura_Minion));
+		NULL_CHECK_RETURN(m_pModel[i], E_FAIL);
+
+		CModelInstance::MODELINSTDESC tModelIntDsec;
+		tModelIntDsec.m_pTargetModel = m_pModel[i];
+
+		m_pModelInstance[i] = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_4), &tModelIntDsec);
+		NULL_CHECK_RETURN(m_pModelInstance[i], E_FAIL);
+	}
+
+	m_pModel[ANIM_IDLE]->Change_AnimIndex(0);
+	m_pModel[ANIM_RUN]->Change_AnimIndex(1);
+	m_pModel[ANIM_ATTACK]->Change_AnimIndex(11);
+	m_pModel[ANIM_HIT]->Change_AnimIndex(5);
+	m_pModel[ANIM_DIE]->Change_AnimIndex(0);
 
 	return S_OK;
 }
 
 HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 {
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		m_ModelTransGroup[i].clear();
+		m_ModelTransGroup[i].reserve(m_vecInstancedTransform.size());
+	}
 
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
-		MeshInstance->LookAt(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
-		//_Vector vDistance = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance->Get_MatrixState(CTransform::STATE_POS);
+		
+		//_Vector vDistance = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS);
 
-		MeshInstance->Move_Forward(dDeltaTime);
+		_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
+
+		MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
+
+		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+		MeshInstance.eType = ANIM_RUN;
+
+		if (fDistance < 2)
+		{
+			MeshInstance.eType = ANIM_ATTACK;
+		}
+
+	}
+
+
+
+	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+
+		switch (m_vecInstancedTransform[i].eType)
+		{
+		case ANIM_IDLE:
+			m_ModelTransGroup[ANIM_IDLE].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_RUN:
+			m_ModelTransGroup[ANIM_RUN].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_ATTACK:
+			m_ModelTransGroup[ANIM_ATTACK].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_HIT:
+			m_ModelTransGroup[ANIM_HIT].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_DIE:
+			m_ModelTransGroup[ANIM_DIE].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		default:
+			break;
+		}
+
+
 	}
 
 
@@ -114,63 +205,55 @@ HRESULT CMonster_Lamp::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	// MODELCOM_NAME
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Lamp), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	for (_uint i = 0; i < 4; i++)
-	{
-		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-		NULL_CHECK_RETURN(pTransform, E_FAIL);
-
-		pTransform->Set_MoveSpeed(1.5f);
-
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(0 + _float(i)*1.f, 0, 2));
-		m_vecInstancedTransform.push_back(pTransform);
-	}
-
-	CModelInstance::MODELINSTDESC tModelIntDsec;
-	tModelIntDsec.m_pTargetModel = m_pModel;
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_4), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
+	SetUp_Info();
 
 
 	return S_OK;
 }
 
-HRESULT CMonster_Lamp::Adjust_AnimMovedTransform(_double fDeltatime)
+HRESULT CMonster_Lamp::Adjust_AnimMovedTransform(_double dDeltatime)
 {
-	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
-	_double PlayRate = m_pModel->Get_PlayRate();
 
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
-		m_iAdjMovedIndex = 0;
-
-
-	if (PlayRate <= 0.98)
+	
+	for (auto& pObjectTransform : m_ModelTransGroup[ANIM_RUN])
 	{
-		//switch (iNowAnimIndex)
-		//{
-		//case 1://애니메이션 인덱스마다 잡아주면 됨
-		//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
-		//	{
-
-		//		m_iAdjMovedIndex++;
-		//	}
-		//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-		//	{
-
-
-		//		m_iAdjMovedIndex++;
-		//	}
-
-		//	break;
-		//case 2:
-
-		//	break;
-		//}
+		pObjectTransform->Move_Forward(dDeltatime);
 	}
 
+	//_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+	//_double PlayRate = m_pModel->Get_PlayRate();
 
-	m_iOldAnimIndex = iNowAnimIndex;
+	//if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	//	m_iAdjMovedIndex = 0;
+
+
+	//if (PlayRate <= 0.98)
+	//{
+	//	//switch (iNowAnimIndex)
+	//	//{
+	//	//case 1://애니메이션 인덱스마다 잡아주면 됨
+	//	//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
+	//	//	{
+
+	//	//		m_iAdjMovedIndex++;
+	//	//	}
+	//	//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+	//	//	{
+
+
+	//	//		m_iAdjMovedIndex++;
+	//	//	}
+
+	//	//	break;
+	//	//case 2:
+
+	//	//	break;
+	//	//}
+	//}
+
+
+	//m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 
@@ -203,11 +286,19 @@ void CMonster_Lamp::Free()
 	__super::Free();
 
 	for (auto& pTransform : m_vecInstancedTransform)
-		Safe_Release(pTransform);
+		Safe_Release(pTransform.pTransform);
 	m_vecInstancedTransform.clear();
-	Safe_Release(m_pModelInstance);
+
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		Safe_Release(m_pModelInstance[i]);
+	}
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pModel);
+
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		Safe_Release(m_pModel[i]);
+	}
 }
