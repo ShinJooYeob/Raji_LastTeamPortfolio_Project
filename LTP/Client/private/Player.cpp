@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "..\Public\Player.h"
+#include "Timer.h"
 #include "Camera_Main.h"
-#include "PlayerWeapon_Spear.h"
+#include "ShellingArrow.h"
 #include "PlayerWeapon_Bow.h"
+#include "PlayerWeapon_Spear.h"
+#include "PlayerWeapon_Arrow.h"
+#include "ShellingSkillRange.h"
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
-#include "PlayerWeapon_Arrow.h"
-#include "Timer.h"
 #include "physx\Collider_PhysX_Joint.h"
 #include "physx\Collider_PhysX_Dynamic.h"
 
@@ -40,12 +42,14 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
 
-	if (m_eNowSceneNum = 7)
+	if (m_eNowSceneNum == 7)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(1.f, 0.f, 0.f));
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	FAILED_CHECK(SetUp_PlayerWeapons());
+
+	FAILED_CHECK(SetUp_PlayerEffects());
 
 	Set_IsOcllusion(true);
 
@@ -57,74 +61,34 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	// instancing test
+	if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
+	{
+		CShellingArrow::SHELLINGARROWDESC tShellingArrowDesc;
+		tShellingArrowDesc.fStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		tShellingArrowDesc.fStartPos.y += 5.f;
+
+		tShellingArrowDesc.fTargetPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_ShellingArrow), &tShellingArrowDesc));
+	}
+	//
+
 	// Check Player Key Input
 	bool keycheck = Check_PlayerKeyInput(fDeltaTime);
 
-	static bool TestBool = false;
-	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
-		TestBool = !TestBool;
-	if (TestBool)
+
+	// Check MotionTrail
+	m_fInterval_MotionTrail -= (_float)fDeltaTime;
+	if (m_fInterval_MotionTrail < 0)
 	{
-		static double Timer = 0;
-		Timer -= fDeltaTime;
-		if (Timer < 0)
-		{
-			Timer = 0.1f;
-			m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.5f, 0.8f, 0.2f, 1));
-		}
+		m_fInterval_MotionTrail = 0.1f;
+		CheckOn_MotionTrail();
 	}
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
-	{
-
-
-
-
-		INSTMESHDESC m_tMeshDesc;
-
-
-
-		m_tMeshDesc.eParticleTypeID = InstanceEffect_Straight;
-		m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_32;
-		m_tMeshDesc.ePassID = MeshPass_BrightColor;
-
-		//m_tMeshDesc.vFixedPosition = _float3(0);
-		//m_tMeshDesc.vPowerDirection = _float3(0, 1, 0);
-
-		m_tMeshDesc.FollowingTarget = m_pTransformCom;
-		m_tMeshDesc.iFollowingDir = FollowingDir_Up;
-
-		m_tMeshDesc.szModelMeshProtoTypeTag = TAG_CP(Prototype_Mesh_AlgaeRock_Ledge);
-
-		m_tMeshDesc.iNoiseTextureIndex = 0;
-		m_tMeshDesc.TotalParticleTime = 5.f;
-		m_tMeshDesc.EachParticleLifeTime = 1.f;
-
-		m_tMeshDesc.SizeChageFrequency = 0;
-		m_tMeshDesc.ParticleSize = _float3(0.2f, 0.2f, 0.2f);
-		m_tMeshDesc.ParticleSize2 = _float3(0, 0, 0);
-		m_tMeshDesc.ColorChageFrequency = 5;
-		m_tMeshDesc.TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
-		m_tMeshDesc.TargetColor2 = _float4(0.f, 1.f, .0f, .2f);
-		m_tMeshDesc.fMaxBoundaryRadius = 999999.f;
-		m_tMeshDesc.Particle_Power = 10.f;
-		m_tMeshDesc.PowerRandomRange = _float2(0.5f, 1.5f);
-		m_tMeshDesc.SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
-		m_tMeshDesc.ParticleStartRandomPosMin = _float3(0, 0, 0);
-		m_tMeshDesc.ParticleStartRandomPosMax = _float3(0, 0, 0);
-
-		m_tMeshDesc.bEmissive = false;
-		m_tMeshDesc.bAutoTurn = false;
-		m_tMeshDesc.bIsOclusion = true;
-
-		m_tMeshDesc.vEmissive_SBB = _float3(0);
-
-		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_tMeshDesc);
-	
-	}
 
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
+
 
 	// Process Player State Logic
 	switch (m_eCurState)
@@ -158,6 +122,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		break;
 	}
 
+
 	// Update Player Anim
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, m_bIsOnScreen));
 
@@ -174,10 +139,45 @@ _int CPlayer::Update(_double fDeltaTime)
 	// CameraShake Test
 	if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
 	{
+		m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
+	{
 		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f);
-		//m_pMainCamera->Start_CameraShaking_Thread(0.2f, 0.5f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
+	{
+		CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+		tCameraShakeDirDesc.fTotalTime = 1.f;
+		tCameraShakeDirDesc.fPower = 10.f;
+		tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+		tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
+		m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+	{
+		CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+		tCameraShakeDirDesc.fTotalTime = 1.f;
+		tCameraShakeDirDesc.fPower = 10.f;
+		tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+		tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+		m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
+	{
+		CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+		tCameraShakeRotDesc.fTotalTime = 1.f;
+		tCameraShakeRotDesc.fPower = 1.f; 
+		tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+		tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
+		m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
 	}
 	//
+
+
+	// Update Targeting
+	Update_Targeting(fDeltaTime);
+
 	return _int();
 }
 
@@ -189,10 +189,8 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 
-
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-
 
 	return _int();
 }
@@ -233,6 +231,7 @@ _int CPlayer::LateRender()
 _fVector CPlayer::Get_BonePos(const char * pBoneName)
 {
 	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
+	//BoneMatrix  = XMMatrixTranspose(BoneMatrix);
 	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
 	_Vector vPos, vRot, vScale;
 	XMMatrixDecompose(&vScale, &vRot, &vPos, TransformMatrix);
@@ -438,6 +437,8 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 	}
 	else
 	{
+		m_fAnimSpeed = 1.2f;
+
 		if (MOVDIR_END != m_eInputDir)
 		{
 			Set_State_MoveStart(fDeltaTime);
@@ -452,6 +453,7 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 
 		if (false == m_bPlayTurnBackAnim && XMVectorGetX(vDot) <= -0.7 && 0.8f < m_fCurTime_PressedMoveKeyDuration)
 		{
+			m_fCurTime_PressedMoveKeyDuration = 0.f;
 			Set_State_TurnBackStart(fDeltaTime);
 			return _int();
 		}
@@ -638,10 +640,10 @@ _bool CPlayer::Check_Mov_KeyInput(_double fDeltaTime)
 		{
 			m_fCurTime_PressedMoveKeyDuration = m_fMaxTime_PressedMoveKeyDuration;
 		}
-	}
+	} 
 	else
 	{
-		m_fCurTime_PressedMoveKeyDuration -= 0.2f;
+		m_fCurTime_PressedMoveKeyDuration -= 0.1f;
 		if (m_fCurTime_PressedMoveKeyDuration <= 0.f)
 		{
 			m_fCurTime_PressedMoveKeyDuration = 0.f;
@@ -666,7 +668,6 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 	{
 		iInputDir -= 1;
 	}
-	//m_fAttachCamPos_Offset = _float3(0.f, 0.897465f, -2.f);
 
 	if (0 != iInputDir)
 	{
@@ -1048,7 +1049,17 @@ void CPlayer::Dodge(_double fDeltaTime)
 	switch (m_pModel->Get_NowAnimIndex())
 	{
 	case BASE_ANIM_DODGE_ROLL:
-		// Set AnimSpeed & Move
+	{
+		// On MotionTrail
+		if (0.f < fAnimPlayRate && 0.52f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
 		if (true == m_pModel->Get_IsHavetoBlockAnimChange() && 0.148148f > fAnimPlayRate)
 		{
 			m_fAnimSpeed = 4.f;
@@ -1060,10 +1071,11 @@ void CPlayer::Dodge(_double fDeltaTime)
 
 			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
 		}
-		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.5925925f < fAnimPlayRate)
+		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && 0.5925925f < fAnimPlayRate)
 		{
 			m_fAnimSpeed = 3.5f;
 			m_pModel->Set_BlockAnim(false);
+			m_bOn_MotionTrail = false;
 		}
 		//
 
@@ -1083,6 +1095,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
 		else if (0.52f <= fAnimPlayRate)
@@ -1091,11 +1104,23 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
-
+	}
 		break;
 	case BASE_ANIM_DODGE_CARTWHEEL:
+	{
+		// On MotionTrail
+		if (0.f < fAnimPlayRate && 0.65f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
 		if (0.f < fAnimPlayRate && 0.66f >= fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.6f;
@@ -1105,14 +1130,13 @@ void CPlayer::Dodge(_double fDeltaTime)
 			else if (0.4f > fAnimPlayRate)		fMoveSpeed = 0.2f;
 			else if (0.66f >= fAnimPlayRate)	fMoveSpeed = 2.5f;
 
-			//_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 2.0f, fAnimPlayRate - 0.12f, 0.58f);
-
 			m_pTransformCom->Move_Forward(fDeltaTime * fMoveSpeed);
 		}
 		else if (fAnimPlayRate && 0.7f < fAnimPlayRate)
 		{
 			m_fAnimSpeed = 1.f;
 			m_pModel->Set_BlockAnim(false);
+			m_bOn_MotionTrail = false;
 		}
 
 
@@ -1132,6 +1156,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
 		else if (0.61f <= fAnimPlayRate)
@@ -1140,11 +1165,24 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
-
+	}
 		break;
 	case BASE_ANIM_DODGE_FLIP:
+	{
+		// On MotionTrail
+		if (0.f < fAnimPlayRate && 0.62f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
+
 		if (true == m_pModel->Get_IsHavetoBlockAnimChange() && 0.24f > fAnimPlayRate)
 		{
 			m_fAnimSpeed = 4.f;
@@ -1159,6 +1197,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 3.5f;
 			m_pModel->Set_BlockAnim(false);
+			m_bOn_MotionTrail = false;
 		}
 
 
@@ -1176,6 +1215,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
 		else if (0.62f <= fAnimPlayRate)
@@ -1184,8 +1224,10 @@ void CPlayer::Dodge(_double fDeltaTime)
 			{
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
+				m_bOn_MotionTrail = false;
 			}
 		}
+	}
 		break;
 	}
 
@@ -1254,7 +1296,6 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			}
 		}
 		/////////////////////////////////////////////////////////
-
 
 
 		// Look At Mouse Pos
@@ -1399,10 +1440,29 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.6f >= fAnimPlayRate && 0.54f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.13f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		// Turn On Weapon Trail
 		if (m_pModel->Get_PlayRate() >= 0.257f)
 		{
@@ -1461,10 +1521,29 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.3f >= fAnimPlayRate && 0.28f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.0f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		// Turn On Weapon Trail
 		if (false == m_bTrailSwitch && fAnimPlayRate > 0.058f)
 		{
@@ -1528,6 +1607,17 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.0f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		// Turn On Weapon Trail
 		if (false == m_bTrailSwitch && fAnimPlayRate > 0.058f)
 		{
@@ -1782,10 +1872,29 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.55f >= fAnimPlayRate && 0.53f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		m_fAnimSpeed = 1.f;
 
 		if (0.41f >= fAnimPlayRate)
@@ -1834,6 +1943,17 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.1f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		// Turn On Weapon Trail
 		if (fAnimPlayRate > 0.5f)
 		{
@@ -1895,6 +2015,17 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		// On MotionTrail
+		if (0.05f < fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = false;
+		}
+		else
+		{
+			m_bOn_MotionTrail = true;
+		}
+
+
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
 		m_fAnimSpeed = 1.5f;
 
@@ -1940,6 +2071,14 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.23f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	}
@@ -1954,6 +2093,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		switch (m_eCurBowMainAtkState)
 		{
 		case BOWMAINATK_START:
+		{
 			m_fAnimSpeed = 1.f;
 
 			if (0.307f < m_pModel->Get_PlayRate() && false == m_bAnimChangeSwitch)
@@ -1977,8 +2117,10 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			LookAt_MousePos();
 
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
+		}
 			break;
 		case BOWMAINATK_LOOP:
+		{
 			m_fAnimSpeed = 0.8f;
 
 			// Cal Bow Range
@@ -1989,6 +2131,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			}
 			else
 			{
+				m_pMainCamera->Start_CameraShaking_Thread(0.1f, 2.f - m_fChargingTime, 0.015f);
 				m_fArrowRange = 12.f;
 			}
 			//
@@ -2042,8 +2185,10 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				}
 			}
 			LookAt_MousePos();
+		}
 			break;
 		case BOWMAINATK_SHOT:
+		{
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			pBowArrow->Active_Trail(true);
 			m_fChargingTime = 0.f;
@@ -2056,6 +2201,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_bAttackEnd = true;
 				m_pTransformCom->Set_MoveSpeed(5.f);
 			}
+		}
 			break;
 		}
 	}
@@ -2067,6 +2213,16 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 		case BOW_ANIM_POWER_COMBO_0:
 		{
+			// On MotionTrail
+			if (0.1f > fAnimPlayRate && true == m_bPlayJumpAttack)
+			{
+				m_bOn_MotionTrail = true;
+			}
+			else
+			{
+				m_bOn_MotionTrail = false;
+			}
+
 			m_fAnimSpeed = 1.5f;
 
 			// Bow Anim Control
@@ -2168,13 +2324,23 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			{
 				LookAt_MousePos();
 			}
-
 			//
+
 		}
 		break;
 		case BOW_ANIM_POWER_COMBO_1:
 		case BOW_ANIM_POWER_COMBO_1_JUMP:
 		{
+			if (0.f > fAnimPlayRate && true == m_bPlayJumpAttack)
+			{
+				m_bOn_MotionTrail = true;
+			}
+			else
+			{
+				m_bOn_MotionTrail = false;
+			}
+
+
 			m_fAnimSpeed = 2.f;
 
 
@@ -2402,6 +2568,15 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		break;
 		case BOW_ANIM_POWER_COMBO_2_JUMP:
 		{
+			if (0.2f > fAnimPlayRate)
+			{
+				m_bOn_MotionTrail = true;
+			}
+			else
+			{
+				m_bOn_MotionTrail = false;
+			}
+
 			if (false == m_bActionSwitch && 0.12f <= fAnimPlayRate)
 			{
 				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
@@ -2763,10 +2938,27 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.45f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
+		if (0.2f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
 		//// Turn On Weapon Trail
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.357f)
 		{
@@ -2831,10 +3023,28 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			LookAt_MousePos();
 		}
 		//
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.25f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
+		if (0.2f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
+
 		//// Turn On Weapon Trail
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.52f)
 		{
@@ -2902,6 +3112,25 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
+		if (0.2f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
+
+		if (0.1f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
 		//// Turn On Weapon Trail
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.454f)
 		{
@@ -3026,6 +3255,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 			vThrowStartPos += vPlayerLook * 1.5f;
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
+
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
 		}
 		else
 		{
@@ -3149,10 +3380,27 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			}
 		}
 		/////////////////////////////////////////////////////////
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.4f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
+		if (0.15f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
 		m_fAnimSpeed = 1.f;
 
 		if (0.f < fAnimPlayRate && 0.277f >= fAnimPlayRate)
@@ -3205,6 +3453,16 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+		if (0.1f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
+
 		m_fAnimSpeed = 2.5f;
 
 		if (false == m_bAnimChangeSwitch)
@@ -3215,6 +3473,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 			vThrowStartPos += vPlayerLook * 1.5f;
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
+
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
 		}
 		else
 		{
@@ -3278,6 +3538,16 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		if (0.1f > fAnimPlayRate)
+		{
+			m_bOn_MotionTrail = true;
+		}
+		else
+		{
+			m_bOn_MotionTrail = false;
+		}
+
+
 		m_fAnimSpeed = 1.5f;
 
 		if (false == m_bAnimChangeSwitch)
@@ -3333,6 +3603,14 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			}
 		}
 		/////////////////////////////////////////////////////////
+
+		// Active CameraShake
+		if (true == m_bActive_ActionCameraShake && 0.15f <= fAnimPlayRate)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+			m_bActive_ActionCameraShake = false;
+		}
+		//
 	}
 	break;
 	}
@@ -3441,19 +3719,32 @@ void CPlayer::Throw_Spear(_double fDeltaTime)
 		_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_Start(vPlayerLook);
 
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.1f);
 	}
 }
 
 void CPlayer::Spear_Ultimate(_double fDeltaTime)
 {
 	static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_TAKEDOWN);
+	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 	m_fAnimSpeed = 1.f;
 
-	if (0.98f <= m_pModel->Get_PlayRate())
+	// Active CameraShake
+	if (true == m_bActive_ActionCameraShake && 0.45f >= fAnimPlayRate  && 0.4f <= fAnimPlayRate)
+	{
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.5f);
+		m_bActive_ActionCameraShake = false;
+	}
+	//
+
+	if (0.98f <= fAnimPlayRate)
 	{
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 		Set_State_IdleStart(fDeltaTime);
+		m_bActive_ActionCameraShake = true;
 	}
+
+
 }
 
 void CPlayer::Shelling(_double fDeltaTime)
@@ -3462,6 +3753,11 @@ void CPlayer::Shelling(_double fDeltaTime)
 	{
 	case UTILITY_START:
 		m_fAnimSpeed = 1.f;
+
+		if (false == m_pShellingSkillRange->Get_IsActive())
+		{
+			m_pShellingSkillRange->Set_Active(true);
+		}
 
 		if (false == m_bAnimChangeSwitch && 0.44f < m_pModel->Get_PlayRate())
 		{
@@ -3516,6 +3812,8 @@ void CPlayer::Shelling(_double fDeltaTime)
 
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityShot);
+			pBowArrow->Set_TargetPos(m_pShellingSkillRange->Get_AttackPoint());
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.03f);
 		}
 		LookAt_MousePos();
 		break;
@@ -3524,6 +3822,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 		Shot_Shelling(fDeltaTime);
 		break;
 	case UTILITY_END:
+		m_pShellingSkillRange->Set_Active(false);
 		m_fAnimSpeed = 2.f;
 		if (0.9f <= m_pModel->Get_PlayRate())
 		{
@@ -3564,6 +3863,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	{
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(3.f);
+		m_pMainCamera->Start_CameraShaking_Thread(2.5f, 5.f, 0.01f);
 	}
 	else if (true == m_bAnimChangeSwitch && 0.574f <= m_pModel->Get_PlayRate())
 	{
@@ -3573,6 +3873,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Post_Shot();
+		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
 	}
 	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
 	{
@@ -3594,6 +3895,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Pre_Shot();
+		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
 	}
 	else if (false == m_bAnimChangeSwitch && 0.106f <= m_pModel->Get_PlayRate() && 0.191f >= m_pModel->Get_PlayRate())
 	{
@@ -3664,6 +3966,12 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
 	{
 		m_fAnimSpeed = 0.4f;
+		if (false == m_bActive_ActionCameraShake)
+		{
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 1.f, 0.6f);
+			m_pMainCamera->Start_CameraShaking_Thread(2.4f, 4.f, 0.005f);
+			m_bActive_ActionCameraShake = true;
+		}
 	}
 
 	if (0.98f <= fAnimPlayRate)
@@ -3671,7 +3979,24 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 		m_bAnimChangeSwitch = false;
 		Set_State_IdleStart(fDeltaTime);
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_UltimateMode();
+		m_bActive_ActionCameraShake = true;
+		return;
 	}
+
+
+
+	//// Active CameraShake
+	if (true == m_bActive_ActionCameraShake && 0.22f <= fAnimPlayRate && 0.5 > fAnimPlayRate)
+	{
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+		m_bActive_ActionCameraShake = false;
+	}
+	/*else if (false == m_bActive_ActionCameraShake && 0.2f <= fAnimPlayRate)
+	{
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+		m_bActive_ActionCameraShake = true;
+	}*/
+	////
 }
 
 void CPlayer::LookAtInputDir(_double fDeltaTime)
@@ -4084,6 +4409,116 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	}
 }
 
+void CPlayer::Update_Targeting(_double fDeltaTime)
+{
+	switch (m_eCur_TargetingState)
+	{
+	case ETARGETING_STATE::TARGETING_SEARCH:
+	{
+		Targeting_Search();
+	}
+	break;
+
+	case ETARGETING_STATE::TARGETING_LOOP:
+	{
+		Targeting_Loop();
+	}
+	break;
+	}
+}
+
+void CPlayer::Targeting_Search()
+{
+	// Check Aleady Cam TargetingMode
+	if (ECameraMode::CAM_MODE_TARGETING == m_pMainCamera->Get_CameraMode())
+	{
+		return;
+	}
+
+	// Check Exist UniqMonster
+	auto* UniqMonsters = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, TAG_LAY(Layer_Unique_Monster));
+	if (nullptr == UniqMonsters || UniqMonsters->size() <= 0)
+	{
+		return;
+	}
+
+	// Check Nearest UniqMonster
+	_float			fCur_NearestDist = 10.f;
+	CGameObject*	pTarget_UniqMonster = nullptr;
+	_Vector			vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	for (auto& UniqMonster : *UniqMonsters)
+	{
+		_Vector vUniqMonsterPos = static_cast<CTransform*>(UniqMonster->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_Vector vDist = XMVector3Length(vPlayerPos - vUniqMonsterPos);
+		if (fCur_NearestDist >= XMVectorGetX(vDist))
+		{
+			fCur_NearestDist = XMVectorGetX(vDist);
+			pTarget_UniqMonster = UniqMonster;
+		}
+	}
+
+	// Check Failed Search In Range
+	if (nullptr == pTarget_UniqMonster)
+	{
+		return;
+	}
+
+	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_TARGETING);
+	m_eCur_TargetingState = ETARGETING_STATE::TARGETING_LOOP;
+	m_pTargetingMonster = pTarget_UniqMonster;
+	m_pTargetingMonster_Transform = static_cast<CTransform*>(m_pTargetingMonster->Get_Component(TAG_COM(Com_Transform)));
+
+	Targeting_Loop();
+}
+
+void CPlayer::Targeting_Loop()
+{
+	_Vector vPlayerPos = Get_BonePos("skd_hip");
+	_Vector vPlayerPos2 = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vTargetPos = m_pTargetingMonster_Transform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vCenterPos = (vPlayerPos + vTargetPos) * 0.5f;
+
+	_float fDist = XMVectorGetX(XMVector3Length(vPlayerPos - vTargetPos));// *0.15f;
+	if (fDist > 20.f)
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		m_pMainCamera->Set_CameraLookWeight(0.9f);
+		m_pMainCamera->Set_CameraMoveWeight(0.9f);
+		return;
+	}  
+	else 
+	{
+		m_pMainCamera->Set_CameraLookWeight(0.98f);
+		m_pMainCamera->Set_CameraMoveWeight(0.98f);
+		fDist *= 2.5f;
+		if (fDist > 25.f)
+		{
+			fDist = 25.f;
+		}
+	}
+
+	_Vector vLookDir = XMVectorSet(0.f, -0.5f, 0.3f, 0.f) * (fDist + 5.f);
+
+	// Send to Center pos to Main Camera
+	m_pMainCamera->Set_TargetingPoint(vCenterPos);
+	m_pMainCamera->Set_TargetingLook(vLookDir);
+
+}
+
+void CPlayer::CheckOn_MotionTrail()
+{
+	if (true == m_bOn_MotionTrail)
+	{
+		Active_MotionTrail();
+	}
+}
+
+void CPlayer::Active_MotionTrail()
+{
+	m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.1f, 0.1f, 1.f), 0.4f);
+}
+
 
 void CPlayer::Check_NextComboCommand()
 {
@@ -4258,10 +4693,9 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
-
 	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
 
-	tMotionDesc.iNumTrailCount = 6;
+	tMotionDesc.iNumTrailCount = 3;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
 	tMotionDesc.iPassIndex = 5;
@@ -4297,18 +4731,16 @@ HRESULT CPlayer::SetUp_EtcInfo()
 	//
 
 
-
-
 	// Setting Camera
 	m_iMaxCamViewIndex = 4;
 	m_pMainCamera = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	//Safe_AddRef(m_pMainCamera);
 	m_pMainCamera->Lock_CamLook(false);
 	m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
 	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 	Update_AttachCamPos();
-	//
-	//m_fAttachCamPos_Offset = _float3(0.f, 8.f, -8.f);
+
+	// Pressed Move Key Amount
+	m_fMaxTime_PressedMoveKeyDuration = 1.f;
 
 	return S_OK;
 }
@@ -4351,13 +4783,21 @@ HRESULT CPlayer::SetUp_PlayerWeapons()
 	m_pPlayerWeapons[WEAPON_SHIELD - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 4));
 	m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_BlockUpdate(true);
 
+	return S_OK;
+}
 
-	// Test
-	//eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
-	//eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc));
-	//auto iter = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), 5));
-	//iter->Set_BlockUpdate(false);
+HRESULT CPlayer::SetUp_PlayerEffects()
+{
+	CShellingSkillRange::SHELLINGSKILLRANGEDESC		tShellingSkillRangeDesc;
+	tShellingSkillRangeDesc.fInitPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	tShellingSkillRangeDesc.fMaxDist = 18.f;
+	tShellingSkillRangeDesc.fSpeed = 3.f;
+	tShellingSkillRangeDesc.fStartDist = 2.f;
+	tShellingSkillRangeDesc.pOwner = this;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_PlayerEffect_ShellingRange), &tShellingSkillRangeDesc));
+	m_pShellingSkillRange = (CShellingSkillRange*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect)));
+	m_pShellingSkillRange->Set_Active(false);
 	return S_OK;
 }
 
@@ -4498,6 +4938,11 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_bPlayJumpAttack = false;
 					m_bPlayPowerAttack = false;
 				}
+
+				if (true == m_bAttackEnd)
+				{
+					m_bActive_ActionCameraShake = true;
+				}
 			}
 		}
 		break;
@@ -4543,8 +4988,5 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
-	//Safe_Release(m_pMainCamera);
-
-
 
 }

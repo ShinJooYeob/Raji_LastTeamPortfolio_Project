@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\PlayerWeapon_Arrow.h"
 #include "Timer.h"
+#include "ShellingArrow.h"
 
 CPlayerWeapon_Arrow::CPlayerWeapon_Arrow(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -162,6 +163,7 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
 		m_fStartPos_y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		m_pTransformCom->Set_MoveSpeed(fSpeed);
+		m_bFired = true;
 		break;
 	case EArrowState::Arrow_State_UtilityReady:
 		m_iPassNum = 8;
@@ -175,6 +177,7 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 		Active_Trail(true);
 		m_pTransformCom->Set_MoveSpeed(fSpeed);
+		m_bFired = true;
 		break;
 	}
 
@@ -301,6 +304,12 @@ void CPlayerWeapon_Arrow::Set_State_Ultimate_Post_Shot()
 	Active_Trail(true);
 }
 
+void CPlayerWeapon_Arrow::Set_TargetPos(_float3 fTargetPos)
+{
+	m_fTargetPos = fTargetPos;
+	int a = 10;
+}
+
 _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
 {
 	return _int();
@@ -341,7 +350,18 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 	//m_pTransformCom->Move_Forward(fDeltaTime);
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	m_pTransformCom->MovetoDir(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
-	m_pTimer_Destroy->Get_DeltaTime();
+	 
+	m_fCurTime_Destroy += (_float)fDeltaTime;
+	if (1.f <= m_fCurTime_Destroy)
+	{
+		CShellingArrow::SHELLINGARROWDESC tShellingArrowDesc;
+		tShellingArrowDesc.fStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		tShellingArrowDesc.fTargetPos = m_fTargetPos;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_ShellingArrow), &tShellingArrowDesc));
+
+		Set_IsDead();
+	}
+
 	m_bFired = true;
 	return _int();
 }

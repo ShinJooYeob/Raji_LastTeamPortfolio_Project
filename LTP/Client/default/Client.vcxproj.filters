@@ -310,6 +310,27 @@
     <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh">
       <UniqueIdentifier>{f9508001-e183-403f-bfe5-bc11ef094b16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\01.Player\01. Effect">
+      <UniqueIdentifier>{2b59b478-2c76-4b62-ba9a-633b9c70c698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\01. Effect\00. ShellingSkillRange">
+      <UniqueIdentifier>{7c4b88c3-40ed-4552-9cb6-dfe2172cefdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\01. Effect\01. ShellingSkillAttackPoint">
+      <UniqueIdentifier>{835eb6be-4825-441d-842a-c9d2f83dfad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\00. ChangeCameraViewTrigger">
+      <UniqueIdentifier>{42357c07-c23c-4d20-a45e-038be75f79ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\02. Skill">
+      <UniqueIdentifier>{f37c3d3b-f078-4e88-bc34-affde86fee38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\02. Skill\00. ShellingArrow">
+      <UniqueIdentifier>{85395cdb-9210-4693-9b2d-7cf54fb0c99d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\02. Skill\01. SpearWave">
+      <UniqueIdentifier>{c1f20be6-04a7-4a06-97e7-b175dc040153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -577,6 +598,11 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
+    <ClInclude Include="..\public\CopyMahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura.h" />
+    <ClInclude Include="..\public\Mahabalasura_Arms.h" />
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
@@ -654,6 +680,27 @@
     </ClInclude>
     <ClInclude Include="..\public\Rangda_Finger.h">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShellingSkillRange.h">
+      <Filter>01.GameObject\01.Player\01. Effect\00. ShellingSkillRange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShellingSkillAttackPoint.h">
+      <Filter>01.GameObject\01.Player\01. Effect\01. ShellingSkillAttackPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger_ChangeCameraView.h">
+      <Filter>01.GameObject\98.TriggerObject\00. ChangeCameraViewTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TriggerObject.h">
+      <Filter>01.GameObject\98.TriggerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShellingArrow.h">
+      <Filter>01.GameObject\01.Player\02. Skill\00. ShellingArrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpearWave.h">
+      <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -883,6 +930,11 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
+    <ClCompile Include="..\private\CopyMahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
@@ -970,6 +1022,30 @@
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\ShellingSkillRange.cpp">
+      <Filter>01.GameObject\01.Player\01. Effect\00. ShellingSkillRange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp">
+      <Filter>01.GameObject\01.Player\01. Effect\01. ShellingSkillAttackPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger_ChangeCameraView.cpp">
+      <Filter>01.GameObject\98.TriggerObject\00. ChangeCameraViewTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TriggerObject.cpp">
+      <Filter>01.GameObject\98.TriggerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\ShellingArrow.cpp">
+      <Filter>01.GameObject\01.Player\02. Skill\00. ShellingArrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpearWave.cpp">
+      <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

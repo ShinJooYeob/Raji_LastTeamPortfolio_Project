@@ -90,10 +90,16 @@ _float3 CUtilityMgr::RandomFloat3(_float3 Min, _float3 Max)
 	return _float3(RandomFloat(Min.x, Max.x), RandomFloat(Min.y, Max.y), RandomFloat(Min.z, Max.z));
 }
 
-void CUtilityMgr::SlowMotionStart(_float fTargetTime, _float TargetSpeed)
+void CUtilityMgr::SlowMotionStart(_float fTargetTime , _float TargetSpeed , _float TargetCurveRate )
 {
 	NULL_CHECK_BREAK(m_pMainApp);
-	m_pMainApp->SlowMotionStart(fTargetTime, TargetSpeed);
+	m_pMainApp->SlowMotionStart(fTargetTime, TargetSpeed, TargetCurveRate);
+}
+
+_float CUtilityMgr::Get_SlowMotionSpeed()
+{
+	NULL_CHECK_BREAK(m_pMainApp);
+	return m_pMainApp->Get_SlowMotionSpeed();
 }
 
 void CUtilityMgr::Start_DebugTimer(E_DEBUGTIMER type)

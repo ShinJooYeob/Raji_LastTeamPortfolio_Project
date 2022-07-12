@@ -73,6 +73,7 @@ public:
 	void MovetoDir(_fVector vDir, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
 	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime, class CNavigation* pNavigation = nullptr);
 	void MovetoTarget(_fVector vTarget, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void MovetoTarget_ErrRange(_fVector vTarget, _double fDeltaTime, _float fErrRange);
 
 	_bool MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);
 	_bool MovetoBezierCurve(_float Total_Time, _float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);
@@ -81,12 +82,13 @@ public:
 	void LookAt(_fVector vTarget);
 	void LookAtExceptY(_fVector vTargetPos, _double TimeDelta);
 	void LookDir(_fVector vTargetLook);
-	
+	void LookDir_ver2(_fVector vTargetLook);													// Made_By Jino
+
 	//월드 좌표 기준으로 현제 회전 상태에서 이어서 회전을 하고싶을 떄
 	void Turn_CW(_fVector vAxis, _double fDeltaTime);
 	void Turn_CCW(_fVector vAxis, _double fDeltaTime);
 	void Turn_Direct(_fVector vAxis, _float fRadian);											// Made_By Jino
-	void Turn_Dir(_fVector vTargetDir, _float fWeight);											// Made_By Jino
+	void Turn_Dir(_fVector vTargetDir, _float fWeight, _float fRightWeight = 0.5f);				// Made_By Jino
 	void Turn_Revolution_CW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);			// Made_By Jino
 	void Turn_Revolution_CCW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);		// Made_By Jino
 

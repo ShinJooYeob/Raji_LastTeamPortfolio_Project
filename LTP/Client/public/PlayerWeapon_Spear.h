@@ -68,6 +68,10 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CSwordTrail*		m_pSwordTrail = nullptr;
 
+
+	CModel*				m_pModel_Skill = nullptr;
+	CTransform*			m_pTransformCom_Skill = nullptr;
+
 public:
 	static CPlayerWeapon_Spear*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);

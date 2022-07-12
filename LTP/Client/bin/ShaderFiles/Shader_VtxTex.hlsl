@@ -160,4 +160,14 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_Effect_Alpha_UP();
 	}
 
+	pass Rect_NoneCull			//3
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RECT();
+	}
 }

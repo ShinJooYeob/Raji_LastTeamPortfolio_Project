@@ -328,6 +328,25 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation*
 	Set_MatrixState(CTransform::STATE_POS, vPos);*/
 }
 
+void CTransform::MovetoTarget_ErrRange(_fVector vTarget, _double fDeltaTime, _float fErrRange)
+{
+	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
+	_float fDist = XMVectorGetX(XMVector3Length(vPos - vTarget));
+	if (fDist <= fErrRange)
+	{
+		vPos = vTarget;
+	}
+	else
+	{
+		vPos += XMVector3Normalize(vTarget - vPos)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
+	}
+
+
+	Set_MatrixState(CTransform::STATE_POS, vPos);
+
+
+}
+
 _bool CTransform::MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos)
 {
 	_bool	bResult = false;
@@ -446,6 +465,31 @@ void CTransform::LookDir(_fVector vTargetLook)
 	XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_UP]), XMVector3Normalize(XMVector3Cross(vLook, vRight)) * matScale.r[STATE_UP]);
 }
 
+void CTransform::LookDir_ver2(_fVector vTargetLook)
+{
+	_Matrix matScale = Get_MatrixScale_All();
+
+	_Vector vRight;
+	_Vector vLook = XMVector3Normalize(vTargetLook);
+
+	XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_LOOK]), vLook * matScale.r[STATE_LOOK]);
+
+	if (XMVector3Equal(vLook, _float3(0, 1, 0).XMVector()) || XMVector3Equal(vLook, _float3(0, -1, 0).XMVector()))
+	{
+		OutputDebugStringW(L"Can't Cross With Same Vector");
+
+		vRight = XMVector3Normalize(XMVector3Cross(_float3(0.0000001f, 1, 0).XMVector(), vLook));
+		XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_RIGHT]), vRight * matScale.r[STATE_RIGHT]);
+	}
+	else
+	{
+		vRight = XMVector3Normalize(XMVector3Cross(_float3(0, 1, 0).XMVector(), vLook));
+		XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_RIGHT]), vRight * matScale.r[STATE_RIGHT]);
+	}
+
+	XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_UP]), XMVector3Normalize(XMVector3Cross(vLook, vRight)) * matScale.r[STATE_UP]);
+}
+
 void CTransform::Turn_CW(_fVector vAxis, _double fDeltaTime)
 {
 	_Matrix matRUL = m_WorldMatrix.XMatrix();
@@ -478,7 +522,7 @@ void CTransform::Turn_Direct(_fVector vAxis, _float fRadian)
 }
 	
 
-void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight)
+void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight, _float fRightWeight)
 {
 	if (0 > fWeight || 1 < fWeight)
 	{
@@ -493,7 +537,7 @@ void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight)
 	_Vector vDot = XMVector3Dot(vRotDir, vMyLook);
 	if (-0.8f > XMVectorGetX(vDot))
 	{
-		vRotDir = (Get_MatrixState_Normalized(TransformState::STATE_RIGHT) * (0.5f)) + vRotDir  * (0.5f);
+		vRotDir = (Get_MatrixState_Normalized(TransformState::STATE_RIGHT) * (fRightWeight)) + vRotDir  * (1.f - fRightWeight);
 		XMVector3Normalize(vRotDir);
 	}
 

@@ -9,6 +9,7 @@ END
 
 BEGIN(Client)
 class CCamera_Main;
+class CShellingSkillRange;
 class CPlayer final : public CGameObject
 {
 private:
@@ -81,7 +82,9 @@ private:
 	};
 	//
 
-
+	enum ETARGETING_STATE {
+		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
+	};
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -125,22 +128,17 @@ private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
 
 
-private:
 	HRESULT Update_State_Idle(_double fDeltaTime);
 	HRESULT Update_State_Move(_double fDeltaTime);
 	
-
 	HRESULT Update_State_Attack(_double fDeltaTime);
 	HRESULT Update_State_UtilitySkill(_double fDeltaTime);
 	HRESULT Update_State_UltimateSkill(_double fDeltaTime);
 	HRESULT Update_State_Evasion(_double fDeltaTime);
 
-
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
-
-
 
 
 private: /* Key Input */
@@ -189,6 +187,14 @@ private: /* Setter */
 	void				Set_TurnInputDir_CalDir();
 	void				Set_MainAttackAnim(_bool bJumpAttack);
 
+private:
+	void				Update_Targeting(_double fDeltaTime);
+	void				Targeting_Search();
+	void				Targeting_Loop();
+
+private: /* Motion Trail*/
+	void				CheckOn_MotionTrail();
+	void				Active_MotionTrail();
 
 private:
 	void				Check_NextComboCommand();
@@ -226,71 +232,87 @@ private: /* Enum Stats */
 
 
 private: /* Animation Control */
-	_bool				m_bPlayTurnBackAnim = false;
-	const _int			m_iMaxCombo = 3;
-	_int				m_iCurCombo = 1;
+	_bool					m_bPlayTurnBackAnim = false;
+	const _int				m_iMaxCombo = 3;
+	_int					m_iCurCombo = 1;
 	
 
-	_uint				m_iOldAnimIndex = INT_MAX;
-	_uint				m_iAdjMovedIndex = 0;
+	_uint					m_iOldAnimIndex = INT_MAX;
+	_uint					m_iAdjMovedIndex = 0;
 
-	_float				m_fAnimSpeed = 1.f;
-	_float				m_fAnimSpeed_DecAcc = 0.f;
-	_float				m_fMovSpeed_DecAcc = 0.f;
+	_float					m_fAnimSpeed = 1.f;
+	_float					m_fAnimSpeed_DecAcc = 0.f;
+	_float					m_fMovSpeed_DecAcc = 0.f;
 
-	_float3				m_fMovDir;
+	_float3					m_fMovDir;
 
-	_bool				m_bPlayNextCombo = false;
+	_bool					m_bPlayNextCombo = false;
 
-	_bool				m_bPlayMainAttackCombo = false;
-	_bool				m_bReadyMainAttackCombo = false;
-	_bool				m_bPlayDodgeCombo = false;
-	_bool				m_bReadyDodgeCombo = false;
-	_bool				m_bPlayJumpAttackCombo = false;
-	_bool				m_bReadyJumpAttackCombo = false;
+	_bool					m_bPlayMainAttackCombo = false;
+	_bool					m_bReadyMainAttackCombo = false;
+	_bool					m_bPlayDodgeCombo = false;
+	_bool					m_bReadyDodgeCombo = false;
+	_bool					m_bPlayJumpAttackCombo = false;
+	_bool					m_bReadyJumpAttackCombo = false;
 
 
-	_bool				m_bAttackEnd = true;
-	_bool				m_bPlayJumpAttack = false;
-	_bool				m_bMainAttacking = false;
-	_bool				m_bPlayPowerAttack = false;
-	_bool				m_bDodging = false;
+	_bool					m_bAttackEnd = true;
+	_bool					m_bPlayJumpAttack = false;
+	_bool					m_bMainAttacking = false;
+	_bool					m_bPlayPowerAttack = false;
+	_bool					m_bDodging = false;
 	
-	_bool				m_bThrowSpear = false;
+	_bool					m_bThrowSpear = false;
 
-	_bool				m_bAnimChangeSwitch = false;
-	_bool				m_bActionSwitch = false;
-	_bool				m_bTrailSwitch = false;
-	_float				m_fChargingTime = 0.f;
-	_float				m_fArrowRange = 0.f;
+	_bool					m_bAnimChangeSwitch = false;
+	_bool					m_bActionSwitch = false;
+	_bool					m_bTrailSwitch = false;
+	_float					m_fChargingTime = 0.f;
+	_float					m_fArrowRange = 0.f;
+
+private: /* Camera Shake */
+	_bool					m_bActive_ActionCameraShake = true;
+
+private: /* Motion Trail */
+	_float					m_fInterval_MotionTrail = 0.f;
+	_bool					m_bOn_MotionTrail = false;
 
 private: /* Activate */
-	_bool				m_bActivateLookDir = false;
+	_bool					m_bActivateLookDir = false;
 
 private: /* Cam View */
-	_int				m_iMaxCamViewIndex = 0;
-	_int				m_iCurCamViewIndex = 0;
+	_int					m_iMaxCamViewIndex = 0;
+	_int					m_iCurCamViewIndex = 0;
 
 private: /* Timer */
-	_float				m_fMaxTime_ShellingDelay = 0.f;
-	_float				m_fCurTime_ShellingDelay = 0.f;
+	_float					m_fMaxTime_ShellingDelay = 0.f;
+	_float					m_fCurTime_ShellingDelay = 0.f;
 
 private:
-	CShader*			m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CModel*				m_pModel = nullptr;
-	CTransform*			m_pTransformCom = nullptr;
-	CMotionTrail*		m_pMotionTrail = nullptr;
-	CCamera_Main*		m_pMainCamera = nullptr;
+	CShellingSkillRange*	m_pShellingSkillRange = nullptr;
+
+private: /* Targeting */
+	ETARGETING_STATE		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+	CGameObject*			m_pTargetingMonster = nullptr;
+	CTransform*				m_pTargetingMonster_Transform = nullptr;
+
+private:
+	CShader*				m_pShaderCom = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CModel*					m_pModel = nullptr;
+	CTransform*				m_pTransformCom = nullptr;
+	CMotionTrail*			m_pMotionTrail = nullptr;
+	CCamera_Main*			m_pMainCamera = nullptr;
 	
 
 private:
-	CPlayerWeapon*		m_pPlayerWeapons[WEAPON_END - 1];
+	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_EtcInfo();
 	HRESULT SetUp_PlayerWeapons();
+	HRESULT SetUp_PlayerEffects();
 
 	HRESULT Adjust_AnimMovedTransform(_double fDeltatime);
 

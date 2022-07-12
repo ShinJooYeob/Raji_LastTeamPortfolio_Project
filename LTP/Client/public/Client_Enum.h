@@ -176,7 +176,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 enum ECameraMode
 {
-	CAM_MODE_FREE, CAM_MODE_NOMAL
+	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING
 };
 
 enum UPGRADEID
@@ -259,6 +259,12 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerWeapon_Shield,
 	Prototype_PlayerWeapon_Chakra,
 	Prototype_PlayerWeapon_Arrow,
+	Prototype_PlayerEffect_ShellingRange,
+	Prototype_PlayerEffect_ShellingPoint,
+
+	Prototype_Trigger_ChangeCameraView,
+
+	Prototype_PlayerSkill_ShellingArrow,
 
 	Prototype_SkyBox,
 
@@ -373,8 +379,21 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_PlayerWeapon_Arrow:
 		return TEXT("Prototype_PlayerWeapon_Arrow");
 		break;
+	case Prototype_PlayerEffect_ShellingRange:
+		return TEXT("Prototype_PlayerEffect_ShellingRange");
+		break;
+	case Prototype_PlayerEffect_ShellingPoint:
+		return TEXT("Prototype_PlayerEffect_ShellingPoint");
+		break;
+		
+	case Prototype_Trigger_ChangeCameraView:
+		return TEXT("Prototype_Trigger_ChangeCameraView");
+		break;
 
-
+	case Prototype_PlayerSkill_ShellingArrow:
+		return TEXT("Prototype_PlayerSkill_ShellingArrow");
+		break;
+	
 	case Prototype_StaticMapObject:
 		return TEXT("Prototype_StaticMapObject");
 		break;
@@ -593,10 +612,13 @@ enum LAYERID
 	Layer_SkyBox,
 	Layer_Player,
 	Layer_PlayerWeapon,
+	Layer_PlayerEffect,
+	Layer_PlayerSkill,
 	Layer_Bullet,
 	Layer_ClockBomb,
 
 	Layer_Monster,
+	Layer_Unique_Monster,
 	Layer_Monster_Weapon,
 	Layer_MonsterBullet,
 	Layer_MonsterBullet1,
@@ -708,6 +730,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_Monster:
 		return TEXT("Layer_Monster");
 		break;
+	case Layer_Unique_Monster:
+		return TEXT("Layer_Unique_Monster");
+		break;
 	case Layer_Monster_Weapon:
 		return TEXT("Layer_Monster_Weapon");
 		break;
@@ -727,6 +752,12 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		break;
 	case Layer_PlayerWeapon:
 		return TEXT("Layer_PlayerWeapon");
+		break;
+	case Layer_PlayerEffect:
+		return TEXT("Layer_PlayerEffect");
+		break;
+	case Layer_PlayerSkill:
+		return TEXT("Layer_PlayerSkill");
 		break;
 	case Layer_JumpPad:
 		return TEXT("Layer_JumpPad");
@@ -886,7 +917,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_DemonTree_Seg04,
 	Prototype_Mesh_DemonTree_Seg05,
 	Prototype_Mesh_TEST_STATIC,
-
+	Prototype_Mesh_PlayerSkill_SpearWave,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
@@ -897,6 +928,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Shield,
 	Prototype_Mesh_PlayerWeapon_Chakra,
 	Prototype_Mesh_PlayerWeapon_Arrow,
+	Prototype_Mesh_PlayerEffect_ShellingParabola,
 
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
@@ -958,7 +990,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_TestEffect,
 	Prototype_Texture_Util,
 	Prototype_Texture_Monster_Bullet,
-
+	Prototype_Texture_ShellingRange,
+	Prototype_Texture_ShellingPoint,
 };
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 {
@@ -1112,6 +1145,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_TEST_STATIC:
 		return TEXT("Prototype_Mesh_TEST_STATIC");
 
+	case Prototype_Mesh_PlayerSkill_SpearWave:
+		return TEXT("SpearWave.fbx");
+		break;
+
 	case Prototype_Mesh_DemonTree_Seg01:
 		return TEXT("DemonTree_Seg01.fbx");
 
@@ -1168,6 +1205,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_PlayerWeapon_Arrow:
 		return TEXT("PlayerWeapon_Arrow.fbx");
+		break;
+	case Prototype_Mesh_PlayerEffect_ShellingParabola:
+		return TEXT("ShellingParabola.fbx");
 		break;
 
 	case Prototype_Mesh_Monster_Mahinasura_Minion:
@@ -1329,6 +1369,13 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_Monster_Bullet");
 		break;
 
+	case Prototype_Texture_ShellingRange:
+		return TEXT("Prototype_Texture_ShellingRange");
+		break;
+	case Prototype_Texture_ShellingPoint:
+		return TEXT("Prototype_Texture_ShellingPoint");
+		break;
+		
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;
@@ -1405,7 +1452,6 @@ enum COMPONENTID
 	Com_Renderer,
 	Com_VIBuffer,
 	Com_Transform,
-	Com_SubTransform,
 	Com_Texture,
 	Com_Inventory,
 	Com_Shader,
@@ -1419,6 +1465,7 @@ enum COMPONENTID
 	Com_MotionTrail,
 	Com_Navaigation,
 	Com_ModelInstance,
+	Com_SubTransform,
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {

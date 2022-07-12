@@ -285,13 +285,19 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 
 	CSwordTrail::TRAILDESC tSwordDesc;
 	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
+	tSwordDesc.vColor = _float4(1.f, 0.2f, 0.1f, 1.f);
 	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
 	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
 	tSwordDesc.iTextureIndex = 1;			// 1 or 4
 	tSwordDesc.NoiseSpeed = 0;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
+
+
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerWeapon_Spear), TAG_COM(Com_SubModel), (CComponent**)&m_pModel_Skill));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pTransformCom_Skill, &tDesc));
+
 
 	return S_OK;
 }
@@ -336,4 +342,7 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pSwordTrail);
+
+	Safe_Release(m_pModel_Skill);
+	Safe_Release(m_pTransformCom_Skill);
 }
