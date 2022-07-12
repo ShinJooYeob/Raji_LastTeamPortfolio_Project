@@ -331,6 +331,9 @@
     <Filter Include="01.GameObject\01.Player\02. Skill\01. SpearWave">
       <UniqueIdentifier>{c1f20be6-04a7-4a06-97e7-b175dc040153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\97.TestObject\03.ColliderTest_Obj">
+      <UniqueIdentifier>{c0d687f1-e3ac-461a-b0ce-3df5cfc9e140}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -428,9 +431,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h">
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TestObject.h">
-      <Filter>01.GameObject\97.TestObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SkyBox.h">
       <Filter>01.GameObject\05.SkyBox</Filter>
@@ -607,7 +607,6 @@
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h" />
-    <ClInclude Include="..\public\TestObject_PhysX.h" />
     <ClInclude Include="..\public\MeshEffect.h">
       <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
     </ClInclude>
@@ -702,6 +701,15 @@
     <ClInclude Include="..\public\SpearWave.h">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TestObject_PhysX.h">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestObject.h">
+      <Filter>01.GameObject\97.TestObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestObject_BaseCollider.h">
+      <Filter>01.GameObject\97.TestObject\03.ColliderTest_Obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -775,9 +783,6 @@
     </ClCompile>
     <ClCompile Include="..\public\Imgui\imgui_widgets.cpp">
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TestObject.cpp">
-      <Filter>01.GameObject\97.TestObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SkyBox.cpp">
       <Filter>01.GameObject\05.SkyBox</Filter>
@@ -939,7 +944,6 @@
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp" />
-    <ClCompile Include="..\private\TestObject_PhysX.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
     </ClCompile>
@@ -1046,6 +1050,15 @@
     </ClCompile>
     <ClCompile Include="..\private\SpearWave.cpp">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject_PhysX.cpp">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject.cpp">
+      <Filter>01.GameObject\97.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestObject_BaseCollider.cpp">
+      <Filter>01.GameObject\97.TestObject\03.ColliderTest_Obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
