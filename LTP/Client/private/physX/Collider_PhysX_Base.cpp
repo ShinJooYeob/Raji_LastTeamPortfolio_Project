@@ -74,6 +74,7 @@ HRESULT CCollider_PhysX_Base::Update_BeforeSimulation()
 {
 	// 시뮬레이션 전의 충돌체 위치
 	// 현재 오브젝트 위치를 받아온다.
+
 	if (mMainGameObject == nullptr)
 		return E_FAIL;
 
@@ -242,6 +243,23 @@ void CCollider_PhysX_Base::Set_Transform(CTransform * trans)
 	mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4));
 }
 
+HRESULT CCollider_PhysX_Base::Set_ActorFlag(PxActorFlag::Enum e, bool b)
+{
+	// 시각화
+	// eVISUALIZATION = (1 << 0),
+
+	// 중력비활성화
+	// eDISABLE_GRAVITY = (1 << 1),
+
+	// 알림이벤트 On Off
+	// eSEND_SLEEP_NOTIFIES = (1 << 2),
+
+	// 충돌 비활성화
+	// eDISABLE_SIMULATION = (1 << 3)
+
+	mMain_Actor->setActorFlag(e, b);
+	return S_OK;
+}
 
 #ifdef _DEBUG
 
@@ -275,13 +293,12 @@ HRESULT CCollider_PhysX_Base::Render()
 	mMain_Actor->getShapes(shapes, numShapes);
 
 	// 모양 마다 그려준다.
-	XMVECTORF32 color = DirectX::Colors::Cyan;
 
 	for (PxU32 j = 0; j < numShapes; j++)
 	{
 		const PxMat44 shpaeWorld(PxShapeExt::getGlobalPose(*shapes[j], *mMain_Actor));
 		const PxGeometryHolder h = shapes[j]->getGeometry();
-		RenderShape(h, shpaeWorld, color);
+		RenderShape(h, shpaeWorld, mRenderColor);
 	}
 	m_pBatch->End();
 
@@ -349,9 +366,18 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 	}
 
 	return S_OK;
-
-
 }
+
+HRESULT CCollider_PhysX_Base::RenderDebugSphere(_float4x4 mat,_float scale, XMVECTORF32 color)
+{
+	color = DirectX::Colors::Red;
+	PxTransform worldTrans = PxTransform(MAT4X4TOPXMAT(mat));
+	_float3 worldpos = PXVEC3TOFLOAT3(worldTrans.p);
+	BoundingSphere s = BoundingSphere(worldpos, scale);
+	DX::Draw(m_pBatch, s, color);
+	return S_OK;
+}
+
 HRESULT CCollider_PhysX_Base::RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color)
 {
 	PxTransform pxtrans = PxTransform(world);

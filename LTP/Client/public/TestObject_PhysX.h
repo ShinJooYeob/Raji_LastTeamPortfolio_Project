@@ -59,6 +59,12 @@ private:
 	HRESULT Set_PlayerMeshair();
 
 private:
+	HRESULT Update_Player(_double time);
+	HRESULT Update_Static(_double time);
+	HRESULT Update_Dynamic(_double time);
+	HRESULT Update_Joint(_double time);
+
+private:
 	// 피직스 관련
 	CTransform*			mCom_Transform = nullptr;
 	CShader*			mCom_Shader = nullptr;

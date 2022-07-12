@@ -24,6 +24,9 @@ _float3 CPhysXMgr::gDebugValue2 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue3 = _float3::Zero();
 _float3 CPhysXMgr::gDebugValue4 = _float3::Zero();
 
+PxTolerancesScale	CPhysXMgr::gToleranceScale;
+
+
 // Scene의 충돌 감지 세팅
 PxFilterFlags SampleSubmarineFilterShader(
 	PxFilterObjectAttributes attributes0, PxFilterData filterData0,
@@ -464,8 +467,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 {
 	
 	// Init
-	mToleranceScale.length = 100;
-	mToleranceScale.speed = 981;
+	gToleranceScale.length = 100;
+	gToleranceScale.speed = 981;
 
 	// 트리거 타입
 
@@ -477,7 +480,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	// 메시 베이크에 해당되는 인자 전달
 	// mPhysics->getPhysicsInsertionCallback();
-	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(mToleranceScale));
+	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(gToleranceScale));
 	NULL_CHECK_BREAK(mCooking);
 	gCooking = mCooking;
 
@@ -488,7 +491,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 	mPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
-	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale, true, mPvd);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale, true, mPvd);
 	NULL_CHECK_BREAK(mPhysics);
 	gPhysics = mPhysics;
 
@@ -497,7 +500,7 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 #endif // _DEBUG
 
 #else
-	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mToleranceScale);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale);
 	NULL_CHECK_BREAK(mPhysics);
 #endif
 
@@ -747,24 +750,22 @@ HRESULT CPhysXMgr::CreateDemoMap()
 	PxVec3		pxScale = PxVec3(1,1,1);
 
 	pxTrnas.p = PxVec3(0, -1, 0);
-	pxScale = PxVec3(10, 1, 10);
+	pxScale = PxVec3(100, 0.5f, 100);
 	CreateDemoMap_StaticBox(pxTrnas,pxScale);
 	
-	pxTrnas.p = PxVec3(-4, 0, 0);
-	pxScale = PxVec3(2, 2, 2);
+	pxTrnas.p = PxVec3(-5, 2, 0);
+	pxScale = PxVec3(3, 3, 3);
 
 	CreateDemoMap_StaticBox(pxTrnas,pxScale);
 	
-	pxTrnas.p = PxVec3(3, 0, 0);
-	pxScale = PxVec3(1, 3, 1);
+	pxTrnas.p = PxVec3(5, 1, 0);
+	pxScale = PxVec3(4, 3, 4);
 	CreateDemoMap_StaticBox(pxTrnas, pxScale);
 
-	pxTrnas.p = PxVec3(1, 1, 3);
-	pxScale = PxVec3(5, 5, 5);
+	pxTrnas.p = PxVec3(2, 1, 6);
+	pxScale = PxVec3(4, 4, 4);
 	CreateDemoMap_StaticBox(pxTrnas, pxScale,true);
-//	CreateDemoMap_StaticBox(pxTrnas,pxScale);
-//	CreateDemoMap_StaticBox(pxTrnas,pxScale);
-//
+
 	return S_OK;
 }
 
@@ -777,7 +778,8 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool t
 	CTestObject_PhysX* obj =
 		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(nowScene, TAG_LAY(Layer_ColBase)));
 	obj->Set_ColSetID(E_PHYTYPE_STATIC);
-	obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+
+	triger ? obj->Set_ModelSetting(CTestObject_PhysX::MODEL_EMPTY) : obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
 
 	CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
 	CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
@@ -793,6 +795,34 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticBox(PxTransform px, PxVec3 scale, _bool t
 	colStatic->Set_ColiiderDesc(createStatic);
 	return S_OK;
 }
+
+HRESULT CPhysXMgr::CreateDemoMap_StaticSphere(PxTransform px, PxVec3 scale, _bool triger)
+{
+	_uint nowScene = g_pGameInstance->Get_TargetSceneNum();
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+	(nowScene, TAG_LAY(Layer_ColBase), TAG_OP(Prototype_Object_Static_PhysX)));
+	CTestObject_PhysX* obj =
+		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(nowScene, TAG_LAY(Layer_ColBase)));
+	obj->Set_ColSetID(E_PHYTYPE_STATIC);
+
+	triger ? obj->Set_ModelSetting(CTestObject_PhysX::MODEL_EMPTY) : obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+
+	CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+	CCollider_PhysX_Static* colStatic = (CCollider_PhysX_Static*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+	objTrans->Set_MatrixState(CTransform::STATE_POS, PXVEC3TOFLOAT3(px.p));
+	objTrans->Scaled_All(PXVEC3TOFLOAT3(scale));
+
+	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
+	createStatic.bTrigger = triger;
+	createStatic.eShapeType = E_GEOMAT_SPEHE;
+	createStatic.mGameObect = obj;
+	createStatic.mTrnasform = objTrans;
+	NULL_CHECK_BREAK(createStatic.mTrnasform);
+	colStatic->Set_ColiiderDesc(createStatic);
+	return S_OK;
+}
+
 
 void CPhysXMgr::Free()
 {

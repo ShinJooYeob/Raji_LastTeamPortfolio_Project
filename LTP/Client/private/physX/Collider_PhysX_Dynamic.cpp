@@ -30,6 +30,9 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 	
 
 	// 키나 외부 힘이 작용했을떄 예외처리
+	
+
+
 	//PxRigidDynamic* dynamic;
 	//dynamic->setKinematicTarget();
 	return S_OK;
@@ -40,6 +43,32 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
 	FAILED_CHECK(__super::Update_BeforeSimulation());
 
+
+	//if (mbKeyDown)
+	//	mMain_Actor->setGlobalPose(PxTransform(FLOAT3TOPXVEC3(mMainTransform->Get_MatrixState(CTransform::STATE_POS))));
+
+
+	//PxTransform trans =  mMain_Actor->getGlobalPose();
+	//_float4x4 f =_Sfloat4x4::CreateTranslation(PXVEC3TOFLOAT3(trans.p));
+	//mMainTransform->Set_Matrix(f);
+	 
+
+	//PxScene* scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+	//PxSceneReadLock scopedLock(*scene);
+
+	//PxCapsuleController* capsuleCtrl = static_cast<PxCapsuleController*>(mController);
+
+	//PxReal r = capsuleCtrl->getRadius();
+	//PxReal dh = mStandingSize - mCrouchingSize - 2 * r;
+	//PxCapsuleGeometry geom(r, dh*.5f);
+
+	//PxExtendedVec3 position = mController->getPosition();
+	//PxVec3 pos((float)position.x, (float)position.y + mStandingSize * .5f + r, (float)position.z);
+	//PxQuat orientation(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f));
+
+	//PxOverlapBuffer hit;
+	//if (scene->overlap(geom, PxTransform(pos, orientation), hit, PxQueryFilterData(PxQueryFlag::eANY_HIT | PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC)))
+	//	return;
 
 
 
@@ -53,11 +82,11 @@ HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 	{
 		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
 		mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4.column3.x, mPxMainMatrix4x4.column3.y, mPxMainMatrix4x4.column3.z));
-	}
 	// PxTransform trans = mMain_Actor->getGlobalPose();
 	// mPxMainMatrix4x4 = PxMat44(trans);
 	// mPxMainMatrix4x4.scale(PxVec4(mScale, 1));
 	// mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	}
 
 	else
 	{
@@ -79,6 +108,7 @@ void CCollider_PhysX_Dynamic::Set_Kinecmatic(_bool b)
 #ifdef _DEBUG
 HRESULT CCollider_PhysX_Dynamic ::Render()
 {
+	mRenderColor = DirectX::Colors::Blue;
 	FAILED_CHECK(__super::Render());
 
 	
@@ -99,12 +129,10 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
-
 	PxGeometry* gemo = nullptr;
 	mMainTransform = mPhysXDesc.mTrnasform;
 	mMainGameObject = mPhysXDesc.mGameObect;
 	
-
 	_float3 scale = mMainTransform->Get_Scale();
 	mScale = FLOAT3TOPXVEC3(scale);
 	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -115,17 +143,49 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColiiderDesc(PHYSXDESC_DYNAMIC desc)
 	// 초기휘치 오류
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
-
-	PxReal density = 0.05f;
+	PxReal density = 1.f;
 
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
-
 	SetBaseFlag();	
-
 	return S_OK;
+}
+
+HRESULT CCollider_PhysX_Dynamic::Set_ColliderDesc_Player(PHYSXDESC_DYNAMIC desc)
+{
+	// 충돌 모델 초기화
+	memcpy(&mPhysXDesc, &desc, sizeof(PHYSXDESC_DYNAMIC));
+
+	// 위 정보로 콜라이더 초기화
+	// 위치 / 스케일 / 엑터 타입 / 모양을 지정헤서 콜라이더 컴포넌트 생성
+	if (mMain_Actor)
+		return E_FAIL;
+
+	PxGeometry* gemo = nullptr;
+	mMainTransform = mPhysXDesc.mTrnasform;
+	mMainGameObject = mPhysXDesc.mGameObect;
+
+	_float3 scale = mMainTransform->Get_Scale();
+	mScale = FLOAT3TOPXVEC3(scale);
+	_float3 pos = mMainTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	gemo = Create_Geometry(desc.eShapeType, scale);
+	NULL_CHECK_BREAK(gemo);
+
+	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
+	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
+	PxReal density = 1.f;
+	nomalTransform.q = PxQuat(PxPi / 2, FLOAT3TOPXVEC3(_float3(0, 0, 1)));
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
+	NULL_CHECK_BREAK(mMain_Actor);
+	Safe_Delete(gemo);
+
+	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
+	SetBaseFlag();
+	return S_OK;
+
 }
 
 HRESULT CCollider_PhysX_Dynamic::Set_RigidbodyFlag(PxRigidBodyFlag::Enum e, bool value)
@@ -153,6 +213,13 @@ HRESULT CCollider_PhysX_Dynamic::Clear_Force(PxForceMode::Enum mode)
 	return S_OK;
 }
 
+HRESULT CCollider_PhysX_Dynamic::Move(PxVec3 velo)
+{
+	mPxDynamicActor->wakeUp();
+	mPxDynamicActor->setLinearVelocity(velo);
+	return S_OK;
+}
+
 void CCollider_PhysX_Dynamic::SetBaseFlag()
 {
 	// Base Flag
@@ -173,6 +240,8 @@ void CCollider_PhysX_Dynamic::SetBaseFlag()
 	force.fMaxLinearSpeed = 100;
 	force.fMaxAngleSpeed = 100;
 	Set_DynamicValue(force);
+
+
 }
 
 

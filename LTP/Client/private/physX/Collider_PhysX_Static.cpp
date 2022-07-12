@@ -45,13 +45,14 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 			return E_FAIL;
 	}
 
-	else
+	if (mPhysXDesc.bTrigger)
 	{
-		if (mbTrigger)
-			return S_OK;
 		if (mMain_Actor == nullptr || mMainTransform == nullptr)
 			return E_FAIL;
+
+		return S_OK;
 	}
+
 
 	return S_OK;
 }
@@ -60,8 +61,6 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 {
 	FAILED_CHECK(__super::Update_AfterSimulation());
 
-
-
 	if (E_STATIC_BUFFER == mStaticID)
 	{
 		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
@@ -69,21 +68,12 @@ HRESULT CCollider_PhysX_Static::Update_AfterSimulation()
 	}
 	else
 	{
-		if (mbTrigger)
+		if (mPhysXDesc.bTrigger)
 			return S_OK;
 
 		// 최초 생성 후 고정
-		//PxVec3 newScale = Get_Scale_MainTrans();
-		////	Set_GeoMatScale(mMainShape, newScale);
-
-		//PxGeometry* gemo = Create_Geometry(mPhysXDesc.eShapeType, newScale);
-		//Create_Geometry(*gemo);
-
-		//mMain_Actor->setGlobalPose()
 	}	
 
-//	mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
-//	mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
 
 	return S_OK;
 }
@@ -106,15 +96,19 @@ HRESULT CCollider_PhysX_Static::Render()
 
 		m_pBatch->Begin();
 		// 모양 마다 그려준다.
-		XMVECTORF32 color = DirectX::Colors::White;
-		RenderBuffer(mPhysXDesc.eShapeType, mPxMainMatrix4x4, color);
+		mRenderColor = DirectX::Colors::White;
+		RenderBuffer(mPhysXDesc.eShapeType, mPxMainMatrix4x4, mRenderColor);
 		m_pBatch->End();
 
 	}
 	else
 	{
+		if (mPhysXDesc.bTrigger)
+			mRenderColor = DirectX::Colors::Green;
+		else
+			mRenderColor = DirectX::Colors::Red;
 
-	FAILED_CHECK(__super::Render());
+		FAILED_CHECK(__super::Render());
 	}
 	return S_OK;
 }
@@ -163,8 +157,6 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	if (mMain_Actor)
 		return E_FAIL;
 
-	
-	
 	mMainTransform = mPhysXDesc.mTrnasform;
 	mMainGameObject = mPhysXDesc.mGameObect;
 
@@ -206,7 +198,6 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderDesc(PHYSXDESC_STATIC desc)
 	// DebugName
 	// mMain_Actor->setName("NONE");
 
-
 	return S_OK;
 }
 
@@ -221,46 +212,6 @@ HRESULT CCollider_PhysX_Static::Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc)
 	return S_OK;
 
 }
-
-
-
-HRESULT CCollider_PhysX_Static::Set_ActorFlag(PxActorFlag::Enum e, bool b)
-{
-	// 시각화
-	// eVISUALIZATION = (1 << 0),
-
-	// 중력비활성화
-	// eDISABLE_GRAVITY = (1 << 1),
-
-	// 알림이벤트 On Off
-	// eSEND_SLEEP_NOTIFIES = (1 << 2),
-
-	// 충돌 비활성화
-	// eDISABLE_SIMULATION = (1 << 3)
-
-	mMain_Actor->setActorFlag(e, b);
-	return S_OK;
-}
-
-//bool isTriggerShape(PxShape* shape)
-//{
-//	const TriggerImpl impl = getImpl();
-//
-//	// Detects native built-in triggers.
-//	if (impl == REAL_TRIGGERS && (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
-//		return true;
-//
-//	// Detects our emulated triggers using the simulation filter data. See createTriggerShape() function.
-//	if (impl == FILTER_SHADER && ::isTrigger(shape->getSimulationFilterData()))
-//		return true;
-//
-//	// Detects our emulated triggers using the simulation filter callback. See createTriggerShape() function.
-//	if (impl == FILTER_CALLBACK && shape->userData)
-//		return true;
-//
-//	return false;
-//}
-
 
 HRESULT CCollider_PhysX_Static::Set_eDISABLE_SIMULATION(bool b)
 {

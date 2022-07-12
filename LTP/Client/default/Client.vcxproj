@@ -183,8 +183,8 @@
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
-    <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
+    <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Rage.h" />
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
@@ -268,10 +268,11 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+
+    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
+    <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp" />
-    <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
-    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Rage.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp" />
@@ -297,6 +298,7 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Bullet.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Monster_Jalsura.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />

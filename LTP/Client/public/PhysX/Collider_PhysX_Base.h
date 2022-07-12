@@ -70,9 +70,18 @@ public:
 		CGameObject*		mGameObect = nullptr;
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
 		_float3				mVelocity = _float3::Zero();
-		_bool				bTrigger = false;
 
 	}PHYSXDESC_DYNAMIC;
+
+
+	//typedef struct Tag_PhysXDesc_Dynamic
+	//{
+	//	CTransform*			mTrnasform = nullptr;
+	//	CGameObject*		mGameObect = nullptr;
+	//	E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+	//	_float3				mVelocity = _float3::Zero();
+
+	//}PHYSXDESC_DYNAMIC;
 
 
 	typedef struct Tag_PhysXDesc_Joint
@@ -88,16 +97,20 @@ public:
 
 	}PHYSXDESC_JOINT;
 
-	typedef struct Tag_PhysXDesc_Joint_TEST
-	{
-		CTransform*			mTrnasform = nullptr;
-		_uint				mLength = 0;
-		_float3				mScale = _float3::One();
-		_float				mSeparation = 2;
-		
-		// E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+	//typedef struct Tag_PhysXDesc_JointHAIR
+	//{
+	//	string				mActorBone;
+	//	string*				mBones = nullptr;
+	//	_uint				mLength = 0;
+	//	CModel*				mAttachModel = nullptr;
+	//	CGameObject*		mGameObject = nullptr;
 
-	}PHYSXDESC_JOINT_TEST;
+	//	E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
+	//	_float3				mScale = _float3::One();
+	//	_float				mSeparation = 2;
+
+	//}PHYSXDESC_JOINT_HAIR;
+
 
 
 protected:
@@ -116,20 +129,20 @@ public:
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 	HRESULT RenderShape(const PxGeometryHolder & h, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
+	HRESULT RenderDebugSphere(_float4x4 mat, _float scale, XMVECTORF32 color);
 	HRESULT RenderBuffer(E_GEOMAT_TYPE e, const PxMat44& world, XMVECTORF32 color = DirectX::Colors::White);
 #endif // _DEBUG
 
 public:
-	PxRigidActor*	Get_ColliderActor() const { return mMain_Actor; }
-	void			Set_Transform(CTransform* trans);
-
-//	void			Set_(_bool b) { mbTrigger = b; };
+	PxRigidActor*		Get_ColliderActor() const { return mMain_Actor; }
+	void				Set_Transform(CTransform* trans);
+	HRESULT				Set_ActorFlag(PxActorFlag::Enum e, bool b);
 
 	// 테스트용 
-	void			Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
+	void				Set_ObjectID(OBJECTPROTOTYPEID e) { mColDesc.mObjid = e; };
 
-	E_PHYTYPE		Get_PhysX_ID()const { return mePhysX_ID; }
-	HRESULT			Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
+	E_PHYTYPE			Get_PhysX_ID()const { return mePhysX_ID; }
+	HRESULT				Add_Shape(PxGeometry& gemo, PxTransform trans = PxTransform());
 
 	PxGeometry*			Create_Geometry(E_GEOMAT_TYPE e,_float3 scale);
 	HRESULT				Change_GeoMetry(PxShape* shape, const PxGeometry& geo, _float3 scale);
@@ -139,19 +152,10 @@ public:
 	CGameObject*		Get_GameObject() { return mMainGameObject; };
 	OBJECTPROTOTYPEID	Get_ObjectID() { return mColDesc.mObjid; };
 
-	HRESULT			CreateNewShape(PxGeometry* gemo);
+	HRESULT				CreateNewShape(PxGeometry* gemo);
 
-	PxVec3			GetScale(PxMat44 mat);
-	PxTransform		GetPxTransform(PxMat44 mat);
-
-
-
-public:
-	//HRESULT CreateDynamicActor(PxVec3 scale = PxVec3(1, 1, 1));
-	//HRESULT CreateStaticActor(PxVec3 scale = PxVec3(1, 1, 1));
-	//HRESULT CCollider_PhysX_Base::CreateChain(ATTACHEDESC attach, PxU32 length, const PxGeometry & g, PxReal separation, JointCreateFunction createJoint);
-
-
+	PxVec3				GetScale(PxMat44 mat);
+	PxTransform			GetPxTransform(PxMat44 mat);
 
 protected:
 	// 충돌체 메인 Actor
@@ -168,9 +172,6 @@ protected:
 	// 콜라이더의 오브젝트 아이디
 	CColider_PX_Desc				mColDesc;
 
-	// 물리충돌 해제 위치만 업데이트 / static에서는 트리거로 사용
-	_bool							mbTrigger = false;
-
 
 	PxPhysics*						mPhysics = nullptr;
 	PxMaterial*						mNormalMaterial = nullptr;
@@ -182,6 +183,8 @@ protected:
 	BasicEffect*									m_pBasicEffect = nullptr;
 	ID3D11InputLayout*								m_pInputLayout = nullptr;
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = nullptr;
+	XMVECTORF32 mRenderColor = DirectX::Colors::Black;
+
 #endif // _DEBUG
 
 public:

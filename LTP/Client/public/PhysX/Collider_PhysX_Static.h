@@ -16,13 +16,22 @@ public:
 		E_STATIC_END,
 	};
 
-	// 트리거 적용 타입
-	enum TriggerImpl
-	{
-		REAL_TRIGGERS,	// 내장 트리거
-		FILTER_SHADER,	// 핉터 트리거
-		FILTER_CALLBACK,// 콜백 트리거
-	};
+	//enum E_STATITRIGGERID
+	//{
+	//	E_STATITRIGGERID_0,
+	//	E_STATITRIGGERID_1,
+	//	E_STATITRIGGERID_2,
+	//	E_STATITRIGGERID_3,
+	//	E_STATITRIGGERID_END,
+	//};
+
+	//enum E_STATICID
+	//{
+	//	E_STATICID_STATIC,
+	//	E_STATICID_TRIGGER,
+	//	E_STATICID_END,
+	//};
+
 
 
 private:
@@ -41,7 +50,6 @@ public:
 	const PHYSXDESC_STATIC& Get_PhysXDesc() const { return mPhysXDesc; }
 	HRESULT Set_ColiiderDesc(PHYSXDESC_STATIC desc);
 	HRESULT Set_ColiiderBufferDesc(PHYSXDESC_STATIC desc);
-	HRESULT Set_ActorFlag(PxActorFlag::Enum e, bool b);
 	HRESULT	Set_eDISABLE_SIMULATION(bool b = true);
 	
 public:
@@ -55,7 +63,6 @@ protected:
 	E_STATICTYPE			mStaticID = E_STATIC_END;
 	PHYSXDESC_STATIC		mPhysXDesc;
 	PxRigidStatic*			mPxRigStaticActor;
-
 
 public:
 	static CCollider_PhysX_Static* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);
