@@ -261,6 +261,7 @@
     <ClInclude Include="..\public\TestNonAnimInstancing.h" />
     <ClInclude Include="..\public\StaticMapObject.h" />
     <ClInclude Include="..\public\TestObject.h" />
+    <ClInclude Include="..\public\TestObject_BaseCollider.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
     <ClInclude Include="..\public\TestObject_PhysX.h" />
     <ClInclude Include="..\public\TreeMesh.h" />
@@ -338,6 +339,7 @@
     <ClCompile Include="..\private\TestNonAnimInstancing.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />
     <ClCompile Include="..\private\NaviPoint.cpp" />
+    <ClCompile Include="..\private\TestObject_BaseCollider.cpp" />
     <ClCompile Include="..\private\TestObject_PhysX.cpp" />
     <ClCompile Include="..\private\TestObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />

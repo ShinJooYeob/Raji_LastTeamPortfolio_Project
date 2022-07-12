@@ -305,6 +305,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Static_PhysX,
 	Prototype_Object_Dynamic_PhysX,
 	Prototype_Object_Joint_PhysX,
+	Prototype_Object_BaseCollision,
 
 
 	//JJB
@@ -529,6 +530,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Joint_PhysX:
 		return TEXT("Prototype_Object_Joint_PhysX");
+
+	case Prototype_Object_BaseCollision:
+		return TEXT("Prototype_Object_BaseCollision");
 
 	default:
 		MSGBOX("Wrong Type Object Prototype");
