@@ -66,6 +66,8 @@ protected:
 
 	_uint						mType = 0;
 
+	_float4x4					BlenderMat[8];
+
 //	vector<_float4x4>			mVecBoneTestMat;
 
 	// DEBUG

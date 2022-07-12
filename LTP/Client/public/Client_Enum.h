@@ -1204,7 +1204,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("PlayerChakra.fbx");
 		break;
 	case Prototype_Mesh_PlayerWeapon_Arrow:
-		return TEXT("PlayerWeapon_Arrow.fbx");
+		return TEXT("BowArrow.fbx");
 		break;
 	case Prototype_Mesh_PlayerEffect_ShellingParabola:
 		return TEXT("ShellingParabola.fbx");

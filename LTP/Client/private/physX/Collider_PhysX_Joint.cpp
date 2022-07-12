@@ -35,6 +35,60 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&mColDesc, pArg, sizeof(CColider_PX_Desc));
 
+	BlenderMat[0] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 5.7499f, -133.2f);
+
+
+	BlenderMat[1] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 5.7499f, -133.2f);
+
+
+	BlenderMat[2] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 14.229f, -133.21f);
+
+
+	BlenderMat[3] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 23.251f, -133.25f);
+
+
+	BlenderMat[4] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 35.752f, -133.28f);
+
+
+	BlenderMat[5] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 52.818f, -133.21f);
+
+
+	BlenderMat[6] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 64.212f, -133.21f);
+
+
+	BlenderMat[7] = XMMatrixScaling(1, 1, 1)
+		*XMMatrixRotationX(XMConvertToRadians(0))
+		*XMMatrixRotationY(XMConvertToRadians(0))
+		*XMMatrixRotationZ(XMConvertToRadians(0))
+		* XMMatrixTranslation(0, 79.901f, -133.14f);
 
 
 	return S_OK;
@@ -132,94 +186,48 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 			PxMat44 px4 = PxMat44(trans);
 			_Matrix mat = (PXMATTOMAT4x4(px4)).XMatrix();
 
-			//_float4x4 offset = XMMatrixInverse(nullptr, mVecHier[i]->Get_OffsetMatrix().XMatrix());
 
-			//mat = /*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-			//	/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-			//	XMMatrixTranspose((XMMatrixTranspose(mat.XMatrix()) * XMMatrixTranspose(mMainTransform->Get_InverseWorldMatrix())))
-			//	* mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
+
 			_Matrix HM = mVecHier[i]->Get_UpdatedMatrix();
-
-			mat.r[0] = XMVector3Normalize(HM.r[0]);
-			mat.r[1] = XMVector3Normalize(HM.r[1]);
-			mat.r[2] = XMVector3Normalize(HM.r[2]);
-
-			//mat.r[0] = HM.r[0];
-			//mat.r[1] = HM.r[1];
-			//mat.r[2] = HM.r[2];
-
-			//mat.r[0] = XMVector3Normalize(mat.r[0]);
-			//mat.r[1] = XMVector3Normalize(mat.r[1]);
-			//mat.r[2] = XMVector3Normalize(mat.r[2]);
-			//
+			_Matrix WorldHM = BlenderMat[i-1].XMatrix() * HM * mAttachModel->Get_DefaiultPivotMat().XMatrix() * mMainTransform->Get_WorldMatrix();
 
 
-			//mat.r[0] = XMVectorSet(1, 0, 0, 0);
-			//mat.r[1] = XMVectorSet(0, 1, 0, 0);
-			//mat.r[2] = XMVectorSet(0, 0, 1, 0);
+
+	
+
+
+
+
+			if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+			{
+				_float4 Pos = WorldHM.r[3];
+				wstring str = to_wstring(i) + L" -> Hair : " + to_wstring(Pos.x) + L" , " + to_wstring(Pos.y) + L" , " + to_wstring(Pos.z) + L" \n";
+				OutputDebugStringW(str.c_str());
+
+				Pos = mat.r[3];
+				str = to_wstring(i) + L" -> Px : " + to_wstring(Pos.x) + L" , " + to_wstring(Pos.y) + L" , " + to_wstring(Pos.z) + L" \n";
+				OutputDebugStringW(str.c_str());
+			}
+
+			mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(WorldHM.r[0]);
+			mat.r[1] = XMVector3Normalize(mat.r[1]) * XMVector3Length(WorldHM.r[1]);
+			mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(WorldHM.r[2]);
+
+
 
 			
 
-			mat = /*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-				/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-				
+			mat = 	XMMatrixInverse(nullptr, BlenderMat[i-1].XMatrix()) *
 				(
-					(mat) *
+				(mat) *
 
 					(mMainTransform->Get_InverseWorldMatrix())
-				) 
-				* mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
-
-				//* XMMatrixScaling(ffMat._11, ffMat._11, ffMat._11);
-
-			//_Vector Position = mat.r[3];
+					) * mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
 
 
-
-			mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(HM.r[0]);
-			mat.r[1] = XMVector3Normalize(mat.r[1])  * XMVector3Length(HM.r[1]);
-			mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(HM.r[2]);
 
 			mVecHier[i]->Set_UpdateTransform(mat);
 
-
-			//_Matrix forRot = (PXMATTOMAT4x4(px4)).XMatrix();
-
-			//forRot.r[0] = XMVector3Normalize(forRot.r[0]); 
-			//forRot.r[1] = XMVector3Normalize(forRot.r[1]); 
-			//forRot.r[2] = XMVector3Normalize(forRot.r[2]);
-			//forRot.r[3] = XMVectorSet(0,0,0,1);
-
-			//_Matrix test1 = mMainTransform->Get_InverseWorldMatrix();
-			//test1.r[3] = XMVectorSet(0, 0, 0, 1);
-			//_Matrix test2 = mAttachModel->Get_DefaiultPivotMat().InverseXMatrix();
-			//test2.r[3] = XMVectorSet(0, 0, 0, 1);
-
-			//forRot = /*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-			//	/*mVecHier[i]->Get_OffsetMatrix().XMatrix() * */
-			//	XMMatrixTranspose
-			//	(
-			//		XMMatrixTranspose(forRot) *
-
-			//		XMMatrixTranspose(test1)
-			//	)
-			//	* test2;
-
-			////* XMMatrixScaling(ffMat._11, ffMat._11, ffMat._11);
-
-
-			//mat.r[0] = forRot.r[0] * XMVector3Length(HM.r[0]);
-			//mat.r[1] = forRot.r[1] * XMVector3Length(HM.r[1]);
-			//mat.r[2] = forRot.r[2] *  XMVector3Length(HM.r[2]);
-			//mat.r[3] = mat.r[3];
-
-			//mMainTransform;
-			//mAttachModel->Get_DefaiultPivotMat();
-
-			//_Sfloat4x4(mMainTransform->Get_WorldFloat4x4());
-			//mMatSocket = (*mBoneMatrixPtr.pCombinedMatrix) * mSocketTransformMatrix * mSocketDESC.mTransform->GetWorldMatrix();
-			//mVecBoneTestMat.push_back(mMatSocket);
-			//mVecHier[i]->Set_UpdateTransform(mMatSocket);
 
 		}
 	}

@@ -63,7 +63,7 @@ namespace physx
 
 
 			wstring log = L"PhyXError:" + msg + L"__" + wfile + L"__" + to_wstring(line) + L"\n";
-			OutputDebugStringW(log.c_str());
+			//OutputDebugStringW(log.c_str());
 
 			/*
 				switch (code)

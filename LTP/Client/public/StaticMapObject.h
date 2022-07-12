@@ -32,7 +32,6 @@ private:
 	CCollider*			m_pColliderCom = nullptr;
 #endif // _DEBUG
 
-
 private:
 	HRESULT SetUp_Components();
 

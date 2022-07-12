@@ -43,6 +43,11 @@ _int CStaticMapObject::Update(_double fDeltaTime)
 
 
 
+
+
+
+
+
 	return _int();
 }
 
@@ -50,6 +55,7 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
+
 
 
 

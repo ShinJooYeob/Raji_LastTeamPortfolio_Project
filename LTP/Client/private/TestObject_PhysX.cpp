@@ -63,6 +63,8 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	}
 
 
+
+
 	return _int();
 }
 
@@ -74,6 +76,9 @@ _int CTestObject_PhysX::LateUpdate(_double fDeltaTime)
 
 	if (mCom_ColliderBase)
 		mCom_ColliderBase->Update_AfterSimulation();
+
+
+	
 
 	FAILED_CHECK(mCom_Renderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	return _int();
@@ -281,37 +286,50 @@ HRESULT CTestObject_PhysX::Update_Player(_double fDeltaTime)
 	FAILED_CHECK(mCom_Model->Update_AnimationClip(fDeltaTime));
 
 	bool isKey = false;
-	if (KEYPRESS(DIK_W))
-	{
-		isKey = true;
-	//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(0, 0, 1));
-		mCom_Transform->Move_Forward(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_S))
-	{
-		isKey = true;
-		//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(0, 0, -1));
-		mCom_Transform->Move_Backward(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_D))
-	{
-		isKey = true;
-		//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(1, 0, 0));
-		mCom_Transform->Move_Right(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_A))
-	{
-		isKey = true;
-		//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(-1, 0, 0));
-		mCom_Transform->Move_Left(fDeltaTime);
-	}
+	//if (KEYPRESS(DIK_W))
+	//{
+	//	isKey = true;
+	////	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(0, 0, 1));
+	//	mCom_Transform->Move_Forward(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_S))
+	//{
+	//	isKey = true;
+	//	//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(0, 0, -1));
+	//	mCom_Transform->Move_Backward(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_D))
+	//{
+	//	isKey = true;
+	//	//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(1, 0, 0));
+	//	mCom_Transform->Move_Right(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_A))
+	//{
+	//	isKey = true;
+	//	//	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Move(PxVec3(-1, 0, 0));
+	//	mCom_Transform->Move_Left(fDeltaTime);
+	//}
 
-	if (KEYPRESS(DIK_E))
-	{
-		isKey = true;
-		_float3 vec = _float3(0, 10, 0);
-		mCom_Transform->Set_MatrixState(CTransform::STATE_POS, vec);;
-	}
+	//if (KEYPRESS(DIK_E))
+	//{
+	//	isKey = true;
+	//	_float3 vec = _float3(0, 10, 0);
+	//	mCom_Transform->Set_MatrixState(CTransform::STATE_POS, vec);;
+	//}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
 	mCom_ColliderBase->Update_BeforeSimulation();
@@ -332,26 +350,26 @@ HRESULT CTestObject_PhysX::Update_Dynamic(_double fDeltaTime)
 HRESULT CTestObject_PhysX::Update_Joint(_double fDeltaTime)
 {
 	bool isKey = false;
-	if (KEYPRESS(DIK_W))
-	{
-		isKey = true;
-		mCom_Transform->Move_Forward(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_S))
-	{
-		isKey = true;
-		mCom_Transform->Move_Backward(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_D))
-	{
-		isKey = true;
-		mCom_Transform->Move_Right(fDeltaTime);
-	}
-	if (KEYPRESS(DIK_A))
-	{
-		isKey = true;
-		mCom_Transform->Move_Left(fDeltaTime);
-	}
+	//if (KEYPRESS(DIK_W))
+	//{
+	//	isKey = true;
+	//	mCom_Transform->Move_Forward(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_S))
+	//{
+	//	isKey = true;
+	//	mCom_Transform->Move_Backward(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_D))
+	//{
+	//	isKey = true;
+	//	mCom_Transform->Move_Right(fDeltaTime);
+	//}
+	//if (KEYPRESS(DIK_A))
+	//{
+	//	isKey = true;
+	//	mCom_Transform->Move_Left(fDeltaTime);
+	//}
 
 	mCom_ColliderBase->Update_BeforeSimulation();
 
@@ -378,6 +396,12 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&mCom_Transform, &tDesc));
+
+
+
+
+
+
 
 	return S_OK;
 }

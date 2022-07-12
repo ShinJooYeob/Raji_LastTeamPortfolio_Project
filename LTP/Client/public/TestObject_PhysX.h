@@ -71,12 +71,17 @@ private:
 	CRenderer*			mCom_Renderer = nullptr;
 	CModel*				mCom_Model = nullptr;
 
+
 	class CCollider_PhysX_Base*	mCom_ColliderBase = nullptr;
 	class CCollider_PhysX_Base*	mCom_ColliderHair = nullptr;
 
 	bool				mbTrigger = false;
 	int					mColID = 0;
 	E_MODEL				meModelID= MODEL_END;
+
+
+
+
 
 private:
 	HRESULT SetUp_Components();

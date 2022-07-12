@@ -871,7 +871,7 @@ void CContactReportCallback::onContact(const PxContactPairHeader& pairHeader, co
 
 		if (current.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			OutputDebugStringW(L"Add onContact 1\n");
+			//OutputDebugStringW(L"Add onContact 1\n");
 			PxContactPair* Currentt = NEW PxContactPair;
 			memcpy(Currentt, &current, sizeof(PxContactPair));
 			GetSingle(CPhysXMgr)->Add_ContactMsg(Currentt);
