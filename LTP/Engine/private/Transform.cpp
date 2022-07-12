@@ -104,7 +104,7 @@ void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation)
 	vPos += Get_MatrixState_Normalized(CTransform::STATE_LOOK) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
-	vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
 
@@ -148,7 +148,7 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
 	vPos += Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
-	vPos += XMVector3Normalize(vRight) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//vPos += XMVector3Normalize(vRight) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
 
@@ -209,7 +209,7 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 	vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
-	vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector Dir = vPos - vPrevPos;
 
@@ -251,7 +251,7 @@ void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaT
 	vPos += XMVector3Normalize(vDir)* fSpeed *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
-	vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector Dir = vPos - vPrevPos;
 
@@ -294,7 +294,7 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation*
 	vPos += XMVector3Normalize(vTarget - vPos)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
-	vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
 
