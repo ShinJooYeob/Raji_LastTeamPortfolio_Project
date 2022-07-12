@@ -243,6 +243,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
+	m_iOncePattern = 3;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -322,7 +323,8 @@ HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_iInfinityAnimNumber = 0;
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 1:
 		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
@@ -548,13 +550,15 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 21: {
-			if (PlayRate > 0 && PlayRate <= 0.720720)
+			if (PlayRate > 0 && PlayRate <= 0.43859)
 			{
+				m_bLookAtOn = false;
+
 				m_dAcceleration = 1.5;
 			}
-			else if (PlayRate >= 0.720720 && PlayRate <= 0.875)
+			else if (PlayRate >= 0.43859 && PlayRate <= 0.78947)
 			{
-				m_dAcceleration = 3;
+				m_dAcceleration = 2;
 			}
 			else {
 				m_dAcceleration = 1;

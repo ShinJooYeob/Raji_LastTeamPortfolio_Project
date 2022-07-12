@@ -216,7 +216,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Gadasura_Black,
 	Prototype_Object_Monster_Gadasura_Rage,
 	Prototype_Object_Monster_Gadasura_Rage_Hollogram,
-	Prototype_Object_Monster_Lamp,
+	Prototype_Object_Monster_Wasp,
 
 	// PhyTest
 	Prototype_Object_Static_PhysX,
@@ -364,8 +364,8 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Gadasura_Rage_Hollogram:
 		return TEXT("Prototype_Object_Monster_Gadasura_Rage_Hollogram");
 
-	case Prototype_Object_Monster_Lamp:
-		return TEXT("Prototype_Object_Monster_Lamp");
+	case Prototype_Object_Monster_Wasp:
+		return TEXT("Prototype_Object_Monster_Wasp");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");

@@ -675,7 +675,10 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_iAdjMovedIndex++;
 			}
-
+			else if(m_iAdjMovedIndex == 3) {
+				m_bLookAtOn = false;
+			}
+			
 			break;
 		}
 		case 24:

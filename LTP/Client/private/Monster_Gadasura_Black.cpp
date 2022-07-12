@@ -271,7 +271,6 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 2;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -304,7 +303,7 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 7:
 		m_iOnceAnimNumber = 19; //smash Attack
-		m_bComboAnimSwitch = true;
+		m_bComboAnimSwitch = false;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 18; //Attack2
@@ -417,7 +416,7 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 	}
 
 
-	if (m_fDistance > 10 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;

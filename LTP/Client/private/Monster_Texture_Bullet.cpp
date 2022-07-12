@@ -85,7 +85,8 @@ _int CMonster_Texture_Bullet::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	if(m_Monster_Texture_BulletDesc.iBulletTextureNumber != GADASURA_TERRAIN_BULLET)
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
 	return _int();
 }

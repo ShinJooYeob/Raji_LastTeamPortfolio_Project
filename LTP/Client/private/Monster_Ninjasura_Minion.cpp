@@ -437,6 +437,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		m_iAdjMovedIndex = 0;
 		m_bLookAtOn = false;
+		m_dAcceleration = 1;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{

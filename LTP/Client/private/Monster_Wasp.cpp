@@ -1,18 +1,18 @@
 #include "stdafx.h"
-#include "..\public\Monster_Lamp.h"
+#include "..\public\Monster_Wasp.h"
 
 
-CMonster_Lamp::CMonster_Lamp(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Wasp::CMonster_Wasp(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Lamp::CMonster_Lamp(const CMonster_Lamp & rhs)
+CMonster_Wasp::CMonster_Wasp(const CMonster_Wasp & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Lamp::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Wasp::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +20,7 @@ HRESULT CMonster_Lamp::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Lamp::Initialize_Clone(void * pArg)
+HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -35,11 +35,10 @@ HRESULT CMonster_Lamp::Initialize_Clone(void * pArg)
 
 	RELEASE_INSTANCE(CGameInstance);
 
-
 	return S_OK;
 }
 
-_int CMonster_Lamp::Update(_double dDeltaTime)
+_int CMonster_Wasp::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
@@ -47,14 +46,14 @@ _int CMonster_Lamp::Update(_double dDeltaTime)
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
-		FAILED_CHECK(m_pModel[i]->Update_AnimationClip(dDeltaTime));
+		m_pModel[i]->Update_AnimationClip(dDeltaTime);
 	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	return _int();
 }
 
-_int CMonster_Lamp::LateUpdate(_double dDeltaTime)
+_int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -62,7 +61,7 @@ _int CMonster_Lamp::LateUpdate(_double dDeltaTime)
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
-		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i] , m_pModelInstance[i], m_pShaderCom, m_pModel[i]));
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i], m_pModelInstance[i], m_pShaderCom, m_pModel[i]));
 	}
 
 
@@ -71,7 +70,7 @@ _int CMonster_Lamp::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Lamp::Render()
+_int CMonster_Wasp::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -83,25 +82,27 @@ _int CMonster_Lamp::Render()
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
+		if(m_ModelTransGroup[i].size())
+			continue;
 		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i]));
 	}
 
 	return _int();
 }
 
-_int CMonster_Lamp::LateRender()
+_int CMonster_Wasp::LateRender()
 {
 	return _int();
 }
 
-HRESULT CMonster_Lamp::SetUp_Info()
+HRESULT CMonster_Wasp::SetUp_Info()
 {
-	for (_uint i = 0; i < 4; i++)
+	for (_uint i = 0; i < 64; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
-		tDesc.eType = ANIM_IDLE;
+		tDesc.iType = ANIM_IDLE;
 
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -117,26 +118,52 @@ HRESULT CMonster_Lamp::SetUp_Info()
 
 	for (_uint i = 0; i < ANIM_END; i++)
 	{
-		m_pModel[i] = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Wasp));
-		NULL_CHECK_RETURN(m_pModel[i], E_FAIL);
+		CModel* pModel = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Wasp));
+		NULL_CHECK_RETURN(pModel, E_FAIL);
+		m_pModel[i] = pModel;
 
 		CModelInstance::MODELINSTDESC tModelIntDsec;
-		tModelIntDsec.m_pTargetModel = m_pModel[i];
+		tModelIntDsec.m_pTargetModel = pModel;
 
-		m_pModelInstance[i] = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_4), &tModelIntDsec);
-		NULL_CHECK_RETURN(m_pModelInstance[i], E_FAIL);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_64), &tModelIntDsec);
+		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
+		m_pModelInstance[i] = pModelInstance;
 	}
 
-	m_pModel[ANIM_IDLE]->Change_AnimIndex(0);
-	m_pModel[ANIM_RUN]->Change_AnimIndex(0);
-	m_pModel[ANIM_ATTACK]->Change_AnimIndex(2);
-	m_pModel[ANIM_HIT]->Change_AnimIndex(3);
-	m_pModel[ANIM_DIE]->Change_AnimIndex(4);
+
+	for (_int i = 0; i < ANIM_END; i++)
+	{
+		if (i < ANIM_ATTACK_Frame1)
+		{
+			m_pModel[i]->Change_AnimIndex(0);
+		}
+		else if (i >= ANIM_ATTACK_Frame1 && i < ANIM_HIT)
+		{
+			m_pModel[i]->Change_AnimIndex(2);
+		}
+		else if (i >= ANIM_HIT && i < ANIM_DIE)
+		{
+			m_pModel[ANIM_HIT]->Change_AnimIndex(3);
+		}
+		else if (i == ANIM_DIE)
+		{
+			m_pModel[ANIM_DIE]->Change_AnimIndex(4);
+		}
+	}
+
+	_int	iNumber = 0;
+	_float	fpercent = 0.2;
+	for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
+	{
+		m_pModel[i]->Update_AnimationClip(iNumber * fpercent);
+
+		iNumber++;
+	}
 
 	return S_OK;
 }
 
-HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
+HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 {
 	for (_int i = 0; i < ANIM_END; i++)
 	{
@@ -144,9 +171,22 @@ HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 		m_ModelTransGroup[i].reserve(m_vecInstancedTransform.size());
 	}
 
+
+	m_iTempAnimNumber = ANIM_ATTACK_Frame1;
+	for (_uint i = ANIM_ATTACK_Frame2; i <= ANIM_ATTACK_Frame5; i++)
+	{
+		if (m_pModel[m_iTempAnimNumber]->Get_PlayRate() < m_pModel[i]->Get_PlayRate())
+		{
+			m_iTempAnimNumber = m_iTempAnimNumber;
+		}
+		else {
+			m_iTempAnimNumber = i;
+		}
+	}
+
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
-		
+
 		//_Vector vDistance = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS);
 
 		_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -155,11 +195,24 @@ HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-		MeshInstance.eType = ANIM_RUN;
 
-		if (fDistance < 2)
+		if (fDistance < 1)
 		{
-			MeshInstance.eType = ANIM_ATTACK;
+			if (MeshInstance.iType >= ANIM_ATTACK_Frame1&& MeshInstance.iType <= ANIM_ATTACK_Frame5)
+				continue;
+			MeshInstance.iType = m_iTempAnimNumber;
+		}
+		else {
+			if (MeshInstance.iType >= ANIM_ATTACK_Frame1&& MeshInstance.iType <= ANIM_ATTACK_Frame5)
+			{
+				if (m_pModel[MeshInstance.iType]->Get_PlayRate() > 0.98)
+				{
+					MeshInstance.iType = ANIM_RUN;
+				}
+			}
+			else {
+				MeshInstance.iType = ANIM_RUN;
+			}
 		}
 
 	}
@@ -169,7 +222,7 @@ HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
 
-		switch (m_vecInstancedTransform[i].eType)
+		switch (m_vecInstancedTransform[i].iType)
 		{
 		case ANIM_IDLE:
 			m_ModelTransGroup[ANIM_IDLE].push_back(m_vecInstancedTransform[i].pTransform);
@@ -177,8 +230,20 @@ HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 		case ANIM_RUN:
 			m_ModelTransGroup[ANIM_RUN].push_back(m_vecInstancedTransform[i].pTransform);
 			break;
-		case ANIM_ATTACK:
-			m_ModelTransGroup[ANIM_ATTACK].push_back(m_vecInstancedTransform[i].pTransform);
+		case ANIM_ATTACK_Frame1:
+			m_ModelTransGroup[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_ATTACK_Frame2:
+			m_ModelTransGroup[ANIM_ATTACK_Frame2].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_ATTACK_Frame3:
+			m_ModelTransGroup[ANIM_ATTACK_Frame3].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_ATTACK_Frame4:
+			m_ModelTransGroup[ANIM_ATTACK_Frame4].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_ATTACK_Frame5:
+			m_ModelTransGroup[ANIM_ATTACK_Frame5].push_back(m_vecInstancedTransform[i].pTransform);
 			break;
 		case ANIM_HIT:
 			m_ModelTransGroup[ANIM_HIT].push_back(m_vecInstancedTransform[i].pTransform);
@@ -199,11 +264,12 @@ HRESULT CMonster_Lamp::FollowMe(_double dDeltaTime)
 
 
 
-HRESULT CMonster_Lamp::SetUp_Components()
+HRESULT CMonster_Wasp::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
 
 
 	SetUp_Info();
@@ -212,10 +278,16 @@ HRESULT CMonster_Lamp::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Lamp::Adjust_AnimMovedTransform(_double dDeltatime)
+HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 {
+	for (_uint i = 0; i < ANIM_END; i++)
+	{
+		if (m_pModel[i]->Get_PlayRate() > 0.98)
+		{
 
-	
+		}
+	}
+
 	for (auto& pObjectTransform : m_ModelTransGroup[ANIM_RUN])
 	{
 		pObjectTransform->Move_Forward(dDeltatime);
@@ -257,31 +329,31 @@ HRESULT CMonster_Lamp::Adjust_AnimMovedTransform(_double dDeltatime)
 	return S_OK;
 }
 
-CMonster_Lamp * CMonster_Lamp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Wasp * CMonster_Wasp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Lamp*	pInstance = new CMonster_Lamp(pDevice, pDeviceContext);
+	CMonster_Wasp*	pInstance = new CMonster_Wasp(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Lamp");
+		MSGBOX("Failed to Created CMonster_Wasp");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Lamp::Clone(void * pArg)
+CGameObject * CMonster_Wasp::Clone(void * pArg)
 {
-	CMonster_Lamp*	pInstance = new CMonster_Lamp(*this);
+	CMonster_Wasp*	pInstance = new CMonster_Wasp(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Lamp");
+		MSGBOX("Failed to Created CMonster_Wasp");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Lamp::Free()
+void CMonster_Wasp::Free()
 {
 	__super::Free();
 

@@ -304,7 +304,7 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms">
       <UniqueIdentifier>{98fecd6c-0b71-42e7-9041-60cc40379614}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Lamp">
+    <Filter Include="01.GameObject\02.Monster\Monster\Monster_Wasp">
       <UniqueIdentifier>{8d6a29f4-949d-476d-8840-163f15ac95c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -632,8 +632,8 @@
     <ClInclude Include="..\public\Mahabalasura_AttackArms.h">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Lamp.h">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Lamp</Filter>
+    <ClInclude Include="..\public\Monster_Wasp.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Wasp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -930,8 +930,9 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
-    <ClCompile Include="..\private\Monster_Lamp.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Lamp</Filter>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\Monster_Wasp.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Wasp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
