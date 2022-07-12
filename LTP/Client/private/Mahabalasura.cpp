@@ -186,7 +186,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 			m_bIsArmAttack = true;
 			for (auto& Arm : m_pArms)
-			Arm->Reset_AttackTime();
+				Arm->Reset_AttackTime();
 			m_pModel->Change_AnimIndex(6);
 		}
 		break;
@@ -209,6 +209,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		++TestNumber;
 		if (TestNumber > 3)
 			TestNumber = 0;
+
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)

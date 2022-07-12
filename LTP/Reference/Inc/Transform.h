@@ -2,7 +2,6 @@
 
 #include "Component.h"
 
-
 BEGIN(Engine)
 
 class ENGINE_DLL CTransform : public CComponent
@@ -64,16 +63,16 @@ public:
 
 public:
 	//Move////////////////////////////////////////////////////////////////////////
-	void Move_Forward(_double fDeltaTime);
-	void Move_Backward(_double fDeltaTime);
-	void Move_Right(_double fDeltaTime);
-	void Move_Left(_double fDeltaTime);
+	void Move_Forward(_double fDeltaTime, class CNavigation* pNavigation =nullptr);
+	void Move_Backward(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void Move_Right(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void Move_Left(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
 	void Move_Up(_double fDeltaTime);
 	void Move_Down(_double fDeltaTime);
 
-	void MovetoDir(_fVector vDir, _double fDeltaTime);
-	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime);
-	void MovetoTarget(_fVector vTarget, _double fDeltaTime);
+	void MovetoDir(_fVector vDir, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void MovetoTarget(_fVector vTarget, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
 
 	_bool MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);
 	_bool MovetoBezierCurve(_float Total_Time, _float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);

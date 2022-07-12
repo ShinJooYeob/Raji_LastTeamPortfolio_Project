@@ -112,7 +112,7 @@ public: /*For SceneMgr*/
 	HRESULT		Set_SceneChanging_to_Scene(_uint _INextScene);
 
 public: /*For TreadMgr*/
-	HRESULT		PlayThread(void* _ThreadFunc, void* _pArg);
+	HRESULT		PlayThread(void* _ThreadFunc, void* _pArg, void*  _pDesc = nullptr);
 
 public: /* For.Input_Device */
 	_byte Get_DIKeyState(_ubyte eKeyID);

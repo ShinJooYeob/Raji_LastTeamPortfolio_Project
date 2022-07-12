@@ -35,7 +35,8 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 
 	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
 
-	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);
+
+	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.f);
 
 	return S_OK;
 }
@@ -48,7 +49,7 @@ _int CMahabalasura_Arms::Update(_double fDeltaTime)
 	if (m_fAttackTime <= 0 && !m_bIsAttack)
 	{
 		m_bIsAttack = true;
-		m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);
+		m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.f);
 		m_pModel->Change_AnimIndex_ReturnTo(1, 0);
 	}
 
@@ -165,7 +166,10 @@ HRESULT CMahabalasura_Arms::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				_float3 TempPos;
 				XMStoreFloat3(&TempPos, m_eAttachedDesc.Get_AttachedBoneWorldPosition());
+
+				//for(_int i=0; i< 20; ++i)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TEXT("Layer_AttackArms"), TAG_OP(Prototype_Object_Boss_MahabalasuraAttackArms), &TempPos));
+
 				++m_iAdjMovedIndex;
 			}
 		}

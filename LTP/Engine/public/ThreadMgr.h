@@ -14,7 +14,7 @@ private:
 
 public:
 	//Thread 함수의 명 넣고, 2인자에 자기가 사용할 변수를 모아놓은 Class의 주소를 넣자
-	HRESULT PlayThread(void* _ThreadFunc,  void* _pArg);
+	HRESULT PlayThread(void* _ThreadFunc,  void* _pArg, void* pDesc);
 	
 	vector<HANDLE>*		Get_vecThread() { return &m_vecThread; };
 

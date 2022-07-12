@@ -6,6 +6,7 @@ BEGIN(Client)
 
 class CCopyMahabalasura final : public CBoss
 {
+
 private:
 	CCopyMahabalasura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CCopyMahabalasura(const CCopyMahabalasura& rhs);
@@ -34,6 +35,8 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 	_uint				m_iAniNum = 0;
 
+
+	_float3				m_startPos;
 	_bool				m_bIsLookAt = true;
 
 

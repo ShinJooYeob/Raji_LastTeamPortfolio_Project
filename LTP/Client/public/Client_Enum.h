@@ -313,6 +313,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_MahabalasuraWeapon,
 	Prototype_Object_Boss_MahabalasuraCopy,
 	Prototype_Object_Effect_MagicCircle,
+	Prototype_Object_Map_Demon_Tree,
+	Prototype_Object_Map_TreeMesh,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -484,6 +486,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
 
+	case Prototype_Object_Map_Demon_Tree:
+		return TEXT("Prototype_Object_Map_Demon_Tree");
+
+	case Prototype_Object_Map_TreeMesh:
+		return TEXT("Prototype_Object_Map_TreeMesh");
+		
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
 
@@ -636,7 +644,9 @@ enum LAYERID
 	Layer_UI_INPUT,
 
 	Layer_TestObject,
+	//JJB
 	Layer_Boss,
+	Layer_MapObject,
 	Layer_TestEffect,
 
 };
@@ -798,6 +808,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		return TEXT("Layer_Boss");
 		break;
 
+	case Layer_MapObject:
+		return TEXT("Layer_MapObject");
+		break;
+
 	case Layer_TestEffect:
 		return TEXT("Layer_TestEffect");
 		break;
@@ -866,6 +880,11 @@ enum COMPONENTPROTOTYPEID
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
+	Prototype_Mesh_DemonTree_Seg01,
+	Prototype_Mesh_DemonTree_Seg02,
+	Prototype_Mesh_DemonTree_Seg03,
+	Prototype_Mesh_DemonTree_Seg04,
+	Prototype_Mesh_DemonTree_Seg05,
 	Prototype_Mesh_TEST_STATIC,
 
 
@@ -1092,6 +1111,21 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		
 	case Prototype_Mesh_TEST_STATIC:
 		return TEXT("Prototype_Mesh_TEST_STATIC");
+
+	case Prototype_Mesh_DemonTree_Seg01:
+		return TEXT("DemonTree_Seg01.fbx");
+
+	case Prototype_Mesh_DemonTree_Seg02:
+		return TEXT("DemonTree_Seg02.fbx");
+
+	case Prototype_Mesh_DemonTree_Seg03:
+		return TEXT("DemonTree_Seg03.fbx");
+
+	case Prototype_Mesh_DemonTree_Seg04:
+		return TEXT("DemonTree_Seg04.fbx");
+
+	case Prototype_Mesh_DemonTree_Seg05:
+		return TEXT("DemonTree_Seg05.fbx");
 
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");

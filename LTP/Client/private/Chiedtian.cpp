@@ -35,8 +35,8 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 	m_pModel->Change_AnimIndex(1);
 
-	m_fAttackCoolTime = 5.f;
-	m_fSkillCoolTime = 8.f;
+	m_fAttackCoolTime = 2.f;
+	m_fSkillCoolTime = 5.f;
 	m_bIsHit = false;
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum,
@@ -44,45 +44,55 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 	CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
-	//TR
-	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(10.f,10.f,10.f, 0.f), XMVectorSet(170.f, 0.f, 0.f, 0.f), XMVectorSet(-3.00f *10.f, -0.250f*10.f, -4.320f*10.f, 1.f));
-	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TR;
-	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	////TR
+	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(10.f,10.f,10.f, 0.f), XMVectorSet(170.f, 0.f, 0.f, 0.f), XMVectorSet(-3.00f *10.f, -0.250f*10.f, -4.320f*10.f, 1.f));
+	//WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TR;
+	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 
-	//RL
-	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_l", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, -90.f, 0.f, 0.f), XMVectorSet(3.120f * 10.f, -0.670f * 10.f, -4.240f * 10.f, 1.f));
-	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TL;
-	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	////RL
+	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_l", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, -90.f, 0.f, 0.f), XMVectorSet(3.120f * 10.f, -0.670f * 10.f, -4.240f * 10.f, 1.f));
+	//WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TL;
+	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 
 	////BR
-	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_r_02", XMVectorSet(9.f, 9.f, 9.f, 0.f), XMVectorSet(90.f, 65.f, 90.f, 0.f), XMVectorSet(-2.580f * 9.f, -1.870f * 9.f, -3.470f * 9.f, 1.f));
+	////WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(0.f, -90.f, 0.f, 0.f), XMVectorSet(-1.250f * 8.f, -2.140f * 8.f, -3.180f * 8.f, 1.f));
+	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -80.f, 50.f, 0.f), XMVectorSet(-1.050f * 8.f,-1.430f* 8.f,-3.230f* 8.f,0));
 	//WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
 	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Weapon"));
+	//Weapon->Set_WaistgirdScal();
 
 	////BL
-	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_l_02", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(50.f, 90.f, 0.f, 0.f), XMVectorSet(2.230f * 10.f, -1.990f* 10.f, -3.500f* 10.f, 1.f));
+	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_l", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -75.f, 50.f, 0.f), XMVectorSet(1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
 	//WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
 	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
-
-	//BR
-	//WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(0.f, -90.f, 0.f, 0.f), XMVectorSet(-1.250f * 8.f, -2.140f * 8.f, -3.180f * 8.f, 1.f));
-	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -80.f, 50.f, 0.f), XMVectorSet(-1.050f * 8.f,-1.430f* 8.f,-3.230f* 8.f,0));
-	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
-	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
-	CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Weapon"));
-	Weapon->Set_WaistgirdScal();
-
-	//BL
-	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_l", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -75.f, 50.f, 0.f), XMVectorSet(1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
-	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
-	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
-	Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Weapon"));
-	Weapon->Set_WaistgirdScal();
+	//Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Weapon"));
+	//Weapon->Set_WaistgirdScal();
 
 
 	CChiedtuan_Weapon* ChiedtuanWeapon = nullptr;
-	//m_pWeapons.push_back(ChiedtuanWeapon);
 
+	//주무기
+	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, 0.f, 0.f, 0.f), XMVectorSet(-3.00f *10.f, -0.250f*10.f, -4.320f*10.f, 1.f));
+	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TR;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	m_pMainWeapons.push_back(ChiedtuanWeapon);
+
+	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_l", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, -90.f, 0.f, 0.f), XMVectorSet(3.120f * 10.f, -0.670f * 10.f, -4.240f * 10.f, 1.f));
+	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TL;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	m_pMainWeapons.push_back(ChiedtuanWeapon);
+
+	//서브무기
+	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -80.f, 50.f, 0.f), XMVectorSet(-1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
+	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	m_pSubWeapons.push_back(ChiedtuanWeapon);
+
+	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_l", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -75.f, 50.f, 0.f), XMVectorSet(1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
+	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
+	m_pSubWeapons.push_back(ChiedtuanWeapon);
 
 	return S_OK;
 }
@@ -107,7 +117,37 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 	if (m_bIsSpinAttack)
+	{
 		m_fSpinTime -= (_float)fDeltaTime;
+
+		if (m_fSpinTime > 4.f)
+		{
+			if (m_fSpinSpeed > 10.f)
+			{
+				m_fSpinSpeed = 10.f;
+				m_fAnimmultiple = 1.4f;
+			}
+			else
+			{
+				m_fSpinSpeed += (_float)fDeltaTime* 5.f;
+				m_fAnimmultiple = (m_fSpinSpeed *0.1f)+0.4f;
+			}
+		}
+		else if (m_fSpinTime < 4.f)
+		{
+			if (m_fSpinSpeed <= 0.f)
+			{
+				m_fSpinSpeed = 0.1f;
+				m_fAnimmultiple = 0.2f;
+			}
+			else
+			{
+				m_fSpinSpeed -= (_float)fDeltaTime*3.f;
+				m_fAnimmultiple = (m_fSpinSpeed *0.1f)+0.1f;
+			}
+
+		}
+	}
 
 	if (m_fSpinTime <= 0 && m_bIsSpinAttack)
 	{
@@ -115,63 +155,63 @@ _int CChiedtian::Update(_double fDeltaTime)
 		m_bIsSpinAttack = false;
 
 		m_fAttackCoolTime = 1.f;
-		m_fSkillCoolTime = 6.f;
+		m_fSkillCoolTime = 5.f;
 
 		CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
-		CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
+		//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
+		CChiedtuan_Weapon* Weapon = m_pSubWeapons[0];
 		WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(0.f, -90.f, 0.f, 0.f), XMVectorSet(-1.250f * 8.f, -2.140f * 8.f, -3.180f * 8.f, 1.f));
 		WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
 		Weapon->Set_WeaponDesc(WeaponDesc);
 		Weapon->Set_WaistgirdScal();
 
-		Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
+		//Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
+		Weapon = m_pSubWeapons[1];
 		WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_l", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -80.f, 50.f, 0.f), XMVectorSet(1.070f * 8.f, -1.160f * 8.f, -2.590f * 8.f, 1.f));
 		WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
 		Weapon->Set_WeaponDesc(WeaponDesc);
 		Weapon->Set_WaistgirdScal();
 
-		m_pModel->Change_AnimIndex(1, 2.f);
+		m_fAnimmultiple = 1.f;
+		m_pModel->Change_AnimIndex(1, 0.8f);
+
 	}
 
-	if (m_bIsWalk)
-		m_fWalkTime -= (_float)fDeltaTime;
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
-	if (m_bIsWalk && m_fWalkTime <= 0.f)
-	{
-		m_bIsWalk = false;
-		m_bIsLookAt = true;
-		m_fWalkTime = 3.f;
-		m_fAttackCoolTime = 1.f;
-		m_fSkillCoolTime = 1.f;
-		m_pModel->Change_AnimIndex(1);
-	}
+	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 
+	m_fRange = XMVectorGetX(XMVector3Length(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	if (m_bIsLookAt)
 	{
-		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-		_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-
-		PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 		_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
 		m_pTransformCom->Turn_Dir(Dir, 0.90f);
-
-		m_fRange = XMVectorGetX(XMVector3Length(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	}
 
+	//if (m_bIsWalk)
+	//	m_fWalkTime -= (_float)fDeltaTime;
 
-	//if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
+	//if (m_bIsWalk && m_fWalkTime <= 0.f)
 	//{
-	//	m_pModel->Change_AnimIndex(m_iAniNum);
-	//	++m_iAniNum;
+	//	m_bIsWalk = false;
+	//	m_bIsLookAt = true;
+	//	m_fWalkTime = 3.f;
+	//	m_fAttackCoolTime = 1.f;
+	//	m_fSkillCoolTime = 1.f;
+	//	m_pModel->Change_AnimIndex(1);
 	//}
 
-	//if (m_iAniNum > 13)
-	//	m_iAniNum = 0;
-
-	//m_pModel->Change_AnimIndex(0);
+	if (!m_bIsAttack && m_fRange > 8.f && !m_bIsHit)
+	{
+		m_bIsLookAt = true;
+		m_pModel->Change_AnimIndex(2);
+	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
 	{
@@ -195,10 +235,10 @@ _int CChiedtian::Update(_double fDeltaTime)
 	{
 		m_bIsHit = false;
 		m_bIsAttack = true;
-		m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
+		//m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
 	}
 	//점프
-	else if (!m_bIsHit && !m_bIsAttack && m_fRange < 9.f &&m_fJumpTime <= 0)
+	else if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
 	{
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_ReturnTo(10, 1);
@@ -226,16 +266,17 @@ _int CChiedtian::Update(_double fDeltaTime)
 	//스킬 공격
 	else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
-		_int iRandom = rand() & 2;
+		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 		m_bIsAttack = true;
 		m_bISkill = true;
-		//iRandom = 1;
+		iRandom = 1;
 
 		switch (iRandom)
 		{
 		case ATTACK_FIRE:
 		{
 			m_pModel->Change_AnimIndex_ReturnTo(12, 13);
+
 		}
 			break;
 		case ATTACK_SPIN:
@@ -251,6 +292,10 @@ _int CChiedtian::Update(_double fDeltaTime)
 			break;
 
 		}
+		++m_iTest;
+
+		if (m_iTest > 2)
+			m_iTest = 0;
 	}
 
 
@@ -258,8 +303,14 @@ _int CChiedtian::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
-	for (auto& Weapon : m_pWeapons)
-		Weapon->Update(fDeltaTime);
+	if (!m_bIsMainWeaponOff)
+	{
+		for (auto& Weapon : m_pMainWeapons)
+			Weapon->Update(fDeltaTime);
+	}
+
+	for (auto& SubWeapon : m_pSubWeapons)
+		SubWeapon->Update(fDeltaTime);
 
 	return _int();
 }
@@ -274,8 +325,16 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
-	for (auto& Weapon : m_pWeapons)
-		Weapon->LateUpdate(fDeltaTime);
+	if (!m_bIsMainWeaponOff) 
+	{
+		for (auto& Weapon : m_pMainWeapons)
+			Weapon->LateUpdate(fDeltaTime);
+
+		for (auto& SubWeapon : m_pSubWeapons)
+			SubWeapon->LateUpdate(fDeltaTime);
+	}
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_Height(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	return _int();
 }
@@ -301,7 +360,9 @@ _int CChiedtian::Render()
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
-
+#ifdef _DEBUG
+	m_pNavigationCom->Render(m_pTransformCom);
+#endif // _DEBUG
 	return _int();
 }
 
@@ -331,6 +392,13 @@ HRESULT CChiedtian::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+	/* For.Com_Navigation */
+	CNavigation::NAVIDESC		NaviDesc;
+	NaviDesc.iCurrentIndex = 0;
+
+	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -354,7 +422,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				m_bIsAttack = false;
 				m_bISkill = false;
-				m_bIsLookAt = true;
+				//m_bIsLookAt = true;
 				//m_bIsBackJump = false;
 
 			}
@@ -364,7 +432,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				m_bIsAttack = false;
 				m_bISkill = false;
-				m_bIsLookAt = true;
+				//m_bIsLookAt = true;
 				//m_bIsBackJump = false;
 
 			}
@@ -395,7 +463,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate < 0.1372549 && PlayRate > 0.3725490)
 			{
-				CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 0);
+				//무기 회전 시킬려고 한거 같은데???
+				//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 0);
 			}
 		}
 
@@ -405,11 +474,11 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			if (PlayRate > 0.22666666f && PlayRate < 0.53333333f)
 			{
-				m_pTransformCom->Move_Forward(fDeltatime);
+				m_pTransformCom->Move_Forward(fDeltatime/*, m_pNavigationCom*/);
 			}
 			else if (PlayRate > 0.8 && PlayRate < 0.92)
 			{
-				m_pTransformCom->Move_Forward(fDeltatime);
+				m_pTransformCom->Move_Forward(fDeltatime/*, m_pNavigationCom*/);
 			}
 		}
 			break;
@@ -422,13 +491,15 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
-				CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
+				//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
+				CChiedtuan_Weapon* Weapon = m_pSubWeapons[0];
 				WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_r_02", XMVectorSet(9.f, 9.f, 9.f, 0.f), XMVectorSet(90.f, 65.f, 90.f, 0.f), XMVectorSet(-2.580f * 9.f, -1.870f * 9.f, -3.470f * 9.f, 1.f));
 				WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
 				Weapon->Set_WeaponDesc(WeaponDesc);
 				Weapon->Set_SpinScal();
 
-				Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
+				//Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
+				Weapon = m_pSubWeapons[1];
 				WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_l_02", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(50.f, 90.f, 0.f, 0.f), XMVectorSet(2.230f * 10.f, -1.990f* 10.f, -3.500f* 10.f, 1.f));
 				WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
 				Weapon->Set_WeaponDesc(WeaponDesc);
@@ -452,11 +523,12 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			PlayerPos.y = MonsterPos.y;
 
 			_float3 vGoalDir = (PlayerPos.XMVector() - MonsterPos.XMVector());
+			m_pTransformCom->Turn_CW(XMVectorSet(0.f,1.f,0.f,0.f), fDeltatime * m_fSpinSpeed +0.01f);
 
-			m_pTransformCom->Turn_CW(XMVectorSet(0.f,1.f,0.f,0.f), fDeltatime* 10);
-			m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3);
+			if(m_fSpinSpeed > 0.1f)
+				m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3/*, m_pNavigationCom*/);
 
-			m_fAnimmultiple = 1.4f;
+			m_fAnimmultiple = (m_fSpinSpeed *0.1f);
 		}
 
 		break;
@@ -534,13 +606,20 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
+
+			//무기없애기
+			if (PlayRate > 0.0411392 && m_iAdjMovedIndex == 0)
+			{
+				m_bIsMainWeaponOff = true;
+				++m_iAdjMovedIndex;
+			}
 		}
 		break;
 
 		case 13: //FireAttack
 		{
 			m_bIsLookAt = true;
-			m_pTransformCom->Move_Forward(fDeltatime);
+			m_pTransformCom->Move_Forward(fDeltatime * 0.7f/*, m_pNavigationCom*/);
 
 		}
 		break;
@@ -550,7 +629,14 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
 
+			
 			//무기생성
+			if (PlayRate > 0.8227848 && m_iAdjMovedIndex == 0)
+			{
+				m_bIsMainWeaponOff = false;
+				++m_iAdjMovedIndex;
+			}
+
 		}
 		break;
 
@@ -594,16 +680,16 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 5)
 		{
-			m_bIsLookAt = true;
+			//m_bIsLookAt = true;
 			m_bIsBasicAttack = false;
-			m_fAttackCoolTime = 4.f;
-			m_fSkillCoolTime = 2.f;
+			m_fAttackCoolTime = 3.f;
+			m_fSkillCoolTime = 1.f;
 
 			m_pModel->Change_AnimIndex(1);
 		}
 		if (iNowAnimIndex == 6)
 		{
-			m_bIsLookAt = true;
+			//m_bIsLookAt = true;
 			m_fAttackCoolTime = 1.f;
 			m_fSkillCoolTime = 6.f;
 			m_fJumpTime = 0.5f;
@@ -618,25 +704,24 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			if (!m_bIsSpinAttack)
 				m_bIsSpinAttack = true;
-			m_fAnimmultiple = 1.f;
 		}
 		if (iNowAnimIndex == 10)
 		{
 
-			m_bIsLookAt = true;
+			//m_bIsLookAt = true;
 			m_fJumpTime = 3.f;
 
 		}
 		if (iNowAnimIndex == 12)
 		{
-			m_bIsLookAt = true;
+			//m_bIsLookAt = true;
 			m_bIsFireAttack = true;
 			m_fFireTime = 10.f;
 			m_fAnimmultiple = 1.f;
 		}
 		if (iNowAnimIndex == 14)
 		{
-			m_bIsLookAt = true;
+			//m_bIsLookAt = true;
 			m_fAttackCoolTime = 0.5f;
 			m_fSkillCoolTime = 6.f;
 			m_fAnimmultiple = 1.f;
@@ -680,9 +765,14 @@ void CChiedtian::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pNavigationCom);
 
-	for (auto& Weapon : m_pWeapons)
+	for (auto& Weapon : m_pMainWeapons)
 		Safe_Release(Weapon);
 
-	m_pWeapons.clear();
+	for (auto& SubWeapon : m_pSubWeapons)
+		Safe_Release(SubWeapon);
+
+	m_pMainWeapons.clear();
+	m_pSubWeapons.clear();
 }

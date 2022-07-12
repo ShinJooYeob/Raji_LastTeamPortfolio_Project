@@ -39,7 +39,7 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	
-	CGameObject*		m_pPlayerObj;
+	CGameObject*		m_pPlayerObj = nullptr;
 	_float3				m_PlayerPos;
 
 	//ATTACHEDESC			m_eAttachedDesc;

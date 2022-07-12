@@ -37,6 +37,7 @@ private:
 
 	//rotation
 	_int				m_iRotationRandom = 0;
+	_bool				m_bIsAngleOut = false;
 	_float				m_fRotTime = 0.f;
 
 	_bool				m_bTestHodeing = false;

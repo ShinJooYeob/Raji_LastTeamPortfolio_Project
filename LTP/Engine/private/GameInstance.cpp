@@ -517,11 +517,11 @@ _bool CGameInstance::Get_Channel_IsPaused(CHANNELID eID)
 }
 
 
-HRESULT CGameInstance::PlayThread(void * _ThreadFunc, void * _pArg)
+HRESULT CGameInstance::PlayThread(void * _ThreadFunc, void * _pArg, void * _pDesc)
 {
 	NULL_CHECK_BREAK(m_pThreadMgr);
 
-	return m_pThreadMgr->PlayThread(_ThreadFunc, _pArg);
+	return m_pThreadMgr->PlayThread(_ThreadFunc, _pArg, _pDesc);
 }
 
 _byte CGameInstance::Get_DIKeyState(_ubyte eKeyID)

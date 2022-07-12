@@ -2,9 +2,22 @@
 
 #include "MonsterWeapon.h"
 
+#define AtkArmTotalCount 8
+
 BEGIN(Client)
+
 class CMahabalasura_AttackArms final : public CMonsterWeapon
 {
+public:
+	typedef struct TransformNTimeNDead
+	{
+		CTransform*		pTransform = nullptr;
+		_float			fPassedTime = 0;
+		_bool			bIsDead = false;
+
+	}TTD;
+
+
 private:
 	CMahabalasura_AttackArms(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CMahabalasura_AttackArms(const CMahabalasura_AttackArms& rhs);
@@ -25,19 +38,22 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
-	CTransform*			m_pTransformCom = nullptr;
 
-	_uint				m_iOldAnimIndex = INT_MAX;
-	_uint				m_iAdjMovedIndex = 0;
-	_uint				m_iAniNum = 0;
+	CTransform*			m_pPlayerTrs = nullptr;
 
-	CGameObject*		m_pPlayerObj;
-	_float3				m_PlayerPos;
+	CModelInstance*		m_pModelInstance = nullptr;
+	vector<CTransform*>		m_vecForRenderTransform;
+	vector<TTD>				m_vecInstancedTransform;
 
-	_float3				m_BezierStartPos;
-	_float				m_fProgressTime = 0;
+	//_float				m_fProgressTime = 0;
 	_float				m_fTotalTime = 1.f;
-	_float3				m_CenterPoint;
+	_float3				m_BezierStartPos;
+	_float3				m_PlayerPos;
+	_float3				m_DestPos[AtkArmTotalCount];
+	_float3				m_StartPos[AtkArmTotalCount];
+
+	_int				m_iCount = 0;
+
 
 private:
 	HRESULT		SetUp_Components();
