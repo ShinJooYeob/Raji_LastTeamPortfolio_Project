@@ -11,7 +11,7 @@ namespace Engine
 
 	typedef struct ENGINE_DLL tagVertex_Point_Instance_Matrix_Declaration
 	{
-		static const unsigned int iNumElements = 8;
+		static const unsigned int iNumElements = 9;
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXPOINT_INSTMAT_DECLARATION;
 
@@ -24,6 +24,7 @@ namespace Engine
 
 		XMFLOAT4			vUV_WHSize;
 		XMFLOAT4			vColor;
+		XMFLOAT4			vTimer;
 	}VTXINSTMAT;
 
 
@@ -94,21 +95,24 @@ namespace Engine
 		XMFLOAT4			vUp;
 		XMFLOAT4			vLook;
 		XMFLOAT4			vPosition;
+
 		XMFLOAT4			vLimLight;
 		XMFLOAT4			vEmissive;
+		XMFLOAT4			vTimer;
+
 	}VTXINSTMATRIX;
 
 
 	typedef struct ENGINE_DLL tagNonAnim_InstanceMatrix_Declaration
 	{
-		static const unsigned int iNumElements = 10;
+		static const unsigned int iNumElements = 11;
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 
 	}VTXNONANIM_INSTMAT_DECLARATION;
 
 	typedef struct ENGINE_DLL tagAnim_InstanceMatrix_Declaration
 	{
-		static const unsigned int iNumElements = 12;
+		static const unsigned int iNumElements = 13;
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXANIM_INSTMAT_DECLARATION;
 

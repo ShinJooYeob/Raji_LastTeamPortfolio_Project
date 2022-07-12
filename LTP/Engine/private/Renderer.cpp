@@ -83,13 +83,13 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_MulMaskBluredEmissive"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_AvgLuminece"), (_uint)1, (_uint)1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LumineceMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_GodRay"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledRefOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Oclussion"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledRefOclussion"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Oclussion"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LenseFlare"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
@@ -97,14 +97,14 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By2"), (_uint)(Viewport.Width / 2), (_uint)(Viewport.Height / 2), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By3"), (_uint)(Viewport.Width / 3), (_uint)(Viewport.Height / 3), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By4"), (_uint)(Viewport.Width / 4), (_uint)(Viewport.Height / 4), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By5"), (_uint)(Viewport.Width / 5), (_uint)(Viewport.Height / 5), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By6"), (_uint)(Viewport.Width / 6), (_uint)(Viewport.Height / 6), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By4"), (_uint)(Viewport.Width / 4), (_uint)(Viewport.Height / 4), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By5"), (_uint)(Viewport.Width / 5), (_uint)(Viewport.Height / 5), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaled_By6"), (_uint)(Viewport.Width / 6), (_uint)(Viewport.Height / 6), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By2"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By3"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By4"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By5"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By6"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By4"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By5"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By6"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
 
@@ -138,6 +138,12 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceDefferred"), TEXT("Target_ReferenceDefferred")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_BluredDefferred"), TEXT("Target_BluredDefferred")));
 
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_Defferred")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_Depth")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_WorldPosition")));
+
+
 	
 	/* For.MRT_LightAcc : 그림자 그릴때 바인드 */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow")));
@@ -168,15 +174,15 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By2"), TEXT("Target_DownScaled_By2")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By3"), TEXT("Target_DownScaled_By3")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By4"), TEXT("Target_DownScaled_By4")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By5"), TEXT("Target_DownScaled_By5")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By6"), TEXT("Target_DownScaled_By6")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By4"), TEXT("Target_DownScaled_By4")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By5"), TEXT("Target_DownScaled_By5")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DownScaled_By6"), TEXT("Target_DownScaled_By6")));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By2"), TEXT("Target_UpScaled_By2")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By3"), TEXT("Target_UpScaled_By3")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By4"), TEXT("Target_UpScaled_By4")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By5"), TEXT("Target_UpScaled_By5")));
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By6"), TEXT("Target_UpScaled_By6")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By4"), TEXT("Target_UpScaled_By4")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By5"), TEXT("Target_UpScaled_By5")));
+	//FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_UpScaled_By6"), TEXT("Target_UpScaled_By6")));
 
 
 
@@ -277,11 +283,11 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	}
 
 
-	FAILED_CHECK(GetSingle(CComponentMgr)->Add_Component_Prototype(0, L"Prototype_Texture_Noise",
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"NoiseTexture.txt")));
+	FAILED_CHECK(GetSingle(CComponentMgr)->Add_Component_Prototype(0, L"Prototype_Texture_Util",
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"UtilityTexture.txt")));
 
 
-	m_pTexture = (CTexture*)GetSingle(CComponentMgr)->Clone_Component(0, L"Prototype_Texture_Noise",nullptr);
+	m_pTexture = (CTexture*)GetSingle(CComponentMgr)->Clone_Component(0, L"Prototype_Texture_Util",nullptr);
 	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
 	FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
 
@@ -461,15 +467,19 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
+	//////////MRT_DefferredForNonLightObject//////////////
 	FAILED_CHECK(Render_NonBlend_NoLight());
 	FAILED_CHECK(Render_SwordTrail());
-	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
-	FAILED_CHECK(Copy_DeferredToReference());
+	FAILED_CHECK(Render_DistortionObject());
+
+
+
+
+
+
+
+
 	FAILED_CHECK(Render_EmissiveBlur());
-
-
-
 	if (m_PostProcessingOn[POSTPROCESSING_SHADOW] && m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
@@ -478,6 +488,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 		FAILED_CHECK(Render_LesnFlare());
 	if (m_PostProcessingOn[POSTPROCESSING_DDFOG])
 		FAILED_CHECK(Render_DDFog());
+
+	
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
 		FAILED_CHECK(Render_Bloom());
 
@@ -1253,7 +1265,7 @@ HRESULT CRenderer::Render_MotionTrail()
 
 HRESULT CRenderer::Render_SwordTrail()
 {
-
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DefferredForNonLightObject")));
 	for (auto& pSwordTrailComponet : m_TrailList[TRAIL_SWORD])
 	{
 		if (pSwordTrailComponet != nullptr)
@@ -1264,6 +1276,8 @@ HRESULT CRenderer::Render_SwordTrail()
 		Safe_Release(pSwordTrailComponet);
 	}
 	m_TrailList[TRAIL_SWORD].clear();
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DefferredForNonLightObject")));
+	FAILED_CHECK(Copy_DeferredToReference());
 
 	return S_OK;
 }
@@ -1764,6 +1778,7 @@ HRESULT CRenderer::Ready_For_Update(_double fDelataTimme)
 
 HRESULT CRenderer::Render_NonBlend_NoLight()
 {
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DefferredForNonLightObject")));
 
 	for (auto& RenderObject : m_RenderObjectList[RENDER_NONBLEND_NOLIGHT])
 	{
@@ -1777,6 +1792,8 @@ HRESULT CRenderer::Render_NonBlend_NoLight()
 	m_RenderObjectList[RENDER_NONBLEND_NOLIGHT].clear();
 
 
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DefferredForNonLightObject")));
+	FAILED_CHECK(Copy_DeferredToReference());
 
 	return S_OK;
 }
@@ -1844,6 +1861,28 @@ HRESULT CRenderer::Render_AfterObj()
 
 	//FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
 	//FAILED_CHECK(Copy_DeferredToReference());
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_DistortionObject()
+{
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DefferredForNonLightObject")));
+
+	for (auto& RenderObject : m_RenderObjectList[RENDER_DISTORTION])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_DISTORTION].clear();
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DefferredForNonLightObject")));
+	FAILED_CHECK(Copy_DeferredToReference());
+	
 
 	return S_OK;
 }

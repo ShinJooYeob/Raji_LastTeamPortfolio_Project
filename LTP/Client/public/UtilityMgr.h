@@ -14,6 +14,12 @@ public:
 		DEBUGTIMER_3,
 		DEBUGTIMER_END,
 	};
+	enum UTILTEXTUREID
+	{
+		UTILTEX_NOISE,
+		UTILTEX_MASK,
+		UTILTEX_END,
+	};
 private:
 	explicit CUtilityMgr();
 	virtual ~CUtilityMgr() = default;
@@ -44,6 +50,8 @@ public:
 	HRESULT Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc);
 	HRESULT Create_MeshInstance(_uint eSceneID, INSTMESHDESC& tParticleDesc);
 
+	/*For Utility Texture */
+	HRESULT Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader* pShader, const char* szhlslConstName, _uint iTextureIndex = 0);
 
 
 public:
@@ -55,6 +63,7 @@ private:
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
 	class CMainApp*			m_pMainApp = nullptr;
 	CRenderer*				m_pRenderer = nullptr;
+	CTexture*				m_pTexture = nullptr;
 
 private:
 	clock_t m_StartTime[E_DEBUGTIMER::DEBUGTIMER_END];

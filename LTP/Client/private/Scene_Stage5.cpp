@@ -183,7 +183,7 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }

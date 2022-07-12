@@ -328,11 +328,13 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
 	m_MeshEffectDesc.vPowerDirection = _float3(0, 1, 0);*/
 
 	m_MeshEffectDesc.FollowingTarget = m_pTransformCom;
-	m_MeshEffectDesc.iFollowingDir = 0;
+	m_MeshEffectDesc.iFollowingDir = FollowingDir_Right;
 
 	m_MeshEffectDesc.szModelMeshProtoTypeTag = TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain);
-	m_MeshEffectDesc.szNoiseTextureLayerTag = nullptr;
+
 	m_MeshEffectDesc.iNoiseTextureIndex = 0;
+	m_MeshEffectDesc.iMaskingTextureIndex= 0;
+
 	m_MeshEffectDesc.TotalParticleTime = 5.f;
 	m_MeshEffectDesc.EachParticleLifeTime = 1.f;
 
@@ -345,7 +347,7 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
 	m_MeshEffectDesc.fMaxBoundaryRadius = 999999.f;
 	m_MeshEffectDesc.Particle_Power = 0.f;
 	m_MeshEffectDesc.PowerRandomRange = _float2(0.5f, 1.5f);
-	m_MeshEffectDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	m_MeshEffectDesc.SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 	m_MeshEffectDesc.ParticleStartRandomPosMin = _float3(0, 0, 0); //Positioning
 	m_MeshEffectDesc.ParticleStartRandomPosMax = _float3(0, 0, 0); //Positioning
 

@@ -60,11 +60,14 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 	m_vecLimLight.clear();
 	m_vecLimLight.swap(vector<_float4>());
 	m_vecEmisive.clear();
-	m_vecLimLight.swap(vector<_float4>());
+	m_vecEmisive.swap(vector<_float4>());
+	m_vecTimer.clear();
+	m_vecTimer.swap(vector<_float4>());
 
 	m_vecWorld.reserve(m_iNumInstance);
 	m_vecLimLight.reserve(m_iNumInstance);
 	m_vecEmisive.reserve(m_iNumInstance);
+	m_vecTimer.reserve(m_iNumInstance);
 
 	_Matrix mat;
 
@@ -79,6 +82,12 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 
 		if (m_tInstanceDesc.bEmissive)
 			m_vecEmisive.push_back(_float4(m_tInstanceDesc.vEmissive_SBB, 1));
+
+		if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright
+			|| m_tInstanceDesc.ePassID >= MeshPass_AllDistortion && m_tInstanceDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
+			m_vecTimer.push_back(_float4(m_vecParticleAttribute[i]._age, m_vecParticleAttribute[i]._lifeTime, (_float)TimeDelta, 1));
+
+
 		m_vecLimLight.push_back(m_vecParticleAttribute[i]._color);
 		m_vecWorld.push_back(mat);
 	}
@@ -93,7 +102,19 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this, nullptr, m_pModelInstance, m_pShaderCom, m_pModel, &m_vecWorld));
 	}
 
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_AFTERALLOBJ, this));
+	}
+	else if (m_tInstanceDesc.ePassID >= MeshPass_AllDistortion && m_tInstanceDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
+	}
+	else
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+
+	}
 	   
 	return _int();
 }
@@ -105,15 +126,23 @@ _int CMeshEffect::Render()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
-	if (m_tInstanceDesc.bEmissive)
-	{
-		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, 2, &m_vecWorld, 0, &m_vecLimLight, &m_vecEmisive));
+	vector<_float4>* vecEmissive = nullptr;
+	vector<_float4>* vecTimer = nullptr;
 
-	}
-	else
-	{
-		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, 2, &m_vecWorld, 0, &m_vecLimLight));
-	}
+	if (m_tInstanceDesc.bEmissive)
+		vecEmissive = &m_vecEmisive;
+
+	if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright
+		|| m_tInstanceDesc.ePassID >= MeshPass_AllDistortion && m_tInstanceDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
+		vecTimer = &m_vecTimer;
+
+
+	
+
+	FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, m_tInstanceDesc.ePassID + 1, &m_vecWorld, 0, &m_vecLimLight, vecEmissive, vecTimer));
+
+
+	
 
 
 
@@ -136,14 +165,22 @@ HRESULT CMeshEffect::SetUp_Components()
 
 	if (m_pModel->Get_IsAnimModel())
 	{
+		MSGBOX("Do Not Input Anim Model to Particle Effect");
+		__debugbreak();
+
+
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+		m_bIsAnimModel = true;
+		m_pModel->Change_AnimIndex(m_tInstanceDesc.iModelAnimIndex);
+		FAILED_CHECK(m_pModel->Update_AnimationClip(g_fDeltaTime));
 	}
 	else
 	{
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXNONANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+		m_bIsAnimModel = false;
 	}
 
-	if (m_tInstanceDesc.eInstanceCount < Prototype_ModelInstance_2 || m_tInstanceDesc.eInstanceCount > Prototype_ModelInstance_512)
+	if (m_tInstanceDesc.eInstanceCount < Prototype_ModelInstance_1 || m_tInstanceDesc.eInstanceCount > Prototype_ModelInstance_512)
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -157,7 +194,6 @@ HRESULT CMeshEffect::SetUp_Components()
 
 
 
-
 	return S_OK;
 }
 
@@ -167,22 +203,36 @@ HRESULT CMeshEffect::Ready_InstanceDesc()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	if (m_tInstanceDesc.FollowingTarget)
-		m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+	{
+		switch (m_tInstanceDesc.iFollowingDir)
+		{
+		case FollowingDir_Right:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_RIGHT).Get_Nomalize();
+			break;
+		case FollowingDir_Up:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_UP).Get_Nomalize();
+			break;
+		case FollowingDir_Look:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+			break;
+		default:
+			__debugbreak();
+			return E_FAIL;
+			break;
+		}
+
+	}
+
 	else
 		m_vUp = m_tInstanceDesc.vPowerDirection.Get_Nomalize();
 
 
+	if (m_vUp.y == 1 || m_vUp.y == -1) m_vUp = _float3(0.000001f, 1, 0).Get_Nomalize();
 
-	if (m_vUp.y == 1 || m_vUp.y == -1)
-	{
-		m_vRight = XMVector3Normalize(_float3(0.000001f, 1, 0).Get_Cross(m_vUp.XMVector()));
-		m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-	}
-	else
-	{
-		m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
-		m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-	}
+
+	m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
+	m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
+	
 
 	return S_OK;
 }
@@ -196,6 +246,36 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pGameInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pGameInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+
+	if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
+	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		//g_NoiseTexture / g_DiffuseTexture / g_SourTexture /  g_DepthTexture
+
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tInstanceDesc.iMaskingTextureIndex));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
+		
+	if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
+
+		if (m_tInstanceDesc.ePassID == MeshPass_MaskingNoising_Appear_Bright || m_tInstanceDesc.ePassID == MeshPass_MaskingNoising_Appear)
+		{
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tInstanceDesc.fAppearTimer, sizeof(_float)));
+		}
+
+	}
+	else if (m_tInstanceDesc.ePassID >= MeshPass_AllDistortion && m_tInstanceDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
+	{
+		//g_NoiseTexture g_DiffuseTexture g_BackBufferTexture
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
+
+		FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.fDistortionNoisingPushPower, sizeof(_float)));
+		
+	}
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -262,6 +342,16 @@ void CMeshEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 	CGameInstance* pInstance = g_pGameInstance;
 
+
+	if (m_bIsAnimModel)
+	{
+		if ((m_pModel->Update_AnimationClip(fDeltaTime)) < 0)
+		{
+			__debugbreak();
+			return;
+		}
+	}
+
 	if (m_tInstanceDesc.FollowingTarget)
 	{
 		if (m_tInstanceDesc.FollowingTarget->Get_IsOwnerDead())
@@ -274,19 +364,33 @@ void CMeshEffect::Update_ParticleAttribute(_double fDeltaTime)
 		else
 		{
 			if (m_tInstanceDesc.FollowingTarget)
-				m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+			{
+				switch (m_tInstanceDesc.iFollowingDir)
+				{
+				case FollowingDir_Right:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_RIGHT).Get_Nomalize();
+					break;
+				case FollowingDir_Up:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_UP).Get_Nomalize();
+					break;
+				case FollowingDir_Look:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+					break;
+				default:
+					__debugbreak();
+					break;
+				}
 
 
-			if (m_vUp.y == 1 || m_vUp.y == -1)
-			{
-				m_vRight = XMVector3Normalize(_float3(0.000001f, 1, 0).Get_Cross(m_vUp.XMVector()));
-				m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
 			}
-			else
-			{
-				m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
-				m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-			}
+
+
+			if (m_vUp.y == 1 || m_vUp.y == -1) m_vUp = _float3(0.000001f, 1, 0).Get_Nomalize();
+
+
+			m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
+			m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
+			
 
 		}
 	}
@@ -314,7 +418,7 @@ void CMeshEffect::Update_ParticleAttribute(_double fDeltaTime)
 			if (m_tInstanceDesc.ColorChageFrequency)
 				Update_ColorChange(&(*iter), fDeltaTime, pInstance);
 
-			if (m_tInstanceDesc.SizeChageFrequency)
+			if (m_tInstanceDesc.SizeChageFrequency) 
 				Update_SizeChange(&(*iter), fDeltaTime, pInstance);
 
 
@@ -502,7 +606,7 @@ HRESULT CMeshEffect_Ball::Initialize_Child_Clone()
 
 		//랜덤한 라이프타임
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 
@@ -573,6 +677,8 @@ CMeshEffect_Straight::CMeshEffect_Straight(const CMeshEffect_Straight & rhs)
 void CMeshEffect_Straight::Reset_Velocity(_float3 & fAttVlocity)
 {
 	fAttVlocity = m_vUp.Get_Nomalize();
+
+
 }
 
 void CMeshEffect_Straight::Update_Position_by_Velocity(INSTMESHATT * tParticleAtt, _double fTimeDelta)
@@ -607,7 +713,7 @@ HRESULT CMeshEffect_Straight::Initialize_Child_Clone()
 	{
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		m_vecParticleAttribute.push_back(part);
 	}
@@ -677,9 +783,9 @@ void CMeshEffect_Cone::Reset_Velocity(_float3 & fAttVlocity)
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.x, m_tInstanceDesc.SubPowerRandomRange.x)
-		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.y , m_tInstanceDesc.SubPowerRandomRange.y)
-		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(0, m_tInstanceDesc.SubPowerRandomRange.z));
+	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.x, m_tInstanceDesc.SubPowerRandomRange_RUL.x)
+		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.y , m_tInstanceDesc.SubPowerRandomRange_RUL.y)
+		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(0, m_tInstanceDesc.SubPowerRandomRange_RUL.z));
 
 }
 
@@ -714,7 +820,7 @@ HRESULT CMeshEffect_Cone::Initialize_Child_Clone()
 
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
@@ -821,7 +927,7 @@ HRESULT CMeshEffect_Spread::Initialize_Child_Clone()
 
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
@@ -891,9 +997,9 @@ void CMeshEffect_Fountain::Reset_Velocity(_float3 & fAttVlocity)
 {
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.x, m_tInstanceDesc.SubPowerRandomRange.x)
-		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.y, m_tInstanceDesc.SubPowerRandomRange.y)
-		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(m_tInstanceDesc.SubPowerRandomRange.z, m_tInstanceDesc.SubPowerRandomRange.z * 2.f));
+	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.x, m_tInstanceDesc.SubPowerRandomRange_RUL.x)
+		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.y, m_tInstanceDesc.SubPowerRandomRange_RUL.y)
+		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(m_tInstanceDesc.SubPowerRandomRange_RUL.z, m_tInstanceDesc.SubPowerRandomRange_RUL.z * 2.f));
 	
 
 	if (fAttVlocity.y < 0) fAttVlocity.y *= -1.f;
@@ -986,7 +1092,7 @@ HRESULT CMeshEffect_Fountain::Initialize_Child_Clone()
 
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		m_vecParticleAttribute.push_back(part);
 	}
@@ -1113,7 +1219,7 @@ HRESULT CMeshEffect_Suck::Initialize_Child_Clone()
 
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);

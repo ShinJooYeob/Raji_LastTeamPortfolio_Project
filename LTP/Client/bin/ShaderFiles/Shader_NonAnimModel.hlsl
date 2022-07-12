@@ -13,6 +13,8 @@ cbuffer AttechMatrix
 	matrix g_AttechMatrix;
 };
 
+float4 g_vColor = 0;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -237,6 +239,23 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
 
 	return Out;
 }
+PS_OUT PS_MAIN_SKYBOX_ForFog(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	Out.vDiffuse = g_vColor;
+	Out.vDiffuse.a = 1;
+
+	Out.vNormal = vector(0, 0, 0, 1);
+	Out.vDepth = vector(1, 0, 0, 1);
+	Out.vSpecular = vector(0, 0, 1, 0);
+	Out.vWorldPosition = vector(1, 0, 0, 1);
+	Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	Out.vLimLight = vector(0.f, 0.f, 0.f, 0.f);
+
+	return Out;
+}
+
 
 
 
@@ -340,6 +359,17 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}
 
+	pass SkyBox_ForFog		//9
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+		//SetRasterizerState(CullMode_cw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_DEFAULT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SKYBOX_ForFog();
+	}
 
 
 	

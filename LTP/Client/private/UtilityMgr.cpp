@@ -23,6 +23,11 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 
 	ZeroMemory(m_StartTime, sizeof(clock_t)*E_DEBUGTIMER::DEBUGTIMER_END);
 
+
+	m_pTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_Util));
+	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
+	FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+
 	return S_OK;
 }
 
@@ -193,6 +198,27 @@ HRESULT CUtilityMgr::Create_MeshInstance(_uint eSceneID, INSTMESHDESC & tParticl
 	return S_OK;
 }
 
+HRESULT CUtilityMgr::Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader * pShader, const char * szhlslConstName, _uint iTextureIndex)
+{
+
+	switch (eID)
+	{
+	case Client::CUtilityMgr::UTILTEX_NOISE:
+		FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+		break;
+	case Client::CUtilityMgr::UTILTEX_MASK:
+		FAILED_CHECK(m_pTexture->Change_TextureLayer(L"MaskTexture"));
+		break;
+	default:
+		break;
+	}
+
+
+	FAILED_CHECK(m_pTexture->Bind_OnShader(pShader, szhlslConstName, iTextureIndex));
+
+	return S_OK;
+}
+
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()
 {
 	NULL_CHECK_RETURN(m_pRenderer, E_FAIL);
@@ -218,7 +244,7 @@ _uint CUtilityMgr::CountDigit(_uint iNum)
 void CUtilityMgr::Free()
 {
 	Safe_Release(m_pRenderer);
-
+	Safe_Release(m_pTexture);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }

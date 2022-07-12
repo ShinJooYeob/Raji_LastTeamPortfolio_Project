@@ -99,6 +99,7 @@ HRESULT CVIBuffer_Point_Instance::Initialize_Prototype(_uint iNumInstance)
 
 		pInstanceMatrix[i].vUV_WHSize = _float4(0,0,1,1);
 		pInstanceMatrix[i].vColor = _float4(1);
+		pInstanceMatrix[i].vTimer = _float4(0);
 	}
 
 	ZeroMemory(&m_VBInstSubResource, sizeof(D3D11_SUBRESOURCE_DATA));

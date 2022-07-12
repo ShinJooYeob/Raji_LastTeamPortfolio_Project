@@ -65,6 +65,7 @@ protected:
 	vector<_float4x4>			m_vecWorld;
 	vector<_float4>				m_vecLimLight;
 	vector<_float4>				m_vecEmisive;
+	vector<_float4>				m_vecTimer;
 
 protected:
 	INSTMESHDESC				m_tInstanceDesc;
@@ -75,6 +76,7 @@ protected:
 	_float3						m_vRight = _float3(1, 0, 0);
 	_float3						m_vLook = _float3(0, 0, 1);
 	_float3						m_vUp = _float3(0, 1, 0);
+	_bool						m_bIsAnimModel = false;
 
 
 protected:

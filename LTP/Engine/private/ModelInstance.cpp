@@ -118,7 +118,7 @@ HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<
 	return 0;
 }
 
-HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive )
+HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive , vector<_float4>*  pvecTiemer)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -135,7 +135,7 @@ HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, 
 
 
 		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive));
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive,pvecTiemer));
 	}
 
 

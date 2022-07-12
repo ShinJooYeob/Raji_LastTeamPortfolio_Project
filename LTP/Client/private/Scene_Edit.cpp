@@ -1454,6 +1454,58 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 	
 #pragma endregion UITOOL
 	}
+
+	else if (m_iNowTab == 2)
+	{
+#pragma region Particle
+		if (pInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_DoubleDown)
+		{
+			POINT ptMouse;
+			GetCursorPos(&ptMouse);
+			ScreenToClient(g_hWnd, &ptMouse);
+
+
+
+			_Vector vCursorPos = XMVectorSet(
+				(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+				(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+				0, 1.f);
+			//_Vector vCursorPos = XMVectorSet(	(_float(ptMouse.x) / g_iWinCX * 0.5f) - 1.f, 	(_float(ptMouse.y) / g_iWinCY * 0.5f) + 1.f ,		0, 1.f);
+
+			_Matrix InvProjMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_PROJ));
+
+			_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+			_Matrix InvViewMat = XMMatrixInverse(nullptr, pInstance->Get_Transform_Matrix(PLM_VIEW));
+			vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+			_Vector vCamPos = m_pEditorCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+			if (XMVectorGetY(vCamPos) * XMVectorGetY(vRayDir) < 0)
+			{
+				_float Scale = (XMVectorGetY(vCamPos)) / -(XMVectorGetY(vRayDir));
+
+				_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
+
+				m_fPickingedPosition[0] = vTargetPos.x;
+				m_fPickingedPosition[1] = vTargetPos.y;
+				m_fPickingedPosition[2] = vTargetPos.z;
+
+				if (!m_iBatchedVecIndex)
+				{
+
+					memcpy(m_vecBatchedObject[0].matSRT.m[2], &vTargetPos, sizeof(_float3));
+
+					RenewElenmetTransform(&m_vecBatchedObject[0]);
+				}
+
+			}
+
+
+		}
+#pragma endregion Particle
+	}
 	else if (m_iNowTab == 3)
 	{
 #pragma region CamAction
@@ -2922,7 +2974,7 @@ HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 	return S_OK;
 }
 
-#define DefaultParticleNameTag "Test"
+#define DefaultParticleNameTag "dds"
 
 HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 {
@@ -2979,15 +3031,85 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	}
 
 
+	static bool	bIsFollowingTransform = false;
+	{
+
+		ImGui::Checkbox("FollowingTransform", &bIsFollowingTransform);
+
+		if (bIsFollowingTransform)
+		{
+			m_tParticleDesc.FollowingTarget = (CTransform*)(m_vecBatchedObject[0].pObject->Get_Component(TAG_COM(Com_Transform)));
+		}
+		else
+		{
+			m_tParticleDesc.FollowingTarget = nullptr;
+		}
+
+	}
+
+	if (bIsFollowingTransform)
+	{
+		if (ImGui::Button("-             ", ImVec2(20, 18)))
+		{
+			m_tParticleDesc.iFollowingDir = (eFollowingDirID)(m_tParticleDesc.iFollowingDir - 1);
+			if (m_tParticleDesc.iFollowingDir < FollowingDir_Right) m_tParticleDesc.iFollowingDir = FollowingDir_Right;
+		}ImGui::SameLine(0, 10);
+		if (ImGui::Button("+             ", ImVec2(20, 18)))
+		{
+			m_tParticleDesc.iFollowingDir = (eFollowingDirID)(m_tParticleDesc.iFollowingDir + 1);
+			if (m_tParticleDesc.iFollowingDir >= FollowingDir_End) m_tParticleDesc.iFollowingDir = (eFollowingDirID)(FollowingDir_End - 1);
+		}
+
+		ImGui::SameLine(0, 10);		ImGui::Text(Tag_InstancePass(m_tParticleDesc.iFollowingDir));
+
+	}
+	else
+	{
+
+		TempFloatArr[0] = m_tParticleDesc.vFixedPosition.x;
+		TempFloatArr[1] = m_tParticleDesc.vFixedPosition.y;
+		TempFloatArr[2] = m_tParticleDesc.vFixedPosition.z;
+		ImGui::InputFloat3("SwpanPosition", TempFloatArr);
+		m_tParticleDesc.vFixedPosition.x = TempFloatArr[0];
+		m_tParticleDesc.vFixedPosition.y = TempFloatArr[1];
+		m_tParticleDesc.vFixedPosition.z = TempFloatArr[2];
 
 
-	TempFloatArr[0] = m_tParticleDesc.vFixedPosition.x;
-	TempFloatArr[1] = m_tParticleDesc.vFixedPosition.y;
-	TempFloatArr[2] = m_tParticleDesc.vFixedPosition.z;
-	ImGui::InputFloat3("SwpanPosition", TempFloatArr);
-	m_tParticleDesc.vFixedPosition.x = TempFloatArr[0];
-	m_tParticleDesc.vFixedPosition.y = TempFloatArr[1];
-	m_tParticleDesc.vFixedPosition.z = TempFloatArr[2];
+		ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+		TempFloatArr[0] = m_tParticleDesc.vPowerDirection.x;
+		TempFloatArr[1] = m_tParticleDesc.vPowerDirection.y;
+		TempFloatArr[2] = m_tParticleDesc.vPowerDirection.z;
+		ImGui::InputFloat3("Force Direct", TempFloatArr);
+		m_tParticleDesc.vPowerDirection.x = TempFloatArr[0];
+		m_tParticleDesc.vPowerDirection.y = TempFloatArr[1];
+		m_tParticleDesc.vPowerDirection.z = TempFloatArr[2];
+	}
+
+
+
+
+	if (m_tParticleDesc.ePassID == InstancePass_MaskingNoising)
+	{
+		m_tParticleDesc.vNoisePushingDir;
+		
+		_float2 tt = m_tParticleDesc.vNoisePushingDir.Get_Nomalize();
+		float fArr[2];
+		memcpy(fArr, &tt, sizeof(float) * 2);
+		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
+		memcpy(&tt, fArr, sizeof(float) * 2);
+		m_tParticleDesc.vNoisePushingDir = tt.Get_Nomalize();
+
+			
+		int tempint = m_tParticleDesc.iNoiseTextureIndex;
+
+
+		ImGui::InputInt("MoiseTex Index", &tempint);
+		m_tParticleDesc.iNoiseTextureIndex = tempint;
+		tempint = m_tParticleDesc.iMaskingTextureIndex;
+		ImGui::InputInt("MaskingTex Index", &tempint);
+		m_tParticleDesc.iMaskingTextureIndex = tempint;
+
+	}
 
 
 	static ImGuiTextFilter filter = "Prototype_Texture_TestEffect";
@@ -3001,10 +3123,17 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	static ImGuiTextFilter filter2 = DefaultParticleNameTag;
 	filter2.Draw("Input TextureLayer");
 
+
 	string Temp2 = string(filter2.InputBuf);
 	wstring wtemp2;
 	wtemp2.assign(Temp2.begin(), Temp2.end());
 	m_tParticleDesc.szTextureLayerTag = wtemp2.c_str();
+
+
+	int tt = m_tParticleDesc.iTextureLayerIndex;
+	ImGui::InputInt("TextureLayer Index", &tt);
+	m_tParticleDesc.iTextureLayerIndex = tt;
+
 
 	ImGui::InputInt("FigureCount_In_Tex", &m_tParticleDesc.iFigureCount_In_Texture);
 
@@ -3013,13 +3142,19 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	ImGui::InputInt("TextureChageFrequency", &TempIntArr[1]);
 	m_tParticleDesc.TextureChageFrequency = TempIntArr[1];
 
-
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 	TempFloatArr[0] = m_tParticleDesc.vTextureXYNum.x;
 	TempFloatArr[1] = m_tParticleDesc.vTextureXYNum.y;
 	ImGui::InputFloat2("TextureXYSizeNum", TempFloatArr);
 	m_tParticleDesc.vTextureXYNum.x = TempFloatArr[0];
 	m_tParticleDesc.vTextureXYNum.y = TempFloatArr[1];
+
+
+
+
+
+
+
 
 	TempFloatArr[2] = m_tParticleDesc.TotalParticleTime;
 	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2]);
@@ -3095,13 +3230,13 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.PowerRandomRange.x = TempFloatArr[0];
 	m_tParticleDesc.PowerRandomRange.y = TempFloatArr[1];
 
-	TempFloatArr[0] = m_tParticleDesc.SubPowerRandomRange.x;
-	TempFloatArr[1] = m_tParticleDesc.SubPowerRandomRange.y;
-	TempFloatArr[2] = m_tParticleDesc.SubPowerRandomRange.z;
+	TempFloatArr[0] = m_tParticleDesc.SubPowerRandomRange_RUL.x;
+	TempFloatArr[1] = m_tParticleDesc.SubPowerRandomRange_RUL.y;
+	TempFloatArr[2] = m_tParticleDesc.SubPowerRandomRange_RUL.z;
 	ImGui::DragFloat3("Power Weight by RUL", TempFloatArr, 0.03f); 
-	m_tParticleDesc.SubPowerRandomRange.x = TempFloatArr[0];
-	m_tParticleDesc.SubPowerRandomRange.y = TempFloatArr[1];
-	m_tParticleDesc.SubPowerRandomRange.z = TempFloatArr[2];
+	m_tParticleDesc.SubPowerRandomRange_RUL.x = TempFloatArr[0];
+	m_tParticleDesc.SubPowerRandomRange_RUL.y = TempFloatArr[1];
+	m_tParticleDesc.SubPowerRandomRange_RUL.z = TempFloatArr[2];
 
 
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
@@ -3192,7 +3327,7 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		if (ImGui::Button("- ", ImVec2(20, 18)))
 		{
 			m_tMeshDesc.eInstanceCount = (COMPONENTPROTOTYPEID)(m_tMeshDesc.eInstanceCount - 1);
-			if (m_tMeshDesc.eInstanceCount < Prototype_ModelInstance_2) m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_2;
+			if (m_tMeshDesc.eInstanceCount < Prototype_ModelInstance_1) m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_1;
 		}ImGui::SameLine(0, 10);
 		if (ImGui::Button("+ ", ImVec2(20, 18)))
 		{
@@ -3211,22 +3346,116 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		if (ImGui::Button("+  ", ImVec2(20, 18)))
 		{
 			m_tMeshDesc.ePassID = (eMeshInstancePassID)(m_tMeshDesc.ePassID + 1);
-			if (m_tMeshDesc.ePassID >= InstancePass_End) m_tMeshDesc.ePassID = (eMeshInstancePassID)(InstancePass_End - 1);
+			if (m_tMeshDesc.ePassID >= MeshPass_End) m_tMeshDesc.ePassID = (eMeshInstancePassID)(MeshPass_End - 1);
 		}
 		ImGui::SameLine(0, 10);		ImGui::Text(TAG_MESHINSTPASS(m_tMeshDesc.ePassID));
 	}
 
 
+	static bool	bIsFollowingTransform = false;
+	{
+
+		ImGui::Checkbox("FollowingTransform", &bIsFollowingTransform);
+
+		if (bIsFollowingTransform)
+		{
+			m_tMeshDesc.FollowingTarget = (CTransform*)(m_vecBatchedObject[0].pObject->Get_Component(TAG_COM(Com_Transform)));
+		}
+		else
+		{
+			m_tMeshDesc.FollowingTarget = nullptr;
+		}
+
+	}
+
+	if (bIsFollowingTransform)
+	{
+		if (ImGui::Button("-             ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.iFollowingDir = (eFollowingDirID)(m_tMeshDesc.iFollowingDir - 1);
+			if (m_tMeshDesc.iFollowingDir < FollowingDir_Right) m_tMeshDesc.iFollowingDir = FollowingDir_Right;
+		}ImGui::SameLine(0, 10);
+		if (ImGui::Button("+             ", ImVec2(20, 18)))
+		{
+			m_tMeshDesc.iFollowingDir = (eFollowingDirID)(m_tMeshDesc.iFollowingDir + 1);
+			if (m_tMeshDesc.iFollowingDir >= FollowingDir_End) m_tMeshDesc.iFollowingDir = (eFollowingDirID)(FollowingDir_End - 1);
+		}
+
+		ImGui::SameLine(0, 10);		ImGui::Text(Tag_InstancePass(m_tMeshDesc.iFollowingDir));
+		
+	}
+	else
+	{
+
+		TempFloatArr[0] = m_tMeshDesc.vFixedPosition.x;
+		TempFloatArr[1] = m_tMeshDesc.vFixedPosition.y;
+		TempFloatArr[2] = m_tMeshDesc.vFixedPosition.z;
+		ImGui::InputFloat3("SwpanPosition", TempFloatArr);
+		m_tMeshDesc.vFixedPosition.x = TempFloatArr[0];
+		m_tMeshDesc.vFixedPosition.y = TempFloatArr[1];
+		m_tMeshDesc.vFixedPosition.z = TempFloatArr[2];
 
 
-	TempFloatArr[0] = m_tMeshDesc.vFixedPosition.x;
-	TempFloatArr[1] = m_tMeshDesc.vFixedPosition.y;
-	TempFloatArr[2] = m_tMeshDesc.vFixedPosition.z;
-	ImGui::InputFloat3("SwpanPosition", TempFloatArr);
-	m_tMeshDesc.vFixedPosition.x = TempFloatArr[0];
-	m_tMeshDesc.vFixedPosition.y = TempFloatArr[1];
-	m_tMeshDesc.vFixedPosition.z = TempFloatArr[2];
+		ZeroMemory(TempFloatArr, sizeof(_float) * 4);
+		TempFloatArr[0] = m_tMeshDesc.vPowerDirection.x;
+		TempFloatArr[1] = m_tMeshDesc.vPowerDirection.y;
+		TempFloatArr[2] = m_tMeshDesc.vPowerDirection.z;
+		ImGui::InputFloat3("Force Direct", TempFloatArr);
+		m_tMeshDesc.vPowerDirection.x = TempFloatArr[0];
+		m_tMeshDesc.vPowerDirection.y = TempFloatArr[1];
+		m_tMeshDesc.vPowerDirection.z = TempFloatArr[2];
+	}
 
+
+	if (m_tMeshDesc.ePassID >= MeshPass_MaskingNoising && m_tMeshDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
+	{
+		m_tMeshDesc.vNoisePushingDir;
+
+		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
+		float fArr[2];
+		memcpy(fArr, &tt, sizeof(float) * 2);
+		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
+		memcpy(&tt, fArr, sizeof(float) * 2);
+		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
+
+
+		int tempint = m_tMeshDesc.iNoiseTextureIndex;
+
+
+		ImGui::InputInt("MoiseTex Index", &tempint);
+		m_tMeshDesc.iNoiseTextureIndex = tempint;
+
+
+		tempint = m_tMeshDesc.iMaskingTextureIndex;
+		ImGui::InputInt("MaskingTex Index", &tempint);
+		m_tMeshDesc.iMaskingTextureIndex = tempint;
+
+
+		if (m_tMeshDesc.ePassID == MeshPass_MaskingNoising_Appear || m_tMeshDesc.ePassID == MeshPass_MaskingNoising_Appear_Bright)
+		{
+			ImGui::DragFloat("AppearTime", &m_tMeshDesc.fAppearTimer, 0.001f, 0, m_tMeshDesc.EachParticleLifeTime);
+			m_tMeshDesc.fAppearTimer = min(max(m_tMeshDesc.fAppearTimer, 0.000001f), m_tMeshDesc.EachParticleLifeTime);
+		}
+	}
+	else if (m_tMeshDesc.ePassID >= MeshPass_AllDistortion && m_tMeshDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
+	{
+		m_tMeshDesc.vNoisePushingDir;
+
+		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
+		float fArr[2];
+		memcpy(fArr, &tt, sizeof(float) * 2);
+		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
+		memcpy(&tt, fArr, sizeof(float) * 2);
+		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
+
+
+		int tempint = m_tMeshDesc.iNoiseTextureIndex;
+		ImGui::InputInt("MoiseTex Index", &tempint);
+		m_tMeshDesc.iNoiseTextureIndex = tempint;
+
+		ImGui::DragFloat("Noise Push Power", &m_tMeshDesc.fDistortionNoisingPushPower,0.001f, -100, 100);
+	
+	}
 
 	static ImGuiTextFilter filter = "Prototype_Mesh_AlgaeRock_Ledge";
 	filter.Draw("Input MeshProtoTypeTag");
@@ -3311,24 +3540,15 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	m_tMeshDesc.PowerRandomRange.x = TempFloatArr[0];
 	m_tMeshDesc.PowerRandomRange.y = TempFloatArr[1];
 
-	TempFloatArr[0] = m_tMeshDesc.SubPowerRandomRange.x;
-	TempFloatArr[1] = m_tMeshDesc.SubPowerRandomRange.y;
-	TempFloatArr[2] = m_tMeshDesc.SubPowerRandomRange.z;
+	TempFloatArr[0] = m_tMeshDesc.SubPowerRandomRange_RUL.x;
+	TempFloatArr[1] = m_tMeshDesc.SubPowerRandomRange_RUL.y;
+	TempFloatArr[2] = m_tMeshDesc.SubPowerRandomRange_RUL.z;
 	ImGui::DragFloat3("Power Weight by RUL", TempFloatArr,0.03f);
-	m_tMeshDesc.SubPowerRandomRange.x = TempFloatArr[0];
-	m_tMeshDesc.SubPowerRandomRange.y = TempFloatArr[1];
-	m_tMeshDesc.SubPowerRandomRange.z = TempFloatArr[2];
+	m_tMeshDesc.SubPowerRandomRange_RUL.x = TempFloatArr[0];
+	m_tMeshDesc.SubPowerRandomRange_RUL.y = TempFloatArr[1];
+	m_tMeshDesc.SubPowerRandomRange_RUL.z = TempFloatArr[2];
 
 	
-
-	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
-	TempFloatArr[0] = m_tMeshDesc.vPowerDirection.x;
-	TempFloatArr[1] = m_tMeshDesc.vPowerDirection.y;
-	TempFloatArr[2] = m_tMeshDesc.vPowerDirection.z;
-	ImGui::InputFloat3("Force Direct", TempFloatArr);
-	m_tMeshDesc.vPowerDirection.x = TempFloatArr[0];
-	m_tMeshDesc.vPowerDirection.y = TempFloatArr[1];
-	m_tMeshDesc.vPowerDirection.z = TempFloatArr[2];
 
 
 	TempFloatArr[3] = m_tMeshDesc.fMaxBoundaryRadius;
@@ -5403,6 +5623,9 @@ HRESULT CScene_Edit::Ready_Layer_Player(const _tchar * pLayerTag)
 		PlayerList->clear();
 	}
 
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_EDIT, pLayerTag, TAG_OP(Prototype_SkyBox)));
+
+
 	return S_OK;
 }
 #ifdef USE_IMGUI
@@ -5426,38 +5649,37 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 
 	m_tParticleDesc.eParticleTypeID = InstanceEffect_Spread;
 	m_tParticleDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
-	m_tParticleDesc.ePassID = InstancePass_BrightColor;
+	m_tParticleDesc.ePassID = InstancePass_MaskingNoising;
 
 	m_tParticleDesc.bBillboard = false;
-
 
 	//둘중 하나만 써야함	
 	m_tParticleDesc.vFixedPosition = _float3(0);
 	m_tParticleDesc.vPowerDirection = _float3(0, 1, 1);
 	//팔로잉 타겟을 쓰면 해당 타겟의 룩을 기준으로 파워 디렉션이 잡힘
 	m_tParticleDesc.FollowingTarget = nullptr;
+	m_tMeshDesc.iFollowingDir = FollowingDir_Right;
 
 	m_tParticleDesc.szTextureProtoTypeTag = TAG_CP(Prototype_Texture_TestEffect);
-	m_tParticleDesc.szTextureLayerTag = L"Test";
+	m_tParticleDesc.szTextureLayerTag = L"dds";
 	m_tParticleDesc.iTextureLayerIndex = 0;
 
-	m_tParticleDesc.szNoiseTextureLayerTag = nullptr;
-	m_tParticleDesc.iNoiseTextureIndex = 0;
-	m_tParticleDesc.iFollowingDir = 0;
+	m_tParticleDesc.iNoiseTextureIndex = 263;
+	m_tParticleDesc.iMaskingTextureIndex = 0;
 
-	m_tParticleDesc.TextureChageFrequency = 1;
+	m_tParticleDesc.TextureChageFrequency = 0;
 	//텍스쳐 안에 그림의 가로 세로 개수
-	m_tParticleDesc.vTextureXYNum = _float2(8, 6);
+	m_tParticleDesc.vTextureXYNum = _float2(1, 1);
 	//텍스쳐 안에 형태가 몇개 있는지 -1이면 간격 기준으로 꽉차있는거
 	//m_tParticleDesc.iFigureCount_In_Texture = -1;
-	m_tParticleDesc.iFigureCount_In_Texture = 46;
+	m_tParticleDesc.iFigureCount_In_Texture = -1;
 
 
 	m_tParticleDesc.TotalParticleTime = 3;
 	m_tParticleDesc.EachParticleLifeTime = 0.35f;
 
-	m_tParticleDesc.SizeChageFrequency = 1;
-	m_tParticleDesc.ParticleSize = _float3(0.1f, 0.4f, 0.1f);
+	m_tParticleDesc.SizeChageFrequency = 0;
+	m_tParticleDesc.ParticleSize = _float3(1.f, 1.f, 1.f);
 	m_tParticleDesc.ParticleSize2 = _float3(0.1f);
 
 
@@ -5470,13 +5692,14 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tParticleDesc.Particle_Power = 10.f;
 	m_tParticleDesc.PowerRandomRange = _float2(0.8f, 1.2f);
 	//콘 형태나 파운틴 형태일때 라업룩 파워 조절 용
-	m_tParticleDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	m_tParticleDesc.SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 
 	m_tParticleDesc.ParticleStartRandomPosMin = _float3(0);
 	m_tParticleDesc.ParticleStartRandomPosMax = _float3(0);
 
-	m_tParticleDesc.bEmissive = false;
 	m_tParticleDesc.AlphaBlendON = true;
+	m_tParticleDesc.bEmissive = false;
+	m_tParticleDesc.vEmissive_SBB = _float3(0);
 
 	m_tParticleDesc.m_fAlphaTestValue = 0.1f;
 
@@ -5491,23 +5714,28 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 
 
 	m_tMeshDesc.eParticleTypeID = InstanceEffect_Cone;
-	m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_32;
-	m_tMeshDesc.ePassID = MeshPass_BrightColor;
+	m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_1;
+	m_tMeshDesc.ePassID = MeshPass_MaskingNoising;
 
 	m_tMeshDesc.vFixedPosition = _float3(0);
 	m_tMeshDesc.vPowerDirection = _float3(0, 1, 0);
 
 	m_tMeshDesc.FollowingTarget = nullptr;
-	m_tMeshDesc.iFollowingDir = 0;
+	m_tMeshDesc.iFollowingDir = FollowingDir_Up;
 
 	m_tMeshDesc.szModelMeshProtoTypeTag = TAG_CP(Prototype_Mesh_AlgaeRock_Ledge);
-	m_tMeshDesc.szNoiseTextureLayerTag = nullptr;
-	m_tMeshDesc.iNoiseTextureIndex = 0;
+
+	m_tMeshDesc.iNoiseTextureIndex = 263;
+	m_tMeshDesc.iMaskingTextureIndex = 0;
+	m_tMeshDesc.vNoisePushingDir = _float2(0, 1);
+
+
+
 	m_tMeshDesc.TotalParticleTime = 5.f;
 	m_tMeshDesc.EachParticleLifeTime = 1.f;
 
-	m_tMeshDesc.SizeChageFrequency = 1;
-	m_tMeshDesc.ParticleSize = _float3(0.1f, 0.1f, 0.1f);
+	m_tMeshDesc.SizeChageFrequency = 0;
+	m_tMeshDesc.ParticleSize = _float3(1.f);
 	m_tMeshDesc.ParticleSize2 = _float3(0, 0, 0);
 	m_tMeshDesc.ColorChageFrequency = 5;
 	m_tMeshDesc.TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
@@ -5515,13 +5743,15 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tMeshDesc.fMaxBoundaryRadius = 999999.f;
 	m_tMeshDesc.Particle_Power = 1.f;
 	m_tMeshDesc.PowerRandomRange = _float2(0.5f, 1.5f);
-	m_tMeshDesc.SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	m_tMeshDesc.SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 	m_tMeshDesc.ParticleStartRandomPosMin = _float3(0, 0, 0);
 	m_tMeshDesc.ParticleStartRandomPosMax = _float3(0, 0, 0);
 
 	m_tMeshDesc.bEmissive = false;
 	m_tMeshDesc.bAutoTurn = false;
 	m_tMeshDesc.bIsOclusion = true;
+
+	m_tMeshDesc.vEmissive_SBB = _float3(0);
 	//m_tMeshDesc.m_fAlphaTestValue = 0.1f;
 
 

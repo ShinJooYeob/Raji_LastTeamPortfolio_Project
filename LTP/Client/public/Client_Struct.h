@@ -97,18 +97,18 @@ typedef struct tagInstanceParticleDesc
 	_float3		vFixedPosition = _float3(0);
 	_float3		vPowerDirection = _float3(0, 1, 0);
 	CTransform* FollowingTarget = nullptr;
-	_uint		iFollowingDir = 0;
+	eFollowingDirID		iFollowingDir = FollowingDir_Look;
 
 	const _tchar* szTextureProtoTypeTag = nullptr;
 	const _tchar* szTextureLayerTag = nullptr;
 	_uint		iTextureLayerIndex = 0;
 
-	const _tchar* szNoiseTextureLayerTag = nullptr;
-	_uint		iNoiseTextureIndex = 0;
+	_int		iNoiseTextureIndex = 0;
+	_int		iMaskingTextureIndex = 0;
+	_float2		vNoisePushingDir = _float2(0, 1);
 
 	_uint		TextureChageFrequency = 1;
 	_float2		vTextureXYNum = _float2(1, 1);
-	
 	//텍스쳐 안에 형태가 몇개 있는지 -1이면 간격 기준으로 꽉차있는거
 	_int		iFigureCount_In_Texture = -1;
 
@@ -129,7 +129,7 @@ typedef struct tagInstanceParticleDesc
 
 	_float Particle_Power = 1.f;
 	_float2 PowerRandomRange = _float2(0.5f, 1.5f);
-	_float3 SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	_float3 SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 
 	_float3 ParticleStartRandomPosMin = _float3(-1.0f, -1.0f, -1.0f);
 	_float3 ParticleStartRandomPosMax = _float3(1.f, 1.f, 1.f);
@@ -137,6 +137,7 @@ typedef struct tagInstanceParticleDesc
 
 	_bool	bEmissive = false;
 	_bool	AlphaBlendON = true;
+	_float3 vEmissive_SBB = _float3(0);
 
 	_float	m_fAlphaTestValue = 0.1f;
 
@@ -152,12 +153,17 @@ typedef struct tagInstanceMeshDesc
 	_float3		vFixedPosition = _float3(0);
 	_float3		vPowerDirection = _float3(0, 1, 0);
 	CTransform* FollowingTarget = nullptr;
-	_uint		iFollowingDir = 0;
+	eFollowingDirID		iFollowingDir = FollowingDir_Look;
 
 	const _tchar* szModelMeshProtoTypeTag = nullptr;
+	_uint		iModelAnimIndex = 0;
 
-	const _tchar* szNoiseTextureLayerTag = nullptr;
-	_uint		iNoiseTextureIndex = 0;
+
+	_int		iNoiseTextureIndex = 0;
+	_int		iMaskingTextureIndex = 0;
+	_float2		vNoisePushingDir = _float2(0, 1);
+	_float		fAppearTimer = 1.f;
+	_float		fDistortionNoisingPushPower = 0.5f;
 
 
 	_float		TotalParticleTime = 0;
@@ -175,7 +181,7 @@ typedef struct tagInstanceMeshDesc
 
 	_float Particle_Power = 1.f;
 	_float2 PowerRandomRange = _float2(0.5f, 1.5f);
-	_float3 SubPowerRandomRange = _float3(1.f, 1.f, 1.f);
+	_float3 SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 
 	_float3 ParticleStartRandomPosMin = _float3(-1.0f, -1.0f, -1.0f);
 	_float3 ParticleStartRandomPosMax = _float3(1.f, 1.f, 1.f);

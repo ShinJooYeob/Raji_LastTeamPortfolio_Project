@@ -148,6 +148,8 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 		return E_FAIL;
 	}
 
+
+
 	_uint iNeedToRenderingCount = ((*pvecWorldMatrixs).size() < m_iNumInstance) ? (_uint)(*pvecWorldMatrixs).size() : m_iNumInstance;
 	
 	CFrustumMgr*	pFrustum = GetSingle(CFrustumMgr);
@@ -187,12 +189,15 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0, 0, 0, 0));
 
+
 			if (pvecEmissive)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 
 
+	
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
 
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
@@ -220,6 +225,9 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
+
+			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
+
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}
@@ -261,7 +269,7 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 }
 
 HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex, CMeshContainer * pMeshContainer, 
-	vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
+	vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTiemer)
 {
 	if (nullptr == m_pDeviceContext)
 	{
@@ -275,6 +283,11 @@ HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPass
 	}
 
 	if (pvecEmissive && pvecEmissive->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (pvecTiemer && pvecTiemer->size() != (*pvecWorldMatrixs).size())
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -302,12 +315,18 @@ HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPass
 			if (pvecLimLight)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), (*pvecLimLight)[i].XMVector());
 			else
-				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0,0,0,0));
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vLimLight), XMVectorSet(0, 0, 0, 0));
 
 			if (pvecEmissive)
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), (*pvecEmissive)[i].XMVector());
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
+
+
+			if (pvecTiemer)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), (*pvecTiemer)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);
 	}

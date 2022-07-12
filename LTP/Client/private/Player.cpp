@@ -76,6 +76,50 @@ _int CPlayer::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
 	{
+
+
+
+
+		INSTMESHDESC m_tMeshDesc;
+
+
+
+		m_tMeshDesc.eParticleTypeID = InstanceEffect_Straight;
+		m_tMeshDesc.eInstanceCount = Prototype_ModelInstance_32;
+		m_tMeshDesc.ePassID = MeshPass_BrightColor;
+
+		//m_tMeshDesc.vFixedPosition = _float3(0);
+		//m_tMeshDesc.vPowerDirection = _float3(0, 1, 0);
+
+		m_tMeshDesc.FollowingTarget = m_pTransformCom;
+		m_tMeshDesc.iFollowingDir = FollowingDir_Up;
+
+		m_tMeshDesc.szModelMeshProtoTypeTag = TAG_CP(Prototype_Mesh_AlgaeRock_Ledge);
+
+		m_tMeshDesc.iNoiseTextureIndex = 0;
+		m_tMeshDesc.TotalParticleTime = 5.f;
+		m_tMeshDesc.EachParticleLifeTime = 1.f;
+
+		m_tMeshDesc.SizeChageFrequency = 0;
+		m_tMeshDesc.ParticleSize = _float3(0.2f, 0.2f, 0.2f);
+		m_tMeshDesc.ParticleSize2 = _float3(0, 0, 0);
+		m_tMeshDesc.ColorChageFrequency = 5;
+		m_tMeshDesc.TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
+		m_tMeshDesc.TargetColor2 = _float4(0.f, 1.f, .0f, .2f);
+		m_tMeshDesc.fMaxBoundaryRadius = 999999.f;
+		m_tMeshDesc.Particle_Power = 10.f;
+		m_tMeshDesc.PowerRandomRange = _float2(0.5f, 1.5f);
+		m_tMeshDesc.SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
+		m_tMeshDesc.ParticleStartRandomPosMin = _float3(0, 0, 0);
+		m_tMeshDesc.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
+		m_tMeshDesc.bEmissive = false;
+		m_tMeshDesc.bAutoTurn = false;
+		m_tMeshDesc.bIsOclusion = true;
+
+		m_tMeshDesc.vEmissive_SBB = _float3(0);
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_tMeshDesc);
 	
 	}
 

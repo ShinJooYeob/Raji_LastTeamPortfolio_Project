@@ -1007,6 +1007,7 @@ PS_OUT PS_VolumeMatricFog(PS_IN In)
 		vector LensflareDesc = g_UpScaledTexture1.Sample(DefaultSampler, In.vTexUV);
 
 		Out.vColor = vector(FogColor.xyz, 1.f);
+
 		if (length(LensflareDesc.xyz) > 0)
 		{
 			Out.vColor += pow(LensflareDesc, 2.2f);

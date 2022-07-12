@@ -1,4 +1,10 @@
 
+#define FloatCorrectionValue 0.00000125f
+#define XTexelSize		0.00078125f
+#define YTexelSize		0.00138889f
+#define	DiagTexelSize	0.00159353f
+
+
 texture2D			g_DiffuseTexture;
 texture2D			g_SpecularTexture;
 texture2D			g_AmbientTexture;

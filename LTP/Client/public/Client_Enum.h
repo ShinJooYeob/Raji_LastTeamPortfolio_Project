@@ -30,7 +30,7 @@ static const char* Tag_TextureInstanceEffect(eInstanceEffectID eTag)
 	case InstanceEffect_Suck:
 		return "InstanceEffect_Suck";
 	default:
-		MSGBOX("Wrong Type SceneNumber");
+		MSGBOX("Wrong Type InstanceType");
 		return nullptr;
 		break;
 	}
@@ -44,6 +44,9 @@ enum eInstancePassID
 {
 	InstancePass_OriginColor,
 	InstancePass_BrightColor,
+	InstancePass_MaskingNoising,
+	InstancePass_AlphaDistortion,
+	InstancePass_AllDistortion,
 
 	InstancePass_End
 };
@@ -53,8 +56,47 @@ enum eMeshInstancePassID
 	MeshPass_OriginColor,
 	MeshPass_BrightColor,
 
+	MeshPass_MaskingNoising,
+	MeshPass_MaskingNoising_Bright,
+	MeshPass_MaskingNoising_Appear,
+	MeshPass_MaskingNoising_Appear_Bright,
+
+	MeshPass_AllDistortion,
+	MeshPass_AllDistortion_Bright,
+	MeshPass_Distortion_DiffuseMix,
+	MeshPass_Distortion_DiffuseMix_Bright,
+	MeshPass_Distortion_ColorMix,
+	MeshPass_Distortion_ColorMix_Bright,
+
 	MeshPass_End
 };
+
+enum eFollowingDirID
+{
+	FollowingDir_Right,
+	FollowingDir_Up,
+	FollowingDir_Look,
+
+	FollowingDir_End
+};
+static const char* Tag_InstancePass(eFollowingDirID eTag)
+{
+	switch (eTag)
+	{
+	case FollowingDir_Right:
+		return "Right";
+	case FollowingDir_Up:
+		return "Up";
+	case FollowingDir_Look:
+		return "Look";
+		
+	default:
+		MSGBOX("Wrong Type Flw Dir");
+		return nullptr;
+		break;
+	}
+
+}
 
 static const char* Tag_InstancePass(eInstancePassID eTag)
 {
@@ -64,8 +106,19 @@ static const char* Tag_InstancePass(eInstancePassID eTag)
 		return "InstancePass_OriginColor";
 	case InstancePass_BrightColor:
 		return "InstancePass_BrightColor";
+
+	case InstancePass_MaskingNoising:
+		return "InstancePass_MaskingNoising";
+	case InstancePass_AlphaDistortion:
+		return "InstancePass_AlphaDistortion";
+	case InstancePass_AllDistortion:
+		return "InstancePass_AllDistortion";
+
+
+
+
 	default:
-		MSGBOX("Wrong Type SceneNumber");
+		MSGBOX("Wrong Type Pass");
 		return nullptr;
 		break;
 	}
@@ -77,14 +130,39 @@ static const char* Tag_InstancePass(eInstancePassID eTag)
 
 static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 {
+
 	switch (eTag)
 	{
-	case InstancePass_OriginColor:
-		return "InstancePass_OriginColor";
-	case InstancePass_BrightColor:
-		return "InstancePass_BrightColor";
+	case MeshPass_OriginColor:
+		return "MeshPass_OriginColor";
+	case MeshPass_BrightColor:
+		return "MeshPass_BrightColor";
+	case MeshPass_MaskingNoising:
+		return "MeshPass_MaskingNoising";
+	case MeshPass_MaskingNoising_Bright:
+		return "MeshPass_MaskingNoising_Bright";
+	case MeshPass_MaskingNoising_Appear:
+		return "MeshPass_MaskingNoising_Appear";
+	case MeshPass_MaskingNoising_Appear_Bright:
+		return "MeshPass_MaskingNoising_Appear_Bright";
+
+
+	case MeshPass_AllDistortion:
+		return "MeshPass_AllDistortion";
+	case MeshPass_AllDistortion_Bright:
+		return "MeshPass_AllDistortion_Bright";
+	case MeshPass_Distortion_DiffuseMix:
+		return "MeshPass_Distortion_DiffuseMix";
+	case MeshPass_Distortion_DiffuseMix_Bright:
+		return "MeshPass_Distortion_DiffuseMix_Bright";
+	case MeshPass_Distortion_ColorMix:
+		return "MeshPass_Distortion_ColorMix";
+	case MeshPass_Distortion_ColorMix_Bright:
+		return "MeshPass_Distortion_ColorMix_Bright";
+
+
 	default:
-		MSGBOX("Wrong Type SceneNumber");
+		MSGBOX("Wrong Type Pass");
 		return nullptr;
 		break;
 	}
@@ -757,6 +835,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Shader_VTXANIMINST,
 	Prototype_Shader_VTXNONANIMINST,
 
+
+	Prototype_ModelInstance_1,
 	Prototype_ModelInstance_2,
 	Prototype_ModelInstance_4,
 	Prototype_ModelInstance_8,
@@ -857,7 +937,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
-	Prototype_Texture_Noise,
+	Prototype_Texture_Util,
 	Prototype_Texture_Monster_Bullet,
 
 };
@@ -896,7 +976,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_Navigation");
 		break;
 
-
+		
+	case Prototype_ModelInstance_1:
+		return TEXT("Prototype_ModelInstance_1");
+		break;
 	case Prototype_ModelInstance_2:
 		return TEXT("Prototype_ModelInstance_2");
 		break;
@@ -1216,8 +1299,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;
 
-	case 	Prototype_Texture_Noise:
-		return TEXT("Prototype_Texture_Noise");
+	case 	Prototype_Texture_Util:
+		return TEXT("Prototype_Texture_Util");
 		break;
 
 		

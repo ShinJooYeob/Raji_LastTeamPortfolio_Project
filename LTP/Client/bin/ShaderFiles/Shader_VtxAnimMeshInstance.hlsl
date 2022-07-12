@@ -31,6 +31,8 @@ struct VS_IN
 	float4		vTranslation : TEXCOORD4;
 	float4		vLimLightColor : TEXCOORD5;
 	float4		vEmissive : TEXCOORD6;
+	float4		vTimer : TEXCOORD7;
+
 };
 
 struct VS_OUT
@@ -45,6 +47,8 @@ struct VS_OUT
 
 	float4		vLimLightColor : TEXCOORD3;
 	float4		vEmissive : TEXCOORD4;
+	float4		vTimer : TEXCOORD5;
+
 };
 struct VS_OUT_SHADOW
 {
@@ -59,6 +63,7 @@ VS_OUT_SHADOW VS_Shadow_NoWeightW(VS_IN In)
 
 	matrix			matWV, matWVP;
 
+	tex2Dlod(g_NoiseTexture, float4(0, 0, 0, 0));
 
 	float		fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
@@ -110,7 +115,7 @@ VS_OUT VS_MAIN_DEFAULT(VS_IN In)
 	Out.vBinormal = normalize(vector(cross(Out.vNormal.xyz, Out.vTangent.xyz), 0.f));
 	Out.vLimLightColor = In.vLimLightColor;
 	Out.vEmissive = In.vEmissive;
-
+	Out.vTimer = In.vTimer;
 	return Out;
 }
 
@@ -148,6 +153,7 @@ VS_OUT VS_MAIN_NOWEIGHTW(VS_IN In)
 	Out.vBinormal = normalize(vector(cross(Out.vNormal.xyz, Out.vTangent.xyz), 0.f));
 	Out.vLimLightColor = In.vLimLightColor;
 	Out.vEmissive = In.vEmissive;
+	Out.vTimer = In.vTimer;
 	return Out;
 }
 
@@ -165,6 +171,7 @@ struct PS_IN
 
 	float4		vLimLightColor : TEXCOORD3;
 	float4		vEmissive : TEXCOORD4;
+	float4		vTimer : TEXCOORD5;
 };
 struct PS_IN_SHADOW
 {

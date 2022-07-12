@@ -141,6 +141,7 @@ struct VS_IN
 
 	float4		vUV_N_Time: TEXCOORD5;
 	float4		vColor : TEXCOORD6;
+	float4		fTimer : TEXCOORD7;
 
 };
 
@@ -156,6 +157,7 @@ struct VS_OUT
 
 	float4		vUV_N_Time	: TEXCOORD5;
 	float4		vColor		: TEXCOORD6;
+	float4		fTimer : TEXCOORD7;
 };	
 
 VS_OUT VS_MAIN_INST(VS_IN In)
@@ -195,6 +197,7 @@ struct GS_IN
 
 	float4		vUV_N_Time	: TEXCOORD5;
 	float4		vColor		: TEXCOORD6;
+	float4		fTimer : TEXCOORD7;
 };
 
 struct GS_OUT
@@ -202,7 +205,9 @@ struct GS_OUT
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vColor : TEXCOORD1;
-	float4		vWorldPosition : TEXCOORD2;
+
+	float4		vProjPos : TEXCOORD2;
+	float4		vWorldPosition : TEXCOORD3;
 };
 
 [maxvertexcount(6)]
@@ -223,6 +228,7 @@ void GS_MAIN_INST(in point GS_IN In[1], inout TriangleStream<GS_OUT> Trianglestr
 	Out[0].vPosition = mul(vPosition, matVP);
 	Out[0].vTexUV = float2(In[0].vUV_N_Time.x, In[0].vUV_N_Time.y);
 	Out[0].vColor = In[0].vColor;
+	Out[0].vProjPos = Out[0].vPosition;
 
 
 	vPosition = vector(In[0].vNextDest.xyz, 1);
@@ -230,18 +236,21 @@ void GS_MAIN_INST(in point GS_IN In[1], inout TriangleStream<GS_OUT> Trianglestr
 	Out[1].vPosition = mul(vPosition, matVP);
 	Out[1].vTexUV = float2(In[0].vUV_N_Time.z, In[0].vUV_N_Time.y);
 	Out[1].vColor = In[0].vColor;
+	Out[1].vProjPos = Out[1].vPosition;
 
 	vPosition = vector(In[0].vNextSour.xyz, 1);
 	Out[2].vWorldPosition = vPosition;
 	Out[2].vPosition = mul(vPosition, matVP);
 	Out[2].vTexUV = float2(In[0].vUV_N_Time.z, In[0].vUV_N_Time.w);
 	Out[2].vColor = In[0].vColor;
+	Out[2].vProjPos = Out[2].vPosition;
 
 	vPosition = vector(In[0].vNowSour.xyz, 1);
 	Out[3].vWorldPosition = vPosition;
 	Out[3].vPosition = mul(vPosition, matVP);
 	Out[3].vTexUV = float2(In[0].vUV_N_Time.x, In[0].vUV_N_Time.w);
 	Out[3].vColor = In[0].vColor;
+	Out[3].vProjPos = Out[3].vPosition;
 
 
 	Trianglestream.Append(Out[0]);
@@ -262,12 +271,16 @@ struct PS_IN
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vColor : TEXCOORD1;
-	float4		vWorldPosition : TEXCOORD2;
+
+	float4		vProjPos : TEXCOORD2;
+	float4		vWorldPosition : TEXCOORD3;
 };
 
 struct PS_OUT
 {
 	vector		vDiffuse : SV_TARGET0;
+	vector		vDepth : SV_TARGET1;
+	vector		vWorldPosition : SV_TARGET2;
 };
 
 
@@ -288,6 +301,8 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 	
 
 	Out.vDiffuse.a = Alpha;
+	Out.vWorldPosition = In.vWorldPosition;
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 	return Out;
 }
@@ -304,6 +319,8 @@ PS_OUT PS_MAIN_INSTINVERSE(PS_IN In)
 		discard;
 
 	Out.vDiffuse = (1 - Out.vDiffuse) * In.vColor;
+	Out.vWorldPosition = In.vWorldPosition;
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 
 	return Out;
@@ -334,6 +351,8 @@ PS_OUT PS_MAIN_INST_DISORT(PS_IN In)
 	Out.vDiffuse = BackBuffer;
 
 	Out.vDiffuse.a = 1;
+	Out.vWorldPosition = In.vWorldPosition;
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 
 	return Out;

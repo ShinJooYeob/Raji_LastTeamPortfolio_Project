@@ -70,9 +70,6 @@
     <Filter Include="02.Scene\02.Scene_Loading">
       <UniqueIdentifier>{be1903d3-435f-4f2a-a696-c8aa1d0cead6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Scene\03.Scene_StageSelect">
-      <UniqueIdentifier>{0ba78e62-3b38-471d-a07a-76cd29ea65d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Scene\04.Scene_InGame">
       <UniqueIdentifier>{a60e6e62-7dea-4bbb-ab77-a674da6c854c}</UniqueIdentifier>
     </Filter>
@@ -303,6 +300,9 @@
     </Filter>
     <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms">
       <UniqueIdentifier>{98fecd6c-0b71-42e7-9041-60cc40379614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\03.Scene_StageSelect">
+      <UniqueIdentifier>{0ba78e62-3b38-471d-a07a-76cd29ea65d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -844,9 +844,6 @@
     <ClCompile Include="..\private\Snake.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Snake</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\InstanceEffect.cpp">
-      <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\TestNonAnimInstancing.cpp">
       <Filter>01.GameObject\97.TestObject\02.TestNonAnimInstancing</Filter>
     </ClCompile>
@@ -921,6 +918,10 @@
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\InstanceEffect.cpp">
+      <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

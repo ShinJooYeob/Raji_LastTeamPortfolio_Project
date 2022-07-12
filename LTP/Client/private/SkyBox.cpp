@@ -75,10 +75,33 @@ _int CSkyBox::Render()
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
+	if (GetSingle(CUtilityMgr)->Get_Renderer()->Get_IsOnPostPorcessing(POSTPROCESSING_DDFOG))
 	{
-		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, 1, MODLETEXTYPE(1)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 6, i));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &_float4(GetSingle(CUtilityMgr)->Get_Renderer()->Get_FogColor(), 1), sizeof(_float4)));
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 9, i));
+		}
+	}
+	else
+	{
+		if (g_pGameInstance->Get_NowSceneNum() == SCENE_EDIT)
+		{
+			m_pShaderCom->Set_Texture("g_DiffuseTexture", nullptr);
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+				FAILED_CHECK(m_pModel->Render(m_pShaderCom, 6, i));
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, 1, MODLETEXTYPE(1)));
+				FAILED_CHECK(m_pModel->Render(m_pShaderCom, 6, i));
+			}
+		}
+
 	}
 
 	return _int();

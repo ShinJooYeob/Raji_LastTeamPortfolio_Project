@@ -33,6 +33,7 @@ HRESULT CInstanceEffect::Initialize_Clone(void * pArg)
 
 
 	Safe_AddRef(m_tInstanceDesc.FollowingTarget);
+	m_tInstanceDesc.vNoisePushingDir = m_tInstanceDesc.vNoisePushingDir.Get_Nomalize();
 
 	 
 
@@ -90,7 +91,6 @@ _int CInstanceEffect::Render()
 
 			if (!m_vecParticleAttribute[i]._isAlive || m_vecParticleAttribute[i]._age <= 0)
 			{
-
 				((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize =
 					_float4(m_vecParticleAttribute[i]._TextureUV.x, m_vecParticleAttribute[i]._TextureUV.y, 0, 0);
 			}
@@ -99,6 +99,7 @@ _int CInstanceEffect::Render()
 				((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize =
 					_float4(m_vecParticleAttribute[i]._TextureUV.x, m_vecParticleAttribute[i]._TextureUV.y, 0, 1);
 			}
+			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(m_vecParticleAttribute[i]._age, m_vecParticleAttribute[i]._lifeTime, (_float)g_fDeltaTime, 0);
 		}
 		m_pVIBufferCom->UnLock();
 
@@ -137,6 +138,7 @@ _int CInstanceEffect::Render()
 				((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize =
 					_float4(m_vecParticleAttribute[i]._TextureUV.x, m_vecParticleAttribute[i]._TextureUV.y, 0, 1);
 			}
+			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(m_vecParticleAttribute[i]._age, m_vecParticleAttribute[i]._lifeTime, (_float)g_fDeltaTime, 0);
 		}
 		m_pVIBufferCom->UnLock();
 		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_tInstanceDesc.ePassID * 2 + 1));
@@ -181,22 +183,37 @@ HRESULT CInstanceEffect::Ready_InstanceDesc()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	if (m_tInstanceDesc.FollowingTarget)
-		m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+	{
+		switch (m_tInstanceDesc.iFollowingDir)
+		{
+		case FollowingDir_Right:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_RIGHT).Get_Nomalize();
+			break;
+		case FollowingDir_Up:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_UP).Get_Nomalize();
+			break;
+		case FollowingDir_Look:
+			m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+			break;
+		default:
+			__debugbreak();
+			return E_FAIL;
+			break;
+		}
+
+
+	}
 	else
 		m_vUp = m_tInstanceDesc.vPowerDirection.Get_Nomalize();
 
+	if (m_vUp.y == 1 || m_vUp.y == -1) m_vUp = _float3(0.000001f, 1, 0).Get_Nomalize();
 
 
-	if (m_vUp.y == 1 || m_vUp.y == -1)
-	{
-		m_vRight = XMVector3Normalize(_float3(0.000001f, 1, 0).Get_Cross(m_vUp.XMVector()));
-		m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-	}
-	else
-	{
+
+
 		m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
 		m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-	}
+	
 
 	return S_OK;
 }
@@ -214,6 +231,19 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 
 	FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_tInstanceDesc.iTextureLayerIndex));
 	FAILED_CHECK(m_pShaderCom->Set_Texture("g_DepthTexture", pGameInstance->Get_SRV(TEXT("Target_Depth"))));
+
+
+	if (m_tInstanceDesc.ePassID == InstancePass_MaskingNoising)
+	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		//g_NoiseTexture / g_DiffuseTexture / g_SourTexture /  g_DepthTexture
+
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tInstanceDesc.iMaskingTextureIndex));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
+	}
+
 
 	_float2 UVSize = _float2(1 / m_tInstanceDesc.vTextureXYNum.x, 1 / m_tInstanceDesc.vTextureXYNum.y);
 
@@ -305,19 +335,32 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 		else
 		{
 			if (m_tInstanceDesc.FollowingTarget)
-				m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
-
-
-			if (m_vUp.y == 1 || m_vUp.y == -1)
 			{
-				m_vRight = XMVector3Normalize(_float3(0.000001f, 1, 0).Get_Cross(m_vUp.XMVector()));
-				m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
+				switch (m_tInstanceDesc.iFollowingDir)
+				{
+				case FollowingDir_Right:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_RIGHT).Get_Nomalize();
+					break;
+				case FollowingDir_Up:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_UP).Get_Nomalize();
+					break;
+				case FollowingDir_Look:
+					m_vUp = m_tInstanceDesc.FollowingTarget->Get_MatrixState_Float3(CTransform::STATE_LOOK).Get_Nomalize();
+					break;
+				default:
+					__debugbreak();
+					break;
+				}
+
+
 			}
-			else
-			{
+
+			if (m_vUp.y == 1 || m_vUp.y == -1) m_vUp = _float3(0.000001f, 1, 0).Get_Nomalize();
+
+
 				m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
 				m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-			}
+			
 
 		}
 	}
@@ -603,7 +646,7 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -625,7 +668,7 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.0f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -719,7 +762,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -737,7 +780,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -806,9 +849,9 @@ void CInstanceEffect_Cone::Reset_Velocity(_float3 & fAttVlocity)
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.x, m_tInstanceDesc.SubPowerRandomRange.x)
-		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.y , m_tInstanceDesc.SubPowerRandomRange.y)
-		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(0, m_tInstanceDesc.SubPowerRandomRange.z));
+	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.x, m_tInstanceDesc.SubPowerRandomRange_RUL.x)
+		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.y , m_tInstanceDesc.SubPowerRandomRange_RUL.y)
+		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(0, m_tInstanceDesc.SubPowerRandomRange_RUL.z));
 
 }
 
@@ -835,7 +878,7 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -854,7 +897,7 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -951,8 +994,8 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 		{
 
 			part._LocalMatirx = XMMatrixIdentity();
-			ResetParticle(&part);	
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			ResetParticle(&part);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -970,7 +1013,7 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1038,9 +1081,9 @@ void CInstanceEffect_Fountain::Reset_Velocity(_float3 & fAttVlocity)
 {
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.x, m_tInstanceDesc.SubPowerRandomRange.x)
-		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange.y, m_tInstanceDesc.SubPowerRandomRange.y)
-		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(m_tInstanceDesc.SubPowerRandomRange.z, m_tInstanceDesc.SubPowerRandomRange.z * 2.f));
+	fAttVlocity = XMVector3Normalize(m_vRight.XMVector() * pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.x, m_tInstanceDesc.SubPowerRandomRange_RUL.x)
+		+ m_vLook.XMVector() *  pUtil->RandomFloat(-m_tInstanceDesc.SubPowerRandomRange_RUL.y, m_tInstanceDesc.SubPowerRandomRange_RUL.y)
+		+ m_vUp.Get_Nomalize()	* pUtil->RandomFloat(m_tInstanceDesc.SubPowerRandomRange_RUL.z, m_tInstanceDesc.SubPowerRandomRange_RUL.z * 2.f));
 	
 
 	if (fAttVlocity.y < 0) fAttVlocity.y *= -1.f;
@@ -1101,8 +1144,8 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 		{
 
 			part._LocalMatirx = XMMatrixIdentity();
-			ResetParticle(&part);	
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			ResetParticle(&part);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1120,7 +1163,7 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1238,7 +1281,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1257,7 +1300,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = part._lifeTime* pUtil->RandomFloat(-1.f, 0.f);
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}

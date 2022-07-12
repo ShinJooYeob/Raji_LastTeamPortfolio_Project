@@ -30,7 +30,7 @@ public:
 		vector<_float4>*  pvecLimLight = nullptr, vector<_float4>*  pvecEmissive = nullptr);
 
 	HRESULT Render_By_float4x4(class CShader* pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs,
-		_float fFrustumsize = 0, vector<_float4>*  pvecLimLight = nullptr, vector<_float4>*  pvecEmissive = nullptr);
+		_float fFrustumsize = 0, vector<_float4>*  pvecLimLight = nullptr, vector<_float4>*  pvecEmissive = nullptr, vector<_float4>*  pvecTiemer = nullptr);
 
 private:
 	wstring									m_szInstancePrototypeTag = L"";
