@@ -63,7 +63,7 @@ VS_OUT_SHADOW VS_Shadow_NoWeightW(VS_IN In)
 
 	matrix			matWV, matWVP;
 
-	tex2Dlod(g_NoiseTexture, float4(0, 0, 0, 0));
+	//tex2Dlod(g_NoiseTexture, float4(0, 0, 0, 0));
 
 	float		fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 

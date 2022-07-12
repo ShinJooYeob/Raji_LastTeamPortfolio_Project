@@ -220,6 +220,9 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Texture_Bullet">
       <UniqueIdentifier>{a5a4a2d1-0644-4133-bd35-41f9e0f6159e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.PhysX\Mgr">
+      <UniqueIdentifier>{69a396b9-fedb-49d9-8474-166e19a5159c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow">
       <UniqueIdentifier>{787c5d22-7198-4974-9964-cca24eee3a17}</UniqueIdentifier>
     </Filter>
@@ -300,7 +303,6 @@
     </Filter>
     <Filter Include="02.Scene\03.Scene_StageSelect">
       <UniqueIdentifier>{0ba78e62-3b38-471d-a07a-76cd29ea65d8}</UniqueIdentifier>
-
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -574,25 +576,59 @@
     <ClInclude Include="..\public\Mahabalasura_Arms.h" />
     <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
     <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h" />
     <ClInclude Include="..\public\Rangda_Finger.h" />
-    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+    <ClInclude Include="..\public\TestObject_PhysX.h" />
+    <ClInclude Include="..\public\MeshEffect.h">
+      <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Gadasura_Rage.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rangda_Finger.h" />
+    <ClInclude Include="..\public\TestObject_PhysX.h">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX\Collider_PhysX_Static.h">
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestObject_PhysX.h">
-      <Filter>05.PhysX\5.Extent</Filter>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MeshEffect.h" />
-    <ClInclude Include="..\public\Monster_Gadasura_Rage.h" />
-    <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
+    <ClInclude Include="..\public\TestObject_PhysX.h" />
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rangda_Finger.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CopyMahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Arms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahabalasuraArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -736,6 +772,9 @@
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\00. Spear</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClCompile>
@@ -793,9 +832,6 @@
     <ClCompile Include="..\private\Monster_Jalsura.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Jalsura</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
     </ClCompile>
@@ -826,12 +862,36 @@
     <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
     <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
     <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
+    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp" />
     <ClCompile Include="..\private\Rangda_Finger.cpp" />
+    <ClCompile Include="..\private\TestObject_PhysX.cpp" />
+    <ClCompile Include="..\private\MeshEffect.cpp">
+      <Filter>01.GameObject\08.Effect\01.MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Bullet_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Rage.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Rage\Gadasura_Rage_Hollogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rangda_Finger.cpp" />
+    <ClCompile Include="..\private\TestObject_PhysX.cpp">
+      <Filter>01.GameObject\97.TestObject\01.PhysX_Obj</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\0.Base</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
+      <Filter>05.PhysX\3.Com_PhyCom\2.Dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp">
+      <Filter>05.PhysX\3.Com_PhyCom\1.Static</Filter>
     </ClCompile>
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp">
       <Filter>05.PhysX\3.Com_PhyCom\3.Joint</Filter>
@@ -862,19 +922,6 @@
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
-    </ClCompile>
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\physX\Collider_PhysX_Static.cpp">
-      <Filter>05.PhysX\3.Com_PhyCom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TestObject_PhysX.cpp">
-      <Filter>05.PhysX\5.Extent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
-    <ClCompile Include="..\private\MeshEffect.cpp" />
-    <ClCompile Include="..\private\Monster_Gadasura_Rage.cpp" />
-    <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

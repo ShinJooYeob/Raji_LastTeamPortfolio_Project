@@ -268,7 +268,6 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
-
     <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
@@ -298,7 +297,6 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Monster_Bullet.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
-    <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp" />
     <ClCompile Include="..\private\Monster_Jalsura.cpp" />
     <ClCompile Include="..\private\Monster_Mahinasura_Leader.cpp" />
