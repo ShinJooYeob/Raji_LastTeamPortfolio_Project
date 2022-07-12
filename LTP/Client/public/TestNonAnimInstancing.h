@@ -27,6 +27,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
+
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
 

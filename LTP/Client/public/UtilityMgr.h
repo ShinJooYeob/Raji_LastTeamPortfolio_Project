@@ -29,12 +29,14 @@ public:
 
 
 	/*For SlowMotion*/
-	void SlowMotionStart(_float fTargetTime = 0.4f, _float TargetSpeed = 0.0f);
+	void SlowMotionStart(_float fTargetTime = 0.5f, _float TargetSpeed = 0.0f, _float TargetCurveRate = 0.5f);
+	_float Get_SlowMotionSpeed();
+
 
 	/*For Debug_Timer*/
-	// ½ÇÇà¼Óµµ Å×½ºÆ® ÇÔ¼ö
 	void Start_DebugTimer(E_DEBUGTIMER type);
 	void End_DebugTimer(E_DEBUGTIMER type, wstring debugLog = L"");
+
 
 	/*For DebugMode*/
 	CRenderer* Get_Renderer() { return m_pRenderer; }

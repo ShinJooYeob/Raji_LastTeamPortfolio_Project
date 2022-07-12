@@ -118,7 +118,7 @@ HRESULT CGameObject::Add_Component(_uint iScenenNum, const _tchar* tagPrototype,
 	if (pCloneComponent == nullptr)
 	{
 		pCloneComponent = GetSingle(CGameInstance)->Clone_Component(0, tagPrototype, pArg);
-		NULL_CHECK_BREAK(pCloneComponent);
+ 		NULL_CHECK_BREAK(pCloneComponent);
 	}
 
 	(*ppOut) = pCloneComponent;
@@ -210,9 +210,19 @@ _fVector CGameObject::Get_AttachCamPos()
 	return XMVectorSetW(m_fAttachCamPos.XMVector(), 1.f);
 }
 
+_fVector CGameObject::Get_AttachCamPosOffset()
+{
+	return m_fAttachCamPos_Offset.XMVector();
+}
+
 _fVector CGameObject::Get_AttachCamLook()
 {
 	return m_fAttachCamLook.XMVector();
+}
+
+void CGameObject::Set_AttachCamPosOffset(_float3 fAttachCamPosOffset)
+{
+	m_fAttachCamPos_Offset = fAttachCamPosOffset;
 }
 
 void CGameObject::Update_AttachCamPos()

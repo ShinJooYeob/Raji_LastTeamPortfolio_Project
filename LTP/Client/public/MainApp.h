@@ -14,10 +14,11 @@ public:
 	HRESULT		Initialize(); 
 	_int		Update(_double fDeltaTime);
 	_double		Update_SlowMotion(_double fDeltaTime);
+	_float		Get_SlowMotionSpeed() {return (_float)m_SlowTimes;};
 	HRESULT		Render();
 
 public:
-	void		SlowMotionStart(_float fTargetTime = 0.5f,_float TargetSpeed = 0.0f);
+	void		SlowMotionStart(_float fTargetTime = 0.5f,_float TargetSpeed = 0.0f,_float TargetCurveRate = 0.5f);
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -41,6 +42,7 @@ private: //슬로우 모션용
 	_float					m_fPassedTime = 0;
 	_float					m_fTargetTime = 1.f;
 	_double					m_SlowTimes = 1;
+	_float					m_fTargetCurveRate = .5f;
 
 
 private:

@@ -59,7 +59,11 @@ public:
 	HRESULT Change_Component_by_Parameter(CComponent* NewComponent, const _tchar* tagComponent, void* pArg = nullptr);
 
 	_fVector Get_AttachCamPos();
+	_fVector Get_AttachCamPosOffset();
 	_fVector Get_AttachCamLook();
+
+	void Set_AttachCamPosOffset(_float3 fAttachCamPosOffset);
+
 	virtual void Update_AttachCamPos();
 
 	_float Get_NowHP() { return m_fHP; };

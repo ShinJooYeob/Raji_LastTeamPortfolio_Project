@@ -122,12 +122,11 @@ _double CMainApp::Update_SlowMotion(_double fDeltaTime)
 {
 	m_fPassedTime += _float(fDeltaTime);
 
-#define SLOWMOTIONTURNINGPOINT 0.0f
 
-	if (m_fPassedTime < m_fTargetTime * SLOWMOTIONTURNINGPOINT)
-		m_SlowTimes = m_pGameInstance->Easing(TYPE_QuarticOut, 1, m_fTargetSpeed, m_fPassedTime, m_fTargetTime *SLOWMOTIONTURNINGPOINT);
+	if (m_fPassedTime < m_fTargetTime * m_fTargetCurveRate)
+		m_SlowTimes = m_pGameInstance->Easing(TYPE_QuarticOut, 1, m_fTargetSpeed, m_fPassedTime, m_fTargetTime *m_fTargetCurveRate);
 	else
-		m_SlowTimes = m_pGameInstance->Easing(TYPE_QuarticIn, m_fTargetSpeed, 1, m_fPassedTime - m_fTargetTime *SLOWMOTIONTURNINGPOINT, m_fTargetTime * (1 - SLOWMOTIONTURNINGPOINT));
+		m_SlowTimes = m_pGameInstance->Easing(TYPE_QuarticIn, m_fTargetSpeed, 1, m_fPassedTime - m_fTargetTime *m_fTargetCurveRate, m_fTargetTime * (1 - m_fTargetCurveRate));
 
 	if (m_fPassedTime > m_fTargetTime)
 	{
@@ -160,13 +159,14 @@ HRESULT CMainApp::Render()
 
 }
 
-void CMainApp::SlowMotionStart(_float fTargetTime , _float TargetSpeed )
+void CMainApp::SlowMotionStart(_float fTargetTime , _float TargetSpeed, _float TargetCurveRate)
 {
 	if (m_bIsSlowed)
 		return;
 
 	m_fTargetSpeed = TargetSpeed;
 	m_fTargetTime = fTargetTime;
+	m_fTargetCurveRate = TargetCurveRate;
 	m_fPassedTime = 0;
 
 	m_bIsSlowed = true;

@@ -46,7 +46,6 @@ HRESULT CTestStaticObject::Initialize_Clone(void * pArg)
 
 _int CTestStaticObject::Update(_double fDeltaTime)
 {
-
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));

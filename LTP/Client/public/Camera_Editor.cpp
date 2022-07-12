@@ -17,6 +17,7 @@ HRESULT CCamera_Editor::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
+
 	return S_OK;
 }
 

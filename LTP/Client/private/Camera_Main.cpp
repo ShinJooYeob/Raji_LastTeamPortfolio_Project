@@ -8,19 +8,30 @@ _uint CALLBACK CameraEffectThread(void* _Prameter)
 	memcpy(&tThreadArg, _Prameter, sizeof(THREADARG));
 	delete _Prameter;
 
+	CCamera_Main::CAMERAEFFECTDESC* tCameraEffectDesc = nullptr;
+	tCameraEffectDesc = (CCamera_Main::CAMERAEFFECTDESC*)tThreadArg.pArg;
 
-	CCamera_Main* pCamemra = (CCamera_Main*)(tThreadArg.pArg);
-
-	switch (pCamemra->Get_EffectID())
+	CCamera_Main* pCamemra = tCameraEffectDesc->pTargetCamera;
+	switch (tCameraEffectDesc->eCameraEffectID)
 	{
 	case CCamera_Main::CAM_EFT_SHAKE:
 		pCamemra->Progress_Shaking_Thread(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
+	case CCamera_Main::CAM_EFT_SHAKE_DIR:
+		pCamemra->Progress_DirShaking_Thread(tThreadArg.IsClientQuit, tThreadArg.CriSec, tCameraEffectDesc->tDirShakingDesc);
+		break;
+		
+	case CCamera_Main::CAM_EFT_SHAKE_ROT:
+		pCamemra->Progress_RotShaking_Thread(tThreadArg.IsClientQuit, tThreadArg.CriSec, tCameraEffectDesc->tRotShakingDesc);
 		break;
 
 	default:
 		MSGBOX("worng Cam Eft");
 		break;
 	}
+
+	delete tCameraEffectDesc;
 
 	return 0;
 }
@@ -114,7 +125,24 @@ void CCamera_Main::Set_FocusTarget(CGameObject * pFocusTarget)
 
 void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
 {
-	m_eCurCamMode = eCameraMode;
+	switch (eCameraMode)
+	{
+	case ECameraMode::CAM_MODE_FREE:
+	{
+		m_eCurCamMode = eCameraMode;
+	}
+		break;
+	case ECameraMode::CAM_MODE_NOMAL:
+	{
+		m_eCurCamMode = eCameraMode;
+	}
+		break;
+	case ECameraMode::CAM_MODE_TARGETING:
+	{
+		m_eCurCamMode = eCameraMode;
+	}
+		break;
+	}
 }
 
 void CCamera_Main::LookAt_Target()
@@ -124,9 +152,39 @@ void CCamera_Main::LookAt_Target()
 	m_pTransform->LookAt(vChasePos);
 }
 
+void CCamera_Main::Set_TargetingPoint(_fVector vTargetingPoint)
+{
+	m_fTargetingPoint = vTargetingPoint;
+}
+
+void CCamera_Main::Set_TargetingLook(_fVector vTargetingLook)
+{
+	m_fTargetingLook = vTargetingLook;
+}
+
+void CCamera_Main::Set_CameraLookWeight(_float fCamMoveWeight)
+{
+	m_fTarget_CamLookWeight = fCamMoveWeight;
+}
+
+void CCamera_Main::Set_CameraMoveWeight(_float fCamMoveWeight)
+{
+	m_fTarget_CamMoveWeight = fCamMoveWeight;
+}
+
 _float CCamera_Main::Get_TargetArmLength()
 {
 	return m_fTargetArmLength;
+}
+
+_float CCamera_Main::Get_CameraLookWeight()
+{
+	return m_fCur_CamLookWeight;
+}
+
+_float CCamera_Main::Get_CameraMoveWeight()
+{
+	return m_fCur_CamMoveWeight;
 }
 
 void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
@@ -136,20 +194,19 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 		Safe_Release(m_pFocusTarget);
 		return;
 	}
-
-
+	 
 	CTransform* pTarget_TransformCom =  static_cast<CTransform*>(m_pFocusTarget->Get_Component(Tag_Component(Com_Transform)));
 	
-	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * 0.9f + m_pFocusTarget->Get_AttachCamPos() * 0.1f;
+	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + m_pFocusTarget->Get_AttachCamPos() * (1.f - m_fCur_CamMoveWeight);
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
-
-	if (true == m_bCamLock)
+	//m_pTransform->MovetoTarget_ErrRange(m_pFocusTarget->Get_AttachCamPos(), fDeltaTime, 0.1f);
+	if (true == m_bCamLock) 
 	{
-		m_pTransform->Turn_Dir(m_fFixLookDir.XMVector(), 0.98f); 
+		m_pTransform->Turn_Dir(m_fFixLookDir.XMVector(), m_fCur_CamLookWeight, 0.999f);
 	}
 	else
 	{
-		m_pTransform->Turn_Dir(m_pFocusTarget->Get_AttachCamLook(), 0.9f);
+		m_pTransform->Turn_Dir(m_pFocusTarget->Get_AttachCamLook(), m_fCur_CamLookWeight, 0.999f);
 	}
 }
 
@@ -157,99 +214,30 @@ _int CCamera_Main::Update(_double fDeltaTime)
 {
 	__super::Update(fDeltaTime);
 
-	FAILED_CHECK(Update_CamAction(fDeltaTime));
+	Update_CamMoveWeight();
 
+	FAILED_CHECK(Update_CamAction(fDeltaTime));
+	m_pTransform->Set_MoveSpeed(8.f);
+	// State Update
 	switch (m_eCurCamMode)
 	{
 	case ECameraMode::CAM_MODE_FREE:
 	{
-		if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
-		{
-			m_pTransform->Move_Forward(fDeltaTime);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
-		{
-			m_pTransform->Move_Backward(fDeltaTime);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
-		{
-			m_pTransform->Move_Right(fDeltaTime);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
-		{
-			m_pTransform->Move_Left(fDeltaTime);
-		}		
-		if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
-		{
-			m_pTransform->MovetoDir(XMVectorSet(0, 1, 0, 0), fDeltaTime);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
-		{
-			m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
-		}
-
-	
-		{
-			static _bool IsWheelClicked = false;
-			_byte BtnState = g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_WHEEL);
-			if (BtnState & DIS_Press)
-			{
-				if (!IsWheelClicked && (BtnState & DIS_Down))
-					IsWheelClicked = true;
-				else if (IsWheelClicked && (BtnState & DIS_Up))
-					IsWheelClicked = false;
-				else if (IsWheelClicked && (BtnState & DIS_Press))
-				{
-					if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
-					{
-
-						_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
-
-						m_pTransform->Turn_CW(m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), fWheelMove*fDeltaTime* 0.1f);
-
-						fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
-
-						m_pTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fWheelMove* fDeltaTime * 0.1f);
-
-
-					}
-					else {
-
-						_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
-
-						m_pTransform->MovetoDir_bySpeed(
-							m_pTransform->Get_MatrixState(CTransform::STATE_UP), (_float)fWheelMove, fDeltaTime);
-
-						fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
-
-						m_pTransform->MovetoDir_bySpeed(
-							m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), (_float)-fWheelMove, fDeltaTime);
-
-
-					}
-
-
-				}
-
-			}
-			if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
-			{
-				_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL);
-				if (fWheelMove)
-				{
-					m_pTransform->MovetoDir_bySpeed(
-						m_pTransform->Get_MatrixState(CTransform::STATE_LOOK), (_float)fWheelMove, fDeltaTime);
-				}
-
-			}
-
-		}
+		Update_FreeMode(fDeltaTime);
 	}
 		break;
 	case ECameraMode::CAM_MODE_NOMAL:
+	{
 		Update_NormalMode(fDeltaTime);
+	}
+		break;
+	case ECameraMode::CAM_MODE_TARGETING:
+	{
+		Update_TargetingMode(fDeltaTime);
+	}
 		break;
 	}
+	//
 
 
 	// Fov Shaking
@@ -296,16 +284,20 @@ _int CCamera_Main::LateRender()
 }
 
 
-HRESULT CCamera_Main::Start_CameraShaking_Thread(_double TotalTime, _float Power)
+HRESULT CCamera_Main::Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval)
 {
 	if (m_bIsStartedShaking) return S_FALSE;
+	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE;
+	pCameraEffectDesc->pTargetCamera = this;
 
 	m_eEffectID = CAM_EFT_SHAKE;
 	m_TargetTime = TotalTime;
 	m_fShakingPower = Power;
 	m_bIsStartedShaking = true;
+	m_fMaxTime_ReturnVectorInterval = fChangeDirectioninterval;
 
-	GetSingle(CGameInstance)->PlayThread(CameraEffectThread, this);
+	GetSingle(CGameInstance)->PlayThread(CameraEffectThread, pCameraEffectDesc);
 
 	return S_OK;
 }
@@ -323,6 +315,8 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 
 	_double ThreadPassedTime = 0;
 
+	m_fCurTime_ReturnVectorInterval = m_fMaxTime_ReturnVectorInterval;
+
 	while (true)
 	{
 		if (*_IsClientQuit == true)
@@ -335,30 +329,31 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 		OldTick = NowTick;
 
 
-
-		if (!bIsReturnVector)
+		m_fCurTime_ReturnVectorInterval += (_float)g_fDeltaTime;
+		if (m_fCurTime_ReturnVectorInterval >= m_fMaxTime_ReturnVectorInterval)
 		{
-			_float Rate = pUtil->RandomFloat(0, 1);
-			vReturnPower = pUtil->RandomFloat(-m_fShakingPower, m_fShakingPower);
+			m_fCurTime_ReturnVectorInterval = 0.f;
 
-
-			EnterCriticalSection(_CriSec);
-			vReturnVector = m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT) * Rate + m_pTransform->Get_MatrixState(CTransform::STATE_UP) * (1 - Rate);
-			LeaveCriticalSection(_CriSec);
-
-			bIsReturnVector = true;
-		}
-		else
-		{
-			vReturnPower = -vReturnPower;
-			bIsReturnVector = false;
+			if (false == bIsReturnVector)
+			{
+				_float Rate = pUtil->RandomFloat(0, 1);
+				vReturnPower = (pUtil->RandomFloat(0.8f,1.2f) * m_fShakingPower * ((rand()% 2 )?-1:1));
+				EnterCriticalSection(_CriSec);
+				vReturnVector = m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT) * Rate + m_pTransform->Get_MatrixState(CTransform::STATE_UP) * (1 - Rate);
+				LeaveCriticalSection(_CriSec);
+				bIsReturnVector = true;
+			}
+			else
+			{
+				vReturnPower = -vReturnPower;
+				bIsReturnVector = false;
+			}
 		}
 
 
 		EnterCriticalSection(_CriSec);
-		m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, 1);
+		m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, g_fDeltaTime);
 		LeaveCriticalSection(_CriSec);
-
 
 		if (m_TargetTime < ThreadPassedTime) break;
 
@@ -369,7 +364,222 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 	m_eEffectID = CAM_EFT_END;
 	LeaveCriticalSection(_CriSec);
 
+
+	//DWORD  NowTick = GetTickCount();
+	//DWORD  OldTick = NowTick;
+
+	//CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	//_bool	bIsReturnVector = false;
+	//_float3 vReturnVector = _float3(0);
+	//_float  vReturnPower = 0;
+
+	//_double ThreadPassedTime = 0;
+
+	//while (true)
+	//{
+	//	if (*_IsClientQuit == true)
+	//		return S_OK;
+
+	//	NowTick = GetTickCount();
+	//	if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+	//		continue;
+	//	ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+	//	OldTick = NowTick;
+
+
+	//	// 이부분 바꿔야된다
+	//	// 현재는 간만큼 오고 반복인데 속도가 파워에 딱 되잇어서 딲딲딲이 되고있다
+	//	// 파워에 대한 보간증가가 필요해 보임
+	//	// 그러면서 지속시간을 지켜야된다
+	//	if (!bIsReturnVector)
+	//	{
+	//		_float Rate = pUtil->RandomFloat(0, 1);
+	//		vReturnPower = pUtil->RandomFloat(-m_fShakingPower, m_fShakingPower);
+
+
+	//		EnterCriticalSection(_CriSec);
+	//		vReturnVector = m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT) * Rate + m_pTransform->Get_MatrixState(CTransform::STATE_UP) * (1 - Rate);
+	//		LeaveCriticalSection(_CriSec);
+
+	//		bIsReturnVector = true;
+	//	}
+	//	else
+	//	{
+	//		vReturnPower = -vReturnPower;
+	//		bIsReturnVector = false;
+	//	}
+	//	//
+
+	//	EnterCriticalSection(_CriSec);
+	//	m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, 1);
+	//	LeaveCriticalSection(_CriSec);
+
+
+	//	if (m_TargetTime < ThreadPassedTime) break;
+
+	//}
+
+	//EnterCriticalSection(_CriSec);
+	//m_bIsStartedShaking = false;
+	//m_eEffectID = CAM_EFT_END;
+	//LeaveCriticalSection(_CriSec);
+
 	return S_OK;
+}
+
+HRESULT CCamera_Main::Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC * tDirShakingDesc)
+{
+	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_DIR;
+	pCameraEffectDesc->pTargetCamera = this;
+	pCameraEffectDesc->tDirShakingDesc = *tDirShakingDesc;
+
+	GetSingle(CGameInstance)->PlayThread(CameraEffectThread, pCameraEffectDesc);
+
+	return S_OK;
+}
+
+HRESULT CCamera_Main::Progress_DirShaking_Thread(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec, CAMERASHAKEDIRDESC tDirShakingDesc)
+{
+	DWORD  NowTick = GetTickCount();
+	DWORD  OldTick = NowTick;
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	_bool	bIsReturnVector = false;
+	_float3 vReturnVector = _float3(0);
+	_float  vReturnPower = 0;
+
+	_double ThreadPassedTime = 0;
+
+	_float fCurTime_ReturnVectorInterval = tDirShakingDesc.fChangeDirectioninterval;
+
+	while (true)
+	{
+		if (*_IsClientQuit == true)
+			return S_OK;
+
+		NowTick = GetTickCount();
+		if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+			continue;
+		ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+		OldTick = NowTick;
+
+
+		fCurTime_ReturnVectorInterval += (_float)g_fDeltaTime;
+		if (fCurTime_ReturnVectorInterval >= tDirShakingDesc.fChangeDirectioninterval)
+		{
+			fCurTime_ReturnVectorInterval = 0.f;
+
+			if (false == bIsReturnVector)
+			{
+				_float Rate = pUtil->RandomFloat(0, 1);
+				vReturnPower = (pUtil->RandomFloat(0.8f, 1.2f) * tDirShakingDesc.fPower * ((rand() % 2) ? -1 : 1));
+				EnterCriticalSection(_CriSec);
+				vReturnVector = tDirShakingDesc.fShakingDir.XMVector() * Rate;
+				LeaveCriticalSection(_CriSec);
+				bIsReturnVector = true;
+			}
+			else
+			{
+				vReturnPower = -vReturnPower;
+				bIsReturnVector = false;
+			}
+		}
+
+
+		EnterCriticalSection(_CriSec);
+		m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, g_fDeltaTime);
+		LeaveCriticalSection(_CriSec);
+
+		if (tDirShakingDesc.fTotalTime < ThreadPassedTime) break;
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCamera_Main::Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc)
+{
+	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_ROT;
+	pCameraEffectDesc->pTargetCamera = this;
+	pCameraEffectDesc->tRotShakingDesc = *tRotShakingDesc;
+
+	GetSingle(CGameInstance)->PlayThread(CameraEffectThread, pCameraEffectDesc);
+
+	return S_OK;
+}
+
+HRESULT CCamera_Main::Progress_RotShaking_Thread(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec, CAMERASHAKEROTDESC tRotShakingDesc)
+{
+	DWORD  NowTick = GetTickCount();
+	DWORD  OldTick = NowTick;
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	_bool	bIsReturnVector = false;
+	_float3 vReturnVector = _float3(0);
+	_float  vReturnPower = 0;
+
+	_double ThreadPassedTime = 0;
+
+	_float fCurTime_ReturnVectorInterval = tRotShakingDesc.fChangeDirectioninterval;
+
+	while (true)
+	{
+		if (*_IsClientQuit == true)
+			return S_OK;
+
+		NowTick = GetTickCount();
+		if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+			continue;
+		ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+		OldTick = NowTick;
+
+
+		fCurTime_ReturnVectorInterval += (_float)g_fDeltaTime;
+		if (fCurTime_ReturnVectorInterval >= tRotShakingDesc.fChangeDirectioninterval)
+		{
+			fCurTime_ReturnVectorInterval = 0.f;
+
+			if (false == bIsReturnVector)
+			{
+				_float Rate = pUtil->RandomFloat(0, 1);
+				vReturnPower = (pUtil->RandomFloat(0.8f, 1.2f) * tRotShakingDesc.fPower * ((rand() % 2) ? -1 : 1));
+				
+				/*
+				EnterCriticalSection(_CriSec);
+				vReturnVector = tRotShakingDesc.fShakingDir.XMVector() * Rate;
+				LeaveCriticalSection(_CriSec);
+				*/
+
+				bIsReturnVector = true;
+			}
+			else
+			{
+				vReturnPower = -vReturnPower;
+				bIsReturnVector = false;
+			}
+		}
+
+
+		EnterCriticalSection(_CriSec);
+		//m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, g_fDeltaTime);
+		m_pTransform->Turn_CCW(tRotShakingDesc.fShakingRotAxis.XMVector(), g_fDeltaTime * vReturnPower);
+		LeaveCriticalSection(_CriSec);
+
+		if (tRotShakingDesc.fTotalTime < ThreadPassedTime) break;
+
+	}
+
+	return S_OK;
+}
+
+void CCamera_Main::Set_EffectID(CameraEffectID eEffectID)
+{
+	m_eEffectID = eEffectID;
 }
 
 void CCamera_Main::Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime)
@@ -412,6 +622,92 @@ HRESULT CCamera_Main::Set_ViewMatrix()
 	return S_OK;
 }
 
+_int CCamera_Main::Update_FreeMode(_double fDeltaTime)
+{
+	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+	{
+		m_pTransform->Move_Forward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	{
+		m_pTransform->Move_Backward(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+	{
+		m_pTransform->Move_Right(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
+	{
+		m_pTransform->Move_Left(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Press)
+	{
+		m_pTransform->MovetoDir(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Press)
+	{
+		m_pTransform->MovetoDir(XMVectorSet(0, -1, 0, 0), fDeltaTime);
+	}
+
+
+	{
+		static _bool IsWheelClicked = false;
+		_byte BtnState = g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_WHEEL);
+		if (BtnState & DIS_Press)
+		{
+			if (!IsWheelClicked && (BtnState & DIS_Down))
+				IsWheelClicked = true;
+			else if (IsWheelClicked && (BtnState & DIS_Up))
+				IsWheelClicked = false;
+			else if (IsWheelClicked && (BtnState & DIS_Press))
+			{
+				if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
+				{
+
+					_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
+
+					m_pTransform->Turn_CW(m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), fWheelMove*fDeltaTime* 0.1f);
+
+					fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
+
+					m_pTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fWheelMove* fDeltaTime * 0.1f);
+
+
+				}
+				else {
+
+					_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
+
+					m_pTransform->MovetoDir_bySpeed(
+						m_pTransform->Get_MatrixState(CTransform::STATE_UP), (_float)fWheelMove, fDeltaTime);
+
+					fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
+
+					m_pTransform->MovetoDir_bySpeed(
+						m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), (_float)-fWheelMove, fDeltaTime);
+
+
+				}
+
+
+			}
+
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT)&DIS_Press)
+		{
+			_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL);
+			if (fWheelMove)
+			{
+				m_pTransform->MovetoDir_bySpeed(
+					m_pTransform->Get_MatrixState(CTransform::STATE_LOOK), (_float)fWheelMove, fDeltaTime);
+			}
+
+		}
+
+	}
+	return _int();
+}
+
 _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 {
 	if (nullptr == m_pFocusTarget || m_eNowSceneNum == SCENE_LOADING)
@@ -426,8 +722,6 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 			m_fTargetArmLength = 10.f;
 		}
 		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
-		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
-		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
 	}
 	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
 	{
@@ -437,8 +731,6 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 			m_fTargetArmLength = 3.f;
 		}
 		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
-		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
-		vCamPos = XMVectorSetY(vCamPos, m_fTargetArmLength);
 	}
 
 	ChaseTarget_NormalMode(fDeltaTime);
@@ -446,6 +738,38 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	RELEASE_INSTANCE(CGameInstance);
 
 	return _int();
+} 
+
+_int CCamera_Main::Update_TargetingMode(_double fDeltaTime)
+{
+	_Vector vCamPos = (m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight) + ((m_fTargetingPoint.XMVector() - m_fTargetingLook.XMVector()) * (1.f - m_fCur_CamMoveWeight));
+	//m_pTransform->MovetoTarget_ErrRange((m_fTargetingPoint.XMVector() - m_fTargetingLook.XMVector()), fDeltaTime, 0.1f);
+	m_pTransform->Turn_Dir(XMVector3Normalize(m_fTargetingLook.XMVector()), m_fCur_CamLookWeight, 0.99f);
+
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+	
+	return _int();
+}
+
+void CCamera_Main::Update_CamMoveWeight()
+{
+	if (m_fCur_CamLookWeight < m_fTarget_CamLookWeight)
+	{
+		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.001f) + (m_fTarget_CamLookWeight * 0.999f);
+	}
+	else
+	{
+		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.999f) + (m_fTarget_CamLookWeight * 0.001f);
+	}
+
+	if (m_fCur_CamMoveWeight < m_fTarget_CamMoveWeight)
+	{
+		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.001f) + (m_fTarget_CamMoveWeight * 0.999f);
+	}
+	else
+	{
+		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.999f) + (m_fTarget_CamMoveWeight * 0.001f);
+	}
 }
 
 HRESULT CCamera_Main::SetUp_Components()
@@ -456,7 +780,7 @@ HRESULT CCamera_Main::SetUp_Components()
 
 HRESULT CCamera_Main::SetUp_EtcInfo()
 {
-
+	m_pTransform->Set_MoveSpeed(1.f);
 	return S_OK;
 }
 

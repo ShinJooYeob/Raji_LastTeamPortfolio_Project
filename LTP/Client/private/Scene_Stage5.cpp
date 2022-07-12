@@ -6,6 +6,7 @@
 #include "PlayerWeapon.h"
 #include "PlayerWeapon_Spear.h"
 #include "MapObject.h"
+#include "Trigger_ChangeCameraView.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -30,7 +31,7 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	
-	
+	FAILED_CHECK(Ready_Layer_Trigger(TAG_LAY(Layer_ColTrigger)));
 	
 	return S_OK;
 }
@@ -164,17 +165,11 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_TargetArmLength(0.f);
-
-	/*CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
-	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(pPlayer, "skd_r_palm", _float3(100, 100, 100), _float3(90, 0, 0), _float3(-63.02f, 0.59f, -112.96f));
-	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));*/
+	m_pMainCam->Set_TargetArmLength(3.f);
 
 
 
-
-
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Unique_Monster), TAG_OP(Prototype_Object_Monster_Gadasura_Black)));
 
 
 	return S_OK;
@@ -218,6 +213,63 @@ HRESULT CScene_Stage5::Ready_Layer_Terrain(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
 
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_Layer_Trigger(const _tchar * pLayerTag)
+{
+	//CTrigger_ChangeCameraView::CHANGECAMERAVIEWDESC ChangeCameraViewDesc;
+	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX;
+	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 2.f, -2.f);
+	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
+	//ChangeCameraViewDesc.fMain_Pos = _float3(5.f, 0.01f, 5.f);
+	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
+	//ChangeCameraViewDesc.bLockCamLook = true;
+	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.98f;
+	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.98f;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+
+
+	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX;
+	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 1.5f, -2.f);
+	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
+	//ChangeCameraViewDesc.fMain_Pos = _float3(0.f, 0.01f, 5.f);
+	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
+	//ChangeCameraViewDesc.bLockCamLook = false;
+	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.9f;
+	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.9f;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+
+
+	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX_SWITCH;
+	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 2.f, -2.f);
+	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
+	//ChangeCameraViewDesc.fMain_Pos = _float3(-5.f, 0.01f, 5.f);
+	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
+	//ChangeCameraViewDesc.bLockCamLook = true;
+	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.99f;
+	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.99f;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+
+
+	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_TWO_INTERP;
+	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 6.f, -2.f);
+	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, -1.f, 1.f);
+	//ChangeCameraViewDesc.fMain_Pos = _float3(5.f, 0.01f, 5.f);
+	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f); 
+	// 
+	//ChangeCameraViewDesc.fSub_CamPos = _float3(-2.f, 6.f, 0.f);
+	//ChangeCameraViewDesc.fSub_CamLook = _float3(1.f, -1.f, 0.f);
+	//ChangeCameraViewDesc.fSub_Pos = _float3(-10.f, 0.01f, 5.f);
+	//ChangeCameraViewDesc.fSub_Scale = _float3(3.f, 3.f, 3.f);
+	//ChangeCameraViewDesc.bLockCamLook = true;
+	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.9f;
+	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.9f;
+	//ChangeCameraViewDesc.fSub_CamMoveWeight = 0.5f;
+	//ChangeCameraViewDesc.fSub_CamLookWeight = 0.5f;
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
 
 	return S_OK;
 }

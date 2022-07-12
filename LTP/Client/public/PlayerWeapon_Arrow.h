@@ -51,6 +51,8 @@ public:
 	void				Set_State_Ultimate_Post_Ready();
 	void				Set_State_Ultimate_Post_Shot();
 
+	void				Set_TargetPos(_float3 fTargetPos);
+
 public:
 	_int				UpdateState_NormalReady(_double fDeltaTime);
 	_int				UpdateState_NormalShot(_double fDeltaTime);
@@ -91,7 +93,8 @@ private:
 	_float				m_fStartPos_y;
 	_float3				m_fEndPos;
 	_float				m_fTimeAcc = 0.f;
-	
+	_float3				m_fTargetPos;
+
 private:
 	CTimer*				m_pTimer_Destroy = nullptr;
 	_float				m_fMaxTime_Destroy = 3.f;

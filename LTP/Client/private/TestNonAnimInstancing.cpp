@@ -118,7 +118,7 @@ HRESULT CTestNonAnimInstancing::SetUp_Components()
 
 	tModelIntDsec.m_pTargetModel = m_pModel;
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_4), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance,&tModelIntDsec));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_64), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance,&tModelIntDsec));
 
 	
 

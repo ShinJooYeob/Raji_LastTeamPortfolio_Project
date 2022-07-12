@@ -54,17 +54,18 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 	//m_pModel->Change_AnimIndex_UntilNReturn();//1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 경우
 	//m_pModel->Change_AnimIndex_UntilNReturn_Must(); //1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 수 있지만 다른 애니메이션을 동작시킬 수 있음
 
-
-
-	PlayAnim(dDeltaTime);
+	 
+	//camera moving test!@#!@#!@$#@$!@$@!$@!$@!#$@!#$@!#$@!#$!@%#$%#@%#@%#@%#@^^$%^#$^#$^%&
+	//PlayAnim(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
-	//////////////Motion Test
+	////////////////Motion Test
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
-	/////////////////////////
+	///////////////////////////
+	//@#$#$@%#@$%#@$%#$%#$%#$%#$%#%#$%#$%@#^$#%^%$&%^&%*^%&*^%*^%&*^%*^%&!@$@!$!@$!@$!@$!@$
 	return _int();
 }
 
