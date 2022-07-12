@@ -39,6 +39,10 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 
 	m_iRandomIndex = rand() % 16;
 
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	m_startPos = PlayerPos;
+
 	return S_OK;
 }
 
@@ -63,7 +67,7 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
-		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&PlayerPos));
+		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&m_startPos));
 
 		if (i % 2 == 0)
 		{
@@ -119,6 +123,15 @@ _int CCopyMahabalasura::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
+	{
+		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&PlayerPos));
+	}
+
+
 	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
 
 
@@ -165,8 +178,7 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 		CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
 		_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
 
-		_int iTemp = rand() % 2 == 0 ? -1 : 1;
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(1.f, 7.5f) * iTemp, BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(1.f, 7.5f) * iTemp));
+		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f), BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f)));
 		//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
 		m_vecInstancedTransform.push_back(pTransform);
 	}

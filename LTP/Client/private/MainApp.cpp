@@ -324,12 +324,12 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 32)));
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_64),
 		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 64)));
-	//FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_128),
-	//	CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 128)));
-	//FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_256),
-	//	CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 256)));
-	//FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512),
-	//	CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 512)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_128),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 128)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_256),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 256)));
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_ModelInstance_512),
+		CModelInstance::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STATIC, 512)));
 
 
 

@@ -8,6 +8,7 @@ namespace Engine {
 		void* pArg;
 		CRITICAL_SECTION*	CriSec;
 		_bool* IsClientQuit;
+		void* Desc = nullptr;
 
 	}THREADARG;
 

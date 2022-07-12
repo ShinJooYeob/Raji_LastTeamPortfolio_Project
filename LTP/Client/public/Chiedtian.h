@@ -1,6 +1,10 @@
 #pragma once
 #include "Boss.h"
 
+BEGIN(Engine)
+class CNavigation;
+END
+
 BEGIN(Client)
 
 class CChiedtian final : public CBoss
@@ -27,6 +31,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CNavigation*		m_pNavigationCom = nullptr;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -34,9 +39,13 @@ private:
 
 	_float				m_fAttackCoolTime = 4.f;
 	_float				m_fSkillCoolTime = 6.f;
-	_float				m_fJumpTime = 3.f;
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
+
+	//Jump
+	_float				m_fJumpTime = 3.f;
+	_bool				m_bIsTurn = false;
+
 
 
 	//Attack
@@ -51,14 +60,19 @@ private:
 	_float				m_fFireTime = 10.f;
 	//Spin Attack
 	_bool				m_bIsSpinAttack = false;
+	_float				m_fSpinSpeed = 0.f;
 	_float				m_fSpinTime = 14.f;
 
 
 	CGameObject*		m_pPlayerObj;
+	_Vector				m_vAngle;
 
 	_float				m_fTestHPIndex = 1.f;
+	_int				m_iTest = 0;
 
-	vector<class CChiedtuan_Weapon*>		m_pWeapons;
+	vector<class CChiedtuan_Weapon*>		m_pMainWeapons;
+	_bool									m_bIsMainWeaponOff = false;
+	vector<class CChiedtuan_Weapon*>		m_pSubWeapons;
 
 private:
 	HRESULT SetUp_Components();

@@ -69,22 +69,25 @@ CThreadMgr::CThreadMgr()
 	m_vecThread.reserve(10);
 
 	//사용되지 않는 쓰래드를 정리하는 콜랙터
-	PlayThread(EraseFinishedThread, this);
+	PlayThread(EraseFinishedThread, this,nullptr);
 }
 
 
 //Client에서 Thread함수 만들 때 무조건 마지막에 클라 종료를 알리는 bool 변수와 Mutex Pointer를 맴버 변수로 받을 것
-HRESULT CThreadMgr::PlayThread(void* _ThreadFunc, void* _pArg)
+HRESULT CThreadMgr::PlayThread(void* _ThreadFunc, void* _pArg, void* pDesc)
 {
 	//포인터로 관리할꺼면 바인드 써서 만들면 될듯
 	if (_ThreadFunc == nullptr)
+	{
+		__debugbreak();
 		return E_FAIL;
+	}
 
 	THREADARG* pArg = new THREADARG;
 	pArg->pArg			= _pArg;
 	pArg->CriSec			= &m_CriSec;
 	pArg->IsClientQuit	= &m_bIsClientQuit;
-
+	pArg->Desc = pDesc;
 
 	m_vecThread.emplace_back(
 		(HANDLE)_beginthreadex(nullptr, 0, _beginthreadex_proc_type(_ThreadFunc), pArg, 0, nullptr)

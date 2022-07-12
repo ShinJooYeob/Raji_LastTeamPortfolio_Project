@@ -98,7 +98,8 @@ _int CRangda::Update(_double fDeltaTime)
 
 		if (m_iMaterialCount - 3 < 8)
 		{
-			_float3 vPos = m_vFingerPoss[m_iMaterialCount - 3];
+
+			_float3 vPos = Get_FingerPos(m_iMaterialCount - 3);
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Finger"), TAG_OP(Prototype_Object_Boss_Rangda_Finger), &vPos);
 		}
 
@@ -308,12 +309,25 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			break;
 		case 2:
+		{
+			if (PlayRate <= 0.97f)
+			{
+				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-			break;
+				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(),  (_float)PlayRate, 0.97f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+			}
+		}
+		break;
 
 		case 3:
+		{
 			m_bIsLookAt = false;
-			break;
+
+		}
+		break;
 
 		case 4:
 		{
@@ -452,7 +466,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
-				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, (_float)PlayRate, 0.97f);
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.8522167487f, 0.11779f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
@@ -493,7 +507,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
-				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, vGoalDir.Get_Lenth(), 0, (_float)PlayRate, 0.97f);
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.8522167487f, 0.11779f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}

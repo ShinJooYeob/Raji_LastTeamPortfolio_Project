@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\Demon_Tree.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="..\public\TestObject.h" />
     <ClInclude Include="..\public\TestStaticObject.h" />
     <ClInclude Include="..\public\TestObject_PhysX.h" />
+    <ClInclude Include="..\public\TreeMesh.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -268,6 +270,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\Demon_Tree.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
@@ -341,6 +344,7 @@
     <ClCompile Include="..\private\Scene_Stage4.cpp" />
     <ClCompile Include="..\private\Scene_Stage3.cpp" />
     <ClCompile Include="..\private\TestStaticObject.cpp" />
+    <ClCompile Include="..\private\TreeMesh.cpp" />
     <ClCompile Include="..\private\UtilityMgr.cpp" />
     <ClCompile Include="..\public\Camera_Editor.cpp" />
     <ClCompile Include="..\public\Imgui\imgui.cpp" />
