@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "PlayerWeapon.h"
+#include "TriggerObject.h"
 
 BEGIN(Engine)
 class CTimer;
@@ -10,6 +11,7 @@ END
 BEGIN(Client)
 class CCamera_Main;
 class CShellingSkillRange;
+class CTriggerObject;
 class CPlayer final : public CGameObject
 {
 private:
@@ -34,7 +36,7 @@ private:
 	};
 	
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL,        STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
 
@@ -80,11 +82,27 @@ private:
 		SWORD_ANIM_SHIELD_WALK_F, SWORD_ANIM_SHIELD_WALK_B, SWORD_ANIM_SHIELD_WALK_L, SWORD_ANIM_SHIELD_WALK_R,
 		SWORD_ANIM_END
 	};
+
+	enum EPLAYERANIM_LEDGE {
+		LEDGE_ANIM_GRAB = SWORD_ANIM_END, LEDGE_ANIM_IDLE, LEDGE_ANIM_CLAMB_UP, 
+		LEDGE_ANIM_JUMP_BACK, LEDGE_ANIM_JUMP_LEFT, LEDGE_ANIM_JUMP_RIGHT, LEDGE_ANIM_JUMP_UP, 
+		LEDGE_ANIM_MOVE_LEFT, LEDGE_ANIM_MOVE_RIGHT,
+		LEDGE_ANIM_REACHOUT_BACK_IDLE, LEDGE_ANIM_REACHOUT_LEFT, LEDGE_ANIM_REACHOUT_RIGHT, LEDGE_ANIM_REACHOUT_UP,
+		LEDGE_ANIM_TURN_BACK, LEDGE_ANIM_TURN_LEFT, LEDGE_ANIM_TURN_RIGHT,
+		LEDGE_ANIM_HANGING_IDLE,
+		LEDGE_ANIM_HANGING_MOVE_LEFT, LEDGE_ANIM_HANGING_MOVE_RIGHT, LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE, LEDGE_ANIM_HANGING_REACHOUT_UP,
+		LEDGE_ANIM_JUMP, LEDGE_ANIM_DOUBLEJUMP, LEDGE_ANIM_FALLING, LEDGE_ANIM_END
+	}; 
 	//
 
 	enum ETARGETING_STATE {
 		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
 	};
+
+	enum EPARKOUR_LEDGESTATE {
+		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP
+	};
+
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -109,6 +127,10 @@ public:
 	CTransform* Get_Transform() const { return m_pTransformCom; }
 
 
+public:
+	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
+
+
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
 	void	Set_State_MoveStart(_double fDeltaTime);								// Move
@@ -119,6 +141,7 @@ private: /* Change Start State */
 	void	Set_State_UltimateSkillStart(_double fDeltaTime);						// Ultimate
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
 
+	void	Set_State_ParkourStart(_double fDeltaTime);								// Dodge
 
 private:
 	virtual void Update_AttachCamPos() override;
@@ -136,10 +159,14 @@ private:
 	HRESULT Update_State_UltimateSkill(_double fDeltaTime);
 	HRESULT Update_State_Evasion(_double fDeltaTime);
 
+	HRESULT Update_State_Parkour(_double fDeltaTime);
+
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
 
+private: /* Check */
+	_bool				Check_InputDirIsForward();
 
 private: /* Key Input */
 	_bool				Check_PlayerKeyInput(_double fDeltaTime);
@@ -175,6 +202,9 @@ private: /* Actions */
 	void				Shield_Mode(_double fDeltaTime);
 	void				Sword_Ultimate(_double fDeltaTime);
 
+	/** For Parkours */
+	// Ledging
+	void				Ledging(_double fDeltaTime);
 
 private: /* Select Anim */
 	void				Play_DodgeAnim();
@@ -208,6 +238,11 @@ private: /* Getter */
 private:
 	_float4				m_fCamLookPoint;
 
+private: /* Relate Parkour */
+	CTriggerObject::EParkourTriggerType 		m_eCurParkourState;
+	CTriggerObject*								m_pCurParkourTrigger = nullptr;
+	CTriggerObject*								m_pPreParkourTrigger = nullptr;
+	EPARKOUR_LEDGESTATE							m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_JUMP;
 
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
@@ -218,6 +253,7 @@ private: /* Key Input State */
 	_bool				m_bPressedPowerAttackKey = false;
 	_bool				m_bPressedUtilityKey = false;
 	_bool				m_bPressedUltimateKey = false;
+	_bool				m_bPressedInteractKey = false;
 
 private: /* For TurnBack Timing*/
 	_float				m_fCurTime_PressedMoveKeyDuration = 0.f;
@@ -270,6 +306,16 @@ private: /* Animation Control */
 	_float					m_fChargingTime = 0.f;
 	_float					m_fArrowRange = 0.f;
 
+	_float					m_fJumpStart_Y = 0.f;
+	_float					m_fFallingStart_Y = 0.f;
+	_float					m_fFallingAcc = 0.f;
+	_float					m_fJumpPower = 0.f;
+
+	EINPUT_MOVDIR			m_eLedgingMoveDir = MOVDIR_END;
+	_bool					m_bLedgingMove = false;
+
+	EINPUT_MOVDIR			m_ePreInputMovDir = MOVDIR_END;
+
 private: /* Camera Shake */
 	_bool					m_bActive_ActionCameraShake = true;
 
@@ -303,8 +349,8 @@ private:
 	CTransform*				m_pTransformCom = nullptr;
 	CMotionTrail*			m_pMotionTrail = nullptr;
 	CCamera_Main*			m_pMainCamera = nullptr;
+	CTransform*				m_pMainCameraTransform = nullptr;
 	
-
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 

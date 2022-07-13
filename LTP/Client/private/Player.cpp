@@ -7,10 +7,13 @@
 #include "PlayerWeapon_Spear.h"
 #include "PlayerWeapon_Arrow.h"
 #include "ShellingSkillRange.h"
+#include "SpearWave.h"
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "physx\Collider_PhysX_Joint.h"
 #include "physx\Collider_PhysX_Dynamic.h"
+
+#include "TestLedgeTrigger.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -73,8 +76,10 @@ _int CPlayer::Update(_double fDeltaTime)
 	}
 	//
 
+	_Vector vScale = m_pTransformCom->Get_Scale();
+
 	// Check Player Key Input
-	bool keycheck = Check_PlayerKeyInput(fDeltaTime);
+	Check_PlayerKeyInput(fDeltaTime);
 
 
 	// Check MotionTrail
@@ -116,6 +121,9 @@ _int CPlayer::Update(_double fDeltaTime)
 			break;
 		case EPLAYER_STATE::STATE_EXECUTION:
 			FAILED_CHECK(Update_State_Execution(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_PARKOUR:
+			FAILED_CHECK(Update_State_Parkour(fDeltaTime));
 			break;
 		default:
 			MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
@@ -246,6 +254,18 @@ _fMatrix CPlayer::Get_BoneMatrix(const char * pBoneName)
 	return TransformMatrix;
 }
 
+void CPlayer::Set_CurParkourTrigger(CTriggerObject * pParkourTrigger, CTriggerObject* pCauser)
+{
+	if (nullptr == pParkourTrigger && m_pCurParkourTrigger != pCauser)
+		return;
+
+	if (nullptr != m_pCurParkourTrigger)
+	{
+		m_pPreParkourTrigger = m_pCurParkourTrigger;
+	}
+	m_pCurParkourTrigger = pParkourTrigger;
+}
+
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 {
 	Set_PlayerState(STATE_IDLE);
@@ -364,6 +384,20 @@ void CPlayer::Set_State_TurnBackStart(_double fDeltaTime)
 	Set_PlayerState(STATE_MOV);
 }
 
+void CPlayer::Set_State_ParkourStart(_double fDeltaTime)
+{
+	m_eCurState = STATE_PARKOUR;
+	m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
+
+	switch (m_eCurParkourState)
+	{
+	case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
+		m_eCurLedgeState = LEDGE_JUMP;
+		m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
+		break;
+	}
+}
+
 void CPlayer::Update_AttachCamPos()
 {
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -399,7 +433,14 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 	/** Change State By KeyInput */
 	if (true == m_bPressedDodgeKey)
 	{
-		Set_State_DodgeStart(fDeltaTime);
+		if (nullptr != m_pCurParkourTrigger)
+		{
+			Set_State_ParkourStart(fDeltaTime);
+		}
+		else
+		{
+			Set_State_DodgeStart(fDeltaTime);
+		}
 	}
 	else if (true == m_bPressedMainAttackKey || true == m_bPressedPowerAttackKey)
 	{
@@ -460,8 +501,15 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 
 		/** Change State By KeyInput */
 		if (true == m_bPressedDodgeKey)
-		{
-			Set_State_DodgeStart(fDeltaTime);
+		{ 
+			if (nullptr != m_pCurParkourTrigger)
+			{
+				Set_State_ParkourStart(fDeltaTime);
+			}
+			else
+			{
+				Set_State_DodgeStart(fDeltaTime);
+			}
 		}
 		else if (true == m_bPressedMainAttackKey || true == m_bPressedPowerAttackKey)
 		{
@@ -579,6 +627,21 @@ HRESULT CPlayer::Update_State_Evasion(_double fDeltaTime)
 	return S_OK;
 }
 
+HRESULT CPlayer::Update_State_Parkour(_double fDeltaTime)
+{
+	//
+	switch (m_eCurParkourState)
+	{
+	case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
+		Ledging(fDeltaTime);
+		break;
+	case CTriggerObject::EParkourTriggerType::PACUR_END:
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Update_State_Damage(_double fDeltaTime)
 {
 	return _int();
@@ -594,13 +657,25 @@ HRESULT CPlayer::Update_State_Dead(_double fDeltaTime)
 	return _int();
 }
 
+_bool CPlayer::Check_InputDirIsForward()
+{
+	_Vector vMyRight = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+	_Vector vCamRight = XMVector3Normalize(m_pMainCameraTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+
+	if (0.5f <= XMVectorGetX(XMVector3Dot(vMyRight, vCamRight)))
+	{
+		return true;
+	}
+	return false;
+}
+
 _bool CPlayer::Check_PlayerKeyInput(_double fDeltaTime)
 {
-	bool keyInput = false;
-	keyInput = Check_Mov_KeyInput(fDeltaTime);
+	Check_Mov_KeyInput(fDeltaTime);
 	Check_Action_KeyInput(fDeltaTime);
 	Check_ChangeCameraView_KeyInput_ForDebug(fDeltaTime);
-	return keyInput;
+
+	return true;
 }
 
 _bool CPlayer::Check_Mov_KeyInput(_double fDeltaTime)
@@ -717,6 +792,15 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_bPressedUltimateKey = false;
+
+	if (pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
+	{
+		m_bPressedInteractKey = true;
+	}
+	else
+	{
+		m_bPressedInteractKey = false;
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
 	{
@@ -1761,6 +1845,12 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		{
 			m_bTrailSwitch = true;
 			m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Trail(true);
+
+			CSpearWave::SPEARWAVEDESC tSpearWaveDesc;
+			tSpearWaveDesc.fStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			tSpearWaveDesc.fStartPos.y += 0.8f;
+			tSpearWaveDesc.fLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
 		}
 		//
 
@@ -1963,6 +2053,12 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		{
 			m_bTrailSwitch = true;
 			m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Trail(true);
+
+			CSpearWave::SPEARWAVEDESC tSpearWaveDesc;
+			tSpearWaveDesc.fStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			tSpearWaveDesc.fStartPos.y += 0.8f;
+			tSpearWaveDesc.fLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
 		}
 		//
 
@@ -3990,12 +4086,6 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
 		m_bActive_ActionCameraShake = false;
 	}
-	/*else if (false == m_bActive_ActionCameraShake && 0.2f <= fAnimPlayRate)
-	{
-		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
-		m_bActive_ActionCameraShake = true;
-	}*/
-	////
 }
 
 void CPlayer::LookAtInputDir(_double fDeltaTime)
@@ -4078,6 +4168,403 @@ void CPlayer::LookAtInputDir(_double fDeltaTime)
 	m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 }
 
+void CPlayer::Ledging(_double fDeltaTime)
+{
+	_float fCurAnimRate = (_float)m_pModel->Get_PlayRate();
+
+	switch (m_eCurLedgeState)
+	{
+	case EPARKOUR_LEDGESTATE::LEDGE_JUMP:
+	{
+		m_fAnimSpeed = 1.5f;
+		if (0.f < fCurAnimRate)
+		{
+			if (0.338f <= fCurAnimRate)
+			{
+				if (nullptr != m_pCurParkourTrigger)
+				{
+					if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
+					{
+						m_eCurLedgeState = LEDGE_HANGING_IDLE;
+						m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+						m_pPreParkourTrigger = nullptr;
+						m_pCurParkourTrigger = nullptr;
+						return;
+					}
+				}
+			}
+
+
+			if (0.1f <= fCurAnimRate && 0.4f >= fCurAnimRate)
+			{
+				if (true == m_bPressedDodgeKey)
+				{
+					m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_DOUBLEJUMP;
+					m_pModel->Change_AnimIndex(LEDGE_ANIM_DOUBLEJUMP);
+					m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+					return;
+				}
+			}
+
+			if (0.36f >= fCurAnimRate)
+			{
+				m_pTransformCom->Move_Up(fDeltaTime * 0.7f);
+			}
+			else if (0.4f <= fCurAnimRate && 0.66f >= fCurAnimRate)
+			{
+				m_fAnimSpeed = (fCurAnimRate < 0.52f) ?
+					g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 1.5f, 2.f, fCurAnimRate, 0.8f)
+					: g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 2.f, 0.6f, fCurAnimRate - 0.52f, 0.8f);
+
+				m_pTransformCom->Move_Up(fDeltaTime * 1.f);
+				m_pTransformCom->Move_Backward(fDeltaTime * 0.5f);
+				m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			}
+			else if (0.66f < fCurAnimRate && 0.75f >= fCurAnimRate)
+			{
+				m_fAnimSpeed = 0.6f;
+				m_pTransformCom->Move_Backward(fDeltaTime * 0.7f);
+				_float fPos_y = g_pGameInstance->Easing(TYPE_QuadIn, m_fFallingStart_Y, m_fJumpStart_Y, fCurAnimRate - 0.66f, 0.088f);
+				_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vMyPos = XMVectorSetY(vMyPos, fPos_y);
+				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+			}
+			else if (0.98f <= fCurAnimRate)
+			{
+				_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
+				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
+				m_eCurState = STATE_IDLE;
+				Set_State_IdleStart(fDeltaTime);
+				m_fFallingAcc = 0.f;
+			}
+		}
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_DOUBLEJUMP:
+	{
+		m_fAnimSpeed = 1.5f;
+		if (0.f < fCurAnimRate)
+		{
+			if (0.031f < fCurAnimRate && 0.9f >= fCurAnimRate)
+			{
+				if (0.359f <= fCurAnimRate)
+				{
+					m_fAnimSpeed = 0.f;
+				}
+
+				_float fPos_y = m_fFallingStart_Y + (6.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+				m_fFallingAcc += 0.03f;
+				
+				if (m_fJumpStart_Y >= fPos_y)
+				{
+					fPos_y = m_fJumpStart_Y;
+					m_fAnimSpeed = 5.f;
+				}
+				else
+				{
+					m_pTransformCom->Move_Backward(fDeltaTime * 1.f);
+				}
+				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vPos = XMVectorSetY(vPos, fPos_y);
+				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+			}
+			else if (0.98f <= fCurAnimRate)
+			{
+				_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
+				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
+				m_eCurState = STATE_IDLE;
+				Set_State_IdleStart(fDeltaTime);
+				m_pPreParkourTrigger = nullptr;
+				m_pCurParkourTrigger = nullptr;
+				m_fFallingAcc = 0.f;
+			}
+		}
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_IDLE:
+	{
+		m_pPreParkourTrigger = m_pCurParkourTrigger;
+
+		// Check to input FallingKey
+		if (0.f < fCurAnimRate && true == m_bPressedInteractKey)
+		{
+			m_eCurLedgeState = LEDGE_HANGING_FALLINGDOWN;
+			m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
+			m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			m_fJumpPower = 0.f;
+			return;
+		}
+
+		if (LEDGE_ANIM_HANGING_REACHOUT_UP == m_pModel->Get_NowAnimIndex()) 
+		{
+			if (m_ePreInputMovDir != m_eInputDir)
+			{
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+			}
+			else if (true == m_bPressedDodgeKey)
+			{
+				m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+				m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP;
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
+				m_fJumpPower = 8.f;
+			}
+		}
+		else
+		{
+			if (LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE == m_pModel->Get_NowAnimIndex())
+			{
+				if (true == m_bPressedDodgeKey)
+				{
+					m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_DOUBLEJUMP;
+					m_pModel->Change_AnimIndex(LEDGE_ANIM_DOUBLEJUMP);
+					m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+					return;
+				}
+			}
+
+			// Check to input MoveKey
+			if ((MOVDIR_F == m_eInputDir) || (MOVDIR_B == m_eInputDir) || (MOVDIR_L == m_eInputDir) || (MOVDIR_R == m_eInputDir))
+			{
+				m_eCurLedgeState = LEDGE_HANGING_MOVE;
+				if (true == Check_InputDirIsForward())
+				{
+					if ((MOVDIR_L == m_eInputDir) || (MOVDIR_R == m_eInputDir))
+					{
+						m_eLedgingMoveDir = m_eInputDir;
+						m_bLedgingMove = true;
+					}
+					else
+					{
+						m_bLedgingMove = false;
+						if (MOVDIR_B == m_eInputDir)
+						{
+							m_fAnimSpeed = 1.f;
+							m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE);
+							m_eCurLedgeState = LEDGE_HANGING_IDLE;
+						}
+						else
+						{
+							m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_UP);
+							m_eCurLedgeState = LEDGE_HANGING_IDLE;
+						}
+					}
+				}
+				else
+				{
+					if ((MOVDIR_F == m_eInputDir) || (MOVDIR_B == m_eInputDir))
+					{
+						_Vector vCamLook = XMVector3Normalize(m_pMainCameraTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+						_Vector vPlayerRight = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+						_float fDot = XMVectorGetX(XMVector3Dot(vCamLook, vPlayerRight));
+
+						if (0.f < fDot)
+						{
+							m_eLedgingMoveDir = (MOVDIR_F == m_eInputDir ? MOVDIR_R : MOVDIR_L);
+							m_bLedgingMove = true;
+						}
+						else
+						{
+							m_eLedgingMoveDir = (MOVDIR_F == m_eInputDir ? MOVDIR_L : MOVDIR_R);
+							m_bLedgingMove = true;
+						}
+					}
+					else
+					{
+						_Vector vCamRight = XMVector3Normalize(m_pMainCameraTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+						_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+						_float fDot = XMVectorGetX(XMVector3Dot(vCamRight, vPlayerLook));
+
+						m_bLedgingMove = false;
+						if (0.f < fDot)
+						{
+							if (MOVDIR_L == m_eInputDir)
+							{
+								m_fAnimSpeed = 1.f;
+								m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE);
+								m_eCurLedgeState = LEDGE_HANGING_IDLE;
+							}
+							else
+							{
+								m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_UP);
+								m_eCurLedgeState = LEDGE_HANGING_IDLE;
+							}
+						}
+						else
+						{
+							if (MOVDIR_R == m_eInputDir)
+							{
+								m_fAnimSpeed = 1.f;
+								m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE);
+								m_eCurLedgeState = LEDGE_HANGING_IDLE;
+							}
+							else
+							{
+								m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_REACHOUT_UP);
+								m_eCurLedgeState = LEDGE_HANGING_IDLE;
+							}
+						}
+					}
+				}
+
+				if (true == m_bLedgingMove)
+				{
+					if (MOVDIR_L == m_eLedgingMoveDir)
+					{
+						m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_MOVE_LEFT);
+					}
+					else
+					{
+						m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_MOVE_RIGHT);
+					}
+					m_bLedgingMove = false;
+				}
+
+				return;
+			}
+			//
+		}
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_MOVE:
+	{
+		if (0.f < fCurAnimRate)
+		{
+			switch (m_pModel->Get_NowAnimIndex())
+			{
+			case LEDGE_ANIM_HANGING_MOVE_LEFT:
+				m_pTransformCom->Move_Left(fDeltaTime * 0.1f);
+				break;
+			case LEDGE_ANIM_HANGING_MOVE_RIGHT:
+				m_pTransformCom->Move_Right(fDeltaTime * 0.1f);
+				break;
+			}
+
+			if (0.98f <= fCurAnimRate)
+			{
+				m_eCurLedgeState = LEDGE_HANGING_IDLE;
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+			}
+		}
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_TURN:
+	{
+		if (0.f < fCurAnimRate)
+		{
+			//m_pTransformCom->Turn_Dir();
+			if (0.98f <= fCurAnimRate)
+			{
+				//complete turn
+				m_eCurLedgeState = LEDGE_HANGING_IDLE;
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+			}
+		}
+	}
+	break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP:
+	{
+		//m_pTransformCom->Move_Down(fDeltaTime * 2.f);
+		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_float fPrePos_Y = XMVectorGetY(vMyPos);
+		m_fFallingAcc += 0.03f;
+		_float fPos_y = m_fFallingStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+
+		if (fPrePos_Y >= fPos_y)
+		{
+			m_eCurLedgeState = LEDGE_HANGING_FALLINGDOWN;
+			m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
+		}	
+
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vPos = XMVectorSetY(vPos, fPos_y);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLING:
+	{
+		m_pTransformCom->Move_Down(fDeltaTime * 2.f);
+		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_float fPos_Y = XMVectorGetY(vMyPos);
+		if (fPos_Y <= m_fJumpStart_Y)
+		{
+			vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
+			Set_State_IdleStart(fDeltaTime);
+			m_pPreParkourTrigger = nullptr;
+			m_pCurParkourTrigger = nullptr;
+		}
+		
+
+		_float fPos_y = m_fFallingStart_Y + (6.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+		m_fFallingAcc += 0.03f;
+
+		if (m_fJumpStart_Y >= fPos_y)
+		{
+			fPos_y = m_fJumpStart_Y;
+			m_fAnimSpeed = 5.f;
+		}
+		else
+		{
+			m_pTransformCom->Move_Backward(fDeltaTime * 1.f);
+		}
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vPos = XMVectorSetY(vPos, fPos_y);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+
+	}
+		break;
+	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN:
+	{
+		if (nullptr != m_pCurParkourTrigger && m_pPreParkourTrigger != m_pCurParkourTrigger)
+		{
+			if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
+			{
+				m_eCurLedgeState = LEDGE_HANGING_IDLE; 
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+				m_fFallingAcc = 0.f;
+				m_fFallingStart_Y = 0.f;
+				return;
+			}
+		}
+		//m_pTransformCom->Move_Down(fDeltaTime * 2.f);
+		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_float fPos_Y = XMVectorGetY(vMyPos);
+		if (fPos_Y <= m_fJumpStart_Y)
+		{
+			vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+			m_fFallingAcc = 0.f;
+			Set_State_IdleStart(fDeltaTime);
+			m_fFallingStart_Y = 0.f;
+			m_pPreParkourTrigger = nullptr;
+			m_pCurParkourTrigger = nullptr;
+			return;
+		}
+
+
+		_float fPos_y = m_fFallingStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+		m_fFallingAcc += 0.03f;
+
+		if (m_fJumpStart_Y >= fPos_y)
+		{
+			fPos_y = m_fJumpStart_Y;
+			m_fAnimSpeed = 5.f;
+		}
+	
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vPos = XMVectorSetY(vPos, fPos_y);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+	}
+	break;
+
+	}
+}
+
 void CPlayer::Play_DodgeAnim()
 {
 	switch (m_iCurCombo)
@@ -4096,6 +4583,7 @@ void CPlayer::Play_DodgeAnim()
 
 void CPlayer::Set_InputDir(_int iAxis_F, _int iAxis_R, _double fDeltaTime)
 {
+	m_ePreInputMovDir = m_eInputDir;
 	if (0 < iAxis_F)
 	{
 		if (0 < iAxis_R)
@@ -4737,7 +5225,7 @@ HRESULT CPlayer::SetUp_EtcInfo()
 	m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
 	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 	Update_AttachCamPos();
-
+	m_pMainCameraTransform = m_pMainCamera->Get_CamTransformCom();
 	// Pressed Move Key Amount
 	m_fMaxTime_PressedMoveKeyDuration = 1.f;
 

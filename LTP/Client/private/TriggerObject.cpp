@@ -57,6 +57,11 @@ _int CTriggerObject::Active_Trigger(_double fDeltaTime)
 	return _int();
 }
 
+CTriggerObject::EParkourTriggerType  CTriggerObject::Get_ParkourTriggerType()
+{
+	return EParkourTriggerType();
+}
+
 void CTriggerObject::Free()
 {
 	__super::Free();

@@ -106,3 +106,6 @@ LTP/Reference/Inc/GameObject.h
 LTP/ZAssimp/bin/Engine.dll
 LTP/ZAssimp/default/x64/Debug/vc140.idb
 LTP/assimpPack/
+LTP/Client/Assimp/ZAssimp.ipdb
+LTP/Client/assimpPack_Final/Engine.dll
+LTP/Client/assimpPack_Final/ZAssimp.iobj

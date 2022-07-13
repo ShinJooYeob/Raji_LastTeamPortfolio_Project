@@ -53,6 +53,7 @@
 #include "SpearWave.h"
 // Trigger Obj
 #include "Trigger_ChangeCameraView.h"
+#include "TestLedgeTrigger.h"
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -601,12 +602,12 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	 
 	// Player Skill
-	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.3f, 0.3f, 0.3f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PlayerSkill_SpearWave), TransformMatrix);
 	//
 
 
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	TransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f);
 	/* 테스트 알게락 */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
@@ -639,9 +640,12 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerWeapon_Chakra), CPlayerWeapon_Chakra::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_ChangeCameraView), CTrigger_ChangeCameraView::Create(m_pDevice, m_pDeviceContext)));
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
-#pragma endregion
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_TestLedgeTrigger), CTestLedgeTrigger::Create(m_pDevice, m_pDeviceContext)));
+	
 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));
+#pragma endregion
 
 	RELEASE_INSTANCE(CGameInstance);
 	EnterCriticalSection(_CriSec);
