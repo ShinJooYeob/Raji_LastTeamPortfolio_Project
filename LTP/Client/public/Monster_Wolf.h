@@ -2,10 +2,9 @@
 #include "Monster.h"
 
 BEGIN(Client)
-
-class CMonster_Wasp final : public CMonster
+class CMonster_Wolf final : public CMonster
 {
-	enum AnimationType{ANIM_RUN, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END};
+	enum AnimationType { ANIM_RUN, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END };
 
 	typedef struct tagState
 	{
@@ -14,9 +13,9 @@ class CMonster_Wasp final : public CMonster
 	}TRANSFORM_STATE;
 
 private:
-	CMonster_Wasp(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	CMonster_Wasp(const CMonster_Wasp& rhs);
-	virtual ~CMonster_Wasp() = default;
+	CMonster_Wolf(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	CMonster_Wolf(const CMonster_Wolf& rhs);
+	virtual ~CMonster_Wolf() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -60,7 +59,7 @@ private:
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
-	static CMonster_Wasp* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMonster_Wolf* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

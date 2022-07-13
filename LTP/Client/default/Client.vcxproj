@@ -188,8 +188,11 @@
     <ClInclude Include="..\public\Monster_Gadasura_Rage.h" />
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
+    <ClInclude Include="..\public\Monster_Spider.h" />
     <ClInclude Include="..\public\Monster_Wasp.h" />
     <ClInclude Include="..\public\Monster_Weapon_Universal.h" />
+    <ClInclude Include="..\public\Monster_Wolf.h" />
+    <ClInclude Include="..\public\Monster_Wormgrub.h" />
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\CopyMahabalasura.h" />
     <ClInclude Include="..\public\Mahabalasura.h" />
@@ -277,8 +280,11 @@
     <ClCompile Include="..\private\Monster_Gadasura_Rage.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp" />
+    <ClCompile Include="..\private\Monster_Spider.cpp" />
     <ClCompile Include="..\private\Monster_Wasp.cpp" />
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp" />
+    <ClCompile Include="..\private\Monster_Wolf.cpp" />
+    <ClCompile Include="..\private\Monster_Wormgrub.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\CopyMahabalasura.cpp" />
     <ClCompile Include="..\private\Mahabalasura.cpp" />

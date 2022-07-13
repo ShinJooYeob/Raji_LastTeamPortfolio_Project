@@ -1,18 +1,17 @@
 #include "stdafx.h"
-#include "..\public\Monster_Wasp.h"
+#include "..\public\Monster_Spider.h"
 
-
-CMonster_Wasp::CMonster_Wasp(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMonster_Spider::CMonster_Spider(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
 }
 
-CMonster_Wasp::CMonster_Wasp(const CMonster_Wasp & rhs)
+CMonster_Spider::CMonster_Spider(const CMonster_Spider & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMonster_Wasp::Initialize_Prototype(void * pArg)
+HRESULT CMonster_Spider::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -20,7 +19,7 @@ HRESULT CMonster_Wasp::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
+HRESULT CMonster_Spider::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -38,7 +37,7 @@ HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CMonster_Wasp::Update(_double dDeltaTime)
+_int CMonster_Spider::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
@@ -62,7 +61,7 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Wasp::LateUpdate(_double dDeltaTime)
+_int CMonster_Spider::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -79,7 +78,7 @@ _int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMonster_Wasp::Render()
+_int CMonster_Spider::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -99,14 +98,14 @@ _int CMonster_Wasp::Render()
 	return _int();
 }
 
-_int CMonster_Wasp::LateRender()
+_int CMonster_Spider::LateRender()
 {
 	return _int();
 }
 
-HRESULT CMonster_Wasp::SetUp_Info()
+HRESULT CMonster_Spider::SetUp_Info()
 {
-	for (_uint i = 0; i < 64; i++)
+	for (_uint i = 0; i < 16; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -118,7 +117,10 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		_float fSpeed = pUtil->RandomFloat(2, 3);
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
+
+
 		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(0 + _float(i)*1.f, 0, 2));
+
 
 
 
@@ -127,14 +129,14 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 	for (_uint i = 0; i < ANIM_END; i++)
 	{
-		CModel* pModel = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Wasp));
+		CModel* pModel = (CModel*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Spider));
 		NULL_CHECK_RETURN(pModel, E_FAIL);
 		m_pModel[i] = pModel;
 
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_64), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}
@@ -144,11 +146,11 @@ HRESULT CMonster_Wasp::SetUp_Info()
 	{
 		if (i == ANIM_RUN)
 		{
-			m_pModel[i]->Change_AnimIndex(0);
+			m_pModel[i]->Change_AnimIndex(1);
 		}
 		else if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 		{
-			m_pModel[i]->Change_AnimIndex(1);
+			m_pModel[i]->Change_AnimIndex(0);
 		}
 	}
 
@@ -164,7 +166,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 	return S_OK;
 }
 
-HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
+HRESULT CMonster_Spider::FollowMe(_double dDeltaTime)
 {
 	for (_int i = 0; i < ANIM_END; i++)
 	{
@@ -256,7 +258,7 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 
 
 
-HRESULT CMonster_Wasp::SetUp_Components()
+HRESULT CMonster_Spider::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
@@ -270,23 +272,12 @@ HRESULT CMonster_Wasp::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
+HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 {
 
 	for (auto& pObjectTransform : m_ModelTransGroup[ANIM_RUN])
 	{
 		pObjectTransform->Move_Forward(dDeltatime);
-	}
-
-	for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
-	{
-		for (auto& pObjectTransform : m_ModelTransGroup[i])
-		{
-			if (m_pModel[i]->Get_PlayRate() > 0.4)
-			{
-				pObjectTransform->Move_Forward(dDeltatime);
-			}
-		}
 	}
 
 	//_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
@@ -325,31 +316,31 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 	return S_OK;
 }
 
-CMonster_Wasp * CMonster_Wasp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMonster_Spider * CMonster_Spider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Wasp*	pInstance = new CMonster_Wasp(pDevice, pDeviceContext);
+	CMonster_Spider*	pInstance = new CMonster_Spider(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Wasp");
+		MSGBOX("Failed to Created CMonster_Spider");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMonster_Wasp::Clone(void * pArg)
+CGameObject * CMonster_Spider::Clone(void * pArg)
 {
-	CMonster_Wasp*	pInstance = new CMonster_Wasp(*this);
+	CMonster_Spider*	pInstance = new CMonster_Spider(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMonster_Wasp");
+		MSGBOX("Failed to Created CMonster_Spider");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMonster_Wasp::Free()
+void CMonster_Spider::Free()
 {
 	__super::Free();
 
