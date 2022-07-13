@@ -31,12 +31,13 @@ public:
 
 	PxRigidDynamic* Create_DemoChain(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* Create_DemoChain2(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
-
+	PxRigidDynamic* Create_MatchForBonePos(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	
-	static PxJoint* createBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	
+//	static PxJoint* createBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 	static PxJoint* CreateNomalJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-	static PxJoint* CreateDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-	static PxJoint* CreateHairSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateMYJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+//	static PxJoint* CreateHairSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
 
 
@@ -49,7 +50,6 @@ public:
 	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT desc);
 	HRESULT Set_ColiiderDesc2(PHYSXDESC_JOINT desc);
 	HRESULT Set_ColiderDesc_(PxTransform trans, PxVec3 scale, PxReal distance, CGameObject* game);
-	HRESULT Set_NomalJoint(CTransform* trans,CGameObject* obj, _uint lent);
 
 
 protected:
@@ -59,14 +59,14 @@ protected:
 
 	vector<CHierarchyNode*>		mVecHier;
 	vector<PxRigidDynamic*>		mVecActors;
-	static vector<PxJoint*>		mVecJoints;
+	vector<PxJoint*>			mVecJoints;
 
 	PxVec3						mOffsetVec;
 	ATTACHEDESC					mAttachDesc;
 
 	_uint						mType = 0;
 
-	_float4x4					BlenderMat[8];
+	_float4x4					BlenderMat[9];
 
 //	vector<_float4x4>			mVecBoneTestMat;
 

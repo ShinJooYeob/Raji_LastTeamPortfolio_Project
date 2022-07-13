@@ -73,11 +73,11 @@ _int CTestObject::Update(_double fDeltaTime)
 	//	m_pTransformCom->Turn_CW(up.XMVector(),fDeltaTime);
 	//}
 
-	if (KEYDOWN(DIK_F))
-	{
-		const wchar_t* name = GetSingle(CAssimpCreateMgr)->GetName_Iter_Plus();
-		FAILED_CHECK(Change_Component_by_NewAssign(SCENE_STATIC, name, TAG_COM(Com_Model)));
-	}
+	//if (KEYDOWN(DIK_F))
+	//{
+	//	const wchar_t* name = GetSingle(CAssimpCreateMgr)->GetName_Iter_Plus();
+	//	FAILED_CHECK(Change_Component_by_NewAssign(SCENE_STATIC, name, TAG_COM(Com_Model)));
+	//}
 
 	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 
