@@ -59,7 +59,7 @@ _int CTreeMesh::LateUpdate(_double fDeltaTime)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
-
+	return 0;
 }
 
 _int CTreeMesh::Render()

@@ -25,7 +25,8 @@ class CScene_Edit final : public CScene
 	{
 		Data_Map,
 		Data_UI,
-		Data_Particle,
+		Data_Particle_Mesh,
+		Data_Particle_Texture,
 		Data_CameraAction,
 		Data_HeightMap,
 		Data_FilterMap,
@@ -144,6 +145,10 @@ private:
 	HRESULT Update_ParticleTab(_double fDeltatime);
 	HRESULT Widget_SettingParticleDesc(_double fDeltatime);
 	HRESULT Widget_ModelParticleDesc(_double fDeltatime);
+
+
+	HRESULT Widget_SaveLoadTextureParticle(_double fDeltatime);
+	HRESULT Widget_SaveLoadMeshParticle(_double fDeltatime);
 
 	INSTPARTICLEDESC m_tParticleDesc;
 	INSTMESHDESC m_tMeshDesc;

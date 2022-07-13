@@ -143,6 +143,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_Depth")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_WorldPosition")));
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DistortionObject"), TEXT("Target_Defferred")));
 
 	
 	/* For.MRT_LightAcc : 그림자 그릴때 바인드 */
@@ -1868,7 +1869,7 @@ HRESULT CRenderer::Render_AfterObj()
 HRESULT CRenderer::Render_DistortionObject()
 {
 
-	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DefferredForNonLightObject")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DistortionObject")));
 
 	for (auto& RenderObject : m_RenderObjectList[RENDER_DISTORTION])
 	{
@@ -1880,7 +1881,7 @@ HRESULT CRenderer::Render_DistortionObject()
 	}
 	m_RenderObjectList[RENDER_DISTORTION].clear();
 
-	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DefferredForNonLightObject")));
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DistortionObject")));
 	FAILED_CHECK(Copy_DeferredToReference());
 	
 

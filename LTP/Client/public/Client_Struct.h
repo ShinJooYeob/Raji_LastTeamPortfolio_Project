@@ -87,7 +87,13 @@ typedef struct tagFonts
 
 typedef struct tagInstanceParticleDesc
 {
-	eInstanceEffectID		eParticleTypeID = InstanceEffect_End;
+	tagInstanceParticleDesc()
+	{
+		lstrcpy(szTextureProtoTypeTag, TAG_CP(Prototype_Texture_TestEffect));
+		lstrcpy(szTextureLayerTag, L"dds");
+	}
+
+	eInstanceEffectID		eParticleTypeID = InstanceEffect_Ball;
 	COMPONENTPROTOTYPEID	eInstanceCount = Prototype_VIBuffer_Point_Instance_1;
 	eInstancePassID			ePassID = InstancePass_BrightColor;
 
@@ -99,23 +105,25 @@ typedef struct tagInstanceParticleDesc
 	CTransform* FollowingTarget = nullptr;
 	eFollowingDirID		iFollowingDir = FollowingDir_Look;
 
-	const _tchar* szTextureProtoTypeTag = nullptr;
-	const _tchar* szTextureLayerTag = nullptr;
+	_tchar		szTextureProtoTypeTag[128];
+	_tchar		szTextureLayerTag[128];
 	_uint		iTextureLayerIndex = 0;
 
 	_int		iNoiseTextureIndex = 0;
 	_int		iMaskingTextureIndex = 0;
+	_float		fAppearTimer = 1.f;
 	_float2		vNoisePushingDir = _float2(0, 1);
+	_float		fDistortionNoisingPushPower = 0.5f;
 
-	_uint		TextureChageFrequency = 1;
+	_uint		TextureChageFrequency = 0;
 	_float2		vTextureXYNum = _float2(1, 1);
 	//텍스쳐 안에 형태가 몇개 있는지 -1이면 간격 기준으로 꽉차있는거
 	_int		iFigureCount_In_Texture = -1;
 
 
 
-	_float		TotalParticleTime = 0;
-	_float		EachParticleLifeTime = 0;
+	_float		TotalParticleTime = 2.f;
+	_float		EachParticleLifeTime = 0.35f;
 
 	_uint		SizeChageFrequency = 0;
 	_float3		ParticleSize = _float3(1, 1, 1);
@@ -127,7 +135,7 @@ typedef struct tagInstanceParticleDesc
 
 	_float		fMaxBoundaryRadius = 15.f;
 
-	_float Particle_Power = 1.f;
+	_float Particle_Power = 5.f;
 	_float2 PowerRandomRange = _float2(0.5f, 1.5f);
 	_float3 SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 
@@ -141,12 +149,24 @@ typedef struct tagInstanceParticleDesc
 
 	_float	m_fAlphaTestValue = 0.1f;
 
+
+	_float4 TempBuffer_0 = _float4(0);
+	_float4 TempBuffer_1 = _float4(0);
+	_float4 TempBuffer_2 = _float4(0);
+	_float4 TempBuffer_3 = _float4(0);
+
 }INSTPARTICLEDESC;
 
 typedef struct tagInstanceMeshDesc
 {
-	eInstanceEffectID		eParticleTypeID = InstanceEffect_End;
-	COMPONENTPROTOTYPEID	eInstanceCount = Prototype_ModelInstance_32;
+	tagInstanceMeshDesc()
+	{
+
+		lstrcpy(szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge));
+	}
+
+	eInstanceEffectID		eParticleTypeID = InstanceEffect_Ball;
+	COMPONENTPROTOTYPEID	eInstanceCount = Prototype_ModelInstance_1;
 	eMeshInstancePassID			ePassID = MeshPass_BrightColor;
 
 
@@ -155,7 +175,7 @@ typedef struct tagInstanceMeshDesc
 	CTransform* FollowingTarget = nullptr;
 	eFollowingDirID		iFollowingDir = FollowingDir_Look;
 
-	const _tchar* szModelMeshProtoTypeTag = nullptr;
+	_tchar		szModelMeshProtoTypeTag[128];
 	_uint		iModelAnimIndex = 0;
 
 
@@ -166,20 +186,20 @@ typedef struct tagInstanceMeshDesc
 	_float		fDistortionNoisingPushPower = 0.5f;
 
 
-	_float		TotalParticleTime = 0;
-	_float		EachParticleLifeTime = 0;
+	_float		TotalParticleTime = 2.f;
+	_float		EachParticleLifeTime = 0.35f;
 
 	_uint		SizeChageFrequency = 0;
 	_float3		ParticleSize = _float3(1, 1, 1);
 	_float3		ParticleSize2 = _float3(0, 0, 0);
 
 	_uint		ColorChageFrequency = 0;
-	_float4		TargetColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4		TargetColor2 = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4		TargetColor = _float4(1.f, 1.f, 1.f, 0.f);
+	_float4		TargetColor2 = _float4(1.f, 1.f, 1.f, 0.f);
 
 	_float		fMaxBoundaryRadius = 15.f;
 
-	_float Particle_Power = 1.f;
+	_float Particle_Power = 5.f;
 	_float2 PowerRandomRange = _float2(0.5f, 1.5f);
 	_float3 SubPowerRandomRange_RUL = _float3(1.f, 1.f, 1.f);
 
@@ -193,6 +213,10 @@ typedef struct tagInstanceMeshDesc
 	_float	fRotSpeed_Radian = XMConvertToRadians(1080);
 
 
+	_float4 TempBuffer_0 = _float4(0);
+	_float4 TempBuffer_1 = _float4(0);
+	_float4 TempBuffer_2 = _float4(0);
+	_float4 TempBuffer_3 = _float4(0);
 }INSTMESHDESC;
 
 

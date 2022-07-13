@@ -330,7 +330,7 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
 	m_MeshEffectDesc.FollowingTarget = m_pTransformCom;
 	m_MeshEffectDesc.iFollowingDir = FollowingDir_Right;
 
-	m_MeshEffectDesc.szModelMeshProtoTypeTag = TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain);
+	lstrcpy(m_MeshEffectDesc.szModelMeshProtoTypeTag, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain));
 
 	m_MeshEffectDesc.iNoiseTextureIndex = 0;
 	m_MeshEffectDesc.iMaskingTextureIndex= 0;

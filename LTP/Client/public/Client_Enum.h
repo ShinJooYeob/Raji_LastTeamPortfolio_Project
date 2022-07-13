@@ -44,9 +44,18 @@ enum eInstancePassID
 {
 	InstancePass_OriginColor,
 	InstancePass_BrightColor,
+
 	InstancePass_MaskingNoising,
-	InstancePass_AlphaDistortion,
+	InstancePass_MaskingNoising_Bright,
+	InstancePass_MaskingNoising_Appear,
+	InstancePass_MaskingNoising_Appear_Bright,
+
 	InstancePass_AllDistortion,
+	InstancePass_AllDistortion_Bright,
+	InstancePass_Distortion_DiffuseMix,
+	InstancePass_Distortion_DiffuseMix_Bright,
+	InstancePass_Distortion_ColorMix,
+	InstancePass_Distortion_ColorMix_Bright,
 
 	InstancePass_End
 };
@@ -107,14 +116,27 @@ static const char* Tag_InstancePass(eInstancePassID eTag)
 	case InstancePass_BrightColor:
 		return "InstancePass_BrightColor";
 
+
 	case InstancePass_MaskingNoising:
 		return "InstancePass_MaskingNoising";
-	case InstancePass_AlphaDistortion:
-		return "InstancePass_AlphaDistortion";
+	case InstancePass_MaskingNoising_Bright:
+		return "InstancePass_MaskingNoising_Bright";
+	case InstancePass_MaskingNoising_Appear:
+		return "InstancePass_MaskingNoising_Appear";
+	case InstancePass_MaskingNoising_Appear_Bright:
+		return "InstancePass_MaskingNoising_Appear_Bright";
 	case InstancePass_AllDistortion:
 		return "InstancePass_AllDistortion";
-
-
+	case InstancePass_AllDistortion_Bright:
+		return "InstancePass_AllDistortion_Bright";
+	case InstancePass_Distortion_DiffuseMix:
+		return "InstancePass_Distortion_DiffuseMix";
+	case InstancePass_Distortion_DiffuseMix_Bright:
+		return "InstancePass_Distortion_DiffuseMix_Bright";
+	case InstancePass_Distortion_ColorMix:
+		return "InstancePass_Distortion_ColorMix";
+	case InstancePass_Distortion_ColorMix_Bright:
+		return "InstancePass_Distortion_ColorMix_Bright";
 
 
 	default:

@@ -278,6 +278,10 @@ PS_OUT PS_MAIN_OriginColor(PS_IN In)
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	Out.vEmissive = In.vEmissive;
 	Out.vLimLight = In.vLimLightColor;
+
+
+	Out.vDiffuse = saturate(Out.vDiffuse);
+
 	return Out;
 }
 
@@ -301,6 +305,10 @@ PS_OUT PS_MAIN_BrightColor(PS_IN In)
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	Out.vEmissive = In.vEmissive;
 	Out.vLimLight = In.vLimLightColor;
+
+
+	Out.vDiffuse = saturate(Out.vDiffuse);
+
 	return Out;
 }
 
@@ -377,6 +385,7 @@ PS_OUT PS_MAIN_NoiseFireEffect(PS_Noise_IN In)
 
 	if (Out.vDiffuse.a < 0.1f)
 		discard;
+	Out.vDiffuse = saturate(Out.vDiffuse);
 
 	return Out;
 
@@ -456,6 +465,8 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 
 	if (Out.vDiffuse.a < 0.1f)
 		discard;
+
+	Out.vDiffuse = saturate(Out.vDiffuse);
 
 	return Out;
 
@@ -544,6 +555,8 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear(PS_Noise_IN In)
 
 	if (Out.vDiffuse.a < 0.1f)
 		discard;
+
+	Out.vDiffuse = saturate(Out.vDiffuse);
 
 	return Out;
 
@@ -634,6 +647,8 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear_Bright(PS_Noise_IN In)
 	if (Out.vDiffuse.a < 0.1f)
 		discard;
 
+	Out.vDiffuse = saturate(Out.vDiffuse);
+
 	return Out;
 
 }
@@ -688,9 +703,9 @@ PS_OUT_NODEFERRED PS_Distortion_All_Bright(PS_IN In)
 	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
 
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
-	vector BackBuffer = g_BackBufferTexture.Sample(DefaultSampler, TargetUV);
+	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
-	Out.vDiffuse = pow(BackBuffer,1.f/2.2f);
+	Out.vDiffuse = saturate(pow(BackBuffer,1.f/2.2f));
 
 	//Out.vDiffuse =  BackBuffer * (1 - Alpha) + (Alpha * g_vMixColor);
 
@@ -715,11 +730,11 @@ PS_OUT_NODEFERRED PS_Distortion_All_DiffuseMix(PS_IN In)
 	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
 
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
-	vector BackBuffer = g_BackBufferTexture.Sample(DefaultSampler, TargetUV);
+	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
 	//Out.vDiffuse = pow(BackBuffer, 1.f / 2.2f);
 
-	Out.vDiffuse =  BackBuffer * (1 - Alpha) + (Alpha * DiffuseDesc);
+	Out.vDiffuse = saturate(BackBuffer * (1 - Alpha) + (Alpha * DiffuseDesc));
 
 	Out.vDiffuse.a = 1.f;
 	return Out;
@@ -742,11 +757,11 @@ PS_OUT_NODEFERRED PS_Distortion_All_DiffuseMix_Bright(PS_IN In)
 	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
 
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
-	vector BackBuffer = g_BackBufferTexture.Sample(DefaultSampler, TargetUV);
+	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
 	//Out.vDiffuse = pow(BackBuffer, 1.f / 2.2f);
 
-	Out.vDiffuse = pow(BackBuffer * (1 - Alpha) + (Alpha * DiffuseDesc),1.f/2.2f);
+	Out.vDiffuse = saturate(pow(BackBuffer * (1 - Alpha) + (Alpha * DiffuseDesc),1.f/2.2f));
 	Out.vDiffuse.a = 1.f;
 
 	return Out;
@@ -769,11 +784,11 @@ PS_OUT_NODEFERRED PS_Distortion_All_ColorMix(PS_IN In)
 	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
 
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
-	vector BackBuffer = g_BackBufferTexture.Sample(DefaultSampler, TargetUV);
+	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
 	//Out.vDiffuse = pow(BackBuffer, 1.f / 2.2f);
 
-	Out.vDiffuse = BackBuffer * (1 - Alpha) + (Alpha * In.vLimLightColor);
+	Out.vDiffuse = saturate(BackBuffer * (1 - Alpha) + (Alpha * In.vLimLightColor));
 	Out.vDiffuse.a = 1.f;
 
 	return Out;
@@ -797,11 +812,11 @@ PS_OUT_NODEFERRED PS_Distortion_All_ColorMix_Bright(PS_IN In)
 	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
 
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
-	vector BackBuffer = g_BackBufferTexture.Sample(DefaultSampler, TargetUV);
+	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
 	//Out.vDiffuse = pow(BackBuffer, 1.f / 2.2f);
 
-	Out.vDiffuse = pow(BackBuffer * (1 - Alpha) + (Alpha * In.vLimLightColor), 1.f / 2.2f);
+	Out.vDiffuse = saturate(pow(BackBuffer * (1 - Alpha) + (Alpha * In.vLimLightColor), 1.f / 2.2f));
 	Out.vDiffuse.a = 1.f;
 
 	return Out;

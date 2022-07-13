@@ -54,8 +54,16 @@ _int CInstanceEffect::LateUpdate(_double TimeDelta)
 {
 	if (0 > __super::LateUpdate(TimeDelta))
 		return -1;
-	 
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
+
+	
+	if (m_tInstanceDesc.ePassID >= InstancePass_AllDistortion && m_tInstanceDesc.ePassID <= InstancePass_Distortion_ColorMix_Bright)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
+	}
+	else
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this));
+	}
 	   
 	return _int();
 }
@@ -232,8 +240,7 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 	FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_tInstanceDesc.iTextureLayerIndex));
 	FAILED_CHECK(m_pShaderCom->Set_Texture("g_DepthTexture", pGameInstance->Get_SRV(TEXT("Target_Depth"))));
 
-
-	if (m_tInstanceDesc.ePassID == InstancePass_MaskingNoising)
+	if (m_tInstanceDesc.ePassID >= InstancePass_MaskingNoising && m_tInstanceDesc.ePassID <= InstancePass_MaskingNoising_Appear_Bright)
 	{
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -242,8 +249,31 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
 		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tInstanceDesc.iMaskingTextureIndex));
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
-	}
 
+
+		if (m_tInstanceDesc.ePassID == InstancePass_MaskingNoising_Appear_Bright || m_tInstanceDesc.ePassID == InstancePass_MaskingNoising_Appear)
+		{
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tInstanceDesc.fAppearTimer, sizeof(_float)));
+		}
+	}
+	else if (m_tInstanceDesc.ePassID >= InstancePass_AllDistortion && m_tInstanceDesc.ePassID <= InstancePass_Distortion_ColorMix_Bright)
+	{
+		//g_NoiseTexture g_DiffuseTexture g_BackBufferTexture
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		//g_NoiseTexture / g_DiffuseTexture / g_SourTexture /  g_DepthTexture
+
+
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tInstanceDesc.fAppearTimer, sizeof(_float)));
+
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tInstanceDesc.iMaskingTextureIndex));
+
+		FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tInstanceDesc.fDistortionNoisingPushPower, sizeof(_float)));
+
+	}
 
 	_float2 UVSize = _float2(1 / m_tInstanceDesc.vTextureXYNum.x, 1 / m_tInstanceDesc.vTextureXYNum.y);
 

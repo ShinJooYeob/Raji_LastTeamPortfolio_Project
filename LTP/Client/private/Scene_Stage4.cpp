@@ -239,6 +239,7 @@ HRESULT CScene_Stage4::Ready_Layer_Boss(const _tchar * pLayerTag)
 HRESULT CScene_Stage4::Ready_Layer_MapObject(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Map_Demon_Tree),&_float3(20.f)));
+	return E_FAIL;
 }
 
 HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)

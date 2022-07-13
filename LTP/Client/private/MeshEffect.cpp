@@ -256,8 +256,7 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tInstanceDesc.iNoiseTextureIndex));
 		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tInstanceDesc.iMaskingTextureIndex));
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
-		
-	if (m_tInstanceDesc.ePassID >= MeshPass_MaskingNoising && m_tInstanceDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
+
 
 		if (m_tInstanceDesc.ePassID == MeshPass_MaskingNoising_Appear_Bright || m_tInstanceDesc.ePassID == MeshPass_MaskingNoising_Appear)
 		{
@@ -273,7 +272,7 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 
 		FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.vNoisePushingDir, sizeof(_float2)));
-		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tInstanceDesc.fDistortionNoisingPushPower, sizeof(_float)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tInstanceDesc.fDistortionNoisingPushPower, sizeof(_float)));
 		
 	}
 

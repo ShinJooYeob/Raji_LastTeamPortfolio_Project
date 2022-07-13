@@ -518,7 +518,10 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 
 		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
 			return E_FAIL;
+		}
 
 		DWORD	dwByte = 0;
 
@@ -569,12 +572,215 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 	{
 
 	}
-		break;
-	case Client::CScene_Edit::Data_Particle:
+	break;
+	case Client::CScene_Edit::Data_Particle_Mesh:
 	{
 
+
+		//../bin/Resources/Data/ParicleData/TextureParticle/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/ParicleData/MeshParticle/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		//HANDLE hFile = CreateFileW(szFullPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, NULL);
+
+
+
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+
+		_int iIDLength = 0;
+
+
+		
+
+		WriteFile(hFile, &(m_tMeshDesc.eParticleTypeID), sizeof(eInstanceEffectID), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.eInstanceCount), sizeof(COMPONENTPROTOTYPEID), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.ePassID), sizeof(eMeshInstancePassID), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.vFixedPosition), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.vPowerDirection), sizeof(_float3), &dwByte, nullptr);
+
+		iIDLength = lstrlen(m_tMeshDesc.szModelMeshProtoTypeTag);
+		WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, (m_tMeshDesc.szModelMeshProtoTypeTag), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.iModelAnimIndex), sizeof(_int), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.iNoiseTextureIndex), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.iMaskingTextureIndex), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.vNoisePushingDir), sizeof(_float2), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.fAppearTimer), sizeof(_float), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.fDistortionNoisingPushPower), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.TotalParticleTime), sizeof(_float), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.EachParticleLifeTime), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.SizeChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.ParticleSize), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.ParticleSize2), sizeof(_float3), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.ColorChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.TargetColor), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.TargetColor2), sizeof(_float4), &dwByte, nullptr);
+
+
+
+		WriteFile(hFile, &(m_tMeshDesc.fMaxBoundaryRadius), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.Particle_Power), sizeof(_float), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tMeshDesc.PowerRandomRange), sizeof(_float2), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.SubPowerRandomRange_RUL), sizeof(_float3), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tMeshDesc.ParticleStartRandomPosMin), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.ParticleStartRandomPosMax), sizeof(_float3), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.bAutoTurn), sizeof(_bool), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.bIsOclusion), sizeof(_bool), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.bEmissive), sizeof(_bool), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.vEmissive_SBB), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.fRotSpeed_Radian), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tMeshDesc.TempBuffer_0), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.TempBuffer_1), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.TempBuffer_2), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tMeshDesc.TempBuffer_3), sizeof(_float4), &dwByte, nullptr);
+
+		
+		CloseHandle(hFile);
+
+
 	}
-		break;
+	break;
+	case Client::CScene_Edit::Data_Particle_Texture:
+	{
+
+
+		//
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/ParicleData/TextureParticle/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		//HANDLE hFile = CreateFileW(szFullPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+		
+
+
+		WriteFile(hFile, &(m_tParticleDesc.eParticleTypeID), sizeof(eInstanceEffectID), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.eInstanceCount), sizeof(COMPONENTPROTOTYPEID), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.ePassID), sizeof(eInstancePassID), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.bBillboard), sizeof(_bool), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.vFixedPosition), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.vPowerDirection), sizeof(_float3), &dwByte, nullptr);
+
+		iIDLength = lstrlen(m_tParticleDesc.szTextureProtoTypeTag);
+		WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, (m_tParticleDesc.szTextureProtoTypeTag), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+		iIDLength = lstrlen(m_tParticleDesc.szTextureLayerTag);
+		WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, (m_tParticleDesc.szTextureLayerTag), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.iTextureLayerIndex), sizeof(_int), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.iNoiseTextureIndex), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.iMaskingTextureIndex), sizeof(_int), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.vNoisePushingDir), sizeof(_float2), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.fAppearTimer), sizeof(_float), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.fDistortionNoisingPushPower), sizeof(_float), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.TextureChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.vTextureXYNum), sizeof(_float2), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.iFigureCount_In_Texture), sizeof(_int), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.TotalParticleTime), sizeof(_float), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.EachParticleLifeTime), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.SizeChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.ParticleSize), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.ParticleSize2), sizeof(_float3), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.ColorChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.TargetColor), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.TargetColor2), sizeof(_float4), &dwByte, nullptr);
+
+
+
+		WriteFile(hFile, &(m_tParticleDesc.fMaxBoundaryRadius), sizeof(_float), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.Particle_Power), sizeof(_float), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.PowerRandomRange), sizeof(_float2), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.SubPowerRandomRange_RUL), sizeof(_float3), &dwByte, nullptr);
+
+		WriteFile(hFile, &(m_tParticleDesc.ParticleStartRandomPosMin), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.ParticleStartRandomPosMax), sizeof(_float3), &dwByte, nullptr);
+
+
+		WriteFile(hFile, &(m_tParticleDesc.AlphaBlendON), sizeof(_bool), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.bEmissive), sizeof(_bool), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.vEmissive_SBB), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.m_fAlphaTestValue), sizeof(_float), &dwByte, nullptr);
+
+
+
+		WriteFile(hFile, &(m_tParticleDesc.TempBuffer_0), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.TempBuffer_1), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.TempBuffer_2), sizeof(_float4), &dwByte, nullptr);
+		WriteFile(hFile, &(m_tParticleDesc.TempBuffer_3), sizeof(_float4), &dwByte, nullptr);
+
+
+		CloseHandle(hFile);
+
+
+	}
+	break;
 	case Client::CScene_Edit::Data_CameraAction:
 	{
 		//../bin/Resources/Data/Map/
@@ -593,8 +799,12 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 
 
+
 		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
 			return E_FAIL;
+		};
 
 		DWORD	dwByte = 0;
 
@@ -834,8 +1044,209 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 	}
 	break;
-	case Client::CScene_Edit::Data_Particle:
+	case Client::CScene_Edit::Data_Particle_Texture:
 	{
+		m_tParticleDesc = INSTPARTICLEDESC();
+
+		//../bin/Resources/Data/Map/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/ParicleData/TextureParticle/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+			return E_FAIL;
+
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+		_tchar szTempBuffer[MAX_PATH] = L"";
+
+
+
+
+		ReadFile(hFile, &(m_tParticleDesc.eParticleTypeID), sizeof(eInstanceEffectID), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.eInstanceCount), sizeof(COMPONENTPROTOTYPEID), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.ePassID), sizeof(eInstancePassID), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tParticleDesc.bBillboard), sizeof(_bool), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.vFixedPosition), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.vPowerDirection), sizeof(_float3), &dwByte, nullptr);
+
+
+		lstrcpy(szTempBuffer, L"");
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, szTempBuffer);
+
+
+		lstrcpy(szTempBuffer, L"");
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		lstrcpy(m_tParticleDesc.szTextureLayerTag, szTempBuffer);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.iTextureLayerIndex), sizeof(_int), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.iNoiseTextureIndex), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.iMaskingTextureIndex), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.vNoisePushingDir), sizeof(_float2), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.fAppearTimer), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.fDistortionNoisingPushPower), sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tParticleDesc.TextureChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.vTextureXYNum), sizeof(_float2), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.iFigureCount_In_Texture), sizeof(_int), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.TotalParticleTime), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.EachParticleLifeTime), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.SizeChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.ParticleSize), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.ParticleSize2), sizeof(_float3), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.ColorChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.TargetColor), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.TargetColor2), sizeof(_float4), &dwByte, nullptr);
+
+
+
+		ReadFile(hFile, &(m_tParticleDesc.fMaxBoundaryRadius), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.Particle_Power), sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tParticleDesc.PowerRandomRange), sizeof(_float2), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.SubPowerRandomRange_RUL), sizeof(_float3), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tParticleDesc.ParticleStartRandomPosMin), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.ParticleStartRandomPosMax), sizeof(_float3), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tParticleDesc.AlphaBlendON), sizeof(_bool), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.bEmissive), sizeof(_bool), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.vEmissive_SBB), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.m_fAlphaTestValue), sizeof(_float), &dwByte, nullptr);
+
+
+
+		ReadFile(hFile, &(m_tParticleDesc.TempBuffer_0), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.TempBuffer_1), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.TempBuffer_2), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tParticleDesc.TempBuffer_3), sizeof(_float4), &dwByte, nullptr);
+
+
+		CloseHandle(hFile);
+
+
+		
+	}
+	break;
+	case Client::CScene_Edit::Data_Particle_Mesh:
+	{
+		m_tMeshDesc = INSTMESHDESC();
+
+		//../bin/Resources/Data/Map/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/ParicleData/MeshParticle/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+			return E_FAIL;
+
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+		ReadFile(hFile, &(m_tMeshDesc.eParticleTypeID), sizeof(eInstanceEffectID), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.eInstanceCount), sizeof(COMPONENTPROTOTYPEID), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.ePassID), sizeof(eMeshInstancePassID), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tMeshDesc.vFixedPosition), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.vPowerDirection), sizeof(_float3), &dwByte, nullptr);
+
+		_tchar szTempBuffer[MAX_PATH] = L"";
+		lstrcpy(szTempBuffer, L"");
+
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+
+		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		lstrcpy(m_tMeshDesc.szModelMeshProtoTypeTag, szTempBuffer);
+
+		ReadFile(hFile, &(m_tMeshDesc.iModelAnimIndex), sizeof(_int), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.iNoiseTextureIndex), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.iMaskingTextureIndex), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.vNoisePushingDir), sizeof(_float2), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.fAppearTimer), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.fDistortionNoisingPushPower), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.TotalParticleTime), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.EachParticleLifeTime), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.SizeChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.ParticleSize), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.ParticleSize2), sizeof(_float3), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.ColorChageFrequency), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.TargetColor), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.TargetColor2), sizeof(_float4), &dwByte, nullptr);
+
+
+
+		ReadFile(hFile, &(m_tMeshDesc.fMaxBoundaryRadius), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.Particle_Power), sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tMeshDesc.PowerRandomRange), sizeof(_float2), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.SubPowerRandomRange_RUL), sizeof(_float3), &dwByte, nullptr);
+
+		ReadFile(hFile, &(m_tMeshDesc.ParticleStartRandomPosMin), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.ParticleStartRandomPosMax), sizeof(_float3), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.bAutoTurn), sizeof(_bool), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.bIsOclusion), sizeof(_bool), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.bEmissive), sizeof(_bool), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.vEmissive_SBB), sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.fRotSpeed_Radian), sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &(m_tMeshDesc.TempBuffer_0), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.TempBuffer_1), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.TempBuffer_2), sizeof(_float4), &dwByte, nullptr);
+		ReadFile(hFile, &(m_tMeshDesc.TempBuffer_3), sizeof(_float4), &dwByte, nullptr);
+
+		CloseHandle(hFile);
+
 
 	}
 	break;
@@ -2949,6 +3360,10 @@ HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 		FAILED_CHECK(Widget_SettingParticleDesc(fDeltatime));
 
 		open_action = 0;
+
+		FAILED_CHECK(Widget_SaveLoadTextureParticle(fDeltatime));
+
+		
 		ImGui::TreePop();
 	}
 	else
@@ -2960,6 +3375,8 @@ HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 	{
 		open_action = 1;
 		FAILED_CHECK(Widget_ModelParticleDesc(fDeltatime));
+
+		FAILED_CHECK(Widget_SaveLoadMeshParticle(fDeltatime));
 
 		ImGui::TreePop();
 	}
@@ -2984,7 +3401,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	ZeroMemory(TempIntArr, sizeof(_int) * 4);
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 
-
+	Make_VerticalSpacing(1);
 
 	{
 
@@ -3030,6 +3447,8 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		ImGui::SameLine(0, 10);		ImGui::Text(TAG_INSTPASS(m_tParticleDesc.ePassID));
 	}
 
+
+	Make_VerticalSpacing(1);
 
 	static bool	bIsFollowingTransform = false;
 	{
@@ -3087,8 +3506,9 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 
 
+	Make_VerticalSpacing(1);
 
-	if (m_tParticleDesc.ePassID == InstancePass_MaskingNoising)
+	if (m_tParticleDesc.ePassID >= InstancePass_MaskingNoising && m_tParticleDesc.ePassID <= InstancePass_MaskingNoising_Appear_Bright)
 	{
 		m_tParticleDesc.vNoisePushingDir;
 		
@@ -3110,7 +3530,36 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		m_tParticleDesc.iMaskingTextureIndex = tempint;
 
 	}
+	else if (m_tParticleDesc.ePassID >= InstancePass_AllDistortion && m_tParticleDesc.ePassID <= InstancePass_Distortion_ColorMix_Bright)
+	{
 
+		m_tParticleDesc.vNoisePushingDir;
+
+		_float2 tt = m_tParticleDesc.vNoisePushingDir.Get_Nomalize();
+		float fArr[2];
+		memcpy(fArr, &tt, sizeof(float) * 2);
+		ImGui::DragFloat2("Distortion Pusing Dir", fArr, 0.0001f, -1, 1);
+		memcpy(&tt, fArr, sizeof(float) * 2);
+		m_tParticleDesc.vNoisePushingDir = tt.Get_Nomalize();
+
+
+		ImGui::DragFloat("Push Power", &m_tParticleDesc.fDistortionNoisingPushPower, 0.001f, -100, 100);
+
+
+
+		int tempint = m_tParticleDesc.iNoiseTextureIndex;
+		ImGui::InputInt("MoiseTex Index", &tempint);
+		m_tParticleDesc.iNoiseTextureIndex = tempint;
+		tempint = m_tParticleDesc.iMaskingTextureIndex;
+		ImGui::InputInt("MaskingTex Index", &tempint);
+		m_tParticleDesc.iMaskingTextureIndex = tempint;
+
+
+
+
+	}
+
+	Make_VerticalSpacing(1);
 
 	static ImGuiTextFilter filter = "Prototype_Texture_TestEffect";
 	filter.Draw("Input TextureProtoTypeTag");
@@ -3118,7 +3567,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	string Temp = string(filter.InputBuf);
 	wstring wtemp;
 	wtemp.assign(Temp.begin(), Temp.end());
-	m_tParticleDesc.szTextureProtoTypeTag = wtemp.c_str();
+	lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, wtemp.c_str());
 
 	static ImGuiTextFilter filter2 = DefaultParticleNameTag;
 	filter2.Draw("Input TextureLayer");
@@ -3127,7 +3576,9 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	string Temp2 = string(filter2.InputBuf);
 	wstring wtemp2;
 	wtemp2.assign(Temp2.begin(), Temp2.end());
-	m_tParticleDesc.szTextureLayerTag = wtemp2.c_str();
+
+
+	lstrcpy(m_tParticleDesc.szTextureLayerTag, wtemp2.c_str());
 
 
 	int tt = m_tParticleDesc.iTextureLayerIndex;
@@ -3152,20 +3603,22 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 
 
+	Make_VerticalSpacing(1);
 
 
 
 
 	TempFloatArr[2] = m_tParticleDesc.TotalParticleTime;
-	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2]);
+	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2],0.0035f, (_float)g_fDeltaTime);
 	m_tParticleDesc.TotalParticleTime = TempFloatArr[2];
 
 
 	TempFloatArr[3] = m_tParticleDesc.EachParticleLifeTime;
-	ImGui::DragFloat("Each PaticleLifeTime", &TempFloatArr[3]);
+	ImGui::DragFloat("Each PaticleLifeTime", &TempFloatArr[3], 0.0035f, (_float)g_fDeltaTime);
 	m_tParticleDesc.EachParticleLifeTime = TempFloatArr[3];
 
 
+	Make_VerticalSpacing(1);
 
 	TempIntArr[3] = (_int)m_tParticleDesc.SizeChageFrequency;
 	ImGui::InputInt("SizeChageFrequency", &TempIntArr[3]);
@@ -3190,6 +3643,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.ParticleSize2.y = TempFloatArr[1];
 	m_tParticleDesc.ParticleSize2.z = TempFloatArr[2];
 
+	Make_VerticalSpacing(1);
 
 	ZeroMemory(TempIntArr, sizeof(_int) * 4);
 	TempIntArr[0] = _int(m_tParticleDesc.ColorChageFrequency);
@@ -3218,9 +3672,11 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.TargetColor2.z = TempFloatArr[2];
 	m_tParticleDesc.TargetColor2.w = TempFloatArr[3];
 
+	Make_VerticalSpacing(1);
+
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 	TempFloatArr[3] = m_tParticleDesc.Particle_Power;
-	ImGui::DragFloat("Particle_Power", &TempFloatArr[3]);
+	ImGui::DragFloat("Particle_Power", &TempFloatArr[3], 0.0034f);
 	m_tParticleDesc.Particle_Power = TempFloatArr[3];
 
 
@@ -3248,10 +3704,13 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.vPowerDirection.y = TempFloatArr[1];
 	m_tParticleDesc.vPowerDirection.z = TempFloatArr[2];
 
+	Make_VerticalSpacing(1);
+
 
 	TempFloatArr[3] = m_tParticleDesc.fMaxBoundaryRadius;
-	ImGui::DragFloat("MaxBoundaryRadius", &TempFloatArr[3]);
+	ImGui::DragFloat("MaxBoundaryRadius", &TempFloatArr[3], 0.0034f);
 	m_tParticleDesc.fMaxBoundaryRadius = TempFloatArr[3];
+
 
 
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
@@ -3273,14 +3732,19 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.ParticleStartRandomPosMax.y = TempFloatArr[1];
 	m_tParticleDesc.ParticleStartRandomPosMax.z = TempFloatArr[2];
 
+	Make_VerticalSpacing(1);
+
 	ImGui::Checkbox("Billboard", &m_tParticleDesc.bBillboard); ImGui::SameLine();
 	ImGui::Checkbox("AlphaBlendON", &m_tParticleDesc.AlphaBlendON); ImGui::SameLine();
 	ImGui::Checkbox("Emissive", &m_tParticleDesc.bEmissive);
+
+	Make_VerticalSpacing(1);
 
 	TempFloatArr[3] = m_tParticleDesc.m_fAlphaTestValue;
 	ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
 	m_tParticleDesc.m_fAlphaTestValue = TempFloatArr[3];
 
+	Make_VerticalSpacing(1);
 
 
 	if (ImGui::Button("Play Partlcle", ImVec2(-FLT_MIN, 30)))
@@ -3307,6 +3771,7 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	ZeroMemory(TempIntArr, sizeof(_int) * 4);
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 
+	Make_VerticalSpacing(1);
 
 	{
 
@@ -3350,6 +3815,7 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		}
 		ImGui::SameLine(0, 10);		ImGui::Text(TAG_MESHINSTPASS(m_tMeshDesc.ePassID));
 	}
+	Make_VerticalSpacing(1);
 
 
 	static bool	bIsFollowingTransform = false;
@@ -3407,6 +3873,8 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	}
 
 
+	Make_VerticalSpacing(1);
+
 	if (m_tMeshDesc.ePassID >= MeshPass_MaskingNoising && m_tMeshDesc.ePassID <= MeshPass_MaskingNoising_Appear_Bright)
 	{
 		m_tMeshDesc.vNoisePushingDir;
@@ -3439,23 +3907,31 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	}
 	else if (m_tMeshDesc.ePassID >= MeshPass_AllDistortion && m_tMeshDesc.ePassID <= MeshPass_Distortion_ColorMix_Bright)
 	{
-		m_tMeshDesc.vNoisePushingDir;
-
-		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
-		float fArr[2];
-		memcpy(fArr, &tt, sizeof(float) * 2);
-		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
-		memcpy(&tt, fArr, sizeof(float) * 2);
-		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
 
 
 		int tempint = m_tMeshDesc.iNoiseTextureIndex;
 		ImGui::InputInt("MoiseTex Index", &tempint);
 		m_tMeshDesc.iNoiseTextureIndex = tempint;
 
-		ImGui::DragFloat("Noise Push Power", &m_tMeshDesc.fDistortionNoisingPushPower,0.001f, -100, 100);
+
+		m_tMeshDesc.vNoisePushingDir;
+
+		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
+		float fArr[2];
+		memcpy(fArr, &tt, sizeof(float) * 2);
+		ImGui::DragFloat2("Distortion Pusing Dir", fArr, 0.0001f, -1, 1);
+		memcpy(&tt, fArr, sizeof(float) * 2);
+		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
+
+
+
+
+		ImGui::DragFloat("Push Power", &m_tMeshDesc.fDistortionNoisingPushPower,0.001f, -100, 100);
 	
 	}
+
+	Make_VerticalSpacing(1);
+
 
 	static ImGuiTextFilter filter = "Prototype_Mesh_AlgaeRock_Ledge";
 	filter.Draw("Input MeshProtoTypeTag");
@@ -3463,18 +3939,22 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	string Temp = string(filter.InputBuf);
 	wstring wtemp;
 	wtemp.assign(Temp.begin(), Temp.end());
-	m_tMeshDesc.szModelMeshProtoTypeTag = wtemp.c_str();
+
+	lstrcpy(m_tMeshDesc.szModelMeshProtoTypeTag, wtemp.c_str());
+
+	Make_VerticalSpacing(1);
 
 
 	TempFloatArr[2] = m_tMeshDesc.TotalParticleTime;
-	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2]);
+	ImGui::DragFloat("Total PaticleLifeTime", &TempFloatArr[2], 0.0035f, (_float)g_fDeltaTime);
 	m_tMeshDesc.TotalParticleTime = TempFloatArr[2];
 
 
 	TempFloatArr[3] = m_tMeshDesc.EachParticleLifeTime;
-	ImGui::DragFloat("Each PaticleLifeTime", &TempFloatArr[3]);
+	ImGui::DragFloat("Each PaticleLifeTime", &TempFloatArr[3], 0.0035f, (_float)g_fDeltaTime);
 	m_tMeshDesc.EachParticleLifeTime = TempFloatArr[3];
 
+	Make_VerticalSpacing(1);
 
 
 	TempIntArr[3] = (_int)m_tMeshDesc.SizeChageFrequency;
@@ -3500,6 +3980,7 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	m_tMeshDesc.ParticleSize2.y = TempFloatArr[1];
 	m_tMeshDesc.ParticleSize2.z = TempFloatArr[2];
 
+	Make_VerticalSpacing(1);
 
 	ZeroMemory(TempIntArr, sizeof(_int) * 4);
 	TempIntArr[0] = _int(m_tMeshDesc.ColorChageFrequency);
@@ -3528,9 +4009,15 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	m_tMeshDesc.TargetColor2.z = TempFloatArr[2];
 	m_tMeshDesc.TargetColor2.w = TempFloatArr[3];
 
+
+
+	Make_VerticalSpacing(1);
+
+
+
 	ZeroMemory(TempFloatArr, sizeof(_float) * 4);
 	TempFloatArr[3] = m_tMeshDesc.Particle_Power;
-	ImGui::DragFloat("Particle_Power", &TempFloatArr[3]);
+	ImGui::DragFloat("Particle_Power", &TempFloatArr[3], 0.0034f);
 	m_tMeshDesc.Particle_Power = TempFloatArr[3];
 
 
@@ -3549,10 +4036,11 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	m_tMeshDesc.SubPowerRandomRange_RUL.z = TempFloatArr[2];
 
 	
+	Make_VerticalSpacing(1);
 
 
 	TempFloatArr[3] = m_tMeshDesc.fMaxBoundaryRadius;
-	ImGui::DragFloat("MaxBoundaryRadius", &TempFloatArr[3]);
+	ImGui::DragFloat("MaxBoundaryRadius", &TempFloatArr[3], 0.0034f);
 	m_tMeshDesc.fMaxBoundaryRadius = TempFloatArr[3];
 
 
@@ -3574,6 +4062,9 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	m_tMeshDesc.ParticleStartRandomPosMax.x = TempFloatArr[0];
 	m_tMeshDesc.ParticleStartRandomPosMax.y = TempFloatArr[1];
 	m_tMeshDesc.ParticleStartRandomPosMax.z = TempFloatArr[2];
+
+	Make_VerticalSpacing(1);
+
 
 	ImGui::Checkbox("Emissive", &m_tMeshDesc.bEmissive); ImGui::SameLine();
 	ImGui::Checkbox("bIsOclusion", &m_tMeshDesc.bIsOclusion); ImGui::SameLine();
@@ -3599,6 +4090,9 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	}
 
 
+	Make_VerticalSpacing(1);
+
+
 	//TempFloatArr[3] = m_tMeshDesc.m_fAlphaTestValue;
 	//ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
 	//m_tMeshDesc.m_fAlphaTestValue = TempFloatArr[3];
@@ -3618,6 +4112,622 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 
 	return S_OK;
 }
+
+HRESULT CScene_Edit::Widget_SaveLoadTextureParticle(_double fDeltatime)
+{
+	Make_VerticalSpacing(10);
+
+
+	if (ImGui::Button("Clear TexParticle"))
+		ImGui::OpenPopup("Clear TexParticle");
+	ImGui::SameLine();
+	if (ImGui::Button("Save TexParticle"))
+		ImGui::OpenPopup("Save TexParticle");
+	ImGui::SameLine();
+	if (ImGui::Button("Laod TexParticle"))
+		ImGui::OpenPopup("Laod TexParticle");
+
+
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Clear TexParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("!!!!!!!!!!!!!!!!Waring!!!!!!!!!!!!!!!!\n\n Delete Batched Object Without Save!!!\n\n	Please Check Save One more\n\n\n");
+		ImGui::Separator();
+
+		//static int unused_i = 0;
+		//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+
+		//static bool dont_ask_me_next_time = false;
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+		//ImGui::PopStyleVar();
+
+		if (ImGui::Button("OK", ImVec2(130, 0))) {
+
+
+			m_tParticleDesc = INSTPARTICLEDESC();
+
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(130, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Save TexParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/ParicleData/TextureParticle/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+		ImGui::Text("Save TexParticle!\n\nExist TexParticle DataList");
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+		ImGui::Separator();
+		if (ImGui::Button("Save", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					ImGui::OpenPopup("One More Check");
+				}
+				else
+				{
+					//실제 저장
+
+					FAILED_CHECK(Sava_Data(filter.InputBuf, Data_Particle_Texture));
+
+					ImGui::CloseCurrentPopup();
+					m_FilePathList.clear();
+
+
+				}
+			}
+
+
+
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+			m_FilePathList.clear();
+		}
+
+
+		//서브 팝업
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("One More Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			ImGui::Text("Mapdata Already Exist\nDo you want to Override on it?");
+
+			if (ImGui::Button("Ok", ImVec2(130, 0)))
+			{
+
+				//실제 저장
+				Sava_Data(filter.InputBuf, Data_Particle_Texture);
+
+				ImGui::CloseCurrentPopup();
+				m_FilePathList.clear();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(130, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Laod TexParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Laod TexParticle!\n\n");
+		ImGui::Separator();
+
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/ParicleData/TextureParticle/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+
+
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					Load_Data(filter.InputBuf, Data_Particle_Texture);
+					m_FilePathList.clear();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			m_FilePathList.clear();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Widget_SaveLoadMeshParticle(_double fDeltatime)
+{
+
+
+	Make_VerticalSpacing(10);
+
+
+	if (ImGui::Button("Clear MeshParticle"))
+		ImGui::OpenPopup("Clear MeshParticle");
+	ImGui::SameLine();
+	if (ImGui::Button("Save MeshParticle"))
+		ImGui::OpenPopup("Save MeshParticle");
+	ImGui::SameLine();
+	if (ImGui::Button("Laod MeshParticle"))
+		ImGui::OpenPopup("Laod MeshParticle");
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Clear MeshParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("!!!!!!!!!!!!!!!!Waring!!!!!!!!!!!!!!!!\n\n Delete Batched Object Without Save!!!\n\n	Please Check Save One more\n\n\n");
+		ImGui::Separator();
+
+		//static int unused_i = 0;
+		//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+
+		//static bool dont_ask_me_next_time = false;
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+		//ImGui::PopStyleVar();
+
+		if (ImGui::Button("OK", ImVec2(130, 0))) {
+
+
+			m_tMeshDesc = INSTMESHDESC();
+
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(130, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Save MeshParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/ParicleData/MeshParticle/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+		ImGui::Text("Save MeshParticle!\n\nExist MeshParticleDataList");
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+		ImGui::Separator();
+		if (ImGui::Button("Save", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					ImGui::OpenPopup("One More Check");
+				}
+				else
+				{
+					//실제 저장
+
+					FAILED_CHECK(Sava_Data(filter.InputBuf, Data_Particle_Mesh));
+
+					ImGui::CloseCurrentPopup();
+					m_FilePathList.clear();
+
+
+				}
+			}
+
+
+
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+			m_FilePathList.clear();
+		}
+
+
+		//서브 팝업
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("One More Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			ImGui::Text("Mapdata Already Exist\nDo you want to Override on it?");
+
+			if (ImGui::Button("Ok", ImVec2(130, 0)))
+			{
+
+				//실제 저장
+				Sava_Data(filter.InputBuf, Data_Particle_Mesh);
+
+				ImGui::CloseCurrentPopup();
+				m_FilePathList.clear();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(130, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Laod MeshParticle", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Laod MeshParticle!\n\n");
+		ImGui::Separator();
+
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/ParicleData/MeshParticle/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+
+
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					Load_Data(filter.InputBuf, Data_Particle_Mesh);
+					m_FilePathList.clear();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			m_FilePathList.clear();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+
+
+
+
+
+
+
+
+	return S_OK;
+}
+
+
 
 HRESULT CScene_Edit::Update_CameraActionTab(_double fDeltatime)
 {
@@ -5660,8 +6770,9 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tParticleDesc.FollowingTarget = nullptr;
 	m_tMeshDesc.iFollowingDir = FollowingDir_Right;
 
-	m_tParticleDesc.szTextureProtoTypeTag = TAG_CP(Prototype_Texture_TestEffect);
-	m_tParticleDesc.szTextureLayerTag = L"dds";
+	lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, TAG_CP(Prototype_Texture_TestEffect));
+	lstrcpy(m_tParticleDesc.szTextureLayerTag, L"dds");
+
 	m_tParticleDesc.iTextureLayerIndex = 0;
 
 	m_tParticleDesc.iNoiseTextureIndex = 263;
@@ -5723,7 +6834,7 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 	m_tMeshDesc.FollowingTarget = nullptr;
 	m_tMeshDesc.iFollowingDir = FollowingDir_Up;
 
-	m_tMeshDesc.szModelMeshProtoTypeTag = TAG_CP(Prototype_Mesh_AlgaeRock_Ledge);
+	lstrcpy(m_tMeshDesc.szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge));
 
 	m_tMeshDesc.iNoiseTextureIndex = 263;
 	m_tMeshDesc.iMaskingTextureIndex = 0;
