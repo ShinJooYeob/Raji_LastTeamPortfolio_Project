@@ -331,6 +331,15 @@
     <Filter Include="01.GameObject\01.Player\02. Skill\01. SpearWave">
       <UniqueIdentifier>{c1f20be6-04a7-4a06-97e7-b175dc040153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue">
+      <UniqueIdentifier>{92aafd35-26ea-4779-ae53-ff36b4735169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle">
+      <UniqueIdentifier>{d3924e29-680f-4f68-8708-8feed799548a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
+      <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -598,11 +607,6 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
-    <ClInclude Include="..\public\CopyMahabalasura.h" />
-    <ClInclude Include="..\public\Mahabalasura.h" />
-    <ClInclude Include="..\public\Mahabalasura_Arms.h" />
-    <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
-    <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
@@ -701,6 +705,30 @@
     </ClInclude>
     <ClInclude Include="..\public\SpearWave.h">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FemaleStatue.h">
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CopyMahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Arms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahabalasuraArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MandalaMesh.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MandalaPuzzle.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -930,11 +958,6 @@
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
-    <ClCompile Include="..\private\CopyMahabalasura.cpp" />
-    <ClCompile Include="..\private\Mahabalasura.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
@@ -1046,6 +1069,30 @@
     </ClCompile>
     <ClCompile Include="..\private\SpearWave.cpp">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FemaleStatue.cpp">
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CopyMahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahabalasuraArms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MandalaMesh.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MandalaPuzzle.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

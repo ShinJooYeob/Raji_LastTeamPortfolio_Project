@@ -222,7 +222,7 @@ HRESULT CScene_Stage4::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Rangda)));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Snake),&_float3(8.f, -110.f, 53.f)));
 
@@ -238,7 +238,13 @@ HRESULT CScene_Stage4::Ready_Layer_Boss(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage4::Ready_Layer_MapObject(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Map_Demon_Tree),&_float3(20.f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Map_Demon_Tree),&_float3(0.f)));
+	//
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Map_FemaleStatue), &_float3(3.f, 0.f, -10.f)));
+	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Map_MandalaPuzzle), &_float3(0.f, 0.f, 0.f)));
+
+	return S_OK;
 }
 
 HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)

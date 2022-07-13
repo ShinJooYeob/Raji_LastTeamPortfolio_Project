@@ -35,13 +35,21 @@ public:
 public:
 	_float		Get_RotationAngle() { return m_fRotationAngle; }
 	_bool		Get_AngleZero() { return m_bIsAngleZero; }
+	_float		Get_TotalHeight() { return m_TotalHeight; }
+	_float		Get_Height() { return m_fHeight; }
+	_float3		Get_ObjPos() { return m_pTransformCom->Get_MatrixState(CTransform::STATE_POS); }
+	_float		Get_BeginningAngle() { return m_BeginningAngle; }
 
 public:
 	void		Set_AngleZero(_bool State) { m_bIsAngleZero = State; }
+	void		Set_ObjPos(_float3 Pos) { m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos); }
 
 public:
 	void		Turn_CCW();
 	void		Turn_CW();
+
+	_bool		CheckAngle();
+	void		ResetTotalHeight();
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -53,6 +61,11 @@ private:
 
 	_bool				m_bIsAngleZero = false;
 	_float				m_fRotationAngle = 0.f;
+
+	_float				m_BeginningAngle = 0.f;
+
+	_float				m_fHeight = 2.f;
+	_float				m_TotalHeight = 0;
 
 
 private:

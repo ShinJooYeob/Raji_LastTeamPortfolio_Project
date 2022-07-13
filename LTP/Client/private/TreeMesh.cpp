@@ -30,7 +30,64 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_DemonTreeDesc.m_Pos);
 	m_iPassIndex = 3;
 
-	m_pTransformCom->Scaled_All(_float3(1.3f));
+	switch (m_DemonTreeDesc.m_eDemonTreeNum)
+	{
+	case CTreeMesh::DEMONTREE_05:
+	{
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(0));
+		m_TotalHeight = 0;
+		m_BeginningAngle = 0;
+		m_bIsAngleZero = true;
+	}
+			break;
+	case CTreeMesh::DEMONTREE_04:
+	{
+		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight);
+		m_TotalHeight = m_fHeight;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(144.f));
+		m_BeginningAngle = 144.f;
+		m_fRotationAngle = 144.f;
+	}
+	break;
+	case CTreeMesh::DEMONTREE_03:
+	{
+		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 2.f);
+		m_TotalHeight = m_fHeight * 2.f;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(72.f));
+		m_BeginningAngle = 72.f;
+		m_fRotationAngle = 72.f;
+	}
+	break;
+	case CTreeMesh::DEMONTREE_02:
+	{
+		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 3.f);
+		m_TotalHeight = m_fHeight * 3.f;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(288.f));
+		m_BeginningAngle = 288.f;
+		m_fRotationAngle = 288.f;
+	}
+	break;
+	case CTreeMesh::DEMONTREE_01:
+	{
+		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 4.f);
+		m_TotalHeight = m_fHeight * 4.f;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(216.f));
+		m_BeginningAngle = 216.f;
+		m_fRotationAngle = 216.f;
+	}
+	break;
+
+	}
+
+	//m_pTransformCom->Scaled_All(_float3(1.3f));
 
 	return S_OK;
 }
@@ -39,7 +96,6 @@ _int CTreeMesh::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
-
 
 
 	return _int();
@@ -60,6 +116,7 @@ _int CTreeMesh::LateUpdate(_double fDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 
+	return _int();
 }
 
 _int CTreeMesh::Render()
@@ -105,13 +162,39 @@ _int CTreeMesh::LateRender()
 void CTreeMesh::Turn_CCW()
 {
 	--m_fRotationAngle;
-	m_pTransformCom->Rotation_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(m_fRotationAngle));
+	if (m_fRotationAngle <= -360.f)
+		m_fRotationAngle = 0;
+	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(m_fRotationAngle));
 }
 
 void CTreeMesh::Turn_CW()
 {
 	++m_fRotationAngle;
+
+	if (m_fRotationAngle >= 360.f)
+		m_fRotationAngle = 0;
+
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(m_fRotationAngle));
+}
+
+_bool CTreeMesh::CheckAngle()
+{
+	if ((m_fRotationAngle >= 0.f && m_fRotationAngle < 3.f) || (m_fRotationAngle >= 355.f && m_fRotationAngle <= 360.f) ||
+		(m_fRotationAngle <= 0.f && m_fRotationAngle >= -5.f) || (m_fRotationAngle <= -355.f && m_fRotationAngle >= -360.f)
+		|| m_fRotationAngle == 0.f)
+	{
+		m_fRotationAngle = 0;
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), m_fRotationAngle);
+		m_bIsAngleZero = true;
+	}
+
+	return m_bIsAngleZero;
+}
+
+void CTreeMesh::ResetTotalHeight()
+{
+	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	m_TotalHeight = Pos.y;
 }
 
 HRESULT CTreeMesh::SetUp_Components()
