@@ -30,11 +30,9 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 	
 
 	// 키나 외부 힘이 작용했을떄 예외처리
-	
-
-
 	//PxRigidDynamic* dynamic;
 	//dynamic->setKinematicTarget();
+
 	return S_OK;
 }
 
@@ -42,6 +40,36 @@ HRESULT CCollider_PhysX_Dynamic ::Initialize_Clone(void * pArg)
 HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 {
 	FAILED_CHECK(__super::Update_BeforeSimulation());
+
+	PxTransform CurrentPxTrans;
+
+	if (mbKeyDown)
+	{
+		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
+		CurrentPxTrans = PxTransform(mPxMainMatrix4x4);
+
+		// PxTransform trans = mMain_Actor->getGlobalPose();
+		// mPxMainMatrix4x4 = PxMat44(trans);
+		// mPxMainMatrix4x4.scale(PxVec4(mScale, 1));
+		// mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	}
+
+	else
+	{
+		mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
+		CurrentPxTrans = PxTransform(mPxMainMatrix4x4);
+	}
+
+	if (mPhysXDesc.eShapeType == E_GEOMAT_CAPSULE)
+	{
+		CurrentPxTrans.q = PxQuat(PxPi/2, PxVec3(0, 0, 1));
+		mMain_Actor->setGlobalPose(CurrentPxTrans);
+
+	}
+	else
+	{
+		mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
+	}
 
 
 	//if (mbKeyDown)
@@ -78,22 +106,7 @@ HRESULT CCollider_PhysX_Dynamic ::Update_BeforeSimulation()
 HRESULT CCollider_PhysX_Dynamic ::Update_AfterSimulation()
 {
 	FAILED_CHECK(__super::Update_AfterSimulation());
-	if (mbKeyDown)
-	{
-		mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldFloat4x4());
-		mMain_Actor->setGlobalPose(PxTransform(mPxMainMatrix4x4.column3.x, mPxMainMatrix4x4.column3.y, mPxMainMatrix4x4.column3.z));
-	// PxTransform trans = mMain_Actor->getGlobalPose();
-	// mPxMainMatrix4x4 = PxMat44(trans);
-	// mPxMainMatrix4x4.scale(PxVec4(mScale, 1));
-	// mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
-	}
 
-	else
-	{
-
-		mPxMainMatrix4x4 = mMain_Actor->getGlobalPose();
-		mMainTransform->Set_Matrix(PXMATTOMAT4x4(mPxMainMatrix4x4));
-	}
 
 	return S_OK;
 }
@@ -177,12 +190,16 @@ HRESULT CCollider_PhysX_Dynamic::Set_ColliderDesc_Player(PHYSXDESC_DYNAMIC desc)
 	mPxMainMatrix4x4 = MAT4X4TOPXMAT(mMainTransform->Get_WorldMatrix());
 	PxTransform nomalTransform = GetPxTransform(mPxMainMatrix4x4);
 	PxReal density = 1.f;
-	nomalTransform.q = PxQuat(PxPi / 2, FLOAT3TOPXVEC3(_float3(0, 0, 1)));
+	
+
+
 	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(nomalTransform, *gemo, density, FLOAT3TOPXVEC3(mPhysXDesc.mVelocity));
+	NULL_CHECK_BREAK(mMain_Actor);
 	NULL_CHECK_BREAK(mMain_Actor);
 	Safe_Delete(gemo);
 
 	mPxDynamicActor = static_cast<PxRigidDynamic*>(mMain_Actor);
+	Set_Kinecmatic(true);
 	SetBaseFlag();
 	return S_OK;
 

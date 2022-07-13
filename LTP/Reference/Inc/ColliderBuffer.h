@@ -7,9 +7,6 @@ class CColliderBuffer final : public CBase
 public:
 	enum BOUNDING { BOUNDING_ORIGINAL, BOUNDING_TRANSFORM, BOUNDING_END };
 
-
-
-
 private:
 	CColliderBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CColliderBuffer(const CColliderBuffer& rhs);

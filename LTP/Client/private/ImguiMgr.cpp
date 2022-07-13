@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Camera_Main.h"
 #include "TestObject_PhysX.h"
+#include "TestObject_BaseCollider.h"
 
 #include "PhysX/Collider_PhysX_Static.h"
 #include "PhysX/Collider_PhysX_Dynamic.h"
@@ -1239,7 +1240,6 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 {
 	static bool bTestObject = false;
 	
-
 	// static 오브젝트 배치
 	static _float3 Position = _float3::Zero();
 	ImGui::DragFloat3("POS:", (float*)&Position, 0.1f, -100, 100);
@@ -1367,7 +1367,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createStatic.mGameObect = obj;
 			NULL_CHECK_BREAK(createStatic.mTrnasform);
 			colStatic->Set_ColiiderDesc(createStatic);
-		}
+		}		
 
 		IMGUITREE_END
 	}
@@ -1578,6 +1578,28 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 
 	ImGui::Separator();
+
+	IMGUITREE("BaseCollision")
+	{
+		static CTestObject_BaseCollider* COllision_TestObj = nullptr;
+
+		if (ImGui::Button("CollisionTest"))
+		{
+			//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+			//(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_BaseCollision)));
+			//CTestObject_PhysX* obj =
+			//	static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
+
+
+		}
+
+
+
+		IMGUITREE_END
+	}
+
+
 
 	if (ImGui::Button("Delete_Static"))
 	{
