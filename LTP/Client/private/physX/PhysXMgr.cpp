@@ -716,6 +716,7 @@ PxRigidDynamic* CPhysXMgr::CreateDynamic(const PxTransform& t, const PxGeometry&
 PxRigidDynamic * CPhysXMgr::CreateDynamic_BaseActor(const PxTransform & t,const PxGeometry& geometry,PxReal density,  const PxVec3 & velocity)
 {
 
+
 	PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, t, geometry, *gMaterial1,density);
 	NULL_CHECK_BREAK(actor);
 	actor->setAngularDamping(0.05f);

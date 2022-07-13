@@ -92,7 +92,8 @@ public:
 		CGameObject*		mGameObject = nullptr;
 
 		E_GEOMAT_TYPE		eShapeType = E_GEOMAT_BOX;
-		_float3				mScale = _float3::One();
+		_float3				mMainScale = _float3::One();
+		_float3				mActorScale = _float3::One();
 		_float				mSeparation = 2;
 
 	}PHYSXDESC_JOINT;
