@@ -21,6 +21,14 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	_int		Get_iCompleteCount() {return m_iCompleteCount; }
+	_float		Get_NowTreeMesh_Angle();
+
+	_float		Get_NowTreeMesh_BeginningAngle();
+
+	vector<class CTreeMesh*>* Get_VecMeshs();
+
 private:
 //	CShader*						m_pShaderCom = nullptr;
 //	CRenderer*						m_pRendererCom = nullptr;
@@ -28,8 +36,13 @@ private:
 //	CModel*							m_pModel = nullptr;
 
 	_int							m_iCompleteCount = 0;//다 각도가 맞는지를 체크
+	_bool							m_bIsInterpolation = false; //보간켜기/끄기
+	_float							m_fInterpolation = 0.f;
 
-	vector<class CTreeMesh*>			m_pTreeMeshs;
+	vector<class CTreeMesh*>		m_pTreeMeshs;
+
+	_bool							m_bIsClear = false;
+	_bool							m_bTest = false;
 private:
 	HRESULT SetUp_Components();
 

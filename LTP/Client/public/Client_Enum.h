@@ -346,6 +346,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Effect_MagicCircle,
 	Prototype_Object_Map_Demon_Tree,
 	Prototype_Object_Map_TreeMesh,
+	Prototype_Object_Map_MandalaPuzzle,
+	Prototype_Object_Map_MandalaMesh,
+	Prototype_Object_Map_FemaleStatue,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -541,6 +544,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Map_TreeMesh:
 		return TEXT("Prototype_Object_Map_TreeMesh");
+
+	case Prototype_Object_Map_MandalaPuzzle:
+		return TEXT("Prototype_Object_Map_MandalaPuzzle");
+
+	case Prototype_Object_Map_MandalaMesh:
+		return TEXT("Prototype_Object_Map_MandalaMesh");
+
+	case Prototype_Object_Map_FemaleStatue:
+		return TEXT("Prototype_Object_Map_FemaleStatue");
 		
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
@@ -945,11 +957,19 @@ enum COMPONENTPROTOTYPEID
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
+
 	Prototype_Mesh_DemonTree_Seg01,
 	Prototype_Mesh_DemonTree_Seg02,
 	Prototype_Mesh_DemonTree_Seg03,
 	Prototype_Mesh_DemonTree_Seg04,
 	Prototype_Mesh_DemonTree_Seg05,
+
+	Prototype_Mesh_MandalaCircle_0,
+	Prototype_Mesh_MandalaCircle_1,
+	Prototype_Mesh_MandalaCircle_2,
+	Prototype_Mesh_MandalaCircle_3,
+	Prototype_Mesh_MandalaCircle_4,
+
 	Prototype_Mesh_TEST_STATIC,
 	Prototype_Mesh_PlayerSkill_SpearWave,
 
@@ -998,6 +1018,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Boss_MahabalasuraAttackArms,
 	Prototype_Mesh_Boss_MahabalasurWeapon,
 	Prototype_Mesh_Boss_MahabalasurCopy,
+	//MapObject
+	Prototype_Mesh_FemaleStatue,
 
 
 	Prototype_Mesh_SkyBox,
@@ -1198,6 +1220,21 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_DemonTree_Seg05:
 		return TEXT("DemonTree_Seg05.fbx");
 
+	case Prototype_Mesh_MandalaCircle_0:
+		return TEXT("MandalaCircle_0.fbx");
+
+	case Prototype_Mesh_MandalaCircle_1:
+		return TEXT("MandalaCircle_1.fbx");
+
+	case Prototype_Mesh_MandalaCircle_2:
+		return TEXT("MandalaCircle_2.fbx");
+
+	case Prototype_Mesh_MandalaCircle_3:
+		return TEXT("MandalaCircle_3.fbx");
+
+	case Prototype_Mesh_MandalaCircle_4:
+		return TEXT("MandalaCircle_4.fbx");
+
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");
 		break;
@@ -1355,6 +1392,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Copy_Boss.fbx");
 		break;
 
+	case Prototype_Mesh_FemaleStatue:
+		return TEXT("Female_statue.fbx");
+		break;
+		
 	case Prototype_Mesh_TestObject:
 		return TEXT("Prototype_Mesh_TestObject");
 		break;

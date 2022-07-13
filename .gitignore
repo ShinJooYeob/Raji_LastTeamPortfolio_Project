@@ -109,3 +109,12 @@ LTP/assimpPack/
 LTP/Client/Assimp/ZAssimp.ipdb
 LTP/Client/assimpPack_Final/Engine.dll
 LTP/Client/assimpPack_Final/ZAssimp.iobj
+LTP/Client/assimp_pack_Release/assimp-vc140-mt.dll
+LTP/Client/assimp_pack_Release/assimp-vc140-mtd.dll
+LTP/Client/assimp_pack_Release/Engine.dll
+LTP/Client/assimp_pack_Release/fmod.dll
+LTP/Client/assimp_pack_Release/fmodL.dll
+LTP/Client/assimp_pack_Release/ZAssimp.iobj
+LTP/Client/assimpPack_Final/assimp-vc140-mt.dll
+LTP/Client/assimpPack_Final/fmod.dll
+LTP/Client/assimpPack_Final/fmodL.dll
