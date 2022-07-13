@@ -331,6 +331,9 @@
     <Filter Include="01.GameObject\01.Player\02. Skill\01. SpearWave">
       <UniqueIdentifier>{c1f20be6-04a7-4a06-97e7-b175dc040153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\99. TestLedgeTrigger">
+      <UniqueIdentifier>{af31f2fd-bdb6-4710-83d3-ba8e30470a1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -597,7 +600,6 @@
     <ClInclude Include="..\public\Monster_Weapon_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\CopyMahabalasura.h" />
     <ClInclude Include="..\public\Mahabalasura.h" />
     <ClInclude Include="..\public\Mahabalasura_Arms.h" />
@@ -701,6 +703,12 @@
     </ClInclude>
     <ClInclude Include="..\public\SpearWave.h">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestLedgeTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -929,7 +937,6 @@
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\CopyMahabalasura.cpp" />
     <ClCompile Include="..\private\Mahabalasura.cpp" />
     <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
@@ -1046,6 +1053,12 @@
     </ClCompile>
     <ClCompile Include="..\private\SpearWave.cpp">
       <Filter>01.GameObject\01.Player\02. Skill\01. SpearWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestLedgeTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

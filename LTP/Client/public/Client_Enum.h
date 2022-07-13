@@ -263,8 +263,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerEffect_ShellingPoint,
 
 	Prototype_Trigger_ChangeCameraView,
+	Prototype_Trigger_TestLedgeTrigger,
 
 	Prototype_PlayerSkill_ShellingArrow,
+	Prototype_PlayerSkill_SpearWave,
 
 	Prototype_SkyBox,
 
@@ -389,11 +391,17 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Trigger_ChangeCameraView:
 		return TEXT("Prototype_Trigger_ChangeCameraView");
 		break;
-
+	case Prototype_Trigger_TestLedgeTrigger:
+		return TEXT("Prototype_Trigger_TestLedgeTrigger");
+		break;
+		
 	case Prototype_PlayerSkill_ShellingArrow:
 		return TEXT("Prototype_PlayerSkill_ShellingArrow");
 		break;
-	
+	case Prototype_PlayerSkill_SpearWave:
+		return TEXT("Prototype_PlayerSkill_SpearWave");
+		break;
+
 	case Prototype_StaticMapObject:
 		return TEXT("Prototype_StaticMapObject");
 		break;
@@ -1204,7 +1212,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("PlayerChakra.fbx");
 		break;
 	case Prototype_Mesh_PlayerWeapon_Arrow:
-		return TEXT("PlayerWeapon_Arrow.fbx");
+		return TEXT("BowArrow.fbx");
 		break;
 	case Prototype_Mesh_PlayerEffect_ShellingParabola:
 		return TEXT("ShellingParabola.fbx");

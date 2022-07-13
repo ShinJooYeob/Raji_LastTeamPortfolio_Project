@@ -6,6 +6,9 @@ BEGIN(Client)
 
 class CTriggerObject abstract : public CGameObject
 {
+public:
+	enum EParkourTriggerType { PACUR_LEDGE, PACUR_END };
+
 protected:
 	CTriggerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CTriggerObject(const CTriggerObject& rhs);
@@ -16,13 +19,15 @@ public:
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
 public:
-	virtual _int		Update(_double fDeltaTime) override;
-	virtual _int		LateUpdate(_double fDeltaTimer) override;
-	virtual _int		Render() override;
-	virtual _int		LateRender() override;
+	virtual _int					Update(_double fDeltaTime) override;
+	virtual _int					LateUpdate(_double fDeltaTimer) override;
+	virtual _int					Render() override;
+	virtual _int					LateRender() override;
 
-	virtual _int		Active_Trigger(_double fDeltaTime) = 0;
-	virtual _int		DeActive_Trigger(_double fDeltaTime) = 0;
+	virtual _int					Active_Trigger(_double fDeltaTime) = 0;
+	virtual _int					DeActive_Trigger(_double fDeltaTime) = 0;
+
+	virtual EParkourTriggerType 	Get_ParkourTriggerType();
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

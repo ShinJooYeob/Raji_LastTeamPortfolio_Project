@@ -6,6 +6,13 @@ BEGIN(Client)
 
 class CSpearWave final : public CGameObject
 {
+public:
+	typedef struct tagSpearWaveDesc
+	{
+		_float3				fStartPos;
+		_float3				fLookDir;
+	}SPEARWAVEDESC;
+
 private:
 	CSpearWave(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CSpearWave(const CSpearWave& rhs);
@@ -21,14 +28,14 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
-	void				Active_Trail(_bool bActivate);
+private:
+	HRESULT				SetUp_Components();
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CSwordTrail*		m_pSwordTrail = nullptr;
 
 public:
 	static CSpearWave*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -38,13 +38,13 @@ public:
 	virtual HRESULT		Initialize_Clone(void* pArg) override;
 
 public:
-	virtual _int		Update(_double fDeltaTime) override;
-	virtual _int		LateUpdate(_double fDeltaTimer) override;
-	virtual _int		Render() override;
-	virtual _int		LateRender() override;
+	virtual _int				Update(_double fDeltaTime) override;
+	virtual _int				LateUpdate(_double fDeltaTimer) override;
+	virtual _int				Render() override;
+	virtual _int				LateRender() override;
 
-	virtual _int		Active_Trigger(_double fDeltaTime) override;
-	virtual _int		DeActive_Trigger(_double fDeltaTime) override;
+	virtual _int				Active_Trigger(_double fDeltaTime) override;
+	virtual _int				DeActive_Trigger(_double fDeltaTime) override;
 
 public:
 	_bool				Check_CollisionToPlayer();

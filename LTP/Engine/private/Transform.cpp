@@ -447,7 +447,7 @@ void CTransform::LookDir(_fVector vTargetLook)
 
 	XMStoreFloat3((_float3*)(m_WorldMatrix.m[STATE_LOOK]), vLook * matScale.r[STATE_LOOK]);
 
-	if (XMVector3Equal(vLook, _float3(0, 1, 0).XMVector()))
+	if (XMVector3Equal(vLook, _float3(0, 1, 0).XMVector()) || XMVector3Equal(vLook, _float3(0, -1, 0).XMVector()))
 	{
 		//__debugbreak();
 		//MSGBOX("Can't Cross With Same Vector");
