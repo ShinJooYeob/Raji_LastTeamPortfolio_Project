@@ -50,7 +50,14 @@ CComponent * CComponentMgr::Clone_Component(_uint eSceneIdx, const _tchar * tagC
 
 
 	if (pPrototype == nullptr)
-		return nullptr;
+	{
+		pPrototype = Find_Component(0, tagComPrototype);
+
+		if (pPrototype == nullptr)
+		{
+			return nullptr;
+		}
+	}
 
   	CComponent* pCloneComponent = pPrototype->Clone(pArg);
 

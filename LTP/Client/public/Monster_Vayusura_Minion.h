@@ -79,6 +79,7 @@ private:
 
 	_bool				m_dAttackOn = true;
 
+	_double				m_dSpeedTime = 0;
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

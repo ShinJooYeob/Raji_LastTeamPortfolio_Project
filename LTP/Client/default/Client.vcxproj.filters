@@ -346,6 +346,21 @@
     <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
       <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster">
+      <UniqueIdentifier>{40a76dc0-5bd6-4973-ba81-d0604c5b41d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wasp">
+      <UniqueIdentifier>{8d6a29f4-949d-476d-8840-163f15ac95c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wormgrub">
+      <UniqueIdentifier>{432119d6-9d3e-4c5b-8802-eefb74c99036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Spider">
+      <UniqueIdentifier>{0a786c5a-77b1-4bd4-97c8-3442bb249433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf">
+      <UniqueIdentifier>{6e6c1b38-65a2-49c2-86e4-95fbcaa58489}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -752,6 +767,18 @@
     <ClInclude Include="..\public\MandalaPuzzle.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster_Wasp.h">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wasp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Wormgrub.h">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wormgrub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Spider.h">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Spider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Wolf.h">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1132,6 +1159,23 @@
     </ClCompile>
     <ClCompile Include="..\private\MandalaPuzzle.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\Monster_Wasp.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wasp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\Monster_Wormgrub.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wormgrub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp" />
+    <ClCompile Include="..\private\Monster_Spider.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Spider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Wolf.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -327,12 +327,24 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 {
-	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+	//_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
-	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+	//vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+	if (m_bOnceSwtich == false)
+	{
+		CTransform* Monster_Transform = static_cast<CTransform*>(static_cast<CGameObject*>(m_Monster_Bullet_UniversalDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, Monster_Transform->Get_MatrixState(CTransform::STATE_LOOK));
+
+		
+		m_bOnceSwtich = true;
+	}
+
+	m_pTransformCom->Move_Forward(dDeltaTime);
 
 	return S_OK;
 }
@@ -363,8 +375,16 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_Bullet(_double dDelt
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Default_Bullet(_double dDeltaTime)
 {
+	/*
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	*/
+	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
@@ -389,7 +409,7 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Howitzer_Bullet(_double dDel
 HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Default_Bullet(_double dDeltaTime)
 {
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 

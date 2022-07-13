@@ -59,7 +59,18 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+	
+	//if (m_pModel->Get_NowAnimIndex() == 8 ||m_pModel->Get_NowAnimIndex() == 9 || m_pModel->Get_NowAnimIndex() == 10)
+	//{
+	//FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration * 1.6452f, m_bIsOnScreen));
+	//}
+	//else
+	//{
+	//FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	//}
+
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	return _int();
@@ -195,7 +206,18 @@ HRESULT CMonster_Tezabsura_Minion::PlayAnim(_double dDeltaTime)
 	{
 		Once_AnimMotion(dDeltaTime);
 		_uint i = m_pModel->Get_NowAnimIndex();
-		m_pModel->Change_AnimIndex(m_iOnceAnimNumber,(i == 1 || i == 8 || i == 9 || i == 10)?0:0.15f); //1도 넣으면 좋을듯
+		switch (i)
+		{
+		case 1:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		case 9:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			break;
+		default:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.15f); //1도 넣으면 좋을듯 // (i == 1 || i == 8 || i == 9 || i == 10) ? 0 :
+			break;
+		}
 	}
 	else
 	{
@@ -445,13 +467,14 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
 
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.95)
 	{
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
+		m_dAcceleration = 1;
 
-		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
+		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
 			m_dOnceCoolTime = 0;
@@ -459,7 +482,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 	}
 
-	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
+	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
 
 
@@ -488,9 +511,36 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 1:
 			if (PlayRate > 0)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime);
+				m_pTransformCom->Move_Forward(dDeltaTime * 0.7);
 			}
 			break;
+		case 8:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 9:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 10:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
 		case 11:
 			if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
 			{

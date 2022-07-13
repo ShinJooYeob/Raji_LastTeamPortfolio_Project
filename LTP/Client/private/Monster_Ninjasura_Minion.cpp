@@ -253,6 +253,9 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 
 		m_dInfinity_CoolTime = 0;
+
+		m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+		m_MotionTrailOn = false; //!@#!@#@!#!@#!@#!@#!@#@$@!Test 맞을떄 모션 트레일온 false 시켜야함
 	}
 
 	return S_OK;
@@ -332,7 +335,7 @@ HRESULT CMonster_Ninjasura_Minion::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 19)
+	if (m_iOncePattern >= 17)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -413,7 +416,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Components()
 	////////////Motion Test
 	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
 
-	tMotionDesc.iNumTrailCount = 6;
+	tMotionDesc.iNumTrailCount = 1;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
 	tMotionDesc.iPassIndex = 5;
@@ -433,8 +436,8 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.95)
 	{
 		m_iAdjMovedIndex = 0;
-
-		m_bLookAtOn = true;
+		m_bLookAtOn = false;
+		m_dAcceleration = 1;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
@@ -453,96 +456,223 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_iMoveNumber = rand() % 5;
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 				m_iAdjMovedIndex++;
 			}
-			if (PlayRate <= 0.1)
+
+			if (PlayRate > 0 && PlayRate <= 0.1)
 			{
-				m_MotionTrailTime += dDeltaTime;
-				if (m_MotionTrailTime > 0.03)
-				{
-					m_MotionTrailOn = true;
-					
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f),1.f);
-					m_MotionTrailTime = 0;
-				}
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+			}
+			else if (PlayRate >= 0.1 && PlayRate <= 0.8)
+			{
+				m_MotionTrailOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 5);
 			}
-			else {
-				m_bIOnceAnimSwitch = false;
-				m_MotionTrailOn = false;
+			else if (PlayRate >= 0.8)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 
 			break;
 		}
-		case 4:
+		case 11:
 		{
-			m_bLookAtOn = false;
-
-			if (m_iAdjMovedIndex == 0)
+			if (m_iAdjMovedIndex == 0 && PlayRate >0)
 			{
-				m_iMoveNumber = rand() % 2;
-
+				m_MotionTrailOn = true;
 				m_iAdjMovedIndex++;
-
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 			}
-			if (PlayRate <= 0.1)
+
+			if (PlayRate >= 0.85)
 			{
-
-				switch (m_iMoveNumber)
-				{
-				case 0:
-					m_pTransformCom->Move_Right(dDeltaTime * 4);
-					break;
-				case 1:
-					m_pTransformCom->Move_Left(dDeltaTime * 4);
-					break;
-				default:
-					break;
-				}
-				////////////Motion Test
-				m_MotionTrailTime += dDeltaTime;
-				if (m_MotionTrailTime > 0.05)
-				{
-					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
-					m_MotionTrailTime = 0;
-				}
-				///////////////
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
+
 			break;
 		}
 		case 12:
 		{
 			m_bLookAtOn = false;
-			if (PlayRate <= 0.20)
+			
+	
+			if (PlayRate>0 && PlayRate <= 0.4)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 10);
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_MotionTrailOn = false;
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+					m_iAdjMovedIndex++;
+				}
+				m_pTransformCom->Move_Forward(dDeltaTime * 5);
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			{
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+			
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+			
+			}
+			break;
+		}
+		case 13:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+				m_iAdjMovedIndex++;
+			}
+
+			if (PlayRate >= 0.66)
+			{
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 			break;
 		}
 		case 14:
 		{
 			m_bLookAtOn = false;
-			if (PlayRate <= 0.20)
+
+
+			if (PlayRate > 0 && PlayRate <= 0.4)
 			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_MotionTrailOn = false;
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+					m_iAdjMovedIndex++;
+				}
 				m_pTransformCom->Move_Forward(dDeltaTime * 5);
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			{
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+
+			}
+			break;
+		}
+		case 15:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+
+				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 2);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0)
+			{
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+				m_iAdjMovedIndex++;
+			}
+			else if (m_iAdjMovedIndex == 2 && PlayRate > 0.1)
+			{
+				m_MotionTrailOn = false;
+
+				m_iAdjMovedIndex++;
 			}
 			break;
 		}
 		case 16:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			m_MotionTrailOn = false;
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
+			
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
 			break;
 		}
 		case 17:
 		{
-			m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+			m_MotionTrailOn = false;
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 2.852698f, (_float)PlayRate, 0.95f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_dAcceleration = 0.8;
+			}
+			break;
+		}
+		case 18:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.75)
+			{
+
+				m_MotionTrailOn = true;
+				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+
+				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				_Vector vDis = (m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+				PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * 4);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_iAdjMovedIndex++;
+
+			}
 			break;
 		}
 		case 19:
 		{
+			m_MotionTrailOn = false;
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.60714)
 			{
 

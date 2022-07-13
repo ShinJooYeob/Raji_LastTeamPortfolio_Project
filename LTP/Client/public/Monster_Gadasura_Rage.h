@@ -84,8 +84,6 @@ private:
 
 	_float3				m_TempLook;
 
-	_uint				m_iBoolOnce = 0;
-
 
 
 private:

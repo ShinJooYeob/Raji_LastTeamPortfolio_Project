@@ -324,6 +324,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Gadasura_Black,
 	Prototype_Object_Monster_Gadasura_Rage,
 	Prototype_Object_Monster_Gadasura_Rage_Hollogram,
+	Prototype_Object_Monster_Wasp,
+	Prototype_Object_Monster_Wormgrub,
+	Prototype_Object_Monster_Spider,
+	Prototype_Object_Monster_Wolf,
 
 	// PhyTest
 	Prototype_Object_Static_PhysX,
@@ -495,6 +499,18 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Monster_Gadasura_Rage_Hollogram:
 		return TEXT("Prototype_Object_Monster_Gadasura_Rage_Hollogram");
+
+	case Prototype_Object_Monster_Wasp:
+		return TEXT("Prototype_Object_Monster_Wasp");
+
+	case Prototype_Object_Monster_Wormgrub:
+		return TEXT("Prototype_Object_Monster_Wormgrub");
+
+	case Prototype_Object_Monster_Spider:
+		return TEXT("Prototype_Object_Monster_Spider");
+
+	case Prototype_Object_Monster_Wolf:
+		return TEXT("Prototype_Object_Monster_Wolf");
 
 	case Prototype_Object_Boss_Rangda:
 		return TEXT("Prototype_Object_Boss_Rangda");
@@ -776,6 +792,7 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_Monster:
 		return TEXT("Layer_Monster");
 		break;
+
 	case Layer_Unique_Monster:
 		return TEXT("Layer_Unique_Monster");
 		break;
@@ -997,6 +1014,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_Ninjasura,
 	Prototype_Mesh_Monster_Gadasura_Black,
 	Prototype_Mesh_Monster_Gadasura_Rage,
+	Prototype_Mesh_Monster_Wasp,
+	Prototype_Mesh_Monster_WormGrub,
+	Prototype_Mesh_Monster_Spider,
+	Prototype_Mesh_Monster_Wolf,
 
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
 	Prototype_Mesh_Monster_Weapon_Gadasura_Black,
@@ -1333,6 +1354,18 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Monster_Gadasura_Rage_Hollogram:
 		return TEXT("Monster_Gadasura_Rage_Hollogram.fbx");
 		break;
+
+	case Prototype_Mesh_Monster_Wasp:
+		return TEXT("Monster_Wasp.fbx");
+
+	case Prototype_Mesh_Monster_WormGrub:
+		return TEXT("Monster_WormGrub.fbx");
+
+	case Prototype_Mesh_Monster_Spider:
+		return TEXT("Monster_Spider.fbx");
+
+	case Prototype_Mesh_Monster_Wolf:
+		return TEXT("Monster_Wolf.fbx");
 
 	case Prototype_Mesh_Monster_Weapon_Gadasura_Black:
 		return TEXT("Gadesura_Black_Waepon.fbx");

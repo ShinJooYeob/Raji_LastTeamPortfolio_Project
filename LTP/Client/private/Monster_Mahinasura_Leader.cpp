@@ -243,7 +243,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
-
+	m_iOncePattern = 3;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -323,7 +323,8 @@ HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_iInfinityAnimNumber = 0;
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 1:
 		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
@@ -399,6 +400,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
+		m_dAcceleration = 1;
 
 		m_bLookAtOn = true;
 
@@ -441,36 +443,18 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		{
 		case 2:
 		{
-			if (PlayRate >= 0.2 && PlayRate <= 0.6)
+			if (PlayRate >= 0.175 && PlayRate <= 0.5)
 			{
 				m_bLookAtOn = false;
-				m_pTransformCom->Move_Backward(dDeltaTime * 0.3);
+
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.f, 1.f, (_float)PlayRate - 0.175f, 0.325f);
+				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed);
 			}
 			break;
 		}
 		case 3:
 		{
-			if (PlayRate <= 0.48)
-			{
-				if (m_iAdjMovedIndex == 0)
-				{
-					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-					m_iAdjMovedIndex += 1;
-				}
-				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook));
-
-				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(vRight) * 3 * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
-			}
-			break;
-		}
-		case 4:
-		{
-			if (PlayRate <= 0.48)
+			if (PlayRate >= 0.1 && PlayRate <= 0.5)
 			{
 				if (m_iAdjMovedIndex == 0)
 				{
@@ -481,7 +465,31 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
 
 				_float3 vDir;
-				XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * 3 * (_float)dDeltaTime);
+
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 14.f, 7.f, (_float)PlayRate - 0.1f, 0.38f);
+				XMStoreFloat3(&vDir, XMVector3Normalize(vRight) * fSpeed * (_float)dDeltaTime);
+
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
+			}
+			break;
+		}
+		case 4:
+		{
+			if (PlayRate >= 0.1 && PlayRate <= 0.5)
+			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+					m_iAdjMovedIndex += 1;
+				}
+				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
+
+				_float3 vDir;
+
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 14.f, 7.f, (_float)PlayRate - 0.1f, 0.38f);
+				XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * fSpeed * (_float)dDeltaTime);
 
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
@@ -495,14 +503,14 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 
 				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.5f, 2.2f, (_float)PlayRate - 0.27272f, 0.17128f);
+				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.7f, 2.5f, (_float)PlayRate - 0.27272f, 0.17128f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
 			else if (PlayRate >= 0.444 && PlayRate <= 0.6)
 			{
 				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.2f, 1.f, (_float)PlayRate - 0.444f, 0.156f);
+				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.5f, 1.7f, (_float)PlayRate - 0.444f, 0.156f);
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
@@ -512,11 +520,16 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (PlayRate >= 0.24 && PlayRate <= 0.48)
 			{
 				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 0.6);
+
+				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.24f, 0.2f);
+
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
 			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.49f, 0.35f);
+
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 			}
 			break;
 		}
@@ -525,24 +538,27 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				m_bLookAtOn = false;
 
+				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 1.24f, 2.5f, (_float)PlayRate - 0.24f, 0.36f); // PlayRate - 0.266666 and 0.5 - 0.266666
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
 
-				_float EasingSpeed;
-				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, (_float)PlayRate - 0.24f, 0.36f);
+				//_float EasingSpeed;
+				//EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, (_float)PlayRate - 0.24f, 0.36f);
 
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				//m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
 
-				//m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
 			}
 			break;
 		}
 		case 21: {
-			if (PlayRate > 0 && PlayRate <= 0.720720)
+			if (PlayRate > 0 && PlayRate <= 0.43859)
 			{
+				m_bLookAtOn = false;
+
 				m_dAcceleration = 1.5;
 			}
-			else if (PlayRate >= 0.720720 && PlayRate <= 0.875)
+			else if (PlayRate >= 0.43859 && PlayRate <= 0.78947)
 			{
-				m_dAcceleration = 3;
+				m_dAcceleration = 2;
 			}
 			else {
 				m_dAcceleration = 1;

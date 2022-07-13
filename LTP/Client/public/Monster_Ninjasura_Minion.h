@@ -81,9 +81,6 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
-private: //MoveNumber
-	_int				m_iMoveNumber = -1;
-
 	_float4				m_fDirection;
 
 private: //MotionTrail
