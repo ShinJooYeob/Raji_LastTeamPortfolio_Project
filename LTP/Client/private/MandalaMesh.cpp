@@ -206,7 +206,7 @@ HRESULT CMandalaMesh::SetUp_Components()
 
 CMandalaMesh * CMandalaMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMandalaMesh*	pInstance = new CMandalaMesh(pDevice, pDeviceContext);
+	CMandalaMesh*	pInstance = NEW CMandalaMesh(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -218,7 +218,7 @@ CMandalaMesh * CMandalaMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 CGameObject * CMandalaMesh::Clone(void * pArg)
 {
-	CMandalaMesh*	pInstance = new CMandalaMesh(*this);
+	CMandalaMesh*	pInstance = NEW CMandalaMesh(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

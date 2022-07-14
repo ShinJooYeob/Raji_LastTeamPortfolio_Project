@@ -244,7 +244,7 @@ HRESULT CCamera_Editor::Update_CamAction(_double fDeltaTime)
 
 CCamera_Editor * CCamera_Editor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CCamera_Editor* pInstance = new CCamera_Editor(pDevice, pDeviceContext);
+	CCamera_Editor* pInstance = NEW CCamera_Editor(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg))) {
 		MSGBOX("Failed to Create CCamera_Editor");
@@ -257,7 +257,7 @@ CCamera_Editor * CCamera_Editor::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CCamera_Editor::Clone(void * pArg)
 {
-	CCamera_Editor* pInstance = new CCamera_Editor(*this);
+	CCamera_Editor* pInstance = NEW CCamera_Editor(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg))) {
 		MSGBOX("Failed to Create CCamera_Editor");

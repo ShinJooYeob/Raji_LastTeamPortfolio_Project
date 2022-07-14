@@ -164,7 +164,7 @@ HRESULT CEditorTerrain::SetUp_Components()
 
 CEditorTerrain * CEditorTerrain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CEditorTerrain*	pInstance = new CEditorTerrain(pDevice,pDeviceContext);
+	CEditorTerrain*	pInstance = NEW CEditorTerrain(pDevice,pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -176,7 +176,7 @@ CEditorTerrain * CEditorTerrain::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CEditorTerrain::Clone(void * pArg)
 {
-	CEditorTerrain*	pInstance = new CEditorTerrain(*this);
+	CEditorTerrain*	pInstance = NEW CEditorTerrain(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

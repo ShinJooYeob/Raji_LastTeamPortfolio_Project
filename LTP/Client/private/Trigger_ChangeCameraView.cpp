@@ -278,7 +278,7 @@ HRESULT CTrigger_ChangeCameraView::SetUp_EtcInfo()
 
 CTrigger_ChangeCameraView * CTrigger_ChangeCameraView::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTrigger_ChangeCameraView*	pInstance = new CTrigger_ChangeCameraView(pDevice, pDeviceContext);
+	CTrigger_ChangeCameraView*	pInstance = NEW CTrigger_ChangeCameraView(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -290,7 +290,7 @@ CTrigger_ChangeCameraView * CTrigger_ChangeCameraView::Create(ID3D11Device * pDe
 
 CGameObject * CTrigger_ChangeCameraView::Clone(void * pArg)
 {
-	CTrigger_ChangeCameraView*	pInstance = new CTrigger_ChangeCameraView(*this);
+	CTrigger_ChangeCameraView*	pInstance = NEW CTrigger_ChangeCameraView(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

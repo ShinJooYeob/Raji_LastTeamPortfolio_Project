@@ -402,7 +402,7 @@ void CTestObject_PhysX::Set_ChainTest()
 
 CTestObject_PhysX * CTestObject_PhysX::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestObject_PhysX*	pInstance = new CTestObject_PhysX(pDevice, pDeviceContext);
+	CTestObject_PhysX*	pInstance = NEW CTestObject_PhysX(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -414,7 +414,7 @@ CTestObject_PhysX * CTestObject_PhysX::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CTestObject_PhysX * CTestObject_PhysX::Clone(void * pArg)
 {
-	CTestObject_PhysX*	pInstance = new CTestObject_PhysX(*this);
+	CTestObject_PhysX*	pInstance = NEW CTestObject_PhysX(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

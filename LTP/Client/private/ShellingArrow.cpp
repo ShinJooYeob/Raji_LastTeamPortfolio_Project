@@ -119,7 +119,7 @@ HRESULT CShellingArrow::SetUp_Components()
 
 CShellingArrow * CShellingArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CShellingArrow*	pInstance = new CShellingArrow(pDevice, pDeviceContext);
+	CShellingArrow*	pInstance = NEW CShellingArrow(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -131,7 +131,7 @@ CShellingArrow * CShellingArrow::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CShellingArrow::Clone(void * pArg)
 {
-	CShellingArrow*	pInstance = new CShellingArrow(*this);
+	CShellingArrow*	pInstance = NEW CShellingArrow(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

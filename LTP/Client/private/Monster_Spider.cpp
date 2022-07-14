@@ -338,7 +338,7 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 
 CMonster_Spider * CMonster_Spider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Spider*	pInstance = new CMonster_Spider(pDevice, pDeviceContext);
+	CMonster_Spider*	pInstance = NEW CMonster_Spider(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -350,7 +350,7 @@ CMonster_Spider * CMonster_Spider::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 
 CGameObject * CMonster_Spider::Clone(void * pArg)
 {
-	CMonster_Spider*	pInstance = new CMonster_Spider(*this);
+	CMonster_Spider*	pInstance = NEW CMonster_Spider(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

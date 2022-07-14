@@ -427,7 +427,7 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Jalsura * CMonster_Jalsura::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Jalsura*	pInstance = new CMonster_Jalsura(pDevice, pDeviceContext);
+	CMonster_Jalsura*	pInstance = NEW CMonster_Jalsura(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -439,7 +439,7 @@ CMonster_Jalsura * CMonster_Jalsura::Create(ID3D11Device * pDevice, ID3D11Device
 
 CGameObject * CMonster_Jalsura::Clone(void * pArg)
 {
-	CMonster_Jalsura*	pInstance = new CMonster_Jalsura(*this);
+	CMonster_Jalsura*	pInstance = NEW CMonster_Jalsura(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

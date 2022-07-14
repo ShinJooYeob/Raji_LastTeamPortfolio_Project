@@ -240,7 +240,7 @@ HRESULT CTestLedgeTrigger::SetUp_EtcInfo()
 
 CTestLedgeTrigger * CTestLedgeTrigger::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestLedgeTrigger*	pInstance = new CTestLedgeTrigger(pDevice, pDeviceContext);
+	CTestLedgeTrigger*	pInstance = NEW CTestLedgeTrigger(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -252,7 +252,7 @@ CTestLedgeTrigger * CTestLedgeTrigger::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CGameObject * CTestLedgeTrigger::Clone(void * pArg)
 {
-	CTestLedgeTrigger*	pInstance = new CTestLedgeTrigger(*this);
+	CTestLedgeTrigger*	pInstance = NEW CTestLedgeTrigger(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

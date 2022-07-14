@@ -364,7 +364,7 @@ HRESULT CPlayerWeapon_Shield::SetUp_EtcInfo()
 
 CPlayerWeapon_Shield * CPlayerWeapon_Shield::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayerWeapon_Shield*	pInstance = new CPlayerWeapon_Shield(pDevice, pDeviceContext);
+	CPlayerWeapon_Shield*	pInstance = NEW CPlayerWeapon_Shield(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -376,7 +376,7 @@ CPlayerWeapon_Shield * CPlayerWeapon_Shield::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CPlayerWeapon_Shield::Clone(void * pArg)
 {
-	CPlayerWeapon_Shield*	pInstance = new CPlayerWeapon_Shield(*this);
+	CPlayerWeapon_Shield*	pInstance = NEW CPlayerWeapon_Shield(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

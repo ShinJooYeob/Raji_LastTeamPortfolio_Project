@@ -722,7 +722,7 @@ _int CInstanceEffect_Ball::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Ball * CInstanceEffect_Ball::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Ball* pInstance = new CInstanceEffect_Ball(pDevice, pDeviceContext);
+	CInstanceEffect_Ball* pInstance = NEW CInstanceEffect_Ball(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -737,7 +737,7 @@ CInstanceEffect_Ball * CInstanceEffect_Ball::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CInstanceEffect_Ball::Clone(void * pArg)
 {
-	CInstanceEffect_Ball* pInstance = new CInstanceEffect_Ball(*this);
+	CInstanceEffect_Ball* pInstance = NEW CInstanceEffect_Ball(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -834,7 +834,7 @@ _int CInstanceEffect_Straight::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Straight * CInstanceEffect_Straight::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Straight* pInstance = new CInstanceEffect_Straight(pDevice, pDeviceContext);
+	CInstanceEffect_Straight* pInstance = NEW CInstanceEffect_Straight(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -848,7 +848,7 @@ CInstanceEffect_Straight * CInstanceEffect_Straight::Create(ID3D11Device * pDevi
 
 CGameObject * CInstanceEffect_Straight::Clone(void * pArg)
 {
-	CInstanceEffect_Straight* pInstance = new CInstanceEffect_Straight(*this);
+	CInstanceEffect_Straight* pInstance = NEW CInstanceEffect_Straight(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -951,7 +951,7 @@ _int CInstanceEffect_Cone::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Cone * CInstanceEffect_Cone::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Cone* pInstance = new CInstanceEffect_Cone(pDevice, pDeviceContext);
+	CInstanceEffect_Cone* pInstance = NEW CInstanceEffect_Cone(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -964,7 +964,7 @@ CInstanceEffect_Cone * CInstanceEffect_Cone::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CInstanceEffect_Cone::Clone(void * pArg)
 {
-	CInstanceEffect_Cone* pInstance = new CInstanceEffect_Cone(*this);
+	CInstanceEffect_Cone* pInstance = NEW CInstanceEffect_Cone(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -1067,7 +1067,7 @@ _int CInstanceEffect_Spread::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Spread * CInstanceEffect_Spread::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Spread* pInstance = new CInstanceEffect_Spread(pDevice, pDeviceContext);
+	CInstanceEffect_Spread* pInstance = NEW CInstanceEffect_Spread(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1080,7 +1080,7 @@ CInstanceEffect_Spread * CInstanceEffect_Spread::Create(ID3D11Device * pDevice, 
 
 CGameObject * CInstanceEffect_Spread::Clone(void * pArg)
 {
-	CInstanceEffect_Spread* pInstance = new CInstanceEffect_Spread(*this);
+	CInstanceEffect_Spread* pInstance = NEW CInstanceEffect_Spread(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -1216,7 +1216,7 @@ _int CInstanceEffect_Fountain::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Fountain * CInstanceEffect_Fountain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Fountain* pInstance = new CInstanceEffect_Fountain(pDevice, pDeviceContext);
+	CInstanceEffect_Fountain* pInstance = NEW CInstanceEffect_Fountain(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1229,7 +1229,7 @@ CInstanceEffect_Fountain * CInstanceEffect_Fountain::Create(ID3D11Device * pDevi
 
 CGameObject * CInstanceEffect_Fountain::Clone(void * pArg)
 {
-	CInstanceEffect_Fountain* pInstance = new CInstanceEffect_Fountain(*this);
+	CInstanceEffect_Fountain* pInstance = NEW CInstanceEffect_Fountain(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -1353,7 +1353,7 @@ _int CInstanceEffect_Suck::LateUpdate(_double fTimeDelta)
 
 CInstanceEffect_Suck * CInstanceEffect_Suck::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CInstanceEffect_Suck* pInstance = new CInstanceEffect_Suck(pDevice, pDeviceContext);
+	CInstanceEffect_Suck* pInstance = NEW CInstanceEffect_Suck(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1366,7 +1366,7 @@ CInstanceEffect_Suck * CInstanceEffect_Suck::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CInstanceEffect_Suck::Clone(void * pArg)
 {
-	CInstanceEffect_Suck* pInstance = new CInstanceEffect_Suck(*this);
+	CInstanceEffect_Suck* pInstance = NEW CInstanceEffect_Suck(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

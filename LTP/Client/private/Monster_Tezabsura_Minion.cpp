@@ -591,7 +591,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Tezabsura_Minion * CMonster_Tezabsura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Minion*	pInstance = NEW CMonster_Tezabsura_Minion(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -603,7 +603,7 @@ CMonster_Tezabsura_Minion * CMonster_Tezabsura_Minion::Create(ID3D11Device * pDe
 
 CGameObject * CMonster_Tezabsura_Minion::Clone(void * pArg)
 {
-	CMonster_Tezabsura_Minion*	pInstance = new CMonster_Tezabsura_Minion(*this);
+	CMonster_Tezabsura_Minion*	pInstance = NEW CMonster_Tezabsura_Minion(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

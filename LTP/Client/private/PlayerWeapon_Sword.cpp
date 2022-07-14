@@ -277,7 +277,7 @@ HRESULT CPlayerWeapon_Sword::SetUp_EtcInfo()
 
 CPlayerWeapon_Sword * CPlayerWeapon_Sword::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayerWeapon_Sword*	pInstance = new CPlayerWeapon_Sword(pDevice, pDeviceContext);
+	CPlayerWeapon_Sword*	pInstance = NEW CPlayerWeapon_Sword(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -289,7 +289,7 @@ CPlayerWeapon_Sword * CPlayerWeapon_Sword::Create(ID3D11Device * pDevice, ID3D11
 
 CGameObject * CPlayerWeapon_Sword::Clone(void * pArg)
 {
-	CPlayerWeapon_Sword*	pInstance = new CPlayerWeapon_Sword(*this);
+	CPlayerWeapon_Sword*	pInstance = NEW CPlayerWeapon_Sword(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

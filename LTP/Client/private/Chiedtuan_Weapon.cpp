@@ -183,7 +183,7 @@ HRESULT CChiedtuan_Weapon::SetUp_Components()
 
 CChiedtuan_Weapon * CChiedtuan_Weapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CChiedtuan_Weapon*	pInstance = new CChiedtuan_Weapon(pDevice, pDeviceContext);
+	CChiedtuan_Weapon*	pInstance = NEW CChiedtuan_Weapon(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -195,7 +195,7 @@ CChiedtuan_Weapon * CChiedtuan_Weapon::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CGameObject * CChiedtuan_Weapon::Clone(void * pArg)
 {
-	CChiedtuan_Weapon*	pInstance = new CChiedtuan_Weapon(*this);
+	CChiedtuan_Weapon*	pInstance = NEW CChiedtuan_Weapon(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -117,7 +117,7 @@ HRESULT CCollider_PhysX_Static::Render()
 CCollider_PhysX_Static * CCollider_PhysX_Static::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 
-	CCollider_PhysX_Static* pInstance = new CCollider_PhysX_Static(pDevice, pDeviceContext);
+	CCollider_PhysX_Static* pInstance = NEW CCollider_PhysX_Static(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -130,7 +130,7 @@ CCollider_PhysX_Static * CCollider_PhysX_Static::Create(ID3D11Device * pDevice, 
 
 CComponent * CCollider_PhysX_Static::Clone(void * pArg)
 {
-	CCollider_PhysX_Static* pInstance = new CCollider_PhysX_Static((*this));
+	CCollider_PhysX_Static* pInstance = NEW CCollider_PhysX_Static((*this));
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -742,7 +742,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 CMonster_Tezabsura_Landmine * CMonster_Tezabsura_Landmine::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Tezabsura_Landmine*	pInstance = new CMonster_Tezabsura_Landmine(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Landmine*	pInstance = NEW CMonster_Tezabsura_Landmine(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -754,7 +754,7 @@ CMonster_Tezabsura_Landmine * CMonster_Tezabsura_Landmine::Create(ID3D11Device *
 
 CGameObject * CMonster_Tezabsura_Landmine::Clone(void * pArg)
 {
-	CMonster_Tezabsura_Landmine*	pInstance = new CMonster_Tezabsura_Landmine(*this);
+	CMonster_Tezabsura_Landmine*	pInstance = NEW CMonster_Tezabsura_Landmine(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -33,7 +33,7 @@ HRESULT CCollider_PhysX_Base::Initialize_Prototype(void * pArg)
 		return E_FAIL;
 
 #ifdef _DEBUG
-	m_pBasicEffect = new BasicEffect(m_pDevice);
+	m_pBasicEffect = NEW BasicEffect(m_pDevice);
 	m_pBasicEffect->SetVertexColorEnabled(true);
 
 	const void* pShaderByteCode = nullptr;
@@ -46,7 +46,7 @@ HRESULT CCollider_PhysX_Base::Initialize_Prototype(void * pArg)
 
 	NULL_CHECK_RETURN(m_pInputLayout, E_FAIL);
 
-	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pDeviceContext);
+	m_pBatch = NEW PrimitiveBatch<DirectX::VertexPositionColor>(m_pDeviceContext);
 	NULL_CHECK_RETURN(m_pBatch, E_FAIL);
 
 #endif // _DEBUG

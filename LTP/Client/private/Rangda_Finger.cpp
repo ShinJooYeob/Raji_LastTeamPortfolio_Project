@@ -119,7 +119,7 @@ HRESULT CRangda_Finger::SetUp_Components()
 
 CRangda_Finger * CRangda_Finger::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CRangda_Finger*	pInstance = new CRangda_Finger(pDevice, pDeviceContext);
+	CRangda_Finger*	pInstance = NEW CRangda_Finger(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -131,7 +131,7 @@ CRangda_Finger * CRangda_Finger::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CRangda_Finger::Clone(void * pArg)
 {
-	CRangda_Finger*	pInstance = new CRangda_Finger(*this);
+	CRangda_Finger*	pInstance = NEW CRangda_Finger(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

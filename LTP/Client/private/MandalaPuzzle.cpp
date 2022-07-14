@@ -234,7 +234,7 @@ HRESULT CMandalaPuzzle::SetUp_Components()
 
 CMandalaPuzzle * CMandalaPuzzle::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMandalaPuzzle*	pInstance = new CMandalaPuzzle(pDevice, pDeviceContext);
+	CMandalaPuzzle*	pInstance = NEW CMandalaPuzzle(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -246,7 +246,7 @@ CMandalaPuzzle * CMandalaPuzzle::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CMandalaPuzzle::Clone(void * pArg)
 {
-	CMandalaPuzzle*	pInstance = new CMandalaPuzzle(*this);
+	CMandalaPuzzle*	pInstance = NEW CMandalaPuzzle(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -130,7 +130,7 @@ HRESULT CRangda_MagicCircle::SetUp_Components()
 
 CRangda_MagicCircle * CRangda_MagicCircle::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CRangda_MagicCircle*	pInstance = new CRangda_MagicCircle(pDevice, pDeviceContext);
+	CRangda_MagicCircle*	pInstance = NEW CRangda_MagicCircle(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -142,7 +142,7 @@ CRangda_MagicCircle * CRangda_MagicCircle::Create(ID3D11Device * pDevice, ID3D11
 
 CGameObject * CRangda_MagicCircle::Clone(void * pArg)
 {
-	CRangda_MagicCircle*	pInstance = new CRangda_MagicCircle(*this);
+	CRangda_MagicCircle*	pInstance = NEW CRangda_MagicCircle(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

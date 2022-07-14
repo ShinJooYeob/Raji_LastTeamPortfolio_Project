@@ -209,7 +209,7 @@ HRESULT CScene_Loby::Ready_NonAnimObject(const _tchar * pLayerTag)
 
 CScene_Loby * CScene_Loby::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Loby* pTempLoby = new CScene_Loby(pDevice,pDeviceContext);
+	CScene_Loby* pTempLoby = NEW CScene_Loby(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

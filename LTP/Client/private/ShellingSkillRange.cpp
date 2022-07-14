@@ -161,7 +161,7 @@ HRESULT CShellingSkillRange::SetUp_Etc()
 
 CShellingSkillRange * CShellingSkillRange::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CShellingSkillRange*	pInstance = new CShellingSkillRange(pDevice, pDeviceContext);
+	CShellingSkillRange*	pInstance = NEW CShellingSkillRange(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -173,7 +173,7 @@ CShellingSkillRange * CShellingSkillRange::Create(ID3D11Device * pDevice, ID3D11
 
 CGameObject * CShellingSkillRange::Clone(void * pArg)
 {
-	CShellingSkillRange*	pInstance = new CShellingSkillRange(*this);
+	CShellingSkillRange*	pInstance = NEW CShellingSkillRange(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

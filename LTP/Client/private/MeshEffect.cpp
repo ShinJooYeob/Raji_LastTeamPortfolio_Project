@@ -632,7 +632,7 @@ _int CMeshEffect_Ball::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Ball * CMeshEffect_Ball::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Ball* pInstance = new CMeshEffect_Ball(pDevice, pDeviceContext);
+	CMeshEffect_Ball* pInstance = NEW CMeshEffect_Ball(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -647,7 +647,7 @@ CMeshEffect_Ball * CMeshEffect_Ball::Create(ID3D11Device * pDevice, ID3D11Device
 
 CGameObject * CMeshEffect_Ball::Clone(void * pArg)
 {
-	CMeshEffect_Ball* pInstance = new CMeshEffect_Ball(*this);
+	CMeshEffect_Ball* pInstance = NEW CMeshEffect_Ball(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -737,7 +737,7 @@ _int CMeshEffect_Straight::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Straight * CMeshEffect_Straight::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Straight* pInstance = new CMeshEffect_Straight(pDevice, pDeviceContext);
+	CMeshEffect_Straight* pInstance = NEW CMeshEffect_Straight(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -751,7 +751,7 @@ CMeshEffect_Straight * CMeshEffect_Straight::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CMeshEffect_Straight::Clone(void * pArg)
 {
-	CMeshEffect_Straight* pInstance = new CMeshEffect_Straight(*this);
+	CMeshEffect_Straight* pInstance = NEW CMeshEffect_Straight(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -845,7 +845,7 @@ _int CMeshEffect_Cone::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Cone * CMeshEffect_Cone::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Cone* pInstance = new CMeshEffect_Cone(pDevice, pDeviceContext);
+	CMeshEffect_Cone* pInstance = NEW CMeshEffect_Cone(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -858,7 +858,7 @@ CMeshEffect_Cone * CMeshEffect_Cone::Create(ID3D11Device * pDevice, ID3D11Device
 
 CGameObject * CMeshEffect_Cone::Clone(void * pArg)
 {
-	CMeshEffect_Cone* pInstance = new CMeshEffect_Cone(*this);
+	CMeshEffect_Cone* pInstance = NEW CMeshEffect_Cone(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -952,7 +952,7 @@ _int CMeshEffect_Spread::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Spread * CMeshEffect_Spread::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Spread* pInstance = new CMeshEffect_Spread(pDevice, pDeviceContext);
+	CMeshEffect_Spread* pInstance = NEW CMeshEffect_Spread(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -965,7 +965,7 @@ CMeshEffect_Spread * CMeshEffect_Spread::Create(ID3D11Device * pDevice, ID3D11De
 
 CGameObject * CMeshEffect_Spread::Clone(void * pArg)
 {
-	CMeshEffect_Spread* pInstance = new CMeshEffect_Spread(*this);
+	CMeshEffect_Spread* pInstance = NEW CMeshEffect_Spread(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -1115,7 +1115,7 @@ _int CMeshEffect_Fountain::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Fountain * CMeshEffect_Fountain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Fountain* pInstance = new CMeshEffect_Fountain(pDevice, pDeviceContext);
+	CMeshEffect_Fountain* pInstance = NEW CMeshEffect_Fountain(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1128,7 +1128,7 @@ CMeshEffect_Fountain * CMeshEffect_Fountain::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CMeshEffect_Fountain::Clone(void * pArg)
 {
-	CMeshEffect_Fountain* pInstance = new CMeshEffect_Fountain(*this);
+	CMeshEffect_Fountain* pInstance = NEW CMeshEffect_Fountain(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
@@ -1243,7 +1243,7 @@ _int CMeshEffect_Suck::LateUpdate(_double fTimeDelta)
 
 CMeshEffect_Suck * CMeshEffect_Suck::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMeshEffect_Suck* pInstance = new CMeshEffect_Suck(pDevice, pDeviceContext);
+	CMeshEffect_Suck* pInstance = NEW CMeshEffect_Suck(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1256,7 +1256,7 @@ CMeshEffect_Suck * CMeshEffect_Suck::Create(ID3D11Device * pDevice, ID3D11Device
 
 CGameObject * CMeshEffect_Suck::Clone(void * pArg)
 {
-	CMeshEffect_Suck* pInstance = new CMeshEffect_Suck(*this);
+	CMeshEffect_Suck* pInstance = NEW CMeshEffect_Suck(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

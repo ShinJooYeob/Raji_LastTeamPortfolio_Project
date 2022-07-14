@@ -413,7 +413,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Vayusura_Leader * CMonster_Vayusura_Leader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Vayusura_Leader*	pInstance = new CMonster_Vayusura_Leader(pDevice, pDeviceContext);
+	CMonster_Vayusura_Leader*	pInstance = NEW CMonster_Vayusura_Leader(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -425,7 +425,7 @@ CMonster_Vayusura_Leader * CMonster_Vayusura_Leader::Create(ID3D11Device * pDevi
 
 CGameObject * CMonster_Vayusura_Leader::Clone(void * pArg)
 {
-	CMonster_Vayusura_Leader*	pInstance = new CMonster_Vayusura_Leader(*this);
+	CMonster_Vayusura_Leader*	pInstance = NEW CMonster_Vayusura_Leader(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

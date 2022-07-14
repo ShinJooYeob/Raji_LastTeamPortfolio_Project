@@ -11,7 +11,7 @@
 #include "PhysX/Collider_PhysX_Joint.h"
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 IMPLEMENT_SINGLETON(CImguiMgr)

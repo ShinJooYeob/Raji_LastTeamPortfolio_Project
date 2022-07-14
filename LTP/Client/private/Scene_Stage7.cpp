@@ -2232,7 +2232,7 @@ wwString.push_back(L"SM_Whitevine_wall_04a.fbx");
 
 CScene_Stage7 * CScene_Stage7::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Stage7* pTempLoby = new CScene_Stage7(pDevice,pDeviceContext);
+	CScene_Stage7* pTempLoby = NEW CScene_Stage7(pDevice,pDeviceContext);
 
 	if (FAILED(pTempLoby->Initialize())) 
 	{

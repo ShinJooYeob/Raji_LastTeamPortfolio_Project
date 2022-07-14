@@ -1140,7 +1140,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 			return E_FAIL;
 
 		{
-			modelDesc = new MODELDESC;
+			modelDesc = NEW MODELDESC;
 
 			// UINT
 			ReadFile(hFile, modelDesc->mFBXFullPath, sizeof(wchar_t)*MAX_PATH, &dwByte, nullptr);
@@ -1160,18 +1160,18 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 			// ? ë‹¹
 			if (modelDesc->mNumMeshes != 0)
-				modelDesc->mMeshDesc = new MESHDESC[modelDesc->mNumMeshes];
+				modelDesc->mMeshDesc = NEW MESHDESC[modelDesc->mNumMeshes];
 
 			if (modelDesc->mNumMaterials != 0)
-				modelDesc->mMaterials = new MATDESC[modelDesc->mNumMaterials];
+				modelDesc->mMaterials = NEW MATDESC[modelDesc->mNumMaterials];
 
 			if (ModelType == CModel::TYPE_ANIM)
 			{
 				if (modelDesc->mNumBones != 0)
-					modelDesc->mBones = new BONEDESC[modelDesc->mNumBones];
+					modelDesc->mBones = NEW BONEDESC[modelDesc->mNumBones];
 
 				if (modelDesc->mNumAnimations != 0)
-					modelDesc->mAnimations = new ANIDESC[modelDesc->mNumAnimations];
+					modelDesc->mAnimations = NEW ANIDESC[modelDesc->mNumAnimations];
 			}
 
 			// MESH
@@ -1190,11 +1190,11 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					ReadFile(hFile, &meshdesc->mNumAffectingBones, sizeof(_uint), &dwByte, nullptr);
 				}
 
-				meshdesc->mVertices = new _float3[meshdesc->mNumVertices];
-				meshdesc->mNormals = new _float3[meshdesc->mNumVertices];
-				meshdesc->mTangents = new _float3[meshdesc->mNumVertices];
-				meshdesc->mUV = new _float2[meshdesc->mNumVertices];
-				meshdesc->mFaces = new FACEINDICES32[meshdesc->mNumFaces];
+				meshdesc->mVertices = NEW _float3[meshdesc->mNumVertices];
+				meshdesc->mNormals = NEW _float3[meshdesc->mNumVertices];
+				meshdesc->mTangents = NEW _float3[meshdesc->mNumVertices];
+				meshdesc->mUV = NEW _float2[meshdesc->mNumVertices];
+				meshdesc->mFaces = NEW FACEINDICES32[meshdesc->mNumFaces];
 
 				// VTX
 				ReadFile(hFile, meshdesc->mVertices, sizeof(_float3)*meshdesc->mNumVertices, &dwByte, nullptr);
@@ -1251,8 +1251,8 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 					if (NumAffectingBones != 0)
 					{
 						// ë¼??¸ë±??ë¦¬ìŠ¤??
-						meshdesc->mAffectingBones = new _uint[NumAffectingBones];
-						meshdesc->mMeshBones = new MESHBONEDESC[NumAffectingBones];
+						meshdesc->mAffectingBones = NEW _uint[NumAffectingBones];
+						meshdesc->mMeshBones = NEW MESHBONEDESC[NumAffectingBones];
 
 						ReadFile(hFile, meshdesc->mAffectingBones, sizeof(_uint)*NumAffectingBones, &dwByte, nullptr);
 						// ë¼?Weight
@@ -1263,7 +1263,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 							if (NumWeight == 0)
 								continue;
 
-							meshdesc->mMeshBones[bone].mAiWeights = new aiVertexWeight[NumWeight];
+							meshdesc->mMeshBones[bone].mAiWeights = NEW aiVertexWeight[NumWeight];
 
 							ReadFile(hFile, meshdesc->mMeshBones[bone].mAiWeights,
 								sizeof(aiVertexWeight)*NumWeight, &dwByte, nullptr);
@@ -1307,7 +1307,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 				for (_uint i = 0; i < modelDesc->mNumAnimations; ++i)
 				{
 					ANIDESC* anidesc = &modelDesc->mAnimations[i];
-					anidesc->mAniBones = new ANIBONES[anidesc->mNumAniBones];
+					anidesc->mAniBones = NEW ANIBONES[anidesc->mNumAniBones];
 					for (_uint j = 0; j < anidesc->mNumAniBones; ++j)
 					{
 						ANIBONES* anibone = &anidesc->mAniBones[j];
@@ -1316,7 +1316,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 						ReadFile(hFile, anibone->mBoneName, sizeof(char)*MAX_PATH, &dwByte, nullptr);
 						ReadFile(hFile, &anibone->mHierarchyNodeIndex, sizeof(_int), &dwByte, nullptr);
 						ReadFile(hFile, &anibone->mNumKeyFrames, sizeof(_uint), &dwByte, nullptr);
-						anibone->mKeyFrames = new KEYFRAME[anibone->mNumKeyFrames];
+						anibone->mKeyFrames = NEW KEYFRAME[anibone->mNumKeyFrames];
 						ReadFile(hFile, anibone->mKeyFrames, sizeof(KEYFRAME)* anibone->mNumKeyFrames, &dwByte, nullptr);
 
 						// #TEST
@@ -1336,7 +1336,7 @@ HRESULT CLoader::Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>&
 
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)
 {
-	CLoader* pTempLoader = new CLoader;
+	CLoader* pTempLoader = NEW CLoader;
 
 	if (FAILED(pTempLoader->Initialize(pDevice,pDeviceContext,eSceneID)))
 	{

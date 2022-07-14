@@ -242,7 +242,7 @@ HRESULT CTestObject_BaseCollider::SetUp_Components()
 
 CTestObject_BaseCollider * CTestObject_BaseCollider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestObject_BaseCollider*	pInstance = new CTestObject_BaseCollider(pDevice, pDeviceContext);
+	CTestObject_BaseCollider*	pInstance = NEW CTestObject_BaseCollider(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -254,7 +254,7 @@ CTestObject_BaseCollider * CTestObject_BaseCollider::Create(ID3D11Device * pDevi
 
 CTestObject_BaseCollider * CTestObject_BaseCollider::Clone(void * pArg)
 {
-	CTestObject_BaseCollider*	pInstance = new CTestObject_BaseCollider(*this);
+	CTestObject_BaseCollider*	pInstance = NEW CTestObject_BaseCollider(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

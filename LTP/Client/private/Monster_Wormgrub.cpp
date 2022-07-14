@@ -338,7 +338,7 @@ HRESULT CMonster_Wormgrub::Adjust_AnimMovedTransform(_double dDeltatime)
 
 CMonster_Wormgrub * CMonster_Wormgrub::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Wormgrub*	pInstance = new CMonster_Wormgrub(pDevice, pDeviceContext);
+	CMonster_Wormgrub*	pInstance = NEW CMonster_Wormgrub(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -350,7 +350,7 @@ CMonster_Wormgrub * CMonster_Wormgrub::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CGameObject * CMonster_Wormgrub::Clone(void * pArg)
 {
-	CMonster_Wormgrub*	pInstance = new CMonster_Wormgrub(*this);
+	CMonster_Wormgrub*	pInstance = NEW CMonster_Wormgrub(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

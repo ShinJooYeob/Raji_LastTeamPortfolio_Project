@@ -1096,7 +1096,7 @@ PxRigidDynamic* CCollider_PhysX_Joint::Create_HairJoint(PxRigidDynamic* mainacto
 CCollider_PhysX_Joint * CCollider_PhysX_Joint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 
-	CCollider_PhysX_Joint* pInstance = new CCollider_PhysX_Joint(pDevice, pDeviceContext);
+	CCollider_PhysX_Joint* pInstance = NEW CCollider_PhysX_Joint(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -1109,7 +1109,7 @@ CCollider_PhysX_Joint * CCollider_PhysX_Joint::Create(ID3D11Device * pDevice, ID
 
 CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 {
-	CCollider_PhysX_Joint* pInstance = new CCollider_PhysX_Joint((*this));
+	CCollider_PhysX_Joint* pInstance = NEW CCollider_PhysX_Joint((*this));
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

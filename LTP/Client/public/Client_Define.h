@@ -11,7 +11,7 @@ extern CGameInstance* g_pGameInstance;
 extern _bool g_bShowMouse;
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 #define GETIMGUI GetSingle(CImguiMgr)
 #endif // USE_IMGUI
 

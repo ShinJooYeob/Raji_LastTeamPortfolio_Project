@@ -729,7 +729,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Ninjasura * CMonster_Ninjasura::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Ninjasura*	pInstance = new CMonster_Ninjasura(pDevice, pDeviceContext);
+	CMonster_Ninjasura*	pInstance = NEW CMonster_Ninjasura(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -741,7 +741,7 @@ CMonster_Ninjasura * CMonster_Ninjasura::Create(ID3D11Device * pDevice, ID3D11De
 
 CGameObject * CMonster_Ninjasura::Clone(void * pArg)
 {
-	CMonster_Ninjasura*	pInstance = new CMonster_Ninjasura(*this);
+	CMonster_Ninjasura*	pInstance = NEW CMonster_Ninjasura(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

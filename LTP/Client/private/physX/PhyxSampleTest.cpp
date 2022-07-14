@@ -157,7 +157,7 @@ PxRigidDynamic * CPhyxSampleTest::createDynamic(const PxTransform & t, const PxG
 
 CPhyxSampleTest * CPhyxSampleTest::Create()
 {
-	CPhyxSampleTest*	pInstance = new CPhyxSampleTest();
+	CPhyxSampleTest*	pInstance = NEW CPhyxSampleTest();
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{

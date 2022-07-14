@@ -171,7 +171,7 @@ HRESULT CFemaleStatue::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CFemaleStatue * CFemaleStatue::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CFemaleStatue*	pInstance = new CFemaleStatue(pDevice, pDeviceContext);
+	CFemaleStatue*	pInstance = NEW CFemaleStatue(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -183,7 +183,7 @@ CFemaleStatue * CFemaleStatue::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 CGameObject * CFemaleStatue::Clone(void * pArg)
 {
-	CFemaleStatue*	pInstance = new CFemaleStatue(*this);
+	CFemaleStatue*	pInstance = NEW CFemaleStatue(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

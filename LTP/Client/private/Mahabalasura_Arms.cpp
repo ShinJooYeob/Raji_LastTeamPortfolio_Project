@@ -188,7 +188,7 @@ HRESULT CMahabalasura_Arms::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CMahabalasura_Arms * CMahabalasura_Arms::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMahabalasura_Arms*	pInstance = new CMahabalasura_Arms(pDevice, pDeviceContext);
+	CMahabalasura_Arms*	pInstance = NEW CMahabalasura_Arms(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -200,7 +200,7 @@ CMahabalasura_Arms * CMahabalasura_Arms::Create(ID3D11Device * pDevice, ID3D11De
 
 CGameObject * CMahabalasura_Arms::Clone(void * pArg)
 {
-	CMahabalasura_Arms*	pInstance = new CMahabalasura_Arms(*this);
+	CMahabalasura_Arms*	pInstance = NEW CMahabalasura_Arms(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

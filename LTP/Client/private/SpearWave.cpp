@@ -103,7 +103,7 @@ HRESULT CSpearWave::SetUp_Components()
 
 CSpearWave * CSpearWave::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CSpearWave*	pInstance = new CSpearWave(pDevice, pDeviceContext);
+	CSpearWave*	pInstance = NEW CSpearWave(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -115,7 +115,7 @@ CSpearWave * CSpearWave::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pD
 
 CGameObject * CSpearWave::Clone(void * pArg)
 {
-	CSpearWave*	pInstance = new CSpearWave(*this);
+	CSpearWave*	pInstance = NEW CSpearWave(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

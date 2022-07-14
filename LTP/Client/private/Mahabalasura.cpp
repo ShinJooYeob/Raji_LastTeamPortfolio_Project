@@ -631,7 +631,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CMahabalasura * CMahabalasura::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMahabalasura*	pInstance = new CMahabalasura(pDevice, pDeviceContext);
+	CMahabalasura*	pInstance = NEW CMahabalasura(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -643,7 +643,7 @@ CMahabalasura * CMahabalasura::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 CGameObject * CMahabalasura::Clone(void * pArg)
 {
-	CMahabalasura*	pInstance = new CMahabalasura(*this);
+	CMahabalasura*	pInstance = NEW CMahabalasura(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

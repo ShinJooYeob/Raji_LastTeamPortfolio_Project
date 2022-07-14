@@ -200,7 +200,7 @@ HRESULT CHpUI::SetUp_Components()
 
 CHpUI * CHpUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CHpUI*	pInstance = new CHpUI(pDevice, pDeviceContext);
+	CHpUI*	pInstance = NEW CHpUI(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -212,7 +212,7 @@ CHpUI * CHpUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceConte
 
 CGameObject * CHpUI::Clone(void * pArg)
 {
-	CHpUI*	pInstance = new CHpUI(*this);
+	CHpUI*	pInstance = NEW CHpUI(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

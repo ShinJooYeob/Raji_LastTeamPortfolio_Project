@@ -623,7 +623,7 @@ HRESULT CPlayerWeapon_Arrow::SetUp_EtcInfo()
 
 CPlayerWeapon_Arrow * CPlayerWeapon_Arrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayerWeapon_Arrow*	pInstance = new CPlayerWeapon_Arrow(pDevice, pDeviceContext);
+	CPlayerWeapon_Arrow*	pInstance = NEW CPlayerWeapon_Arrow(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -635,7 +635,7 @@ CPlayerWeapon_Arrow * CPlayerWeapon_Arrow::Create(ID3D11Device * pDevice, ID3D11
 
 CGameObject * CPlayerWeapon_Arrow::Clone(void * pArg)
 {
-	CPlayerWeapon_Arrow*	pInstance = new CPlayerWeapon_Arrow(*this);
+	CPlayerWeapon_Arrow*	pInstance = NEW CPlayerWeapon_Arrow(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

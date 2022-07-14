@@ -4,7 +4,7 @@
 #include "GameObject.h"
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 #include "ImguiMgr.h"
 #endif // USE_IMGUI
 
@@ -18,7 +18,7 @@ class CESCursor;
 class CScene_Edit final : public CScene
 {
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 	enum eDATATYPE
@@ -56,7 +56,7 @@ public:
 //imgui 세팅 관련
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 private:
 
 #pragma region Total

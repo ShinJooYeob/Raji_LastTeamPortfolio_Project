@@ -15,7 +15,7 @@
 //#include "Scene_Ending.h"
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
  #include "Scene_Edit.h"
 #endif // USE_IMGUI
 
@@ -115,7 +115,7 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 //			break;
 //
 //
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 		case SCENEID::SCENE_EDIT:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Edit::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
@@ -175,7 +175,7 @@ HRESULT CScene_Loading::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
 
 CScene_Loading * CScene_Loading::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, SCENEID eSceneID)
 {
-	CScene_Loading* pTempLoadingScene = new CScene_Loading(pDevice, pDeviceContext);
+	CScene_Loading* pTempLoadingScene = NEW CScene_Loading(pDevice, pDeviceContext);
 
 	if (FAILED(pTempLoadingScene->Initialize((eSceneID))))
 	{

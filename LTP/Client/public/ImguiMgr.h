@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 #include "Base.h"
 

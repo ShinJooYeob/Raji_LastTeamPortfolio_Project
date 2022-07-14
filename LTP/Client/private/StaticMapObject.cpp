@@ -231,7 +231,7 @@ HRESULT CStaticMapObject::SetUp_Components()
 
 CStaticMapObject * CStaticMapObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CStaticMapObject*	pInstance = new CStaticMapObject(pDevice, pDeviceContext);
+	CStaticMapObject*	pInstance = NEW CStaticMapObject(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -243,7 +243,7 @@ CStaticMapObject * CStaticMapObject::Create(ID3D11Device * pDevice, ID3D11Device
 
 CGameObject * CStaticMapObject::Clone(void * pArg)
 {
-	CStaticMapObject*	pInstance = new CStaticMapObject(*this);
+	CStaticMapObject*	pInstance = NEW CStaticMapObject(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

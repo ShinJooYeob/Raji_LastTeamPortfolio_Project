@@ -244,7 +244,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CCopyMahabalasura * CCopyMahabalasura::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CCopyMahabalasura*	pInstance = new CCopyMahabalasura(pDevice, pDeviceContext);
+	CCopyMahabalasura*	pInstance = NEW CCopyMahabalasura(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -256,7 +256,7 @@ CCopyMahabalasura * CCopyMahabalasura::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CGameObject * CCopyMahabalasura::Clone(void * pArg)
 {
-	CCopyMahabalasura*	pInstance = new CCopyMahabalasura(*this);
+	CCopyMahabalasura*	pInstance = NEW CCopyMahabalasura(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

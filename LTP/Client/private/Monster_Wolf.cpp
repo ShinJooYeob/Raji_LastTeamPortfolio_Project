@@ -338,7 +338,7 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 
 CMonster_Wolf * CMonster_Wolf::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Wolf*	pInstance = new CMonster_Wolf(pDevice, pDeviceContext);
+	CMonster_Wolf*	pInstance = NEW CMonster_Wolf(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -350,7 +350,7 @@ CMonster_Wolf * CMonster_Wolf::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 CGameObject * CMonster_Wolf::Clone(void * pArg)
 {
-	CMonster_Wolf*	pInstance = new CMonster_Wolf(*this);
+	CMonster_Wolf*	pInstance = NEW CMonster_Wolf(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

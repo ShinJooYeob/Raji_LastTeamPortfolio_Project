@@ -552,7 +552,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 CMonster_Mahinasura_Minion * CMonster_Mahinasura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Mahinasura_Minion*	pInstance = new CMonster_Mahinasura_Minion(pDevice, pDeviceContext);
+	CMonster_Mahinasura_Minion*	pInstance = NEW CMonster_Mahinasura_Minion(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -564,7 +564,7 @@ CMonster_Mahinasura_Minion * CMonster_Mahinasura_Minion::Create(ID3D11Device * p
 
 CGameObject * CMonster_Mahinasura_Minion::Clone(void * pArg)
 {
-	CMonster_Mahinasura_Minion*	pInstance = new CMonster_Mahinasura_Minion(*this);
+	CMonster_Mahinasura_Minion*	pInstance = NEW CMonster_Mahinasura_Minion(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -148,7 +148,7 @@ void CUI::Update_Rect()
 
 CUI * CUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg)
 {
-	CUI*	pInstance = new CUI(pDevice, pDeviceContext);
+	CUI*	pInstance = NEW CUI(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -160,7 +160,7 @@ CUI * CUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, 
 
 CGameObject * CUI::Clone(void * pArg)
 {
-	CUI*	pInstance = new CUI(*this);
+	CUI*	pInstance = NEW CUI(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

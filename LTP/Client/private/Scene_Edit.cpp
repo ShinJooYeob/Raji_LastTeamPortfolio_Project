@@ -20,7 +20,7 @@ HRESULT CScene_Edit::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	m_pGameInstance = GetSingle(CGameInstance);
 	Safe_AddRef(m_pGameInstance);
 
@@ -100,7 +100,7 @@ _int CScene_Edit::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 	switch (m_iNowTab)
@@ -174,7 +174,7 @@ _int CScene_Edit::LateUpdate(_double fDeltaTime)
 		return Change_to_NextScene();
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 	switch (m_iNowTab)
@@ -357,7 +357,7 @@ _int CScene_Edit::LateRender()
 	if (__super::LateRender() < 0)
 		return -1;
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	if (Prevent_Order)
 	{
 		GETIMGUI->Render_ImguiMgr();
@@ -387,7 +387,7 @@ _int CScene_Edit::Change_to_NextScene()
 	return _int();
 }
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 #pragma region Total
 HRESULT CScene_Edit::Update_First_Frame(_double fDeltatime, const char * szFrameBarName)
@@ -1409,7 +1409,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			char str[10] = "Cell";
 			strcat_s(str, sIntStr);
 
-			char* sCellNum = new char[10];
+			char* sCellNum = NEW char[10];
 
 			strcpy_s(sCellNum, 10, str);
 
@@ -1424,7 +1424,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 					char sIntStr[5];
 					_itoa_s(m_iVertexCount, sIntStr, 10);
 					char str[10] = "Vertex";
-					char* sVertexNum = new char[10];
+					char* sVertexNum = NEW char[10];
 					strcat_s(str, sIntStr);
 					strcpy_s(sVertexNum, 10, str);
 
@@ -1456,7 +1456,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 						char sIntStr[5];
 						_itoa_s(m_iVertexCount, sIntStr, 10);
 						char str[10] = "Vertex";
-						char* sVertexNum = new char[10];
+						char* sVertexNum = NEW char[10];
 						strcat_s(str, sIntStr);
 						strcpy_s(sVertexNum, 10, str);
 
@@ -5887,7 +5887,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 				char str[10] = "Cell";
 				strcat_s(str, sIntStr);
 
-				char* sCellNum = new char[10];
+				char* sCellNum = NEW char[10];
 
 				strcpy_s(sCellNum, 10, str);
 
@@ -6641,7 +6641,7 @@ void CScene_Edit::Add_Vertex()
 			char sIntStr[5];
 			_itoa_s(m_iVertexCount, sIntStr, 10);
 			char str[10] = "Vertex";
-			char* sVertexNum = new char[10];
+			char* sVertexNum = NEW char[10];
 			strcat_s(str, sIntStr);
 			strcpy_s(sVertexNum, 10, str);
 
@@ -6795,7 +6795,7 @@ HRESULT CScene_Edit::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	return S_OK;
 }
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 
 
@@ -6933,7 +6933,7 @@ HRESULT CScene_Edit::Ready_ParticleDesc()
 
 CScene_Edit * CScene_Edit::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CScene_Edit* pTempGame = new CScene_Edit(pDevice, pDeviceContext);
+	CScene_Edit* pTempGame = NEW CScene_Edit(pDevice, pDeviceContext);
 
 	if (FAILED(pTempGame->Initialize()))
 	{
@@ -6949,7 +6949,7 @@ void CScene_Edit::Free()
 {
 	__super::Free();
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	for (auto& iter : m_vecBatchedObject)
 	{
 		//객채 없애기 죽이기 비워주기

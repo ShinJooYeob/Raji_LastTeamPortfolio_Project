@@ -623,7 +623,7 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Tezabsura_Bomber * CMonster_Tezabsura_Bomber::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Tezabsura_Bomber*	pInstance = new CMonster_Tezabsura_Bomber(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Bomber*	pInstance = NEW CMonster_Tezabsura_Bomber(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -635,7 +635,7 @@ CMonster_Tezabsura_Bomber * CMonster_Tezabsura_Bomber::Create(ID3D11Device * pDe
 
 CGameObject * CMonster_Tezabsura_Bomber::Clone(void * pArg)
 {
-	CMonster_Tezabsura_Bomber*	pInstance = new CMonster_Tezabsura_Bomber(*this);
+	CMonster_Tezabsura_Bomber*	pInstance = NEW CMonster_Tezabsura_Bomber(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

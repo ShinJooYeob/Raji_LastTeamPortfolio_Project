@@ -73,7 +73,7 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-	FAILED_CHECK(Initialize_PhysXLib());
+//	FAILED_CHECK(Initialize_PhysXLib());
 //	CreateBase_Plane(PxVec3(0, -10, 0));
 
 	return S_OK;
@@ -827,7 +827,7 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticSphere(PxTransform px, PxVec3 scale, _boo
 
 void CPhysXMgr::Free()
 {
-	Clean_Phyics();
+//	Clean_Phyics();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 

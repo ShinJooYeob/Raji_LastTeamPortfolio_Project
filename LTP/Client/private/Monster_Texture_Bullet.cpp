@@ -389,7 +389,7 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
 
 CMonster_Texture_Bullet * CMonster_Texture_Bullet::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Texture_Bullet*	pInstance = new CMonster_Texture_Bullet(pDevice, pDeviceContext);
+	CMonster_Texture_Bullet*	pInstance = NEW CMonster_Texture_Bullet(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -401,7 +401,7 @@ CMonster_Texture_Bullet * CMonster_Texture_Bullet::Create(ID3D11Device * pDevice
 
 CGameObject * CMonster_Texture_Bullet::Clone(void * pArg)
 {
-	CMonster_Texture_Bullet*	pInstance = new CMonster_Texture_Bullet(*this);
+	CMonster_Texture_Bullet*	pInstance = NEW CMonster_Texture_Bullet(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

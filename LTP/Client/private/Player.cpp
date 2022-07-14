@@ -6328,7 +6328,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayer*	pInstance = new CPlayer(pDevice, pDeviceContext);
+	CPlayer*	pInstance = NEW CPlayer(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -6340,7 +6340,7 @@ CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceC
 
 CGameObject * CPlayer::Clone(void * pArg)
 {
-	CPlayer*	pInstance = new CPlayer(*this);
+	CPlayer*	pInstance = NEW CPlayer(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

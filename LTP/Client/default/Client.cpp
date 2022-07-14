@@ -33,14 +33,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 
-#ifndef USE_IMGUI
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif // _DEBUG
-#endif
 
 	srand(_uint(time(NULL)));
 
+//	_CrtSetBreakAlloc(91166);
 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -189,7 +188,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -198,7 +197,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 		return true;
 #endif // USE_IMGUI

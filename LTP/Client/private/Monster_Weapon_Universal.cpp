@@ -356,7 +356,7 @@ HRESULT CMonster_Weapon_Universal::Gadasura_Rage_Weapon(_double dDeltaTime)
 
 CMonster_Weapon_Universal * CMonster_Weapon_Universal::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Weapon_Universal*	pInstance = new CMonster_Weapon_Universal(pDevice, pDeviceContext);
+	CMonster_Weapon_Universal*	pInstance = NEW CMonster_Weapon_Universal(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -368,7 +368,7 @@ CMonster_Weapon_Universal * CMonster_Weapon_Universal::Create(ID3D11Device * pDe
 
 CGameObject * CMonster_Weapon_Universal::Clone(void * pArg)
 {
-	CMonster_Weapon_Universal*	pInstance = new CMonster_Weapon_Universal(*this);
+	CMonster_Weapon_Universal*	pInstance = NEW CMonster_Weapon_Universal(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

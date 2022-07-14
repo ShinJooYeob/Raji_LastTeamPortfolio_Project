@@ -104,7 +104,7 @@ HRESULT CNaviPoint::SetUp_Components()
 
 CNaviPoint * CNaviPoint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg)
 {
-	CNaviPoint*	pInstance = new CNaviPoint(pDevice, pDeviceContext);
+	CNaviPoint*	pInstance = NEW CNaviPoint(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -116,7 +116,7 @@ CNaviPoint * CNaviPoint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pD
 
 CGameObject * CNaviPoint::Clone(void * pArg)
 {
-	CNaviPoint*	pInstance = new CNaviPoint(*this);
+	CNaviPoint*	pInstance = NEW CNaviPoint(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

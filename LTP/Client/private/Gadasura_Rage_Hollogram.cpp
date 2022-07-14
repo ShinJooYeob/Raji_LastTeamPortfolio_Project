@@ -263,7 +263,7 @@ HRESULT CGadasura_Rage_Hollogram::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CGadasura_Rage_Hollogram * CGadasura_Rage_Hollogram::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CGadasura_Rage_Hollogram*	pInstance = new CGadasura_Rage_Hollogram(pDevice, pDeviceContext);
+	CGadasura_Rage_Hollogram*	pInstance = NEW CGadasura_Rage_Hollogram(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -275,7 +275,7 @@ CGadasura_Rage_Hollogram * CGadasura_Rage_Hollogram::Create(ID3D11Device * pDevi
 
 CGameObject * CGadasura_Rage_Hollogram::Clone(void * pArg)
 {
-	CGadasura_Rage_Hollogram*	pInstance = new CGadasura_Rage_Hollogram(*this);
+	CGadasura_Rage_Hollogram*	pInstance = NEW CGadasura_Rage_Hollogram(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -243,7 +243,7 @@ HRESULT CShellingSkillAttackPoint::SetUp_Components()
 
 CShellingSkillAttackPoint * CShellingSkillAttackPoint::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CShellingSkillAttackPoint*	pInstance = new CShellingSkillAttackPoint(pDevice, pDeviceContext);
+	CShellingSkillAttackPoint*	pInstance = NEW CShellingSkillAttackPoint(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -255,7 +255,7 @@ CShellingSkillAttackPoint * CShellingSkillAttackPoint::Create(ID3D11Device * pDe
 
 CGameObject * CShellingSkillAttackPoint::Clone(void * pArg)
 {
-	CShellingSkillAttackPoint*	pInstance = new CShellingSkillAttackPoint(*this);
+	CShellingSkillAttackPoint*	pInstance = NEW CShellingSkillAttackPoint(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

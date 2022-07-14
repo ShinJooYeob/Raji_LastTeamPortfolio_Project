@@ -228,7 +228,7 @@ HRESULT CTreeMesh::SetUp_Components()
 
 CTreeMesh * CTreeMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTreeMesh*	pInstance = new CTreeMesh(pDevice, pDeviceContext);
+	CTreeMesh*	pInstance = NEW CTreeMesh(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -240,7 +240,7 @@ CTreeMesh * CTreeMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDev
 
 CGameObject * CTreeMesh::Clone(void * pArg)
 {
-	CTreeMesh*	pInstance = new CTreeMesh(*this);
+	CTreeMesh*	pInstance = NEW CTreeMesh(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

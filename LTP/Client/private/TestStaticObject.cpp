@@ -196,7 +196,7 @@ HRESULT CTestStaticObject::SetUp_Components()
 
 CTestStaticObject * CTestStaticObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestStaticObject*	pInstance = new CTestStaticObject(pDevice, pDeviceContext);
+	CTestStaticObject*	pInstance = NEW CTestStaticObject(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -208,7 +208,7 @@ CTestStaticObject * CTestStaticObject::Create(ID3D11Device * pDevice, ID3D11Devi
 
 CGameObject * CTestStaticObject::Clone(void * pArg)
 {
-	CTestStaticObject*	pInstance = new CTestStaticObject(*this);
+	CTestStaticObject*	pInstance = NEW CTestStaticObject(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

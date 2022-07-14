@@ -121,7 +121,7 @@ HRESULT CESCursor::SetUp_Components()
 
 CESCursor * CESCursor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CESCursor*	pInstance = new CESCursor(pDevice,pDeviceContext);
+	CESCursor*	pInstance = NEW CESCursor(pDevice,pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -133,7 +133,7 @@ CESCursor * CESCursor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDev
 
 CGameObject * CESCursor::Clone(void * pArg)
 {
-	CESCursor*	pInstance = new CESCursor(*this);
+	CESCursor*	pInstance = NEW CESCursor(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -346,7 +346,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 CMonster_Wasp * CMonster_Wasp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Wasp*	pInstance = new CMonster_Wasp(pDevice, pDeviceContext);
+	CMonster_Wasp*	pInstance = NEW CMonster_Wasp(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -358,7 +358,7 @@ CMonster_Wasp * CMonster_Wasp::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 CGameObject * CMonster_Wasp::Clone(void * pArg)
 {
-	CMonster_Wasp*	pInstance = new CMonster_Wasp(*this);
+	CMonster_Wasp*	pInstance = NEW CMonster_Wasp(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

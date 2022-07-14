@@ -480,7 +480,7 @@ HRESULT CMonster_Bullet_Universal::Gadasura_Black(_double dDeltaTime)
 
 CMonster_Bullet_Universal * CMonster_Bullet_Universal::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Bullet_Universal*	pInstance = new CMonster_Bullet_Universal(pDevice, pDeviceContext);
+	CMonster_Bullet_Universal*	pInstance = NEW CMonster_Bullet_Universal(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -492,7 +492,7 @@ CMonster_Bullet_Universal * CMonster_Bullet_Universal::Create(ID3D11Device * pDe
 
 CGameObject * CMonster_Bullet_Universal::Clone(void * pArg)
 {
-	CMonster_Bullet_Universal*	pInstance = new CMonster_Bullet_Universal(*this);
+	CMonster_Bullet_Universal*	pInstance = NEW CMonster_Bullet_Universal(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

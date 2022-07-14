@@ -147,7 +147,7 @@ HRESULT CSkyBox::SetUp_Components()
 
 CSkyBox * CSkyBox::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CSkyBox*	pInstance = new CSkyBox(pDevice,pDeviceContext);
+	CSkyBox*	pInstance = NEW CSkyBox(pDevice,pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -159,7 +159,7 @@ CSkyBox * CSkyBox::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceC
 
 CGameObject * CSkyBox::Clone(void * pArg)
 {
-	CSkyBox*	pInstance = new CSkyBox(*this);
+	CSkyBox*	pInstance = NEW CSkyBox(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

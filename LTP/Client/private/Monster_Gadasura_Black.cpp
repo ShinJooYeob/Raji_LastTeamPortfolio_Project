@@ -629,7 +629,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Gadasura_Black * CMonster_Gadasura_Black::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Gadasura_Black*	pInstance = new CMonster_Gadasura_Black(pDevice, pDeviceContext);
+	CMonster_Gadasura_Black*	pInstance = NEW CMonster_Gadasura_Black(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -641,7 +641,7 @@ CMonster_Gadasura_Black * CMonster_Gadasura_Black::Create(ID3D11Device * pDevice
 
 CGameObject * CMonster_Gadasura_Black::Clone(void * pArg)
 {
-	CMonster_Gadasura_Black*	pInstance = new CMonster_Gadasura_Black(*this);
+	CMonster_Gadasura_Black*	pInstance = NEW CMonster_Gadasura_Black(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -287,7 +287,7 @@ _int CCamera_Main::LateRender()
 HRESULT CCamera_Main::Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval)
 {
 	if (m_bIsStartedShaking) return S_FALSE;
-	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE;
 	pCameraEffectDesc->pTargetCamera = this;
 
@@ -430,7 +430,7 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 
 HRESULT CCamera_Main::Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC * tDirShakingDesc)
 {
-	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_DIR;
 	pCameraEffectDesc->pTargetCamera = this;
 	pCameraEffectDesc->tDirShakingDesc = *tDirShakingDesc;
@@ -502,7 +502,7 @@ HRESULT CCamera_Main::Progress_DirShaking_Thread(_bool * _IsClientQuit, CRITICAL
 
 HRESULT CCamera_Main::Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc)
 {
-	CAMERAEFFECTDESC* pCameraEffectDesc = new CAMERAEFFECTDESC();
+	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_ROT;
 	pCameraEffectDesc->pTargetCamera = this;
 	pCameraEffectDesc->tRotShakingDesc = *tRotShakingDesc;
@@ -899,7 +899,7 @@ HRESULT CCamera_Main::Update_CamAction(_double fDeltaTime)
 
 CCamera_Main * CCamera_Main::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CCamera_Main* pInstance = new CCamera_Main(pDevice, pDeviceContext);
+	CCamera_Main* pInstance = NEW CCamera_Main(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg))) {
 		MSGBOX("Failed to Create CCamera_Main");
@@ -912,7 +912,7 @@ CCamera_Main * CCamera_Main::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 CGameObject * CCamera_Main::Clone(void * pArg)
 {
-	CCamera_Main* pInstance = new CCamera_Main(*this);
+	CCamera_Main* pInstance = NEW CCamera_Main(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg))) {
 		MSGBOX("Failed to Create CCamera_Main");

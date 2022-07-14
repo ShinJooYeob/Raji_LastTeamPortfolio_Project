@@ -311,7 +311,7 @@ HRESULT CCollider_PhysX_Dynamic::Set_DynamicLock(PxRigidDynamicLockFlag::Enum e,
 CCollider_PhysX_Dynamic  * CCollider_PhysX_Dynamic ::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 
-	CCollider_PhysX_Dynamic * pInstance = new CCollider_PhysX_Dynamic (pDevice, pDeviceContext);
+	CCollider_PhysX_Dynamic * pInstance = NEW CCollider_PhysX_Dynamic (pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -324,7 +324,7 @@ CCollider_PhysX_Dynamic  * CCollider_PhysX_Dynamic ::Create(ID3D11Device * pDevi
 
 CComponent * CCollider_PhysX_Dynamic ::Clone(void * pArg)
 {
-	CCollider_PhysX_Dynamic * pInstance = new CCollider_PhysX_Dynamic ((*this));
+	CCollider_PhysX_Dynamic * pInstance = NEW CCollider_PhysX_Dynamic ((*this));
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

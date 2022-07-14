@@ -340,7 +340,7 @@ HRESULT CPlayerWeapon_Chakra::SetUp_EtcInfo()
 
 CPlayerWeapon_Chakra * CPlayerWeapon_Chakra::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayerWeapon_Chakra*	pInstance = new CPlayerWeapon_Chakra(pDevice, pDeviceContext);
+	CPlayerWeapon_Chakra*	pInstance = NEW CPlayerWeapon_Chakra(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -352,7 +352,7 @@ CPlayerWeapon_Chakra * CPlayerWeapon_Chakra::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CPlayerWeapon_Chakra::Clone(void * pArg)
 {
-	CPlayerWeapon_Chakra*	pInstance = new CPlayerWeapon_Chakra(*this);
+	CPlayerWeapon_Chakra*	pInstance = NEW CPlayerWeapon_Chakra(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

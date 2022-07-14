@@ -735,7 +735,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CChiedtian * CChiedtian::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CChiedtian*	pInstance = new CChiedtian(pDevice, pDeviceContext);
+	CChiedtian*	pInstance = NEW CChiedtian(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -747,7 +747,7 @@ CChiedtian * CChiedtian::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pD
 
 CGameObject * CChiedtian::Clone(void * pArg)
 {
-	CChiedtian*	pInstance = new CChiedtian(*this);
+	CChiedtian*	pInstance = NEW CChiedtian(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

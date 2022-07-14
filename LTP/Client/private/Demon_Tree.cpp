@@ -262,7 +262,7 @@ HRESULT CDemon_Tree::SetUp_Components()
 
 CDemon_Tree * CDemon_Tree::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CDemon_Tree*	pInstance = new CDemon_Tree(pDevice, pDeviceContext);
+	CDemon_Tree*	pInstance = NEW CDemon_Tree(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -274,7 +274,7 @@ CDemon_Tree * CDemon_Tree::Create(ID3D11Device * pDevice, ID3D11DeviceContext * 
 
 CGameObject * CDemon_Tree::Clone(void * pArg)
 {
-	CDemon_Tree*	pInstance = new CDemon_Tree(*this);
+	CDemon_Tree*	pInstance = NEW CDemon_Tree(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

@@ -544,7 +544,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CRangda * CRangda::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CRangda*	pInstance = new CRangda(pDevice, pDeviceContext);
+	CRangda*	pInstance = NEW CRangda(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -556,7 +556,7 @@ CRangda * CRangda::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceC
 
 CGameObject * CRangda::Clone(void * pArg)
 {
-	CRangda*	pInstance = new CRangda(*this);
+	CRangda*	pInstance = NEW CRangda(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

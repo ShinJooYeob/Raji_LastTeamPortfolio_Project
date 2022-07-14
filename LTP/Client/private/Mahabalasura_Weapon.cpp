@@ -309,7 +309,7 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 CMahabalasura_Weapon * CMahabalasura_Weapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMahabalasura_Weapon*	pInstance = new CMahabalasura_Weapon(pDevice, pDeviceContext);
+	CMahabalasura_Weapon*	pInstance = NEW CMahabalasura_Weapon(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -321,7 +321,7 @@ CMahabalasura_Weapon * CMahabalasura_Weapon::Create(ID3D11Device * pDevice, ID3D
 
 CGameObject * CMahabalasura_Weapon::Clone(void * pArg)
 {
-	CMahabalasura_Weapon*	pInstance = new CMahabalasura_Weapon(*this);
+	CMahabalasura_Weapon*	pInstance = NEW CMahabalasura_Weapon(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

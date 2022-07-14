@@ -143,7 +143,7 @@ HRESULT CTestNonAnimInstancing::SetUp_Components()
 
 CTestNonAnimInstancing * CTestNonAnimInstancing::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestNonAnimInstancing*	pInstance = new CTestNonAnimInstancing(pDevice, pDeviceContext);
+	CTestNonAnimInstancing*	pInstance = NEW CTestNonAnimInstancing(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -155,7 +155,7 @@ CTestNonAnimInstancing * CTestNonAnimInstancing::Create(ID3D11Device * pDevice, 
 
 CGameObject * CTestNonAnimInstancing::Clone(void * pArg)
 {
-	CTestNonAnimInstancing*	pInstance = new CTestNonAnimInstancing(*this);
+	CTestNonAnimInstancing*	pInstance = NEW CTestNonAnimInstancing(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

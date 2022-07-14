@@ -364,7 +364,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CSnake * CSnake::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CSnake*	pInstance = new CSnake(pDevice, pDeviceContext);
+	CSnake*	pInstance = NEW CSnake(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -376,7 +376,7 @@ CSnake * CSnake::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceCon
 
 CGameObject * CSnake::Clone(void * pArg)
 {
-	CSnake*	pInstance = new CSnake(*this);
+	CSnake*	pInstance = NEW CSnake(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

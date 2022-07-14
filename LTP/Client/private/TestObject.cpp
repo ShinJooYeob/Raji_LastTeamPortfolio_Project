@@ -212,7 +212,7 @@ HRESULT CTestObject::Adjust_AnimMovedTransform(_double fDeltatime)
 
 CTestObject * CTestObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CTestObject*	pInstance = new CTestObject(pDevice, pDeviceContext);
+	CTestObject*	pInstance = NEW CTestObject(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -224,7 +224,7 @@ CTestObject * CTestObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * 
 
 CGameObject * CTestObject::Clone(void * pArg)
 {
-	CTestObject*	pInstance = new CTestObject(*this);
+	CTestObject*	pInstance = NEW CTestObject(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

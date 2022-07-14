@@ -646,7 +646,7 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 CMonster_Tezabsura_Purple * CMonster_Tezabsura_Purple::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMonster_Tezabsura_Purple*	pInstance = new CMonster_Tezabsura_Purple(pDevice, pDeviceContext);
+	CMonster_Tezabsura_Purple*	pInstance = NEW CMonster_Tezabsura_Purple(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -658,7 +658,7 @@ CMonster_Tezabsura_Purple * CMonster_Tezabsura_Purple::Create(ID3D11Device * pDe
 
 CGameObject * CMonster_Tezabsura_Purple::Clone(void * pArg)
 {
-	CMonster_Tezabsura_Purple*	pInstance = new CMonster_Tezabsura_Purple(*this);
+	CMonster_Tezabsura_Purple*	pInstance = NEW CMonster_Tezabsura_Purple(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{

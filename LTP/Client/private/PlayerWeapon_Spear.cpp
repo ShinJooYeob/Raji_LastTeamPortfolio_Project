@@ -311,7 +311,7 @@ HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 
 CPlayerWeapon_Spear * CPlayerWeapon_Spear::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CPlayerWeapon_Spear*	pInstance = new CPlayerWeapon_Spear(pDevice, pDeviceContext);
+	CPlayerWeapon_Spear*	pInstance = NEW CPlayerWeapon_Spear(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
@@ -323,7 +323,7 @@ CPlayerWeapon_Spear * CPlayerWeapon_Spear::Create(ID3D11Device * pDevice, ID3D11
 
 CGameObject * CPlayerWeapon_Spear::Clone(void * pArg)
 {
-	CPlayerWeapon_Spear*	pInstance = new CPlayerWeapon_Spear(*this);
+	CPlayerWeapon_Spear*	pInstance = NEW CPlayerWeapon_Spear(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
