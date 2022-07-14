@@ -17,11 +17,11 @@ HRESULT CScene_Loby::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-	FAILED_CHECK(Ready_Light());
-	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
-	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
+	//FAILED_CHECK(Ready_Light());
+	//FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
+	//FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
+	//FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 		
 	return S_OK;

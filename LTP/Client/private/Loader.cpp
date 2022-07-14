@@ -193,6 +193,7 @@ HRESULT CLoader::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pDevic
 
 HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
+
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 
 #pragma region PROTOTYPE_COMPONENT
@@ -758,7 +759,9 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 #pragma region PROTOTYPE_COMPONENT
-
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE7, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/Test_Jino.dat")))))
+		return E_FAIL;
 	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),

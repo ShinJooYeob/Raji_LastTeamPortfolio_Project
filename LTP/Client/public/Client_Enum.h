@@ -5504,7 +5504,7 @@ enum COMPONENTID
 	Com_Navaigation,
 	Com_ModelInstance,
 	Com_SubTransform,
-	Com_Dissolve
+	Com_Dissolve,
 	//JJB
 	Com_HPUI,
 };

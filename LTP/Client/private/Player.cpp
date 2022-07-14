@@ -285,7 +285,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	if (true == m_bOnNavigation)
 	{
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_Height(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	}
 
 	return _int();
