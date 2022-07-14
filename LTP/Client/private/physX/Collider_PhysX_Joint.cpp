@@ -278,11 +278,11 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 		for (_uint i = 1; i < mVecActors.size(); ++i)
 		{
 			// 보간한 위치의 회전이 안먹인다
-		//	PreDir = New_WorldPxTransform[i+1].p - New_WorldPxTransform[i].p;
-		//	PreDir = PreDir.getNormalized();
-		//	New_WorldPxTransform[i+1].p = New_WorldPxTransform[i].p + PreDir * myOffsetScale[i]* value1.x;;
-			//_Squternion a = _Squternion::Slerp(*(_Squternion*)&New_WorldPxTransform[i].q, *(_Squternion*)&New_WorldPxTransform[i + 1].q, value1.y);
-			//New_WorldPxTransform[i].q = *(PxQuat*)&a;
+			PreDir = New_WorldPxTransform[i+1].p - New_WorldPxTransform[i].p;
+			PreDir = PreDir.getNormalized();
+			New_WorldPxTransform[i+1].p = New_WorldPxTransform[i].p + PreDir * myOffsetScale[i]* value1.x;;
+		//	_Squternion a = _Squternion::Slerp(*(_Squternion*)&New_WorldPxTransform[i].q, *(_Squternion*)&New_WorldPxTransform[i + 1].q, value1.y);
+		//	New_WorldPxTransform[i].q = *(PxQuat*)&a;
 
 
 			PxTransform trans = New_WorldPxTransform[i];
@@ -294,8 +294,8 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 			_Matrix mat = (PXMATTOMAT4x4(px4)).XMatrix() ;
 			_Vector Pos = mat.r[3];
 
-			mat.r[3] = XMVectorSet(0, 0, 0, 1);
-			mat =  XMMatrixRotationX(XMConvertToRadians(-90)) * mat ;
+		//	mat.r[3] = XMVectorSet(0, 0, 0, 1);
+		//	mat =  XMMatrixRotationX(XMConvertToRadians(-90)) * mat ;
 			//* 
 			
 
@@ -305,9 +305,20 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 
 			XMStoreFloat4x4(&myHM[i], WorldHM);
 
-			mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(WorldHM.r[0]);
-			mat.r[1] = XMVector3Normalize(mat.r[1]) * XMVector3Length(WorldHM.r[1]);
-			mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(WorldHM.r[2]);
+		//	mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(WorldHM.r[0]);
+		//	mat.r[1] = XMVector3Normalize(mat.r[1]) * XMVector3Length(WorldHM.r[1]);
+		//	mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(WorldHM.r[2]);
+
+		//	mat.r[0] = XMVector3Normalize(mat.r[0]);
+		//	mat.r[1] = XMVector3Normalize(mat.r[1]);
+		//	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+
+			mat.r[0] = WorldHM.r[0];
+			mat.r[1] = WorldHM.r[1];
+			mat.r[2] = WorldHM.r[2];
+
+
 			mat.r[3] = Pos;
 			mat = XMMatrixInverse(nullptr, BlenderMat[i].XMatrix()) *
 				(
@@ -815,6 +826,10 @@ PxJoint * CCollider_PhysX_Joint::CreateMYJoint(PxRigidActor * a0, const PxTransf
 PxJoint* CCollider_PhysX_Joint::CreateD6Joint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
 {
 	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
+	j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
+	j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+
 	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
 	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
 	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
