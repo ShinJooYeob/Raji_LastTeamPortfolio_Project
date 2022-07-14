@@ -35,6 +35,7 @@ private:
 		class CTransform* pTransform = nullptr;
 		class CShader* pShader = nullptr;
 		class CModel* pModel = nullptr;
+		class CDissolve* pDissolve = nullptr;
 		_float fIsOcllusion = 1.f;
 		_float4x4 AttacehdMatrix = XMMatrixIdentity();
 	}SHADOWDESC;
@@ -44,9 +45,11 @@ private:
 		CGameObject* pGameObject = nullptr;
 		vector<class CTransform*>* pvecTransform = nullptr;
 		vector<_float4x4>*		   pvecTransformfloat4x4 = nullptr;
+		vector<_float4>*		   pvecTimer = nullptr;
 		class CShader* pShader = nullptr;
 		class CModel* pModel = nullptr;
 		class CModelInstance* pModelInstance = nullptr;
+		class CDissolve* pDissolve = nullptr;
 		_float fIsOcllusion = 1.f;
 	}INSTSHADOWDESC;
 
@@ -62,9 +65,10 @@ private:
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderID, CGameObject* pGameObject);
-	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, class CModel* pModel = nullptr, _float4x4* AttacehdMatrix = nullptr);
+	HRESULT Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject* pGameObject, CTransform* pTransform, CShader* pShader, 
+		class CModel* pModel = nullptr, _float4x4* AttacehdMatrix = nullptr, class CDissolve* pDissolve = nullptr);
 	HRESULT Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, CGameObject* pGameObject, vector<CTransform*>* pvecTransform, 
-		CModelInstance* pModelInst ,CShader* pShader, class CModel* pModel, vector<_float4x4>* pvecTransformfloat4x4 = nullptr);
+		CModelInstance* pModelInst ,CShader* pShader, class CModel* pModel, vector<_float4x4>* pvecTransformfloat4x4 = nullptr, vector<_float4>* pvecTimer = nullptr);
 	HRESULT Add_TrailGroup(TRAILGROUP eTrailID, CComponent* pTrailComponent);
 	HRESULT Add_DebugGroup(class CComponent* pComponent);
 	HRESULT Render_RenderGroup(_double fDeltaTime);

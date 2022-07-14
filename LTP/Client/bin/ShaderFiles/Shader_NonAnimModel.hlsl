@@ -37,6 +37,7 @@ struct VS_OUT
 struct VS_OUT_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
 };
 
@@ -51,6 +52,7 @@ VS_OUT_SHADOW VS_Shadow(VS_IN In)
 	Out.vPosition = mul(Out.vPosition, g_LightProjMatrix);
 
 	Out.vClipPosition = Out.vPosition;
+	Out.vTexUV = In.vTexUV;
 	return Out;
 };
 VS_OUT_SHADOW VS_Shadow_AttachedBone(VS_IN In)
@@ -64,6 +66,7 @@ VS_OUT_SHADOW VS_Shadow_AttachedBone(VS_IN In)
 	Out.vPosition = mul(Out.vPosition, g_LightProjMatrix);
 
 	Out.vClipPosition = Out.vPosition;
+	Out.vTexUV = In.vTexUV;
 	return Out;
 };
 
@@ -135,6 +138,7 @@ struct PS_IN
 struct PS_IN_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
 };
 
@@ -179,6 +183,23 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -187,12 +208,10 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 
 	vNormal = mul(vNormal, WorldMatrix);
 
-	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = vector(g_fEmissive.xyz, 1);;
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
@@ -201,6 +220,24 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -213,12 +250,11 @@ PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 	if (vDiffuse.a < 1)
 		discard;
 
-	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = vector(g_fEmissive.xyz, 1);;
+
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
@@ -252,6 +288,82 @@ PS_OUT PS_MAIN_SKYBOX_ForFog(PS_IN In)
 	Out.vWorldPosition = vector(1, 0, 0, 1);
 	Out.vEmissive = vector(g_fEmissive.xyz, 1);
 	Out.vLimLight = vector(0.f, 0.f, 0.f, 0.f);
+
+	return Out;
+}
+PS_OUT PS_MAIN_DEFAULT_Dissolve(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
+
+
+	vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - g_fDissolveValue;
+
+	if (NoiseDesc.r < 0)
+		discard;
+
+	if (NoiseDesc.r < 0.15 && g_fDissolveValue > 0 && g_fDissolveValue < 1)
+	{
+		vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+
+		vDiffuse = BurnRampDesc;
+		//Out.vEmissive = max((max(BurnRampDesc.r, BurnRampDesc.g), BurnRampDesc.b) - 0.15f, 0);
+		Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		//o.Emission = tex2D(_BurnRamp, float2(test *(1 / _BurnSize), 0));
+		//o.Albedo *= o.Emission;
+	}
+
+	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+	vNormal = mul(vNormal, WorldMatrix);
+
+
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
+
+	return Out;
+}
+
+PS_OUT_SHADOW PS_Shadow_Dissolve(PS_IN_SHADOW In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+
+
+	vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - g_fDissolveValue;
+
+	if (NoiseDesc.r < 0)
+		discard;
+
+
+	float Depth = In.vClipPosition.z / In.vClipPosition.w;
+	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, g_fOclussionObject);
+
 
 	return Out;
 }
@@ -371,6 +483,47 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_SKYBOX_ForFog();
 	}
 
+
+	pass Dissolve_Default //10
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_DEFAULT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_Dissolve();
+	}
+	pass Dissolve_Attached //11
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_ATTACHBONE();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_Dissolve();
+	}
+	pass Dissolve_Shadow_Default //12
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_Shadow();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Shadow_Dissolve();
+	}
+	pass Dissolve_Shadow_Attached //13
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_Shadow_AttachedBone();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Shadow_Dissolve();
+	}
 
 	
 }

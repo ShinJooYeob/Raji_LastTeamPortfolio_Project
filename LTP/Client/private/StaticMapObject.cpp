@@ -43,11 +43,21 @@ _int CStaticMapObject::Update(_double fDeltaTime)
 
 
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
+	{
+		m_pDissolve->Set_DissolveOn(false, 5.5f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	{
+		m_pDissolve->Set_DissolveOn(true, 1.5f);
+	}
 
 
 
 
 
+
+	m_pDissolve->Update_Dissolving(fDeltaTime);
 	return _int();
 }
 
@@ -61,7 +71,7 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel,nullptr,m_pDissolve));
 
 	if (g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius))
 	{
@@ -107,16 +117,19 @@ _int CStaticMapObject::Render()
 	FAILED_CHECK(__super::SetUp_ConstTable(m_pShaderCom));
 
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i= 0 ; i < NumMaterial ; i ++)
-	{
+	FAILED_CHECK(m_pDissolve->Render(m_iPassIndex));
 
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex,i));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+	//
+	//for (_uint i= 0 ; i < NumMaterial ; i ++)
+	//{
+	//
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex,i));
+	//}
 
 	return 0;
 }
@@ -196,6 +209,23 @@ HRESULT CStaticMapObject::SetUp_Components()
 
 #endif // _DEBUG
 
+
+
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &tDissolveDesc));
+
+	
+
+
+
+
+
 	return S_OK;
 }
 
@@ -231,6 +261,7 @@ void CStaticMapObject::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderCom);

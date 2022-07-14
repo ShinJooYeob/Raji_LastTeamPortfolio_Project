@@ -77,6 +77,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
 
 public:
 	static CPlayerWeapon_Bow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

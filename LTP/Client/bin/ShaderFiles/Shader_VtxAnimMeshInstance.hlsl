@@ -53,7 +53,9 @@ struct VS_OUT
 struct VS_OUT_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
+	float4		vTimer : TEXCOORD2;
 };
 
 VS_OUT_SHADOW VS_Shadow_NoWeightW(VS_IN In)
@@ -81,6 +83,8 @@ VS_OUT_SHADOW VS_Shadow_NoWeightW(VS_IN In)
 	Out.vPosition = mul(Out.vPosition, g_LightProjMatrix);
 
 	Out.vClipPosition = Out.vPosition;
+	Out.vTexUV = In.vTexUV;
+	Out.vTimer = In.vTimer;
 	return Out;
 };
 VS_OUT VS_MAIN_DEFAULT(VS_IN In)
@@ -176,7 +180,9 @@ struct PS_IN
 struct PS_IN_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
+	float4		vTimer : TEXCOORD2;
 };
 
 struct PS_OUT
@@ -201,11 +207,20 @@ PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
 
+	if (In.vTimer.w > 0)
+	{
+		float DissolveValue = 0;
+		if (In.vTimer.w > 1)
+			DissolveValue = In.vTimer.x / In.vTimer.y;
+		else
+			DissolveValue = 1.f - (In.vTimer.x / In.vTimer.y);
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+		if (NoiseDesc.r < 0)	discard;
+
+	}
+
 	float Depth = In.vClipPosition.z / In.vClipPosition.w;
-
-	//Out.vDiffuse = float4(Depth.xxx, 1);
-
-
 	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, g_fOclussionObject);
 
 	return Out;
@@ -216,26 +231,48 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-	//
-	if (vDiffuse.a < 0.1f)
-		discard;
+	Out.vEmissive = In.vEmissive;
+
+	if (In.vTimer.w > 0)
+	{
+
+		float DissolveValue = 0;
+		if (In.vTimer.w > 1)
+			DissolveValue = In.vTimer.x / In.vTimer.y;
+		else
+			DissolveValue = 1.f - (In.vTimer.x / In.vTimer.y);
+		
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+
+		if (NoiseDesc.r < 0)
+			discard;
+
+
+		if (NoiseDesc.r < 0.15 && DissolveValue > 0 && DissolveValue < 1)
+		{
+			vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+			vDiffuse = BurnRampDesc;
+			Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		}
+
+	}
+	else
+	{
+		if (vDiffuse.a < 0.1f)
+			discard;
+	}
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
-
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-	float3x3	NormalWorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-
-	vNormal = mul(vNormal, NormalWorldMatrix);
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+	vNormal = mul(vNormal, WorldMatrix);
 
 
 	Out.vDiffuse = vDiffuse;
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = In.vEmissive;
 	Out.vLimLight = In.vLimLightColor;
 	return Out;
 }
@@ -265,6 +302,7 @@ PS_OUT PS_MotionTrail(PS_IN In)
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
+
 
 
 technique11		DefaultTechnique
@@ -299,4 +337,5 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}
+
 }

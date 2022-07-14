@@ -930,6 +930,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Collider_PhysX_Dynamic,
 	Prototype_Collider_PhysX_Joint,
 
+	Prototype_Dissolve,
 	Prototype_Navigation,
 	Prototype_SwordTrail,
 	Prototype_MotionTrail,
@@ -1092,6 +1093,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Collider_PhysX_Joint:
 		return TEXT("Prototype_Collider_PhysX_Joint");
+		break;
+		
+
+	case Prototype_Dissolve:
+		return TEXT("Prototype_Component_Dissolve");
 		break;
 	case Prototype_MotionTrail:
 		return TEXT("Prototype_Component_MotionTrail");
@@ -1574,6 +1580,7 @@ enum COMPONENTID
 	Com_Navaigation,
 	Com_ModelInstance,
 	Com_SubTransform,
+	Com_Dissolve
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -1636,6 +1643,10 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 
 	case Com_ModelInstance:
 		return TEXT("Com_ModelInstance");
+		break;
+
+	case Com_Dissolve:
+		return TEXT("Com_Dissolve");
 		break;
 
 		

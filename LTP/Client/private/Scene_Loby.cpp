@@ -20,7 +20,7 @@ HRESULT CScene_Loby::Initialize()
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-//	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 		
@@ -181,14 +181,29 @@ HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Loby::Ready_NonAnimObject(const _tchar * pLayerTag)
 {
+
+
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 
-	CTransform* pObjectTransform =(CTransform*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag)->Get_Component(TAG_COM(Com_Transform));
-	
-	_Matrix WorldMat = XMMatrixScaling(10,  1, 10) * XMMatrixTranslation(5, -2, 5);
-	
-	pObjectTransform->Set_Matrix(WorldMat);
-	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag))->Set_FrustumSize(10000);
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+	_Matrix tt = XMMatrixScaling(100, 1, 100) * XMMatrixTranslation(0, -2.f, 0);
+
+	pTransform->Set_Matrix(tt);
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag))->Set_FrustumSize(99999999.f);
+
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, L"TestNonAnimInstance"));
+
+
+
+
+
 	return S_OK;
 }
 

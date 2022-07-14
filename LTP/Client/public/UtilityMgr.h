@@ -65,6 +65,10 @@ public:
 	HRESULT Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader* pShader, const char* szhlslConstName, _uint iTextureIndex = 0);
 
 
+	/*For Dissolve*/
+	HRESULT Bind_DissolveTex_OnShader(CShader* pShader, _uint iRampTextureIndex);
+
+
 	INSTPARTICLEDESC	Get_TextureParticleDesc(const _tchar* szFileName);
 	INSTMESHDESC		Get_MeshParticleDesc(const _tchar* szFileName);
 
@@ -78,6 +82,7 @@ private:
 	class CMainApp*			m_pMainApp = nullptr;
 	CRenderer*				m_pRenderer = nullptr;
 	CTexture*				m_pTexture = nullptr;
+	CTexture*				m_pDissolveTexture = nullptr;
 
 
 	map<wstring, INSTPARTICLEDESC>				m_mapTextureParticles;

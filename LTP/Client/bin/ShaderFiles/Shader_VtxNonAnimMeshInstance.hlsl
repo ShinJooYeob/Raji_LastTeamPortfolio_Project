@@ -91,7 +91,9 @@ struct VS_OUT_Noise
 struct VS_OUT_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
+	float4		vTimer : TEXCOORD2;
 };
 
 VS_OUT_SHADOW VS_Shadow(VS_IN In)
@@ -110,6 +112,8 @@ VS_OUT_SHADOW VS_Shadow(VS_IN In)
 	Out.vClipPosition = Out.vPosition;
 
 
+	Out.vTexUV = In.vTexUV;
+	Out.vTimer = In.vTimer;
 	return Out;
 };
 
@@ -202,7 +206,9 @@ struct PS_IN
 struct PS_IN_SHADOW
 {
 	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
 	float4		vClipPosition : TEXCOORD1;
+	float4		vTimer : TEXCOORD2;
 };
 struct PS_Noise_IN
 {
@@ -248,11 +254,21 @@ PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
 
+
+	if (In.vTimer.w > 0)
+	{
+		float DissolveValue = 0;
+		if (In.vTimer.w > 1)
+			DissolveValue = In.vTimer.x / In.vTimer.y;
+		else
+			DissolveValue = 1.f - (In.vTimer.x / In.vTimer.y);
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+		if (NoiseDesc.r < 0)	discard;
+
+	}
+
 	float Depth = In.vClipPosition.z / In.vClipPosition.w;
-
-	//Out.vDiffuse = float4(Depth.xxx, 1);
-
-
 	Out.vDiffuse = float4(Depth.x, In.vClipPosition.z, In.vClipPosition.w, g_fOclussionObject);
 
 	return Out;
@@ -262,7 +278,45 @@ PS_OUT PS_MAIN_OriginColor(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+
+
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vEmissive = In.vEmissive;
+
+
+	if (In.vTimer.w > 0)
+	{
+
+		float DissolveValue = 0;
+		if (In.vTimer.w > 1)
+			DissolveValue = In.vTimer.x / In.vTimer.y;
+		else
+			DissolveValue = 1.f - (In.vTimer.x / In.vTimer.y);
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+
+		if (NoiseDesc.r < 0)
+			discard;
+
+
+		if (NoiseDesc.r < 0.15 && DissolveValue > 0 && DissolveValue < 1)
+		{
+			vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+			vDiffuse = BurnRampDesc;
+			Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		}
+
+	}
+	//else
+	//{
+	//	if (vDiffuse.a < 0.1f)
+	//		discard;
+	//}
+
+
+
+
+
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -276,9 +330,7 @@ PS_OUT PS_MAIN_OriginColor(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = In.vEmissive;
 	Out.vLimLight = In.vLimLightColor;
-
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
 
@@ -289,7 +341,42 @@ PS_OUT PS_MAIN_BrightColor(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vDiffuse = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV), 1.f/2.2f);
+
+	vector		vDiffuse = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV), 1.f / 2.2f);
+	Out.vEmissive = In.vEmissive;
+
+
+	if (In.vTimer.w > 0)
+	{
+
+		float DissolveValue = 0;
+		if (In.vTimer.w > 1)
+			DissolveValue = In.vTimer.x / In.vTimer.y;
+		else
+			DissolveValue = 1.f - (In.vTimer.x / In.vTimer.y);
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+
+		if (NoiseDesc.r < 0)
+			discard;
+
+
+		if (NoiseDesc.r < 0.15 && DissolveValue > 0 && DissolveValue < 1)
+		{
+			vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+			vDiffuse = BurnRampDesc;
+			Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		}
+
+	}
+	//else
+	//{
+	//	if (vDiffuse.a < 0.1f)
+	//		discard;
+	//}
+
+
+
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -303,7 +390,6 @@ PS_OUT PS_MAIN_BrightColor(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = In.vEmissive;
 	Out.vLimLight = In.vLimLightColor;
 
 

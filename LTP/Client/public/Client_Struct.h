@@ -48,6 +48,9 @@ typedef struct tagAttachedDesc
 		return m_DefaultBonePivot.XMatrix() * BoneMatrix;
 	}
 
+
+
+
 	_Vector Get_AttachedBoneWorldPosition()
 	{
 		NULL_CHECK_BREAK(pModel);
@@ -56,6 +59,30 @@ typedef struct tagAttachedDesc
 
 		return (m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
 	}
+
+	_Matrix Caculate_AttachedBoneMatrix_BlenderFixed()
+	{
+		NULL_CHECK_BREAK(pModel);
+		NULL_CHECK_BREAK(m_pAttachedNode);
+		NULL_CHECK_BREAK(pAttachingObjectTransform);
+
+		_Matrix BoneMatrix = m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix();
+		BoneMatrix.r[0] = XMVector3Normalize(BoneMatrix.r[0]);
+		BoneMatrix.r[1] = XMVector3Normalize(BoneMatrix.r[1]);
+		BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
+
+		return BoneMatrix;
+	}
+	_Vector Get_AttachedBoneWorldPosition_BlenderFixed()
+	{
+		NULL_CHECK_BREAK(pModel);
+		NULL_CHECK_BREAK(m_pAttachedNode);
+		NULL_CHECK_BREAK(pAttachingObjectTransform);
+
+		return (m_DefaultBonePivot.XMatrix() * pModel->Caculate_AttachedBone(m_pAttachedNode) * pAttachingObjectTransform->Get_WorldMatrix()).r[3];
+	}
+
+
 public:
 
 	void Set_ReAttachBoneName(const char*	pAttachBoneName)

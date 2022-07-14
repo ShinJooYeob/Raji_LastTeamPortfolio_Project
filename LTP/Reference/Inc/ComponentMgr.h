@@ -19,6 +19,7 @@
 #include "MotionTrail.h"
 #include "SwordTrail.h"
 #include "ModelInstance.h"
+#include "Dissolve.h"
 
 
 BEGIN(Engine)

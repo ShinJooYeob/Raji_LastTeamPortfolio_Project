@@ -38,6 +38,16 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	}
+
+
 	switch (m_tPlayerWeaponDesc.eWeaponState)
 	{
 	case EWeaponState::STATE_STRUCTURE:
@@ -55,6 +65,7 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	//m_pModel->Change_AnimIndex(0);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	return _int();
 }
 
@@ -82,7 +93,7 @@ _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix, m_pDissolveCom));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
 }
@@ -101,16 +112,20 @@ _int CPlayerWeapon_Bow::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
-	}
+
+	FAILED_CHECK(m_pDissolveCom->Render(4));
+
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+	//
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//	{
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	}
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
+	//}
 
 	return _int();
 }
@@ -269,6 +284,16 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
+
+
 	return S_OK;
 }
 
@@ -310,4 +335,6 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolveCom);
+	
 }

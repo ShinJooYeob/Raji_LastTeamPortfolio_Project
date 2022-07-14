@@ -24,6 +24,13 @@ texture2D			g_DiffuseRoughTexture;
 texture2D			g_AmbientOcculusionTexture;
 
 
+texture2D			g_BurnRampTexture;
+texture2D			g_DissolveNoiseTexture;
+
+cbuffer	DissolveBuffer
+{
+	float	g_fDissolveValue = 0;
+};
 
 struct BoneMatrixArray
 {

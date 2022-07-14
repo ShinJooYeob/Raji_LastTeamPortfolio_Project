@@ -28,6 +28,9 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CModel*				m_pModel = nullptr;
+
+	CDissolve*			m_pDissolve = nullptr;
+
 #ifdef _DEBUG
 	CCollider*			m_pColliderCom = nullptr;
 #endif // _DEBUG

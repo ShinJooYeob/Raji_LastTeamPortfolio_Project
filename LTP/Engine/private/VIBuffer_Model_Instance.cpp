@@ -128,7 +128,8 @@ HRESULT CVIBuffer_Model_Instance::Initialize_Clone(void * pArg)
 }
 
 HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex ,
-	CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs ,_float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
+	CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs ,_float fFrustumsize,
+	vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>* pvecTimmer)
 {
 	if (nullptr == m_pDeviceContext)
 	{
@@ -147,6 +148,13 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (pvecTimmer && pvecTimmer->size() != (*pvecWorldMatrixs).size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	
 
 
 
@@ -195,8 +203,9 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 
-
-	
+			if (pvecTimmer)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), (*pvecTimmer)[i].XMVector());
+			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
 
 		}
@@ -226,7 +235,10 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 			else
 				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vEmissive), XMVectorSet(0, 0, 0, 0));
 
-			XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
+			if (pvecTimmer)
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), (*pvecTimmer)[i].XMVector());
+			else
+				XMStoreFloat4(&(((VTXINSTMATRIX*)SubResource.pData)[i].vTimer), XMVectorSet(0, 0, 0, 0));
 
 		}
 		m_pDeviceContext->Unmap(m_pVBInstance, 0);

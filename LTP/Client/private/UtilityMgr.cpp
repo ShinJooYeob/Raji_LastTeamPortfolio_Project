@@ -29,8 +29,8 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
 
 
-
-
+	m_pDissolveTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, L"Prototype_Texture_Dissolve");
+	NULL_CHECK_RETURN(m_pDissolveTexture, E_FAIL);
 
 	FAILED_CHECK(Ready_Particles());
 
@@ -229,6 +229,17 @@ HRESULT CUtilityMgr::Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader * pShader,
 
 
 	FAILED_CHECK(m_pTexture->Bind_OnShader(pShader, szhlslConstName, iTextureIndex));
+
+	return S_OK;
+}
+
+HRESULT CUtilityMgr::Bind_DissolveTex_OnShader(CShader * pShader, _uint iRampTextureIndex)
+{
+	if (iRampTextureIndex < 1) iRampTextureIndex = 1;
+
+	FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(pShader, "g_DissolveNoiseTexture", 0));
+	FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(pShader, "g_BurnRampTexture", iRampTextureIndex));
+
 
 	return S_OK;
 }
@@ -624,6 +635,8 @@ void CUtilityMgr::Free()
 {
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pDissolveTexture);
+	
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 }

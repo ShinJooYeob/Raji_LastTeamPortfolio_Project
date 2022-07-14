@@ -56,7 +56,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(true);
 
-
+	//m_szNameTag = L"Raji";
+	//"Layer_Player";
 	return S_OK;
 }
 
@@ -75,7 +76,14 @@ _int CPlayer::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_ShellingArrow), &tShellingArrowDesc));
 	}
 	//
-
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	}
 	_Vector vScale = m_pTransformCom->Get_Scale();
 
 	// Check Player Key Input
@@ -184,7 +192,20 @@ _int CPlayer::Update(_double fDeltaTime)
 
 	// Update Targeting
 	Update_Targeting(fDeltaTime);
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
+
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+	//m_pCollider->Get_ColliderPosition()
+
+	_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+	
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	m_IsConfilicted = false;
 	return _int();
 }
 
@@ -192,9 +213,16 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
+	//if (m_IsConfilicted == true)
+	//	m_pCollider->Set_Conflicted(0.5f);
+
+
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
+
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
@@ -212,19 +240,23 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	_uint a = m_pModel->Get_NowAnimIndex();
-	a = 10;
+
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	FAILED_CHECK(m_pDissolveCom->Render(3));
+
+
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+	//
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 	return _int();
 }
@@ -233,6 +265,29 @@ _int CPlayer::LateRender()
 {
 
 	return _int();
+}
+
+void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	//m_IsConfilicted = true;
+	//if (iMyColliderIndex == 2)
+	//{
+	//
+	//}
+	//
+	//if (!lstrcmp(pConflictedObj->Get_NameTag(), "Ä¡ÇÁÅ¸ÀÌÅº"))
+	//{
+	//	//
+	//}
+
+	//pConflictedObj->Get_NowHP() < 10
+
+	//eConflictedObjCollisionType
+	//m_pCollider->Get_ColliderPosition(iMyColliderIndex);
+	//pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex);
+
+	//pConflictedObj->Get_NameTag();
+
 }
 
 _fVector CPlayer::Get_BonePos(const char * pBoneName)
@@ -5190,6 +5245,44 @@ HRESULT CPlayer::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
 
 
+
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
+
+
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+	
+	COLLIDERDESC			ColliderDesc;
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.0f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1), _float3(0), _float3(-0.074084f, -0.861011f, -75.1948f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, -1.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_wrist", _float3(1), _float3(0), _float3(-58.667f, -0.60365f, -114.675f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
 	return S_OK;
 }
 
@@ -5475,5 +5568,9 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
+	Safe_Release(m_pDissolveCom);
+	Safe_Release(m_pCollider);
+	
 
+	
 }

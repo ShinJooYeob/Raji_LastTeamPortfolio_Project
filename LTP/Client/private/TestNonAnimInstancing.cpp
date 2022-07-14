@@ -25,11 +25,6 @@ HRESULT CTestNonAnimInstancing::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 
 
-	//if (pArg != nullptr)
-	//{
-	//	_float3 vPos = *(_float3*)pArg;
-	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPos);
-	//}
 
 	Set_IsOcllusion(true);
 
@@ -44,6 +39,22 @@ _int CTestNonAnimInstancing::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
+	{
+		for (_uint i = 0; i < m_vecTimer.size(); i++)
+		{
+			m_vecTimer[i] = _float4(-1.f * i - 3.f, 3.f, 0, 0);
+		}
+
+	}
+
+	for (_uint i = 0; i < m_vecTimer.size(); i++)
+	{
+		m_vecTimer[i].x += (_float)fDeltaTime;
+
+		if (m_vecTimer[i].x > 0) m_vecTimer[i].w = 2;
+
+	}
 
 
 	return _int();
@@ -58,7 +69,8 @@ _int CTestNonAnimInstancing::LateUpdate(_double fDeltaTime)
 
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this,
+		&m_vecInstancedTransform, m_pModelInstance, m_pShaderCom, m_pModel,nullptr,&m_vecTimer));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	
 
@@ -79,7 +91,8 @@ _int CTestNonAnimInstancing::Render()
 
 	FAILED_CHECK(__super::SetUp_ConstTable(m_pShaderCom));
 
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_DissolveTex_OnShader(m_pShaderCom, 1));
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform,0,nullptr,nullptr, &m_vecTimer));
 
 	return 0;
 }
@@ -108,8 +121,11 @@ HRESULT CTestNonAnimInstancing::SetUp_Components()
 	{
 		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(10, 3, -512.f + _float(i)*2.f));
-		m_vecInstancedTransform.push_back(pTransform);		
+		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(10, 0, 0 + _float(i)*2.f));
+		m_vecInstancedTransform.push_back(pTransform);	
+
+
+		m_vecTimer.push_back(_float4(-1.f * i - 3.f, 3.f, 0, 0));
 	}
 
 

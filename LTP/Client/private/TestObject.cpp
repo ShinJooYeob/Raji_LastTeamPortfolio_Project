@@ -50,6 +50,23 @@ _int CTestObject::Update(_double fDeltaTime)
 		static bool  t = false;	t = !t;
 		m_pModel->Change_AnimIndex((t) ? 0: 10);
 	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_V) & DIS_Down)
+	{
+		for (_uint i = 0; i < m_vecTimer.size(); i++)
+		{
+			m_vecTimer[i] = _float4(-1.f * i - 3.f, 3.f, 0, 0);
+		}
+
+	}
+
+	for (_uint i =0 ; i< m_vecTimer.size(); i++)
+	{
+		m_vecTimer[i].x += (_float)fDeltaTime;
+
+		if (m_vecTimer[i].x > 0) m_vecTimer[i].w = 2;
+
+	}
+
 	//if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
 	//{
 	//	m_pTransformCom->Move_Backward(fDeltaTime);
@@ -92,7 +109,8 @@ _int CTestObject::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance,m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this,
+		&m_vecInstancedTransform, m_pModelInstance,m_pShaderCom, m_pModel,nullptr, &m_vecTimer));
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
@@ -112,7 +130,9 @@ _int CTestObject::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_DissolveTex_OnShader(m_pShaderCom, 1));
+
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform,0,nullptr,nullptr,&m_vecTimer));
 
 
 	return _int();
@@ -140,6 +160,8 @@ HRESULT CTestObject::SetUp_Components()
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
 		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3( 0+ _float(i)*1.f, 0, 2));
 		m_vecInstancedTransform.push_back(pTransform);
+
+		m_vecTimer.push_back(_float4(-1.f * i - 3.f, 3.f, 0, 0));
 	}
 
 	CModelInstance::MODELINSTDESC tModelIntDsec;
@@ -224,4 +246,6 @@ void CTestObject::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	//Safe_Release(m_pDissolveCom);
+	
 }

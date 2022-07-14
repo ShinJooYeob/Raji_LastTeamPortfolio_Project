@@ -119,7 +119,12 @@ public:
 	virtual _int LateUpdate(_double fDeltaTimer) override;
 	virtual _int Render() override;
 	virtual _int LateRender() override;
-	
+
+
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider, 
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	_bool	m_IsConfilicted = false;
 
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
@@ -350,7 +355,11 @@ private:
 	CMotionTrail*			m_pMotionTrail = nullptr;
 	CCamera_Main*			m_pMainCamera = nullptr;
 	CTransform*				m_pMainCameraTransform = nullptr;
-	
+	CDissolve*				m_pDissolveCom = nullptr;
+
+	CCollider*				m_pCollider = nullptr;
+	vector<ATTACHEDESC>		m_vecAttachedDesc;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 

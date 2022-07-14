@@ -280,6 +280,10 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CMotionTrail::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_SwordTrail),
 		CSwordTrail::Create(m_pDevice, m_pDeviceContext, L"SwordTrail.txt", 20)));
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Dissolve),
+		CDissolve::Create(m_pDevice, m_pDeviceContext, L"Prototype_Texture_Dissolve")));
+
 	
 
 	////버퍼인덱스 프로토타입 생성
@@ -369,6 +373,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
+
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, L"Prototype_Texture_Dissolve",
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Dissolve.txt")));
 
 
 	//TestEffect.txt;

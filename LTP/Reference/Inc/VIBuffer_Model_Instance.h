@@ -33,7 +33,8 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 	virtual HRESULT Render(class CShader* pShader, _uint iPassIndex, _uint iMatreialIndex ,_uint iMeshContainerIndex 
-		,CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
+		,CMeshContainer* pMeshContainer, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize ,
+		vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer);
 
 	virtual HRESULT Render_float4x4(class CShader* pShader, _uint iPassIndex, _uint iMatreialIndex, _uint iMeshContainerIndex
 		, CMeshContainer* pMeshContainer, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize,

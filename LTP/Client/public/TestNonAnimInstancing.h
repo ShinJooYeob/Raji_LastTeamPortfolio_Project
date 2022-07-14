@@ -30,6 +30,8 @@ private:
 
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
+	vector<_float4>		m_vecTimer;
+
 
 private:
 	HRESULT SetUp_Components();

@@ -14,6 +14,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Model.h"
+#include "Dissolve.h"
 
 
 
@@ -328,7 +329,8 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderID, CGameObject * pGameObj
 	return S_OK;
 }
 
-HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObject, CTransform * pTransform, CShader * pShader, CModel* pModel, _float4x4 * AttacehdMatrix)
+HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObject, CTransform * pTransform, 
+	CShader * pShader, CModel* pModel, _float4x4 * AttacehdMatrix, CDissolve* pDissolve)
 {
 	if (pGameObject == nullptr || pTransform == nullptr || pShader == nullptr)
 	{
@@ -354,6 +356,8 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 	tDesc.pTransform = pTransform;
 	tDesc.pModel = pModel;
 	tDesc.pShader = pShader;
+	tDesc.pDissolve = pDissolve;
+
 
 	if (tDesc.pGameObject->Get_IsOcllusion())
 		tDesc.fIsOcllusion = 0.9f;
@@ -371,7 +375,8 @@ HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObj
 }
 
 HRESULT CRenderer::Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, CGameObject * pGameObject,
-	vector<CTransform*>* pvecTransform, CModelInstance* pModelInst, CShader * pShader, CModel * pModel, vector<_float4x4>* pvecTransformfloat4x4)
+	vector<CTransform*>* pvecTransform, CModelInstance* pModelInst,
+	CShader * pShader, CModel * pModel, vector<_float4x4>* pvecTransformfloat4x4, vector<_float4>* pvecTimer)
 {
 	if (pGameObject == nullptr || pShader == nullptr || pModelInst == nullptr)
 	{
@@ -400,6 +405,7 @@ HRESULT CRenderer::Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, 
 	tDesc.pModel = pModel;
 	tDesc.pShader = pShader;
 	tDesc.pModelInstance = pModelInst;
+	tDesc.pvecTimer = pvecTimer;
 
 	if (tDesc.pGameObject->Get_IsOcllusion())
 		tDesc.fIsOcllusion = 0.9f;
@@ -1523,13 +1529,19 @@ HRESULT CRenderer::Render_ShadowGroup()
 
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 
-
-				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
-
-				for (_uint i = 0; i < NumMaterial; i++)
+				if (ShadowDesc.pDissolve == nullptr)
 				{
-					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i, "g_BoneMatrices"));
+					_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+					for (_uint i = 0; i < NumMaterial; i++)
+					{
+						FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i, "g_BoneMatrices"));
+					}
 				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pDissolve->Render_Shadow(0));
+				}
+			
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 		}
@@ -1555,12 +1567,23 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
 				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-				for (_uint i = 0; i < NumMaterial; i++)
+				if (ShadowDesc.pDissolve == nullptr)
 				{
-					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i, "g_BoneMatrices"));
+
+					_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+
+					for (_uint i = 0; i < NumMaterial; i++)
+					{
+						FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i, "g_BoneMatrices"));
+					}
 				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pDissolve->Render_Shadow(1));
+				}
+
+
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 
@@ -1587,12 +1610,25 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
 				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-				for (_uint i = 0; i < NumMaterial; i++)
+
+				if (ShadowDesc.pDissolve == nullptr)
 				{
-					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i));
+
+					_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+
+					for (_uint i = 0; i < NumMaterial; i++)
+					{
+						FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 0, i));
+					}
 				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pDissolve->Render_Shadow(0));
+				}
+
+
+
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 		}
@@ -1618,12 +1654,22 @@ HRESULT CRenderer::Render_ShadowGroup()
 				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_AttechMatrix", &ShadowDesc.AttacehdMatrix, sizeof(_float4x4)));
 				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
 
-				_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
 
-				for (_uint i = 0; i < NumMaterial; i++)
+				if (ShadowDesc.pDissolve == nullptr)
 				{
-					FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i));
+					_uint NumMaterial = ShadowDesc.pModel->Get_NumMaterial();
+
+					for (_uint i = 0; i < NumMaterial; i++)
+					{
+						FAILED_CHECK(ShadowDesc.pModel->Render(ShadowDesc.pShader, 1, i));
+					}
 				}
+				else
+				{
+					FAILED_CHECK(ShadowDesc.pDissolve->Render_Shadow(1));
+				}
+
+
 			}
 			Safe_Release(ShadowDesc.pGameObject);
 
@@ -1680,12 +1726,13 @@ HRESULT CRenderer::Render_ShadowGroup()
 
 				if (!ShadowDesc.pvecTransformfloat4x4)
 				{
-					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform));
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform,0,nullptr,nullptr, ShadowDesc.pvecTimer));
 
 				}
 				else
 				{
-					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0, ShadowDesc.pvecTransformfloat4x4));
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0,
+						ShadowDesc.pvecTransformfloat4x4, 0, nullptr, nullptr, ShadowDesc.pvecTimer));
 
 				}
 			}
@@ -1714,12 +1761,14 @@ HRESULT CRenderer::Render_ShadowGroup()
 
 				if (!ShadowDesc.pvecTransformfloat4x4)
 				{
-					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform));
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render(ShadowDesc.pShader, 0, ShadowDesc.pvecTransform, 0,
+						nullptr, nullptr, ShadowDesc.pvecTimer));
 
 				}
 				else
 				{
-					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0, ShadowDesc.pvecTransformfloat4x4));
+					FAILED_CHECK(ShadowDesc.pModelInstance->Render_By_float4x4(ShadowDesc.pShader, 0,
+						ShadowDesc.pvecTransformfloat4x4, 0, nullptr, nullptr, ShadowDesc.pvecTimer));
 
 				}
 

@@ -42,7 +42,17 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	{
+		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	}
 
+
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	return _int();
 }
 
@@ -54,14 +64,14 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 	//m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
 
 
-	_Matrix mat = m_fAttachedMatrix.XMatrix();
+	//_Matrix mat = m_fAttachedMatrix.XMatrix();
 
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	//mat.r[0] = XMVector3Normalize(mat.r[0]);
+	//mat.r[1] = XMVector3Normalize(mat.r[1]);
+	//mat.r[2] = XMVector3Normalize(mat.r[2]);
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
@@ -96,17 +106,18 @@ _int CChiedtuan_Weapon::Render()
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 
+	FAILED_CHECK(m_pDissolveCom->Render(8));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+	//
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//	{
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	}
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
+	//}
 
 	return _int();
 }
@@ -155,6 +166,18 @@ HRESULT CChiedtuan_Weapon::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM_ATTACHED;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
+
+
+
 	return S_OK;
 }
 
@@ -191,4 +214,6 @@ void CChiedtuan_Weapon::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolveCom);
+	
 }

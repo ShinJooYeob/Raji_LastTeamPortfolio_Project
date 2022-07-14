@@ -48,7 +48,7 @@ public:
 
 
 	HRESULT Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer, 
-		vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName , _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive);
+		vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName , _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer);
 	HRESULT Render_ForInstancing_float4x4(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer,
 		vector<_float4x4>* pvecWorldMatrixs, const char* szBoneValueName , _float fFrustumsize , vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTiemer);
 

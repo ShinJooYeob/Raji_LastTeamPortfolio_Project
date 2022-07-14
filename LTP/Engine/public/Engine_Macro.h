@@ -214,3 +214,56 @@ return _return;}
 
 
 
+
+static const char* Tag_ModelTextureTypeForEngine(unsigned int eTag)
+{
+	switch (eTag)
+	{
+	case aiTextureType_NONE:		return "None";
+		break;
+	case aiTextureType_DIFFUSE:	return "g_DiffuseTexture";
+		break;
+	case aiTextureType_SPECULAR:return "g_SpecularTexture";
+		break;
+	case aiTextureType_AMBIENT:return "g_AmbientTexture";
+		break;
+	case aiTextureType_EMISSIVE:return "g_EmissiveTexture";
+		break;
+	case aiTextureType_HEIGHT:return "g_HeightTexture";
+		break;
+	case aiTextureType_NORMALS:return "g_NormalTexture";
+		break;
+	case aiTextureType_SHININESS:return "g_ShininessTexture";
+		break;
+	case aiTextureType_OPACITY:return "g_OpacityTexture";
+		break;
+	case aiTextureType_DISPLACEMENT:return "g_DisplaceTexture";
+		break;
+	case aiTextureType_LIGHTMAP:return "g_LightMapTexture";
+		break;
+	case aiTextureType_REFLECTION:return "g_ReflectTexture";
+		break;
+	case aiTextureType_BASE_COLOR:return "g_BaseColorTexture";
+		break;
+	case aiTextureType_NORMAL_CAMERA:return "g_NormalCamTexture";
+		break;
+	case aiTextureType_EMISSION_COLOR:return "g_EmissionColorTexture";
+		break;
+	case aiTextureType_METALNESS:return "g_MetalTexture";
+		break;
+	case aiTextureType_DIFFUSE_ROUGHNESS:return "g_DiffuseRoughTexture";
+		break;
+	case aiTextureType_AMBIENT_OCCLUSION:return "g_AmbientOcculusionTexture";
+		break;
+	case aiTextureType_UNKNOWN:return "";
+		break;
+	case _aiTextureType_Force32Bit:return "";
+		break;
+	default:
+		OutputDebugStringW(L"Wrong Type Texture");
+		__debugbreak();
+		return nullptr;
+		break;
+	}
+}
+#define  MODLETEXTYPEFORENGINE Tag_ModelTextureTypeForEngine

@@ -41,6 +41,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*				m_pDissolveCom = nullptr;
 
 	WEAPOPNDESC			m_WeaponDesc;
 

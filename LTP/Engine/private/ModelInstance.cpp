@@ -4,58 +4,6 @@
 
 
 
-static const char* Tag_ModelTextureTypeForEngine(_uint eTag)
-{
-	switch (eTag)
-	{
-	case aiTextureType_NONE:		return "None";
-		break;
-	case aiTextureType_DIFFUSE:	return "g_DiffuseTexture";
-		break;
-	case aiTextureType_SPECULAR:return "g_SpecularTexture";
-		break;
-	case aiTextureType_AMBIENT:return "g_AmbientTexture";
-		break;
-	case aiTextureType_EMISSIVE:return "g_EmissiveTexture";
-		break;
-	case aiTextureType_HEIGHT:return "g_HeightTexture";
-		break;
-	case aiTextureType_NORMALS:return "g_NormalTexture";
-		break;
-	case aiTextureType_SHININESS:return "g_ShininessTexture";
-		break;
-	case aiTextureType_OPACITY:return "g_OpacityTexture";
-		break;
-	case aiTextureType_DISPLACEMENT:return "g_DisplaceTexture";
-		break;
-	case aiTextureType_LIGHTMAP:return "g_LightMapTexture";
-		break;
-	case aiTextureType_REFLECTION:return "g_ReflectTexture";
-		break;
-	case aiTextureType_BASE_COLOR:return "g_BaseColorTexture";
-		break;
-	case aiTextureType_NORMAL_CAMERA:return "g_NormalCamTexture";
-		break;
-	case aiTextureType_EMISSION_COLOR:return "g_EmissionColorTexture";
-		break;
-	case aiTextureType_METALNESS:return "g_MetalTexture";
-		break;
-	case aiTextureType_DIFFUSE_ROUGHNESS:return "g_DiffuseRoughTexture";
-		break;
-	case aiTextureType_AMBIENT_OCCLUSION:return "g_AmbientOcculusionTexture";
-		break;
-	case aiTextureType_UNKNOWN:return "";
-		break;
-	case _aiTextureType_Force32Bit:return "";
-		break;
-	default:
-		OutputDebugStringW(L"Wrong Type Texture");
-		__debugbreak();
-		return nullptr;
-		break;
-	}
-}
-#define  MODLETEXTYPEFORENGINE Tag_ModelTextureTypeForEngine
 
 CModelInstance::CModelInstance(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CComponent(pDevice, pDeviceContext)
@@ -96,7 +44,7 @@ HRESULT CModelInstance::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive)
+HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -112,7 +60,7 @@ HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<
 			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
 
 		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i,  m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive));
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive, pvecTimmer));
 	}
 
 	return 0;

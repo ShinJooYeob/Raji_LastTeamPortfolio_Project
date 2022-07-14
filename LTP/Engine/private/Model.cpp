@@ -6,6 +6,7 @@
 #include "ClipBone.h"
 #include "VIBuffer_Model_Instance.h"
 #include "Transform.h"
+#include "Shader.h"
 
 
 _bool CModel::MODEL_TOOLPATH_FLAG = false;
@@ -539,13 +540,19 @@ HRESULT CModel::Remove_CertainKeyFrameIndex(_uint iAnimIndex)
 
 HRESULT CModel::Bind_OnShader(CShader * pShader, _uint iMaterialIndex, _uint eTextureType, const char * pHlslConstValueName)
 {
+	if (eTextureType == 0) return S_FALSE;
+
 	if (iMaterialIndex  >= m_iNumMaterials|| pShader == nullptr || m_MeshMaterialDesc.pTexture == nullptr)
 		return E_FAIL;
 
 	FAILED_CHECK(m_MeshMaterialDesc.pTexture->Change_TextureLayer(to_wstring(iMaterialIndex).c_str()));
 
 	if (FAILED(m_MeshMaterialDesc.pTexture->NullCheckTexture(eTextureType)))
+	{
+		pShader->Set_Texture(pHlslConstValueName, nullptr);
 		return S_FALSE;
+	}
+	
 
 	if (FAILED(m_MeshMaterialDesc.pTexture->Bind_OnShader(pShader, pHlslConstValueName, eTextureType)))
 	{
@@ -834,7 +841,8 @@ HRESULT CModel::Render(CShader * pShader, _uint iPassIndex,_uint iMaterialIndex,
 }
 
 HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer,
-									vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive)
+									vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName, 
+	_float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer)
 {
 	if (iMaterialIndex >= m_iNumMaterials || nullptr == m_MeshMaterialDesc.pTexture)
 		return E_FAIL;
@@ -851,7 +859,8 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 		{
 			FAILED_CHECK(pMeshContainer->Bind_AffectingBones_OnShader(pShader, matDefualtPivot, BoneMatrices, szBoneValueName, &m_vecHierarchyNode));
 
-			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
+			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex,
+				pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer));
 			iMeshConstainerIndex++;
 		}
 	}
@@ -861,7 +870,8 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
-			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive));
+			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer,
+				pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer));
 			iMeshConstainerIndex++;
 		}
 

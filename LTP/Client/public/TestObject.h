@@ -32,6 +32,7 @@ private:
 
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
+	vector<_float4>		m_vecTimer;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;
