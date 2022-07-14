@@ -31,11 +31,12 @@ public:
 
 	PxRigidDynamic* Create_DemoChain(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* Create_DemoChain2(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
+	PxRigidDynamic* Create_DemoChain_Test(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	PxRigidDynamic* Create_MatchForBonePos(PxRigidDynamic* actor, const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint);
 	
 	
 //	static PxJoint* createBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
-	static PxJoint* CreateNomalJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+	static PxJoint* CreateD6Joint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 	static PxJoint* CreateMYJoint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 //	static PxJoint* CreateHairSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
@@ -47,9 +48,8 @@ public:
 	virtual HRESULT Render() override;
 
 #endif // _DEBUG
-	HRESULT Set_ColiiderDesc(PHYSXDESC_JOINT desc);
 	HRESULT Set_ColiiderDesc2(PHYSXDESC_JOINT desc);
-	HRESULT Set_ColiderDesc_(PxTransform trans, PxVec3 scale, PxReal distance, CGameObject* game);
+	HRESULT Set_ColiderDesc_Test(PHYSXDESC_JOINT desc);
 
 
 protected:

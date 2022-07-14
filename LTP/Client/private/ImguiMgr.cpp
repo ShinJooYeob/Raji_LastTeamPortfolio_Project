@@ -1243,12 +1243,12 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	// static 오브젝트 배치
 	static _float3 Position = _float3::Zero();
 	ImGui::DragFloat3("POS:", (float*)&Position, 0.1f, -100, 100);
-	static  _float3 Scale = _float3(0.1f, 0.3f, 0.3f);
+	static  _float3 Scale = _float3(1.0f, 1.0f, 1.0f);
 	ImGui::DragFloat3("SCALE:", (float*)&Scale, 0.1f, 0.1f, 100);
-	static  _float3 Force = _float3(0.1f, 0.3f, 0.3f);
+	static  _float3 Force = _float3(1.0f, 1.0f, 1.0f);
 	ImGui::DragFloat3("FORCE:", (float*)&Force, 0.1f, -100, 100);
 
-	static  _float3 MainActorScale = _float3(0.1f,0,0);
+	static  _float3 MainActorScale = _float3(1.0f,0,0);
 	ImGui::DragFloat3("MainActorScale:", (float*)&MainActorScale, 0.1f, -100, 100);
 
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
@@ -1534,7 +1534,8 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createJoint.mSeparation = Force.x;
 			createJoint.mAttachModel = objModel;
 
-			coljoint->Set_ColiiderDesc2(createJoint);
+		//	coljoint->Set_ColiiderDesc2(createJoint);
+			coljoint->Set_ColiderDesc_Test(createJoint);
 
 		}
 

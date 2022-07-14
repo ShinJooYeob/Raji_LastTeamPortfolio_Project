@@ -318,7 +318,7 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 	case PxGeometryType::eSPHERE:
 	{
 		const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
-		BoundingSphere s = BoundingSphere(worldpos, sphereGeom.radius);
+		BoundingSphere s = BoundingSphere(worldpos, 0.05f);
 		DX::Draw(m_pBatch, s, color);
 		break;
 	}
@@ -368,13 +368,29 @@ HRESULT CCollider_PhysX_Base::RenderShape(const PxGeometryHolder & h, const PxMa
 	return S_OK;
 }
 
-HRESULT CCollider_PhysX_Base::RenderDebugSphere(_float4x4 mat,_float scale, XMVECTORF32 color)
+HRESULT CCollider_PhysX_Base::RenderDebugSphere(_float4x4 mat,_float3 scale, XMVECTORF32 color, PxGeometryType::Enum type)
 {
-	color = DirectX::Colors::Red;
-	PxTransform worldTrans = PxTransform(MAT4X4TOPXMAT(mat));
-	_float3 worldpos = PXVEC3TOFLOAT3(worldTrans.p);
-	BoundingSphere s = BoundingSphere(worldpos, scale);
-	DX::Draw(m_pBatch, s, color);
+	if (type == PxGeometryType::Enum::eBOX)
+	{
+		_Sfloat4x4 s = _Sfloat4x4(mat);
+		_float x = s.Right().Length();
+		_float y = s.Up().Length();
+		_float z = s.Backward().Length();
+
+		scale = _float3(x*4, y*5, z*3);
+		_Squternion q = _Squternion::CreateFromRotationMatrix(mat);
+
+		BoundingOrientedBox obbBox = BoundingOrientedBox(s.Translation(), scale, q);
+		DX::Draw(m_pBatch, obbBox, color);
+	}
+	if (type == PxGeometryType::Enum::eSPHERE)
+	{
+		PxTransform worldTrans = PxTransform(MAT4X4TOPXMAT(mat));
+		_float3 worldpos = PXVEC3TOFLOAT3(worldTrans.p);
+		BoundingSphere s = BoundingSphere(worldpos, scale.x);
+		DX::Draw(m_pBatch, s, color);
+	}
+	
 	return S_OK;
 }
 
