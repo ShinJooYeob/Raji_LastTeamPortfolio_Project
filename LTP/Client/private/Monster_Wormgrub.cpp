@@ -26,14 +26,6 @@ HRESULT CMonster_Wormgrub::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 
 
-
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
-
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -105,12 +97,20 @@ _int CMonster_Wormgrub::LateRender()
 
 HRESULT CMonster_Wormgrub::SetUp_Info()
 {
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+
 	for (_uint i = 0; i < 16; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
-		tDesc.iType = ANIM_RUN;
+		tDesc.iType = rand() % 2;
 
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -118,9 +118,13 @@ HRESULT CMonster_Wormgrub::SetUp_Info()
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
 
+		_Vector vDis = (m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
 
-		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(0 + _float(i)*1.f, 0, 2));
+		_Vector PlayerPos = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
+		PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * pUtil->RandomFloat(2, 5));
+
+		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
 
 
 
@@ -144,18 +148,31 @@ HRESULT CMonster_Wormgrub::SetUp_Info()
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
-		if (i == ANIM_RUN)
+		if (i == ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
 		{
-			m_pModel[i]->Change_AnimIndex(1);
+			//m_pModel[i]->Change_AnimIndex_ReturnTo(1,1);
+			m_pModel[i]->Change_AnimIndex(0);
 		}
 		else if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 		{
-			m_pModel[i]->Change_AnimIndex(0);
+			//m_pModel[i]->Change_AnimIndex_ReturnTo(1,1);
+			m_pModel[i]->Change_AnimIndex(1);
 		}
 	}
 
+
 	_int	iNumber = 0;
-	_double	dpercent = 0.2;
+	_double	dpercent = 0.15999984;
+
+	for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
+	{
+		m_pModel[i]->Update_AnimationClip(iNumber * dpercent);
+
+		iNumber++;
+	}
+
+	iNumber = 0;
+	dpercent = 0.216;
 	for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
 	{
 		m_pModel[i]->Update_AnimationClip(iNumber * dpercent);
@@ -210,11 +227,8 @@ HRESULT CMonster_Wormgrub::FollowMe(_double dDeltaTime)
 			{
 				if (m_pModel[MeshInstance.iType]->Get_PlayRate() > 0.95)
 				{
-					MeshInstance.iType = ANIM_RUN;
+					MeshInstance.iType = rand() % 2;
 				}
-			}
-			else {
-				MeshInstance.iType = ANIM_RUN;
 			}
 		}
 
@@ -227,8 +241,11 @@ HRESULT CMonster_Wormgrub::FollowMe(_double dDeltaTime)
 
 		switch (m_vecInstancedTransform[i].iType)
 		{
-		case ANIM_RUN:
-			m_ModelTransGroup[ANIM_RUN].push_back(m_vecInstancedTransform[i].pTransform);
+		case ANIM_RUN_Frame1:
+			m_ModelTransGroup[ANIM_RUN_Frame1].push_back(m_vecInstancedTransform[i].pTransform);
+			break;
+		case ANIM_RUN_Frame2:
+			m_ModelTransGroup[ANIM_RUN_Frame2].push_back(m_vecInstancedTransform[i].pTransform);
 			break;
 		case ANIM_ATTACK_Frame1:
 			m_ModelTransGroup[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].pTransform);
@@ -275,9 +292,12 @@ HRESULT CMonster_Wormgrub::SetUp_Components()
 HRESULT CMonster_Wormgrub::Adjust_AnimMovedTransform(_double dDeltatime)
 {
 
-	for (auto& pObjectTransform : m_ModelTransGroup[ANIM_RUN])
+	for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
 	{
-		pObjectTransform->Move_Forward(dDeltatime);
+		for (auto& pObjectTransform : m_ModelTransGroup[i])
+		{
+			pObjectTransform->Move_Forward(dDeltatime);
+		}
 	}
 
 	//_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();

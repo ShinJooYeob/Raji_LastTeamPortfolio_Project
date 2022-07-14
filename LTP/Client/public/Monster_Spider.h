@@ -4,7 +4,7 @@
 BEGIN(Client)
 class CMonster_Spider final : public CMonster
 {
-	enum AnimationType { ANIM_RUN, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END };
+	enum AnimationType { ANIM_RUN_Frame1, ANIM_RUN_Frame2, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END };
 
 	typedef struct tagState
 	{
