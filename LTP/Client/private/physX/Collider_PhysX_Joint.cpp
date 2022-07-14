@@ -265,8 +265,10 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 
 	//	return S_OK;
 
-		_float3 value1;  
+		_float3 value1;
+		_float3 value2;
 		memcpy((_float3*)(&value1), &DEBUGVALUE1, sizeof(_float3));
+		memcpy((_float3*)(&value2), &DEBUGVALUE2, sizeof(_float3));
 
 		// 테스트로 엑터 1과 2를 보정
 		PxVec3 PreDir;
@@ -275,14 +277,38 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 		//	New_WorldPxTransform[2].p = New_WorldPxTransform[1].p + PreDir * value1.x;;
 
 
+		for (_uint i = 0; i < mVecActors.size(); ++i)
+		{
+			PreDir = New_WorldPxTransform[i + 1].p - New_WorldPxTransform[i].p;
+			PreDir = PreDir.getNormalized();
+			New_WorldPxTransform[i + 1].p = New_WorldPxTransform[i].p+ PreDir * myOffsetScale[i] * value1.x;
+
+		}
+
+
 		for (_uint i = 1; i < mVecActors.size(); ++i)
 		{
 			// 보간한 위치의 회전이 안먹인다
-			PreDir = New_WorldPxTransform[i+1].p - New_WorldPxTransform[i].p;
-			PreDir = PreDir.getNormalized();
-			New_WorldPxTransform[i+1].p = New_WorldPxTransform[i].p + PreDir * myOffsetScale[i]* value1.x;;
-		//	_Squternion a = _Squternion::Slerp(*(_Squternion*)&New_WorldPxTransform[i].q, *(_Squternion*)&New_WorldPxTransform[i + 1].q, value1.y);
-		//	New_WorldPxTransform[i].q = *(PxQuat*)&a;
+		//	PreDir = New_WorldPxTransform[i+1].p - New_WorldPxTransform[i].p;
+		//	PreDir = PreDir.getNormalized();
+			//New_WorldPxTransform[i+1].p = New_WorldPxTransform[i].p + PreDir * myOffsetScale[i]* value1.x;;
+			if (i == 7)
+			{
+				New_WorldPxTransform[i] = New_WorldPxTransform[i - 1];
+			}
+			else
+			{
+				PxMat44 CurrentMat = PxMat44(New_WorldPxTransform[i]);
+				PxMat44 NextMat = PxMat44(New_WorldPxTransform[i + 1]);
+				//CurrentMat.column3 = NextMat.column3 = PxVec4(0, 0, 0,1);
+
+				PxVec3 UpDir = (NextMat.column3.getXYZ() - CurrentMat.column3.getXYZ()).getNormalized();
+				PxVec3 RightDir = (UpDir == PxVec3(0, 1, 0)) ?
+					UpDir.cross(PxVec3(0.0000001f, 1, 0).getNormalized()).getNormalized() : UpDir.cross(PxVec3(0, 1, 0)).getNormalized();
+				PxVec3 LookDir = RightDir.cross(UpDir).getNormalized();
+				PxVec3 Pos2 = CurrentMat.column3.getXYZ();
+				New_WorldPxTransform[i] = PxTransform(PxMat44(RightDir, UpDir, LookDir, Pos2));
+			}
 
 
 			PxTransform trans = New_WorldPxTransform[i];
@@ -294,29 +320,33 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 			_Matrix mat = (PXMATTOMAT4x4(px4)).XMatrix() ;
 			_Vector Pos = mat.r[3];
 
-		//	mat.r[3] = XMVectorSet(0, 0, 0, 1);
-		//	mat =  XMMatrixRotationX(XMConvertToRadians(-90)) * mat ;
-			//* 
-			
+		
 
 			_Matrix HM = mVecHier[i]->Get_UpdatedMatrix();
 			_Matrix WorldHM = BlenderMat[i].XMatrix() * HM * mAttachModel->Get_DefaiultPivotMat().XMatrix()
 				* mMainTransform->Get_WorldMatrix();
 
 			XMStoreFloat4x4(&myHM[i], WorldHM);
-
-		//	mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(WorldHM.r[0]);
-		//	mat.r[1] = XMVector3Normalize(mat.r[1]) * XMVector3Length(WorldHM.r[1]);
-		//	mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(WorldHM.r[2]);
-
-		//	mat.r[0] = XMVector3Normalize(mat.r[0]);
-		//	mat.r[1] = XMVector3Normalize(mat.r[1]);
-		//	mat.r[2] = XMVector3Normalize(mat.r[2]);
+		
+				mat.r[0] = XMVector3Normalize(mat.r[0]) * XMVector3Length(WorldHM.r[0]);
+				mat.r[1] = XMVector3Normalize(mat.r[1]) * XMVector3Length(WorldHM.r[1]);
+				mat.r[2] = XMVector3Normalize(mat.r[2]) * XMVector3Length(WorldHM.r[2]);
 
 
-			mat.r[0] = WorldHM.r[0];
-			mat.r[1] = WorldHM.r[1];
-			mat.r[2] = WorldHM.r[2];
+			//WorldHM =  XMMatrixRotationX(XMConvertToRadians(value2.x)) *
+			//	XMMatrixRotationY(XMConvertToRadians(value2.y))*
+			//	XMMatrixRotationZ(XMConvertToRadians(value2.z))*
+			//	mat ;
+
+
+			//mat.r[0] = XMMatrixRotationX(XMConvertToRadians(value2.x)).r[0] * WorldHM.r[0];
+			//mat.r[1] = XMMatrixRotationY(XMConvertToRadians(value2.y)).r[1] * WorldHM.r[1];
+			//mat.r[2] = XMMatrixRotationZ(XMConvertToRadians(value2.z)).r[2] * WorldHM.r[2];
+
+			// mat.r[0] = WorldHM.r[0];
+			// mat.r[1] = WorldHM.r[1];
+			// mat.r[2] = WorldHM.r[2];
+			// 
 
 
 			mat.r[3] = Pos;
@@ -826,9 +856,9 @@ PxJoint * CCollider_PhysX_Joint::CreateMYJoint(PxRigidActor * a0, const PxTransf
 PxJoint* CCollider_PhysX_Joint::CreateD6Joint(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
 {
 	PxD6Joint* j = PxD6JointCreate(*GetSingle(CPhysXMgr)->gPhysics, a0, t0, a1, t1);
-	j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
-	j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
+	//j->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
 
 	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
 	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
