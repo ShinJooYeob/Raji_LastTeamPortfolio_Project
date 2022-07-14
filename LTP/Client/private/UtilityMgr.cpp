@@ -392,12 +392,14 @@ HRESULT CUtilityMgr::Ready_TextureParticles()
 		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
 		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 		lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, szTempBuffer);
+		ZeroMemory(szTempBuffer, sizeof(_tchar) * MAX_PATH);
 
 
 		lstrcpy(szTempBuffer, L"");
 		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
 		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 		lstrcpy(m_tParticleDesc.szTextureLayerTag, szTempBuffer);
+		ZeroMemory(szTempBuffer, sizeof(_tchar) * MAX_PATH);
 
 
 		ReadFile(hFile, &(m_tParticleDesc.iTextureLayerIndex), sizeof(_int), &dwByte, nullptr);

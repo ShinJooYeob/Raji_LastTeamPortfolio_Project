@@ -10,11 +10,14 @@ class CTestLedgeTrigger final : public CTriggerObject
 {
 public:
 	enum ELedgeTriggerState { STATE_START, STATE_LEDGE, STATE_LAST_LEDGE, STATE_END };
+	enum ELedgeCornorType { CONORTYPE_FORWARD_L_BACKWARD_R, CONORTYPE_FORWARD_R_BACKWARD_L, CONORTYPE_END };
 
 	typedef struct tagLedgeTriggerDesc
 	{
 		_float3					fSpawnPos;
 		ELedgeTriggerState		eLedgeTriggerState;
+		_bool					bConor = false;
+		ELedgeCornorType		eConorType = CONORTYPE_END;
 	}LEDGETRIGGERDESC;
 
 protected:
@@ -39,13 +42,14 @@ public:
 
 public:
 	ELedgeTriggerState				Get_LedgeType();
+	_bool							Is_Cornor();
+	ELedgeCornorType				Get_CornorType();
 
 public:
 	void				Ledge_Start();
 	void				Ledge_Hanging();
 	void				Ledge_LastHanging();
 	void				Ledge_End();
-
 
 public:
 	_bool				Check_CollisionToPlayer();
@@ -58,7 +62,8 @@ private:
 private:
 	ELedgeTriggerState			m_eLedgeTriggerType;
 	_bool						m_bOnTriggered = false;
-	_bool						m_bTurnPoint = false;
+	_bool						m_bCornor = false;
+	ELedgeCornorType			m_eConorType = CONORTYPE_END;
 
 private:
 	CTransform*					m_pTransformCom = nullptr;

@@ -8,6 +8,7 @@
 #include "MapObject.h"
 #include "Trigger_ChangeCameraView.h"
 #include "TestLedgeTrigger.h"
+#include "Transform.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -159,6 +160,7 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(5.999756f, 0.00001f, 13.531549f));
 
 
 	// Setting Cam Attach to Player //
@@ -168,10 +170,7 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(3.f);
 
-
-
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Unique_Monster), TAG_OP(Prototype_Object_Monster_Gadasura_Black)));
-
 
 	return S_OK;
 
@@ -283,6 +282,14 @@ HRESULT CScene_Stage5::Ready_Layer_Trigger(const _tchar * pLayerTag)
 
 	tLedgeTriggerDesc.fSpawnPos = _float3(5.f, 6.f, 5.f);
 	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+
+	tLedgeTriggerDesc.fSpawnPos = _float3(5.f, 9.f, 5.f);
+	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+
+	tLedgeTriggerDesc.fSpawnPos = _float3(5.f, 11.f, 5.f);
+	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
 
 	return S_OK;

@@ -163,8 +163,8 @@ HRESULT CNavigation::Render(CTransform* pTransform)
 
 	_uint		iIndex = 0;
 
-	if (-1 == m_NaviDesc.iCurrentIndex)
-	{
+	//if (-1 == m_NaviDesc.iCurrentIndex)
+	//{
 		for (auto& pCell : m_Cells)
 		{
 			if (nullptr != pCell)
@@ -172,12 +172,11 @@ HRESULT CNavigation::Render(CTransform* pTransform)
 				pCell->Render(m_pVIBuffer, m_pShader, iIndex++ == m_NaviDesc.iCurrentIndex ? _float4(1.f, 0.f, 0.f, 1.f) : _float4(1.f, 1.f, 1.f, 1.f));
 			}
 		}
-	}
-	else
+	//}
+	/*else
 	{
 		m_Cells[m_NaviDesc.iCurrentIndex]->Render(m_pVIBuffer, m_pShader, _float4(1.f, 0.f, 0.f, 1.f));
-
-	}
+	}*/
 
 	return S_OK;
 }
