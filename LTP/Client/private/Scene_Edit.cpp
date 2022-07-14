@@ -2546,7 +2546,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 					{
 						if (ImGui::Selectable(buf, is_selected))
 						{
-							strcpy_s(filter.InputBuf, buf);
+							//strcpy_s(filter.InputBuf, buf);
 
 							m_iSelectedObjectNMesh[1] = i;
 
