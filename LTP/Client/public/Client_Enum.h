@@ -1065,6 +1065,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
+	Prototype_Texture_HPUI,
 	Prototype_Texture_Util,
 	Prototype_Texture_Monster_Bullet,
 	Prototype_Texture_ShellingRange,
@@ -1524,7 +1525,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		case Prototype_Texture_TestEffect:
 			return TEXT("Prototype_Texture_TestEffect");
 			break;
+
+		case Prototype_Texture_HPUI:
+			return TEXT("Prototype_Texture_HPUI");
+			break;
 			
+
 				//메쉬////////////////////////////////////////////////////////////////////////
 
 
@@ -1574,6 +1580,8 @@ enum COMPONENTID
 	Com_Navaigation,
 	Com_ModelInstance,
 	Com_SubTransform,
+	//JJB
+	Com_HPUI,
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {

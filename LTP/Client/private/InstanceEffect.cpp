@@ -111,7 +111,7 @@ _int CInstanceEffect::Render()
 		}
 		m_pVIBufferCom->UnLock();
 
-		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_tInstanceDesc.ePassID * 2 ));
+		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_tInstanceDesc.ePassID * 2));
 	}
 	else
 	{

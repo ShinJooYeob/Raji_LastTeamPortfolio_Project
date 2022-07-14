@@ -23,7 +23,8 @@ public:
 
 public:
 	_bool Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* vSlidingVec);
-	_Vector Get_Height(_fVector vTargetPos);
+	_Vector Get_NaviPosition(_fVector vTargetPos);
+	_float	Get_NaviHeight(_fVector vTargetPos);
 	HRESULT	FindCellIndex(_Vector Pos);
 
 #ifdef _DEBUG

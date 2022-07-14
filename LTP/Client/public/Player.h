@@ -350,6 +350,8 @@ private:
 	CMotionTrail*			m_pMotionTrail = nullptr;
 	CCamera_Main*			m_pMainCamera = nullptr;
 	CTransform*				m_pMainCameraTransform = nullptr;
+
+	class CHpUI*			m_pHPUI = nullptr;
 	
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];

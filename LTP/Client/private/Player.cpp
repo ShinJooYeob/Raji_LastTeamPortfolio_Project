@@ -15,6 +15,8 @@
 
 #include "TestLedgeTrigger.h"
 
+#include "HpUI.h"
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
@@ -55,6 +57,13 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_PlayerEffects()); 
 
 	Set_IsOcllusion(true);
+
+	//CHpUI::HPDesc HpDesc;
+	//HpDesc.m_HPType = CHpUI::HP_RAJI;
+	//HpDesc.m_pObjcect = this;
+	//HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+	//g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)m_pHPUI, m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &HpDesc);
 
 
 	return S_OK;
@@ -5475,5 +5484,7 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
+
+	/*Safe_Release(m_pHPUI);*/
 
 }

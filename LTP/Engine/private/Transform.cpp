@@ -168,7 +168,8 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
 
 		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
 		{
-			Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			XMStoreFloat3((_float3*)(&m_WorldMatrix.m[STATE_POS][0]), vPrevPos);
+			//Set_MatrixState(CTransform::STATE_POS, vPrevPos);
 		}
 
 		/*_float3 vNewPos;

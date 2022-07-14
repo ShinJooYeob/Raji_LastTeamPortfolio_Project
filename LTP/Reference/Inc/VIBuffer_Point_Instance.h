@@ -15,7 +15,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
 	virtual HRESULT Initialize_Clone(void* pArg) override;
-	virtual HRESULT Render(class CShader* pShader, _uint iPassIndex) override;
+	virtual HRESULT Render(class CShader* pShader, _uint iPassIndex, _int iInstancesize = -1);
 
 public:
 	_uint	Get_NumInstance() { return m_iNumInstance; };
