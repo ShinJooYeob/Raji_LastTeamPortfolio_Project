@@ -27,7 +27,7 @@ HRESULT CScene_Stage6::Initialize()
 
 	// Assimp Test
 	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
-	GetSingle(CPhysXMgr)->CreateDemoMap();
+//	GetSingle(CPhysXMgr)->CreateDemoMap();
 
 
 

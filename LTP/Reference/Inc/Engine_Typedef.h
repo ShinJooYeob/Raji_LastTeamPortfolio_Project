@@ -156,6 +156,8 @@ namespace Engine
 			return XMVector4Normalize(this->XMVector());
 		}
 
+
+
 		//(매개 변수)백터와 내적(XMVector4Dot) 스칼라(float) 반환
 		_float Get_Dot(const XMVECTOR& _Param)
 		{
@@ -274,6 +276,27 @@ namespace Engine
 		{
 			return XMVector3Cross(this->XMVector(), _Param);
 		}
+
+		XMFLOAT3 Get_Scale(int x)
+		{
+			XMFLOAT3 returna;
+			returna.x = this->x*x;
+			returna.y = this->y*x;
+			returna.z = this->z*x;
+
+			return returna;
+		}
+
+		XMFLOAT3 Get_Scale(float x)
+		{
+			XMFLOAT3 returna;
+			returna.x = this->x*x;
+			returna.y = this->y*x;
+			returna.z = this->z*x;
+
+			return returna;
+		}
+
 
 
 		//(매개 변수)백터와의 거리(XMVector3Length) 반환

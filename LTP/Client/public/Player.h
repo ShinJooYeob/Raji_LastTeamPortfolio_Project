@@ -221,6 +221,7 @@ private: /* Setter */
 	void				Set_TurnInputDir();
 	void				Set_TurnInputDir_CalDir();
 	void				Set_MainAttackAnim(_bool bJumpAttack);
+	void				Set_PhysX_Head();
 
 private:
 	void				Update_Targeting(_double fDeltaTime);
@@ -359,6 +360,8 @@ private:
 
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
+
+class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
 
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
