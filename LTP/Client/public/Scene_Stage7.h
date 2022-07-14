@@ -27,6 +27,8 @@ private:
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT	Ready_Layer_Monster(const _tchar* pLayerTag);
 
+	HRESULT teST();
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 public:

@@ -2040,7 +2040,7 @@ HRESULT CScene_Edit::Update_MapTab(_double fDeltatime)
 
 	Make_VerticalSpacing(3);
 
-	FAILED_CHECK(Widget_CreateDeleteHeightMap(fDeltatime));
+	//FAILED_CHECK(Widget_CreateDeleteHeightMap(fDeltatime));
 	Make_VerticalSpacing(3);
 	FAILED_CHECK(Widget_SaveLoadMapData(fDeltatime));
 
