@@ -2417,7 +2417,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 			{
 
 				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-				ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 130), true, window_flags);
+				ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 330), true, window_flags);
 
 
 				if (ImGui::BeginMenuBar())
@@ -2470,8 +2470,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 			ImGui::SameLine();
 
 			{
-
-				ImGui::BeginChild("ChildR", ImVec2(0, 130), true, window_flags);
+				ImGui::BeginChild("ChildR", ImVec2(0, 330), true, window_flags);
 
 
 				if (ImGui::BeginMenuBar())
@@ -2511,7 +2510,15 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 
 						}
 					}
+
+
 					ImGui::EndTable();
+
+
+
+					Make_VerticalSpacing(5);
+
+
 				}
 
 				Make_VerticalSpacing(1);
@@ -2519,6 +2526,56 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 				ImGui::EndChild();
 				Make_VerticalSpacing(1);
 			}
+
+			Make_VerticalSpacing(5);
+			static ImGuiTextFilter filter;
+
+			char	szCheckforSameFileName[256] = "";
+
+			if (ImGui::BeginListBox("    "))
+			{
+
+				for (int i = Prototype_Mesh_None + 1; i < Prototype_Mesh_Player; i++)
+				{
+					const bool is_selected = false;
+
+					char buf[MAX_PATH];
+					sprintf_s(buf, "%ws", TAG_CP(COMPONENTPROTOTYPEID(i)));
+
+					if (filter.PassFilter(buf))
+					{
+						if (ImGui::Selectable(buf, is_selected))
+						{
+							strcpy_s(filter.InputBuf, buf);
+
+							m_iSelectedObjectNMesh[1] = i;
+
+						}
+
+
+						if (m_iBatchedVecIndex != 0 && ImGui::IsItemHovered())
+						{
+							m_iBatchedVecIndex = 0; m_bIsModelMove = 0;
+							m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+							m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
+							m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
+							m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
+							ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
+							m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
+							m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
+
+						}
+
+						//if (!strcmp(buf, filter.InputBuf))
+						//{
+						//	strcpy_s(szCheckforSameFileName, filter.InputBuf);
+
+						//}
+					}
+				}
+				ImGui::EndListBox();
+			}
+			filter.Draw("Input FileName");
 		}
 
 		Make_VerticalSpacing(2);
