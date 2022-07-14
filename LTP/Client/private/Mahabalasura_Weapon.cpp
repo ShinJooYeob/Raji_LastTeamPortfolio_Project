@@ -296,55 +296,6 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
 	{
-		/*for (_uint i = 0; i < 6; i++)
-		{
-			_float Angle = (_float)i*(360.f / 6.f);
-			
-			_Matrix Mat =  XMMatrixRotationY(XMConvertToRadians(Angle));
-			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 4.f);
-			Pos.y += 10.f;
-
-			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-			NULL_CHECK_RETURN(pTransform, E_FAIL);
-
-
-			pTransform->Scaled_All(_float3(100, 200, 150));
-			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
-			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
-
-			m_vInstanceTransformComs.push_back(pTransform);
-		}
-		for (_uint i = 0; i < 12; i++)
-		{
-			_float Angle = (_float)i*(360.f / 12.f);
-
-			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
-			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 8.f);
-			Pos.y += 10.f;
-
-			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-			NULL_CHECK_RETURN(pTransform, E_FAIL);
-			pTransform->Scaled_All(_float3(100, 200, 150));
-			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
-			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
-
-			m_vInstanceTransformComs.push_back(pTransform);
-		}
-		for (_uint i = 0; i < 24; i++)
-		{
-			_float Angle = (_float)i*(360.f / 24.f);
-
-			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
-			_float3 Pos = XMLoadFloat3(&m_pBossPos) + (Mat.r[2] * 12.f);
-			Pos.y += 10.f;
-
-			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-			NULL_CHECK_RETURN(pTransform, E_FAIL);
-			pTransform->Scaled_All(_float3(100, 200, 150));
-			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
-			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
-			m_vInstanceTransformComs.push_back(pTransform);
-		}*/
 
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = m_pModel;

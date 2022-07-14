@@ -120,10 +120,14 @@ HRESULT CVIBuffer_Point_Instance::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Point_Instance::Render(CShader * pShader, _uint iPassIndex)
+HRESULT CVIBuffer_Point_Instance::Render(CShader * pShader, _uint iPassIndex, _int iInstancesize)
 {
 	if (nullptr == m_pDeviceContext)
 		return E_FAIL;
+
+	_uint iDrawInstanceSize = m_iNumInstance;
+	if (iInstancesize != -1)
+		iDrawInstanceSize = (iDrawInstanceSize > (_uint)iInstancesize) ? (_uint)iInstancesize : iDrawInstanceSize;
 
 	ID3D11Buffer*	pVertexBuffers[] = {
 		m_pVB,
@@ -144,12 +148,10 @@ HRESULT CVIBuffer_Point_Instance::Render(CShader * pShader, _uint iPassIndex)
 	m_pDeviceContext->IASetIndexBuffer(m_pIB, m_eIndexFormat, 0);
 	m_pDeviceContext->IASetPrimitiveTopology(m_eTopology);
 
-	if (FAILED(pShader->Set_InputLayout(iPassIndex)))
-		return E_FAIL;
-	if (FAILED(pShader->Apply(iPassIndex)))
-		return E_FAIL;
+	FAILED_CHECK(pShader->Set_InputLayout(iPassIndex));
+	FAILED_CHECK(pShader->Apply(iPassIndex));
 
-	m_pDeviceContext->DrawIndexedInstanced(1, m_iNumInstance, 0, 0, 0);
+	m_pDeviceContext->DrawIndexedInstanced(1, iDrawInstanceSize, 0, 0, 0);
 
 	return S_OK;
 }

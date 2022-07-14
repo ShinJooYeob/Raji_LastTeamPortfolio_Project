@@ -417,6 +417,9 @@ class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
 
 	CNavigation*			m_pNavigationCom = nullptr;
 
+
+	class CHpUI*			m_pHPUI = nullptr;
+	
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 

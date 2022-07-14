@@ -361,6 +361,9 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf">
       <UniqueIdentifier>{6e6c1b38-65a2-49c2-86e4-95fbcaa58489}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\HPUI">
+      <UniqueIdentifier>{d0336f0e-cc49-49b9-b6b6-20baa54c315b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -624,11 +627,6 @@
     <ClInclude Include="..\public\Monster_Weapon_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CopyMahabalasura.h" />
-    <ClInclude Include="..\public\Mahabalasura.h" />
-    <ClInclude Include="..\public\Mahabalasura_Arms.h" />
-    <ClInclude Include="..\public\Mahabalasura_AttackArms.h" />
-    <ClInclude Include="..\public\Mahabalasura_Weapon.h" />
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
@@ -778,6 +776,27 @@
     </ClInclude>
     <ClInclude Include="..\public\Monster_Wolf.h">
       <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Arms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahabalasuraArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_AttackArms.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CopyMahabalasura.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_Weapon.h">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI.h">
+      <Filter>01.GameObject\99.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HpUI.h">
+      <Filter>01.GameObject\99.UI\HPUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1003,11 +1022,6 @@
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CopyMahabalasura.cpp" />
-    <ClCompile Include="..\private\Mahabalasura.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_Arms.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp" />
-    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
@@ -1176,6 +1190,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Wolf.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wolf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Arms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahabalasuraArms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_AttackArms.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CopyMahabalasura.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\CopyMahabalasura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_Weapon.cpp">
+      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI.cpp">
+      <Filter>01.GameObject\99.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HpUI.cpp">
+      <Filter>01.GameObject\99.UI\HPUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

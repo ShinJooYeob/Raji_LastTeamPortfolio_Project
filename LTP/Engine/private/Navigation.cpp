@@ -212,7 +212,7 @@ HRESULT CNavigation::SetUp_Neighbor()
 	return S_OK;
 }
 
-_Vector CNavigation::Get_Height(_fVector vTargetPos)
+_Vector CNavigation::Get_NaviPosition(_fVector vTargetPos)
 {
 	_Vector		vPosition = vTargetPos;
 
@@ -228,6 +228,22 @@ _Vector CNavigation::Get_Height(_fVector vTargetPos)
 	vPosition = XMVectorSetY(vPosition, fY);
 
 	return vPosition;
+}
+
+_float CNavigation::Get_NaviHeight(_fVector vTargetPos)
+{
+	_Vector		vPosition = vTargetPos;
+
+	_float	fY = 0.f;
+	_Vector	vPlane;
+
+	vPlane = XMPlaneFromPoints(m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_A), m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_B), m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_C));
+
+	fY = (-XMVectorGetX(vPlane) * XMVectorGetX(vPosition)
+		- XMVectorGetZ(vPlane) * XMVectorGetZ(vPosition)
+		- XMVectorGetW(vPlane)) / XMVectorGetY(vPlane);
+
+	return fY;
 }
 
 HRESULT CNavigation::FindCellIndex(_Vector Pos)
