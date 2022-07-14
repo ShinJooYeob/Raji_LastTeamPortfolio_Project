@@ -6,6 +6,7 @@
 
 BEGIN(Engine)
 class CTimer;
+class CNavigation;
 END
 
 BEGIN(Client)
@@ -36,7 +37,7 @@ private:
 	};
 	
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
 
@@ -91,8 +92,30 @@ private:
 		LEDGE_ANIM_TURN_BACK, LEDGE_ANIM_TURN_LEFT, LEDGE_ANIM_TURN_RIGHT,
 		LEDGE_ANIM_HANGING_IDLE,
 		LEDGE_ANIM_HANGING_MOVE_LEFT, LEDGE_ANIM_HANGING_MOVE_RIGHT, LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE, LEDGE_ANIM_HANGING_REACHOUT_UP,
-		LEDGE_ANIM_JUMP, LEDGE_ANIM_DOUBLEJUMP, LEDGE_ANIM_FALLING, LEDGE_ANIM_END
-	}; 
+		LEDGE_ANIM_JUMP, LEDGE_ANIM_DOUBLEJUMP, LEDGE_ANIM_FALLING, LEDGE_ANIM_HANGING_CLIMBDOWN, BASE_ANIM_JUMP, LEDGE_ANIM_END
+	};
+
+	enum EPLAYERANIM_CURTAIN {
+		CURTAIN_ANIM_TRANSITION = LEDGE_ANIM_END, CURTAIN_ANIM_FALLING, CURTAIN_ANIM_END
+	};
+
+	enum EPLAYERANIM_WALLRUN {
+		WALLRUN_ANIM_LEFT = CURTAIN_ANIM_END, WALLRUN_ANIM_RIGHT, WALLRUN_ANIM_END
+	};
+
+	enum EPLAYERANIM_PILLAR {
+		PILLAR_ANIM_GRAB = WALLRUN_ANIM_END, PILLAR_ANIM_IDLE, PILLAR_ANIM_CLIMB_UP, PILLAR_ANIM_CLIMB_DOWN, PILLAR_ANIM_MOVE_DOWN, PILLAR_ANIM_ROT_CLOCK, PILLAR_ANIM_ROT_ANTICLOCK,
+		PILLAR_ANIM_TOP_CLIMB, PILLAR_ANIM_TOP_CLIMB_IDLE, PILLAR_ANIM_TOP_CLIMB_ROT_CLOCK, PILLAR_ANIM_TOP_CLIMB_ROT_ANTICLOCK,
+		PILLAR_ANIM_BACKJUMP, PILLAR_ANIM_LOOKBACK, PILLAR_ANIM_DOWN_CLIMB, PILLAR_ANIM_JUMP, PILLAR_ANIM_TOP_JUMP, PILLAR_ANIM_END
+	};
+
+	enum EPLAYERANIM_PETAL {
+		PETAL_ANIM_PLUCK = PILLAR_ANIM_END, PETAL_ANIM_THROW_INIT, PETAL_ANIM_THROW_LOOP, PETAL_ANIM_THROW_THROW, PETAL_ANIM_END
+	};
+
+	enum EPLAYERANIM_DAMAGE {
+		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, DAMAGE_ANIM_END
+	};
 	//
 
 	enum ETARGETING_STATE {
@@ -100,9 +123,13 @@ private:
 	};
 
 	enum EPARKOUR_LEDGESTATE {
-		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP
+		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP,
+		LEDGE_HANGING_CLIMBUP, LEDGE_HANGING_CLIMBDOWN
 	};
 
+	enum EPERAL_STATE {
+		PETAL_PLUCK, PETAL_IDLE, PETAL_WALK, PETAL_THROW_INIT, PETAL_THROW_LOOP, PETAL_THROW_THROW, PETAL_END
+	};
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -131,10 +158,14 @@ public:
 	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
 
 
+public: /* Damage Logic*/
+	_float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f);
+	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
+
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
 	void	Set_State_MoveStart(_double fDeltaTime);								// Move
-
+	
 	void	Set_State_DodgeStart(_double fDeltaTime);								// Dodge
 	void	Set_State_MainAttackStart(_double fDeltaTime);							// MainAttack
 	void	Set_State_UtilitySkillStart(_double fDeltaTime);						// Utility
@@ -143,6 +174,15 @@ private: /* Change Start State */
 
 	void	Set_State_ParkourStart(_double fDeltaTime);								// Dodge
 
+	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
+	void	Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime);			// WallRun
+
+	void	Set_State_PillarStart(_double fDeltaTime);								// Pillar
+	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
+
+	void	Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir);		// TakeDamage
+	void	Set_State_DeathStart();													// Death
+
 private:
 	virtual void Update_AttachCamPos() override;
 
@@ -150,20 +190,26 @@ private:
 private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
 
-
 	HRESULT Update_State_Idle(_double fDeltaTime);
 	HRESULT Update_State_Move(_double fDeltaTime);
-	
+	HRESULT Update_State_Jump(_double fDeltaTime);
+
 	HRESULT Update_State_Attack(_double fDeltaTime);
 	HRESULT Update_State_UtilitySkill(_double fDeltaTime);
 	HRESULT Update_State_UltimateSkill(_double fDeltaTime);
 	HRESULT Update_State_Evasion(_double fDeltaTime);
 
 	HRESULT Update_State_Parkour(_double fDeltaTime);
+	HRESULT Update_State_Curtain(_double fDeltaTime);
+	HRESULT Update_State_WallRun(_double fDeltaTime);
+	HRESULT Update_State_Pillar(_double fDeltaTime);
+
+	HRESULT Update_State_Petal(_double fDeltaTime);
 
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
+
 
 private: /* Check */
 	_bool				Check_InputDirIsForward();
@@ -176,7 +222,6 @@ private: /* Key Input */
 	_bool				Check_Action_KeyInput(_double fDeltaTime);
 	_bool				Check_SwapWeapon_KeyInput(_double fDeltaTime);
 
-
 private: /* Actions */
 	void				Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime);
 	void				Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime);
@@ -186,7 +231,6 @@ private: /* Actions */
 	void				Attack_Spear(_double fDeltaTime);
 	void				Attack_Bow(_double fDeltaTime);
 	void				Attack_Sword(_double fDeltaTime);
-
 
 	/** For Equip Weapon_Spear */
 	void				Javelin(_double fDeltaTime);
@@ -265,7 +309,7 @@ private: /* Enum Stats */
 	EPLAYER_STATE			m_eCurState = STATE_END;
 	EUTILITYSKILL_STATE		m_eCurUtilityState = UTILITY_START; 
 	EBOWMAINATK_STATE		m_eCurBowMainAtkState = BOWMAINATK_START;
-
+	EPERAL_STATE			m_eCurPetalState = PETAL_END;
 
 private: /* Animation Control */
 	_bool					m_bPlayTurnBackAnim = false;
@@ -316,6 +360,10 @@ private: /* Animation Control */
 
 	EINPUT_MOVDIR			m_ePreInputMovDir = MOVDIR_END;
 
+	_bool					m_bUpdateAnimation = true;
+
+	_bool					m_bOnNavigation = false;
+
 private: /* Camera Shake */
 	_bool					m_bActive_ActionCameraShake = true;
 
@@ -334,6 +382,10 @@ private: /* Timer */
 	_float					m_fMaxTime_ShellingDelay = 0.f;
 	_float					m_fCurTime_ShellingDelay = 0.f;
 
+private: /* Damage */
+	_float					m_fKnockbackPower = 0.f;
+	_float3					m_fKnockbackDir = _float3(0.f, 0.f, 0.f);
+
 private:
 	CShellingSkillRange*	m_pShellingSkillRange = nullptr;
 
@@ -350,9 +402,15 @@ private:
 	CMotionTrail*			m_pMotionTrail = nullptr;
 	CCamera_Main*			m_pMainCamera = nullptr;
 	CTransform*				m_pMainCameraTransform = nullptr;
-	
+	CNavigation*			m_pNavigationCom = nullptr;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
+
+
+private:
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 
 private:
 	HRESULT SetUp_Components();
@@ -362,6 +420,7 @@ private:
 
 	HRESULT Adjust_AnimMovedTransform(_double fDeltatime);
 
+	HRESULT Ready_ParticleDesc();
 
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

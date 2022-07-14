@@ -230,6 +230,18 @@ void CGameObject::Update_AttachCamPos()
 	
 }
 
+_float CGameObject::Add_NowHP(_float fHP)
+{
+	m_fHP += fHP;
+
+	if (0.f > m_fHP)
+	{
+		m_fHP = 0.f;
+	}
+
+	return m_fHP;
+}
+
 
 CComponent * CGameObject::Find_Components(const _tchar * tagComponent)
 {

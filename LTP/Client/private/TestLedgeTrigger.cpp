@@ -128,7 +128,10 @@ _int CTestLedgeTrigger::DeActive_Trigger(_double fDeltaTime)
 		}
 		break;
 	case ELedgeTriggerState::STATE_LAST_LEDGE:
-	
+		if (true == m_bOnTriggered)
+		{
+			m_bOnTriggered = false;
+		}
 		break;
 	case ELedgeTriggerState::STATE_END:
 	
@@ -148,6 +151,16 @@ CTestLedgeTrigger::ELedgeTriggerState CTestLedgeTrigger::Get_LedgeType()
 	return m_eLedgeTriggerType;
 }
 
+_bool CTestLedgeTrigger::Is_Cornor()
+{
+	return m_bCornor;
+}
+
+CTestLedgeTrigger::ELedgeCornorType CTestLedgeTrigger::Get_CornorType()
+{
+	return m_eConorType;
+}
+
 void CTestLedgeTrigger::Ledge_Start()
 {
 	m_pPlayer->Set_CurParkourTrigger(this, this);
@@ -165,6 +178,11 @@ void CTestLedgeTrigger::Ledge_Hanging()
 
 void CTestLedgeTrigger::Ledge_LastHanging()
 {
+	if (false == m_bOnTriggered)
+	{
+		m_pPlayer->Set_CurParkourTrigger(this, this);
+		m_bOnTriggered = true;
+	}
 }
 
 void CTestLedgeTrigger::Ledge_End()
@@ -177,7 +195,7 @@ _bool CTestLedgeTrigger::Check_CollisionToPlayer()
 	_Vector vTriggerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 
 	_float fDist = XMVectorGetX(XMVector3Length(vTriggerPos - vPlayerPos));
-	if (fDist <= .5f)
+	if (fDist <= 1.f)
 	{
 		return true;
 	}
