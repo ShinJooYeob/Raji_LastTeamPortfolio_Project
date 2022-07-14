@@ -11,7 +11,6 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "physx\Collider_PhysX_Joint.h"
-#include "physx\Collider_PhysX_Dynamic.h"
 
 #include "TestLedgeTrigger.h"
 
@@ -142,6 +141,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	// Update Attach CamPos
 	Update_AttachCamPos();
 
+	// Update PhysX
+	if (m_pHeadJoint)
+		m_pHeadJoint->Update_BeforeSimulation();
 
 	// CameraShake Test
 	if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
@@ -199,6 +201,10 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
+	// Update PhysX
+	if (m_pHeadJoint)
+		m_pHeadJoint->Update_AfterSimulation();
+
 	return _int();
 }
 
@@ -225,6 +231,13 @@ _int CPlayer::Render()
 
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
+
+
+#ifdef _DEBUG
+	// Render PhysX
+//	if (m_pHeadJoint)
+//		m_pHeadJoint->Render();
+#endif // _DEBUG
 
 	return _int();
 }
@@ -382,6 +395,9 @@ void CPlayer::Set_State_TurnBackStart(_double fDeltaTime)
 	m_pModel->Change_AnimIndex_ReturnTo_Must(BASE_ANIM_TURN_BACK, BASE_ANIM_IDLE, 0.1f, true);
 	m_bPlayTurnBackAnim = true;
 	Set_PlayerState(STATE_MOV);
+
+	m_pHeadJoint->Add_ForceDir(m_fMovDir.InverseXMVector(), 100);
+	
 }
 
 void CPlayer::Set_State_ParkourStart(_double fDeltaTime)
@@ -469,7 +485,6 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 	if (true == m_bPlayTurnBackAnim)
 	{
 		Turn_Back(fDeltaTime);
-
 		if (false == m_pModel->Get_IsHavetoBlockAnimChange())
 		{
 			m_bPlayTurnBackAnim = false;
@@ -4896,6 +4911,34 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 	}
 }
 
+void CPlayer::Set_PhysX_Head()
+{
+	// 머리 뼈 정보 넘기기
+	CCollider_PhysX_Base::PHYSXDESC_JOINT  createJoint;
+
+	const _uint length = 9;
+	string mBoneNames[length] =
+	{
+		"skd_head",
+		"skd_hair01",
+		"skd_hair02", "skd_hair03",
+		"skd_hair04","skd_hair05",
+		"skd_hair06",
+		"skd_hair07", "skd_hairEnd"
+	};
+
+	createJoint.mBoneNames = mBoneNames;
+	createJoint.mLength = length;
+	createJoint.mGameObject = this;
+	createJoint.eShapeType = E_GEOMAT_SPEHE;
+	createJoint.mMainScale = _float3(0.5f, 0.5f, 0.5f);
+	createJoint.mActorScale = _float3(0.5f, 0.5f, 0.5f);
+	createJoint.mSeparation = 0.0f;
+	createJoint.mAttachModel = m_pModel;
+
+	m_pHeadJoint->Set_ColiderDesc_Hair(createJoint);
+}
+
 void CPlayer::Update_Targeting(_double fDeltaTime)
 {
 	switch (m_eCur_TargetingState)
@@ -5166,7 +5209,7 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-
+	
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 
@@ -5188,6 +5231,10 @@ HRESULT CPlayer::SetUp_Components()
 	tMotionDesc.iPassIndex = 5;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
+
+	// For PhysX
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider_PhysX_Joint), TAG_COM(Com_Collider_PhysX), (CComponent**)&m_pHeadJoint));
+	Set_PhysX_Head();
 
 
 	return S_OK;
@@ -5475,5 +5522,6 @@ void CPlayer::Free()
 	Safe_Release(m_pModel);
 
 	Safe_Release(m_pMotionTrail);
+	Safe_Release(m_pHeadJoint);
 
 }

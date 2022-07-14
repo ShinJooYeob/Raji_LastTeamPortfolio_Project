@@ -216,6 +216,7 @@ private: /* Setter */
 	void				Set_TurnInputDir();
 	void				Set_TurnInputDir_CalDir();
 	void				Set_MainAttackAnim(_bool bJumpAttack);
+	void				Set_PhysX_Head();
 
 private:
 	void				Update_Targeting(_double fDeltaTime);
@@ -343,14 +344,15 @@ private: /* Targeting */
 	CTransform*				m_pTargetingMonster_Transform = nullptr;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModel = nullptr;
-	CTransform*				m_pTransformCom = nullptr;
-	CMotionTrail*			m_pMotionTrail = nullptr;
-	CCamera_Main*			m_pMainCamera = nullptr;
-	CTransform*				m_pMainCameraTransform = nullptr;
-	
+	CShader*					m_pShaderCom = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
+	CModel*						m_pModel = nullptr;
+	CTransform*					m_pTransformCom = nullptr;
+	CMotionTrail*				m_pMotionTrail = nullptr;
+	CCamera_Main*				m_pMainCamera = nullptr;
+	CTransform*					m_pMainCameraTransform = nullptr;
+class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 

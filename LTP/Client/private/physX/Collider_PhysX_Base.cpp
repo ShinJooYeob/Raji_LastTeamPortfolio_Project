@@ -377,7 +377,7 @@ HRESULT CCollider_PhysX_Base::RenderDebugSphere(_float4x4 mat,_float3 scale, XMV
 		_float y = s.Up().Length();
 		_float z = s.Backward().Length();
 
-		scale = _float3(x*4, y*5, z*3);
+		scale = _float3(x*scale.x, y*scale.y, z*scale.z);
 		_Squternion q = _Squternion::CreateFromRotationMatrix(mat);
 
 		BoundingOrientedBox obbBox = BoundingOrientedBox(s.Translation(), scale, q);

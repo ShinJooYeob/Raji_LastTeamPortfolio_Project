@@ -1225,10 +1225,13 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 	ImGui::Separator();
 
-	IMGUITREE("PhysX Controller")
+	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
 	{
-		Update_DebugWnd_PhysX(fDeltaTime);
-		IMGUITREE_END
+		IMGUITREE("PhysX Controller")
+		{
+			Update_DebugWnd_PhysX(fDeltaTime);
+			IMGUITREE_END
+		}
 	}
 	ImGui::Separator();
 	End_Update_Frame();
@@ -1238,6 +1241,7 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 {
+	
 	static bool bTestObject = false;
 	
 	// static 오브젝트 배치
@@ -1535,7 +1539,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 			createJoint.mAttachModel = objModel;
 
 		//	coljoint->Set_ColiiderDesc2(createJoint);
-			coljoint->Set_ColiderDesc_Test(createJoint);
+			coljoint->Set_ColiderDesc_Hair(createJoint);
 
 		}
 

@@ -63,8 +63,6 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	}
 
 
-
-
 	return _int();
 }
 
@@ -319,18 +317,6 @@ HRESULT CTestObject_PhysX::Update_Player(_double fDeltaTime)
 	//}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
 	mCom_ColliderBase->Update_BeforeSimulation();
 
@@ -396,10 +382,6 @@ HRESULT CTestObject_PhysX::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&mCom_Transform, &tDesc));
-
-
-
-
 
 
 
