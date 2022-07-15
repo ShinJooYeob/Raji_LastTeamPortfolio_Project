@@ -59,15 +59,16 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(true);
 
-	//CHpUI::HPDesc HpDesc;
-	//HpDesc.m_HPType = CHpUI::HP_RAJI;
-	//HpDesc.m_pObjcect = this;
-	//HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_RAJI;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 0.63f;
 
-	//g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)m_pHPUI, m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &HpDesc);
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
-	//m_szNameTag = L"Raji";
-	//"Layer_Player";
+	m_szNameTag = L"Raji";
+	"Layer_Player";
 	return S_OK;
 }
 
@@ -257,6 +258,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
 	m_IsConfilicted = false;
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(fDeltaTime);
 	return _int();
 }
 
@@ -287,6 +291,9 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	}
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(fDeltaTimer);
 
 	return _int();
 }

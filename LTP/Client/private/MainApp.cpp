@@ -13,6 +13,7 @@
 #include "PhysX/Collider_PhysX_Static.h"
 #include "PhysX/Collider_PhysX_Dynamic.h"
 #include "PhysX/Collider_PhysX_Joint.h"
+#include "HpUI.h"
 //#include "LoadingUI.h"
 
 #ifdef _DEBUG
@@ -438,6 +439,11 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Spread"),	CMeshEffect_Spread::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Fountain"),	CMeshEffect_Fountain::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Suck"),		CMeshEffect_Suck::Create(m_pDevice, m_pDeviceContext)));
+	
+	//JJB
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_HpUI),		CHpUI::Create(m_pDevice, m_pDeviceContext)));
+
+
 	//
 
 	//

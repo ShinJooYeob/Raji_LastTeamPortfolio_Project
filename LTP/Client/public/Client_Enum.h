@@ -353,6 +353,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Map_MandalaPuzzle,
 	Prototype_Object_Map_MandalaMesh,
 	Prototype_Object_Map_FemaleStatue,
+	Prototype_Object_UI_HpUI,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -569,7 +570,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Map_FemaleStatue:
 		return TEXT("Prototype_Object_Map_FemaleStatue");
-		
+
+	case Prototype_Object_UI_HpUI:
+		return TEXT("Prototype_Object_UI_HpUI");
+			
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
 
@@ -5577,8 +5581,11 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 		return TEXT("Com_Dissolve");
 		break;
 
+	case Com_HPUI:
+		return TEXT("Com_HPUI");
+		break;
 		
-
+		
 		//////////////////////////////////////////////////////////////////////////
 	default:
 		MSGBOX("Wrong Type Component");

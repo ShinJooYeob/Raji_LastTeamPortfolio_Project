@@ -13,6 +13,7 @@ public:
 		HpType			m_HPType = HP_END;
 		CGameObject*	m_pObjcect = nullptr;
 		_float3			m_vPos;
+		_float			m_Dimensions = 1.f;
 	}HPDESC;
 
 private:

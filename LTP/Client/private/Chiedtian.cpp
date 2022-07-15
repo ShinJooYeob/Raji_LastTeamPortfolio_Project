@@ -2,6 +2,8 @@
 #include "..\public\Chiedtian.h"
 #include "Chiedtuan_Weapon.h"
 
+#include "HpUI.h"
+
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -93,6 +95,14 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 	m_pSubWeapons.push_back(ChiedtuanWeapon);
+
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 3.f;
+
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
 	return S_OK;
 }
@@ -312,6 +322,9 @@ _int CChiedtian::Update(_double fDeltaTime)
 	for (auto& SubWeapon : m_pSubWeapons)
 		SubWeapon->Update(fDeltaTime);
 
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(fDeltaTime);
+
 	return _int();
 }
 
@@ -335,6 +348,9 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 	}
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(fDeltaTime);
 
 	return _int();
 }
@@ -775,4 +791,6 @@ void CChiedtian::Free()
 
 	m_pMainWeapons.clear();
 	m_pSubWeapons.clear();
+
+	Safe_Release(m_pHPUI);
 }

@@ -379,6 +379,16 @@ struct PS_OUT_NODEFERRED
 {
 	vector		vDiffuse : SV_TARGET0;
 };
+struct PS_OUT_WorldBlend
+{
+	vector		vDiffuse : SV_TARGET0;
+	vector		vNormal : SV_TARGET1;
+	vector		vSpecular : SV_TARGET2;
+	vector		vEmissive : SV_TARGET3;
+	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
+};
 
 PS_OUT PS_MAIN_INST(PS_IN In)
 {
@@ -1027,8 +1037,44 @@ PS_OUT_NODEFERRED PS_Distortion_ClolorMix_Bright(PS_Noise_IN In)
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	return Out;
 }
+
+PS_OUT_WorldBlend PS_MAIN_NoSoft(PS_IN In)
+{
+	PS_OUT_WorldBlend		Out = (PS_OUT_WorldBlend)0;
+
+	Out.vDiffuse = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	Out.vDiffuse *= In.vColor;
+
+
+	//float2		vUV = In.vProjPos.xy / In.vProjPos.w;
+	//vUV.x = vUV.x * 0.5f + 0.5f;
+	//vUV.y = vUV.y * -0.5f + 0.5f;
+
+	//vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
+	//float		fViewZ = vDepthDesc.x * 300.f;
+
+
+	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
+
+
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
+		discard;
+
+
+	Out.vWorldPosition = In.vWorldPos;
+	Out.vEmissive = vector(1, 0.5f, 1.f, 1);
+	Out.vLimLight = 0.f;
+	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vDiffuse = saturate(Out.vDiffuse);
+	return Out;
+}
+
+
+
+
 technique11		DefaultTechnique
 {
+	//0
 	pass Point_OrigingColor_CullCW
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -1038,7 +1084,7 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_INST();
 		PixelShader = compile ps_5_0 PS_MAIN_INST();
-	}
+	}	  //0
 	pass Point_OrigingColor_CullNone
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -1071,6 +1117,7 @@ technique11		DefaultTechnique
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//4
 	pass Point_Noise_CullCW
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -1152,7 +1199,7 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_NoiseAppear_Bright();
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	//12
 	pass Point_Distortion_All_CullCW
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
@@ -1280,4 +1327,20 @@ technique11		DefaultTechnique
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
 		PixelShader = compile ps_5_0 PS_Distortion_ClolorMix_Bright();
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//24
+	pass PS_MAIN_NoSoft
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_INST();
+		GeometryShader = compile gs_5_0 GS_MAIN_INST();
+		PixelShader = compile ps_5_0 PS_MAIN_NoSoft();
+	}
+
+
+	
 }
