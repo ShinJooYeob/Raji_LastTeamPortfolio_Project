@@ -1109,6 +1109,8 @@ CCollider_PhysX_Joint * CCollider_PhysX_Joint::Create(ID3D11Device * pDevice, ID
 
 CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 {
+
+
 	CCollider_PhysX_Joint* pInstance = NEW CCollider_PhysX_Joint((*this));
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
@@ -1121,6 +1123,8 @@ CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 
 void CCollider_PhysX_Joint::Free()
 {
+
+	__super::Free();
 
 
 #ifdef _DEBUG
@@ -1148,6 +1152,7 @@ void CCollider_PhysX_Joint::Free()
 			mBodyActor->release();
 		}
 	}
+
 
 
 

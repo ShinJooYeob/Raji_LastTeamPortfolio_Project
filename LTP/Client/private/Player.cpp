@@ -6354,13 +6354,17 @@ void CPlayer::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pTransformCom);
 
 	Safe_Release(m_pMotionTrail);
 	Safe_Release(m_pDissolveCom);
 	
 	Safe_Release(m_pNavigationCom);
+	Safe_Release(m_pHeadJoint);
+
+	Safe_Release(m_pCollider);
+	Safe_Release(m_pHPUI);
 }

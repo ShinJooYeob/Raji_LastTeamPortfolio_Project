@@ -52,7 +52,7 @@ HRESULT CCollider_PhysX_Static::Update_BeforeSimulation()
 
 		return S_OK;
 	}
-
+	
 
 	return S_OK;
 }

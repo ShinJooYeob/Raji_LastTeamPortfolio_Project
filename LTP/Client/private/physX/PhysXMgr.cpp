@@ -73,8 +73,8 @@ HRESULT CPhysXMgr::Initialize_PhysX(ID3D11Device * pDevice, ID3D11DeviceContext 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
-//	FAILED_CHECK(Initialize_PhysXLib());
-//	CreateBase_Plane(PxVec3(0, -10, 0));
+	FAILED_CHECK(Initialize_PhysXLib());
+	//CreateBase_Plane(PxVec3(0, -10, 0));
 
 	return S_OK;
 
@@ -218,23 +218,32 @@ HRESULT CPhysXMgr::CreateStack_Test(const PxTransform & trans, PxU32 size, PxRea
 
 HRESULT CPhysXMgr::Clean_Phyics()
 {
-	PX_RELEASE(mDisPatcher);
-	PX_RELEASE(mScene);
-	PX_RELEASE(mMaterial);
+
 #ifdef _DEBUG
 	PxCloseExtensions();
 #endif // _DEBUG
+
+	PX_RELEASE(mDisPatcher);
+	PX_RELEASE(mScene);
+	PX_RELEASE(mMaterial);
+
+
 	PX_RELEASE(mPhysics);
 	PX_RELEASE(mCooking);
+#ifdef _DEBUG
+	PxPvdTransport* transport = mPvd->getTransport();
+	PX_RELEASE(transport);
+	PX_RELEASE(mPvd);
+#endif // _DEBUG
 	PX_RELEASE(mFoundation);
 
 #ifdef _DEBUG
 	//if (mPvd)
-	//{
-	//	PxPvdTransport* transport = mPvd->getTransport();
-	//	PX_RELEASE(mPvd);
-	//	PX_RELEASE(transport);
-
+	//
+	//
+	//
+	//
+	//
 	//}
 #endif // _DEBUG
 	return S_OK;
@@ -494,6 +503,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale, true, mPvd);
 	NULL_CHECK_BREAK(mPhysics);
 	gPhysics = mPhysics;
+
+	//PX_RELEASE(transport);
 
 #ifdef _DEBUG
 	PxInitExtensions(*mPhysics, mPvd);
@@ -827,9 +838,16 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticSphere(PxTransform px, PxVec3 scale, _boo
 
 void CPhysXMgr::Free()
 {
-//	Clean_Phyics();
+	Clean_Phyics();
+	
+	for (auto& hair : mListContactPair)
+		Safe_Delete(hair);
+	mListContactPair.clear();
+	
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
+
+
 
 	ReleasePhysXCom();
 }

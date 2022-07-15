@@ -39,7 +39,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	srand(_uint(time(NULL)));
 
-//	_CrtSetBreakAlloc(91166);
+	//_CrtSetBreakAlloc(586764);
 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);

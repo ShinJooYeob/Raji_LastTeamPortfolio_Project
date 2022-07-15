@@ -21,6 +21,7 @@ CCollider_PhysX_Base::CCollider_PhysX_Base(const CCollider_PhysX_Base & rhs)
 	m_pInputLayout(rhs.m_pInputLayout)
 #endif // _DEBUG
 {
+	mMain_Actor = nullptr;
 #ifdef _DEBUG
 	Safe_AddRef(m_pInputLayout);
 #endif // _DEBUG
@@ -475,12 +476,15 @@ void CCollider_PhysX_Base::Free()
 
 	if (m_bIsClone)
 	{
-		
+
 		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
 		if (scene)
 		{
-			mMain_Actor->release();
-			mMain_Actor = nullptr;
+			if (mMain_Actor)
+			{
+				mMain_Actor->release();
+				mMain_Actor = nullptr;
+			}
 		}
 	}
 
