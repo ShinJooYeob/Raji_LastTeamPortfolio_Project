@@ -25,6 +25,7 @@ HRESULT CShellingArrow::Initialize_Clone(void * pArg)
 	memcpy(&m_tShellingArrowDesc, pArg, sizeof(SHELLINGARROWDESC));
 
 	FAILED_CHECK(SetUp_Components());
+	FAILED_CHECK(SetUp_Collider());
 
 	return S_OK;
 }
@@ -49,6 +50,10 @@ _int CShellingArrow::Update(_double dDeltaTime)
 	{
 		Set_IsDead();
 	}
+
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+
 	return _int();
 }
 
@@ -58,6 +63,7 @@ _int CShellingArrow::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this, &m_vecInstancedTransform, m_pModelInstance, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
 }
@@ -79,8 +85,19 @@ _int CShellingArrow::Render()
 }
 
 _int CShellingArrow::LateRender()
-{
+{	
 	return _int();
+}
+
+void CShellingArrow::Update_Colliders()
+{
+	_Matrix Matrix = XMMatrixIdentity();
+	_float4 fPos = _float4(m_tShellingArrowDesc.fTargetPos, 1.f);
+	Matrix.r[3] = XMLoadFloat4(&fPos);
+
+	m_pCollider->Update_Transform(0, Matrix);
+	m_pCollider->Update_Transform(1, Matrix);
+
 }
 
 HRESULT CShellingArrow::SetUp_Components()
@@ -113,6 +130,27 @@ HRESULT CShellingArrow::SetUp_Components()
 	CModelInstance::MODELINSTDESC tModelIntDsec;
 	tModelIntDsec.m_pTargetModel = m_pModel;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_32), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
+
+	return S_OK;
+}
+
+HRESULT CShellingArrow::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
 
 	return S_OK;
 }
@@ -153,4 +191,5 @@ void CShellingArrow::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pCollider);
 }

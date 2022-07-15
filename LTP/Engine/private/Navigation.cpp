@@ -204,7 +204,6 @@ HRESULT CNavigation::SetUp_Neighbor()
 			if (true == pDestCell->Compare_Points(pSourCell->Get_Point(CCell::POINT_C), pSourCell->Get_Point(CCell::POINT_A)))
 			{
 				pSourCell->Set_NeighborIndex(CCell::LINE_CA, pDestCell->Get_Index());
-
 			}
 		}
 	}

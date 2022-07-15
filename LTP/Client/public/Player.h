@@ -409,20 +409,18 @@ private:
 	CCamera_Main*			m_pMainCamera = nullptr;
 	CTransform*				m_pMainCameraTransform = nullptr;
 	CDissolve*				m_pDissolveCom = nullptr;
+	CNavigation*			m_pNavigationCom = nullptr;
 
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
 
-class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
-
-	CNavigation*			m_pNavigationCom = nullptr;
-
+	class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
 
 	class CHpUI*			m_pHPUI = nullptr;
+
 	
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
-
 
 private:
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
@@ -443,4 +441,5 @@ public:
 	virtual CGameObject*	Clone(void* pArg);
 	virtual void			Free() override;
 };
+
 END

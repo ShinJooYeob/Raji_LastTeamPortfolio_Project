@@ -29,13 +29,19 @@ public:
 	virtual _int		LateRender() override;
 
 private:
+	void				Update_Colliders();
+
+private:
 	HRESULT				SetUp_Components();
+	HRESULT				SetUp_Collider();
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+
+	CCollider*			m_pCollider = nullptr;
 
 public:
 	static CSpearWave*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

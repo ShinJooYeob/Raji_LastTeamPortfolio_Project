@@ -106,8 +106,14 @@ HRESULT CColliderBuffer::Initialize_Clone(COLLIDERDESC * pArg)
 	if (nullptr != pArg)
 	{
 		memcpy(&m_ColliderDesc, pArg, sizeof(COLLIDERDESC));
-		TransformMatrix = XMMatrixAffineTransformation(XMLoadFloat3(&m_ColliderDesc.vScale), XMVectorSet(0.f, 0.f, 0.f, 1.f), 
+		TransformMatrix = XMMatrixAffineTransformation(m_ColliderDesc.vScale.XMVector(), XMVectorSet(0.f, 0.f, 0.f, 1.f),
 			XMLoadFloat4(&m_ColliderDesc.vRotation), XMLoadFloat4(&m_ColliderDesc.vPosition));
+
+		//TransformMatrix.r[0] = XMVector3Normalize(TransformMatrix.r[0]) * m_ColliderDesc.vScale.x;
+		//TransformMatrix.r[1] = XMVector3Normalize(TransformMatrix.r[1]) * m_ColliderDesc.vScale.y;
+		//TransformMatrix.r[2] = XMVector3Normalize(TransformMatrix.r[2]) * m_ColliderDesc.vScale.z;
+
+
 	}
 	else
 		TransformMatrix = XMMatrixIdentity();
@@ -119,11 +125,19 @@ HRESULT CColliderBuffer::Initialize_Clone(COLLIDERDESC * pArg)
 		break;
 	case Engine::COLLIDER_OBB:
 	{
-		//_float3 vExtents = _float3(XMLoadFloat3(&m_pOBB[BOUNDING_ORIGINAL]->Extents) * m_ColliderDesc.vScale.XMVector());
-		//m_pOBB[BOUNDING_ORIGINAL]->Transform(*m_pOBB[BOUNDING_ORIGINAL], TransformMatrix);
-		//m_pOBB[BOUNDING_ORIGINAL]->Extents = vExtents;
+		if (nullptr != pArg)
+		{
+			TransformMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMLoadFloat4(&m_ColliderDesc.vRotation), XMLoadFloat4(&m_ColliderDesc.vPosition));
+		}
+		else
+			TransformMatrix = XMMatrixIdentity();
 
+		_float3 vExtents = _float3(XMLoadFloat3(&m_pOBB[BOUNDING_ORIGINAL]->Extents) * m_ColliderDesc.vScale.XMVector());
 		m_pOBB[BOUNDING_ORIGINAL]->Transform(*m_pOBB[BOUNDING_ORIGINAL], TransformMatrix);
+		m_pOBB[BOUNDING_ORIGINAL]->Extents = vExtents;
+
+		//m_pOBB[BOUNDING_ORIGINAL]->Transform(*m_pOBB[BOUNDING_ORIGINAL], TransformMatrix);
 	}
 		break;
 	case Engine::COLLIDER_SPHERE:

@@ -627,7 +627,6 @@
     <ClInclude Include="..\public\Monster_Weapon_Universal.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Base.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Dynamic.h" />
     <ClInclude Include="..\public\PhysX\Collider_PhysX_Joint.h" />
@@ -797,6 +796,9 @@
     </ClInclude>
     <ClInclude Include="..\public\HpUI.h">
       <Filter>01.GameObject\99.UI\HPUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1022,7 +1024,6 @@
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Weapon_Universal</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Base.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Dynamic.cpp" />
     <ClCompile Include="..\private\physX\Collider_PhysX_Joint.cpp" />
@@ -1211,6 +1212,9 @@
     </ClCompile>
     <ClCompile Include="..\private\HpUI.cpp">
       <Filter>01.GameObject\99.UI\HPUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
+      <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

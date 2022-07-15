@@ -25,9 +25,10 @@ HRESULT CPlayerWeapon_Arrow::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
+	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 
+	
 	return S_OK;
 }
 
@@ -80,6 +81,10 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 			Set_IsDead();
 		}
 	}
+
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+
 	return _int();
 }
 
@@ -102,6 +107,7 @@ _int CPlayerWeapon_Arrow::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail2));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
@@ -506,6 +512,15 @@ void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 
 }
 
+void CPlayerWeapon_Arrow::Update_Colliders()
+{
+	_Matrix Matrix = m_pTransformCom->Get_WorldMatrix();
+
+	Matrix.r[3] += (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.7f);
+	m_pCollider->Update_Transform(0, Matrix);
+	m_pCollider->Update_Transform(1, Matrix);
+}
+
 void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 {
 	__super::Active_Trail(bActivate);
@@ -595,17 +610,13 @@ HRESULT CPlayerWeapon_Arrow::SetUp_Components()
 
 	CSwordTrail::TRAILDESC tSwordDesc;
 	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
-	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
-	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
+	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
 	tSwordDesc.iTextureIndex = 1;
 	tSwordDesc.NoiseSpeed = 0;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
 	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(1.f, 0.5745f, 0.9745f, 1.f);
-	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
-	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
+	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
 	tSwordDesc.iTextureIndex = 1;
 	tSwordDesc.NoiseSpeed = 0;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SubSwordTrail), (CComponent**)&m_pSwordTrail2, &tSwordDesc));
@@ -617,6 +628,27 @@ HRESULT CPlayerWeapon_Arrow::SetUp_EtcInfo()
 	m_pTimer_Destroy = CTimer::Create();
 	m_fMaxTime_Destroy = 2.f;
 	m_fCurTime_Destroy = 0.f;
+
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon_Arrow::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f, 0.2f, 0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
 
 	return S_OK;
 }
@@ -656,4 +688,5 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pSwordTrail2);
+	Safe_Release(m_pCollider);
 }

@@ -29,8 +29,12 @@ public:
 	virtual _int LateRender()override;
 
 private:
+	void	Update_Colliders();
+
+private:
 	HRESULT SetUp_Components();
-	
+	HRESULT	SetUp_Collider();
+
 private:
 	SHELLINGARROWDESC	m_tShellingArrowDesc;
 
@@ -43,6 +47,8 @@ private:
 
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
+
+	CCollider*			m_pCollider = nullptr;
 
 public:
 	static CShellingArrow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

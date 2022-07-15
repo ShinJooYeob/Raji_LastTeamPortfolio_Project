@@ -48,29 +48,34 @@ private:
 
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
+	void				Update_Colliders();
 
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
+	HRESULT				SetUp_Collider();
 
 private:
-	_float4x4			m_fAttachedMatrix;
-	CHierarchyNode*		m_pAttachedNode = nullptr;
-	_bool				m_bThrowing = false;
-	_float3				m_bThrowDir;
-	_uint				m_iPassNum;
-	_uint				m_iCurAnim;
+	_float4x4				m_fAttachedMatrix;
+	CHierarchyNode*			m_pAttachedNode = nullptr;
+	_bool					m_bThrowing = false;
+	_float3					m_bThrowDir;
+	_uint					m_iPassNum;
+	_uint					m_iCurAnim;
 
 private:
-	CShader*			m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CModel*				m_pModel = nullptr;
-	CTransform*			m_pTransformCom = nullptr;
-	CSwordTrail*		m_pSwordTrail = nullptr;
+	CShader*				m_pShaderCom = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CModel*					m_pModel = nullptr;
+	CTransform*				m_pTransformCom = nullptr;
+	CSwordTrail*			m_pSwordTrail = nullptr;
 
 
-	CModel*				m_pModel_Skill = nullptr;
-	CTransform*			m_pTransformCom_Skill = nullptr;
+	CModel*					m_pModel_Skill = nullptr;
+	CTransform*				m_pTransformCom_Skill = nullptr;
+
+	CCollider*				m_pCollider = nullptr;
+
 
 public:
 	static CPlayerWeapon_Spear*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

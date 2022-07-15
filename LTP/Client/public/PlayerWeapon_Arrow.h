@@ -79,10 +79,12 @@ private:
 
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
+	void				Update_Colliders();
 
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
+	HRESULT				SetUp_Collider();
 
 private:
 	_float4x4			m_fAttachedMatrix;
@@ -107,6 +109,7 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CSwordTrail*		m_pSwordTrail = nullptr;
 	CSwordTrail*		m_pSwordTrail2 = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
