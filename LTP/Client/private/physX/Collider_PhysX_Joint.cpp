@@ -677,7 +677,9 @@ HRESULT CCollider_PhysX_Joint::Set_ColiderDesc_Hair(PHYSXDESC_JOINT desc)
 	PxGeometry* mainGemo = nullptr;
 	PxGeometry* gemo = nullptr;
 	PxGeometry* bofygemo = nullptr;
-	mainGemo = Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_BOX, mPhysXDesc.mMainScale);
+	mainGemo = gemo = NEW PxBoxGeometry(FLOAT3TOPXVEC3(mPhysXDesc.mMainScale));
+	
+	//Create_Geometry(E_GEOMAT_TYPE::E_GEOMAT_BOX, mPhysXDesc.mMainScale);
 	gemo = Create_Geometry(desc.eShapeType, mPhysXDesc.mActorScale);
 	_float bodysize = 0.4f;
 	bofygemo = NEW PxCapsuleGeometry(PxReal(bodysize), PxReal(bodysize*1.5f));
@@ -691,8 +693,8 @@ HRESULT CCollider_PhysX_Joint::Set_ColiderDesc_Hair(PHYSXDESC_JOINT desc)
 
 	// 기본 엑터를 생성후에 여기에 관절을 달아야한다.
 	PxTransform dummyTransform = PxTransform(1, 1, 1);
-	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(dummyTransform, *mainGemo, 1);
-	mBodyActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(dummyTransform, *bofygemo, 1);
+	mMain_Actor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(dummyTransform, *mainGemo, 10);
+	mBodyActor = GetSingle(CPhysXMgr)->CreateDynamic_BaseActor(dummyTransform, *bofygemo, 100);
 
 	// CreateD6Joint CreateMYJoint
 	Create_HairJoint((PxRigidDynamic*)mMain_Actor, PxTransform(0,0,0), desc.mLength-1, *gemo, desc.mSeparation, CreateD6Joint);
@@ -1124,7 +1126,7 @@ CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 void CCollider_PhysX_Joint::Free()
 {
 
-	__super::Free();
+		__super::Free();
 
 
 #ifdef _DEBUG
@@ -1147,13 +1149,13 @@ void CCollider_PhysX_Joint::Free()
 
 			for (auto& ss : mVecActors)
 			{
-				ss->release();
+				PX_RELEASE(ss);
 			}
-			mBodyActor->release();
+			
+			PX_RELEASE(mBodyActor);
+
 		}
 	}
-
-
 
 
 
