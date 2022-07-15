@@ -63,6 +63,8 @@ private:
 	_float				m_fSpinSpeed = 0.f;
 	_float				m_fSpinTime = 14.f;
 
+	class CHpUI*		m_pHPUI = nullptr;
+
 
 	CGameObject*		m_pPlayerObj;
 	_Vector				m_vAngle;
