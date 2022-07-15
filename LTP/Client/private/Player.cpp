@@ -329,7 +329,7 @@ _int CPlayer::Render()
 
 
 
-	FAILED_CHECK(m_pDissolveCom->Render(3));
+	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
 	m_pNavigationCom->Render(m_pTransformCom);
@@ -6438,8 +6438,8 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 
 HRESULT CPlayer::Ready_ParticleDesc()
 {
-	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
-	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
 
