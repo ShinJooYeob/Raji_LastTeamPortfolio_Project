@@ -1653,7 +1653,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 	static  _float3 PlayPostiton2 = _float3::Zero();
 	ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
 
-	TCHAR* str_DemoSoundFile = L"Attack.wav";
+	TCHAR* str_DemoSoundFile = L"3DTestSound.wav";
 
 	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
 	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
@@ -1712,7 +1712,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 	}
 
-
+	
 
 
 
