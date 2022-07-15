@@ -33,21 +33,46 @@ HRESULT CHpUI::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_HpDesc.m_vPos);
 
-	for (_int i = 0; i < 9; ++i)
+	if (m_HpDesc.m_HPType == CHpUI::HP_RAJI)
 	{
-		_float Angle = (_float)i*(360.f / 9.f);
-		_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle + 40.f));
-		_float3 Pos = m_pObjectPos.XMVector() + (Mat.r[2] * 1.5f);
+		for (_int i = 0; i < 9; ++i)
+		{
+			_float Angle = (_float)i*(360.f / 9.f);
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * 0.5f);
 
-		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-		NULL_CHECK_RETURN(pTransform, E_FAIL);
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
 
-		pTransform->Rotation_CW(XMVectorSet(1.f, 0, 0.f, 0), XMConvertToRadians(90.f));
-		pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+			pTransform->Turn_CW(XMVectorSet(1.f, 0, 0.f, 0), XMConvertToRadians(90.f));
+			//pTransform->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0), XMConvertToRadians(Angle + 180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
 
-		m_vPosTransforms.push_back(pTransform);
+			pTransform->Scaled_All(_float3(0.2f));
+
+			m_vPosTransforms.push_back(pTransform);
+		}
 	}
-	Set_ObjectPos();
+	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
+	{
+		for (_int i = 0; i < (_int)m_HpDesc.m_pObjcect->Get_MaxHP(); ++i)
+		{
+			_float Angle = (_float)i*(360.f / m_HpDesc.m_pObjcect->Get_MaxHP());
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * 0.8f);
+
+			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+			pTransform->Turn_CW(XMVectorSet(1.f, 0, 0.f, 0), XMConvertToRadians(90.f));
+			//pTransform->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0), XMConvertToRadians(Angle + 180.f));
+			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			pTransform->Scaled_All(_float3(0.2f));
+
+			m_vPosTransforms.push_back(pTransform);
+		}
+	}
 
 
 	return S_OK;
@@ -58,27 +83,73 @@ _int CHpUI::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
 	Set_ObjectPos();
-	for (_int i = 0; i < 9; ++i)
-	{
-		_float Angle = (_float)i*(360.f / 9.f);
-		_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle + 40.f));
-		_float3 Pos = m_HpDesc.m_vPos.XMVector() + (Mat.r[2] * 1.5f);
 
-		//m_vPosTransforms[i]->Rotation_CW(XMVectorSet(1.f, 0, 0.f, 0), XMConvertToRadians(90.f));
-		m_vPosTransforms[i]->Set_MatrixState(CTransform::STATE_POS, Pos);
-	}
+	m_iHitCount = 0;
 
 	if (m_iHitCount > 9)
+	{
 		m_iHitCount = 9;
+		//´ÙÀÌ!!!!!
+	}
 
-	for (_int i = 0; i < m_iHitCount; ++i)
+	if (m_HpDesc.m_HPType == CHpUI::HP_RAJI)
 	{
-		m_vecInstancedEmptyHPTransform.push_back(m_vPosTransforms[i]);
+		for (_int i = 0; i < 9; ++i)
+		{
+			_float Angle = (_float)i*(360.f / 9.f);
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
+
+			_Matrix Mat2 = XMMatrixRotationX(XMConvertToRadians(90))
+				*XMMatrixRotationY(XMConvertToRadians(Angle + 180.f));
+
+			Mat2.r[3] = _float4(Pos, 1).XMVector();
+
+			m_vPosTransforms[i]->Set_Matrix(Mat2);
+
+
+			m_vPosTransforms[i]->Scaled_All(_float3(0.2f));
+		}
+
+		for (_int i = 0; i < m_iHitCount; ++i)
+		{
+			m_vecInstancedEmptyHPTransform.push_back(m_vPosTransforms[i]);
+		}
+		for (_int i = m_iHitCount; i < m_vPosTransforms.size(); ++i)
+		{
+			m_vecInstancedHPTransform.push_back(m_vPosTransforms[i]);
+		}
 	}
-	for (_int i = m_iHitCount; i < m_vPosTransforms.size(); ++i)
+	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
 	{
-		m_vecInstancedHPTransform.push_back(m_vPosTransforms[i]);
+		_int iMaxHP = (_int)m_HpDesc.m_pObjcect->Get_MaxHP();
+
+		for (_int i = 0; i < iMaxHP; ++i)
+		{
+			_float Angle = (_float)i*(360.f / (_float)iMaxHP);
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
+
+			_Matrix Mat2 = XMMatrixRotationX(XMConvertToRadians(90))
+				*XMMatrixRotationY(XMConvertToRadians(Angle + 180.f));
+
+			Mat2.r[3] = _float4(Pos, 1).XMVector();
+
+			m_vPosTransforms[i]->Set_Matrix(Mat2);
+
+
+			m_vPosTransforms[i]->Scaled_All(_float3(1.f - (m_HpDesc.m_pObjcect->Get_MaxHP() *0.01f), 0.5f, 0.5f));
+		}
+
+		for (_int i = 0; i < m_vPosTransforms.size(); ++i)
+		{
+			if(i < m_iHitCount)
+				continue;
+
+			m_vecInstancedHPTransform.push_back(m_vPosTransforms[i]);
+		}
 	}
+
 
 	return _int();
 }
@@ -86,6 +157,8 @@ _int CHpUI::Update(_double fDeltaTime)
 _int CHpUI::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
+
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SUBBLEND, this));
 
 	return _int();
 }
@@ -101,65 +174,113 @@ _int CHpUI::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+	_float ATV = .1f;
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vTextureFigureUVSize", &_float2(1, 1), sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &ATV, sizeof(_float)));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 1)))
-		return E_FAIL;
+
+
+
+	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	D3D11_MAPPED_SUBRESOURCE SubResource;
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
-
-	for (_int i = 0; i < m_vecInstancedEmptyHPTransform.size(); ++i)
+	if (m_HpDesc.m_HPType == CHpUI::HP_RAJI)
 	{
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 1));
 
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
-			((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
-		((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
 
-		((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f,1.f,1.f,1.f);
+		for (_int i = 0; i < m_vecInstancedEmptyHPTransform.size(); ++i)
+		{
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
 
-		((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+				((m_vecInstancedEmptyHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
+			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
 
-		((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0,0,0,0);
+			((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
 
+			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+
+			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
+
+		}
+		m_pVIBufferCom->UnLock();
+
+		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 24, (_int)m_vecInstancedEmptyHPTransform.size()));
+
+
+		ATV = .1f;
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vTextureFigureUVSize", &_float2(1, 1), sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &ATV, sizeof(_float)));
+
+
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
+
+		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
+
+		for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+		{
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
+
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+				((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
+			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+
+			((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
+
+			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+
+			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
+
+		}
+		m_pVIBufferCom->UnLock();
+
+		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 24, (_int)m_vecInstancedHPTransform.size()));
+
+		m_vecInstancedEmptyHPTransform.clear();
+		m_vecInstancedHPTransform.clear();
 	}
-	m_pVIBufferCom->UnLock();
-
-	FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 1, (_int)m_vecInstancedEmptyHPTransform.size()));
-
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
-		return E_FAIL;
-
-	FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
-
-	for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
 	{
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
 
-		XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
-			((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
-		((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+		ATV = .1f;
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vTextureFigureUVSize", &_float2(1, 1), sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &ATV, sizeof(_float)));
 
-		((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
+		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
 
-		((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+		for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+		{
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
 
-		((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+				((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
+			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
 
+			((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
+
+			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+
+			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
+
+		}
+		m_pVIBufferCom->UnLock();
+
+		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 24, (_int)m_vecInstancedHPTransform.size()));
+
+		m_vecInstancedEmptyHPTransform.clear();
+		m_vecInstancedHPTransform.clear();
 	}
-	m_pVIBufferCom->UnLock();
 
-	FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 1, (_int)m_vecInstancedHPTransform.size()));
-
-	m_vecInstancedEmptyHPTransform.clear();
-	m_vecInstancedHPTransform.clear();
 
 	return _int();
 }
@@ -180,7 +301,7 @@ HRESULT CHpUI::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXPOINTINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Point_Instance_128), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 
@@ -190,10 +311,14 @@ HRESULT CHpUI::SetUp_Components()
 	if (FAILED(__super::Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_HPUI), TAG_COM(Com_HPUI), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
-	if(m_HpDesc.m_HPType == CHpUI::HP_RAJI)
-		m_pTextureCom->Change_TextureLayer(L"RajiHP");
-	else if(m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
-		m_pTextureCom->Change_TextureLayer(L"MonsterHP");
+	if (m_HpDesc.m_HPType == CHpUI::HP_RAJI)
+	{
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"RajiHP"));
+	}
+	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
+	{
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"MonsterHP"));
+	}
 
 	return S_OK;
 }
