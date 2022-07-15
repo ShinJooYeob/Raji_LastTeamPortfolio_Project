@@ -31,6 +31,8 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 	// Rim Light //
 	//Set_LimLight_N_Emissive(_float4(1.f, 0, 0, 1.f), 0.f);
 	//
+
+	FAILED_CHECK(Ready_ParticleDesc());
 	
 	return S_OK;
 }
@@ -60,6 +62,8 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 
 	Update_Colliders();
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+
+	Update_ParticleTransform();
 
 	return _int();
 }
@@ -145,6 +149,10 @@ _int CPlayerWeapon_Spear::LateRender()
 void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 {
 	__super::Active_Trail(bActivate);
+	
+	static _bool bChecker = false;
+
+
 
 	if (true == m_bActiveTrail)
 	{
@@ -154,10 +162,22 @@ void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 		mat.r[1] = XMVector3Normalize(mat.r[1]);
 		mat.r[2] = XMVector3Normalize(mat.r[2]);
 		m_pSwordTrail->Set_TrailTurnOn(true, mat.r[3] + mat.r[2] * 0.5f, mat.r[3] - (mat.r[2] * 1.f + mat.r[0] * 0.1f + mat.r[1] * 0.1f));
+
+		if (!bChecker)
+		{
+			m_vecTextureParticleDesc[0].ParticleSize = _float3(0.5f);
+			m_vecTextureParticleDesc[0].vEmissive_SBB = _float3(0);
+			m_vecTextureParticleDesc[0].Particle_Power = 10.f;
+			m_vecTextureParticleDesc[0].SubPowerRandomRange_RUL = _float3(1,1,3);
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+			bChecker = true;
+		}
 	}
 	else
 	{
 		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+		bChecker = false;
 	}
 }
 
@@ -263,6 +283,12 @@ void CPlayerWeapon_Spear::Update_Colliders()
 		mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.f + mat.r[1] * 0.f);
 		m_pCollider->Update_Transform(3, mat);
 	}
+}
+
+void CPlayerWeapon_Spear::Update_ParticleTransform()
+{
+	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
+	m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(2).XMVector());
 }
 
 void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
@@ -375,6 +401,29 @@ HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pCollider->Set_ParantBuffer();
+
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
+{
+	//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+
+
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	//	0
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"SpearNormalAttack"));
+	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
+
+
+
 
 	return S_OK;
 }

@@ -49,11 +49,20 @@ private:
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 	void				Update_Colliders();
+	void				Update_ParticleTransform();
 
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
 	HRESULT				SetUp_Collider();
+
+	HRESULT				Ready_ParticleDesc();
+
+private:/*For Particle*/
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	CTransform*						m_pMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 
 private:
 	_float4x4				m_fAttachedMatrix;
