@@ -1234,6 +1234,19 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		}
 	}
 	ImGui::Separator();
+	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	{
+		IMGUITREE("Sound_3D_PlayerTest")
+		{
+
+			Update_DebugWnd_Sound3D(fDeltaTime);
+
+			IMGUITREE_END
+		}
+
+	}
+	ImGui::Separator();
+
 	End_Update_Frame();
 	return _int();
 }
@@ -1595,24 +1608,15 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	//IMGUITREE("BaseCollision")
 	//{
 	//	static CTestObject_BaseCollider* COllision_TestObj = nullptr;
-
 	//	if (ImGui::Button("CollisionTest"))
 	//	{
 	//		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
 	//		//(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_BaseCollision)));
 	//		//CTestObject_PhysX* obj =
 	//		//	static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
-
-
-
 	//	}
-
-
-
 	//	IMGUITREE_END
 	//}
-
-
 
 	if (ImGui::Button("Delete_Static"))
 	{
@@ -1638,6 +1642,77 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	ImGui::DragFloat3("DebugValue2:", (float*)&GetSingle(CPhysXMgr)->gDebugValue2, 0.1f, -1000, 1000);
 	ImGui::DragFloat3("DebugValue3:", (float*)&GetSingle(CPhysXMgr)->gDebugValue3, 0.1f, -1000, 1000);
 	ImGui::DragFloat3("DebugValue4:", (float*)&GetSingle(CPhysXMgr)->gDebugValue4, 0.1f, -1000, 1000);
+
+	return _int();
+}
+
+_int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
+{
+	static _float3 PlayPostiton1 = _float3::Zero();
+	ImGui::DragFloat3("PlayPostiton1:", (float*)&PlayPostiton1, 0.1f, -100, 100);
+	static  _float3 PlayPostiton2 = _float3::Zero();
+	ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
+
+	TCHAR* str_DemoSoundFile = L"Attack.wav";
+
+	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
+	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
+	static const wchar_t* layerTrigger = TAG_LAY(Layer_ColTrigger);
+
+	static CTestObject_PhysX* PlayerSoundObject = nullptr;
+
+	if (ImGui::Button("Create_SoundPlayer"))
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
+		PlayerSoundObject =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
+		PlayerSoundObject->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
+		PlayerSoundObject->Set_TYPE(CTestObject_PhysX::TESTTYPE_SOUND);
+		CTransform* objTrans = (CTransform*)PlayerSoundObject->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, PlayPostiton1);
+		NULL_CHECK_BREAK(PlayerSoundObject);
+		NULL_CHECK_BREAK(objTrans);
+
+
+	}
+
+	if (PlayerSoundObject)
+	{
+		static FMOD_SYSTEM* SoundSystem = GetSingle(CGameInstance)->Get_SOUNDSYSTEM();
+
+		// 각 3D 사운드 정보 출력
+		int iListener=0;
+		float fDopperScale, fDistance, fRollScale;
+
+		FMOD_System_Get3DSettings(SoundSystem, &fDopperScale, &fDistance,&fRollScale);
+		FMOD_System_Get3DNumListeners(SoundSystem, &iListener);
+	
+		ImGui::Text("3DSetting:(%.2f,%.2f,%.2f,)", fDopperScale, fDistance, fRollScale);
+		ImGui::Text("3DListener:(%d)", iListener);
+
+		// 이동 스케일 상대거리 스케일 감소 배율
+		_float MinusValue = fRollScale;
+		ImGui::DragFloat("DopperScale Distance RollScale:", &MinusValue, 0.1f, 0.01f, 1000);
+
+		GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
+
+		// 일반 사운드와 3D 사운드 재생
+		if (ImGui::Button("StartSound"))
+		{
+			GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
+
+		}
+
+		if (ImGui::Button("Start3DSound"))
+		{
+			// #3DSOUND
+			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile,_float3(0,0,0), CHANNEL_EFFECT, 1.0f);
+		}
+
+	}
+
+
 
 
 

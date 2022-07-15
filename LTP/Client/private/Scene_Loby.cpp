@@ -23,6 +23,10 @@ HRESULT CScene_Loby::Initialize()
 	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
+
+
+	// #SOUND Test
+	// GetSingle(CGameInstance)->PlayBGM(L"The End.mp3", 0, 1.f);
 		
 	return S_OK;
 }
@@ -62,7 +66,7 @@ _int CScene_Loby::Update(_double fDeltaTime)
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE7), SCENEID::SCENE_LOADING));
 	}
-	
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return 0;

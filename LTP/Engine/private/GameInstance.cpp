@@ -92,8 +92,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, const CGraphic_Device:
 
 	FAILED_CHECK(m_pExternFontMgr->Initialize_FontMgr(*ppDeviceOut, *ppDeviceContextOut));
 
-
-
 	return S_OK;
 }
 
@@ -492,6 +490,20 @@ HRESULT CGameInstance::PlayBGM(TCHAR * pSoundKey, _uint iBGMIndex, _float fLoude
 	return m_pSoundMgr->PlayBGM(pSoundKey, iBGMIndex, fLouderMultiple);
 }
 
+HRESULT CGameInstance::Play3D_Sound(TCHAR * pSoundKey, _float3 pos, CHANNELID eID, _float fLouderMultiple)
+{
+	NULL_CHECK_BREAK(m_pSoundMgr);
+	return m_pSoundMgr->Play3D_Sound(pSoundKey, pos, eID, fLouderMultiple);
+}
+
+HRESULT CGameInstance::Set_3DSound_DistanceMinValue(_float rolloffscale)
+{
+	NULL_CHECK_BREAK(m_pSoundMgr);
+
+	m_pSoundMgr->Set_3DSound_Distance_World(rolloffscale);
+	return S_OK;
+}
+
 void CGameInstance::Stop_ChannelSound(CHANNELID eID)
 {
 	NULL_CHECK_BREAK(m_pSoundMgr);
@@ -514,6 +526,12 @@ _bool CGameInstance::Get_Channel_IsPaused(CHANNELID eID)
 {
 	NULL_CHECK_BREAK(m_pSoundMgr);
 	return m_pSoundMgr->Get_Channel_IsPaused(eID);
+}
+
+FMOD_SYSTEM * CGameInstance::Get_SOUNDSYSTEM()
+{
+	NULL_CHECK_BREAK(m_pSoundMgr);
+	return m_pSoundMgr->Get_SOUNDSYSTEM();
 }
 
 

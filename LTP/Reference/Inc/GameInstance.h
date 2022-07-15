@@ -86,13 +86,16 @@ public: /*For. SoundMgr*/
 
 	HRESULT PlaySound(TCHAR* pSoundKey, CHANNELID eID, _float fLouderMultiple = 1.f);
 	HRESULT PlayBGM(TCHAR* pSoundKey, _uint iBGMIndex = 0, _float fLouderMultiple = 1.f);
+	HRESULT Play3D_Sound(TCHAR* pSoundKey, _float3 pos, CHANNELID eID, _float fLouderMultiple = 1.f);
+	HRESULT Set_3DSound_DistanceMinValue(_float rolloffscale);
 
 	void Stop_ChannelSound(CHANNELID eID);
 	void Stop_AllChannel();
 
 	_float  Get_Channel_Volume(CHANNELID eID);
 	_bool  Get_Channel_IsPaused(CHANNELID eID);
-
+	
+	FMOD_SYSTEM*	Get_SOUNDSYSTEM();
 
 
 public: /* For.TimerMgr */
