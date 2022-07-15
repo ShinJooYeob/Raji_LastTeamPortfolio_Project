@@ -25,7 +25,7 @@ HRESULT CPlayerWeapon_Chakra::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
+	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	return S_OK;
@@ -59,6 +59,10 @@ _int CPlayerWeapon_Chakra::Update(_double fDeltaTime)
 	m_pSwordTrail->Set_Color(_float4(1.f, 1.f, 0.6f, 1.f));
 	m_pModel->Change_AnimIndex(0, 0.f);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
+
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+
 	return _int();
 }
 
@@ -73,6 +77,7 @@ _int CPlayerWeapon_Chakra::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	return _int();
 }
 
@@ -253,6 +258,12 @@ void CPlayerWeapon_Chakra::Update_Trail(_double fDeltaTime)
 	);
 }
 
+void CPlayerWeapon_Chakra::Update_Colliders()
+{
+	m_pCollider->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
+	m_pCollider->Update_Transform(1, m_pTransformCom->Get_WorldMatrix());
+}
+
 void CPlayerWeapon_Chakra::Check_AttackStart()
 {
 	if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
@@ -338,6 +349,27 @@ HRESULT CPlayerWeapon_Chakra::SetUp_EtcInfo()
 	return S_OK;
 }
 
+HRESULT CPlayerWeapon_Chakra::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
+
+	return S_OK;
+}
+
 CPlayerWeapon_Chakra * CPlayerWeapon_Chakra::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CPlayerWeapon_Chakra*	pInstance = NEW CPlayerWeapon_Chakra(pDevice, pDeviceContext);
@@ -371,4 +403,5 @@ void CPlayerWeapon_Chakra::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pSwordTrail);
+	Safe_Release(m_pCollider);
 }

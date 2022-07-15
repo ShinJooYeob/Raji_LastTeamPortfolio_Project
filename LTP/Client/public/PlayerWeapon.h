@@ -13,6 +13,7 @@ public:
 	{
 		EWeaponState	eWeaponState;
 		ATTACHEDESC		eAttachedDesc;
+		CGameObject*	pOwner;
 	}PlayerWeaponDesc;
 
 protected:

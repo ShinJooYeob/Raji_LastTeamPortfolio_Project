@@ -61,7 +61,7 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	//CHpUI::HPDesc HpDesc;
 	//HpDesc.m_HPType = CHpUI::HP_RAJI;
-	//HpDesc.m_pObjcect = this;
+	//HpDesc.m_pObjcect = this; 
 	//HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 	//g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)m_pHPUI, m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &HpDesc);
@@ -79,8 +79,8 @@ _int CPlayer::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
 	{
 		// JUMP
-		//m_eCurState = STATE_JUMP;
-		//m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
+		m_eCurState = STATE_JUMP;
+		m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
 
 		// CURTAIN
 		//Set_State_CurtainStart(fDeltaTime);
@@ -90,27 +90,52 @@ _int CPlayer::Update(_double fDeltaTime)
 		Set_State_WallRunStart(bDebugBoolean, fDeltaTime);
 		bDebugBoolean = !bDebugBoolean;*/
 
-		// CURTAIN
-		//Set_State_CurtainStart(fDeltaTime);
-
 		// PILLAR
 		//Set_State_PillarStart(fDeltaTime);
+		//Take_Damage(this, 10.f, XMVectorSet(1.f, 0.f, 0.f, 0.f), true, 10.f);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_R) & DIS_Down)
+	{
+		Set_State_CurtainStart(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_T) & DIS_Down)
+	{
+		static _bool bDebugBoolean = false;
+		Set_State_WallRunStart(bDebugBoolean, fDeltaTime);
+		bDebugBoolean = !bDebugBoolean;
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Down)
+	{
+		Set_State_PetalStart(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_F) & DIS_Down)
+	{
+		Set_State_PillarStart(fDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_G) & DIS_Down)
+	{
 		Take_Damage(this, 10.f, XMVectorSet(1.f, 0.f, 0.f, 0.f), true, 10.f);
 	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_H) & DIS_Down)
+	{
+		m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
+	}
+	
+
 	//if (g_pGameInstance->Get_DIKeyState(DIK_U) & DIS_Down)
 	//{
 	//	m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
 	//	//Set_State_PillarStart(fDeltaTime);
 	//}
 	
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	/*if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
 		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
 	{
 		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-	}
+	}*/
 	_Vector vScale = m_pTransformCom->Get_Scale();
 
 	// Check Player Key Input
@@ -271,8 +296,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
-
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -306,18 +330,6 @@ _int CPlayer::Render()
 
 
 	FAILED_CHECK(m_pDissolveCom->Render(3));
-
-
-	//_uint NumMaterial = m_pModel->Get_NumMaterial();
-	//
-	//for (_uint i = 0; i < NumMaterial; i++)
-	//{
-	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-	//
-	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	//}
-
 
 #ifdef _DEBUG
 	m_pNavigationCom->Render(m_pTransformCom);
@@ -666,11 +678,11 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 	}
 	else if (true == m_bPressedInteractKey)
 	{
-		Set_State_PetalStart(fDeltaTime);
-		/*if (nullptr != m_pCurParkourTrigger && CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
+//		Set_State_PetalStart(fDeltaTime);
+		if (nullptr != m_pCurParkourTrigger && CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
 		{
 			Set_State_ParkourStart(fDeltaTime);
-		}*/
+		}
 	}
 	else if (true == m_bPressedMainAttackKey || true == m_bPressedPowerAttackKey)
 	{
@@ -1827,7 +1839,7 @@ void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 	}
 	}
 
-	m_pTransformCom->MovetoDir(vMovDir, fMoveRate);
+	m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
 
 	m_fMovDir = XMVector3Normalize(vMovDir);
 }
@@ -2195,7 +2207,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			m_vecTextureParticleDesc[0].FollowingTarget = m_pTransformCom;
 			m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
-			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum,m_vecTextureParticleDesc[0]);
+			//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum,m_vecTextureParticleDesc[0]);
 		}
 		//
 
@@ -2930,6 +2942,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 		case BOWMAINATK_START:
 		{
+			m_bOnNavigation = true;
+
 			m_fAnimSpeed = 1.f;
 
 			if (0.307f < m_pModel->Get_PlayRate() && false == m_bAnimChangeSwitch)
@@ -3049,6 +3063,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 		case BOW_ANIM_POWER_COMBO_0:
 		{
+			m_bOnNavigation = true;
+
 			// On MotionTrail
 			if (0.1f > fAnimPlayRate && true == m_bPlayJumpAttack)
 			{
@@ -3105,7 +3121,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			if (0.277f >= fAnimPlayRate)
 			{
 				_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.f, fAnimPlayRate, 0.277f);
-				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			}
 			else if (0.277f < fAnimPlayRate)
 			{
@@ -3167,6 +3183,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		case BOW_ANIM_POWER_COMBO_1:
 		case BOW_ANIM_POWER_COMBO_1_JUMP:
 		{
+			m_bOnNavigation = true;
+
 			if (0.f > fAnimPlayRate && true == m_bPlayJumpAttack)
 			{
 				m_bOn_MotionTrail = true;
@@ -3348,7 +3366,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			if (0.277f >= fAnimPlayRate)
 			{
 				_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.f, fAnimPlayRate, 0.277f);
-				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			}
 			else if (0.277f < fAnimPlayRate)
 			{
@@ -3404,6 +3422,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		break;
 		case BOW_ANIM_POWER_COMBO_2_JUMP:
 		{
+			m_bOnNavigation = true;
+
 			if (0.2f > fAnimPlayRate)
 			{
 				m_bOn_MotionTrail = true;
@@ -3479,7 +3499,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			if (0.277f >= fAnimPlayRate)
 			{
 				_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.f, fAnimPlayRate, 0.277f);
-				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+				m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			}
 			else if (0.277f < fAnimPlayRate)
 			{
@@ -3544,6 +3564,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 	switch (m_pModel->Get_NowAnimIndex())
 	{
+		m_bOnNavigation = true;
 		//// Main Attack ////
 	case SWORD_ANIM_MAIN_ATK_COMBO_0:
 	{
@@ -3615,6 +3636,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_1:
 	{
+		m_bOnNavigation = true;
 		//// Turn On Weapon Trail
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.694f)
 		{
@@ -3645,7 +3667,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.f < fAnimPlayRate && 0.47f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.5f, fAnimPlayRate, 0.47f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (0.9f < fAnimPlayRate)
 		{
@@ -3697,6 +3719,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_2:
 	{
+		m_bOnNavigation = true;
 		//// Turn On Weapon Trail
 		if (true == m_bTrailSwitch && m_pModel->Get_PlayRate() >= 0.512f)
 		{
@@ -3727,7 +3750,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.f < fAnimPlayRate && 0.47f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing_Return(TYPE_QuadOut, TYPE_QuarticIn, 0.f, 1.6f, fAnimPlayRate, 0.47f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (0.9f < fAnimPlayRate)
 		{
@@ -3786,6 +3809,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
 		if (0.2f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -3812,7 +3836,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.25f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
 		{
@@ -3871,6 +3895,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
 		if (0.2f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -3898,7 +3923,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.25f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
 		{
@@ -3948,6 +3973,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
+
 		if (0.2f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -3984,7 +4011,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.25f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
 		{
@@ -4037,12 +4064,14 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	//// Power Attack ////
 	case SWORD_ANIM_POWER_ATK_COMBO_0:
 	{
+		m_bOnNavigation = true;
+
 		m_fAnimSpeed = 1.f;
 
 		if (0.f < fAnimPlayRate && 0.277f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_QuadOut, 2.5f, 0.f, fAnimPlayRate, 0.277f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			LookAt_MousePos();
 		}
 		else if (0.277f < fAnimPlayRate && 0.9f > fAnimPlayRate)
@@ -4082,6 +4111,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1:
 	{
+		m_bOnNavigation = true;
+
 		// 
 		if (false == m_bAnimChangeSwitch)
 		{
@@ -4111,7 +4142,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 2.5f;
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_QuadOut, 0.f, 1.f, fAnimPlayRate - 0.205f, 0.324f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			LookAt_MousePos();
 		}
 		else if (0.529f < fAnimPlayRate && 0.9f > fAnimPlayRate)
@@ -4159,6 +4190,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2:
 	{
+		m_bOnNavigation = true;
+
 		if (false == m_bAnimChangeSwitch)
 		{
 			_Vector vPutOnPos = (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 1.2f) + m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -4228,6 +4261,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
+
 		if (0.15f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -4242,7 +4277,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.f < fAnimPlayRate && 0.277f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_QuadOut, 2.5f, 0.f, fAnimPlayRate, 0.277f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 			LookAt_MousePos();
 		}
 		else if (0.277f < fAnimPlayRate && 0.9f > fAnimPlayRate)
@@ -4289,6 +4324,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
+
 		if (0.1f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -4323,7 +4360,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (0.25f >= fAnimPlayRate)
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
 		{
@@ -4374,6 +4411,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_bOnNavigation = true;
+
 		if (0.1f > fAnimPlayRate)
 		{
 			m_bOn_MotionTrail = true;
@@ -4386,17 +4425,17 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 		m_fAnimSpeed = 1.5f;
 
-		if (false == m_bAnimChangeSwitch)
+		if (false == m_bAnimChangeSwitch && 0.12f <= fAnimPlayRate)
 		{
-			_Vector vPutOnPos = (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 3.7f) + m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			_Vector vPutOnPos = (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 1.7f) + m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_SmashMode(vPutOnPos);
 			m_bAnimChangeSwitch = true;
 		}
 
-		if (0.25f >= fAnimPlayRate)
+		if (0.25f >= fAnimPlayRate) 
 		{
 			_float MoveSpeed = g_pGameInstance->Easing(TYPE_SinInOut, 1.5f, 0.f, fAnimPlayRate, 0.25f);
-			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed);
+			m_pTransformCom->Move_Forward(fDeltaTime * MoveSpeed, m_pNavigationCom);
 		}
 		else if (0.9f < fAnimPlayRate)
 		{
@@ -4455,6 +4494,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 void CPlayer::Javelin(_double fDeltaTime)
 {
+	m_bOnNavigation = true;
+
 	switch (m_eCurUtilityState)
 	{
 	case UTILITY_START:
@@ -6016,26 +6057,21 @@ HRESULT CPlayer::SetUp_Components()
 
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-
 	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;
-
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
 
 
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
-	
 	COLLIDERDESC			ColliderDesc;
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(3.0f);
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC)); 
+	ColliderDesc.vScale = _float3(1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-
 	ATTACHEDESC tAttachedDesc;
 	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1), _float3(0), _float3(-0.074084f, -0.861011f, -75.1948f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
@@ -6043,15 +6079,95 @@ HRESULT CPlayer::SetUp_Components()
 
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f);
+	ColliderDesc.vScale = _float3(0.2f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, -1.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_wrist", _float3(1), _float3(0), _float3(-58.667f, -0.60365f, -114.675f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_chest", _float3(1), _float3(0), _float3(-0.041261f, -1.80535f, -109.114f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_arm", _float3(1), _float3(0), _float3(-11.7516f, -0.395438f, -114.675f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_arm", _float3(1), _float3(0), _float3(11.6691f, -0.395438f, -114.675f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine01", _float3(1), _float3(0), _float3(0.024159f, -1.80535f, -88.5722f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_leg", _float3(1), _float3(0), _float3(-6.28502f, -0.74237f, -75.1888f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_leg", _float3(1), _float3(0), _float3(6.13641f, -0.74237f, -75.1206f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_knee", _float3(1), _float3(0), _float3(6.1366f, -5.7681f, -37.9986f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_knee", _float3(1), _float3(0), _float3(-6.28494f, -5.51913f, -38.0339f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+	
 
 	CNavigation::NAVIDESC NaviDesc;
 	NaviDesc.iCurrentIndex = 0;
@@ -6116,6 +6232,7 @@ HRESULT CPlayer::SetUp_PlayerWeapons()
 	CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
 	eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(-97, -120, -60), _float3(-0.661f, -0.04f, -1.133f));
 	eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
+	eWeaponDesc.pOwner = this;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Spear), &eWeaponDesc));
 	m_pPlayerWeapons[WEAPON_SPEAR - 1] = (CPlayerWeapon*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon)));
 	m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_BlockUpdate(true);
@@ -6325,7 +6442,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
-
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 

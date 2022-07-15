@@ -54,6 +54,7 @@ private:
 	_int				LateUpdate_NoEquip(_double fDeltaTime);
 
 	void				Update_AttachMatrix();
+	void				Update_Colliders();
 
 public:
 	void				Change_Pivot(EShieldPivot ePitvot);
@@ -61,6 +62,7 @@ public:
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
+	HRESULT				SetUp_Collider();
 
 private:
 	_float4x4				m_fAttachedMatrix;
@@ -81,6 +83,7 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 public:
 	static CPlayerWeapon_Shield*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

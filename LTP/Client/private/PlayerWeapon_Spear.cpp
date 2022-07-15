@@ -23,7 +23,7 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
+	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 	Set_IsOcllusion(true);
 
@@ -58,6 +58,9 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(m_iCurAnim, 0.f);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+
 	return _int();
 }
 
@@ -87,8 +90,6 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-
-
 	_Matrix mat = m_fAttachedMatrix.XMatrix();
 	mat.r[0] = XMVector3Normalize(mat.r[0]);
 	mat.r[1] = XMVector3Normalize(mat.r[1]);
@@ -102,6 +103,7 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
@@ -226,6 +228,43 @@ void CPlayerWeapon_Spear::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 	m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.5f, (*pMat).r[3] - ((*pMat).r[2] * 1.f + (*pMat).r[0] * 0.1f + (*pMat).r[1] * 0.1f), fDeltaTime);
 }
 
+void CPlayerWeapon_Spear::Update_Colliders()
+{
+	if (true == m_bThrowing)
+	{
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		_Vector vPos = mat.r[3];
+
+		m_pCollider->Update_Transform(0, mat);
+		mat.r[3] = vPos + mat.r[2] * 0.9f;
+		m_pCollider->Update_Transform(1, mat);
+		mat.r[3] = vPos + mat.r[2] * 0.6f;
+		m_pCollider->Update_Transform(2, mat);
+		mat.r[3] = vPos + mat.r[2] * 0.3f;
+		m_pCollider->Update_Transform(3, mat);
+	}
+	else
+	{
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+		_Vector vPos = mat.r[3];
+
+		m_pCollider->Update_Transform(0, mat);
+
+		mat.r[3] = vPos - (mat.r[2] * 0.8f + mat.r[0] * 0.1f + mat.r[1] * 0.1f);
+		m_pCollider->Update_Transform(1, mat);
+
+		mat.r[3] = vPos - (mat.r[2] * 0.5f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
+		m_pCollider->Update_Transform(2, mat);
+
+		mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.f + mat.r[1] * 0.f);
+		m_pCollider->Update_Transform(3, mat);
+	}
+}
+
 void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 {
 	switch (ePitvot)
@@ -276,7 +315,7 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	
 	CTransform::TRANSFORMDESC tDesc = {};
 
-	tDesc.fMovePerSec = 30;
+	tDesc.fMovePerSec = 1;
 	tDesc.fRotationPerSec = XMConvertToRadians(360);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
@@ -286,14 +325,10 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	CSwordTrail::TRAILDESC tSwordDesc;
 	tSwordDesc.iPassIndex = 0;
 	tSwordDesc.vColor = _float4(1.f, 0.2f, 0.1f, 1.f);
-	// _float4(1.f, 0.5745f, 0.9745f, 1.f)	  Elec Type
-	// _float4(0.587f, 0.972f, 0.941f, 1.f)   Water Type
-	tSwordDesc.iTextureIndex = 1;			// 1 or 4
+	tSwordDesc.iTextureIndex = 1;
 	tSwordDesc.NoiseSpeed = 0;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
-
-
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerWeapon_Spear), TAG_COM(Com_SubModel), (CComponent**)&m_pModel_Skill));
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pTransformCom_Skill, &tDesc));
@@ -306,6 +341,41 @@ HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 {
 	m_iPassNum = 4;
 	m_iCurAnim = 0;
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon_Spear::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
+
 	return S_OK;
 }
 
@@ -345,4 +415,6 @@ void CPlayerWeapon_Spear::Free()
 
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
+	Safe_Release(m_pCollider);
+
 }

@@ -23,7 +23,7 @@ HRESULT CPlayerWeapon_Shield::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
+	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 
 
@@ -63,6 +63,9 @@ _int CPlayerWeapon_Shield::Update(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(m_iCurAnim, 0.f);
 	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
+
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
 	return _int();
 }
 
@@ -72,9 +75,6 @@ _int CPlayerWeapon_Shield::LateUpdate(_double fDeltaTimer)
 		return 0;
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
-
-
-
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
 	{
@@ -89,13 +89,12 @@ _int CPlayerWeapon_Shield::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
-
-
 
 	return _int();
 }
@@ -136,12 +135,6 @@ _int CPlayerWeapon_Shield::LateRender()
 void CPlayerWeapon_Shield::Active_Trail(_bool bActivate)
 {
 	__super::Active_Trail(bActivate);
-
-
-
-	if (true == m_bActiveTrail)
-	{
-	}
 
 }
 
@@ -311,6 +304,12 @@ void CPlayerWeapon_Shield::Update_AttachMatrix()
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
+void CPlayerWeapon_Shield::Update_Colliders()
+{
+	m_pCollider->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
+	m_pCollider->Update_Transform(1, m_pTransformCom->Get_WorldMatrix());
+}
+
 void CPlayerWeapon_Shield::Change_Pivot(EShieldPivot ePitvot)
 {
 	switch (ePitvot)
@@ -362,6 +361,27 @@ HRESULT CPlayerWeapon_Shield::SetUp_EtcInfo()
 	return S_OK;
 }
 
+HRESULT CPlayerWeapon_Shield::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(2.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.8f, 0.8f, 0.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider->Set_ParantBuffer();
+
+	return S_OK;
+}
+
 CPlayerWeapon_Shield * CPlayerWeapon_Shield::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CPlayerWeapon_Shield*	pInstance = NEW CPlayerWeapon_Shield(pDevice, pDeviceContext);
@@ -395,4 +415,5 @@ void CPlayerWeapon_Shield::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pMotionTrail);
+	Safe_Release(m_pCollider);
 }
