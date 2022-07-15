@@ -327,7 +327,7 @@ PS_OUT PS_MAIN_DEFAULT_Dissolve(PS_IN In)
 	{
 		vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
 
-		vDiffuse = BurnRampDesc;
+		Out.vDiffuse = BurnRampDesc;
 		//Out.vEmissive = max((max(BurnRampDesc.r, BurnRampDesc.g), BurnRampDesc.b) - 0.15f, 0);
 		Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
 		//o.Emission = tex2D(_BurnRamp, float2(test *(1 / _BurnSize), 0));

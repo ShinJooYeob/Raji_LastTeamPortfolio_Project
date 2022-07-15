@@ -6060,6 +6060,14 @@ HRESULT CPlayer::SetUp_Components()
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
+
+
+
+
+
+
+
+
 	return S_OK;
 }
 
@@ -6313,14 +6321,17 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 
 HRESULT CPlayer::Ready_ParticleDesc()
 {
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"testTexParticle"));
-
-
-
-	m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"testMeshParticle"));
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"SpearNormalAttack"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
 
 
 	return S_OK;
@@ -6367,4 +6378,9 @@ void CPlayer::Free()
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pHPUI);
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+
+
 }

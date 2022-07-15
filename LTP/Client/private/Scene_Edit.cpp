@@ -1099,13 +1099,13 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 		ReadFile(hFile, &(m_tParticleDesc.vPowerDirection), sizeof(_float3), &dwByte, nullptr);
 
 
-		lstrcpy(szTempBuffer, L"");
+		ZeroMemory(szTempBuffer, sizeof(_tchar) * MAX_PATH);
 		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
 		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 		lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, szTempBuffer);
 
 
-		lstrcpy(szTempBuffer, L"");
+		ZeroMemory(szTempBuffer, sizeof(_tchar) * MAX_PATH);
 		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
 		ReadFile(hFile, (szTempBuffer), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 		lstrcpy(m_tParticleDesc.szTextureLayerTag, szTempBuffer);
@@ -3646,8 +3646,14 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 	Make_VerticalSpacing(1);
 
-	static ImGuiTextFilter filter = "Prototype_Texture_TestEffect";
-	filter.Draw("Input TextureProtoTypeTag");
+		static ImGuiTextFilter filter = "Prototype_Texture_TestEffect";
+	{
+
+		wstring ta = m_tParticleDesc.szTextureProtoTypeTag;
+		string t2;
+		strcpy_s(filter.InputBuf, t2.assign(ta.begin(), ta.end()).c_str());
+		filter.Draw("Input TextureProtoTypeTag");
+	}
 
 	string Temp = string(filter.InputBuf);
 	wstring wtemp;
@@ -3655,6 +3661,10 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	lstrcpy(m_tParticleDesc.szTextureProtoTypeTag, wtemp.c_str());
 
 	static ImGuiTextFilter filter2 = DefaultParticleNameTag;
+	wstring ta = m_tParticleDesc.szTextureLayerTag;
+	string t2;
+
+	strcpy_s(filter2.InputBuf, t2.assign(ta.begin(), ta.end()).c_str());
 	filter2.Draw("Input TextureLayer");
 
 
@@ -3823,6 +3833,18 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	ImGui::Checkbox("AlphaBlendON", &m_tParticleDesc.AlphaBlendON); ImGui::SameLine();
 	ImGui::Checkbox("Emissive", &m_tParticleDesc.bEmissive);
 
+	if (m_tParticleDesc.bEmissive)
+	{
+		Make_VerticalSpacing(1);
+		memcpy(TempFloatArr, &(m_tParticleDesc.vEmissive_SBB), sizeof(_float) * 3);
+		ImGui::Text("Shade /Blur /Bright");
+
+		ImGui::DragFloat3("  ", TempFloatArr, 0.0073f, 0, 1.f);
+
+		memcpy(&(m_tParticleDesc.vEmissive_SBB), TempFloatArr, sizeof(_float) * 3);
+
+
+	}
 	Make_VerticalSpacing(1);
 
 	TempFloatArr[3] = m_tParticleDesc.m_fAlphaTestValue;
@@ -4019,6 +4041,12 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 
 
 	static ImGuiTextFilter filter = "Prototype_Mesh_AlgaeRock_Ledge";
+	{
+		wstring ta = m_tMeshDesc.szModelMeshProtoTypeTag;
+		string t2;
+		strcpy_s(filter.InputBuf, t2.assign(ta.begin(), ta.end()).c_str());
+	}
+
 	filter.Draw("Input MeshProtoTypeTag");
 
 	string Temp = string(filter.InputBuf);

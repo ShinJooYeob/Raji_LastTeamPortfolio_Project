@@ -237,7 +237,13 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pGameInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
 
+	_float4 Emissive = _float4(m_tInstanceDesc.vEmissive_SBB, 1);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &Emissive, sizeof(_float4)));
+
+
 	FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_tInstanceDesc.iTextureLayerIndex));
+
+	
 	FAILED_CHECK(m_pShaderCom->Set_Texture("g_DepthTexture", pGameInstance->Get_SRV(TEXT("Target_Depth"))));
 
 	if (m_tInstanceDesc.ePassID >= InstancePass_MaskingNoising && m_tInstanceDesc.ePassID <= InstancePass_MaskingNoising_Appear_Bright)
@@ -309,7 +315,6 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 
 	attribute->_color = m_tInstanceDesc.TargetColor;
 	attribute->_Targetforce = attribute->_force = m_tInstanceDesc.Particle_Power * pUtil->RandomFloat(m_tInstanceDesc.PowerRandomRange.x, m_tInstanceDesc.PowerRandomRange.y);
-	attribute->_color = m_tInstanceDesc.TargetColor;
 	attribute->_size = m_tInstanceDesc.ParticleSize;
 
 
@@ -408,10 +413,13 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 		for (; iter != m_vecParticleAttribute.end();iter++)
 		{
 			iter->_age += (_float)fDeltaTime;
+
 			if (iter->_age < 0) continue;
 
 			Update_Position_by_Velocity(&(*iter), fDeltaTime);
 
+			Update_TextureChange(&(*iter), fDeltaTime, pInstance);
+			
 			if ((*(_float3*)&iter->_LocalMatirx._41).Get_Lenth() > m_tInstanceDesc.fMaxBoundaryRadius	|| (iter->_age > iter->_lifeTime))
 				ResetParticle(&(*iter));
 
@@ -424,8 +432,6 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 			if (m_tInstanceDesc.SizeChageFrequency)
 				Update_SizeChange(&(*iter), fDeltaTime, pInstance);
 
-
-			Update_TextureChange(&(*iter), fDeltaTime, pInstance);
 		}
 
 
@@ -444,6 +450,8 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 			{
 				Update_Position_by_Velocity(&(*iter), fDeltaTime);
 
+				Update_TextureChange(&(*iter), fDeltaTime, pInstance);
+
 				if (m_tInstanceDesc.AlphaBlendON)
 					iter->_CamDist = XMVectorGetX(XMVector3Length(((iter->_LocalMatirx.XMatrix().r[3] + iter->_TargetParentPosition.XMVector()) - CamPos)));
 
@@ -453,7 +461,6 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 				if (m_tInstanceDesc.SizeChageFrequency)
 					Update_SizeChange(&(*iter), fDeltaTime, pInstance);
 
-				Update_TextureChange(&(*iter), fDeltaTime, pInstance);
 			}
 			else
 			{
@@ -513,7 +520,9 @@ void CInstanceEffect::Update_SizeChange(INSTANCEATT * tParticleAtt, _double fTim
 
 void CInstanceEffect::Update_TextureChange(INSTANCEATT * tParticleAtt, _double fTimeDelta, CGameInstance * pInstance)
 {
-	_uint iTotalTextureNum = m_tInstanceDesc.iFigureCount_In_Texture;
+	//if (tParticleAtt->_age < 0 || tParticleAtt->_age >= tParticleAtt->_lifeTime)return;
+
+	_int iTotalTextureNum = m_tInstanceDesc.iFigureCount_In_Texture;
 
 	if (iTotalTextureNum < 0)
 		iTotalTextureNum = _uint(m_tInstanceDesc.vTextureXYNum.x * m_tInstanceDesc.vTextureXYNum.y);
@@ -521,15 +530,15 @@ void CInstanceEffect::Update_TextureChange(INSTANCEATT * tParticleAtt, _double f
 	if (m_tInstanceDesc.TextureChageFrequency)
 	{
 		_double TimeInterver = tParticleAtt->_lifeTime / m_tInstanceDesc.TextureChageFrequency; //=> 15.초 파티클의 2번 진동수면 7.5가 나오는 것
-		_uint iFrequencyIndex = _uint(tParticleAtt->_age / TimeInterver); //=> 7.5초 주기에 3.4초를 지나고있으면 0번째 10초를 지나고있으면 1번째를 의미함
+		_int iFrequencyIndex = _uint(tParticleAtt->_age / TimeInterver); //=> 7.5초 주기에 3.4초를 지나고있으면 0번째 10초를 지나고있으면 1번째를 의미함
 		_double FrequencyAge = tParticleAtt->_age - (TimeInterver * iFrequencyIndex); // =>7.5초 주기에 3.4초를 지나고있으면 3.4 10초를 지나고있으면 2.5
 
 
 
-		_uint iNowIndex = _uint(FrequencyAge / TimeInterver * iTotalTextureNum);
+		_int iNowIndex = _uint(FrequencyAge / TimeInterver * iTotalTextureNum);
 
-		_uint fX = (iNowIndex % _uint(m_tInstanceDesc.vTextureXYNum.x));
-		_uint fY = (iNowIndex / _uint(m_tInstanceDesc.vTextureXYNum.x));
+		_int fX = (iNowIndex % _uint(m_tInstanceDesc.vTextureXYNum.x));
+		_int fY = (iNowIndex / _uint(m_tInstanceDesc.vTextureXYNum.x));
 
 		tParticleAtt->_TextureUV = _float2(_float(fX) / m_tInstanceDesc.vTextureXYNum.x, _float(fY) / m_tInstanceDesc.vTextureXYNum.y);
 	}

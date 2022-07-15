@@ -425,6 +425,8 @@ private:
 
 
 private:
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	CTransform*						m_pMeshParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 

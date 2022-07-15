@@ -404,7 +404,7 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 
 
 	Out.vWorldPosition = In.vWorldPos;
-	Out.vEmissive = vector(Out.vDiffuse.a,0,0,1);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x , g_fEmissive.y, g_fEmissive.z,1);
 	Out.vLimLight = 0.f;
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
@@ -435,7 +435,7 @@ PS_OUT PS_BrightColor(PS_IN In)
 		discard;
 
 	Out.vWorldPosition = In.vWorldPos;
-	Out.vEmissive = vector(Out.vDiffuse.a,0,0,1);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 	Out.vLimLight = 0.f;
 	Out.vDiffuse = saturate(Out.vDiffuse);
 
@@ -498,6 +498,7 @@ PS_OUT PS_MAIN_NoiseFireEffect(PS_Noise_IN In)
 		discard;
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 	return Out;
 
 }
@@ -544,6 +545,7 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 
 	return Out;
 
@@ -600,6 +602,7 @@ PS_OUT PS_MAIN_NoiseAppear(PS_Noise_IN In)
 		discard;
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 	return Out;
 
 }
@@ -654,6 +657,7 @@ PS_OUT PS_MAIN_NoiseAppear_Bright(PS_Noise_IN In)
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 
 	return Out;
 
