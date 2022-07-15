@@ -16,12 +16,21 @@ HRESULT CMonster_Wasp::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
+	
+
 
 	return S_OK;
 }
 
 HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
 {
+
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
+
+
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());

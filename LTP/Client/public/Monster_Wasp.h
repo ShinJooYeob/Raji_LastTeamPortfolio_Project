@@ -42,8 +42,8 @@ private:
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 
-	CModel*				m_pModel[ANIM_END];
-	CModelInstance*		m_pModelInstance[ANIM_END];
+	CModel*				m_pModel[ANIM_END] = {nullptr};
+	CModelInstance*		m_pModelInstance[ANIM_END] = { nullptr };
 
 	vector<TRANSFORM_STATE> m_vecInstancedTransform;
 

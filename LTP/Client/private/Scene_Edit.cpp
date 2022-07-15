@@ -1000,6 +1000,23 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 				((CMapObject*)tData.pObject)->Set_FrustumSize(tData.FrustumRange);
 				((CMapObject*)tData.pObject)->Set_IsOcllusion(tData.bIsOcllsuion);
 				((CMapObject*)tData.pObject)->Set_PassIndex(tData.PassIndex);
+
+
+
+
+				CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+				tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+				tDissolveDesc.pModel = (CModel*)tData.pObject->Get_Component(TAG_COM(Com_Model));
+				tDissolveDesc.pShader = (CShader*)tData.pObject->Get_Component(TAG_COM(Com_Shader));
+				tDissolveDesc.RampTextureIndex = 1;
+
+				tData.pObject->Change_Component_by_NewAssign(SCENE_EDIT, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve),&tDissolveDesc);
+
+
+
+
+
 			}
 
 			//Æ®·»½ºÆû
@@ -2613,6 +2630,17 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 				ObjElement.pObject->Change_Component_by_NewAssign(SCENE_EDIT, ObjElement.MeshID, TAG_COM(Com_Model));
 				((CMapObject*)ObjElement.pObject)->Set_FrustumSize(m_fFrustumRange);
 				((CMapObject*)ObjElement.pObject)->Set_PassIndex(m_iPassIndex);
+
+				CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+				tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+				tDissolveDesc.pModel = (CModel*)ObjElement.pObject->Get_Component(TAG_COM(Com_Model));
+				tDissolveDesc.pShader = (CShader*)ObjElement.pObject->Get_Component(TAG_COM(Com_Shader));
+				tDissolveDesc.RampTextureIndex = 1;
+
+				ObjElement.pObject->Change_Component_by_NewAssign(SCENE_EDIT, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve),&tDissolveDesc);
+
+
 			}
 
 			m_vecBatchedObject.push_back(ObjElement);

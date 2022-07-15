@@ -4,11 +4,15 @@
 CMonster_Wolf::CMonster_Wolf(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 CMonster_Wolf::CMonster_Wolf(const CMonster_Wolf & rhs)
 	: CMonster(rhs)
 {
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 HRESULT CMonster_Wolf::Initialize_Prototype(void * pArg)

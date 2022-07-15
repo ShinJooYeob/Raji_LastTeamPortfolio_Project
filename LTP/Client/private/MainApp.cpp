@@ -373,6 +373,10 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_HPUI),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"HPUI.txt")));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
+	
+	
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, L"Prototype_Texture_Dissolve",
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Dissolve.txt")));
 

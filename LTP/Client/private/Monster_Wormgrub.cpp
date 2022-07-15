@@ -4,11 +4,15 @@
 CMonster_Wormgrub::CMonster_Wormgrub(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 CMonster_Wormgrub::CMonster_Wormgrub(const CMonster_Wormgrub & rhs)
 	: CMonster(rhs)
 {
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 HRESULT CMonster_Wormgrub::Initialize_Prototype(void * pArg)
