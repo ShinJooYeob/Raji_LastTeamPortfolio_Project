@@ -165,11 +165,8 @@ void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 
 		if (!bChecker)
 		{
-			m_vecTextureParticleDesc[0].ParticleSize = _float3(0.5f);
-			m_vecTextureParticleDesc[0].vEmissive_SBB = _float3(0);
-			m_vecTextureParticleDesc[0].Particle_Power = 10.f;
-			m_vecTextureParticleDesc[0].SubPowerRandomRange_RUL = _float3(1,1,3);
-
+			//m_vecTextureParticleDesc[0].vEmissive_SBB = _float3(0);
+			//m_vecTextureParticleDesc[0].EachParticleLifeTime = 0.35f;
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 			bChecker = true;
 		}
@@ -288,7 +285,7 @@ void CPlayerWeapon_Spear::Update_Colliders()
 void CPlayerWeapon_Spear::Update_ParticleTransform()
 {
 	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
-	m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(2).XMVector());
+	m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(1).XMVector());
 }
 
 void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
@@ -423,6 +420,12 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
 
+
+	//	1
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
+	//	2
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSlamCircle"));
+	
 
 
 	return S_OK;

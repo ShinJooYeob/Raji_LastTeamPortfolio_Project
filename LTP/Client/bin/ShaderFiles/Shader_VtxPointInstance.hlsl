@@ -6,6 +6,7 @@ cbuffer InstanceDesc
 	vector			g_vCamPosition;
 	float2			g_vTextureFigureUVSize;
 	float			g_fAlphaTestValue;
+	float			g_fWorldMixing = 0.f;
 };
 
 cbuffer ForNoise
@@ -412,8 +413,8 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 
-
-	Out.vWorldPosition = In.vWorldPos;
+	
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, g_fWorldMixing);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x , g_fEmissive.y, g_fEmissive.z,1);
 	Out.vLimLight = 0.f;
 
@@ -444,7 +445,7 @@ PS_OUT PS_BrightColor(PS_IN In)
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 
-	Out.vWorldPosition = In.vWorldPos;
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, g_fWorldMixing);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 	Out.vLimLight = 0.f;
 	Out.vDiffuse = saturate(Out.vDiffuse);

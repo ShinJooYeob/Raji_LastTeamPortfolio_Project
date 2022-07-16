@@ -3851,6 +3851,11 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
 	m_tParticleDesc.m_fAlphaTestValue = TempFloatArr[3];
 
+
+	ImGui::DragFloat("DepthTargetRender ", &m_tParticleDesc.TempBuffer_0.x);
+
+
+
 	Make_VerticalSpacing(1);
 
 

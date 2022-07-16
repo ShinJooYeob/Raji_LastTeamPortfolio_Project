@@ -2675,10 +2675,29 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		else if (fAnimPlayRate >= 0.78f)
 		{
 			static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
+
+
 		}
 		else
 		{
-			m_fAnimSpeed = 1.f;
+			static _bool bParticleChecker = false;
+			m_fAnimSpeed = 1.f;			
+			
+			if (fAnimPlayRate < 0.5525f)
+			{
+				bParticleChecker = false;
+			}
+			else if (!bParticleChecker)
+			{
+				//m_vecTextureParticleDesc[2].SizeChageFrequency = 1;
+				//m_vecTextureParticleDesc[2].EachParticleLifeTime = 0.4f;
+				m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
+				m_vecTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.8f;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);																	 
+				m_vecTextureParticleDesc[2].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.8f;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
+				bParticleChecker = true;
+			}
 		}
 
 		if (true == m_pModel->Get_IsHavetoBlockAnimChange() && fAnimPlayRate && 0.9f < fAnimPlayRate)
@@ -2686,6 +2705,9 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			m_fAnimSpeed = 1.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bAttackEnd = true;
+
+
+
 		}
 
 		////////////////////Next Combo Check //////////////////////
@@ -6456,6 +6478,15 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
 
+
+
+
+	//	1
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+	//	2
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSlamCircle"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
 
 	return S_OK;
 }

@@ -237,6 +237,9 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pGameInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
 
+	
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fWorldMixing", &m_tInstanceDesc.TempBuffer_0.x, sizeof(_float)));
+
 	_float4 Emissive = _float4(m_tInstanceDesc.vEmissive_SBB, 1);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &Emissive, sizeof(_float4)));
 
@@ -415,6 +418,9 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 			iter->_age += (_float)fDeltaTime;
 
 			if (iter->_age < 0) continue;
+
+			if(iter->_age - fDeltaTime < 0)
+				ResetParticle(&(*iter));
 
 			Update_Position_by_Velocity(&(*iter), fDeltaTime);
 
