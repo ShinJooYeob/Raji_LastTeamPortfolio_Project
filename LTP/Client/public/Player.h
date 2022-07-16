@@ -438,6 +438,8 @@ private:
 
 	HRESULT Ready_ParticleDesc();
 
+	HRESULT Update_Partilce_WeaponDefault();
+
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*	Clone(void* pArg);

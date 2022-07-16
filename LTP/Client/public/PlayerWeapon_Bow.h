@@ -42,6 +42,9 @@ public:
 public:
 	void				Set_AnimSpeed(_float fAnimSpeed);
 
+	HRESULT				Set_Play_Particle(_uint ParticleIndex, _float Timer=-1,_float3 offset = _float3::Zero());
+	HRESULT				Set_PlayOff_ALL();
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
@@ -55,6 +58,7 @@ private:
 	_int				LateUpdate_NoEquip(_double fDeltaTime);
 
 	void				Update_AttachMatrix();
+	void				Update_ParticleTransform(_double fDeltaTime);
 
 	void				Set_Pivot();
 
@@ -64,6 +68,16 @@ public:
 private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
+
+	HRESULT				Ready_ParticleDesc();
+
+
+private:/*For Particle*/
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	CTransform*						m_pMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	_float							m_fPlayParticleTimer[PARTILCECOUNT] = {0,};
 
 private:
 	_float4x4			m_fAttachedMatrix;

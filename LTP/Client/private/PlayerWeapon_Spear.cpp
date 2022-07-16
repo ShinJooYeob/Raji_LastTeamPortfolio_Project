@@ -143,6 +143,8 @@ _int CPlayerWeapon_Spear::Render()
 
 _int CPlayerWeapon_Spear::LateRender()
 {
+
+
 	return _int();
 }
 
@@ -418,7 +420,6 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"SpearNormalAttack"));
 	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
-
 
 
 	//	1

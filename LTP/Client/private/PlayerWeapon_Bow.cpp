@@ -28,6 +28,9 @@ HRESULT CPlayerWeapon_Bow::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
+	FAILED_CHECK(Ready_ParticleDesc());
+
+
 	return S_OK;
 }
 
@@ -66,6 +69,9 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 	//m_pModel->Change_AnimIndex(0);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
+
+	Update_ParticleTransform(fDeltaTime);
+
 	return _int();
 }
 
@@ -95,6 +101,10 @@ _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix, m_pDissolveCom));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
+
+	
+	
+
 	return _int();
 }
 
@@ -190,6 +200,43 @@ void CPlayerWeapon_Bow::Set_AnimSpeed(_float fAnimSpeed)
 	m_fAnimSpeed = fAnimSpeed;
 }
 
+HRESULT CPlayerWeapon_Bow::Set_Play_Particle(_uint ParticleIndex,_float Timer,_float3 offset)
+{
+
+	if (PARTILCECOUNT <= ParticleIndex)
+		return E_FAIL;
+
+	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
+		return E_FAIL;
+
+//	m_vecTextureParticleDesc[ParticleIndex].
+
+	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
+		if (Timer == -1)
+		{
+			m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
+		}
+		else
+			m_fPlayParticleTimer[ParticleIndex] = Timer;
+	}
+	
+	return S_OK;
+
+}
+
+HRESULT CPlayerWeapon_Bow::Set_PlayOff_ALL()
+{
+	for (_uint i = 0; i < PARTILCECOUNT; ++i)
+	{
+		ZeroMemory(m_fPlayParticleTimer, sizeof(_float) * PARTILCECOUNT);
+	}
+
+	m_pTextureParticleTransform->Set_IsOwnerDead(true);
+	return S_OK;
+}
+
 _fVector CPlayerWeapon_Bow::Get_BonePos(const char * pBoneName)
 {
 	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
@@ -241,6 +288,40 @@ _int CPlayerWeapon_Bow::LateUpdate_NoEquip(_double fDeltaTime)
 void CPlayerWeapon_Bow::Update_AttachMatrix()
 {
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+}
+
+void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
+{
+	// 본체 위치에 업데이트
+
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	_Vector vPos = mat.r[3];
+
+
+	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
+
+
+	// 활 앞 뒤 세팅
+	mat.r[3] = vPos - (mat.r[2] * 0.8f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
+	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
+
+	mat.r[3] = vPos + (mat.r[2] * 0.8f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
+	m_vecTextureParticleDesc[2].vFixedPosition = mat.r[3];
+
+
+
+
+	for (auto& timer :m_fPlayParticleTimer)
+	{
+		timer -= fDeltaTime;
+		if (timer <= -100)
+			timer = -1;
+	}
+
 }
 
 void CPlayerWeapon_Bow::Set_Pivot()
@@ -303,6 +384,35 @@ HRESULT CPlayerWeapon_Bow::SetUp_EtcInfo()
 	return S_OK;
 }
 
+HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
+{
+	// 파티클용 Transform Create
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
+
+	_uint num = 0;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
+	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+
+
+
+	num = 1;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze"));
+	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+
+	num = 2;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
+	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+
+	return S_OK;
+}
+
 CPlayerWeapon_Bow * CPlayerWeapon_Bow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CPlayerWeapon_Bow*	pInstance = NEW CPlayerWeapon_Bow(pDevice, pDeviceContext);
@@ -336,5 +446,8 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pDissolveCom);
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
 	
 }
