@@ -300,7 +300,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -6445,8 +6445,8 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 
 HRESULT CPlayer::Ready_ParticleDesc()
 {
-	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
-	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_COM(Com_Transform));
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
 

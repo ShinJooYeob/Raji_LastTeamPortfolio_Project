@@ -303,6 +303,14 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 	}
 
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	//COLLIDERDESC			ColliderDesc;
+	//ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	//ColliderDesc.vScale = _float3(3.f);
+	//ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	//ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	//FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	return S_OK;
 }
@@ -341,6 +349,7 @@ void CMahabalasura_Weapon::Free()
 	Safe_Release(m_pInstanceShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pModelInstance);
+	Safe_Release(m_pCollider);
 	
 	for (auto& pTransform : m_vInstanceTransformComs)
 		Safe_Release(pTransform);

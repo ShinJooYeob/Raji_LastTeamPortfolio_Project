@@ -38,6 +38,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CCollider*			m_pCollider = nullptr;
 	
 	CGameObject*		m_pPlayerObj = nullptr;
 	_float3				m_PlayerPos;
