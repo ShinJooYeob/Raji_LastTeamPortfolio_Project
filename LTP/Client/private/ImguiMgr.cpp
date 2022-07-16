@@ -1653,7 +1653,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 	static  _float3 PlayPostiton2 = _float3::Zero();
 	ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
 
-	TCHAR* str_DemoSoundFile = L"3DTestSound.wav";
+	static TCHAR* str_DemoSoundFile = L"3DTestSound2.wav";
 
 	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
 	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
@@ -1697,6 +1697,8 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 		GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
 
+		// #3DSOUND
+
 		// 일반 사운드와 3D 사운드 재생
 		if (ImGui::Button("StartSound"))
 		{
@@ -1706,8 +1708,20 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 		if (ImGui::Button("Start3DSound"))
 		{
-			// #3DSOUND
 			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile,_float3(0,0,0), CHANNEL_EFFECT, 1.0f);
+		}
+		if (ImGui::Button("Start3DSound_Move"))
+		{
+
+			/*
+			FMOD Ex에 전달된 속도 는 프레임당 미터가 아니라 초당 미터
+			velx = (posx-lastposx) * 1000 / timedelta;
+			velz = (posy-lastposy) * 1000 / timedelta;
+			velz = (posz-lastposz) * 1000 / timedelta;
+
+			배속 느낌 / 테스트더 해봐야겠음
+			*/
+			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile, _float3(0, 0, 0), CHANNEL_EFFECT, 1.0f,_float3(1,0,0),1000);
 		}
 
 	}

@@ -391,18 +391,16 @@ HRESULT CSoundMgr::Setup_Listender_Camera(_fMatrix CameraMat, int listenerIndex)
 	return S_OK;
 }
 
-HRESULT CSoundMgr::Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple)
+
+
+HRESULT CSoundMgr::Play3D_Sound(TCHAR * pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple, _float3 dir, _float speed)
 {
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_FRONT_LEFT, sin(XMConvertToRadians(-30)), cos(XMConvertToRadians(-30)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_FRONT_RIGHT, sin(XMConvertToRadians(30)), cos(XMConvertToRadians(30)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_FRONT_CENTER, sin(XMConvertToRadians(0)), cos(XMConvertToRadians(0)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_LOW_FREQUENCY, sin(XMConvertToRadians(0)), cos(XMConvertToRadians(0)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_SURROUND_LEFT, sin(XMConvertToRadians(-90)), cos(XMConvertToRadians(-90)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_SURROUND_RIGHT, sin(XMConvertToRadians(90)), cos(XMConvertToRadians(90)), 1);
-	//r = FMOD_System_SetSpeakerPosition(m_pSystem, FMOD_SPEAKER_BACK_LEFT, sin(XMConvertToRadians(-150)), cos(XMConvertToRadians(-150)), 1);
+
+	// 방향과 속도를 주면 해당 방향의 속도 구현 가능
 
 	FMOD_RESULT r;
 
+	FMOD_VECTOR		Dir = { dir.x*speed ,dir.y*speed ,dir.z*speed };
 	FMOD_VECTOR		Vec = { Pos.x,Pos.y,Pos.z };
 	FMOD_CHANNEL*	Chanel = nullptr;
 
@@ -411,7 +409,7 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _f
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 
 	map<TCHAR*, FMOD_SOUND*>::iterator iter;
 
@@ -440,7 +438,7 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _f
 
 
 			Chanel = m_pChannelArr[eID];
-			r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, nullptr);
+			r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, &Dir);
 			if (r != FMOD_OK)
 				return E_FAIL;
 
@@ -464,7 +462,7 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _f
 	FMOD_System_PlaySound(m_pSystem, iter->second, nullptr, FALSE, &m_pChannelArr[fOldSoundIndx]);
 
 	Chanel = m_pChannelArr[fOldSoundIndx];
-	r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, nullptr);
+	r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, &Dir);
 	if (r != FMOD_OK)
 		return E_FAIL;
 
@@ -473,8 +471,6 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _f
 	m_fPassedTimeArr[fOldSoundIndx] = 0.1f;
 
 	return S_OK;
-
-
 }
 
 HRESULT CSoundMgr::Set_3DSound_Distance_World(_float rolloffscale)

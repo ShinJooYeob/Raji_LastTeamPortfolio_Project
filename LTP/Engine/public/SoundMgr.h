@@ -34,7 +34,7 @@ public:
 	HRESULT PlayBGM(TCHAR* pSoundKey,_uint iBGMIndex = 0 ,_float fLouderMultiple = 1.f);
 
 	// 3D SoundFunc
-	HRESULT Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple = 1.f);
+	HRESULT Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple = 1.f,_float3 dir= _float3::Zero(), _float speed =1.f );
 	HRESULT Set_3DSound_Distance_World(_float rolloffscale);
 
 	void	Stop_ChannelSound(CHANNELID eID);

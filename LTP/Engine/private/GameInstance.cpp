@@ -490,10 +490,12 @@ HRESULT CGameInstance::PlayBGM(TCHAR * pSoundKey, _uint iBGMIndex, _float fLoude
 	return m_pSoundMgr->PlayBGM(pSoundKey, iBGMIndex, fLouderMultiple);
 }
 
-HRESULT CGameInstance::Play3D_Sound(TCHAR * pSoundKey, _float3 pos, CHANNELID eID, _float fLouderMultiple)
+
+HRESULT CGameInstance::Play3D_Sound(TCHAR * pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple, _float3 dir, _float speed)
 {
+
 	NULL_CHECK_BREAK(m_pSoundMgr);
-	return m_pSoundMgr->Play3D_Sound(pSoundKey, pos, eID, fLouderMultiple);
+	return m_pSoundMgr->Play3D_Sound(pSoundKey, Pos, eID, fLouderMultiple,dir,speed);
 }
 
 HRESULT CGameInstance::Set_3DSound_DistanceMinValue(_float rolloffscale)
