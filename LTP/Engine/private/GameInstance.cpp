@@ -646,6 +646,12 @@ HRESULT CGameInstance::Add_CollisionGroup(CollisionTypeID eType, CGameObject * p
 	return m_pCollisionMgr->Add_CollisionGroup(eType,pCollisionObject,pCollider);
 }
 
+HRESULT CGameInstance::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation * pNavigation)
+{
+	NULL_CHECK_RETURN(m_pCollisionMgr, E_FAIL);
+	return m_pCollisionMgr->Add_RepelGroup(pTransform, fRadious, pNavigation);
+}
+
 void CGameInstance::Clear_CollisionGroup()
 {
 	NULL_CHECK_BREAK(m_pCollisionMgr);

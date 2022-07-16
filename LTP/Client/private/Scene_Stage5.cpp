@@ -32,7 +32,7 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
-	
+	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	FAILED_CHECK(Ready_Layer_Trigger(TAG_LAY(Layer_ColTrigger)));
 	
 	return S_OK;
@@ -204,6 +204,13 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 
 
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_Layer_Boss(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
 
 	return S_OK;
 }

@@ -465,6 +465,11 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pSwordTrail);
 
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+
+
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);

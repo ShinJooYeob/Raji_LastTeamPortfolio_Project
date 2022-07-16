@@ -15,6 +15,14 @@ class CCollisionMgr final : public CBase
 		class CCollider* pCollider = nullptr;
 	}COLLIDERELEMENTS;
 
+
+	typedef struct tagRepelObject
+	{
+		class  CTransform* pRepelObjTransform = nullptr;
+		_float fRadious = 0.5f;
+		class CNavigation* pNavigation = nullptr;
+	}REPELELEMENT;
+
 public:
 	typedef struct tagEditPointCollider
 	{
@@ -33,6 +41,8 @@ public:
 
 public:
 	HRESULT Add_CollisionGroup(CollisionTypeID eType, class CGameObject* pCollisionObject, class CCollider* pCollider);
+	HRESULT Add_RepelGroup(class CTransform* pTransform, _float fRadious  = 0.5f, class CNavigation* pNavigation = nullptr);
+	
 	void	Clear_CollisionGroup();
 
 public:
@@ -47,9 +57,12 @@ private:
 	HRESULT Inspect_NPC_To_Player();
 	HRESULT Inspect_Terrain_To_All();
 
+	HRESULT Inspect_RepelGroup();
+
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
-
+	list<REPELELEMENT>		m_RepelObjectList;
+	
 	list<EDITPOINTCOLLIDER>		m_EditPointCollider;
 
 

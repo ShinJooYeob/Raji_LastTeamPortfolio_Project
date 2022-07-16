@@ -1422,9 +1422,7 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 	for (_uint i = 0; i < iNumCollider; i++)
 		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 
-	
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
 	m_IsConfilicted = false;
 
 	return S_OK;
