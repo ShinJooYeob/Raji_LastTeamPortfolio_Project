@@ -2691,10 +2691,16 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			{
 				//m_vecTextureParticleDesc[2].SizeChageFrequency = 1;
 				//m_vecTextureParticleDesc[2].EachParticleLifeTime = 0.4f;
-				m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
-				m_vecTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.8f;
-				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);																	 
-				m_vecTextureParticleDesc[2].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.8f;
+				//m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
+				m_vecTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.8f;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
+
+
+				m_vecTextureParticleDesc[2].vFixedPosition = 	m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + 
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.1f +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.8f;
+
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
 				bParticleChecker = true;
 			}
