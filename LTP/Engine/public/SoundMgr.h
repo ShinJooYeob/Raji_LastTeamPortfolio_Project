@@ -7,7 +7,7 @@ class CSoundMgr :public CBase
 {
 	DECLARE_SINGLETON(CSoundMgr);
 
-#define MaxChannelCount 10
+#define MaxChannelCount 102
 #define BGMChannelCount	2
 
 private:

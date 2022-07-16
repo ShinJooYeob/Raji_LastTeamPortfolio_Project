@@ -1,4 +1,4 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "..\public\Chiedtian.h"
 #include "Chiedtuan_Weapon.h"
 
@@ -74,23 +74,27 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 	CChiedtuan_Weapon* ChiedtuanWeapon = nullptr;
 
-	//¡÷π´±‚
+	//Ï£ºÎ¨¥Í∏∞
+	WeaponDesc.BossObj = this;
 	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, 0.f, 0.f, 0.f), XMVectorSet(-3.00f *10.f, -0.250f*10.f, -4.320f*10.f, 1.f));
 	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TR;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 	m_pMainWeapons.push_back(ChiedtuanWeapon);
 
+	WeaponDesc.BossObj = this;
 	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_l", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(170.f, -90.f, 0.f, 0.f), XMVectorSet(3.120f * 10.f, -0.670f * 10.f, -4.240f * 10.f, 1.f));
 	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_TL;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 	m_pMainWeapons.push_back(ChiedtuanWeapon);
 
-	//º≠∫Íπ´±‚
+	//ÏÑúÎ∏åÎ¨¥Í∏∞
+	WeaponDesc.BossObj = this;
 	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_r", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -80.f, 50.f, 0.f), XMVectorSet(-1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
 	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
 	m_pSubWeapons.push_back(ChiedtuanWeapon);
 
+	WeaponDesc.BossObj = this;
 	WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "thigh_twist_01_l", XMVectorSet(8.f, 8.f, 8.f, 0.f), XMVectorSet(-55.f, -75.f, 50.f, 0.f), XMVectorSet(1.050f * 8.f, -1.430f* 8.f, -3.230f* 8.f, 0));
 	WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&ChiedtuanWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), &WeaponDesc);
@@ -240,20 +244,20 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 
-	//∏¬æ“¿ª∂ß
+	//ÎßûÏïòÏùÑÎïå
 	if (m_bIsHit)
 	{
 		m_bIsHit = false;
 		m_bIsAttack = true;
 		//m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
 	}
-	//¡°«¡
+	//Ï†êÌîÑ
 	else if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
 	{
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_ReturnTo(10, 1);
 	}
-	//¿œπ› ∞¯∞›
+	//ÏùºÎ∞ò Í≥µÍ≤©
 	else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f &&!m_bIsAttack && !m_bIsHit)
 	{
 		m_bIsAttack = true;
@@ -273,7 +277,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 	}
-	//Ω∫≈≥ ∞¯∞›
+	//Ïä§ÌÇ¨ Í≥µÍ≤©
 	else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
 		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
@@ -313,6 +317,15 @@ _int CChiedtian::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+	_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
+
 	if (!m_bIsMainWeaponOff)
 	{
 		for (auto& Weapon : m_pMainWeapons)
@@ -335,6 +348,7 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -389,6 +403,28 @@ _int CChiedtian::LateRender()
 	return _int();
 }
 
+void CChiedtian::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	//m_IsConfilicted = true;
+	//if (iMyColliderIndex == 2)
+	//{
+	//
+	//}
+	//
+	//if (!lstrcmp(pConflictedObj->Get_NameTag(), "√Ñ¬°√á√Å√Ö¬∏√Ä√å√Ö¬∫"))
+	//{
+	//	//
+	//}
+
+	//pConflictedObj->Get_NowHP() < 10
+
+	//eConflictedObjCollisionType
+	//m_pCollider->Get_ColliderPosition(iMyColliderIndex);
+	//pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex);
+
+	//pConflictedObj->Get_NameTag();
+}
+
 HRESULT CChiedtian::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -412,8 +448,163 @@ HRESULT CChiedtian::SetUp_Components()
 	CNavigation::NAVIDESC		NaviDesc;
 	NaviDesc.iCurrentIndex = 0;
 
-	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
-		return E_FAIL;
+	FAILED_CHECK(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(9.f, 9.f, 9.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_02", _float3(1), _float3(0), _float3(0.f, -0.04408f, -3.10981f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(6.f, 6.f, 6.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 1.4f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1), _float3(0), _float3(0.f, 0.012524f, -4.42935f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(6.f, 6.f, 6.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 2.5f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1), _float3(0), _float3(0.f, 0.027885f, -2.54343f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(2.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1), _float3(0), _float3(0.f, 0.012524f, -4.42935f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1), _float3(0), _float3(0.f, -0.033538f, -2.83053f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "calf_r", _float3(1), _float3(0), _float3(-0.443741f, 0.047085f, -1.39788f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(2);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "calf_l", _float3(1), _float3(0), _float3(0.44374f, 0.047085f, -1.39788f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(2);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "foot_r", _float3(1), _float3(0), _float3(-0.612995f, 0.226194f, -0.264389f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(2);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "foot_l", _float3(1), _float3(0), _float3(0.612994f, 0.226194f, -0.264393f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(2);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "upperarm_r", _float3(1), _float3(0), _float3(-0.570974f, 0.137702f, -3.78514f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), _float3(0.570976f, 0.137702f, -3.78514f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_r", _float3(1), _float3(0), _float3(-1.16276f, 0.060726f, -3.44879f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_l", _float3(1), _float3(0), _float3(1.16276f, 0.060726f, -3.44879f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_01_r", _float3(1), _float3(0), _float3(-1.75266f, -0.14289f, -3.13727f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_01_l", _float3(1), _float3(0), _float3(1.75266f, -0.14289f, -3.13727f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer(1);
+
+
 
 
 	return S_OK;
@@ -443,7 +634,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			}
 			break;
-		case 1://æ÷¥œ∏ﬁ¿Ãº« ¿Œµ¶Ω∫∏∂¥Ÿ ¿‚æ∆¡÷∏È µ 
+		case 1://Ïï†ÎãàÎ©îÏù¥ÏÖò Ïù∏Îç±Ïä§ÎßàÎã§ Ïû°ÏïÑÏ£ºÎ©¥ Îê®
 			if (PlayRate > 0.f)
 			{
 				m_bIsAttack = false;
@@ -479,7 +670,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate < 0.1372549 && PlayRate > 0.3725490)
 			{
-				//π´±‚ »∏¿¸ Ω√≈≥∑¡∞Ì «—∞≈ ∞∞¿∫µ•???
+				//Î¨¥Í∏∞ ÌöåÏ†Ñ ÏãúÌÇ¨Î†§Í≥† ÌïúÍ±∞ Í∞ôÏùÄÎç∞???
 				//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 0);
 			}
 		}
@@ -623,7 +814,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
 
-			//π´±‚æ¯æ÷±‚
+			//Î¨¥Í∏∞ÏóÜÏï†Í∏∞
 			if (PlayRate > 0.0411392 && m_iAdjMovedIndex == 0)
 			{
 				m_bIsMainWeaponOff = true;
@@ -646,7 +837,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_fAnimmultiple = 1.3f;
 
 			
-			//π´±‚ª˝º∫
+			//Î¨¥Í∏∞ÏÉùÏÑ±
 			if (PlayRate > 0.8227848 && m_iAdjMovedIndex == 0)
 			{
 				m_bIsMainWeaponOff = false;
@@ -782,6 +973,7 @@ void CChiedtian::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pNavigationCom);
+	Safe_Release(m_pCollider);
 
 	for (auto& Weapon : m_pMainWeapons)
 		Safe_Release(Weapon);

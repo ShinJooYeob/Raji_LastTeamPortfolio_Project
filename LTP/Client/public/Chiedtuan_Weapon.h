@@ -10,6 +10,7 @@ public:
 
 	typedef struct WeaponDesc
 	{
+		CGameObject* BossObj = nullptr;
 		KatanaPOS m_KatanaPOS;
 		ATTACHEDESC m_eAttachedDesc;
 	}WEAPOPNDESC;
@@ -41,11 +42,14 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CDissolve*				m_pDissolveCom = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 	WEAPOPNDESC			m_WeaponDesc;
 
 	_float4x4			m_fAttachedMatrix;
+
+	ATTACHEDESC			m_AttachedDesc;
 
 private:
 	void				Update_AttachMatrix();
