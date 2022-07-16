@@ -232,8 +232,8 @@ HRESULT CPhysXMgr::Clean_Phyics()
 	PX_RELEASE(mCooking);
 #ifdef _DEBUG
 	PxPvdTransport* transport = mPvd->getTransport();
-	PX_RELEASE(transport);
 	PX_RELEASE(mPvd);
+	PX_RELEASE(transport);
 #endif // _DEBUG
 	PX_RELEASE(mFoundation);
 
@@ -846,9 +846,6 @@ void CPhysXMgr::Free()
 	
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
-
-
-
 	ReleasePhysXCom();
 }
 

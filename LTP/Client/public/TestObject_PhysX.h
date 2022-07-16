@@ -21,6 +21,15 @@ public:
 		MODEL_END,
 	};
 
+	enum E_TESTTYPE
+	{
+		TESTTYPE_NOMAL,
+		TESTTYPE_PHYSX,
+		TESTTYPE_SOUND,
+		TESTTYPE_END,
+	};
+
+
 private:
 	CTestObject_PhysX(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CTestObject_PhysX(const CTestObject_PhysX& rhs);
@@ -53,6 +62,11 @@ public:
 
 	// Model Setting
 	HRESULT	Set_ModelSetting(E_MODEL id);
+	void	Set_TYPE(E_TESTTYPE e)
+	{
+		meTestType = e;
+	}
+
 	HRESULT	Set_Kinect(bool b);
 
 private:
@@ -78,7 +92,7 @@ private:
 	bool				mbTrigger = false;
 	int					mColID = 0;
 	E_MODEL				meModelID= MODEL_END;
-
+	E_TESTTYPE			meTestType =TESTTYPE_NOMAL;
 
 
 

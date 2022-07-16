@@ -463,6 +463,9 @@ void CCollider_PhysX_Base::Free()
 {
 	__super::Free();
 
+	if (mePhysX_ID == E_PHYTYPE_JOINT)
+		return;
+
 #ifdef _DEBUG
 	if (m_bIsClone == false)
 	{
@@ -476,9 +479,7 @@ void CCollider_PhysX_Base::Free()
 
 	if (m_bIsClone)
 	{
-
-		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
-		if (scene)
+		if (mScene)
 		{
 			if (mMain_Actor)
 			{
@@ -487,6 +488,9 @@ void CCollider_PhysX_Base::Free()
 			}
 		}
 	}
-
+	//PX_RELEASE(mPhysics);
+	//PX_RELEASE(mNormalMaterial);
+	//PX_RELEASE(mScene);
+	
 
 }

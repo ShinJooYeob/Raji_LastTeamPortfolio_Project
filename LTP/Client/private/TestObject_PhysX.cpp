@@ -40,28 +40,47 @@ _int CTestObject_PhysX::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 	
-	// 이동 
-	if (meModelID == CTestObject_PhysX::MODEL_PLAYER)
+	if (meTestType == TESTTYPE_NOMAL)
+	{
+
+
+
+
+
+
+	}
+	else if (meTestType == TESTTYPE_PHYSX)
+	{
+
+		// 이동 
+		if (meModelID == CTestObject_PhysX::MODEL_PLAYER)
+		{
+			Update_Player(fDeltaTime);
+		}
+		else if (mCom_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_DYNAMIC)
+		{
+
+		}
+
+		else if (mCom_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_JOINT)
+		{
+			Update_Joint(fDeltaTime);
+		}
+		else
+		{
+			if (mCom_ColliderBase)
+			{
+				mCom_ColliderBase->Update_BeforeSimulation();
+			}
+		}
+
+
+	}
+	else if (meTestType == TESTTYPE_SOUND)
 	{
 		Update_Player(fDeltaTime);
 	}
-	else if (mCom_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_DYNAMIC)
-	{
-
-	}
-
-	else if (mCom_ColliderBase->Get_PhysX_ID() == E_PHYTYPE_JOINT)
-	{
-		Update_Joint(fDeltaTime);
-	}
-	else
-	{
-		if (mCom_ColliderBase)
-		{
-			mCom_ColliderBase->Update_BeforeSimulation();
-		}
-	}
-
+	
 
 	return _int();
 }
@@ -72,8 +91,22 @@ _int CTestObject_PhysX::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
 
-	if (mCom_ColliderBase)
-		mCom_ColliderBase->Update_AfterSimulation();
+
+	if (meTestType == TESTTYPE_NOMAL)
+	{
+
+	}
+
+	else if (meTestType == TESTTYPE_PHYSX)
+	{
+		if (mCom_ColliderBase)
+			mCom_ColliderBase->Update_AfterSimulation();
+	}
+
+	else if (meTestType == TESTTYPE_SOUND)
+	{
+	
+	}
 
 
 	
@@ -86,33 +119,47 @@ _int CTestObject_PhysX::Render()
 {
 	if (__super::Render() < 0)		
 		return -1;
-	if (meModelID == MODEL_EMPTY)
-	{
 
-	}
-	else
+	if (mCom_Model)
 	{
-		if (mbTrigger == false)
+		NULL_CHECK_RETURN(mCom_Model, E_FAIL);
+
+		CGameInstance* pInstance = GetSingle(CGameInstance);
+		FAILED_CHECK(mCom_Shader->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(mCom_Shader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+
+		FAILED_CHECK(mCom_Transform->Bind_OnShader(mCom_Shader, "g_WorldMatrix"));
+
+		_uint NumMaterial = mCom_Model->Get_NumMaterial();
+
+		for (_uint i = 0; i < NumMaterial; i++)
 		{
-			NULL_CHECK_RETURN(mCom_Model, E_FAIL);
+			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(mCom_Model->Bind_OnShader(mCom_Shader, i, j, MODLETEXTYPE(j)));
 
-			CGameInstance* pInstance = GetSingle(CGameInstance);
-			FAILED_CHECK(mCom_Shader->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-			FAILED_CHECK(mCom_Shader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
-			FAILED_CHECK(mCom_Transform->Bind_OnShader(mCom_Shader, "g_WorldMatrix"));
-
-			_uint NumMaterial = mCom_Model->Get_NumMaterial();
-
-			for (_uint i = 0; i < NumMaterial; i++)
-			{
-				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-					FAILED_CHECK(mCom_Model->Bind_OnShader(mCom_Shader, i, j, MODLETEXTYPE(j)));
-
-				FAILED_CHECK(mCom_Model->Render(mCom_Shader, 2, i, "g_BoneMatrices"));
-			}
+			FAILED_CHECK(mCom_Model->Render(mCom_Shader, 2, i, "g_BoneMatrices"));
 		}
 	}
+
+	if (meTestType == TESTTYPE_NOMAL)
+	{
+
+
+	}
+
+	else if (meTestType == TESTTYPE_PHYSX)
+	{
+
+
+
+	}
+	else if (meTestType == TESTTYPE_SOUND)
+	{
+		
+		
+
+	}
+
 
 #ifdef _DEBUG
 	if (mCom_ColliderBase)
@@ -196,29 +243,24 @@ HRESULT CTestObject_PhysX::Set_ModelSetting(E_MODEL id)
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
 
-		// For.Test
-		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)1);
 
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_PLAYER:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
-		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)2);
 
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_STATICMAPOBJ:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
-		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)3);
 
 		return S_OK;
 		break;
 	case Client::CTestObject_PhysX::MODEL_MONSTER:
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Mesh_Boss_Rangda_Finger), TAG_COM(Com_Model), (CComponent**)&mCom_Model));
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&mCom_Shader));
-		mCom_ColliderBase->Set_ObjectID((OBJECTPROTOTYPEID)4);
 
 		return S_OK;
 		break;
@@ -317,8 +359,11 @@ HRESULT CTestObject_PhysX::Update_Player(_double fDeltaTime)
 	//}
 
 
-	((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
-	mCom_ColliderBase->Update_BeforeSimulation();
+	if (mCom_ColliderBase)
+	{
+		((CCollider_PhysX_Dynamic*)mCom_ColliderBase)->Set_KeyDown(isKey);
+		mCom_ColliderBase->Update_BeforeSimulation();
+	}
 
 	return S_OK;
 }

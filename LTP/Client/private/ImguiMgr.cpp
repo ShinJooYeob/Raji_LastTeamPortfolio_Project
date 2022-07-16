@@ -1234,6 +1234,19 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		}
 	}
 	ImGui::Separator();
+	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	{
+		IMGUITREE("Sound_3D_PlayerTest")
+		{
+
+			Update_DebugWnd_Sound3D(fDeltaTime);
+
+			IMGUITREE_END
+		}
+
+	}
+	ImGui::Separator();
+
 	End_Update_Frame();
 	return _int();
 }
@@ -1252,7 +1265,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	static  _float3 Force = _float3(1.0f, 1.0f, 1.0f);
 	ImGui::DragFloat3("FORCE:", (float*)&Force, 0.1f, -100, 100);
 
-	static  _float3 MainActorScale = _float3(1.0f,0,0);
+	static  _float3 MainActorScale = _float3(1.0f,1,1);
 	ImGui::DragFloat3("MainActorScale:", (float*)&MainActorScale, 0.1f, -100, 100);
 
 	CCollider_PhysX_Base::PHYSXDESC_STATIC createStatic;
@@ -1264,40 +1277,40 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 	static CTestObject_PhysX* PhysX_Testobj = nullptr;
 
-	if (bTestObject == false)
-	{
-		bTestObject = true;
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-		(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_ColBase), TAG_OP(Prototype_Object_Static_PhysX)));
+	//if (bTestObject == false)
+	//{
+	//	bTestObject = true;
+	//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+	//	(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_ColBase), TAG_OP(Prototype_Object_Static_PhysX)));
 
-		PhysX_Testobj =
-			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_ColBase)));
-		PhysX_Testobj->Set_ColSetID(E_PHYTYPE_STATIC);
-		PhysX_Testobj->Set_ModelSetting(CTestObject_PhysX::MODEL_EMPTY);
+	//	PhysX_Testobj =
+	//		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_ColBase)));
+	//	PhysX_Testobj->Set_ColSetID(E_PHYTYPE_STATIC);
+	//	PhysX_Testobj->Set_ModelSetting(CTestObject_PhysX::MODEL_EMPTY);
 
-		CCollider_PhysX_Static* colCom = (CCollider_PhysX_Static*)PhysX_Testobj->Get_ComCollider();
-		CTransform* objTrans = (CTransform*)PhysX_Testobj->Get_Component(TAG_COM(Com_Transform));
-		NULL_CHECK_BREAK(objTrans);
+	//	CCollider_PhysX_Static* colCom = (CCollider_PhysX_Static*)PhysX_Testobj->Get_ComCollider();
+	//	CTransform* objTrans = (CTransform*)PhysX_Testobj->Get_Component(TAG_COM(Com_Transform));
+	//	NULL_CHECK_BREAK(objTrans);
 
-		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-		objTrans->Scaled_All(Scale);
+	//	objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+	//	objTrans->Scaled_All(Scale);
 
-		createStatic.bTrigger = false;
-		createStatic.eShapeType = E_GEOMAT_BOX;
-		createStatic.mTrnasform = objTrans;
-		createStatic.mGameObect = PhysX_Testobj;
+	//	createStatic.bTrigger = false;
+	//	createStatic.eShapeType = E_GEOMAT_BOX;
+	//	createStatic.mTrnasform = objTrans;
+	//	createStatic.mGameObect = PhysX_Testobj;
 
-		colCom->Set_ColiiderBufferDesc(createStatic);
-	}
+	//	colCom->Set_ColiiderBufferDesc(createStatic);
+	//}
 
-	{
-		if (PhysX_Testobj == nullptr)
-			return 0;
+	//{
+	//	if (PhysX_Testobj == nullptr)
+	//		return 0;
 
-		PhysX_Testobj->Set_Postition(Position);
-		PhysX_Testobj->Set_Scale(Scale);
+	//	PhysX_Testobj->Set_Postition(Position);
+	//	PhysX_Testobj->Set_Scale(Scale);
 
-	}
+	//}
 
 #pragma region PHYSX UI
 
@@ -1417,29 +1430,29 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 	//	ImGui::SameLine();
 
-	//	if (ImGui::Button("Dynamic_Sphere"))
-	//	{
-	//		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-	//		(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
-	//		CTestObject_PhysX* obj =
-	//			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+		//if (ImGui::Button("Dynamic_Sphere"))
+		//{
+		//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		//	(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
+		//	CTestObject_PhysX* obj =
+		//		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
 
-	//		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
-	//		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
-	//		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+		//	obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+		//	obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+		//	CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
 
 
-	//		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-	//		objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
-	//		objTrans->Scaled_All(Scale);
+		//	CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+		//	objTrans->Set_MatrixState(CTransform::STATE_POS, Position);
+		//	objTrans->Scaled_All(Scale);
 
-	//		createDynamic.eShapeType = E_GEOMAT_SPEHE;
-	//		createDynamic.mTrnasform = objTrans;
-	//		createDynamic.mGameObect = obj;
-	//		NULL_CHECK_BREAK(createDynamic.mTrnasform);
-	//		createDynamic.mVelocity = Force;
-	//		coldynamic->Set_ColiiderDesc(createDynamic);
-	//	}
+		//	createDynamic.eShapeType = E_GEOMAT_SPEHE;
+		//	createDynamic.mTrnasform = objTrans;
+		//	createDynamic.mGameObect = obj;
+		//	NULL_CHECK_BREAK(createDynamic.mTrnasform);
+		//	createDynamic.mVelocity = Force;
+		//	coldynamic->Set_ColiiderDesc(createDynamic);
+		//}
 
 
 	//	
@@ -1595,24 +1608,15 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	//IMGUITREE("BaseCollision")
 	//{
 	//	static CTestObject_BaseCollider* COllision_TestObj = nullptr;
-
 	//	if (ImGui::Button("CollisionTest"))
 	//	{
 	//		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
 	//		//(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_BaseCollision)));
 	//		//CTestObject_PhysX* obj =
 	//		//	static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
-
-
-
 	//	}
-
-
-
 	//	IMGUITREE_END
 	//}
-
-
 
 	if (ImGui::Button("Delete_Static"))
 	{
@@ -1638,6 +1642,91 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	ImGui::DragFloat3("DebugValue2:", (float*)&GetSingle(CPhysXMgr)->gDebugValue2, 0.1f, -1000, 1000);
 	ImGui::DragFloat3("DebugValue3:", (float*)&GetSingle(CPhysXMgr)->gDebugValue3, 0.1f, -1000, 1000);
 	ImGui::DragFloat3("DebugValue4:", (float*)&GetSingle(CPhysXMgr)->gDebugValue4, 0.1f, -1000, 1000);
+
+	return _int();
+}
+
+_int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
+{
+	static _float3 PlayPostiton1 = _float3::Zero();
+	ImGui::DragFloat3("PlayPostiton1:", (float*)&PlayPostiton1, 0.1f, -100, 100);
+	static  _float3 PlayPostiton2 = _float3::Zero();
+	ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
+
+	static TCHAR* str_DemoSoundFile = L"3DTestSound2.wav";
+
+	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
+	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
+	static const wchar_t* layerTrigger = TAG_LAY(Layer_ColTrigger);
+
+	static CTestObject_PhysX* PlayerSoundObject = nullptr;
+
+	if (ImGui::Button("Create_SoundPlayer"))
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+		(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
+		PlayerSoundObject =
+			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
+		PlayerSoundObject->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
+		PlayerSoundObject->Set_TYPE(CTestObject_PhysX::TESTTYPE_SOUND);
+		CTransform* objTrans = (CTransform*)PlayerSoundObject->Get_Component(TAG_COM(Com_Transform));
+		objTrans->Set_MatrixState(CTransform::STATE_POS, PlayPostiton1);
+		NULL_CHECK_BREAK(PlayerSoundObject);
+		NULL_CHECK_BREAK(objTrans);
+
+
+	}
+
+	if (PlayerSoundObject)
+	{
+		static FMOD_SYSTEM* SoundSystem = GetSingle(CGameInstance)->Get_SOUNDSYSTEM();
+
+		// 각 3D 사운드 정보 출력
+		int iListener=0;
+		float fDopperScale, fDistance, fRollScale;
+
+		FMOD_System_Get3DSettings(SoundSystem, &fDopperScale, &fDistance,&fRollScale);
+		FMOD_System_Get3DNumListeners(SoundSystem, &iListener);
+	
+		ImGui::Text("3DSetting:(%.2f,%.2f,%.2f,)", fDopperScale, fDistance, fRollScale);
+		ImGui::Text("3DListener:(%d)", iListener);
+
+		// 이동 스케일 상대거리 스케일 감소 배율
+		_float MinusValue = fRollScale;
+		ImGui::DragFloat("DopperScale Distance RollScale:", &MinusValue, 0.1f, 0.01f, 1000);
+
+		GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
+
+		// #3DSOUND
+
+		// 일반 사운드와 3D 사운드 재생
+		if (ImGui::Button("StartSound"))
+		{
+			GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
+
+		}
+
+		if (ImGui::Button("Start3DSound"))
+		{
+			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile,_float3(0,0,0), CHANNEL_EFFECT, 1.0f);
+		}
+		if (ImGui::Button("Start3DSound_Move"))
+		{
+
+			/*
+			FMOD Ex에 전달된 속도 는 프레임당 미터가 아니라 초당 미터
+			velx = (posx-lastposx) * 1000 / timedelta;
+			velz = (posy-lastposy) * 1000 / timedelta;
+			velz = (posz-lastposz) * 1000 / timedelta;
+
+			배속 느낌 / 테스트더 해봐야겠음
+			*/
+			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile, _float3(0, 0, 0), CHANNEL_EFFECT, 1.0f,_float3(1,0,0),1000);
+		}
+
+	}
+
+	
 
 
 
