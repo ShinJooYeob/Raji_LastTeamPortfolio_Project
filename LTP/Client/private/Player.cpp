@@ -1921,7 +1921,15 @@ void CPlayer::Dodge(_double fDeltaTime)
 	switch (m_pModel->Get_NowAnimIndex())
 	{
 	case BASE_ANIM_DODGE_ROLL:
-	{
+	{ 
+		// Play Sound
+		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
+		{
+			m_bOncePlaySound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Dodge_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		}
+		
+
 		// On MotionTrail
 		m_bOnNavigation = true;
 		if (0.f < fAnimPlayRate && 0.52f > fAnimPlayRate)
@@ -1949,6 +1957,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			m_fAnimSpeed = 3.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bOn_MotionTrail = false;
+			m_bOncePlaySound = false;
 		}
 		//
 
@@ -1969,6 +1978,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 		else if (0.52f <= fAnimPlayRate)
@@ -1978,12 +1988,25 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 	}
 		break;
 	case BASE_ANIM_DODGE_CARTWHEEL:
 	{
+		// Play Sound
+		if (false == m_bOncePlaySound && 0.f < fAnimPlayRate && 0.4f > fAnimPlayRate)
+		{
+			m_bOncePlaySound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Dodge_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+		else if (true == m_bOncePlaySound && 0.4f <= fAnimPlayRate)
+		{
+			m_bOncePlaySound = false;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Dodge_1_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+
 		m_bOnNavigation = true;
 		// On MotionTrail
 		if (0.f < fAnimPlayRate && 0.65f > fAnimPlayRate)
@@ -2011,6 +2034,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			m_fAnimSpeed = 1.f;
 			m_pModel->Set_BlockAnim(false);
 			m_bOn_MotionTrail = false;
+			m_bOncePlaySound = false;
 		}
 
 
@@ -2031,6 +2055,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 		else if (0.61f <= fAnimPlayRate)
@@ -2040,12 +2065,21 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 	}
 		break;
 	case BASE_ANIM_DODGE_FLIP:
 	{
+		// Play Sound
+		if (false == m_bOncePlaySound && 0.f < fAnimPlayRate && 0.4f > fAnimPlayRate)
+		{
+			m_bOncePlaySound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Dodge_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+
+
 		m_bOnNavigation = true;
 		// On MotionTrail
 		if (0.f < fAnimPlayRate && 0.62f > fAnimPlayRate)
@@ -2073,6 +2107,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 			m_fAnimSpeed = 3.5f;
 			m_pModel->Set_BlockAnim(false);
 			m_bOn_MotionTrail = false;
+			m_bOncePlaySound = false;
 		}
 
 
@@ -2091,6 +2126,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayMainAttackCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 		else if (0.62f <= fAnimPlayRate)
@@ -2100,6 +2136,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 				m_pModel->Set_BlockAnim(false);
 				m_bPlayDodgeCombo = true;
 				m_bOn_MotionTrail = false;
+				m_bOncePlaySound = false;
 			}
 		}
 	}
@@ -2116,8 +2153,16 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	switch (m_pModel->Get_NowAnimIndex())
 	{
 		//// Main Attack ////
-	case SPEAR_ANIM_MAIN_ATK_COMBO_0:
+	case SPEAR_ANIM_MAIN_ATK_COMBO_0: 
 	{
+		// Play Sound
+		if (false == m_bOncePlaySwingSound && 0.32f < fAnimPlayRate)
+		{
+			m_bOncePlaySwingSound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+
 		m_bOnNavigation = true;
 		if (fAnimPlayRate <= 0.714f)
 		{
@@ -2184,6 +2229,14 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1:
 	{
+		// Play Sound
+		if (false == m_bOncePlaySwingSound && 0.6f < fAnimPlayRate)
+		{
+			m_bOncePlaySwingSound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+
 		m_bOnNavigation = true;
 		if (fAnimPlayRate <= 0.6666f)
 		{
@@ -2249,6 +2302,14 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2:
 	{
+		// Play Sound
+		if (false == m_bOncePlaySwingSound && 0.45f < fAnimPlayRate)
+		{
+			m_bOncePlaySwingSound = true;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
+
 		m_bOnNavigation = true;
 		// Turn On Weapon Trail
 		if (m_pModel->Get_PlayRate() >= 0.661f)
@@ -6513,6 +6574,8 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 				{
 					m_bActive_ActionCameraShake = true;
 				}
+
+				m_bOncePlaySwingSound = false;
 			}
 		}
 		break;

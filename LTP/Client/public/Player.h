@@ -378,6 +378,9 @@ private: /* Animation Control */
 
 	_bool					m_bOnNavigation = false;
 
+	_bool					m_bOncePlaySound = false;
+	_bool					m_bOncePlaySwingSound = false;
+
 private: /* Camera Shake */
 	_bool					m_bActive_ActionCameraShake = true;
 
