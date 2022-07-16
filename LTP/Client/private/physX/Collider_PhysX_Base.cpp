@@ -477,9 +477,12 @@ void CCollider_PhysX_Base::Free()
 
 #endif // _DEBUG
 
+
+
 	if (m_bIsClone)
 	{
-		if (mScene)
+		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
+		if (scene)
 		{
 			if (mMain_Actor)
 			{
@@ -488,9 +491,9 @@ void CCollider_PhysX_Base::Free()
 			}
 		}
 	}
-	//PX_RELEASE(mPhysics);
-	//PX_RELEASE(mNormalMaterial);
-	//PX_RELEASE(mScene);
+	mPhysics = nullptr;
+	mNormalMaterial = nullptr;
+	mScene = nullptr;
 	
 
 }
