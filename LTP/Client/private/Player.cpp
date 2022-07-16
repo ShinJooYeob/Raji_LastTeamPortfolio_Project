@@ -2749,12 +2749,14 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 					m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition =
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)	+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f;
 
-				m_vecTextureParticleDesc[4].ePassID = InstancePass_OriginColor;
-				m_vecTextureParticleDesc[4].ParticleSize = _float3(4.f);
-				m_vecTextureParticleDesc[4].EachParticleLifeTime = 1.f;
-
+				//m_vecTextureParticleDesc[4].ePassID = InstancePass_OriginColor;
+				//m_vecTextureParticleDesc[4].ParticleSize = _float3(4.f);
+				//m_vecTextureParticleDesc[4].EachParticleLifeTime = 1.f;
+				m_vecTextureParticleDesc[2].ParticleSize2 = _float3(2.5f);
+				m_vecTextureParticleDesc[2].vEmissive_SBB = _float3(1, 0.5f, 0);
 				m_vecTextureParticleDesc[2].vFixedPosition
-					= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.2f;
+					= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
+
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
