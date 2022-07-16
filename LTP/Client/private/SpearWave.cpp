@@ -66,7 +66,6 @@ _int CSpearWave::Render()
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
@@ -105,7 +104,7 @@ HRESULT CSpearWave::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerSkill_SpearWave), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
-	tDesc.fMovePerSec = 1;
+	tDesc.fMovePerSec = 30;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);

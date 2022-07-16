@@ -67,8 +67,6 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
-	m_szNameTag = L"Raji";
-	"Layer_Player";
 	return S_OK;
 }
 
@@ -76,68 +74,43 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	// Test
-	if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
 	{
-		// JUMP
-		m_eCurState = STATE_JUMP;
-		m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
+		// Test
+		if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
+		{
+			// JUMP
+			Set_State_JumpStart(fDeltaTime);
 
-		// CURTAIN
-		//Set_State_CurtainStart(fDeltaTime);
+			// CURTAIN
+			//Set_State_CurtainStart(fDeltaTime);
 
-		// WALL RUN
-		/*static _bool bDebugBoolean = false;
-		Set_State_WallRunStart(bDebugBoolean, fDeltaTime);
-		bDebugBoolean = !bDebugBoolean;*/
+			// WALL RUN
+			/*static _bool bDebugBoolean = false;
+			Set_State_WallRunStart(bDebugBoolean, fDeltaTime);
+			bDebugBoolean = !bDebugBoolean;*/
 
-		// PILLAR
-		//Set_State_PillarStart(fDeltaTime);
-		//Take_Damage(this, 10.f, XMVectorSet(1.f, 0.f, 0.f, 0.f), true, 10.f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_R) & DIS_Down)
-	{
-		Set_State_CurtainStart(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_T) & DIS_Down)
-	{
-		static _bool bDebugBoolean = false;
-		Set_State_WallRunStart(bDebugBoolean, fDeltaTime);
-		bDebugBoolean = !bDebugBoolean;
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Down)
-	{
-		Set_State_PetalStart(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_F) & DIS_Down)
-	{
-		Set_State_PillarStart(fDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_G) & DIS_Down)
-	{
-		Take_Damage(this, 10.f, XMVectorSet(1.f, 0.f, 0.f, 0.f), true, 10.f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_H) & DIS_Down)
-	{
-		m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
-	}
-	
+			// PILLAR
+			//Set_State_PillarStart(fDeltaTime);
+			//m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
 
-	//if (g_pGameInstance->Get_DIKeyState(DIK_U) & DIS_Down)
-	//{
-	//	m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
-	//	//Set_State_PillarStart(fDeltaTime);
-	//}
-	
-	/*if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+			// TAKE DAMAGE
+			//Take_Damage(this, 10.f, XMVectorSet(1.f, 0.f, 0.f, 0.f), true, 10.f);
+
+			// PETAL
+			//Set_State_PetalStart(fDeltaTime);
+
+
+		}
+
+		/*if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+		{
+			m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+		{
+			m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+		}*/
 	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-	}*/
-	_Vector vScale = m_pTransformCom->Get_Scale();
 
 	// Check Player Key Input
 	Check_PlayerKeyInput(fDeltaTime);
@@ -156,7 +129,7 @@ _int CPlayer::Update(_double fDeltaTime)
 	m_fAnimSpeed = 1.f;
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Process Player State Logic
+	//Process Player State Logic
 		switch (m_eCurState)
 		{
 		case EPLAYER_STATE::STATE_IDLE:
@@ -173,6 +146,9 @@ _int CPlayer::Update(_double fDeltaTime)
 			break;
 		case EPLAYER_STATE::STATE_JUMP:
 			FAILED_CHECK(Update_State_Jump(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_FALL:
+			FAILED_CHECK(Update_State_Fall(fDeltaTime));
 			break;
 		case EPLAYER_STATE::STATE_UTILITYSKILL:
 			FAILED_CHECK(Update_State_UtilitySkill(fDeltaTime));
@@ -272,20 +248,11 @@ _int CPlayer::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
 
-	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
 
-	//m_pCollider->Get_ColliderPosition()
+	Update_Collider(fDeltaTime);
 
-	_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+	Update_HPUI(fDeltaTime);
 
-	for (_uint i = 0; i < iNumCollider; i++)
-		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
-	
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
-	m_IsConfilicted = false;
-
-	if (m_pHPUI != nullptr)
-		m_pHPUI->Update(fDeltaTime);
 	return _int();
 }
 
@@ -300,24 +267,23 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	
-
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	// Update PhysX
 	if (m_pHeadJoint)
+	{
 		m_pHeadJoint->Update_AfterSimulation();
-
+	}
 
 	if (true == m_bOnNavigation)
 	{
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	}
 
-	if (m_pHPUI != nullptr)
-		m_pHPUI->LateUpdate(fDeltaTimer);
+	LateUpdate_HPUI(fDeltaTimer);
 
 	return _int();
 }
@@ -331,10 +297,7 @@ _int CPlayer::Render()
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-
 
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
@@ -355,6 +318,14 @@ _int CPlayer::LateRender()
 
 void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
+	{
+		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_Vector vConflicted_Col_Pos = pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector();
+		_Vector vDamageDir = XMVector3Normalize(vPlayerPos - vConflicted_Col_Pos);
+		Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
+	}
+
 	//m_IsConfilicted = true;
 	//if (iMyColliderIndex == 2)
 	//{
@@ -365,21 +336,11 @@ void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedO
 	//{
 	//	//
 	//}
-
-	//pConflictedObj->Get_NowHP() < 10
-
-	//eConflictedObjCollisionType
-	//m_pCollider->Get_ColliderPosition(iMyColliderIndex);
-	//pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex);
-
-	//pConflictedObj->Get_NameTag();
-
 }
 
 _fVector CPlayer::Get_BonePos(const char * pBoneName)
 {
 	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
-	//BoneMatrix  = XMMatrixTranspose(BoneMatrix);
 	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
 	_Vector vPos, vRot, vScale;
 	XMMatrixDecompose(&vScale, &vRot, &vPos, TransformMatrix);
@@ -625,6 +586,13 @@ void CPlayer::Set_State_PetalStart(_double fDeltaTime)
 	m_eCurPetalState = PETAL_PLUCK;
 }
 
+void CPlayer::Set_State_JumpStart(_double fDeltaTime)
+{
+	m_eCurState = STATE_JUMP;
+	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
+	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+}
+
 void CPlayer::Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir)
 {
 	m_eCurState = STATE_TAKE_DAMAGE;
@@ -783,6 +751,8 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 
 HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 {
+	m_bOnNavigation = false;
+
 	_float fCurAnimRate = (_float)m_pModel->Get_PlayRate();
 
 	if (0.f <= fCurAnimRate)
@@ -792,18 +762,70 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 			m_fFallingAcc += 0.02267f;
 			_float fPos_y = m_fJumpStart_Y + (5.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
-			m_pTransformCom->Move_Forward(fDeltaTime * 1.6f); 
+			m_pTransformCom->Move_Forward(fDeltaTime * 1.6f, m_pNavigationCom); 
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 			vMyPos = XMVectorSetY(vMyPos, fPos_y);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 		}
-
-		if (0.98f <= fCurAnimRate)
+		
+		_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		if (fMyPos_Y < m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
 		{
+			m_bOnNavigation = true;
+			Set_State_IdleStart(fDeltaTime);
+			m_fFallingAcc = 0.f;
+
+			m_bOnNavigation = true;
 			Set_State_IdleStart(fDeltaTime);
 			m_fFallingAcc = 0.f;
 		}
+		/*if (0.98f <= fCurAnimRate)
+		{
+				m_bOnNavigation = true;
+				Set_State_IdleStart(fDeltaTime);
+				m_fFallingAcc = 0.f;
+
+			m_bOnNavigation = true;
+			Set_State_IdleStart(fDeltaTime);
+			m_fFallingAcc = 0.f; 
+		}
+		else */if (0.6f <= fCurAnimRate)
+		{
+			_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			if (fMyPos_Y - 0.5f > m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
+			{
+				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 1.f);
+				m_eCurState = STATE_FALL;
+				m_fJumpPower = 5.f;
+			}
+		}
 	}
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
+{
+	m_bOnNavigation = false;
+	m_fAnimSpeed = 2.f;
+	m_fFallingAcc += 0.04f;
+	_float fPos_y = m_fJumpStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+
+	m_pTransformCom->Move_Forward(fDeltaTime * 1.2f, m_pNavigationCom);
+	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
+	if (fPos_y <= fOnNavPos_Y)
+	{
+		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y);
+		Set_State_IdleStart(fDeltaTime);
+		m_fFallingAcc = 0.f;
+		m_fJumpPower = 0.f;
+	}
+	else
+	{
+		vMyPos = XMVectorSetY(vMyPos, fPos_y);
+	}
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
 	return S_OK;
 }
 
@@ -1391,6 +1413,37 @@ HRESULT CPlayer::Update_State_Dead(_double fDeltaTime)
 		}
 	}
 	return _int();
+}
+
+HRESULT CPlayer::Update_Collider(_double fDeltaTime)
+{
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+	_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	m_IsConfilicted = false;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_HPUI(_double fDeltaTime)
+{
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(fDeltaTime);
+
+	return S_OK;
+}
+
+HRESULT CPlayer::LateUpdate_HPUI(_double fDeltaTime)
+{
+	if (m_pHPUI != nullptr)
+	{
+		m_pHPUI->LateUpdate(fDeltaTime);
+	}
+
+	return S_OK;
 }
 
 _bool CPlayer::Check_InputDirIsForward()

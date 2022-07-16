@@ -37,7 +37,7 @@ private:
 	};
 	
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
 
@@ -185,12 +185,15 @@ private: /* Change Start State */
 	void	Set_State_PillarStart(_double fDeltaTime);								// Pillar
 	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
 
+	void	Set_State_JumpStart(_double fDeltaTime);								// Jump
+	void	Set_State_FallingStart(_double fDeltaTime);								// Falling
+
 	void	Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir);		// TakeDamage
 	void	Set_State_DeathStart();													// Death
 
+
 private:
 	virtual void Update_AttachCamPos() override;
-
 
 private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
@@ -198,6 +201,7 @@ private:
 	HRESULT Update_State_Idle(_double fDeltaTime);
 	HRESULT Update_State_Move(_double fDeltaTime);
 	HRESULT Update_State_Jump(_double fDeltaTime);
+	HRESULT Update_State_Fall(_double fDeltaTime);
 
 	HRESULT Update_State_Attack(_double fDeltaTime);
 	HRESULT Update_State_UtilitySkill(_double fDeltaTime);
@@ -215,6 +219,10 @@ private:
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
 
+
+	HRESULT	Update_Collider(_double fDeltaTime);
+	HRESULT Update_HPUI(_double fDeltaTime);
+	HRESULT LateUpdate_HPUI(_double fDeltaTime);
 
 private: /* Check */
 	_bool				Check_InputDirIsForward();
