@@ -53,7 +53,11 @@ _int CMonster_Spider::Update(_double dDeltaTime)
 
 
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
+	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 1.f));
 
+	}
 	return _int();
 }
 

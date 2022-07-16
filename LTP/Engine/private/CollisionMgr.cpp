@@ -1,6 +1,8 @@
 #include "..\public\CollisionMgr.h"
 #include "GameObject.h"
 #include "Collider.h"
+#include "Transform.h"
+#include "Navigation.h"
 
 IMPLEMENT_SINGLETON(CCollisionMgr);
 
@@ -35,6 +37,26 @@ HRESULT CCollisionMgr::Add_CollisionGroup(CollisionTypeID eType, CGameObject * p
 	return S_OK;
 }
 
+HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation* pNavigation)
+{
+	NULL_CHECK_RETURN(pTransform,E_FAIL);
+	if (fRadious < 0) fRadious = 0;
+
+
+	REPELELEMENT tDesc;
+	ZeroMemory(&tDesc, sizeof(REPELELEMENT));
+
+	tDesc.pRepelObjTransform = pTransform;
+	tDesc.fRadious			= fRadious;
+	tDesc.pNavigation	= pNavigation;
+
+	Safe_AddRef(tDesc.pRepelObjTransform);
+
+	m_RepelObjectList.push_back(tDesc);
+
+	return S_OK;
+}
+
 HRESULT CCollisionMgr::Inspect_Collision()
 {
 
@@ -48,6 +70,7 @@ HRESULT CCollisionMgr::Inspect_Collision()
 
 	FAILED_CHECK(Inspect_Terrain_To_All());
 
+
 	for (_uint i = 0; i < CollisionType_END; i++)
 	{
 		for (auto& ColideElements : m_CollisionGroupList[i])
@@ -58,6 +81,7 @@ HRESULT CCollisionMgr::Inspect_Collision()
 		m_CollisionGroupList[i].clear();
 	}
 
+	FAILED_CHECK(Inspect_RepelGroup());
 
 	return S_OK;
 }
@@ -73,6 +97,11 @@ void CCollisionMgr::Clear_CollisionGroup()
 		}
 		m_CollisionGroupList[i].clear();
 	}
+
+	for (auto& RepelElement : m_RepelObjectList)
+		Safe_Release(RepelElement.pRepelObjTransform);
+	m_RepelObjectList.clear();
+
 }
 
 HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)
@@ -228,6 +257,84 @@ HRESULT CCollisionMgr::Inspect_Terrain_To_All()
 	return S_OK;
 }
 
+HRESULT CCollisionMgr::Inspect_RepelGroup()
+{
+
+#define PushingSpeed 2.f 
+
+	if (m_RepelObjectList.size() < 2)
+	{
+		for (auto& iter : m_RepelObjectList)
+			Safe_Release(iter.pRepelObjTransform);
+		m_RepelObjectList.clear();
+
+		return S_FALSE;
+	}
+
+	_Vector SourPos = XMVectorSet(0, 0, 0, 0);
+	_Vector DestPos = XMVectorSet(0, 0, 0, 0);
+	_Vector D2SDir = XMVectorSet(0, 0, 0, 0);
+
+	auto SourIter = m_RepelObjectList.begin();
+	
+
+	for (;SourIter != m_RepelObjectList.end(); )
+	{
+		if (SourIter->pRepelObjTransform->Get_IsOwnerDead())
+		{
+			Safe_Release(SourIter->pRepelObjTransform);
+			SourIter =  m_RepelObjectList.erase(SourIter);
+			continue;
+		}
+
+
+		auto DestIter = SourIter;
+		DestIter++;
+
+		for (; DestIter != m_RepelObjectList.end(); )
+		{
+			if (DestIter->pRepelObjTransform->Get_IsOwnerDead())
+			{
+				Safe_Release(DestIter->pRepelObjTransform);
+				DestIter =  m_RepelObjectList.erase(DestIter);
+				continue;
+			}
+			
+			SourPos = SourIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
+			DestPos = DestIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
+			D2SDir = SourPos - DestPos;
+			if ( XMVectorGetX(XMVector3Length(D2SDir)) < SourIter->fRadious + DestIter->fRadious)
+			{
+				D2SDir = XMVector3Normalize(XMVectorSetY(D2SDir,0));
+
+				if (SourIter->fRadious > DestIter->fRadious)
+				{
+					DestIter->pRepelObjTransform->MovetoDir_bySpeed(-D2SDir, PushingSpeed, 0.0166667f, DestIter->pNavigation);
+				}
+				else
+				{
+					SourIter->pRepelObjTransform->MovetoDir_bySpeed(D2SDir, PushingSpeed, 0.0166667f, SourIter->pNavigation);
+				}
+
+			}
+
+			DestIter++;
+		}
+
+		SourIter++;
+	}
+
+	for (auto iter : m_RepelObjectList)
+		Safe_Release(iter.pRepelObjTransform);
+	m_RepelObjectList.clear();
+	
+
+
+
+
+	return S_OK;
+}
+
 
 
 
@@ -242,6 +349,11 @@ void CCollisionMgr::Free()
 		}
 		m_CollisionGroupList[i].clear();
 	}
+
+
+	for (auto& RepelElement : m_RepelObjectList)	
+		Safe_Release(RepelElement.pRepelObjTransform);
+	m_RepelObjectList.clear();
 
 
 	Safe_Release(m_pDevice);
