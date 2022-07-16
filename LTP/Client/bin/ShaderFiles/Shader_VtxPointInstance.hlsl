@@ -542,7 +542,7 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 
 	fireColor *= alphaColor;
 	fireColor.a = length(alphaColor.xyz) * In.vColor.a;
-	Out.vDiffuse = vector(pow(fireColor,1.f/2.2f).xyz , fireColor.a);
+	Out.vDiffuse = vector(pow(fireColor,1.f/1.34598f).xyz , fireColor.a);
 
 	float2		vUV = In.vProjPos.xy / In.vProjPos.w;
 	vUV.x = vUV.x * 0.5f + 0.5f;
@@ -782,7 +782,7 @@ PS_OUT_NODEFERRED PS_Distortion_All_Bright(PS_Noise_IN In)
 
 	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
-	Out.vDiffuse = pow(BackBuffer,1.f/2.2f);
+	Out.vDiffuse = pow(BackBuffer,1.f/1.34598f);
 	//Out.vDiffuse =  BackBuffer * (1 - Alpha) + (Alpha * g_vMixColor);
 
 	Out.vDiffuse.a = 1.f;
@@ -880,7 +880,7 @@ PS_OUT_NODEFERRED PS_Distortion_DiffuseMix_Bright(PS_Noise_IN In)
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
 
 	fireColor *= alphaColor;
-	Out.vDiffuse = pow(fireColor, 1.f/2.2f);
+	Out.vDiffuse = pow(fireColor, 1.f/1.5f);
 	fireColor.a = length(alphaColor.xyz) * In.vColor.a;
 	Out.vDiffuse.a = fireColor.a;
 
@@ -903,7 +903,7 @@ PS_OUT_NODEFERRED PS_Distortion_DiffuseMix_Bright(PS_Noise_IN In)
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
 
 
-	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV),1.f/2.2f);
+	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV),1.f/1.34598f);
 
 	float MixRate = abs(0.5f - Out.vDiffuse.a) * 2.f;
 
