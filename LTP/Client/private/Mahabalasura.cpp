@@ -4,6 +4,7 @@
 #include "Mahabalasura_Weapon.h"
 #include "Mahabalasura_Arms.h"
 #include "CopyMahabalasura.h"
+#include "HpUI.h"
 
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -81,6 +82,17 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 		m_pArms.push_back(Arm);
 	}
 
+	m_fMaxHP = 100.f;
+	m_fHP = 100.f;
+
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 2.f;
+
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
 	return S_OK;
 }
 
@@ -155,22 +167,22 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_ReturnTo(4, 0);
 	}
-	//기본공격
-	if (m_fRange < 4.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit)
-	{
-		m_bIsAttack = true;
+	////기본공격
+	//if (m_fRange < 4.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit)
+	//{
+	//	m_bIsAttack = true;
 
-		m_bIsWalk = false;
-		//m_bIsLookAt = false;
-		m_pModel->Change_AnimIndex_ReturnTo(5, 0);
-	}
+	//	m_bIsWalk = false;
+	//	//m_bIsLookAt = false;
+	//	m_pModel->Change_AnimIndex_ReturnTo(5, 0);
+	//}
 	//스킬공격
 	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit)
 	{
 		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
 		m_bIsAttack = true;
 
-		iRandom = TestNumber;
+		iRandom = 3;
 
 		switch (iRandom)
 		{
@@ -220,6 +232,16 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+	_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
+
+
 	m_pSpear->Update(fDeltaTime);
 
 	if (m_bIsArmAttack)
@@ -229,6 +251,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			Arm->Update(fDeltaTime);
 		}
 	}
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(fDeltaTime);
 
 	return _int();
 }
@@ -248,6 +273,7 @@ _int CMahabalasura::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	m_pSpear->LateUpdate(fDeltaTime);
@@ -259,6 +285,9 @@ _int CMahabalasura::LateUpdate(_double fDeltaTime)
 			Arm->LateUpdate(fDeltaTime);
 		}
 	}
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(fDeltaTime);
 
 	return _int();
 }
@@ -299,6 +328,10 @@ _int CMahabalasura::LateRender()
 	return _int();
 }
 
+void CMahabalasura::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+}
+
 HRESULT CMahabalasura::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -317,6 +350,49 @@ HRESULT CMahabalasura::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.f, 4.f, 4.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1), _float3(0), _float3(0.f, -0.032385f, -1.5257f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1), _float3(0), _float3(0.f, -0.030919f, -2.49767f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.2f, 1.2f, 1.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_02", _float3(1), _float3(0), _float3(0.f, -0.0666f, -1.86665f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.6f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1), _float3(0), _float3(0.f, -0.032385f, -1.5257f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
 
 
 	return S_OK;
@@ -361,6 +437,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
+			m_pSpear->Set_IsAttackState(true);
 
 			if (PlayRate > 0.1401869f && PlayRate < 0.20f)
 			{
@@ -375,8 +452,8 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 						Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
 
 						m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
-					}
 
+					}
 					++m_iAdjMovedIndex;
 				}
 				m_bIsLookAt = true;
@@ -422,6 +499,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsLookAt = true;
 				m_pTransformCom->Move_Forward(fDeltatime * 1.5);
 			}
+
+			if (PlayRate > 0.766355140f && m_iAdjMovedIndex == 3)
+			{
+				m_pSpear->Set_IsAttackState(false);
+				++m_iAdjMovedIndex;
+			}
 		}
 		break;
 
@@ -452,6 +535,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
 				InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
 				InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				InstanceDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(100.f, 200.f, 150.f, 0.f), XMVectorSet(0, 0.f, 180.f, 0.f), XMVectorSet(-0.950 * 100.f, -0.160 * 200.f, -1.550 * 150.f, 1.f));
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &InstanceDesc));
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_InstanceWeapon(0);
@@ -459,18 +543,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.246153f)
 			{
-				CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
-				InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
-				InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_InstanceWeapon(1);
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.353846f)
 			{
-				CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
-				InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
-				InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_InstanceWeapon(2);
 				++m_iAdjMovedIndex;
@@ -599,6 +677,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 5)
 		{
+			m_pSpear->Set_IsAttackState(false);
 			m_fAttackCoolTime = 4.f;
 			//m_fSkillCoolTime += 2.f;
 			m_fAnimmultiple = 1.f;
@@ -661,6 +740,7 @@ void CMahabalasura::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pCollider);
 
 	Safe_Release(m_pSpear);
 
@@ -669,4 +749,6 @@ void CMahabalasura::Free()
 		Safe_Release(Arm);
 	}
 	m_pArms.clear();
+
+	Safe_Release(m_pHPUI);
 }

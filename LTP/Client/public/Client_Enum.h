@@ -5503,6 +5503,8 @@ enum COMPONENTID
 	Com_Model,
 	Com_SubModel,
 	Com_Collider,
+	Com_ColliderSub,
+	Com_ColliderSubSub,
 	Com_Collider_PhysX,
 	Com_SwordTrail,
 	Com_SubSwordTrail,
@@ -5552,6 +5554,14 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 
 	case Com_Collider:
 		return TEXT("Com_Collider");
+		break;
+
+	case Com_ColliderSub:
+		return TEXT("Com_ColliderSub");
+		break;
+
+	case Com_ColliderSubSub:
+		return TEXT("Com_ColliderSubSub");
 		break;
 
 	case Com_Collider_PhysX:

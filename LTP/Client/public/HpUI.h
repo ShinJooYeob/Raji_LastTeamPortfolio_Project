@@ -32,9 +32,12 @@ public:
 	virtual _int LateRender()override;
 
 public:
+	_int	Get_HitCount() { return m_iHitCount; }
+
+public:
 	void	Set_ObjectPos();
 
-	void	Set_ADD_HitCount() { m_iHitCount++; }
+	void	Set_ADD_HitCount(_int iAdd = 1) { m_iHitCount += iAdd; }
 
 private:
 	CShader*						m_pShaderCom = nullptr;

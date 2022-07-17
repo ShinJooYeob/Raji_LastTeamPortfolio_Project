@@ -36,8 +36,17 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
 
+	//¸öÃ¼
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
+
+	//È­¿°
+	CCollider*				m_pFireCollider = nullptr;
+	ATTACHEDESC				m_FireAttachedDesc;
+
+	//Á¡ÇÁ
+	CCollider*				m_pJumpCollider = nullptr;
+	ATTACHEDESC				m_JumpAttachedDesc;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -51,6 +60,7 @@ private:
 	//Jump
 	_float				m_fJumpTime = 3.f;
 	_bool				m_bIsTurn = false;
+	_bool				m_bIsJump = false;
 
 
 

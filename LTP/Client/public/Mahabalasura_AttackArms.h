@@ -34,10 +34,14 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 	CTransform*			m_pPlayerTrs = nullptr;
 
@@ -51,6 +55,7 @@ private:
 	_float3				m_PlayerPos;
 	_float3				m_DestPos[AtkArmTotalCount];
 	_float3				m_StartPos[AtkArmTotalCount];
+	_float4x4			m_BossMatrix;
 
 	_int				m_iCount = 0;
 

@@ -21,6 +21,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 public:
 	void		Set_CopyOff(_bool State) 
 	{
@@ -35,6 +38,10 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+
+	//¸öÃ¼
+	CCollider*				m_pCollider = nullptr;
+	vector<ATTACHEDESC>		m_vecAttachedDesc;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -66,6 +73,9 @@ private:
 	_bool									m_bIsTeleport = false;
 	_float									m_fTeleportDelay = 0.5f;
 	_float									m_fTeleporCoolTime = 7.f;
+
+	//HPBar
+	class CHpUI*							m_pHPUI = nullptr;
 
 
 

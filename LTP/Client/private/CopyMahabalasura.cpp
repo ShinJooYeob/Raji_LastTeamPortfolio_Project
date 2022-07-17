@@ -54,7 +54,6 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	if (m_fAttackCoolTime <= 0 && !m_bIsAttack)
 	{
-		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_ReturnTo(1, 0);
 
 	}
@@ -97,6 +96,24 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+
+			_Matrix mat = PlayerTransform->Get_WorldMatrix();
+
+			mat.r[0] = XMVector3Normalize(mat.r[0]);
+			mat.r[1] = XMVector3Normalize(mat.r[1]);
+			mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+			m_pCollider->Update_Transform(0, mat);
+
+	
+
+	if (m_bIsAttack)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+	}
+
 	return _int();
 }
 
@@ -109,6 +126,7 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	//m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
 }
@@ -129,6 +147,16 @@ _int CCopyMahabalasura::Render()
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
 		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&PlayerPos));
+
+
+		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
+		m_pCollider->Update_Transform(i + 1, mat);
+
+
 	}
 
 
@@ -168,11 +196,21 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(100.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
 	for (_uint i = 0; i < 16; i++)
 	{
 		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
-		
+
 		pTransform->Set_MoveSpeed(1.5f);
 
 		CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
@@ -181,6 +219,14 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f), BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f)));
 		//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
 		m_vecInstancedTransform.push_back(pTransform);
+
+		//�浹ü
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.3f, 1.6f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
 	}
 
 	CModelInstance::MODELINSTDESC tModelIntDsec;
@@ -217,6 +263,36 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 0:
 			break;
 		case 1:
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.233644859)
+			{
+				m_bIsAttack = true;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.2803738)
+			{
+				m_bIsAttack = false;;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.392523)
+			{
+				m_bIsAttack = true;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.47663551)
+			{
+				m_bIsAttack = false;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.56074766)
+			{
+				m_bIsAttack = true;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.6074766)
+			{
+				m_bIsAttack = false;
+				++m_iAdjMovedIndex;
+			}
 			break;
 
 		case 5:
@@ -275,6 +351,7 @@ void CCopyMahabalasura::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pModelInstance);
+	Safe_Release(m_pCollider);
 
 	for (auto& pTransform : m_vecInstancedTransform)
 		Safe_Release(pTransform);

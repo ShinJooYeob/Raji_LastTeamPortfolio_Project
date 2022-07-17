@@ -56,16 +56,16 @@ _int CRangda::Update(_double fDeltaTime)
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
-	
+
 
 	if (m_bIsLookAt)
 	{
-		CTransform* PlayerTransform= (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 		_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 		PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 		_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		Dir = XMVector3Normalize(PlayerPos.XMVector() -  XMVectorSetY(Dir, PlayerPos.y)  );
+		Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
 		m_pTransformCom->Turn_Dir(Dir, 0.90f);
 
 		//m_fRange = XMVectorGetZ(XMVector3Length(XMLoadFloat3(&Pos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
@@ -86,7 +86,7 @@ _int CRangda::Update(_double fDeltaTime)
 
 	//m_bIsHalf = true;
 
-	if(m_iMaterialCount == 7)
+	if (m_iMaterialCount == 7)
 		m_bIsHalf = true;
 
 	//맞았을때
@@ -135,6 +135,34 @@ _int CRangda::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
+	//Left
+	m_pHand_L_Collider->Update_ConflictPassedTime(fDeltaTime);
+	m_pHand_L_Collider->Update_Transform(0, m_LeftAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	//Right
+	m_pHand_R_Collider->Update_ConflictPassedTime(fDeltaTime);
+	m_pHand_R_Collider->Update_Transform(0, m_RightAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	if (m_bIsNailAttack && !m_bIsHalf)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pHand_L_Collider));
+	}
+	if (m_bIsNailAttack && m_bIsHalf)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pHand_R_Collider));
+	}
+
+	if (m_bIsNailHit && !m_bIsHalf)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pHand_L_Collider));
+	}
+	else if (m_bIsNailHit && m_bIsHalf)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pHand_R_Collider));
+	}
+
+
+
 	return _int();
 }
 
@@ -145,6 +173,8 @@ _int CRangda::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_L_Collider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_R_Collider));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -187,6 +217,10 @@ _int CRangda::LateRender()
 	if (__super::LateRender() < 0)		return -1;
 
 	return _int();
+}
+
+void CRangda::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
 }
 
 _fVector CRangda::Get_BonePos(const char * pBoneName)
@@ -269,7 +303,29 @@ HRESULT CRangda::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pHand_L_Collider));
 
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pHand_L_Collider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_l", _float3(1), _float3(0), _float3(674.453f, 60.4958f, -66.9747f));
+	m_LeftAttachedDesc = tAttachedDesc;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pHand_R_Collider));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pHand_R_Collider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", _float3(1), _float3(0), _float3(-674.453f, 60.4957f, -66.9735f));
+	m_RightAttachedDesc = tAttachedDesc;
+	
 	return S_OK;
 }
 
@@ -449,19 +505,46 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 
 			}
-			else if (PlayRate < 0.310344827586206)
+			
+			if (m_iAdjMovedIndex == 0 && PlayRate < 0.310344827586206)
 			{
 				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
+				++m_iAdjMovedIndex;
 			}
-			else if (PlayRate < 0.330049261083743f)
+			if (m_iAdjMovedIndex == 1 && PlayRate < 0.330049261083743)
 			{
 				m_fAnimmultiple = 1.f;
 				m_bIsLookAt = false;
+				++m_iAdjMovedIndex;
 
 			}
-			else if (PlayRate > 0.8522167487)
+
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.216748768)
+			{
+				m_bIsNailAttack = true;
+
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.359605911)
+			{
+				m_bIsNailAttack = false;
+
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.37931034)
+			{
+				m_bIsNailHit = true;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.842364532)
+			{
+				m_bIsNailHit = false;
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0.8522167487)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
@@ -490,19 +573,45 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 
 			}
-			else if (PlayRate < 0.310344827586206)
+			if (m_iAdjMovedIndex == 0 && PlayRate < 0.310344827586206)
 			{
 				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
+				++m_iAdjMovedIndex;
 			}
-			else if (PlayRate < 0.330049261083743f)
+			if (m_iAdjMovedIndex == 1 && PlayRate < 0.330049261083743)
 			{
 				m_fAnimmultiple = 1.f;
 				m_bIsLookAt = false;
+				++m_iAdjMovedIndex;
 
 			}
-			else if (PlayRate > 0.8522167487)
+
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.216748768)
+			{
+				m_bIsNailAttack = true;
+
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.359605911)
+			{
+				m_bIsNailAttack = false;
+
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.37931034)
+			{
+				m_bIsNailHit = true;
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.842364532)
+			{
+				m_bIsNailHit = false;
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0.8522167487)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
@@ -574,4 +683,7 @@ void CRangda::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+	Safe_Release(m_pHand_L_Collider);
+	Safe_Release(m_pHand_R_Collider);
 }

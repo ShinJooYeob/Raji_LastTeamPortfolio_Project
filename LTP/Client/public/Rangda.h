@@ -19,9 +19,20 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
+
+	//Left
+	CCollider*				m_pHand_L_Collider = nullptr;	
+	ATTACHEDESC				m_LeftAttachedDesc;
+
+	//Right
+	CCollider*				m_pHand_R_Collider = nullptr;
+	ATTACHEDESC				m_RightAttachedDesc;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -35,6 +46,8 @@ private:
 
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
+	_bool				m_bIsNailAttack = false;
+	_bool				m_bIsNailHit = false;
 
 	CGameObject*		m_pPlayerObj;
 

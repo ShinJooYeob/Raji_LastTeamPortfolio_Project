@@ -59,7 +59,9 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 	for (_uint i = 0; i < iNumCollider; i++)
 		m_pCollider->Update_Transform(i, m_AttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
 
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+	if(m_bIsAttack)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+
 	return _int();
 }
 
@@ -80,8 +82,7 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	if(m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR || m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
-		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 
@@ -124,6 +125,10 @@ _int CChiedtuan_Weapon::Render()
 _int CChiedtuan_Weapon::LateRender()
 {
 	return _int();
+}
+
+void CChiedtuan_Weapon::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
 }
 
 void CChiedtuan_Weapon::Update_AttachMatrix()

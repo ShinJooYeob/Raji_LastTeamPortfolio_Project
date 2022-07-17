@@ -28,6 +28,9 @@ private:
 	CModel*				m_pModel = nullptr;
 	//CTransform*			m_pTransformCom = nullptr;
 
+	CCollider*			m_pCollider = nullptr;
+
+
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
 

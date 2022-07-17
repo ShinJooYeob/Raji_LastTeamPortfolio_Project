@@ -75,6 +75,13 @@ public:
 	_bool	Get_IsOcllusion() { return m_bIsOcllusionObject; }
 	void	Set_IsOcllusion(_bool bBool) { m_bIsOcllusionObject = bBool; }
 
+
+	_bool Get_OnKnockbackCol() { return m_bOnKnockbackCol; }
+	_float Get_KnockbackColPower() { return m_fKnockbackColPower; }
+	void Set_OnKnockbackCol(_bool bOnKnockbackCol) { m_bOnKnockbackCol = bOnKnockbackCol; }
+	void Set_KnockbackColPower(_float fKnockbackColPower) { m_fKnockbackColPower = fKnockbackColPower; }
+	
+
 protected:
 	map<const _tchar*, class CComponent**>	m_mapComponets;
 	typedef map<const _tchar*, class CComponent**>	COMPONENTS;
@@ -105,6 +112,9 @@ protected:
 
 	_float					m_fHP	= 32.f;
 	_float					m_fMaxHP = 32.f;
+
+	_bool						m_bOnKnockbackCol = false;
+	_float						m_fKnockbackColPower = 0.f;
 
 private:
 	class CShader*				m_pEngineShader = nullptr;

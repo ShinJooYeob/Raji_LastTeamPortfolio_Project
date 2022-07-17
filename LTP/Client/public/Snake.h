@@ -19,11 +19,17 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+
+	CCollider*				m_pCollider = nullptr;
+	ATTACHEDESC				m_AttachedDesc;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -34,6 +40,7 @@ private:
 
 	//Attacking
 	_bool				m_bIsAttack = false;
+	_bool				m_bIsBite = false;
 
 	//rotation
 	_int				m_iRotationRandom = 0;
