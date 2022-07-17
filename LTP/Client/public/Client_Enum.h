@@ -314,10 +314,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Mahinasura_Leader,
 	Prototype_Object_Monster_Vayusura_Minion,
 	Prototype_Object_Monster_Vayusura_Leader,
-	Prototype_Obejct_Monster_Tezabsura_Minion,
-	Prototype_Obejct_Monster_Tezabsura_Purple,
-	Prototype_Obejct_Monster_Tezabsura_Bomber,
-	Prototype_Obejct_Monster_Tezabsura_Landmine,
+	Prototype_Object_Monster_Tezabsura_Minion,
+	Prototype_Object_Monster_Tezabsura_Purple,
+	Prototype_Object_Monster_Tezabsura_Bomber,
+	Prototype_Object_Monster_Tezabsura_Landmine,
 	Prototype_Object_Monster_Jalsura,
 	Prototype_Object_Monster_Ninjasura,
 	Prototype_Object_Monster_Ninjasura_Minion,
@@ -470,16 +470,16 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Vayusura_Leader:
 		return TEXT("Prototype_Object_Monster_Vayusura_Leader");
 
-	case Prototype_Obejct_Monster_Tezabsura_Minion:
+	case Prototype_Object_Monster_Tezabsura_Minion:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Minion");
 
-	case Prototype_Obejct_Monster_Tezabsura_Purple:
+	case Prototype_Object_Monster_Tezabsura_Purple:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Purple");
 
-	case Prototype_Obejct_Monster_Tezabsura_Bomber:
+	case Prototype_Object_Monster_Tezabsura_Bomber:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Bomber");
 
-	case Prototype_Obejct_Monster_Tezabsura_Landmine:
+	case Prototype_Object_Monster_Tezabsura_Landmine:
 		return TEXT("Prototype_Object_Monster_Tezabsura_Landmine");
 
 	case Prototype_Object_Monster_Jalsura:
@@ -1958,6 +1958,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_03,
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_04,
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_05,
+	Prototype_Mesh_VentQStone,
 
 	Prototype_Mesh_DemonTree_Seg01,
 	Prototype_Mesh_DemonTree_Seg02,
@@ -5146,6 +5147,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_SM_ENV_F_MandalaCircle_05:
 		return TEXT("SM_Whitevine_wall_04a.fbx");
 		break;
+
+	case Prototype_Mesh_VentQStone:
+		return TEXT("VentQStone.fbx");
+
 	case Prototype_Mesh_TEST_STATIC:
 		return TEXT("Prototype_Mesh_TEST_STATIC");
 

@@ -758,15 +758,210 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+
+
+#pragma  region Static_Mesh
+	
+TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Stairs_01_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Diya_02_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_LionEntranceSplit_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform05.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform04_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_BullPlatform_Broken_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_BullPlatform_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_StatueBase.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Bull.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBaseStep_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBaseStep_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_Stairs_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_TempleBase_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_TempleBase_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBase_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBase_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBase_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_DurgaBase_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Durga_Statue_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_left_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_left_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_Right_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_Right_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_Right_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_Right_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_left_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_Arm_left_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Trishul_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Sword_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Shield_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Lotus_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Gada_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Drum_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Chakra_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Bow_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_WP_Bell_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_StatueBase.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_DT_ElephantHead_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_Arch_Stairs.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_StatueBase.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueBase_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_06.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_06.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_06.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_06.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatuePillar_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatuePillar_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatuePillar_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_05.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Fern_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_PillarLarge_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Diya_02_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_PillarLarge_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatuePillar_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_05.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_PLANT_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Plant_CVR_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_05.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_05.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_PLANT_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Green_Stack_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GroundScatter_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Plant_CVR_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_F_Vine07.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vines_Ruins_Exterior_ENT_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vines_Straight_006.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Whitevine_wall_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Whitevine_wall_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_F_Vine14.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerVine_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Pinkflower_vine_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vines_Straight_006.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vines_Ruins_Exterior_ENT_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vines_Ruins_Exterior_ENT_02.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vine_Pillar_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Vine_Pillar_06.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Whiteflower_vine_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_FlowerBush_03.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_Bush_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_PLANT_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GroundClutter_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GroundScatter_03B.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GRND_PLANT_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GroundClutter_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_GroundScatter_02A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Green_Stack_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"VentQStone.fbx", TransformMatrix);
+pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
+
+#pragma endregion
 
 #pragma region PROTOTYPE_COMPONENT
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE7, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/Test_Jino.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_1.dat")))))
 		return E_FAIL;
-	_Matrix			TransformMatrix;
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
+
+
+	////////////////////////////All Load
+	//TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+	//////////////////////////////////////
+
 
 	////////Monster_Mesh
 	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -887,10 +1082,10 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Mahinasura_Leader), CMonster_Mahinasura_Leader::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Vayusura_Minion), CMonster_Vayusura_Minion::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Vayusura_Leader), CMonster_Vayusura_Leader::Create(m_pDevice, m_pDeviceContext)));
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Obejct_Monster_Tezabsura_Minion), CMonster_Tezabsura_Minion::Create(m_pDevice, m_pDeviceContext)));
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Obejct_Monster_Tezabsura_Purple), CMonster_Tezabsura_Purple::Create(m_pDevice, m_pDeviceContext)));
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Obejct_Monster_Tezabsura_Bomber), CMonster_Tezabsura_Bomber::Create(m_pDevice, m_pDeviceContext)));
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Obejct_Monster_Tezabsura_Landmine), CMonster_Tezabsura_Landmine::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Tezabsura_Minion), CMonster_Tezabsura_Minion::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Tezabsura_Purple), CMonster_Tezabsura_Purple::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber), CMonster_Tezabsura_Bomber::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine), CMonster_Tezabsura_Landmine::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Jalsura), CMonster_Jalsura::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Ninjasura), CMonster_Ninjasura::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Ninjasura_Minion), CMonster_Ninjasura_Minion::Create(m_pDevice, m_pDeviceContext)));

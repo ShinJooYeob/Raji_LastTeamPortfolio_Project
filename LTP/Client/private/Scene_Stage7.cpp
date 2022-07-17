@@ -28,6 +28,9 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
+	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
+
+	
 	
 	
 	//FAILED_CHECK(teST());
@@ -209,13 +212,13 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Obejct_Monster_Tezabsura_Minion)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion)));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Obejct_Monster_Tezabsura_Purple)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Obejct_Monster_Tezabsura_Bomber)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Obejct_Monster_Tezabsura_Landmine)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
 
@@ -232,9 +235,123 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	//Mesh Instance
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wasp)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wormgrub)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wormgrub)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Spider)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wolf)));
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+
+	//../bin/Resources/Data/Map/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Map/";
+
+	lstrcat(szFullPath, szMapDataFileName);
+
+
+
+	//HANDLE hFile = CreateFileW(szFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte = 0;
+
+	CGameInstance* pInstance = g_pGameInstance;
+
+	_uint iIDLength = 0;
+
+	// 유니코드임을 알리는 BOM
+	//DWORD wc = 0xFF;
+	//ReadFile(hFile, &wc, 3, &dwByte, NULL);
+
+	while (true)
+	{
+
+
+
+		OBJELEMENT	tData{};
+		_tchar szBuffer[MAX_PATH] = L"";
+		// key 값 로드
+		ReadFile(hFile, &(iIDLength), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, (tData.ObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		//lstrcpy(tData.ObjectID, szBuffer);
+
+		ReadFile(hFile, &(iIDLength), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, (tData.MeshID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		//lstrcpy(tData.MeshID, szBuffer);
+
+		ReadFile(hFile, &(tData.PassIndex), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(tData.FrustumRange), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(tData.bIsOcllsuion), sizeof(_bool), &dwByte, nullptr);
+
+		ReadFile(hFile, &(tData.matSRT.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
+		ReadFile(hFile, &(tData.matTransform.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
+
+		if (0 == dwByte)
+			break;
+
+		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
+
+
+
+		//객채 생성해주기
+		//&(tData.pObject),
+		pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag ,tData.ObjectID);
+
+		CGameObject* pObject = pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag);
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+
+
+		if (lstrcmp(tData.MeshID, TAG_CP(Prototype_Mesh_None)))
+		{
+			//매쉬 바꿔주기 
+
+			pObject->Change_Component_by_NewAssign(eSceneID, tData.MeshID, TAG_COM(Com_Model));
+
+			((CMapObject*)pObject)->Set_FrustumSize(tData.FrustumRange);
+			((CMapObject*)pObject)->Set_IsOcllusion(tData.bIsOcllsuion);
+			((CMapObject*)pObject)->Set_PassIndex(tData.PassIndex);
+
+
+
+
+			CDissolve::DISSOLVEDESC	tDissolveDesc;
+
+			tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+			tDissolveDesc.pModel = (CModel*)pObject->Get_Component(TAG_COM(Com_Model));
+			tDissolveDesc.pShader = (CShader*)pObject->Get_Component(TAG_COM(Com_Shader));
+			tDissolveDesc.RampTextureIndex = 1;
+
+			pObject->Change_Component_by_NewAssign(eSceneID, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), &tDissolveDesc);
+
+
+		}
+
+		//트렌스폼
+		CTransform* pTrans = (CTransform*)(pObject->Get_Component(TAG_COM(Com_Transform)));
+		NULL_CHECK_RETURN(pTrans, E_FAIL);
+		//tData.matTransform._42 -= 20;
+		pTrans->Set_Matrix(tData.matTransform);
+
+
+
+	}
+
+
+
+
+	CloseHandle(hFile);
+
+
 
 
 

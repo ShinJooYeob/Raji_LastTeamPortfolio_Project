@@ -43,14 +43,14 @@ _int CStaticMapObject::Update(_double fDeltaTime)
 
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
-	{
-		m_pDissolve->Set_DissolveOn(false, 5.5f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	{
-		m_pDissolve->Set_DissolveOn(true, 1.5f);
-	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
+	//{
+	//	m_pDissolve->Set_DissolveOn(false, 5.5f);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	//{
+	//	m_pDissolve->Set_DissolveOn(true, 1.5f);
+	//}
 
 
 
