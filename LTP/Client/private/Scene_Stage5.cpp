@@ -32,8 +32,8 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	FAILED_CHECK(Ready_Layer_Trigger(TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	FAILED_CHECK(Ready_Layer_Trigger(TAG_LAY(Layer_ColTrigger))); 
 	
 	return S_OK;
 }
@@ -188,7 +188,7 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
 	NULL_CHECK_RETURN(pTransform, E_FAIL);
-	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
+	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -3, 0);
 	pTransform->Set_Matrix(tt);
 	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE5, pLayerTag))->Set_FrustumSize(99999999.f);
 
@@ -278,22 +278,22 @@ HRESULT CScene_Stage5::Ready_Layer_Trigger(const _tchar * pLayerTag)
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
 
-	CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
-	tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 0.f, 13.f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_START;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger),&tLedgeTriggerDesc));
-	
-	tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 3.f, 13.f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
-	
-	tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 6.f, 13.f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
-	
-	tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 9.f, 13.f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
+	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 0.f, 13.f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_START;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger),&tLedgeTriggerDesc));
+	//
+	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 3.f, 13.f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//
+	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 6.f, 13.f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//
+	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 9.f, 13.f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
 	
 	/*tLedgeTriggerDesc.fSpawnPos = _float3(5.f, 11.f, 13.f);
 	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;

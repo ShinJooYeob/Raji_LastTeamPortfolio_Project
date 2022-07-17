@@ -95,6 +95,7 @@ _int CDissolve::Render(_uint iPassIndex)
 	}
 	else
 	{
+
 		_uint NumMaterial = m_tDissolveDesc.pModel->Get_NumMaterial();
 
 		for (_uint i = 0; i < NumMaterial; i++)

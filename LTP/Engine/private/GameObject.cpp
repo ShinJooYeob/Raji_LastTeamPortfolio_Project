@@ -60,6 +60,8 @@ _int CGameObject::Render()
 		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float4)));
 	}
 
+	_float DissolveValue = 0;
+	FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
 
 	return _int();
 }
@@ -67,6 +69,11 @@ _int CGameObject::Render()
 _int CGameObject::LateRender()
 {
 	return _int();
+}
+
+_float CGameObject::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
 }
 
 _fVector CGameObject::Get_BonePos(const char * pBoneName)
@@ -241,7 +248,6 @@ _float CGameObject::Add_NowHP(_float fHP)
 
 	return m_fHP;
 }
-
 
 CComponent * CGameObject::Find_Components(const _tchar * tagComponent)
 {

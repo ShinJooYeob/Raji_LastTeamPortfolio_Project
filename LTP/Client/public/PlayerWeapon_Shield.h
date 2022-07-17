@@ -27,6 +27,15 @@ public:
 
 	virtual void		Active_Trail(_bool bActivate) override;
 
+	virtual void		CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	virtual _bool		AbleToChangeWeapon() override;
+
+	virtual void		Dissolve_In(_double fTargetTime) override;
+	virtual void		Dissolve_Out(_double fTargetTime) override;
+
+
 public:
 	void				Start_UltimateMode(_fVector fStartPos, _float fUltimateTargetHeight);
 	void				End_UltimateMode();
@@ -55,6 +64,7 @@ private:
 
 	void				Update_AttachMatrix();
 	void				Update_Colliders();
+	void				Update_Collider_Smash();
 
 public:
 	void				Change_Pivot(EShieldPivot ePitvot);
@@ -84,6 +94,9 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CCollider*			m_pCollider_Smash = nullptr;
+
+	CDissolve*			m_pDissolveCom = nullptr;
 
 public:
 	static CPlayerWeapon_Shield*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

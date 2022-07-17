@@ -80,8 +80,8 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	if(m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR || m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
-		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	/*if(m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR || m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));*/
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 

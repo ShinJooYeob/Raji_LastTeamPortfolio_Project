@@ -57,6 +57,46 @@ _int CPlayerWeapon::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon::Dissolve_In(_double fTargetTime)
+{
+	
+}
+
+void CPlayerWeapon::Dissolve_Out(_double fTargetTime)
+{
+	
+}
+
+void CPlayerWeapon::Active_Collision()
+{
+	m_bActiveCollision = true;
+}
+
+void CPlayerWeapon::DeActive_Collision()
+{
+	m_bActiveCollision = false;
+}
+
+void CPlayerWeapon::Active_Collision_1()
+{
+	m_bActiveCollision_1 = true;
+}
+
+void CPlayerWeapon::DeActive_Collision_1()
+{
+	m_bActiveCollision_1 = false;
+}
+
+void CPlayerWeapon::Active_Collision_2()
+{
+	m_bActiveCollision_2 = true;
+}
+
+void CPlayerWeapon::DeActive_Collision_2()
+{
+	m_bActiveCollision_2 = false;
+}
+
 void CPlayerWeapon::Active_Trail(_bool bActivate)
 {
 	m_bActiveTrail = bActivate;
@@ -65,6 +105,11 @@ void CPlayerWeapon::Active_Trail(_bool bActivate)
 void CPlayerWeapon::Set_BlockUpdate(_bool bBlock)
 {
 	m_bBlockUpdate = bBlock;
+}
+
+_bool CPlayerWeapon::AbleToChangeWeapon()
+{
+	return _bool();
 }
 
 _fVector CPlayerWeapon::Get_BonePos(const char * pBoneName)

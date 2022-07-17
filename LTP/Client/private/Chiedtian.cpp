@@ -283,7 +283,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 		m_bIsAttack = true;
 		m_bISkill = true;
-		iRandom = 1;
+		//iRandom = 1;
 
 		switch (iRandom)
 		{
@@ -349,7 +349,7 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -406,16 +406,12 @@ _int CChiedtian::LateRender()
 
 void CChiedtian::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	//m_IsConfilicted = true;
-	//if (iMyColliderIndex == 2)
-	//{
-	//
-	//}
-	//
-	//if (!lstrcmp(pConflictedObj->Get_NameTag(), "Ä¡ÇÁÅ¸ÀÌÅº"))
-	//{
-	//	//
-	//}
+	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
+	{
+		m_pHPUI->Set_ADD_HitCount();
+		//m_pCollider->Set_Conflicted(0.5f);
+		//Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
+	}
 
 	//pConflictedObj->Get_NowHP() < 10
 

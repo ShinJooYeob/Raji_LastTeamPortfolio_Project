@@ -26,10 +26,20 @@ public:
 
 	virtual void		Active_Trail(_bool bActivate) override;
 
+	virtual void		CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	virtual _bool		AbleToChangeWeapon() override;
+
+public:
+	virtual void		Dissolve_In(_double fTargetTime) override;
+	virtual void		Dissolve_Out(_double fTargetTime) override;
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix	Get_BoneMatrix(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
+
 
 public:				
 	void				Change_Pivot(ESpearPivot ePitvot);
@@ -49,6 +59,7 @@ private:
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 	void				Update_Colliders();
+	void				Update_Colliders_1();
 	void				Update_ParticleTransform();
 
 private:
@@ -78,15 +89,15 @@ private:
 	CModel*					m_pModel = nullptr;
 	CTransform*				m_pTransformCom = nullptr;
 	CSwordTrail*			m_pSwordTrail = nullptr;
-
-
+	
 	CModel*					m_pModel_Skill = nullptr;
 	CTransform*				m_pTransformCom_Skill = nullptr;
 
 	CCollider*				m_pCollider = nullptr;
+	CCollider*				m_pCollider_Range = nullptr;
 
 
-
+	CDissolve*				m_pDissolveCom = nullptr;
 
 public:
 	static CPlayerWeapon_Spear*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -74,7 +74,6 @@ _int CShellingSkillRange::LateUpdate(_double fDeltaTime)
 
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
 
 	return _int();

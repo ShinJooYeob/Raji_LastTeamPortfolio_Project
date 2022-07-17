@@ -48,6 +48,7 @@ public:
 	HRESULT	Set_DissolveOn(_bool bFadeIn, _double TargetTime);
 	_bool	Get_IsDissolving() { return m_bIsDissolving; }
 	_double	Get_DissolvingRate() { return m_PassedTime / m_TargetTime; }
+	_bool	Get_IsFadeIn() { return m_bIsFadeIn; };
 
 
 private:

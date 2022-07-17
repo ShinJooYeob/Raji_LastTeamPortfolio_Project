@@ -36,6 +36,9 @@ public:
 
 	virtual void		Active_Trail(_bool bActivate) override;
 
+	virtual void		CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 public:
 	void				LookAtDir(_fVector fDir);
 
@@ -83,6 +86,7 @@ public:
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
+
 
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);

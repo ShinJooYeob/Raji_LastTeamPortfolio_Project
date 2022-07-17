@@ -85,7 +85,7 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 	}
 
 	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
 	Update_ParticleTransform(fDeltaTime);
 
 	return _int();
@@ -316,7 +316,6 @@ void CPlayerWeapon_Arrow::Set_State_Ultimate_Post_Shot()
 void CPlayerWeapon_Arrow::Set_TargetPos(_float3 fTargetPos)
 {
 	m_fTargetPos = fTargetPos;
-	int a = 10;
 }
 
 _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
@@ -462,7 +461,7 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 
 void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
 {
-	// º»Ã¼ À§Ä¡¿¡ ¾÷µ¥ÀÌÆ®
+	// ÂºÂ»ÃƒÂ¼ Ã€Â§Ã„Â¡Â¿Â¡ Â¾Ã·ÂµÂ¥Ã€ÃŒÃ†Â®
 
 	_Matrix mat = m_pTransformCom->Get_WorldMatrix();// * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 	_Vector vPos = mat.r[3];
@@ -518,7 +517,7 @@ HRESULT CPlayerWeapon_Arrow::Set_PlayOff_ALL()
 
 HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 {
-	// ÆÄÆ¼Å¬¿ë Transform Create
+	// Ã†Ã„Ã†Â¼Ã…Â¬Â¿Ã« Transform Create
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
@@ -690,6 +689,22 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 	else
 	{
 		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	}
+}
+
+void CPlayerWeapon_Arrow::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		if (true == m_bFired)
+		{
+			pConflictedCollider->Set_Conflicted(0.5f);
+
+			_int iSelectSoundFileIndex = rand() % 3;
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_Raji_Arrow_Impact_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
 	}
 }
 

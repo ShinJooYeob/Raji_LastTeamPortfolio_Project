@@ -28,6 +28,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 private:
 	void	Update_Colliders();
 
@@ -39,6 +42,8 @@ private:
 	SHELLINGARROWDESC	m_tShellingArrowDesc;
 
 	_float				m_fDestroy_Count = 2.f;
+
+	_bool				m_bOnceDamage = false;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

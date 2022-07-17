@@ -32,11 +32,28 @@ public:
 	virtual _int		LateRender() override;
 
 public:
+	virtual void		Dissolve_In(_double fTargetTime);
+	virtual void		Dissolve_Out(_double fTargetTime);
+
+public:
+	void				Active_Collision();
+	void				DeActive_Collision();
+
+	void				Active_Collision_1();
+	void				DeActive_Collision_1();
+
+	void				Active_Collision_2();
+	void				DeActive_Collision_2();
+
+public:
 	virtual void		Active_Trail(_bool bActivate);
+	virtual _bool		AbleToChangeWeapon();
 
 public:
 	void				Set_BlockUpdate(_bool bBlock);
+	_bool				Get_BlockUpdate() { return m_bBlockUpdate; }
 
+		
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
@@ -45,6 +62,10 @@ protected:
 	PlayerWeaponDesc			m_tPlayerWeaponDesc;
 	_bool						m_bBlockUpdate = false;
 	_bool						m_bActiveTrail = false;
+	_bool						m_bActiveCollision = false;
+	_bool						m_bActiveCollision_1 = false;
+	_bool						m_bActiveCollision_2 = false;
+
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;
