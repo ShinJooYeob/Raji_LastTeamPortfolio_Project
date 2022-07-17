@@ -19,6 +19,15 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+public:
+	virtual	_bool	Get_IsAttackState() { return m_bIsAttack; }
+
+public:
+	virtual	void	Set_IsAttackState(_bool State) { m_bIsAttack = State; }
+
 protected:
 	_bool		m_bIsHit = false;
 	_bool		m_bIsAttack = false;

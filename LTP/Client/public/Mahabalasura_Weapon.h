@@ -11,6 +11,7 @@ public:
 	{
 		CloneType m_CloneType = CLONE_END;
 		ATTACHEDESC m_eAttachedDesc;
+		CGameObject* MahabalasuraObj = nullptr;
 		_float3 Pos = _float3(0.f);
 	}WEAPONDESC;
 private:
@@ -29,6 +30,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 public:
 	HRESULT		Set_InstanceWeapon(_int iCount = 0);
 	void		Set_IsStab() { m_bIsStab = true; }
@@ -38,6 +42,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+
 	CCollider*			m_pCollider = nullptr;
 	
 	CGameObject*		m_pPlayerObj = nullptr;

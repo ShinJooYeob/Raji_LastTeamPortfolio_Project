@@ -37,6 +37,7 @@ HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 
 		m_pBossPos = m_WeaponDesc.Pos;
 		m_mBossMatrix = BossTransform->Get_WorldMatrix();
+		m_bIsAttack = true;
 	}
 
 	FAILED_CHECK(SetUp_Components());
@@ -44,12 +45,14 @@ HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
 	{
 		m_pTransformCom->Scaled_All(_float3(0.8f));
+		m_bIsAttack = false;
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
 	{
 		m_pTransformCom->Scaled_All(XMVectorSet(100.f, 200.f, 150.f, 0.f));
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_WeaponDesc.Pos);
+		m_bIsAttack = true;
 	}
 
 
@@ -88,6 +91,9 @@ _int CMahabalasura_Weapon::Update(_double fDeltaTime)
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
 	{
+			m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	m_PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 		if (m_bIsAliveTimeStart)
 		{
@@ -113,9 +119,88 @@ _int CMahabalasura_Weapon::Update(_double fDeltaTime)
 				}
 				else
 				{
-					m_bIsAliveTimeStart = true;
+					Pos.y = m_PlayerPos.y;
+
+					if(i== m_vInstanceTransformComs.size()-1)
+						m_bIsAliveTimeStart = true;
 				}
 			}
+		}
+	}
+
+	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
+	{
+		m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+		_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pCollider->Update_Transform(i, mat);
+
+		if (m_bIsAttack)
+		{
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+		}
+
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+
+		m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+		_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+		_Vector vPos = mat.r[3];
+
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pCollider->Update_Transform(i, mat);
+
+		if (m_bIsAttack)
+		{
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+		}
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+
+		_uint iNumCollider = m_pCollider->Get_NumColliderBuffer();
+
+		for (_uint i = 0; i < iNumCollider; i++)
+		{
+			if (i == 0)
+			{
+				_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+				mat.r[0] = XMVector3Normalize(mat.r[0]);
+				mat.r[1] = XMVector3Normalize(mat.r[1]);
+				mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+				m_pCollider->Update_Transform(i, mat);
+				continue;
+			}
+
+			_Matrix mat = m_vInstanceTransformComs[i-1]->Get_WorldMatrix();
+			mat.r[0] = XMVector3Normalize(mat.r[0]);
+			mat.r[1] = XMVector3Normalize(mat.r[1]);
+			mat.r[2] = XMVector3Normalize(mat.r[2]);
+			m_pCollider->Update_Transform(i, mat);
+
+		}
+
+		if (m_bIsAttack)
+		{
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 		}
 	}
 
@@ -133,15 +218,18 @@ _int CMahabalasura_Weapon::LateUpdate(_double fDeltaTime)
 
 		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	}
 
 	return _int();
@@ -206,8 +294,15 @@ _int CMahabalasura_Weapon::LateRender()
 	return _int();
 }
 
+void CMahabalasura_Weapon::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	pConflictedCollider->Set_Conflicted();
+}
+
 HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
 {
+	COLLIDERDESC			ColliderDesc;
+
 	if (iCount == 0)
 	{
 		for (_uint i = 0; i < 6; i++)
@@ -227,6 +322,14 @@ HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
 			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
 
 			m_vInstanceTransformComs.push_back(pTransform);
+
+			//충돌체
+			ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+			ColliderDesc.vScale = _float3(2.5f, 2.5f, 2.5f);
+			ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.vPosition = _float4(0.f, 2.7f, 0.f, 1);
+			FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+			m_pCollider->Set_ParantBuffer();
 		}
 	}
 	else if (iCount == 1)
@@ -246,6 +349,14 @@ HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
 			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
 
 			m_vInstanceTransformComs.push_back(pTransform);
+
+			//충돌체
+			ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+			ColliderDesc.vScale = _float3(2.5f, 2.5f, 2.5f);
+			ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.vPosition = _float4(0.f, 2.7f, 0.f, 1);
+			FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+			m_pCollider->Set_ParantBuffer();
 		}
 	}
 	else if (iCount == 2)
@@ -264,6 +375,14 @@ HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
 			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
 			pTransform->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(180.f));
 			m_vInstanceTransformComs.push_back(pTransform);
+
+			//충돌체
+			ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+			ColliderDesc.vScale = _float3(2.5f, 2.5f, 2.5f);
+			ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.vPosition = _float4(0.f, 2.7f, 0.f, 1);
+			FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+			m_pCollider->Set_ParantBuffer();
 		}
 	}
 	return S_OK;
@@ -303,14 +422,82 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 	}
 
-	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 
-	//COLLIDERDESC			ColliderDesc;
-	//ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	//ColliderDesc.vScale = _float3(3.f);
-	//ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	//ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	//FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	if(m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_BOSS)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(5.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 2.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(6.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 2.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+	}
+	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_INSTANCE)
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(100.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	}
 
 	return S_OK;
 }

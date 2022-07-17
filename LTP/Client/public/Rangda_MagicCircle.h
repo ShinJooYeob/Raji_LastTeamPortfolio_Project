@@ -34,8 +34,13 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
 
+	CCollider*			m_pCollider = nullptr;
+
 private:
 	_float				m_fAlpha = 0.f;
+
+	_bool				m_bIsVanish = false;
+	_float				m_fVanishTime = 0.5f;
 
 private:
 	HRESULT SetUp_Components();

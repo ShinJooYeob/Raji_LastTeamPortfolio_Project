@@ -41,6 +41,8 @@ HRESULT CHpUI::Initialize_Clone(void * pArg)
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * 0.5f);
 
+			Pos.y += 0.1f;
+
 			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 			NULL_CHECK_RETURN(pTransform, E_FAIL);
 
@@ -60,6 +62,8 @@ HRESULT CHpUI::Initialize_Clone(void * pArg)
 			_float Angle = (_float)i*(360.f / m_HpDesc.m_pObjcect->Get_MaxHP());
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * 0.8f);
+
+			Pos.y += 0.1f;
 
 			CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 			NULL_CHECK_RETURN(pTransform, E_FAIL);
@@ -84,22 +88,24 @@ _int CHpUI::Update(_double fDeltaTime)
 
 	Set_ObjectPos();
 
-	if(m_iHitCount < 0)
+	if (m_iHitCount < 0)
 		m_iHitCount = 0;
-
-	if (m_iHitCount > m_HpDesc.m_pObjcect->Get_MaxHP())
-	{
-		m_iHitCount = 9;
-		//다이!!!!!
-	}
 
 	if (m_HpDesc.m_HPType == CHpUI::HP_RAJI)
 	{
+		if (m_iHitCount >(_int)m_HpDesc.m_pObjcect->Get_MaxHP())
+		{
+			m_iHitCount = (_int)m_HpDesc.m_pObjcect->Get_MaxHP();
+			//다이!!!!!
+		}
+
 		for (_int i = 0; i < 9; ++i)
 		{
 			_float Angle = (_float)i*(360.f / 9.f);
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
+
+			Pos.y += 0.1f;
 
 			_Matrix Mat2 = XMMatrixRotationX(XMConvertToRadians(90))
 				*XMMatrixRotationY(XMConvertToRadians(Angle + 180.f));
@@ -123,6 +129,13 @@ _int CHpUI::Update(_double fDeltaTime)
 	}
 	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
 	{
+
+		if (m_iHitCount > (_int)m_HpDesc.m_pObjcect->Get_MaxHP())
+		{
+			m_iHitCount = (_int)m_HpDesc.m_pObjcect->Get_MaxHP();
+			//다이!!!!!
+		}
+
 		_int iMaxHP = (_int)m_HpDesc.m_pObjcect->Get_MaxHP();
 
 		for (_int i = 0; i < iMaxHP; ++i)
@@ -130,6 +143,8 @@ _int CHpUI::Update(_double fDeltaTime)
 			_float Angle = (_float)i*(360.f / (_float)iMaxHP);
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
+
+			Pos.y += 0.1f;
 
 			_Matrix Mat2 = XMMatrixRotationX(XMConvertToRadians(90))
 				*XMMatrixRotationY(XMConvertToRadians(Angle + 180.f));
@@ -139,7 +154,7 @@ _int CHpUI::Update(_double fDeltaTime)
 			m_vPosTransforms[i]->Set_Matrix(Mat2);
 
 
-			m_vPosTransforms[i]->Scaled_All(_float3(1.f - (m_HpDesc.m_pObjcect->Get_MaxHP() *0.01f), 0.5f, 0.5f));
+			m_vPosTransforms[i]->Scaled_All(_float3(1.1f - (m_HpDesc.m_pObjcect->Get_MaxHP() *0.01f), 0.5f, 0.5f));
 		}
 
 		for (_int i = 0; i < m_vPosTransforms.size(); ++i)

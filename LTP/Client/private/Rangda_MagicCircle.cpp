@@ -50,12 +50,30 @@ _int CRangda_MagicCircle::Update(_double fDeltaTime)
 
 	m_fAlpha += (_float)fDeltaTime * 0.5f;
 
+	if (m_bIsVanish)
+	{
+		m_fVanishTime -= (_float)fDeltaTime;
+	}
+
 	if (m_fAlpha >= 1.f)
+	{
+		m_bIsVanish = true;
+	}
+
+	if (m_fVanishTime <= 0)
 	{
 		Set_IsDead();
 	}
 
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
 
+	_Matrix Matrix = m_pTransformCom->Get_WorldMatrix();
+	m_pCollider->Update_Transform(0, Matrix);
+
+	if (m_bIsVanish)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+	}
 
 	return _int();
 }
@@ -69,7 +87,7 @@ _int CRangda_MagicCircle::LateUpdate(_double fDeltaTime)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
 	}
-
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
 }
@@ -124,6 +142,13 @@ HRESULT CRangda_MagicCircle::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 	
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pCollider));
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	return S_OK;
 }
@@ -161,4 +186,5 @@ void CRangda_MagicCircle::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pCollider);
 }

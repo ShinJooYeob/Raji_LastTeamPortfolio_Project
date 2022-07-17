@@ -171,6 +171,13 @@ _int CChiedtian::Update(_double fDeltaTime)
 		m_fAttackCoolTime = 1.f;
 		m_fSkillCoolTime = 5.f;
 
+
+		for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+			m_pMainWeapons[i]->Set_IsAttackState(false);
+
+		for (_int i = 0; i < m_pSubWeapons.size(); ++i)
+			m_pSubWeapons[i]->Set_IsAttackState(false);
+
 		CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
 		//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
@@ -244,15 +251,15 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 
-	//맞았을때
-	if (m_bIsHit)
-	{
-		m_bIsHit = false;
-		m_bIsAttack = true;
-		//m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
-	}
+	////맞았을때
+	//if (m_bIsHit)
+	//{
+	//	m_bIsHit = false;
+	//	m_bIsAttack = true;
+	//	//m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
+	//}
 	//점프
-	else if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
+	if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
 	{
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex_ReturnTo(10, 1);
@@ -283,7 +290,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 		m_bIsAttack = true;
 		m_bISkill = true;
-		//iRandom = 1;
+		iRandom = 0;
 
 		switch (iRandom)
 		{
@@ -324,6 +331,24 @@ _int CChiedtian::Update(_double fDeltaTime)
 	for (_uint i = 0; i < iNumCollider; i++)
 		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 
+	//FireSkill_Collider
+	m_pFireCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pFireCollider->Update_Transform(0, m_FireAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	//Jump_Collider
+	m_pJumpCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pJumpCollider->Update_Transform(0, m_JumpAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	if (m_bIsFireAttack)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pFireCollider));
+	}
+
+	if (m_bIsJump)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pJumpCollider));
+	}
+
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
 	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
@@ -349,7 +374,9 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pFireCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pJumpCollider));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -406,12 +433,22 @@ _int CChiedtian::LateRender()
 
 void CChiedtian::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
-	{
-		m_pHPUI->Set_ADD_HitCount();
-		//m_pCollider->Set_Conflicted(0.5f);
-		//Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
-	}
+	//if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
+	//{
+	//	m_pHPUI->Set_ADD_HitCount();
+	//	m_pCollider->Set_Conflicted(0.3f);
+	//	//Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
+	//}
+	//m_IsConfilicted = true;
+	//if (iMyColliderIndex == 2)
+	//{
+	//
+	//}
+	//
+	//if (!lstrcmp(pConflictedObj->Get_NameTag(), "Ä¡ÇÁÅ¸ÀÌÅº"))
+	//{
+	//	//
+	//}
 
 	//pConflictedObj->Get_NowHP() < 10
 
@@ -602,6 +639,28 @@ HRESULT CChiedtian::SetUp_Components()
 	m_pCollider->Set_ParantBuffer(1);
 
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pFireCollider));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, -4.f, 0.f, 1);
+	FAILED_CHECK(m_pFireCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "root", _float3(1), _float3(0), _float3(0, 0, 0));
+	m_FireAttachedDesc = tAttachedDesc;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSubSub), (CComponent**)&m_pJumpCollider));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pJumpCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "root", _float3(1), _float3(0), _float3(0, 0, 0));
+	m_JumpAttachedDesc = tAttachedDesc;
+
 
 
 	return S_OK;
@@ -664,19 +723,39 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsLookAt = false;
 				m_iAdjMovedIndex++;
 			}
-
-			if (PlayRate < 0.1372549 && PlayRate > 0.3725490)
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.529411764)
 			{
-				//무기 회전 시킬려고 한거 같은데???
-				//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 0);
+				m_pMainWeapons[0]->Set_IsAttackState(false);
+				m_iAdjMovedIndex++;
 			}
+
+			if (PlayRate > 0.215686274 && PlayRate < 0.529411764)
+			{
+				m_pMainWeapons[0]->Set_IsAttackState(true);
+			}
+
+
+			//if (PlayRate < 0.1372549 && PlayRate > 0.3725490)
+			//{
+			//	//무기 회전 시킬려고 한거 같은데???
+			//	//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 0);
+			//}
 		}
 
 		break;
 
 		case 6:
 		{
-			if (PlayRate > 0.22666666f && PlayRate < 0.53333333f)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
+			{
+				for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+				{
+					m_pMainWeapons[i]->Set_IsAttackState(true);
+				}
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0.22666666 && PlayRate < 0.53333333)
 			{
 				m_pTransformCom->Move_Forward(fDeltatime/*, m_pNavigationCom*/);
 			}
@@ -691,7 +770,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsLookAt = false;
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315f)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
 			{
 				CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
@@ -803,6 +882,17 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsLookAt = false;
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.682926)
+			{
+				m_bIsJump = true;
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.71)
+			{
+				m_bIsJump = false;
+				m_iAdjMovedIndex++;
+			}
 		}
 		break;
 
@@ -893,6 +983,10 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 6)
 		{
+			for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+			{
+				m_pMainWeapons[i]->Set_IsAttackState(false);
+			}
 			//m_bIsLookAt = true;
 			m_fAttackCoolTime = 1.f;
 			m_fSkillCoolTime = 6.f;
@@ -902,6 +996,13 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 8)
 		{
 			m_bIsSpinAttack = true;
+
+			for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+				m_pMainWeapons[i]->Set_IsAttackState(true);
+
+			for (_int i = 0; i < m_pSubWeapons.size(); ++i)
+				m_pSubWeapons[i]->Set_IsAttackState(true);
+
 			m_fSpinTime = 14.f;
 		}
 		if (iNowAnimIndex == 9)
@@ -971,6 +1072,8 @@ void CChiedtian::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pFireCollider);
+	Safe_Release(m_pJumpCollider);
 
 	for (auto& Weapon : m_pMainWeapons)
 		Safe_Release(Weapon);

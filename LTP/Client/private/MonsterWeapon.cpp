@@ -52,6 +52,10 @@ _int CMonsterWeapon::LateRender()
 	return _int();
 }
 
+void CMonsterWeapon::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+}
+
 void CMonsterWeapon::Free()
 {
 	__super::Free();

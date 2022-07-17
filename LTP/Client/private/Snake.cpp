@@ -112,7 +112,7 @@ _int CSnake::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 
 			_int iRandom =  (_int)GetSingle(CUtilityMgr)->RandomFloat(1.0f, 2.9f);
-
+			iRandom = 1;
 			if(iRandom == 1)
 				m_pModel->Change_AnimIndex(3);
 			else
@@ -123,6 +123,14 @@ _int CSnake::Update(_double fDeltaTime)
 	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple)));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
+
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pCollider->Update_Transform(0, m_AttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	if (m_bIsBite)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+	}
 
 	return _int();
 }
@@ -135,6 +143,8 @@ _int CSnake::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
 }
@@ -171,6 +181,10 @@ _int CSnake::LateRender()
 	return _int();
 }
 
+void CSnake::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+}
+
 HRESULT CSnake::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -190,6 +204,18 @@ HRESULT CSnake::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(15.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "sk_tongue_01", _float3(1), _float3(0), _float3(-172.598f, -0.000048f, 76.4859f));
+	m_AttachedDesc = tAttachedDesc;
 
 	return S_OK;
 }
@@ -298,6 +324,13 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		break;
 
 		case 3:
+		{
+			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
+			{
+				m_bIsBite = true;
+				m_iAdjMovedIndex++;
+			}
+		}
 		break;
 
 		case 4:
@@ -332,6 +365,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		if (iNowAnimIndex == 3)
 		{
+			m_bIsBite = false;
 			m_bIsAngleOut = false;
 			m_fAttackCoolTime = 2.f;
 			m_fRotTime = 0.f;
@@ -394,4 +428,5 @@ void CSnake::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pCollider);
 }
