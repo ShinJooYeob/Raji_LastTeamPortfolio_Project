@@ -59,6 +59,9 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	if (m_eNowSceneNum == 7)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(1.f, 0.f, 0.f));
 
+	//////////////////////////////////////////////////////////////////////////EH!@#!@#@!#$@#$@!$@!$!@$@!#$
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.5f, 60.f ));
+	//////////////////////////////////////////////////////////////////////////
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	FAILED_CHECK(SetUp_PlayerWeapons());
@@ -326,11 +329,11 @@ _int CPlayer::Render()
 
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
-#ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom);
-//	if (m_pHeadJoint)
-//		m_pHeadJoint->Render();
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	m_pNavigationCom->Render(m_pTransformCom);
+////	if (m_pHeadJoint)
+////		m_pHeadJoint->Render();
+//#endif // _DEBUG
 
 	return _int();
 }

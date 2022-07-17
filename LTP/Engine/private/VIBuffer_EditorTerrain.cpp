@@ -517,8 +517,8 @@ _Vector CVIBuffer_EditorTerrain::Caculate_Terrain_Pick_byRay(_bool* pbIsOnTerrai
 
 _float CVIBuffer_EditorTerrain::EquationPlane(_bool * pbIsOnTerrain, _float3 PosOnTerrainLocal, _float* pCaculateY, _float3* vNormVector)
 {
-	if (PosOnTerrainLocal.x < 0 || PosOnTerrainLocal.x >= m_iNumVerticesX ||
-		PosOnTerrainLocal.z < 0 || PosOnTerrainLocal.z >= m_iNumVerticesZ)
+	if (PosOnTerrainLocal.x < 2 || PosOnTerrainLocal.x >= m_iNumVerticesX-2 ||
+		PosOnTerrainLocal.z < 2 || PosOnTerrainLocal.z >= m_iNumVerticesZ-2)
 	{
 		*pbIsOnTerrain = false;
 		return -FLT_MAX;

@@ -912,6 +912,10 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 	{
 	case Client::CScene_Edit::Data_Map:
 	{
+
+
+		list<wstring> MeshIDList;
+
 		{
 			for (auto& tObjElement : m_vecBatchedObject)
 			{
@@ -1013,15 +1017,13 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 				tData.pObject->Change_Component_by_NewAssign(SCENE_EDIT, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve),&tDissolveDesc);
 
-
-
-
-
+				MeshIDList.push_back(tData.MeshID);
 			}
 
 			//Æ®·»½ºÆû
 			CTransform* pTrans = (CTransform*)(tData.pObject->Get_Component(TAG_COM(Com_Transform)));
 			NULL_CHECK_RETURN(pTrans, E_FAIL);
+			//tData.matTransform._42 -= 20;
 			pTrans->Set_Matrix(tData.matTransform);
 
 
@@ -1038,7 +1040,22 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		CloseHandle(hFile);
 	
+		//wstring
+		OutputDebugStringW(L"TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));\n");
+		OutputDebugStringW(L"CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);\n");
 
+		for (auto MeshID : MeshIDList)
+		{
+			wstring Ouput;
+
+			Ouput = L"pAssimpCreateMgr->Load_Model_One_ByFBXName(L\"" + MeshID + L"\", TransformMatrix);\n";
+
+			OutputDebugStringW(Ouput.c_str());
+
+		}
+
+		//TransformMatrix = XMMatrixScaling(1, 1, 1) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		//GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Vayusura_Leader), TransformMatrix);
 	}
 	break;
 	case Client::CScene_Edit::Data_UI:
