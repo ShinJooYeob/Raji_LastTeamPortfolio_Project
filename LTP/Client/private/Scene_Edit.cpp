@@ -889,6 +889,9 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 				}
 			}
 			WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+			CCell::CELL_OPTION CellOption = Cell->Get_CellOption();
+			WriteFile(hFile, &CellOption, sizeof(CCell::CELL_OPTION),  &dwByte, nullptr);
+
 		}
 
 		CloseHandle(hFile);
@@ -1427,6 +1430,9 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 		{
 			ReadFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
+			CCell::CELL_OPTION CellOption = CCell::CELL_END;
+			ReadFile(hFile, &CellOption, sizeof(CCell::CELL_OPTION), &dwByte, nullptr);
+
 			if (0 == dwByte)
 				break;
 
@@ -1522,6 +1528,9 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 				ZeroMemory(m_vVertexts, sizeof(_float3) * 3);
 			}
+
+
+			pCell->Set_CellOption(CellOption);
 		}
 
 		CloseHandle(hFile);
@@ -6191,7 +6200,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 
 		Make_VerticalSpacing(2);
 
-		const char* items[] = { "CELL_NOMAL", "CELL_DROP" };
+		const char* items[] = { "CELL_NOMAL", "CELL_DROP","CELL_JUMPZONE","CELL_BLOCKZONE" };
 		static int item_current = 0;
 		ImGui::Combo("Cell Option", &item_current, items, IM_ARRAYSIZE(items));
 		if (m_bIsCellListClick)
@@ -6209,6 +6218,10 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 				}
 				else if (item_current == 1)
 					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_DROP);
+				else if (item_current == 2)
+					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_JUMPZONE);
+				else if (item_current == 3)
+					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_BLOCKZONE);
 			}
 		}
 
