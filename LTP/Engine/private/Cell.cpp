@@ -30,10 +30,16 @@ void CCell::Set_CellOption(CELL_OPTION eCellOption)
 	switch (m_eCellOption)
 	{
 	case Engine::CCell::CELL_NOMAL:
-		m_vColor = _float4(1.f, 0.f, 0.f, 1.f);
+		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 		break;
 	case Engine::CCell::CELL_DROP:
 		m_vColor = _float4(0.f, 0.f, 1.f, 1.f);
+		break;
+	case Engine::CCell::CELL_JUMPZONE:
+		m_vColor = _float4(0.f,1.f,1.f,1.f);
+		break;
+	case Engine::CCell::CELL_BLOCKZONE:
+		m_vColor = _float4(0.75f,0.f,1.f,1.f);
 		break;
 	}
 }

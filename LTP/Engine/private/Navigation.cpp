@@ -37,9 +37,13 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
 
 	_float3			vPoints[3];
 
+
+
 	while (true)
 	{
 		ReadFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+		CCell::CELL_OPTION CellOption = CCell::CELL_END;
+		ReadFile(hFile, &CellOption, sizeof(CCell::CELL_OPTION), &dwByte, nullptr);
 
 		if (0 == dwByte)
 			break;
@@ -47,6 +51,8 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
 		CCell*		pCell = CCell::Create(m_pDevice, m_pDeviceContext, vPoints, _uint(m_Cells.size()));
 		if (nullptr == pCell)
 			return E_FAIL;
+
+		pCell->Set_CellOption(CellOption);
 
 		m_Cells.push_back(pCell);
 	}
