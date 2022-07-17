@@ -1699,7 +1699,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 
 _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 {
-	CGameInstance* pGameInstance = GetSingle(CGameInstance);
+	CGameInstance* pGameInstance = GetSingle(CGameInstance); 
 
 	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_SPEAR)
 	{
