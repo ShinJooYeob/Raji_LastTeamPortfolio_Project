@@ -413,7 +413,7 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	CameraDesc.fFovy = XMConvertToRadians(60.f);
 	CameraDesc.fAspect = _float(g_iWinCX) / g_iWinCY;
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = CAMERAFAR;
 
 	CameraDesc.iWinCX = g_iWinCX;
 	CameraDesc.iWinCY = g_iWinCY;
@@ -454,8 +454,6 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	//JJB
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_HpUI),		CHpUI::Create(m_pDevice, m_pDeviceContext)));
 
-
-	//
 
 	//
 	//FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UILoading), CLoadingUI::Create(m_pDevice, m_pDeviceContext)));

@@ -404,7 +404,7 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 	
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
@@ -436,7 +436,7 @@ PS_OUT PS_BrightColor(PS_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
@@ -501,7 +501,7 @@ PS_OUT PS_MAIN_NoiseFireEffect(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -549,7 +549,7 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -606,7 +606,7 @@ PS_OUT PS_MAIN_NoiseAppear(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -666,7 +666,7 @@ PS_OUT PS_MAIN_NoiseAppear_Bright(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -714,7 +714,7 @@ PS_OUT_NODEFERRED PS_Distortion_All(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -768,7 +768,7 @@ PS_OUT_NODEFERRED PS_Distortion_All_Bright(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -831,7 +831,7 @@ PS_OUT_NODEFERRED PS_Distortion_DiffuseMix(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -893,7 +893,7 @@ PS_OUT_NODEFERRED PS_Distortion_DiffuseMix_Bright(PS_Noise_IN In)
 	vUV.x = vUV.x * 0.5f + 0.5f;
 	vUV.y = vUV.y * -0.5f + 0.5f;
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
@@ -953,7 +953,7 @@ PS_OUT_NODEFERRED PS_Distortion_ClolorMix(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -1017,7 +1017,7 @@ PS_OUT_NODEFERRED PS_Distortion_ClolorMix_Bright(PS_Noise_IN In)
 	vUV.y = vUV.y * -0.5f + 0.5f;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
@@ -1061,7 +1061,7 @@ PS_OUT_WorldBlend PS_MAIN_NoSoft(PS_IN In)
 	//vUV.y = vUV.y * -0.5f + 0.5f;
 
 	//vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vUV);
-	//float		fViewZ = vDepthDesc.x * 300.f;
+	//float		fViewZ = vDepthDesc.x * FarDist;
 
 
 	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
@@ -1074,7 +1074,7 @@ PS_OUT_WorldBlend PS_MAIN_NoSoft(PS_IN In)
 	Out.vWorldPosition = In.vWorldPos;
 	Out.vEmissive = vector(1, 0.5f, 1.f, 1);
 	Out.vLimLight = 0.f;
-	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	return Out;
 }

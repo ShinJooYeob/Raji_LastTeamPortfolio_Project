@@ -23,6 +23,8 @@
 #endif
 
 
+#define CAMERAFAR 300.f
+
 #define EASING_PI 3.1415926535f
 
 #define SOUND_MAX 1.0f

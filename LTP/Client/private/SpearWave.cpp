@@ -31,8 +31,8 @@ HRESULT CSpearWave::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->LookDir_ver2(tSpearWaveDesc.fLookDir.XMVector());
 
-	if (tSpearWaveDesc.IsHorizon)
-		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), 1);
+	//if (tSpearWaveDesc.IsHorizon)
+	//	m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), 1);
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, tSpearWaveDesc.fStartPos);
 
@@ -50,13 +50,12 @@ HRESULT CSpearWave::Initialize_Clone(void * pArg)
 	m_tTextureParticleDesc.iFollowingDir = FollowingDir_Look;
 	m_tTextureParticleDesc.TotalParticleTime = m_fMaxTime_Duration - 0.5f;
 
+	pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
 
-	if (tSpearWaveDesc.IsHorizon)
-	{
-		m_tTextureParticleDesc.ParticleStartRandomPosMax = _float3(2.f,0.1f,2.0f);
-		m_tTextureParticleDesc.ParticleStartRandomPosMin= _float3(-2.f, -0.1f, -2.0f);
-	}
 
+	m_tTextureParticleDesc.ParticleStartRandomPosMax = _float3(2.f, 0.1f, 2.0f);
+	m_tTextureParticleDesc.ParticleStartRandomPosMin = _float3(-2.f, -0.1f, -2.0f);
+	
 
 	pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
 
@@ -120,11 +119,9 @@ _int CSpearWave::Render()
 
 	_float4 color = _float4(1.f, 0.734375f, 0.75234375f, 1);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &color, sizeof(_float4)));
-	
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	_float2 noisingdir = _float2(1, 0);
 	_float fDistortionNoisingPushPower = 0.5f;
@@ -155,6 +152,11 @@ _int CSpearWave::Render()
 			}
 		}
 
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), 1);
+		FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 16, i));
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), -1);
+		FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 16, i));
 	}
 

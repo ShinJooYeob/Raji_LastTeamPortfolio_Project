@@ -317,7 +317,7 @@ void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
 
 	for (auto& timer :m_fPlayParticleTimer)
 	{
-		timer -= fDeltaTime;
+		timer -= (_float)fDeltaTime;
 		if (timer <= -100)
 			timer = -1;
 	}

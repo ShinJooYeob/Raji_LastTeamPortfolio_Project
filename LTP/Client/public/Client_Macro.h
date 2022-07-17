@@ -21,7 +21,7 @@
 #define KEYPRESS(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Press
 #define KEYDOUBLE(x)	GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_DoubleDown
 
-#define DefalutSunPosition _float4(64.f,15.f,64.f,0)
+#define DefalutSunPosition _float4(-64.f,64.f,-64.f,0)
 #define PXVEC3TOFLOAT3(x) *((_float3*)&x)
 #define FLOAT3TOPXVEC3(x) *((PxVec3*)&x)
 

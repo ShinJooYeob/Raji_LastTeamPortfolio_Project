@@ -29,7 +29,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 	ZeroMemory(m_PostProcessingOn, sizeof(_bool) * POSTPROCESSING_END);
 }
-#define ShadowMapQuality 3
+#define ShadowMapQuality 5
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -1505,6 +1505,10 @@ HRESULT CRenderer::Render_ShadowMap()
 
 HRESULT CRenderer::Render_ShadowGroup()
 {
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_Vector vCamWorldPosition = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix().r[3];
+
 
 	//SHADOW_ANIMMODEL, SHADOW_ANIMMODEL_ATTACHED, SHADOW_NONANIMMODEL, SHADOW_NONANIMMODEL_ATTACHED, SHADOW_TERRAIN, SHADOW_END
 
@@ -1517,8 +1521,10 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL])
 		{
-			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+			if (!ShadowDesc.pGameObject->Get_IsOwerDead() )
+			//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
 			{
+				
 				if (!m_bShadowLightMatBindedChecker)
 				{
 					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
@@ -1556,6 +1562,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED])
 		{
 			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
 			{
 				if (!m_bShadowLightMatBindedChecker)
 				{
@@ -1600,6 +1607,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_NONANIMMODEL])
 		{
 			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
 			{
 				if (!m_bShadowLightMatBindedChecker)
 				{
@@ -1643,6 +1651,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED])
 		{
 			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
 			{
 				if (!m_bShadowLightMatBindedChecker)
 				{
@@ -1685,6 +1694,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_TERRAIN])
 		{
 			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
 			{
 				if (!m_bShadowLightMatBindedChecker)
 				{

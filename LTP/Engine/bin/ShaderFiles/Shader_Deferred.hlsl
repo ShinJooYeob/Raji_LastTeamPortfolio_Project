@@ -3,6 +3,7 @@
 #define XTexelSize		0.00078125f
 #define YTexelSize		0.00138889f
 #define	DiagTexelSize	0.00159353f
+#define FarDist			300.f
 #define vec2			float2
 #define vec3			float3
 #define vec4			float4
@@ -168,7 +169,7 @@ float3 ApplyFog(float3 originalColor, float eyePosY, float3 eyeToPixel)
 float3 Calculate_ClipUV_N_CurrentDepth(texture2D WorldTexture, float2 UVPos, matrix mViewProj)
 {
 	vector		vWorldPosition = WorldTexture.Sample(DefaultSampler, UVPos);
-	//float		fViewZ = vDepthDesc.x * 300.f;
+	//float		fViewZ = vDepthDesc.x * FarDist;
 	vector		vWorldPos = vector(vWorldPosition.xyz, 1);
 
 	float4 ClipPos = mul(vWorldPos, g_LightViewMatrix);
@@ -474,7 +475,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vDepthDesc		= g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vMtrlSpecularMap = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
@@ -530,7 +531,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
 	vector		vMtrlSpecularMap = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
@@ -751,7 +752,7 @@ PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 
 
 	vector		vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
-	//float		fViewZ = vDepthDesc.x * 300.f;
+	//float		fViewZ = vDepthDesc.x * FarDist;
 
 	matrix LightViewProj = mul(g_LightViewMatrix, g_LightProjMatrix);
 	float3 ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, In.vTexUV, LightViewProj);
@@ -832,7 +833,7 @@ PS_OUT PS_MAIN_DepthOfFiled(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
-	float		fViewZ = vDepthDesc.x * 300.f;
+	float		fViewZ = vDepthDesc.x * FarDist;
 
 	vector		vWorldPos;
 

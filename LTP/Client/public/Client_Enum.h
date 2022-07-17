@@ -300,6 +300,7 @@ enum OBJECTPROTOTYPEID
 
 
 	Prototype_StaticMapObject,
+	Prototype_InstanceStaticMapObject,
 
 
 	Prototype_TestObject,
@@ -433,7 +434,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_PlayerSkill_SpearWave:
 		return TEXT("Prototype_PlayerSkill_SpearWave");
 		break;
-
+		
+	case Prototype_InstanceStaticMapObject:
+		return TEXT("Prototype_InstanceStaticMapObject");
+		break;
 	case Prototype_StaticMapObject:
 		return TEXT("Prototype_StaticMapObject");
 		break;

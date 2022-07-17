@@ -71,31 +71,32 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel,nullptr,m_pDissolve));
+
 
 	if (g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius))
 	{
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 
 
 
 #ifdef _DEBUG
-	/*for (_uint i = 0; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
-	{
-		m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
-	}*/
-	for (_uint i = 0; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
-	{
-		_Matrix FrustumSizeCheckMat = m_pTransformCom->Get_WorldMatrix();
 
-		FrustumSizeCheckMat.r[0] = XMVectorSet(1.f, 0.f, 0.f, 0.f) * (m_fFrustumRadius * 2.f);
-		FrustumSizeCheckMat.r[1] = XMVectorSet(0.f, 1.f, 0.f, 0.f) * (m_fFrustumRadius* 2.f);
-		FrustumSizeCheckMat.r[2] = XMVectorSet(0.f, 0.f, 1.f, 0.f) * (m_fFrustumRadius* 2.f);
+	if (m_eNowSceneNum == SCENE_EDIT)
+	{
+		for (_uint i = 0; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
+		{
+			_Matrix FrustumSizeCheckMat = m_pTransformCom->Get_WorldMatrix();
 
-		m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
+			FrustumSizeCheckMat.r[0] = XMVectorSet(1.f, 0.f, 0.f, 0.f) * (m_fFrustumRadius * 2.f);
+			FrustumSizeCheckMat.r[1] = XMVectorSet(0.f, 1.f, 0.f, 0.f) * (m_fFrustumRadius* 2.f);
+			FrustumSizeCheckMat.r[2] = XMVectorSet(0.f, 0.f, 1.f, 0.f) * (m_fFrustumRadius* 2.f);
+
+			m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
+		}
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 	}
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 
 #endif // _DEBUG
 

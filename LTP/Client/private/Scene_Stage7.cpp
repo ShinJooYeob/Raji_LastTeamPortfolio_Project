@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Player.h"
 #include "MapObject.h"
+#include "StaticInstanceMapObject.h"
 #include "AssimpCreateMgr.h"
 
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -125,7 +126,7 @@ HRESULT CScene_Stage7::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(60.f);
 	CameraDesc.fAspect = _float(g_iWinCX) / g_iWinCY;
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = CAMERAFAR;
 
 	CameraDesc.iWinCX = g_iWinCX;
 	CameraDesc.iWinCY = g_iWinCY;
@@ -160,9 +161,13 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.F, 30.F, 60.f));
+	
+	
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+
+
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(5.999756f, 0.00001f, 13.531549f));
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
@@ -171,18 +176,18 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 
 
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 
-	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+	//CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
 
-	NULL_CHECK_RETURN(pTransform, E_FAIL);
+	//NULL_CHECK_RETURN(pTransform, E_FAIL);
 
 
-	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
+	//_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
 
-	pTransform->Set_Matrix(tt);
+	//pTransform->Set_Matrix(tt);
 
-	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag))->Set_FrustumSize(99999999.f);
+	//((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag))->Set_FrustumSize(99999999.f);
 
 	return S_OK;
 }
@@ -235,7 +240,7 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 
 	//Mesh Instance
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wasp)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wasp)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wormgrub)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Spider)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wolf)));
@@ -255,6 +260,13 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 
 
+	CGameInstance* pInstance = g_pGameInstance;
+
+	pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_InstanceStaticMapObject));
+	CStaticInstanceMapObject* pInstanceMapObject = (CStaticInstanceMapObject*)pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag);
+	NULL_CHECK_RETURN(pInstanceMapObject, E_FAIL);
+
+
 	//HANDLE hFile = CreateFileW(szFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 
@@ -266,7 +278,6 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 	DWORD	dwByte = 0;
 
-	CGameInstance* pInstance = g_pGameInstance;
 
 	_uint iIDLength = 0;
 
@@ -302,7 +313,9 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
 
+		FAILED_CHECK(pInstanceMapObject->Add_InstanceMapObject(tData));
 
+/*
 
 		//객채 생성해주기
 		//&(tData.pObject),
@@ -342,8 +355,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 		NULL_CHECK_RETURN(pTrans, E_FAIL);
 		//tData.matTransform._42 -= 20;
 		pTrans->Set_Matrix(tData.matTransform);
-
-
+*/
 
 	}
 

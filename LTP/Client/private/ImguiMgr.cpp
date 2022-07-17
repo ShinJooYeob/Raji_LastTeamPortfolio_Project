@@ -811,9 +811,9 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 			ImGui::DragFloat3("Sun Pos", arrSunPos, 0.134f, -64, 320.f);
 
-			vSunPos.x = max(min(arrSunPos[0], 320.f), -64.f);
-			vSunPos.y = max(min(arrSunPos[1], 48.f), 10.f);
-			vSunPos.z = max(min(arrSunPos[2], 320.f), -64.f);
+			vSunPos.x = max(min(arrSunPos[0], 1024.f), -64.f);
+			vSunPos.y = max(min(arrSunPos[1], 128.f), 10.f);
+			vSunPos.z = max(min(arrSunPos[2], 1024.f), -64.f);
 
 			g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(vSunPos, 0).XMVector());
 

@@ -1,4 +1,5 @@
 
+#define FarDist			300.f
 #define FloatCorrectionValue 0.00000125f
 #define XTexelSize		0.00078125f
 #define YTexelSize		0.00138889f

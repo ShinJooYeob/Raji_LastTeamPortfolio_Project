@@ -472,7 +472,7 @@ void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
 
 	for (auto& timer : m_fPlayParticleTimer)
 	{
-		timer -= fDeltaTime;
+		timer -= (_float)fDeltaTime;
 		if (timer <= -100)
 			timer = -1;
 	}
@@ -794,4 +794,7 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pSwordTrail2);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+
 }

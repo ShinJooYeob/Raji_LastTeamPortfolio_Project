@@ -161,7 +161,7 @@ PS_OUT PS_MAIN_TERRAIN_Default(PS_IN In)
 		Out.vSpecular = vector((Out.vDiffuse.r + Out.vDiffuse.g + Out.vDiffuse.b) * 0.34f, 0.167f, 0.f,1);
 		
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
-		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+		Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 		Out.vEmissive = vector(g_fEmissive.xyz, 1);;
 		Out.vLimLight = g_vLimLight;
@@ -218,7 +218,7 @@ PS_OUT PS_MAIN_TERRAIN_WIRE(PS_IN In)
 		/* -1 -> 0*/
 		/* 1 - > 1*/
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
-		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+		Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 		Out.vEmissive = vector(g_fEmissive.xyz, 1);;
@@ -281,7 +281,7 @@ PS_OUT PS_MAIN_TERRAIN_EDIT(PS_IN In)
 		Out.vDiffuse = vMtrlDiffuse;
 
 		Out.vNormal = vector(In.vWorldNormal.xyz * 0.5f + 0.5f, 0.f);
-		Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+		Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 		Out.vSpecular = 1;
 		Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 		Out.vEmissive = vector(g_fEmissive.xyz, 1);;

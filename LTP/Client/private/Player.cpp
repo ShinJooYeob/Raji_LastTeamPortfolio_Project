@@ -2754,8 +2754,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			tSpearWaveDesc.fStartPos.y += 0.8f;
 			tSpearWaveDesc.fLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
-			tSpearWaveDesc.IsHorizon = true;
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
+
 		}
 		//
 
@@ -6733,7 +6732,7 @@ HRESULT CPlayer::Update_Partilce_WeaponDefault()
 {
 	if (m_eCurWeapon == CPlayer::WEAPON_BOW)
 	{
-		_int randValue = GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f);
+		_float randValue = (GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f));
 
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(0, randValue));
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2, randValue+0.1f));

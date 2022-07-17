@@ -122,7 +122,7 @@ HRESULT CScene_Stage2::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(60.f);
 	CameraDesc.fAspect = _float(g_iWinCX) / g_iWinCY;
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = CAMERAFAR;
 
 	CameraDesc.iWinCX = g_iWinCX;
 	CameraDesc.iWinCY = g_iWinCY;

@@ -1,3 +1,6 @@
+
+#define FarDist			300.f
+
 sampler DefaultSampler = sampler_state
 {
 	// D3D11_SAMPLER_DESC
@@ -302,7 +305,7 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 
 	Out.vDiffuse.a = Alpha;
 	Out.vWorldPosition = In.vWorldPosition;
-	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 	return Out;
 }
@@ -320,7 +323,7 @@ PS_OUT PS_MAIN_INSTINVERSE(PS_IN In)
 
 	Out.vDiffuse = (1 - Out.vDiffuse) * In.vColor;
 	Out.vWorldPosition = In.vWorldPosition;
-	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 
 	return Out;
@@ -352,7 +355,7 @@ PS_OUT PS_MAIN_INST_DISORT(PS_IN In)
 
 	Out.vDiffuse.a = 1;
 	Out.vWorldPosition = In.vWorldPosition;
-	Out.vDepth = vector(In.vProjPos.w / 300.0f, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
 
 
 	return Out;
