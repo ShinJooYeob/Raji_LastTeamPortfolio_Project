@@ -306,10 +306,10 @@ void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
 
 
 	// 활 앞 뒤 세팅
-	mat.r[3] = vPos - (mat.r[2] * 0.8f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
+	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
 	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
 
-	mat.r[3] = vPos + (mat.r[2] * 0.8f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
+	mat.r[3] = vPos + (mat.r[2] * 0.65f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
 	m_vecTextureParticleDesc[2].vFixedPosition = mat.r[3];
 
 

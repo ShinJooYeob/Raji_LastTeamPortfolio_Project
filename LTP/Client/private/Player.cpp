@@ -3008,8 +3008,6 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		{
 			m_fAnimSpeed = 0.8f;
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
-			//CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
-			//FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle(0));
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
@@ -3032,8 +3030,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_NormalShot, m_fArrowRange);
 				pBowArrow->Active_Trail(false);
-				pBowArrow->LookAtDir(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
-				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle(0));
+
 			}
 			else
 			{
