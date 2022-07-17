@@ -241,9 +241,6 @@
     <Filter Include="01.GameObject\08.Effect">
       <UniqueIdentifier>{46304b89-0333-4cca-abca-de65a3cefa29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\08.Effect\00.TextureEffect">
-      <UniqueIdentifier>{fde42bc4-6ac8-4175-8951-b07a89c71625}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\08.Effect\01.MeshEffect">
       <UniqueIdentifier>{8f1ee2e7-0e64-4df5-83aa-e5f6910d5176}</UniqueIdentifier>
     </Filter>
@@ -363,6 +360,9 @@
     </Filter>
     <Filter Include="01.GameObject\99.UI\HPUI">
       <UniqueIdentifier>{d0336f0e-cc49-49b9-b6b6-20baa54c315b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\08.Effect\00.NonInstanceMeshEffect">
+      <UniqueIdentifier>{fde42bc4-6ac8-4175-8951-b07a89c71625}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -800,6 +800,9 @@
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NonInstanceMeshEffect.h">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1215,6 +1218,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NonInstanceMeshEffect.cpp">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

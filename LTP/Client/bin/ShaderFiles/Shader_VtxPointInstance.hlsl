@@ -426,8 +426,8 @@ PS_OUT PS_BrightColor(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-	Out.vDiffuse.a = pow(Out.vDiffuse.a, 2.2f);
+	Out.vDiffuse = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV),1.f/2.2f);
+	Out.vDiffuse.a = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV).a;
 	Out.vDiffuse *= In.vColor;
 
 
@@ -570,10 +570,11 @@ PS_OUT PS_MAIN_NoiseAppear(PS_Noise_IN In)
 
 	if (In.vTimer.x < g_fAppearTimer)
 	{
-		In.vTexUV = saturate((In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+
 	}
 
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
@@ -626,10 +627,14 @@ PS_OUT PS_MAIN_NoiseAppear_Bright(PS_Noise_IN In)
 
 	if (In.vTimer.x < g_fAppearTimer)
 	{
-		In.vTexUV = saturate((In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+
+		//In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
 	}
 
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
@@ -782,7 +787,7 @@ PS_OUT_NODEFERRED PS_Distortion_All_Bright(PS_Noise_IN In)
 
 	vector BackBuffer = g_BackBufferTexture.Sample(ClampSampler, TargetUV);
 
-	Out.vDiffuse = pow(BackBuffer,1.f/1.34598f);
+	Out.vDiffuse = pow(BackBuffer,1.f/1.0751f);
 	//Out.vDiffuse =  BackBuffer * (1 - Alpha) + (Alpha * g_vMixColor);
 
 	Out.vDiffuse.a = 1.f;
@@ -903,7 +908,7 @@ PS_OUT_NODEFERRED PS_Distortion_DiffuseMix_Bright(PS_Noise_IN In)
 	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
 
 
-	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV),1.f/1.34598f);
+	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV),1.f/ 1.0751f);
 
 	float MixRate = abs(0.5f - Out.vDiffuse.a) * 2.f;
 

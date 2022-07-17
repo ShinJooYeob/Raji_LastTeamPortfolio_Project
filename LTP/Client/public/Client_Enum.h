@@ -308,6 +308,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Camera_Editor,
 	Prototype_TestObject_Himeko,
 	Prototype_NaviPoint,
+	Prototype_NonInstanceMeshEffect,
 
 
 	Prototype_Object_Monster_Mahinasura_Minion,
@@ -454,7 +455,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_TestObject_Himeko: 
 		return TEXT("Prototype_TestObject_Himeko");
 		break;
-
+		
+	case Prototype_NonInstanceMeshEffect:
+		return TEXT("Prototype_NonInstanceMeshEffect");
+		break;
 	case Prototype_NaviPoint:
 		return TEXT("Prototype_NaviPoint");
 		break;
@@ -980,7 +984,8 @@ enum COMPONENTPROTOTYPEID
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
-
+	Prototype_Mesh_ConeMesh,
+	
 	
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
@@ -2213,6 +2218,13 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_None:
 		return TEXT("Prototype_Mesh_None");
 		break;
+
+	case Prototype_Mesh_ConeMesh:
+		return TEXT("ConeMesh.fbx");
+		break;
+
+
+		
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");
 		break;

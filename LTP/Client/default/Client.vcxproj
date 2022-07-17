@@ -265,6 +265,7 @@
     <ClInclude Include="..\public\ShellingSkillRange.h" />
     <ClInclude Include="..\public\SkyBox.h" />
     <ClInclude Include="..\public\Snake.h" />
+    <ClInclude Include="..\public\NonInstanceMeshEffect.h" />
     <ClInclude Include="..\public\SpearWave.h" />
     <ClInclude Include="..\public\TestLedgeTrigger.h" />
     <ClInclude Include="..\public\TestNonAnimInstancing.h" />
@@ -353,6 +354,7 @@
     <ClCompile Include="..\private\ShellingSkillRange.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\Snake.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect.cpp" />
     <ClCompile Include="..\private\SpearWave.cpp" />
     <ClCompile Include="..\private\TestLedgeTrigger.cpp" />
     <ClCompile Include="..\private\TestNonAnimInstancing.cpp" />

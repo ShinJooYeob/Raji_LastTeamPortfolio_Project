@@ -16,6 +16,16 @@
 
 #include "HpUI.h"
 
+
+
+
+#include "NonInstanceMeshEffect.h"
+
+
+
+
+
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
@@ -73,6 +83,19 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		CNonInstanceMeshEffect::NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
+		tNIMEDesc.fMaxTime_Duration = 10.f;
+		tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK);
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+	}
 
 	{
 		// Test
@@ -323,7 +346,7 @@ void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedO
 		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_Vector vConflicted_Col_Pos = pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector();
 		_Vector vDamageDir = XMVector3Normalize(vPlayerPos - vConflicted_Col_Pos);
-		Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
+		//Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
 	}
 
 	//m_IsConfilicted = true;
@@ -2723,6 +2746,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			tSpearWaveDesc.fStartPos.y += 0.8f;
 			tSpearWaveDesc.fLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
+			tSpearWaveDesc.IsHorizon = true;
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
 		}
 		//
 
@@ -2796,8 +2821,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		else
 		{
-			static _bool bParticleChecker = false;
 			m_fAnimSpeed = 1.f;			
+			static _bool bParticleChecker = false;
 			
 			if (fAnimPlayRate < 0.5525f)
 			{
@@ -2805,26 +2830,26 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			}
 			else if (!bParticleChecker)
 			{
-				//m_vecTextureParticleDesc[2].SizeChageFrequency = 1;
-				//m_vecTextureParticleDesc[2].EachParticleLifeTime = 0.4f;
-				//m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
+
 				m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 					m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition =
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)	+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f;
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
+					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.3f;
 
 				//m_vecTextureParticleDesc[4].ePassID = InstancePass_OriginColor;
 				//m_vecTextureParticleDesc[4].ParticleSize = _float3(4.f);
 				//m_vecTextureParticleDesc[4].EachParticleLifeTime = 1.f;
-				m_vecTextureParticleDesc[2].ParticleSize2 = _float3(2.5f);
-				m_vecTextureParticleDesc[2].vEmissive_SBB = _float3(1, 0.5f, 0);
-				m_vecTextureParticleDesc[2].vFixedPosition
-					= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
+				//m_vecTextureParticleDesc[2].ParticleSize2 = _float3(2.5f);
+				//m_vecTextureParticleDesc[2].vEmissive_SBB = _float3(1, 0.5f, 0);
+				m_vecTextureParticleDesc[2].vFixedPosition 	= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() 
+					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.04f;
 
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
+
 
 				bParticleChecker = true;
 			}
@@ -3021,6 +3046,68 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+
+
+		static _bool bParticleChecker = false;
+
+
+		if (fAnimPlayRate < 0.3525f)
+		{
+			bParticleChecker = false;
+		}
+		else if (!bParticleChecker)
+		{
+			m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
+				m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition =
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
+				+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.3f;
+
+			m_vecTextureParticleDesc[2].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition.XMVector()
+				+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.04f;
+
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
+
+
+			bParticleChecker = true;
+		}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		m_bOnNavigation = true;
 		// On MotionTrail
 		if (0.05f < fAnimPlayRate)
@@ -6617,15 +6704,17 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
 	//	2
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSlamCircle"));
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Fire_SlamEffect2"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
 	//	3
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"DistortionWaveEffect"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
-
 	//	4
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Fire_Mandara"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+
+
+
 	
 	return S_OK;
 }

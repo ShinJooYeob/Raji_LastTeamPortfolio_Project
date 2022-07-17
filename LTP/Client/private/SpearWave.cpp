@@ -29,8 +29,38 @@ HRESULT CSpearWave::Initialize_Clone(void * pArg)
 	SPEARWAVEDESC		tSpearWaveDesc;
 	memcpy(&tSpearWaveDesc, pArg, sizeof(SPEARWAVEDESC));
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, tSpearWaveDesc.fStartPos);
 	m_pTransformCom->LookDir_ver2(tSpearWaveDesc.fLookDir.XMVector());
+
+	if (tSpearWaveDesc.IsHorizon)
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), 1);
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, tSpearWaveDesc.fStartPos);
+
+
+
+
+
+
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	//	0
+	m_tTextureParticleDesc = pUtil->Get_TextureParticleDesc(L"SpearWave_SmallParticle");
+	m_tTextureParticleDesc.FollowingTarget = m_pTransformCom;
+	m_tTextureParticleDesc.iFollowingDir = FollowingDir_Look;
+	m_tTextureParticleDesc.TotalParticleTime = m_fMaxTime_Duration - 0.5f;
+
+
+	if (tSpearWaveDesc.IsHorizon)
+	{
+		m_tTextureParticleDesc.ParticleStartRandomPosMax = _float3(2.f,0.1f,2.0f);
+		m_tTextureParticleDesc.ParticleStartRandomPosMin= _float3(-2.f, -0.1f, -2.0f);
+	}
+
+
+	pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
+
+
 
 	return S_OK;
 }
@@ -39,10 +69,33 @@ _int CSpearWave::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	m_pTransformCom->Move_Forward(fDeltaTime);
 	Update_Colliders();
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
 
+	m_fCurTime_Duration += (_float)fDeltaTime;
+
+
+	if (m_fCurTime_Duration < 0.5f)
+	{
+
+		m_pTransformCom->Move_Forward(fDeltaTime * ( 0.5f - m_fCurTime_Duration));
+		_float3 vScale = g_pGameInstance->Easing_Vector(TYPE_Linear, _float3(5.5f, 2.5f, 2.5f), _float3(3.5f, 1.5f, 1.5f),
+			m_fCurTime_Duration, 0.5f);
+
+
+		m_pTransformCom->Scaled_All(vScale);
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), fDeltaTime * 4);
+	}
+	else
+	{
+		m_pTransformCom->Move_Forward(fDeltaTime );
+	}
+
+
+	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
+	{
+		Set_IsDead();
+	}
 	return _int();
 }
 
@@ -50,7 +103,7 @@ _int CSpearWave::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
@@ -64,19 +117,45 @@ _int CSpearWave::Render()
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 
+
+	_float4 color = _float4(1.f, 0.734375f, 0.75234375f, 1);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &color, sizeof(_float4)));
+	
+
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+
+	_float2 noisingdir = _float2(1, 0);
+	_float fDistortionNoisingPushPower = 0.5f;
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &fDistortionNoisingPushPower, sizeof(_float)));
+
+
+
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 137));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 0));
+	FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
-
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+		{
+			if (j == 1)
+			{
+				FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", 299));
+			}
+			else
+			{
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+			}
+		}
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 16, i));
 	}
 
 	return _int();
@@ -105,7 +184,7 @@ HRESULT CSpearWave::SetUp_Components()
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
+	tDesc.fRotationPerSec = XMConvertToRadians(90);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));

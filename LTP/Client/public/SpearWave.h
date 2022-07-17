@@ -11,6 +11,7 @@ public:
 	{
 		_float3				fStartPos;
 		_float3				fLookDir;
+		_bool				IsHorizon = false;
 	}SPEARWAVEDESC;
 
 private:
@@ -36,12 +37,23 @@ private:
 	HRESULT				SetUp_Collider();
 
 private:
+	_float				m_fMaxTime_Duration = 5.f;
+	_float				m_fCurTime_Duration = 0.f;
+
+private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 
 	CCollider*			m_pCollider = nullptr;
+
+
+
+
+
+
+	INSTPARTICLEDESC				m_tTextureParticleDesc;
 
 public:
 	static CSpearWave*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

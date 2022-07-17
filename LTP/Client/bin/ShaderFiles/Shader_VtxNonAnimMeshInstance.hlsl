@@ -565,10 +565,14 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear(PS_Noise_IN In)
 
 	if (In.vTimer.x < g_fAppearTimer)
 	{
-		In.vTexUV = saturate((In.vTexUV			- noisingdir * (g_fAppearTimer-In.vTimer.x) ));
-		In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+
+		//In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
 	}
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
@@ -655,10 +659,10 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear_Bright(PS_Noise_IN In)
 
 	if (In.vTimer.x < g_fAppearTimer)
 	{
-		In.vTexUV = saturate((In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
-		In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - In.vTimer.x)));
+		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
 	}
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
