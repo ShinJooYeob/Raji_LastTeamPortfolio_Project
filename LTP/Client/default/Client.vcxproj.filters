@@ -55,9 +55,6 @@
     <Filter Include="01.GameObject\06.Terrain">
       <UniqueIdentifier>{111bb108-04f6-4804-a7ed-b1ac40e6d873}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\07.MapObject">
-      <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\98.TriggerObject">
       <UniqueIdentifier>{cc515ead-bb04-41b8-aadc-3e855ee22769}</UniqueIdentifier>
     </Filter>
@@ -111,12 +108,6 @@
     </Filter>
     <Filter Include="01.GameObject\97.TestObject\00.For_EditorScene">
       <UniqueIdentifier>{ff4047c5-d159-4854-b153-f03f045d7655}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject">
-      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject">
-      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.GameObject\96.NaviPoint">
       <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
@@ -304,12 +295,6 @@
     <Filter Include="02.Scene\03.Scene_StageSelect">
       <UniqueIdentifier>{0ba78e62-3b38-471d-a07a-76cd29ea65d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Demon_Tree">
-      <UniqueIdentifier>{c0676edd-9c61-4af6-b132-7e2bbd16463a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh">
-      <UniqueIdentifier>{f9508001-e183-403f-bfe5-bc11ef094b16}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\01.Player\01. Effect">
       <UniqueIdentifier>{2b59b478-2c76-4b62-ba9a-633b9c70c698}</UniqueIdentifier>
     </Filter>
@@ -337,15 +322,6 @@
     <Filter Include="01.GameObject\98.TriggerObject\99. TestLedgeTrigger">
       <UniqueIdentifier>{af31f2fd-bdb6-4710-83d3-ba8e30470a1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue">
-      <UniqueIdentifier>{92aafd35-26ea-4779-ae53-ff36b4735169}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle">
-      <UniqueIdentifier>{d3924e29-680f-4f68-8708-8feed799548a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
-      <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\02.Monster\Monster\Instance_Monster">
       <UniqueIdentifier>{40a76dc0-5bd6-4973-ba81-d0604c5b41d3}</UniqueIdentifier>
     </Filter>
@@ -363,6 +339,30 @@
     </Filter>
     <Filter Include="01.GameObject\99.UI\HPUI">
       <UniqueIdentifier>{d0336f0e-cc49-49b9-b6b6-20baa54c315b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject">
+      <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject">
+      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue">
+      <UniqueIdentifier>{92aafd35-26ea-4779-ae53-ff36b4735169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject">
+      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree">
+      <UniqueIdentifier>{c0676edd-9c61-4af6-b132-7e2bbd16463a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh">
+      <UniqueIdentifier>{f9508001-e183-403f-bfe5-bc11ef094b16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle">
+      <UniqueIdentifier>{d3924e29-680f-4f68-8708-8feed799548a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
+      <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -478,10 +478,10 @@
       <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapObject.h">
-      <Filter>01.GameObject\07.MapObject</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticMapObject.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\NaviPoint.h">
       <Filter>01.GameObject\96.NaviPoint</Filter>
@@ -696,10 +696,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TreeMesh.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Demon_Tree.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Rangda_Finger.h">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
@@ -741,7 +741,7 @@
       <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\FemaleStatue.h">
-      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Mahabalasura.h">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -759,10 +759,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MandalaMesh.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MandalaPuzzle.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster_Wasp.h">
       <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wasp</Filter>
@@ -890,10 +890,10 @@
       <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMapObject.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapObject.cpp">
-      <Filter>01.GameObject\07.MapObject</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\NaviPoint.cpp">
       <Filter>01.GameObject\96.NaviPoint</Filter>
@@ -1097,10 +1097,10 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\TreeMesh.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Demon_Tree.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rangda_Finger.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
@@ -1152,7 +1152,7 @@
       <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FemaleStatue.cpp">
-      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -1170,10 +1170,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MandalaMesh.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MandalaPuzzle.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />

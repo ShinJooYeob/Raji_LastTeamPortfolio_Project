@@ -260,7 +260,7 @@ HRESULT CCollisionMgr::Inspect_Terrain_To_All()
 HRESULT CCollisionMgr::Inspect_RepelGroup()
 {
 
-#define PushingSpeed 2.f 
+#define PushingSpeed 5.f 
 
 	if (m_RepelObjectList.size() < 2)
 	{

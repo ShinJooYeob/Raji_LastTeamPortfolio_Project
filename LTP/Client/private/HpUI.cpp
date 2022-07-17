@@ -84,9 +84,10 @@ _int CHpUI::Update(_double fDeltaTime)
 
 	Set_ObjectPos();
 
-	m_iHitCount = 0;
+	if(m_iHitCount < 0)
+		m_iHitCount = 0;
 
-	if (m_iHitCount > 9)
+	if (m_iHitCount > m_HpDesc.m_pObjcect->Get_MaxHP())
 	{
 		m_iHitCount = 9;
 		//´ÙÀÌ!!!!!

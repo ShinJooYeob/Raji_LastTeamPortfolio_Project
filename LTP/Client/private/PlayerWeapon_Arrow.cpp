@@ -83,7 +83,7 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 	}
 
 	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
 
 	return _int();
 }
@@ -313,7 +313,6 @@ void CPlayerWeapon_Arrow::Set_State_Ultimate_Post_Shot()
 void CPlayerWeapon_Arrow::Set_TargetPos(_float3 fTargetPos)
 {
 	m_fTargetPos = fTargetPos;
-	int a = 10;
 }
 
 _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
@@ -585,6 +584,22 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 	else
 	{
 		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	}
+}
+
+void CPlayerWeapon_Arrow::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		if (true == m_bFired)
+		{
+			pConflictedCollider->Set_Conflicted(0.5f);
+
+			_int iSelectSoundFileIndex = rand() % 3;
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_Raji_Arrow_Impact_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
 	}
 }
 

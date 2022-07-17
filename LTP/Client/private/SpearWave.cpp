@@ -41,7 +41,7 @@ _int CSpearWave::Update(_double fDeltaTime)
 
 	m_pTransformCom->Move_Forward(fDeltaTime);
 	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
 
 	return _int();
 }
@@ -85,6 +85,16 @@ _int CSpearWave::Render()
 _int CSpearWave::LateRender()
 {
 	return _int();
+}
+
+void CSpearWave::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+		pConflictedCollider->Set_Conflicted(0.5f);
+	}
 }
 
 void CSpearWave::Update_Colliders()

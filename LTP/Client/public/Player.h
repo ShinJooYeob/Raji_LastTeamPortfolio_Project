@@ -164,7 +164,7 @@ public:
 
 
 public: /* Damage Logic*/
-	_float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f);
+	_float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 private: /* Change Start State */
@@ -378,6 +378,11 @@ private: /* Animation Control */
 
 	_bool					m_bOnNavigation = false;
 
+	_bool					m_bShieldMode;
+
+	_bool					m_bActiveCollider = true;
+
+private: /* For Sound */
 	_bool					m_bOncePlaySound = false;
 	_bool					m_bOncePlaySwingSound = false;
 

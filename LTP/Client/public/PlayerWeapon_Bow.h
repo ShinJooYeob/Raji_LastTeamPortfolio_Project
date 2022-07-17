@@ -30,6 +30,14 @@ public:
 	virtual _int		LateRender() override;
 
 public:
+	virtual _bool		AbleToChangeWeapon() override;
+
+public:
+	virtual void		Dissolve_In(_double fTargetTime) override;
+	virtual void		Dissolve_Out(_double fTargetTime) override;
+
+
+public:
 	void				PlayAnim_Idle();
 
 	void				PlayAnim_NormalAttack_Ready();

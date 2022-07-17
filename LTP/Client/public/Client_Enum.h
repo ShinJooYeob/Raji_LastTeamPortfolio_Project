@@ -5513,6 +5513,7 @@ enum COMPONENTID
 	Com_Dissolve,
 	//JJB
 	Com_HPUI,
+	Com_Collider_1
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -5552,6 +5553,9 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 
 	case Com_Collider:
 		return TEXT("Com_Collider");
+		break;
+	case Com_Collider_1:
+		return TEXT("Com_Collider_1");
 		break;
 
 	case Com_Collider_PhysX:

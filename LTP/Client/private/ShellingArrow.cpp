@@ -44,6 +44,16 @@ _int CShellingArrow::Update(_double dDeltaTime)
 		m_vecInstancedTransform[i]->Move_Forward(dDeltaTime);
 	}
 	 
+	if (false == m_bOnceDamage)
+	{
+		if (m_tShellingArrowDesc.fTargetPos.y >= XMVectorGetY(m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS)) - 0.5f)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Shelling.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			m_bOnceDamage = true;
+			Update_Colliders();
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
+		}
+	}
 
 	m_fDestroy_Count -= (_float)dDeltaTime;
 	if (0.f >= m_fDestroy_Count)
@@ -51,8 +61,6 @@ _int CShellingArrow::Update(_double dDeltaTime)
 		Set_IsDead();
 	}
 
-	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
 
 	return _int();
 }
@@ -89,6 +97,16 @@ _int CShellingArrow::LateRender()
 	return _int();
 }
 
+void CShellingArrow::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		pConflictedCollider->Set_Conflicted(0.5f);
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Impact_0.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_EFFECT, 0.1f);
+
+	}
+}
+
 void CShellingArrow::Update_Colliders()
 {
 	_Matrix Matrix = XMMatrixIdentity();
@@ -121,7 +139,7 @@ HRESULT CShellingArrow::SetUp_Components()
 
 		pTransform->LookDir_ver2(vLookDir);
 		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(fStartPos.x, fStartPos.y, fStartPos.z));
-		pTransform->Set_MoveSpeed(18.f);
+		pTransform->Set_MoveSpeed(30.f);
 
 		m_vecInstancedTransform.push_back(pTransform);
 	}

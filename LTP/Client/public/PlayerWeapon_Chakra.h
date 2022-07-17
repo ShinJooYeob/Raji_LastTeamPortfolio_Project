@@ -26,6 +26,15 @@ public:
 
 	virtual void		Active_Trail(_bool bActivate) override;
 
+	virtual void		CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	virtual _bool		AbleToChangeWeapon() override;
+
+public:
+	virtual void		Dissolve_In(_double fTargetTime) override;
+	virtual void		Dissolve_Out(_double fTargetTime) override;
+
 public:
 	void				Set_ChakraState(EChakraState eChakraState);
 	EChakraState		Get_ChakraState();
@@ -51,6 +60,8 @@ private:
 	_bool				m_bAttackStart = false;
 	_float				m_fAnimSpeed = 1.f;
 	_float				m_fTurnDirWeight = 0.9f;
+	_float				m_fMax_AttackSoundDelay = 1.5f;
+	_float				m_fCur_AttackSoundDelay = 0.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -59,6 +70,7 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CSwordTrail*		m_pSwordTrail = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
 
 public:
 	static CPlayerWeapon_Chakra*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -32,8 +32,10 @@ HRESULT CPlayerWeapon_Sword::Initialize_Clone(void * pArg)
 
 _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
+	{
 		return 0;
+	}
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
@@ -56,16 +58,23 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(0); 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 	
-	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	if (true == m_bActiveCollision)
+	{
+		Update_Colliders();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
+	}
+
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
 	return _int();
 }
 
 _int CPlayerWeapon_Sword::LateUpdate(_double fDeltaTimer)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
+	{
 		return 0;
+	}
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
@@ -127,19 +136,9 @@ _int CPlayerWeapon_Sword::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
-
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
-	}
+	FAILED_CHECK(m_pDissolveCom->Render(9));
 
 	return _int();
 }
@@ -169,6 +168,34 @@ void CPlayerWeapon_Sword::Active_Trail(_bool bActivate)
 	{
 		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
 	}*/
+}
+
+void CPlayerWeapon_Sword::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		pConflictedCollider->Set_Conflicted(0.5f);
+
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Sword_Impact_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+	}
+}
+
+_bool CPlayerWeapon_Sword::AbleToChangeWeapon()
+{
+	return (false == m_pDissolveCom->Get_IsDissolving());
+}
+
+void CPlayerWeapon_Sword::Dissolve_In(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(true, fTargetTime);
+}
+
+void CPlayerWeapon_Sword::Dissolve_Out(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
 }
 
 _fVector CPlayerWeapon_Sword::Get_BonePos(const char * pBoneName)
@@ -270,6 +297,13 @@ HRESULT CPlayerWeapon_Sword::SetUp_Components()
 	tSwordDesc.iTextureIndex = 3;
 	tSwordDesc.NoiseSpeed = 0;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
 
 	return S_OK;
 }
@@ -401,4 +435,5 @@ void CPlayerWeapon_Sword::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pDissolveCom);
 }

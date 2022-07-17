@@ -27,11 +27,6 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_EtcInfo());
 	Set_IsOcllusion(true);
 
-
-	// Rim Light //
-	//Set_LimLight_N_Emissive(_float4(1.f, 0, 0, 1.f), 0.f);
-	//
-
 	FAILED_CHECK(Ready_ParticleDesc());
 	
 	return S_OK;
@@ -39,8 +34,10 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 
 _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
+	{
 		return 0;
+	}
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
@@ -60,9 +57,21 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(m_iCurAnim, 0.f);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
-	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
 
+	if (true == m_bActiveCollision)
+	{
+		Update_Colliders();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
+	}
+
+	if (true == m_bActiveCollision_1)
+	{
+		Update_Colliders_1();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Range));
+	}
+
+
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	Update_ParticleTransform();
 
 	return _int();
@@ -70,10 +79,10 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 
 _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
 		return 0;
-
-	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
+	
+	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;  
 
 	if (true == m_bThrowing)
 	{
@@ -105,9 +114,11 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 	}
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolveCom));
+	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Range));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
@@ -124,19 +135,9 @@ _int CPlayerWeapon_Spear::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix",  &m_fAttachedMatrix, sizeof(_float4x4)));
-	
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassNum, i, "g_BoneMatrices"));
-	}
+	FAILED_CHECK(m_pDissolveCom->Render(m_iPassNum));
 
 	return _int();
 }
@@ -165,8 +166,6 @@ void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 
 		if (!bChecker)
 		{
-			//m_vecTextureParticleDesc[0].vEmissive_SBB = _float3(0);
-			//m_vecTextureParticleDesc[0].EachParticleLifeTime = 0.35f;
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 			bChecker = true;
 		}
@@ -198,6 +197,34 @@ _fMatrix CPlayerWeapon_Spear::Get_BoneMatrix(const char * pBoneName)
 
 void CPlayerWeapon_Spear::Update_AttachCamPos()
 {
+}
+
+void CPlayerWeapon_Spear::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		pConflictedCollider->Set_Conflicted(0.5f);
+
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+	}
+}
+
+_bool CPlayerWeapon_Spear::AbleToChangeWeapon()
+{
+	return (false == m_pDissolveCom->Get_IsDissolving());
+}
+
+void CPlayerWeapon_Spear::Dissolve_In(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(true, fTargetTime);
+}
+
+void CPlayerWeapon_Spear::Dissolve_Out(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
 }
 
 _int CPlayerWeapon_Spear::Update_Structure(_double fDeltaTime)
@@ -282,6 +309,19 @@ void CPlayerWeapon_Spear::Update_Colliders()
 	}
 }
 
+void CPlayerWeapon_Spear::Update_Colliders_1()
+{
+	CTransform* pPlayerTransform = static_cast<CTransform*>(m_tPlayerWeaponDesc.pOwner->Get_Component(TAG_COM(Com_Transform)));
+	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vPlayerLook = XMVector3Normalize(pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+
+	_Matrix mat = XMMatrixIdentity();
+	mat.r[3] = vPlayerPos + (vPlayerLook * 0.8f);
+
+	m_pCollider_Range->Update_Transform(0, mat);
+	m_pCollider_Range->Update_Transform(1, mat);
+}
+
 void CPlayerWeapon_Spear::Update_ParticleTransform()
 {
 	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
@@ -294,6 +334,7 @@ void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 	{
 	case ESpearPivot::SPEAR_PIVOT_NORMAL:
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-97, -120, -60), _float3(-0.661f, -0.04f, -1.133f));
+		m_bActiveCollision = false;
 		break;
 	case ESpearPivot::SPEAR_PIVOT_THROW:
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(90, 0, 0), _float3(-0.661f, -0.04f, -1.133f));
@@ -306,11 +347,14 @@ void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 
 void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
 {
+	CTransform* pPlayerTransform = static_cast<CTransform*>(m_tPlayerWeaponDesc.pOwner->Get_Component(TAG_COM(Com_Transform)));
+	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Throw.wav"), vPlayerPos, CHANNELID::CHANNEL_PLAYER, 1.f);
 	m_pTransformCom->Set_Matrix(m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix());
 	m_pTransformCom->LookDir(vThrowDir);
 	m_bThrowing = true;
 	m_bThrowDir = vThrowDir;
-	m_iPassNum = 3;
+	m_iPassNum = 13;
 	m_iCurAnim = 8;
 }
 
@@ -319,12 +363,13 @@ void CPlayerWeapon_Spear::Throw_End()
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 	m_bThrowing = false;
 	m_bThrowDir = { 0.f, 0.f, 0.f };
-	m_iPassNum = 4;
+	m_iPassNum = 9;
 	m_iCurAnim = 0;
 }
 
 void CPlayerWeapon_Spear::Throw(_double fDeltaTimer)
 {
+	m_bActiveCollision = true;
 	m_pTransformCom->MovetoDir(m_bThrowDir.XMVector(), fDeltaTimer);
 }
 
@@ -338,9 +383,9 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	
 	CTransform::TRANSFORMDESC tDesc = {};
 
-	tDesc.fMovePerSec = 1;
-	tDesc.fRotationPerSec = XMConvertToRadians(360);
-	tDesc.fScalingPerSec = 1;
+	tDesc.fMovePerSec = 30.f;
+	tDesc.fRotationPerSec = XMConvertToRadians(360); 
+	tDesc.fScalingPerSec = 1;  
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
@@ -356,21 +401,26 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerWeapon_Spear), TAG_COM(Com_SubModel), (CComponent**)&m_pModel_Skill));
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pTransformCom_Skill, &tDesc));
 
-
+	CDissolve::DISSOLVEDESC	tDissolveDesc;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.pModel = m_pModel;
+	tDissolveDesc.pShader = m_pShaderCom;
+	tDissolveDesc.RampTextureIndex = 1;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
 	return S_OK;
 }
 
 HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 {
-	m_iPassNum = 4;
+	m_iPassNum = 9;
 	m_iCurAnim = 0;
 	return S_OK;
 }
 
 HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 {
+	// Weapon Collider
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
-
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(3.f);
@@ -398,15 +448,30 @@ HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pCollider->Set_ParantBuffer();
+	//
+
+
+	// Attack Range Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_1), (CComponent**)&m_pCollider_Range));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(6.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Range->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Range->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider_Range->Set_ParantBuffer();
+	//
 
 	return S_OK;
 }
 
 HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 {
-	//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
-
-
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
@@ -473,5 +538,7 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pCollider_Range);
 
+	Safe_Release(m_pDissolveCom);
 }

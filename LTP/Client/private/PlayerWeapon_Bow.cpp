@@ -33,7 +33,7 @@ HRESULT CPlayerWeapon_Bow::Initialize_Clone(void * pArg)
 
 _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
 		return 0;
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
@@ -63,15 +63,15 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	Set_Pivot();
 
-	//m_pModel->Change_AnimIndex(0);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
+
 	return _int();
 }
 
 _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 {
-	if (true == m_bBlockUpdate)
+	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
 		return 0;
 
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
@@ -112,27 +112,28 @@ _int CPlayerWeapon_Bow::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-
-
-	FAILED_CHECK(m_pDissolveCom->Render(4));
-
-	//_uint NumMaterial = m_pModel->Get_NumMaterial();
-	//
-	//for (_uint i = 0; i < NumMaterial; i++)
-	//{
-	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-	//	{
-	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-	//	}
-	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
-	//}
-
+	FAILED_CHECK(m_pDissolveCom->Render(9));
 	return _int();
 }
 
 _int CPlayerWeapon_Bow::LateRender()
 {
 	return _int();
+}
+
+_bool CPlayerWeapon_Bow::AbleToChangeWeapon()
+{
+	return (false == m_pDissolveCom->Get_IsDissolving());
+}
+
+void CPlayerWeapon_Bow::Dissolve_In(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(true, fTargetTime);
+}
+
+void CPlayerWeapon_Bow::Dissolve_Out(_double fTargetTime)
+{
+	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
 }
 
 void CPlayerWeapon_Bow::PlayAnim_Idle()
@@ -285,14 +286,11 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-
 	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;
-
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
-
 
 	return S_OK;
 }
