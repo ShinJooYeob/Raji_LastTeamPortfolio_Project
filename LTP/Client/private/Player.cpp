@@ -276,10 +276,10 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 		m_pHeadJoint->Update_AfterSimulation();
 	}
 
-	/*if (true == m_bOnNavigation)
+	if (true == m_bOnNavigation)
 	{
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-	}*/
+	}
 
 	LateUpdate_HPUI(fDeltaTimer);
 
@@ -6721,12 +6721,12 @@ HRESULT CPlayer::SetUp_Components()
 	m_pCollider->Set_ParantBuffer();
 	
 
-	//CNavigation::NAVIDESC NaviDesc;
-	//NaviDesc.iCurrentIndex = 0;
-	//if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
-	//	return E_FAIL;
+	CNavigation::NAVIDESC NaviDesc;
+	NaviDesc.iCurrentIndex = 0;
+	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
+		return E_FAIL;
 
-	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 
 
