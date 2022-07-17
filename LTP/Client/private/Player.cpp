@@ -308,6 +308,8 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	LateUpdate_HPUI(fDeltaTimer);
 
+	Update_Partilce_WeaponDefault();
+
 	return _int();
 }
 
@@ -871,6 +873,8 @@ HRESULT CPlayer::Update_State_Attack(_double fDeltaTime)
 		Attack_Spear(fDeltaTime);
 		break;
 	case EWEAPON_TYPE::WEAPON_BOW:
+
+
 		if (true == m_bAttackEnd || EBOWMAINATK_STATE::BOWMAINATK_START == m_eCurBowMainAtkState)
 		{
 			Set_MainAttackAnim(m_bPlayJumpAttack);
@@ -1633,6 +1637,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 			{
 				m_bPressedMainAttackKey = true;
 				m_bPressedPowerAttackKey = false;
+
 			}
 		}
 		else if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Up)
@@ -2845,7 +2850,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.04f;
 
 
-				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);																	 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
@@ -3213,11 +3218,13 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			LookAt_MousePos();
 
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_NormalAttack_Ready();
+
 		}
 			break;
 		case BOWMAINATK_LOOP:
 		{
 			m_fAnimSpeed = 0.8f;
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
@@ -3240,7 +3247,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_NormalShot, m_fArrowRange);
 				pBowArrow->Active_Trail(false);
-				pBowArrow->LookAtDir(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+
 			}
 			else
 			{
@@ -6694,18 +6701,18 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"SpearNormalAttack"));
-	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
-	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
 
 
 
 	//	1
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
-	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+	m_vecTextureParticleDesc[1].FollowingTarget = nullptr;
 	//	2
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Fire_SlamEffect2"));
-	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+	m_vecTextureParticleDesc[2].FollowingTarget = nullptr;
 	//	3
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"DistortionWaveEffect"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
@@ -6718,6 +6725,23 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	
 	return S_OK;
 }
+
+HRESULT CPlayer::Update_Partilce_WeaponDefault()
+{
+	if (m_eCurWeapon == CPlayer::WEAPON_BOW)
+	{
+		_int randValue = GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(0, randValue));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2, randValue+0.1f));
+
+
+	}
+
+	return S_OK;
+}
+
+
 
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {

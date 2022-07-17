@@ -28,6 +28,8 @@ HRESULT CPlayerWeapon_Arrow::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 
+	FAILED_CHECK(Ready_ParticleDesc());
+
 	
 	return S_OK;
 }
@@ -84,6 +86,7 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 
 	Update_Colliders();
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
+	Update_ParticleTransform(fDeltaTime);
 
 	return _int();
 }
@@ -318,6 +321,7 @@ void CPlayerWeapon_Arrow::Set_TargetPos(_float3 fTargetPos)
 
 _int CPlayerWeapon_Arrow::UpdateState_NormalReady(_double fDeltaTime)
 {
+
 	return _int();
 }
 
@@ -348,6 +352,7 @@ _int CPlayerWeapon_Arrow::UpdateState_NormalShot(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_UtilityReady(_double fDeltaTime)
 {
+
 	return _int();
 }
 
@@ -374,6 +379,7 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_UltimateReady(_double fDeltaTime)
 {
+
 	return _int();
 }
 
@@ -417,6 +423,7 @@ _int CPlayerWeapon_Arrow::UpdateState_PowerShot_Conbo_2(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Pre_Ready(_double fDeltaTime)
 {
+
 	return _int();
 }
 
@@ -436,6 +443,7 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Pre_Shot(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Ready(_double fDeltaTime)
 {
+
 	return _int();
 }
 
@@ -450,6 +458,91 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 	}
 	*/
 	return _int();
+}
+
+void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
+{
+	// 본체 위치에 업데이트
+
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();// * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+	_Vector vPos = mat.r[3];
+	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
+
+
+
+	for (auto& timer : m_fPlayParticleTimer)
+	{
+		timer -= fDeltaTime;
+		if (timer <= -100)
+			timer = -1;
+	}
+
+
+}
+
+HRESULT CPlayerWeapon_Arrow::Set_Play_Particle(_uint ParticleIndex, _float Timer)
+{
+
+	if (PARTILCECOUNT <= ParticleIndex)
+		return E_FAIL;
+	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
+		return E_FAIL;
+
+	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
+		if (Timer == -1)
+		{
+			m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
+		}
+		else
+			m_fPlayParticleTimer[ParticleIndex] = Timer;
+	}
+
+
+	return S_OK;
+
+}
+
+HRESULT CPlayerWeapon_Arrow::Set_PlayOff_ALL()
+{
+	for (_uint i = 0; i < PARTILCECOUNT; ++i)
+	{
+		ZeroMemory(m_fPlayParticleTimer, sizeof(_float) * PARTILCECOUNT);
+	}
+
+	m_pTextureParticleTransform->Set_IsOwnerDead(true);
+	return S_OK;
+}
+
+
+HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
+{
+	// 파티클용 Transform Create
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
+	_uint num = 0;
+
+	num = 0;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze_ArrowHead"));
+	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+
+	num = 1;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowTrail"));
+	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+
+	num = 2;
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowHit"));
+	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+
+
+	return S_OK;
 }
 
 _fVector CPlayerWeapon_Arrow::Get_BonePos(const char * pBoneName)
@@ -467,10 +560,14 @@ void CPlayerWeapon_Arrow::Update_AttachMatrix()
 
 void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 {
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 	switch (m_eCurState)
 	{
 	case EArrowState::Arrow_State_NormalReady:
 		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
+
+		m_vecTextureParticleDesc[0].vFixedPosition = (*pMat).r[3] + (*pMat).r[2] * 0.75f;
+		FAILED_CHECK_NONERETURN(Set_Play_Particle(0));
 		break;
 	case EArrowState::Arrow_State_NormalShot:
 	case EArrowState::Arrow_State_PowerShot_Combo_0:
@@ -532,10 +629,14 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 		mat.r[1] = XMVector3Normalize(mat.r[1]);
 		mat.r[2] = XMVector3Normalize(mat.r[2]);
 
+
+
+
 		switch (m_eCurState)
 		{
 		case EArrowState::Arrow_State_NormalReady:
 			m_pSwordTrail->Set_TrailTurnOn(true, mat.r[3] + mat.r[2] * 0.62f, mat.r[3] + mat.r[2] * 0.75f);
+
 			break;
 		case EArrowState::Arrow_State_NormalShot:
 			m_pSwordTrail->Set_TrailTurnOn(
@@ -549,6 +650,8 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
 			);
+			FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
+
 			break;
 		case EArrowState::Arrow_State_PowerShot_Combo_0:
 		case EArrowState::Arrow_State_PowerShot_Combo_1:
@@ -564,6 +667,7 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 1.f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f),
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.8f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP) * 0.015f)
 			);
+
 			break;
 		case EArrowState::Arrow_State_UtilityShot:
 		case EArrowState::Arrow_State_UltimateShot_Pre_Shot:
@@ -579,6 +683,7 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.6f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.1f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
 			);
+
 			break;
 		}
 	}

@@ -143,6 +143,8 @@ _int CPlayerWeapon_Spear::Render()
 
 _int CPlayerWeapon_Spear::LateRender()
 {
+
+
 	return _int();
 }
 
@@ -420,7 +422,6 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
 
-
 	//	1
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	//	2
@@ -473,5 +474,7 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
 
 }

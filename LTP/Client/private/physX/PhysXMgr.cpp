@@ -226,6 +226,8 @@ HRESULT CPhysXMgr::Clean_Phyics()
 	PX_RELEASE(mDisPatcher);
 	PX_RELEASE(mScene);
 	PX_RELEASE(mMaterial);
+	PX_RELEASE(gMaterial1);
+	PX_RELEASE(gMaterial2);
 
 
 	PX_RELEASE(mPhysics);
@@ -237,15 +239,7 @@ HRESULT CPhysXMgr::Clean_Phyics()
 #endif // _DEBUG
 	PX_RELEASE(mFoundation);
 
-#ifdef _DEBUG
-	//if (mPvd)
-	//
-	//
-	//
-	//
-	//
-	//}
-#endif // _DEBUG
+
 	return S_OK;
 
 }
@@ -838,12 +832,13 @@ HRESULT CPhysXMgr::CreateDemoMap_StaticSphere(PxTransform px, PxVec3 scale, _boo
 
 void CPhysXMgr::Free()
 {
-	Clean_Phyics();
 	
 	for (auto& hair : mListContactPair)
 		Safe_Delete(hair);
 	mListContactPair.clear();
-	
+
+	Clean_Phyics();
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
 	ReleasePhysXCom();

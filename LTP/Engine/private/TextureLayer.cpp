@@ -71,14 +71,14 @@ HRESULT CTextureLayer::Add_Model_Texture(_uint iIndex, const _tchar * pTextureFi
 
 	if (iIndex >= m_vecTextures.size())
 	{
-		OutputDebugString(TEXT("\nAlready Exist Texture Map\n"));
+	//	OutputDebugString(TEXT("\nAlready Exist Texture Map\n"));
 		__debugbreak();
 		return E_FAIL;
 	}
 
 	if (m_vecTextures[iIndex] != nullptr)
 	{
-		OutputDebugString(TEXT("\nAlready Exist Texture Map\n"));
+	//	OutputDebugString(TEXT("\nAlready Exist Texture Map\n"));
 		
 		return S_FALSE;
 	}
@@ -103,7 +103,7 @@ HRESULT CTextureLayer::Add_Model_Texture(_uint iIndex, const _tchar * pTextureFi
 			IsNotExistPath = true;
 			wstring DebugString = L"\nNot Exist DDS File : " + wstring(szTextureFilePath)+ L"\n";
 			Safe_Release(pSRV);
-			OutputDebugString(DebugString.c_str());
+		//	OutputDebugString(DebugString.c_str());
 		}
 	}
 
@@ -125,7 +125,7 @@ HRESULT CTextureLayer::Add_Model_Texture(_uint iIndex, const _tchar * pTextureFi
 			IsNotExistPath = true;
 			wstring DebugString = L"\nNot Exist PNG File : " + wstring(ChagedtoPngPath) + L"\n";
 			Safe_Release(pSRV);
-			OutputDebugString(DebugString.c_str());
+		//	OutputDebugString(DebugString.c_str());
 		}
 
 		return E_FAIL;
@@ -151,7 +151,7 @@ HRESULT CTextureLayer::Add_Model_Texture(_uint iIndex, const _tchar * pTextureFi
 				IsNotExistPath = true;
 				Safe_Release(pSRV);
 				wstring DebugString = L"\nNot Exist PNG File : " + wstring(ChagedtoPngPath) + L"\n";
-				OutputDebugString(DebugString.c_str());
+			//	OutputDebugString(DebugString.c_str());
 			}
 
 

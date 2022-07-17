@@ -12,8 +12,7 @@ CSoundMgr::CSoundMgr()
 HRESULT CSoundMgr::Initialize_FMOD()
 {
 	FMOD_System_Create(&m_pSystem);
-	
-	
+
 	m_Verson = FMOD_VERSION;
 	FMOD_System_GetVersion(m_pSystem, &m_Verson);
 
