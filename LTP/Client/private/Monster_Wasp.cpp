@@ -42,6 +42,15 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	for (auto& Instance : m_vecInstancedTransform)
+	{
+		if (Instance.bHit == true)
+		{
+
+		}
+	}
+
+
 	FollowMe(dDeltaTime);
 
 	for (_int i = 0; i < ANIM_END; i++)
@@ -119,7 +128,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 
 	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
 	{
-		int a = 10;
+		m_vecInstancedTransform[iMyColliderIndex].bHit = true;
 	}
 }
 
@@ -347,7 +356,7 @@ HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
 
 
-	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
+	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
 		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
 			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));

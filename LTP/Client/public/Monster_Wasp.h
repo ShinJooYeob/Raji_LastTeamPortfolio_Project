@@ -11,7 +11,12 @@ class CMonster_Wasp final : public CMonster
 	{
 		CTransform*		pTransform = nullptr;
 		CNavigation*	pNavigation = nullptr;
-		_uint iType = ANIM_END;
+		_uint			iType = ANIM_END;
+
+		_int			iHp = 3;
+		_bool			bHit = false;
+		_bool			bOnceSwtich = false;
+		_double			dTime = 0;
 	}TRANSFORM_STATE;
 
 private:

@@ -25,6 +25,8 @@ public:
 	_bool Collision_All(CColliderBuffer* pTargetColliderBuffer,_bool IsFinialBuffer = false);
 
 	void Add_ChildBufferIndex(_uint iIndex);
+	void Delete_ChildeBuffer(_uint iIndex);
+	
 	list<_uint>* Get_ChildIndexList() { return &m_ChildNodeIndexList; };
 	_uint Get_NumChildBuffer() { return _uint(m_ChildNodeIndexList.size()); };
 	void Set_IsConflicted(_bool bBool) { m_bIsConflicted = bBool; };

@@ -281,7 +281,38 @@ _bool CColliderBuffer::Collision_All(CColliderBuffer * pTargetColliderBuffer, _b
 
 void CColliderBuffer::Add_ChildBufferIndex(_uint iIndex)
 {
-	m_ChildNodeIndexList.push_back(iIndex);
+	auto iter = m_ChildNodeIndexList.begin();
+	_bool bIsNone = true;
+
+	for (; iter != m_ChildNodeIndexList.end();)
+	{
+		if ((*iter) == iIndex)
+		{
+			bIsNone = false;
+			break;
+		}
+		iter++;
+	}
+
+	if (!bIsNone)
+		m_ChildNodeIndexList.push_back(iIndex);
+}
+
+void CColliderBuffer::Delete_ChildeBuffer(_uint iIndex)
+{
+	auto iter = m_ChildNodeIndexList.begin();
+
+	for (; iter != m_ChildNodeIndexList.end();)
+	{
+		if ((*iter) == iIndex)
+		{
+			m_ChildNodeIndexList.erase(iter);
+			break;
+		}
+		iter++;
+	}
+
+
 }
 
 _float3 CColliderBuffer::Get_ColliderPosition()

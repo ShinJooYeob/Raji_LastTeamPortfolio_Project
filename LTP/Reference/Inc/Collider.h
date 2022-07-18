@@ -22,6 +22,7 @@ public:
 	_bool Inspect_Collision( CCollider* pTargetCollider, _uint iBufferIndex = 0, _uint iTargetIndex = 0, _uint2* pOutIndex = nullptr);
 
 	HRESULT Set_ParantBuffer(_uint iParantIndex = 0, _int iIndex = -1);
+	HRESULT Delete_ChildeBuffer(_uint iParantIndex = 0, _int iIndex = -1);
 
 	_uint Get_NumColliderBuffer() { return _uint(m_vecColliderBuffer.size()); };
 	_int Add_ColliderBuffer(COLLIDERTYPE eColliderType, COLLIDERDESC* pColliderDesc = nullptr);

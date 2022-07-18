@@ -94,6 +94,22 @@ HRESULT CCollider::Set_ParantBuffer(_uint iParantIndex, _int iIndex)
 	return S_OK;
 }
 
+HRESULT CCollider::Delete_ChildeBuffer(_uint iParantIndex, _int iIndex)
+{
+	if (iIndex == -1) iIndex = _int(_int(m_vecColliderBuffer.size()) - 1);
+
+	if (iIndex >= m_vecColliderBuffer.size() || iParantIndex >= m_vecColliderBuffer.size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
+	m_vecColliderBuffer[iParantIndex]->Delete_ChildeBuffer(iIndex);
+
+	return S_OK;
+}
+
 
 
 
