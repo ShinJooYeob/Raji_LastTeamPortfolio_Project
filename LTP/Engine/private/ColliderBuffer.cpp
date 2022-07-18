@@ -294,8 +294,7 @@ void CColliderBuffer::Add_ChildBufferIndex(_uint iIndex)
 		iter++;
 	}
 
-	if (!bIsNone)
-		m_ChildNodeIndexList.push_back(iIndex);
+	if (bIsNone) m_ChildNodeIndexList.push_back(iIndex);
 }
 
 void CColliderBuffer::Delete_ChildeBuffer(_uint iIndex)

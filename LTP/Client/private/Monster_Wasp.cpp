@@ -50,7 +50,6 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 		}
 	}
 
-
 	FollowMe(dDeltaTime);
 
 	for (_int i = 0; i < ANIM_END; i++)
@@ -126,10 +125,10 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 
-	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
-	{
-		m_vecInstancedTransform[iMyColliderIndex].bHit = true;
-	}
+	//if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
+	//{
+	//	m_vecInstancedTransform[iMyColliderIndex].bHit = true;
+	//}
 }
 
 _float CMonster_Wasp::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
