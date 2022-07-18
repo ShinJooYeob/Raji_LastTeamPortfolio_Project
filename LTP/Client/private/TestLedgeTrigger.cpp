@@ -43,11 +43,11 @@ _int CTestLedgeTrigger::Update(_double fDeltaTime)
 
 	if (true == Check_CollisionToPlayer())
 	{
-		Active_Trigger(fDeltaTime);
+		//Active_Trigger(fDeltaTime);
 	}
 	else
 	{
-		DeActive_Trigger(fDeltaTime);
+		//DeActive_Trigger(fDeltaTime);
 	}
 
 	return _int();
@@ -88,7 +88,7 @@ _int CTestLedgeTrigger::LateRender()
 	return _int();
 }
 
-_int CTestLedgeTrigger::Active_Trigger(_double fDeltaTime)
+_int CTestLedgeTrigger::Active_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
 	switch (m_eLedgeTriggerType)
 	{
@@ -109,7 +109,7 @@ _int CTestLedgeTrigger::Active_Trigger(_double fDeltaTime)
 	return _int();
 }
 
-_int CTestLedgeTrigger::DeActive_Trigger(_double fDeltaTime)
+_int CTestLedgeTrigger::DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
 	switch (m_eLedgeTriggerType)
 	{

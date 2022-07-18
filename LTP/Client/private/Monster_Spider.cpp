@@ -103,6 +103,20 @@ _int CMonster_Spider::LateRender()
 	return _int();
 }
 
+void CMonster_Spider::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
+}
+
+_float CMonster_Spider::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
+}
+
 HRESULT CMonster_Spider::SetUp_Info()
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Cell.h"
 
 BEGIN(Engine)
 
@@ -26,6 +27,10 @@ public:
 	_Vector Get_NaviPosition(_fVector vTargetPos);
 	_float	Get_NaviHeight(_fVector vTargetPos);
 	HRESULT	FindCellIndex(_Vector Pos);
+
+	CCell::CELL_OPTION Get_CurCellOption();
+	_uint Get_CurNavCellIndex();
+	void Set_CurNavCellIndex(_uint iIndex);
 
 #ifdef _DEBUG
 public:

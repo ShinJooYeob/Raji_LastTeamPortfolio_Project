@@ -114,7 +114,7 @@ private:
 	};
 
 	enum EPLAYERANIM_DAMAGE {
-		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, DAMAGE_ANIM_END
+		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, BASE_ANIM_JUMP_READY, BASE_ANIM_JUMP_CHARGING, BASE_ANIM_JUMP_JUMPING, DAMAGE_ANIM_END
 	};
 	//
 
@@ -159,7 +159,8 @@ public:
 	CTransform* Get_Transform() const { return m_pTransformCom; }
 
 
-public:
+public: /* public Setter */
+	void	Set_JumpPower(_float fJumpPower);
 	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
 
 
@@ -226,6 +227,7 @@ private:
 
 private: /* Check */
 	_bool				Check_InputDirIsForward();
+	void				Check_CurNaviCellOption();
 
 private: /* Key Input */
 	_bool				Check_PlayerKeyInput(_double fDeltaTime);
@@ -267,7 +269,7 @@ private: /* Select Anim */
 	void				Play_DodgeAnim();
 
 
-private: /* Setter */
+private: /* private Setter */
 	void				Set_InputDir(_int iAxis_F, _int iAxis_R, _double fDeltaTime);
 	void				Set_PlayerState(EPLAYER_STATE eState);
 	void				Set_TurnInputDir();
@@ -381,6 +383,9 @@ private: /* Animation Control */
 	_bool					m_bShieldMode;
 
 	_bool					m_bActiveCollider = true;
+
+private: /* For Navi */
+	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
 
 private: /* For Sound */
 	_bool					m_bOncePlaySound = false;

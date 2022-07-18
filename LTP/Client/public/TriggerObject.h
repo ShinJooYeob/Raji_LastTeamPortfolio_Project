@@ -7,7 +7,7 @@ BEGIN(Client)
 class CTriggerObject abstract : public CGameObject
 {
 public:
-	enum EParkourTriggerType { PACUR_LEDGE, PACUR_END };
+	enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_END };
 
 protected:
 	CTriggerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -24,8 +24,8 @@ public:
 	virtual _int					Render() override;
 	virtual _int					LateRender() override;
 
-	virtual _int					Active_Trigger(_double fDeltaTime) = 0;
-	virtual _int					DeActive_Trigger(_double fDeltaTime) = 0;
+	virtual _int					Active_Trigger(CGameObject* pTarget, _double fDeltaTime) = 0;
+	virtual _int					DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime) = 0;
 
 	virtual EParkourTriggerType 	Get_ParkourTriggerType();
 

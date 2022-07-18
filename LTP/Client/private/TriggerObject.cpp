@@ -52,7 +52,7 @@ _int CTriggerObject::LateRender()
 	return _int();
 }
 
-_int CTriggerObject::Active_Trigger(_double fDeltaTime)
+_int CTriggerObject::Active_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
 	return _int();
 }

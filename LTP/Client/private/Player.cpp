@@ -91,10 +91,11 @@ _int CPlayer::Update(_double fDeltaTime)
 	}
 #pragma endregion TestInputkey
 
+	// Check Cur Pos Navi's Cell Option
+	Check_CurNaviCellOption();
 
 	// Check Player Key Input
 	Check_PlayerKeyInput(fDeltaTime);
-
 
 	// Check MotionTrail
 	m_fInterval_MotionTrail -= (_float)fDeltaTime;
@@ -238,10 +239,6 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
-	//if (m_IsConfilicted == true)
-	//	m_pCollider->Set_Conflicted(0.5f);
-
-
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
@@ -296,15 +293,14 @@ _int CPlayer::LateRender()
 
 void CPlayer::CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
+	/*if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
 	{
 		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_Vector vConflicted_Col_Pos = pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector();
 		_Vector vDamageDir = XMVector3Normalize(vPlayerPos - vConflicted_Col_Pos);
+	}*/
 
-		Take_Damage(pConflictedObj, 1.f, vDamageDir, pConflictedObj->Get_OnKnockbackCol(), pConflictedObj->Get_KnockbackColPower());
-		m_pCollider->Set_Conflicted(1.f);
-	}
+
 }
 
 _fVector CPlayer::Get_BonePos(const char * pBoneName)
@@ -575,8 +571,11 @@ void CPlayer::Set_State_PetalStart(_double fDeltaTime)
 void CPlayer::Set_State_JumpStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_JUMP;
-	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
+	//m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
+	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_READY);
 	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	m_fJumpPower = 0.1f;
 }
 
 void CPlayer::Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir)
@@ -646,9 +645,17 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 	/** Change State By KeyInput */
 	if (true == m_bPressedDodgeKey)
 	{
-		if (nullptr != m_pCurParkourTrigger)
+		/*if (nullptr != m_pCurParkourTrigger)
 		{
 			Set_State_ParkourStart(fDeltaTime);
+		}
+		else
+		{*/
+		//}
+
+		if (CCell::CELL_JUMPZONE == m_eCurPosNavCellOption)
+		{
+			Set_State_JumpStart(fDeltaTime);
 		}
 		else
 		{
@@ -722,9 +729,13 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 		/** Change State By KeyInput */
 		if (true == m_bPressedDodgeKey)
 		{ 
-			if (nullptr != m_pCurParkourTrigger)
+			/*if (nullptr != m_pCurParkourTrigger)
 			{
 				Set_State_ParkourStart(fDeltaTime);
+			}*/
+			if (CCell::CELL_JUMPZONE == m_eCurPosNavCellOption)
+			{
+				Set_State_JumpStart(fDeltaTime);
 			}
 			else
 			{
@@ -756,73 +767,142 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 {
 	m_bOnNavigation = false;
-
 	_float fCurAnimRate = (_float)m_pModel->Get_PlayRate();
 
-	if (0.f <= fCurAnimRate)
+	switch (m_pModel->Get_NowAnimIndex())
 	{
-		if (0.194f <= fCurAnimRate && 0.694f >= fCurAnimRate)
+	case BASE_ANIM_JUMP_READY:
+	{
+		if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Up)
+		{
+			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_JUMPING);
+		}
+		else if (0.9f < fCurAnimRate)
+		{
+			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_CHARGING);
+		}
+	}
+		break;
+	case BASE_ANIM_JUMP_CHARGING:
+	{
+		if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Press)
+		{
+			m_fJumpPower += 0.04f;
+			if (m_fJumpPower > 2.f)
+			{
+				m_fJumpPower = 2.f;
+			}
+		}
+		else
+		{
+			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_JUMPING);
+		}
+	}
+		break;
+	case BASE_ANIM_JUMP_JUMPING:
+	{
+		if (0.f < fCurAnimRate && 0.55f >= fCurAnimRate)
 		{
 			m_fFallingAcc += 0.02267f;
-			_float fPos_y = m_fJumpStart_Y + (5.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+			_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
-			m_pTransformCom->Move_Forward(fDeltaTime * 1.6f, m_pNavigationCom); 
+			m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 			vMyPos = XMVectorSetY(vMyPos, fPos_y);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 		}
-		
-		_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		if (fMyPos_Y < m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
-		{
-			m_bOnNavigation = true;
-			Set_State_IdleStart(fDeltaTime);
-			m_fFallingAcc = 0.f;
 
-			m_bOnNavigation = true;
-			Set_State_IdleStart(fDeltaTime);
-			m_fFallingAcc = 0.f;
-		}
-		/*if (0.98f <= fCurAnimRate)
-		{
+			_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			if (fMyPos_Y < m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) 
+				&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
+			{
 				m_bOnNavigation = true;
 				Set_State_IdleStart(fDeltaTime);
 				m_fFallingAcc = 0.f;
-
-			m_bOnNavigation = true;
-			Set_State_IdleStart(fDeltaTime);
-			m_fFallingAcc = 0.f; 
-		}
-		else */if (0.6f <= fCurAnimRate)
-		{
-			_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-			if (fMyPos_Y - 0.5f > m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
-			{
-				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 1.f);
-				m_eCurState = STATE_FALL;
-				m_fJumpPower = 5.f;
+				return S_OK;
 			}
-		}
+
+			if (0.55f < fCurAnimRate)
+			{
+				_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+				if (fMyPos_Y > m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS))
+					|| CCell::CELL_BLOCKZONE == m_pNavigationCom->Get_CurCellOption())
+				{
+					m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 0.5f);
+					m_eCurState = STATE_FALL;
+				}
+			}
 	}
+		break;
+	}
+
+
+	//_float fCurAnimRate = (_float)m_pModel->Get_PlayRate();
+
+	//if (0.f <= fCurAnimRate)
+	//{
+	//	if (0.194f <= fCurAnimRate && 0.694f >= fCurAnimRate)
+	//	{
+	//		m_fFallingAcc += 0.02267f;
+	//		_float fPos_y = m_fJumpStart_Y + (5.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+
+	//		m_pTransformCom->Move_Forward(fDeltaTime * 2.f, m_pNavigationCom, true); 
+	//		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	//		vMyPos = XMVectorSetY(vMyPos, fPos_y);
+	//		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+	//	}
+	//	
+	//	_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//	if (fMyPos_Y < m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) 
+	//		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
+	//	{
+	//		m_bOnNavigation = true;
+	//		Set_State_IdleStart(fDeltaTime);
+	//		m_fFallingAcc = 0.f;
+	//	}
+	//	/*if (0.98f <= fCurAnimRate)
+	//	{
+	//			m_bOnNavigation = true;
+	//			Set_State_IdleStart(fDeltaTime);
+	//			m_fFallingAcc = 0.f;
+
+	//		m_bOnNavigation = true;
+	//		Set_State_IdleStart(fDeltaTime);
+	//		m_fFallingAcc = 0.f; 
+	//	}
+	//	else */if (0.6f <= fCurAnimRate)
+	//	{
+	//		_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//		if (fMyPos_Y - 0.5f > m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
+	//		{
+	//			m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 1.f);
+	//			m_eCurState = STATE_FALL;
+	//			m_fJumpPower = 5.f;
+	//		}
+	//	}
+	//}
+
 	return S_OK;
 }
 
 HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 {
 	m_bOnNavigation = false;
-	m_fAnimSpeed = 2.f;
-	m_fFallingAcc += 0.04f;
-	_float fPos_y = m_fJumpStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	m_fAnimSpeed = 1.f;
+	m_fFallingAcc += 0.03f;
+	_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
-	m_pTransformCom->Move_Forward(fDeltaTime * 1.2f, m_pNavigationCom);
+	m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
-	if (fPos_y <= fOnNavPos_Y)
+	if (fPos_y <= fOnNavPos_Y
+		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
 	{
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y);
 		Set_State_IdleStart(fDeltaTime);
 		m_fFallingAcc = 0.f;
 		m_fJumpPower = 0.f;
+		return S_OK;
 	}
 	else
 	{
@@ -1268,7 +1348,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 	case LEDGE_ANIM_FALLING:
 	{
 		m_fFallingAcc += 0.03f;
-		m_pTransformCom->Move_Forward(fDeltaTime * 1.5f);
+		m_pTransformCom->Move_Forward(fDeltaTime * (m_fJumpPower * 0.5f));
 		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_float fPrePos_Y = XMVectorGetY(vMyPos);
 		_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
@@ -1471,6 +1551,11 @@ _bool CPlayer::Check_InputDirIsForward()
 		return true;
 	}
 	return false;
+}
+
+void CPlayer::Check_CurNaviCellOption()
+{
+	m_eCurPosNavCellOption = m_pNavigationCom->Get_CurCellOption();
 }
 
 _bool CPlayer::Check_PlayerKeyInput(_double fDeltaTime)
@@ -6316,6 +6401,11 @@ void CPlayer::Set_PhysX_Head()
 	createJoint.mAttachModel = m_pModel;
 
 	m_pHeadJoint->Set_ColiderDesc_Hair(createJoint);
+}
+
+void CPlayer::Set_JumpPower(_float fJumpPower)
+{
+	m_fJumpPower = fJumpPower;
 }
 
 void CPlayer::Update_Targeting(_double fDeltaTime)
