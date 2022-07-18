@@ -2,7 +2,7 @@
 
 #include "Scene.h"
 #include "GameObject.h"
-
+#include "TriggerObject.h"
 
 #ifdef _DEBUG
 #include "ImguiMgr.h"
@@ -31,6 +31,10 @@ class CScene_Edit final : public CScene
 		Data_HeightMap,
 		Data_FilterMap,
 		Data_Navigation,
+
+		Data_Trigger,
+		Data_Monster,
+
 		Datatype_End
 	};
 
@@ -108,6 +112,22 @@ private:
 	_float	m_fPickingedPosition[3] = {0};
 #pragma endregion MapTab
 
+
+#pragma region TriggerTab
+
+	HRESULT Update_TriggerTab(_double fDeltatime);
+	HRESULT Widget_TriggerSRT(_double fDeltatime);
+
+	HRESULT Widget_BatchedTriggerList(_double fDeltatime);
+	HRESULT Widget_CreateDeleteTrigger(_double fDeltatime);
+	HRESULT Widget_SaveLoadTriggerData(_double fDeltatime);
+	HRESULT	RenewTriggerTransform(OBJELEMENT* pObjElement);
+
+	//CTriggerObject
+
+
+#pragma endregion TriggerTab
+
 #pragma region UITab
 
 
@@ -178,8 +198,6 @@ private:
 
 	vector<CAMACTDESC>		 m_vecCamPositions;
 	vector<CAMACTDESC>		 m_vecLookPostions;
-
-
 #pragma endregion CamTab
 
 

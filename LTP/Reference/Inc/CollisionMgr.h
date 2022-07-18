@@ -6,6 +6,12 @@ BEGIN(Engine)
 
 class CCollisionMgr final : public CBase
 {
+public:
+	enum CollsionThreadStateID
+	{
+		CTS_ENTER, CTS_PROCESSING, CTS_SCENECHANGING, CTS_END
+	};
+
 	DECLARE_SINGLETON(CCollisionMgr);
 
 
@@ -50,6 +56,10 @@ public:
 	HRESULT		 Add_NaviPointCollider(EDITPOINTCOLLIDER Collider);
 	CGameObject* NaviPointCollision(_Vector pos, _Vector dir);
 
+
+public:
+	HRESULT		Processing_RepelCollision(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
+
 private:
 	HRESULT Inspect_Player_To_MonsterWeapon();
 	HRESULT Inspect_PlayerWeapon_To_Monster();
@@ -58,12 +68,15 @@ private:
 	HRESULT Inspect_Terrain_To_All();
 
 	HRESULT Inspect_RepelGroup();
+	void	Start_InspectRepelCollision();
 
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
 	list<REPELELEMENT>		m_RepelObjectList;
 	
 	list<EDITPOINTCOLLIDER>		m_EditPointCollider;
+
+	CollsionThreadStateID		m_eCollisionThreadState = CTS_ENTER;
 
 
 private:

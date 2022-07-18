@@ -309,6 +309,8 @@ _float3 CColliderBuffer::Get_ColliderPosition()
 _int CColliderBuffer::Render()
 {
 	//m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
+	//m_pDeviceContext->PSSetShader(nullptr, nullptr, 0);
+	//m_pDeviceContext->VSSetShader(nullptr, nullptr, 0);
 
 	m_pDeviceContext->IASetInputLayout(m_pInputLayout);
 

@@ -60,7 +60,8 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
-		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 1.f));
+		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f));
 
 	}
 	return _int();

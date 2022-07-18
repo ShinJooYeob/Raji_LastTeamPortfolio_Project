@@ -1181,6 +1181,13 @@ RasterizerState CullMode_ccw
 	CullMode = back;
 	FrontCounterClockwise = false;
 };
+RasterizerState CullMode_None
+{
+	FillMode = Solid;
+	CullMode = none;
+	FrontCounterClockwise = false;
+
+};
 
 technique11		DefaultTechnique
 {
@@ -1394,5 +1401,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_Emissive();
+	}
+
+	pass DebugCollider// 20
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RECT();
 	}
 }

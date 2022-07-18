@@ -3063,6 +3063,30 @@ HRESULT CScene_Edit::RenewElenmetTransform(OBJELEMENT * pObjElement)
 #pragma endregion MapTab
 
 #pragma region UITab
+HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
+{
+	return E_NOTIMPL;
+}
+HRESULT CScene_Edit::Widget_TriggerSRT(_double fDeltatime)
+{
+	return E_NOTIMPL;
+}
+HRESULT CScene_Edit::Widget_BatchedTriggerList(_double fDeltatime)
+{
+	return E_NOTIMPL;
+}
+HRESULT CScene_Edit::Widget_CreateDeleteTrigger(_double fDeltatime)
+{
+	return E_NOTIMPL;
+}
+HRESULT CScene_Edit::Widget_SaveLoadTriggerData(_double fDeltatime)
+{
+	return E_NOTIMPL;
+}
+HRESULT CScene_Edit::RenewTriggerTransform(OBJELEMENT * pObjElement)
+{
+	return E_NOTIMPL;
+}
 HRESULT CScene_Edit::Ready_Layer_RendererEditUI(const _tchar * pLayerTag)
 {
 

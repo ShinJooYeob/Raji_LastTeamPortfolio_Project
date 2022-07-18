@@ -29,7 +29,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 	ZeroMemory(m_PostProcessingOn, sizeof(_bool) * POSTPROCESSING_END);
 }
-#define ShadowMapQuality 5
+#define ShadowMapQuality 1
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -1997,7 +1997,7 @@ HRESULT CRenderer::Render_UI()
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
-	FAILED_CHECK(m_pShader->Apply(4));
+	FAILED_CHECK(m_pShader->Apply(20));
 
 	for (auto& pComponent : m_DebugObjectList)
 	{

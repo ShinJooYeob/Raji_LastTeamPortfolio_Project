@@ -284,8 +284,13 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerEffect_ShellingRange,
 	Prototype_PlayerEffect_ShellingPoint,
 
+
+	//////////////////////////////////////////////////////////////////////////
 	Prototype_Trigger_ChangeCameraView,
+
+
 	Prototype_Trigger_TestLedgeTrigger,
+	//////////////////////////////////////////////////////////////////////////
 
 	Prototype_PlayerSkill_ShellingArrow,
 	Prototype_PlayerSkill_SpearWave,
@@ -312,7 +317,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_NonInstanceMeshEffect,
 
 
+	//////////////////////////////////////////////////////////////////////////
 	Prototype_Object_Monster_Mahinasura_Minion,
+
 	Prototype_Object_Monster_Mahinasura_Leader,
 	Prototype_Object_Monster_Vayusura_Minion,
 	Prototype_Object_Monster_Vayusura_Leader,
@@ -324,7 +331,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Ninjasura,
 	Prototype_Object_Monster_Ninjasura_Minion,
 	Prototype_Object_Monster_Gadasura_Black,
+
 	Prototype_Object_Monster_Gadasura_Rage,
+	//////////////////////////////////////////////////////////////////////////
+
 	Prototype_Object_Monster_Gadasura_Rage_Hollogram,
 	Prototype_Object_Monster_Wasp,
 	Prototype_Object_Monster_Wormgrub,
@@ -989,6 +999,9 @@ enum COMPONENTPROTOTYPEID
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
 	Prototype_Mesh_ConeMesh,
+	Prototype_Mesh_JY_Tornado,
+	Prototype_Mesh_Spear_UltiEffect,
+	Prototype_Mesh_Spear_NormalEffect,
 	
 	
 
@@ -2226,6 +2239,16 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_ConeMesh:
 		return TEXT("ConeMesh.fbx");
+		break;
+
+	case Prototype_Mesh_JY_Tornado:
+		return TEXT("JY_Tornado.fbx");
+		break;
+	case Prototype_Mesh_Spear_NormalEffect:
+		return TEXT("Spear_NormalEffect.fbx");
+		break;
+	case Prototype_Mesh_Spear_UltiEffect:
+		return TEXT("Spear_UltiEffect.fbx");
 		break;
 
 

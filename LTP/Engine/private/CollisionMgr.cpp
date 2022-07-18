@@ -3,6 +3,23 @@
 #include "Collider.h"
 #include "Transform.h"
 #include "Navigation.h"
+#include "ThreadMgr.h"
+
+
+
+_uint CALLBACK RepelCollisionThread(void* _Prameter)
+{
+	THREADARG tThreadArg{};
+	memcpy(&tThreadArg, _Prameter, sizeof(THREADARG));
+	delete _Prameter;
+
+
+	CCollisionMgr* pCollisionMgr = (CCollisionMgr*)tThreadArg.pArg;
+
+	FAILED_CHECK(pCollisionMgr->Processing_RepelCollision(tThreadArg.IsClientQuit, tThreadArg.CriSec));
+
+	return 0;
+}
 
 IMPLEMENT_SINGLETON(CCollisionMgr);
 
@@ -17,6 +34,8 @@ HRESULT CCollisionMgr::Initialize_CollisionMgr(ID3D11Device * pDevice, ID3D11Dev
 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
+
+	GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
 
 	return S_OK;
 }
@@ -39,6 +58,9 @@ HRESULT CCollisionMgr::Add_CollisionGroup(CollisionTypeID eType, CGameObject * p
 
 HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation* pNavigation)
 {
+	if (m_eCollisionThreadState != CollsionThreadStateID::CTS_ENTER) return S_FALSE;
+
+
 	NULL_CHECK_RETURN(pTransform,E_FAIL);
 	if (fRadious < 0) fRadious = 0;
 
@@ -59,6 +81,8 @@ HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, 
 
 HRESULT CCollisionMgr::Inspect_Collision()
 {
+	Start_InspectRepelCollision();
+	
 
 	FAILED_CHECK(Inspect_Player_To_MonsterWeapon());
 
@@ -81,7 +105,7 @@ HRESULT CCollisionMgr::Inspect_Collision()
 		m_CollisionGroupList[i].clear();
 	}
 
-	FAILED_CHECK(Inspect_RepelGroup());
+	//FAILED_CHECK(Inspect_RepelGroup());
 
 	return S_OK;
 }
@@ -98,10 +122,16 @@ void CCollisionMgr::Clear_CollisionGroup()
 		m_CollisionGroupList[i].clear();
 	}
 
-	for (auto& RepelElement : m_RepelObjectList)
-		Safe_Release(RepelElement.pRepelObjTransform);
-	m_RepelObjectList.clear();
+	m_eCollisionThreadState = CCollisionMgr::CTS_SCENECHANGING;
+}
 
+void CCollisionMgr::Start_InspectRepelCollision()
+{
+	if (m_eCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
+		m_eCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
+
+	if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+		m_eCollisionThreadState = CCollisionMgr::CTS_ENTER;
 }
 
 HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)
@@ -141,6 +171,48 @@ CGameObject * CCollisionMgr::NaviPointCollision(_Vector pos, _Vector dir)
 	return nullptr;
 }
 
+
+HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	_double ThreadPassedTime = 0;
+
+	while (true)
+	{
+		Sleep(8);
+
+		if (*_IsClientQuit == true)
+			return S_OK;
+
+		if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+		{
+			if (m_RepelObjectList.size() > 0)
+			{
+				for (auto& RepelElement : m_RepelObjectList)
+					Safe_Release(RepelElement.pRepelObjTransform);
+				m_RepelObjectList.clear();
+			}
+
+			continue;
+		}
+
+
+		if (m_eCollisionThreadState != CCollisionMgr::CTS_PROCESSING) continue;
+		FAILED_CHECK(Inspect_RepelGroup());
+
+		if (m_eCollisionThreadState != CCollisionMgr::CTS_SCENECHANGING)
+		{
+			EnterCriticalSection(_CriSec);
+			m_eCollisionThreadState = CCollisionMgr::CTS_ENTER;
+			LeaveCriticalSection(_CriSec);
+		}
+
+
+	}
+
+
+
+	return S_OK;
+}
 
 HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 {

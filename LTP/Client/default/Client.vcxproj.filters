@@ -340,9 +340,6 @@
     <Filter Include="01.GameObject\08.Effect\00.NonInstanceMeshEffect">
       <UniqueIdentifier>{fde42bc4-6ac8-4175-8951-b07a89c71625}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject">
-      <UniqueIdentifier>{27a098be-aa38-4464-b3cd-2613b7ba3d2d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\06.Terrain\07.MapObject">
       <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
     </Filter>
@@ -806,9 +803,7 @@
     <ClInclude Include="..\public\NonInstanceMeshEffect.h">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\StaticInstanceMapObject.h">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
-    </ClInclude>
+    <ClInclude Include="..\public\StaticInstanceMapObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1228,9 +1223,7 @@
     <ClCompile Include="..\private\NonInstanceMeshEffect.cpp">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\StaticInstanceMapObject.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
-    </ClCompile>
+    <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

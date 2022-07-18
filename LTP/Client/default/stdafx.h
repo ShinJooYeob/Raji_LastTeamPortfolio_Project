@@ -2,8 +2,8 @@
 
 
 
-#ifdef _DEBUG
 #include "GameInstance.h"
+#ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 
 
 #define NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) 
-#elif
+#else
 #define NEW new 
 //#define NEW new
 
