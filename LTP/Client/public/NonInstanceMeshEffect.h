@@ -6,32 +6,6 @@ BEGIN(Client)
 
 class CNonInstanceMeshEffect final : public CGameObject
 {
-public:
-	typedef struct tagNonInstanceMeshEffect
-	{
-		COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
-		_float4				vColor = _float4(1);
-		_float				fMaxTime_Duration = 5.f;
-
-		_uint				NoiseTextureIndex = 0;
-		_uint				MaskTextureIndex = 0;
-		_uint				iDiffuseTextureIndex = 299;
-
-		_float3				vPosition = _float3(0);
-		_float3				vLookDir = _float3(0,1,0);
-
-
-		_float4				vLimLight = _float4(0);
-		_float4				vEmissive = _float4(0);
-
-		_float2				noisingdir = _float2(1, 1).Get_Nomalize();
-		_float				fDistortionNoisingPushPower = 0.5f;
-		_float				fAppearTime = 2.f;
-
-
-		_uint				m_iPassIndex = 16;
-
-	}NONINSTNESHEFTDESC;
 
 private:
 	CNonInstanceMeshEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -54,6 +28,8 @@ private:
 private:
 	NONINSTNESHEFTDESC		m_tMeshDesc;
 	_float				m_fCurTime_Duration = 0.f;
+
+	_float3				m_vRotAxis = _float3(0,1,0); 
 
 private:
 	CShader*			m_pShaderCom = nullptr;

@@ -112,6 +112,36 @@ typedef struct tagFonts
 	_float fAngle = 0;
 }FONTSDESC;
 
+	typedef struct tagNonInstanceMeshEffect
+	{
+		COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
+		_float4				vColor = _float4(1);
+		_float				fMaxTime_Duration = 5.f;
+
+		_uint				NoiseTextureIndex = 0;
+		_uint				MaskTextureIndex = 0;
+		_uint				iDiffuseTextureIndex = 299;
+
+		_float3				vPosition = _float3(0);
+		_float3				vLookDir = _float3(0, 1, 0);
+
+
+		_float4				vLimLight = _float4(0);
+		_float4				vEmissive = _float4(0);
+
+		_float2				noisingdir = _float2(1, 1).Get_Nomalize();
+		_float				fDistortionNoisingPushPower = 0.5f;
+		_float				fAppearTime = 2.f;
+
+		_float3				vSize = _float3(1);
+		eFollowingDirID		RotAxis = FollowingDir_Up;
+		_float				RotationSpeedPerSec = 0.f;
+
+		_uint				m_iPassIndex = 16;
+
+	}NONINSTNESHEFTDESC;
+
+
 typedef struct tagInstanceParticleDesc
 {
 	tagInstanceParticleDesc()

@@ -439,10 +439,11 @@ private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 
 private:
-	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pMeshParticleTransform = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	CTransform*												m_pTextureParticleTransform = nullptr;
+	CTransform*												m_pMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
+	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
 
 private:
 	HRESULT SetUp_Components();

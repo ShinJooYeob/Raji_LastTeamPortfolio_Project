@@ -36,6 +36,24 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tMeshDesc.vPosition);
 	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 
+	m_pTransformCom->Scaled_All(m_tMeshDesc.vSize);
+
+	switch (m_tMeshDesc.RotAxis)
+	{
+	case FollowingDir_Right:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
 
 	return S_OK;
@@ -48,20 +66,22 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 
-	m_tMeshDesc.NoiseTextureIndex = 381;
-	m_tMeshDesc.MaskTextureIndex = 10;
-	m_tMeshDesc.iDiffuseTextureIndex = 300;
-	m_tMeshDesc.m_iPassIndex = 19;
-	m_tMeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-	m_tMeshDesc.vLimLight = _float4(1, 0, 0, 1);
+	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime);
+
+	//m_tMeshDesc.NoiseTextureIndex = 381;
+	//m_tMeshDesc.MaskTextureIndex = 10;
+	//m_tMeshDesc.iDiffuseTextureIndex = 300;
+	//m_tMeshDesc.m_iPassIndex = 19;
+	//m_tMeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+	//m_tMeshDesc.vLimLight = _float4(1, 0, 0, 1);
 
 
-	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+	//Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
 
-	//if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
-	//{
-	//	Set_IsDead();
-	//}
+	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
+	{
+		Set_IsDead();
+	}
 	return _int();
 }
 
@@ -102,8 +122,10 @@ _int CNonInstanceMeshEffect::Render()
 	//_float	fDistortionNoisingPushPower = 0.5f;
 	//_float	fAppearTime = 2.f;
 
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tMeshDesc.fMaxTime_Duration, sizeof(_float)));
+	
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tMeshDesc.noisingdir, sizeof(_float2)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tMeshDesc.fDistortionNoisingPushPower, sizeof(_float)));
 
@@ -151,7 +173,7 @@ HRESULT CNonInstanceMeshEffect::SetUp_Components()
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30;
-	tDesc.fRotationPerSec = XMConvertToRadians(90);
+	tDesc.fRotationPerSec = XMConvertToRadians(m_tMeshDesc.RotationSpeedPerSec);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));

@@ -12,7 +12,8 @@ cbuffer Distortion
 	float3				g_vScale = float3(1, 2, 3);
 	float3				g_vScrollSpeeds = float3(2.f, 3.f, 4.f);
 
-	float g_fAppearTimer = 2.f;
+	float g_fAppearTimer = 1.f;
+	float g_fMaxTime = 2.f;
 	float g_fTimer = 0;
 	float2 noisingdir = float2(1, 0);
 
@@ -745,9 +746,12 @@ PS_OUT PS_Noise_AppearNDisApper(PS_IN_Distortion In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+
 	if (g_fTimer < g_fAppearTimer)
 	{
-		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - g_fTimer));
+		
+
+		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
@@ -755,7 +759,14 @@ PS_OUT PS_Noise_AppearNDisApper(PS_IN_Distortion In)
 		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - g_fTimer)));
 		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - g_fTimer)));
 	}
+	else if (g_fTimer > g_fMaxTime - g_fAppearTimer)
+	{
+		In.vTexUV = (In.vTexUV + noisingdir * (g_fTimer - (g_fMaxTime - g_fAppearTimer)  )* (1 / g_fAppearTimer));
 
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+
+	}
 
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
 	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);

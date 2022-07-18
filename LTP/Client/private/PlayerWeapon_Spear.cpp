@@ -34,6 +34,8 @@ HRESULT CPlayerWeapon_Spear::Initialize_Clone(void * pArg)
 
 _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 {
+	m_vecTextureParticleDesc[0].TotalParticleTime = 2.f;
+
 	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
 	{
 		return 0;
@@ -483,6 +485,7 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 
 	//	0
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"SpearNormalAttack"));
+	m_vecTextureParticleDesc[0].TotalParticleTime = 2.f;
 	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
@@ -539,7 +542,6 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);
-	Safe_Release(m_pTextureParticleTransform);
 
 	Safe_Release(m_pDissolveCom);
 }
