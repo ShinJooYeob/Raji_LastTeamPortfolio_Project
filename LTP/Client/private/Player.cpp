@@ -11,7 +11,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "physx\Collider_PhysX_Joint.h"
-
+#include "TriggerObject.h"
 #include "TestLedgeTrigger.h"
 
 #include "HpUI.h"
@@ -330,6 +330,38 @@ _int CPlayer::LateRender()
 
 void CPlayer::CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	//if (CollisionTypeID::CollisionType_NPC == eConflictedObjCollisionType)
+	//{
+	//	CTriggerObject* pTriggerObj = static_cast<CTriggerObject*>(pConflictedObj);
+	//	switch (pTriggerObj->Get_ParkourTriggerType())
+	//	{
+	//	case CTriggerObject::PACUR_LEDGE:
+	//	{
+	//		CTestLedgeTrigger* pLedgeTriger = static_cast<CTestLedgeTrigger*>(pTriggerObj);
+	//		switch (pLedgeTriger->Get_LedgeType())
+	//		{
+	//		case CTestLedgeTrigger::ELedgeTriggerState::STATE_START:    //STATE_START, STATE_LEDGE, STATE_LAST_LEDGE
+	//		{
+
+	//		}
+	//			break;
+	//		case CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE:
+	//		{
+	//			if ()
+	//			{
+
+	//			}
+	//		}
+	//			break;
+	//		}
+
+	//	}
+	//		break;
+
+
+	//	}
+	//}
+
 	/*if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
 	{
 		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -567,23 +599,42 @@ void CPlayer::Set_State_TurnBackStart(_double fDeltaTime)
 void CPlayer::Set_State_ParkourStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_PARKOUR;
-	m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
 
-	switch (m_eCurParkourState)
-	{
-	case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
-		if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-		{
-			m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
-			m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
-		}
-		else 
-		{
-			m_eCurLedgeState = LEDGE_JUMP;
-			m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
-		}
-		break;
-	}
+	m_eCurLedgeState = LEDGE_HANGING_IDLE;
+	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+
+	//m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
+
+	//switch (m_eCurParkourState)
+	//{
+	//case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
+		//if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
+		//{
+//			m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
+			//m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
+		//}
+		//else 
+		//{
+//			m_eCurLedgeState = LEDGE_JUMP;
+			//m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
+		//}
+//		break;
+//	}
+}
+
+void CPlayer::Set_State_LedgeClimbDownStart(_double fDeltaTime)
+{
+	m_eCurState = STATE_PARKOUR;
+
+	m_eCurParkourState = CTriggerObject::EParkourTriggerType::PACUR_LEDGE;
+	m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
+	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
+
+}
+
+CPlayer::EPLAYER_STATE CPlayer::Get_PlayerState()
+{
+	return m_eCurState;
 }
 
 void CPlayer::Set_State_CurtainStart(_double fDeltaTime)
@@ -854,7 +905,7 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		if (0.f < fCurAnimRate && 0.55f >= fCurAnimRate)
 		{
 			m_fFallingAcc += 0.02267f;
-			_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+			_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 			m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -940,12 +991,13 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 	m_bOnNavigation = false;
 	m_fAnimSpeed = 1.f;
 	m_fFallingAcc += 0.03f;
-	_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 	m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
 	if (fPos_y <= fOnNavPos_Y
+		&& fPos_y >= fOnNavPos_Y - 0.25f
 		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
 	{
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y);
@@ -6107,9 +6159,9 @@ void CPlayer::Ledging(_double fDeltaTime)
 		{
 			if (0.8f > fCurAnimRate)
 			{
-				m_pTransformCom->Move_Down(fDeltaTime * 0.1f);
+				m_pTransformCom->Move_Down(fDeltaTime * 5.f);
 			}
-			else if (0.98f <= fCurAnimRate)
+			else if (0.9f <= fCurAnimRate)
 			{
 				m_eCurLedgeState = LEDGE_HANGING_IDLE;
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);

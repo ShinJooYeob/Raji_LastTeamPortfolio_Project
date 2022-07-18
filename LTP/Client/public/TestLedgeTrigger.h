@@ -40,6 +40,10 @@ public:
 
 	virtual EParkourTriggerType 	Get_ParkourTriggerType();
 
+	virtual void					CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+
 public:
 	ELedgeTriggerState				Get_LedgeType();
 	_bool							Is_Cornor();
@@ -66,7 +70,6 @@ private:
 	ELedgeCornorType			m_eConorType = CONORTYPE_END;
 
 private:
-	CTransform*					m_pTransformCom = nullptr;
 	CPlayer*					m_pPlayer = nullptr;
 	CTransform*					m_pPlayerTransform = nullptr;
 

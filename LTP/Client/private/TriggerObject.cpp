@@ -62,7 +62,7 @@ _int CTriggerObject::Update(_double fDeltaTime)
 
 _int CTriggerObject::LateUpdate(_double fDeltaTimer)
 {
-	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
+	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
 
 
@@ -76,7 +76,7 @@ _int CTriggerObject::LateUpdate(_double fDeltaTimer)
 
 _int CTriggerObject::Render()
 {
-	if (__super::Render() < 0)		return -1;
+	if (__super::Render() < 0)      return -1;
 
 	return _int();
 }

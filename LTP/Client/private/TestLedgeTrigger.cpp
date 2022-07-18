@@ -50,6 +50,8 @@ _int CTestLedgeTrigger::Update(_double fDeltaTime)
 	//	//DeActive_Trigger(fDeltaTime);
 	//}
 
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
+
 	return _int();
 }
 
@@ -58,6 +60,11 @@ _int CTestLedgeTrigger::LateUpdate(_double fDeltaTimer)
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
+
+
+#ifdef _DEBUG
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pColliderCom));
+#endif // _DEBUG
 
 	return _int();
 }
@@ -144,6 +151,40 @@ _int CTestLedgeTrigger::DeActive_Trigger(CGameObject* pTarget, _double fDeltaTim
 CTestLedgeTrigger::EParkourTriggerType  CTestLedgeTrigger::Get_ParkourTriggerType()
 {
 	return EParkourTriggerType::PACUR_LEDGE;
+}
+
+void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		switch (m_eLedgeTriggerType)
+		{
+		case ELedgeTriggerState::STATE_START:
+		{
+		}
+			break;
+		case ELedgeTriggerState::STATE_LEDGE:
+		{
+			CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+			if (CPlayer::EPLAYER_STATE::STATE_JUMP == pPlayer->Get_PlayerState() ||
+				CPlayer::EPLAYER_STATE::STATE_FALL == pPlayer->Get_PlayerState())
+			{
+				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
+			}
+		}
+			break;
+		case ELedgeTriggerState::STATE_LAST_LEDGE:
+		{
+			if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
+			{
+				CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+				pPlayer->Set_State_LedgeClimbDownStart(g_fDeltaTime);
+			}
+		}
+			break;
+		}
+
+	}
 }
 
 CTestLedgeTrigger::ELedgeTriggerState CTestLedgeTrigger::Get_LedgeType()

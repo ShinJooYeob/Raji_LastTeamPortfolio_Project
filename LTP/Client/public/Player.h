@@ -15,6 +15,11 @@ class CShellingSkillRange;
 class CTriggerObject;
 class CPlayer final : public CGameObject
 {
+public:
+	enum EPLAYER_STATE {
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+	};
+
 private:
 	enum EINPUT_MOVDIR {
 		MOVDIR_F, MOVDIR_B, MOVDIR_L, MOVDIR_R, MOVDIR_FL, MOVDIR_FR, MOVDIR_BL, MOVDIR_BR, MOVDIR_END
@@ -36,9 +41,6 @@ private:
 		WEAPON_NONE, WEAPON_SPEAR, WEAPON_BOW, WEAPON_SWORD, WEAPON_CHAKRA, WEAPON_SHIELD, WEAPON_END
 	};
 	
-	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
-	};
 
 
 	//**	   Enum_Anim		**//
@@ -168,6 +170,13 @@ public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
+public:
+	void	Set_State_ParkourStart(_double fDeltaTime);
+	void	Set_State_LedgeClimbDownStart(_double fDeltaTime);
+
+public:
+	EPLAYER_STATE Get_PlayerState();
+
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
 	void	Set_State_MoveStart(_double fDeltaTime);								// Move
@@ -177,8 +186,6 @@ private: /* Change Start State */
 	void	Set_State_UtilitySkillStart(_double fDeltaTime);						// Utility
 	void	Set_State_UltimateSkillStart(_double fDeltaTime);						// Ultimate
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
-
-	void	Set_State_ParkourStart(_double fDeltaTime);								// Dodge
 
 	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
 	void	Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime);			// WallRun
