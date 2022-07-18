@@ -17,6 +17,15 @@
 #include "HpUI.h"
 
 
+
+
+#include "NonInstanceMeshEffect.h"
+#include "PartilceCreateMgr.h"
+
+
+
+
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
@@ -3435,6 +3444,9 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
+			if(m_fChargingTime>0.1f)
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
+
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
@@ -7170,9 +7182,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
 
-
-
-
 	//	1
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
@@ -7295,13 +7304,9 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 	}
 	// 3
-	{
-		NONINSTNESHEFTDESC tNIMEDesc;
-
-		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f;
-		tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-
+		_int randValue = GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f);
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(0, randValue));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2, randValue+0.1f));
 
 		tNIMEDesc.eMeshType = Prototype_Mesh_JY_Tornado;
 		tNIMEDesc.fMaxTime_Duration = 3.0f;
@@ -7323,9 +7328,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.RotationSpeedPerSec = 360.f;
 		tNIMEDesc.vSize = _float3(2.f, 0.2f, 2.f);
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
-	}
 #pragma endregion
-
 	return S_OK;
 }
 

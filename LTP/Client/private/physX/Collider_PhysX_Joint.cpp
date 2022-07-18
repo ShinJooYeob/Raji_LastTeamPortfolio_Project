@@ -34,7 +34,7 @@ HRESULT CCollider_PhysX_Joint::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&mColDesc, pArg, sizeof(CColider_PX_Desc));
 
-	// 머리의 뼈의 오프셋 값
+	// Head Offset
 
 	BlenderMat[0] = XMMatrixScaling(1, 1, 1)
 		*XMMatrixRotationX(XMConvertToRadians(0))
@@ -129,7 +129,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 
 
 
-#pragma region 참고 코드
+#pragma region CODE
 
 
 //	PxVec3 Value1;
@@ -214,7 +214,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 	//memcpy((_float3*)(&ffMat.m[2][0]), &DEBUGVALUE3, sizeof(_float3));
 	//memcpy((_float3*)(&ffMat.m[3][0]), &DEBUGVALUE4, sizeof(_float3));
 
-	// 뼈위치만 업데이트
+	// BoneUpdate
 	//PxVec3 APos = mVecActors[1]->getGlobalPose().p;
 	//PxVec3 BPos = mVecActors[0]->getGlobalPose().p;
 	//PxVec3 DIr = APos - BPos;
@@ -222,7 +222,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 	//_Sfloat4x4 newmat = mVecHier[1]->Get_UpdatedMatrix();
 	//int Debug = 5;
 
-	// 뼈 회전만 실행
+	// Bone Rot
 		// _Sfloat4x4 rotmat = _Sfloat4x4();
 		// PxRigidDynamic* act = mVecActors[i];
 		// _Squternion quternian = _Squternion(act->getGlobalPose().q.x, act->getGlobalPose().q.y, act->getGlobalPose().q.z, act->getGlobalPose().q.w);
@@ -240,7 +240,7 @@ HRESULT CCollider_PhysX_Joint::Update_BeforeSimulation()
 		//_Sfloat4x4 DirMat = _Sfloat4x4::CreateTranslation(PXVEC3TOFLOAT3(DIr));
 		//mVecHier[i]->Set_UpdateTransform(DirMat* mat);
 
-#pragma endregion 참고 코드
+#pragma endregion 
 
 
 	return S_OK;
@@ -374,10 +374,10 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	}
 
 
-#pragma region 이전코드
+#pragma region PRE CODE
 
-	// 뼈들 위치로 보내기
-		//_float NewRatio = 0.5f;
+	// Bone Pos
+	//_float NewRatio = 0.5f;
 
 		//for (_uint i = 1; i < mVecActors.size(); ++i)
 		//{

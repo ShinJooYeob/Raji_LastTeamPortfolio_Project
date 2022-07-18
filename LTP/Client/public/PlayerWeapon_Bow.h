@@ -82,7 +82,8 @@ private:
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pMeshParticleTransform = nullptr;
+	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	_float							m_fPlayParticleTimer[PARTILCECOUNT] = {0,};

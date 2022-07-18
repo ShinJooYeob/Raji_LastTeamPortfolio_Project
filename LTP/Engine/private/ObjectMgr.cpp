@@ -144,6 +144,50 @@ HRESULT CObjectMgr::Add_GameObject_To_Layer_By_Parameter(_uint eSceneNum, const 
 	return S_OK;
 }
 
+CGameObject * CObjectMgr::Add_GameObject_GetObject(_uint eSceneNum, const _tchar * tagLayer, const _tchar * tagPrototype, void * pArg)
+{
+
+	if (eSceneNum >= m_iMaxSceneNum)
+	{
+		__debugbreak();
+		return nullptr;
+	}
+
+	CGameObject* pPrototype = Find_Prototype(tagPrototype);
+
+	NULL_CHECK_BREAK(pPrototype);
+
+
+	CGameObject* pInstance = pPrototype->Clone(pArg);
+
+	NULL_CHECK_BREAK(pInstance);
+
+	pInstance->Set_NowSceneNum(eSceneNum);
+
+	if (pInstance->Get_NameTag() == nullptr)
+		pInstance->Set_NameTag(tagLayer);
+
+	CObjectLayer* pLayer = Find_Layer(eSceneNum, tagLayer);
+
+	if (pLayer == nullptr)
+	{
+		pLayer = CObjectLayer::Create();
+		NULL_CHECK_BREAK(pLayer);
+
+
+		FAILED_CHECK_NONERETURN(pLayer->Add_GameObject(pInstance));
+
+		m_mapLayer[eSceneNum].emplace(tagLayer, pLayer);
+	}
+	else
+	{
+		FAILED_CHECK_NONERETURN(pLayer->Add_GameObject(pInstance));
+
+		m_mapLayer[eSceneNum].emplace(tagLayer, pLayer);
+	}
+	return pInstance;
+}
+
 HRESULT CObjectMgr::Delete_GameObject_To_Layer_Index(_uint eSceneNum, const _tchar * tagLayer, int index)
 {
 	if (eSceneNum >= m_iMaxSceneNum || m_mapLayer == nullptr)

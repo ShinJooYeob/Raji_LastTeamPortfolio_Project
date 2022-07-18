@@ -26,3 +26,8 @@ _ulong CBase::Release()
 	}
 }
 
+_ulong CBase::Get_RefCount()
+{
+	return m_dwRefCnt;
+}
+

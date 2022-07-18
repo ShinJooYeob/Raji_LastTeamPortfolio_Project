@@ -218,6 +218,14 @@ HRESULT CGameInstance::Add_GameObject_Out_of_Manager(CGameObject ** ppOutGameObj
 	return	m_pObjectMgr->Add_GameObject_Out_of_Manager(ppOutGameObj,eSceneNum, tagPrototype, pArg);
 }
 
+CGameObject * CGameInstance::Add_GameObject_GetObject(_uint eSceneNum, const _tchar * tagLayer, const _tchar * tagPrototype, void * pArg)
+{
+
+	NULL_CHECK_BREAK(m_pObjectMgr);
+
+	return	m_pObjectMgr->Add_GameObject_GetObject(eSceneNum, tagLayer, tagPrototype, pArg);
+}
+
 CComponent* CGameInstance::Get_Commponent_By_LayerIndex(_uint eSceneNum, const _tchar * tagLayer, const _tchar* tagComponet, _uint iLayerIndex)
 {
 	if (tagComponet == nullptr || tagLayer == nullptr || m_pObjectMgr == nullptr)

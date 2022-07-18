@@ -10,6 +10,7 @@
 #include "InstanceEffect.h"
 #include "MeshEffect.h"
 #include "NonInstanceMeshEffect.h"
+#include "PartilceCreateMgr.h"
 
 #include "PhysX/Collider_PhysX_Static.h"
 #include "PhysX/Collider_PhysX_Dynamic.h"
@@ -58,7 +59,6 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK(Scene_Change(SCENEID::SCENE_LOBY));
 
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"VinerFonts", L"../bin/Resources/Fonts/Reenie.spritefont"));
-
 
 
 	return S_OK;
@@ -226,8 +226,9 @@ HRESULT CMainApp::Ready_SingletonMgr()
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Initialize_UtilityMgr(m_pDevice, m_pDeviceContext, this));
 	FAILED_CHECK(GetSingle(CAssimpCreateMgr)->Initalize(m_pDevice, m_pDeviceContext));
 	FAILED_CHECK(GetSingle(CPhysXMgr)->Initialize_PhysX(m_pDevice, m_pDeviceContext));
+	FAILED_CHECK(GetSingle(CPartilceCreateMgr)->Initialize_ParticleMgr());
 
-	
+
 	return S_OK;
 }
 
@@ -258,6 +259,13 @@ HRESULT CMainApp::Free_SingletonMgr()
 		MSGBOX("Failed to Release CPhysXMgr");
 		return E_FAIL;
 	}
+	if (0 != GetSingle(CPartilceCreateMgr)->DestroyInstance())
+	{
+		MSGBOX("Failed to Release CPartilceCreateMgr");
+		return E_FAIL;
+	}
+
+
 
 	return S_OK;
 }

@@ -296,22 +296,26 @@ void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
 
 	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 
+//	EX)
+//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
+//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
+	
 	mat.r[0] = XMVector3Normalize(mat.r[0]);
 	mat.r[1] = XMVector3Normalize(mat.r[1]);
 	mat.r[2] = XMVector3Normalize(mat.r[2]);
 	_Vector vPos = mat.r[3];
 
-
 	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
 
-
-	// È° ¾Õ µÚ ¼¼ÆÃ
-	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
-	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
-
-	mat.r[3] = vPos + (mat.r[2] * 0.65f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
-	m_vecTextureParticleDesc[2].vFixedPosition = mat.r[3];
-
+	//// È° ¾Õ µÚ ¼¼ÆÃ
+	_Vector vPos2 = vPos + (mat.r[2] * 0.5f + mat.r[0] * 0.1f);
+	m_pTextureParticleTransform_BowFront->Set_MatrixState(CTransform::STATE_POS, vPos2);
+	
+	_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
+	m_pTextureParticleTransform_BowBack->Set_MatrixState(CTransform::STATE_POS, vPos3);
+	
+	//m_vecTextureParticleDesc[1].TotalParticleTime= 1.0f;
+	//m_vecTextureParticleDesc[1].EachParticleLifeTime= 0.1f;
 
 
 
@@ -385,9 +389,12 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 {
 	// ÆÄÆ¼Å¬¿ë Transform Create
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pTextureParticleTransform_BowFront = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pTextureParticleTransform_BowBack = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
-	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowFront, E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowBack, E_FAIL);
+
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -395,7 +402,8 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 
 	_uint num = 0;
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform_BowFront;
+	m_vecTextureParticleDesc[num].TotalParticleTime = 99999.f;
 
 
 
@@ -403,9 +411,14 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze"));
 	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
 
+
 	num = 2;
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform_BowBack;
+	m_vecTextureParticleDesc[num].TotalParticleTime = 99999.f;
+
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]));
 
 	return S_OK;
 }
@@ -445,6 +458,7 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pDissolveCom);
 
 	Safe_Release(m_pTextureParticleTransform);
-	Safe_Release(m_pMeshParticleTransform);
+	Safe_Release(m_pTextureParticleTransform_BowFront);
+	Safe_Release(m_pTextureParticleTransform_BowBack);
 	
 }

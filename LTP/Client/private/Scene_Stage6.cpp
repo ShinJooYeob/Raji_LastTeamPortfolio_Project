@@ -6,6 +6,7 @@
 
 #include "physX/PhyxSampleTest.h"
 #include "TestObject_PhysX.h"
+#include "physX/Collider_PhysX_Dynamic.h"
 
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -73,6 +74,39 @@ _int CScene_Stage6::LateRender()
 	if (__super::LateRender() < 0)
 		return -1;
 
+
+
+#ifndef _DEBUG
+
+	if (KEYDOWN(DIK_F))
+	{
+		const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
+		CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
+
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+			(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
+			CTestObject_PhysX* obj =
+				static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
+
+			obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
+			obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
+			CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+
+
+			CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
+			objTrans->Set_MatrixState(CTransform::STATE_POS, _float3(0,2,0));
+			objTrans->Scaled_All(_float3(1, 1, 1));
+
+			createDynamic.eShapeType = E_GEOMAT_SPEHE;
+			createDynamic.mTrnasform = objTrans;
+			createDynamic.mGameObect = obj;
+			NULL_CHECK_BREAK(createDynamic.mTrnasform);
+			createDynamic.mVelocity = _float3(10000, 0, 0);
+			coldynamic->Set_ColiiderDesc(createDynamic);
+
+	}
+
+#endif // _DEBUG
 	return 0;
 }
 

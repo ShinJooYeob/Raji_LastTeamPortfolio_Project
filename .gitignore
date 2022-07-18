@@ -125,3 +125,6 @@ LTP/Client/Assimp/Engine.dll
 LTP/Client/Assimp/fmod.dll
 LTP/Client/Assimp/fmodL.dll
 LTP/Client/assimpPack_Final/assimp-vc140-mtd.dll
+*.tmp
+LTP/Engine/bin/Engine.iobj
+LTP/Engine/bin/Engine.ipdb

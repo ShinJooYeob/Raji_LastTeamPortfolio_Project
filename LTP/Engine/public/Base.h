@@ -13,6 +13,8 @@ public:
 	virtual _ulong AddRef();
 	virtual _ulong Release(); 
 
+	_ulong Get_RefCount();
+	
 private:
 	_ulong m_dwRefCnt = 0;
 

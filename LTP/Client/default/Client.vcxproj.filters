@@ -367,6 +367,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\01. JumpTrigger">
       <UniqueIdentifier>{77149153-f4dd-4279-b594-ff6a0f4514b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\08.Effect\03.ParticleMgr">
+      <UniqueIdentifier>{fbb0f076-d5b8-48bb-ad99-7ece43dd4c5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -811,6 +814,9 @@
     <ClInclude Include="..\public\JumpTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\01. JumpTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PartilceCreateMgr.h">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1233,6 +1239,10 @@
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
     <ClCompile Include="..\private\JumpTrigger.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PartilceCreateMgr.cpp">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

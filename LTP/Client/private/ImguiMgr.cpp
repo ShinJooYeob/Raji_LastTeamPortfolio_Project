@@ -1257,7 +1257,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	
 	static bool bTestObject = false;
 	
-	// static 오브젝트 배치
+	// static
 	static _float3 Position = _float3::Zero();
 	ImGui::DragFloat3("POS:", (float*)&Position, 0.1f, -100, 100);
 	static  _float3 Scale = _float3(1.0f, 1.0f, 1.0f);
@@ -1464,9 +1464,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	//{
 	//	static CTestObject_PhysX* playerDynamic = nullptr;
 	//	static CCollider_PhysX_Dynamic* playerDynamicCol = nullptr;
-	//	// 엑터에 여러개의 충돌체 다는 것
-	//	// 엑터에 여러개 충돌체 체크 방법
-	//	// 엑터의 이동시 다른 메시와 충돌 
+
 
 	//	if (ImGui::Button("Dynamic_Player"))
 	//	{
@@ -1511,7 +1509,7 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	IMGUITREE("PHYSX_JOINT")
 	{
 
-		// Joint 테스트
+		// Joint Test
 		if (ImGui::Button("Joint_HairBoneSphere"))
 		{
 
@@ -1681,7 +1679,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 	{
 		static FMOD_SYSTEM* SoundSystem = GetSingle(CGameInstance)->Get_SOUNDSYSTEM();
 
-		// 각 3D 사운드 정보 출력
+		// 3D Sound
 		int iListener=0;
 		float fDopperScale, fDistance, fRollScale;
 
@@ -1691,7 +1689,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 		ImGui::Text("3DSetting:(%.2f,%.2f,%.2f,)", fDopperScale, fDistance, fRollScale);
 		ImGui::Text("3DListener:(%d)", iListener);
 
-		// 이동 스케일 상대거리 스케일 감소 배율
+		// Scale 
 		_float MinusValue = fRollScale;
 		ImGui::DragFloat("DopperScale Distance RollScale:", &MinusValue, 0.1f, 0.01f, 1000);
 
@@ -1699,7 +1697,6 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 		// #3DSOUND
 
-		// 일반 사운드와 3D 사운드 재생
 		if (ImGui::Button("StartSound"))
 		{
 			GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
@@ -1714,12 +1711,10 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 		{
 
 			/*
-			FMOD Ex에 전달된 속도 는 프레임당 미터가 아니라 초당 미터
 			velx = (posx-lastposx) * 1000 / timedelta;
 			velz = (posy-lastposy) * 1000 / timedelta;
 			velz = (posz-lastposz) * 1000 / timedelta;
 
-			배속 느낌 / 테스트더 해봐야겠음
 			*/
 			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile, _float3(0, 0, 0), CHANNEL_EFFECT, 1.0f,_float3(1,0,0),1000);
 		}

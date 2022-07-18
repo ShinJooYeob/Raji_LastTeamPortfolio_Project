@@ -2,6 +2,7 @@
 #include "..\public\PlayerWeapon_Arrow.h"
 #include "Timer.h"
 #include "ShellingArrow.h"
+#include "PartilceCreateMgr.h"
 
 CPlayerWeapon_Arrow::CPlayerWeapon_Arrow(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -29,6 +30,10 @@ HRESULT CPlayerWeapon_Arrow::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	FAILED_CHECK(Ready_ParticleDesc());
+
+
+	m_bEffect_Head = false;
+
 
 	
 	return S_OK;
@@ -73,6 +78,16 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 	case Arrow_State_UltimateShot_Post_Shot:
 		UpdateState_Ultimate_Post_Shot(fDeltaTime);
 		break;
+	}
+ // #BUG
+	if (m_eCurState != (Arrow_State_NormalReady || Arrow_State_UtilityReady || Arrow_State_UltimateReady_Pre_Ready || Arrow_State_UltimateReady_Post_Ready))
+	{
+		if (!m_bEffect_Head)
+		{
+			GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom);
+			m_bEffect_Head = true;
+		}
+
 	}
 
 	if (true == m_bFired)
@@ -172,6 +187,7 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
 		m_fStartPos_y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		m_pTransformCom->Set_MoveSpeed(fSpeed);
+
 		m_bFired = true;
 		break;
 	case EArrowState::Arrow_State_UtilityReady:
@@ -186,6 +202,7 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 		Active_Trail(true);
 		m_pTransformCom->Set_MoveSpeed(fSpeed);
+
 		m_bFired = true;
 		break;
 	}
@@ -346,6 +363,8 @@ _int CPlayerWeapon_Arrow::UpdateState_NormalShot(_double fDeltaTime)
 
 		m_pTransformCom->LookDir(XMVector3Normalize(vMyPos_After - vMyPos_Before));
 	}
+
+
 	return _int();
 }
 
@@ -373,6 +392,7 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 	}
 
 	m_bFired = true;
+	
 	return _int();
 }
 
@@ -436,7 +456,7 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Pre_Shot(_double fDeltaTime)
 		// Spawn Core Sphere
 		Set_IsDead();
 	}
-
+	
 	return _int();
 }
 
@@ -449,6 +469,8 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Ready(_double fDeltaTime)
 _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 {
 	m_pTransformCom->Move_Forward(fDeltaTime);
+
+	
 
 	/** Check Collision to CoreSphere
 	if ()
@@ -471,7 +493,7 @@ void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
 
 	for (auto& timer : m_fPlayParticleTimer)
 	{
-		timer -= (_float)fDeltaTime;
+		timer -= _float(fDeltaTime);
 		if (timer <= -100)
 			timer = -1;
 	}
@@ -535,6 +557,7 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	num = 1;
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowTrail"));
 	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+
 
 	num = 2;
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowHit"));
@@ -649,6 +672,7 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
 			);
+		//	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
 			FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
 
 			break;
@@ -811,6 +835,7 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pSwordTrail2);
 	Safe_Release(m_pCollider);
+
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
 
