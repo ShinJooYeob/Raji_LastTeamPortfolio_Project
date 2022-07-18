@@ -120,7 +120,17 @@ _bool CNavigation::Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* 
 				else
 				{
 					if (-1 == iCurrentNeighborIndex)
+					{
+						_Vector Line = m_Cells[m_NaviDesc.iCurrentIndex]->Get_LineDir(iLineNumber);
+						Line = XMVector3Normalize(Line);
+						vDir = XMVector3Normalize(vDir);
+
+						_float CosValue = XMVectorGetX(XMVector3Dot(Line, vDir));
+						*vSlidingVec = Line * CosValue;
+
+
 						return false;
+					}
 				}
 				iNeighborIndex = iCurrentNeighborIndex;
 
