@@ -263,6 +263,8 @@ HRESULT CNavigation::FindCellIndex(_Vector Pos)
 			{
 				_uint Index = Cell->Get_Index();
 				m_NaviDesc.iCurrentIndex = Index;
+
+				return S_OK;
 			}
 		}
 	}

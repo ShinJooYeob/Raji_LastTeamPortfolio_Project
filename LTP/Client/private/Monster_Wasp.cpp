@@ -60,9 +60,11 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
-		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 1.f));
+		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f));
 
 	}
+
 	return _int();
 }
 
@@ -138,6 +140,14 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
 
 
+		//////////Navigation
+		CNavigation::NAVIDESC		NaviDesc;
+		NaviDesc.iCurrentIndex = 0;
+
+		tDesc.pNavigation = (CNavigation*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), &NaviDesc);
+
+		tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		///////////////
 
 		m_vecInstancedTransform.push_back(tDesc);
 	}
@@ -215,16 +225,16 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
 
-		//_Vector vDistance = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS);
-
 		_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
 
 		MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
-
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
-		if (fDistance < 1)
+		MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+
+		if (fDistance < 1.5)
 		{
 			if (MeshInstance.iType >= ANIM_ATTACK_Frame1&& MeshInstance.iType <= ANIM_ATTACK_Frame5)
 				continue;
@@ -293,7 +303,6 @@ HRESULT CMonster_Wasp::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 
-
 	SetUp_Info();
 
 
@@ -302,58 +311,50 @@ HRESULT CMonster_Wasp::SetUp_Components()
 
 HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 {
-	for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
+	for (auto & pInstance : m_vecInstancedTransform)
 	{
-		for (auto& pObjectTransform : m_ModelTransGroup[i])
+		switch (pInstance.iType)
 		{
-			pObjectTransform->Move_Forward(dDeltatime);
-		}
-	}
-
-	for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
-	{
-		for (auto& pObjectTransform : m_ModelTransGroup[i])
+		case ANIM_RUN_Frame1:
+			pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+			break;
+		case ANIM_RUN_Frame2:
+			pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+			break;
+		default:
 		{
-			if (m_pModel[i]->Get_PlayRate() > 0.4)
+			if (m_pModel[pInstance.iType]->Get_PlayRate() > 0.4)
 			{
-				pObjectTransform->Move_Forward(dDeltatime);
+				pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
 			}
+			break;
 		}
+		}
+		//if (pInstance.iType == ANIM_RUN_Frame1 || pInstance.iType == ANIM_RUN_Frame2)
+		//{
+		//	pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+		//}
 	}
 
-	//_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
-	//_double PlayRate = m_pModel->Get_PlayRate();
-
-	//if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
-	//	m_iAdjMovedIndex = 0;
-
-
-	//if (PlayRate <= 0.98)
+	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
 	//{
-	//	//switch (iNowAnimIndex)
-	//	//{
-	//	//case 1://애니메이션 인덱스마다 잡아주면 됨
-	//	//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
-	//	//	{
-
-	//	//		m_iAdjMovedIndex++;
-	//	//	}
-	//	//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-	//	//	{
-
-
-	//	//		m_iAdjMovedIndex++;
-	//	//	}
-
-	//	//	break;
-	//	//case 2:
-
-	//	//	break;
-	//	//}
+	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	{
+	//		pObjectTransform->Move_Forward(dDeltatime, );
+	//	}
 	//}
 
+	//for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
+	//{
+	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	{
+	//		if (m_pModel[i]->Get_PlayRate() > 0.4)
+	//		{
+	//			pObjectTransform->Move_Forward(dDeltatime);
+	//		}
+	//	}
+	//}
 
-	//m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 
@@ -386,7 +387,10 @@ void CMonster_Wasp::Free()
 	__super::Free();
 
 	for (auto& pTransform : m_vecInstancedTransform)
+	{
 		Safe_Release(pTransform.pTransform);
+		Safe_Release(pTransform.pNavigation);
+	}
 	m_vecInstancedTransform.clear();
 
 	for (_int i = 0; i < ANIM_END; i++)
