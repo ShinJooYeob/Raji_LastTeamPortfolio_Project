@@ -314,16 +314,16 @@ _int CPlayer::LateRender()
 	return _int();
 }
 
-void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CPlayer::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
 	{
-		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		/*_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_Vector vConflicted_Col_Pos = pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector();
 		_Vector vDamageDir = XMVector3Normalize(vPlayerPos - vConflicted_Col_Pos);
 
-		Take_Damage(pConflictedObj, 1.f, vDamageDir, pConflictedObj->Get_OnKnockbackCol(), pConflictedObj->Get_KnockbackColPower());
-		m_pCollider->Set_Conflicted(1.f);
+		Take_Damage(pConflictedObj, 1.f, vDamageDir, pConflictedObj->Get_OnKnockbackCol(), pConflictedObj->Get_KnockbackColPower());*/
+		//m_pCollider->Set_Conflicted(1.f);
 	}
 }
 
@@ -2937,7 +2937,9 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				//m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
 				m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 					m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition =
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)	+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f;
+
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)	+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
+					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.35f;
 
 				//m_vecTextureParticleDesc[4].ePassID = InstancePass_OriginColor;
 				//m_vecTextureParticleDesc[4].ParticleSize = _float3(4.f);

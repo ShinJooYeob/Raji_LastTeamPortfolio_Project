@@ -18,7 +18,7 @@ public:
 	virtual _int Render();
 	virtual _int LateRender();
 
-	virtual void CollisionTriger(_uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) {};
+	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) {};
 
 	virtual void CollisionPhysX_Trigger(CGameObject* pTriggerObj, _uint id , COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
 	virtual void CollisionPhysX_Rigid(CGameObject* pOtherObject, _uint id , COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}

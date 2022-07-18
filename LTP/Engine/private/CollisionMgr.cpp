@@ -152,8 +152,8 @@ HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
-				SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_MonsterWeapon);
-				DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_Player);
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_MonsterWeapon);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_Player);
 			}
 
 		}
@@ -174,8 +174,8 @@ HRESULT CCollisionMgr::Inspect_PlayerWeapon_To_Monster()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
-				SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Monster);
-				DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_PlayerWeapon);
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider,ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Monster);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider,ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_PlayerWeapon);
 			}
 
 		}
@@ -195,8 +195,8 @@ HRESULT CCollisionMgr::Inspect_NPC_To_Player()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
-				SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
-				DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_NPC);
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_NPC);
 			}
 
 		}
@@ -216,8 +216,8 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
-				SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
-				DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
 			}
 
 		}
@@ -226,8 +226,8 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
-				SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_PlayerWeapon);
-				DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_PlayerWeapon);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
 			}
 
 		}
@@ -247,8 +247,8 @@ HRESULT CCollisionMgr::Inspect_Terrain_To_All()
 			{
 				if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 				{
-					SrcElement.pCollisionObject->CollisionTriger(ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionTypeID(i));
-					DestElemet.pCollisionObject->CollisionTriger(ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_MonsterWeapon);
+					SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionTypeID(i));
+					DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_MonsterWeapon);
 				}
 
 			}
