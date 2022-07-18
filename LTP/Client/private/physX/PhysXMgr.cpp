@@ -95,15 +95,19 @@ HRESULT CPhysXMgr::Update_PhysX(_double timedelta)
 
 HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 {
-	// 업데이트전에 콜라이더를 받아옴
+	// Collider
+	if (mScene) {}
 
 	if (mScene)
 	{
 		// 결과 업데이트
 		mScene->fetchResults(true);
+	//	mScene->fetchResults(false);
+
+	//	mScene->flushSimulation(false);
 	}
-	// 충돌이 끝나면 메세지를 받는다.
-	// 현재 컴포넌트로 검사하고 맞는 명령을 실행.
+
+
 	Call_CollisionFunc_Trigger();
 	Call_CollisionFunc_Contect();
 	ReleasePhysXCom();
@@ -329,6 +333,7 @@ HRESULT CPhysXMgr::Create_Cook()
 		hfGeom, *mMaterial);
 
 	mScene->addActor(*aHieightFieldActor);
+
 	return S_OK;
 }
 
@@ -456,8 +461,10 @@ PxPhysics * CPhysXMgr::Get_PhysicsCreater()
 
 PxCooking * CPhysXMgr::Get_PhysicsCooking()
 {
+
 	NULL_CHECK_BREAK(mCooking);
 	return mCooking;
+//	return nullptr;
 }
 
 PxScene * CPhysXMgr::Get_PhysicsScene()
@@ -485,7 +492,9 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 	// mPhysics->getPhysicsInsertionCallback();
 	mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams(gToleranceScale));
 	NULL_CHECK_BREAK(mCooking);
-	gCooking = mCooking;
+	gCooking = mCooking; 
+
+	
 
 
 #ifdef  _DEBUG
@@ -500,13 +509,13 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 
 	//PX_RELEASE(transport);
 
-#ifdef _DEBUG
 	PxInitExtensions(*mPhysics, mPvd);
-#endif // _DEBUG
 
 #else
 	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, gToleranceScale);
 	NULL_CHECK_BREAK(mPhysics);
+	gPhysics = mPhysics;
+
 #endif
 
 
@@ -523,10 +532,8 @@ HRESULT CPhysXMgr::Initialize_PhysXLib()
 //	sceneDesc.contactModifyCallback = PxDefaultSimulationFilterShader;
 
 
-#ifdef  _DEBUG
 	mDisPatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = mDisPatcher;
-#endif
 
 	mScene = mPhysics->createScene(sceneDesc);
 

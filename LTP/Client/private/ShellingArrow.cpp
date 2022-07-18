@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\ShellingArrow.h"
+#include "..\public\PartilceCreateMgr.h"
 
 CShellingArrow::CShellingArrow(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
@@ -27,6 +28,7 @@ HRESULT CShellingArrow::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 	FAILED_CHECK(SetUp_Collider());
 
+	m_bEffect_Head = false;
 	return S_OK;
 }
 
@@ -38,6 +40,14 @@ _int CShellingArrow::Update(_double dDeltaTime)
 	{
 		if (0.5f >= XMVectorGetY(m_vecInstancedTransform[i]->Get_MatrixState(CTransform::TransformState::STATE_POS)))
 		{
+			if (!m_bEffect_Head)
+			{
+				for (_uint i = 0; i < 32; i++)
+				{
+					GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_vecInstancedTransform[i]);
+				}
+				m_bEffect_Head = true;
+			}
 			continue;
 		}
 

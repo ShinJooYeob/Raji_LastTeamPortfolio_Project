@@ -30,7 +30,9 @@ static const char* Tag_TextureInstanceEffect(eInstanceEffectID eTag)
 	case InstanceEffect_Suck:
 		return "InstanceEffect_Suck";
 	default:
+#ifdef _DEBUG
 		MSGBOX("Wrong Type InstanceType");
+#endif // _DEBUG
 		return nullptr;
 		break;
 	}
@@ -985,7 +987,15 @@ enum COMPONENTPROTOTYPEID
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
 	Prototype_Mesh_ConeMesh,
-	
+	Prototype_Mesh_CIRCLE,
+	Prototype_Mesh_CIRCLE_DIST4,
+	Prototype_Mesh_CIRCLE_DIST5,
+	Prototype_Mesh_IMPECTFX_02,
+	Prototype_Mesh_RING,
+	Prototype_Mesh_LOVE,
+	Prototype_Mesh_WING,
+	Prototype_Mesh_BOW1,
+	Prototype_Mesh_BOW2,
 	
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
@@ -2064,6 +2074,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 };
+
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 {
 	switch (eTag)
@@ -2218,13 +2229,37 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_None:
 		return TEXT("Prototype_Mesh_None");
 		break;
-
 	case Prototype_Mesh_ConeMesh:
 		return TEXT("ConeMesh.fbx");
 		break;
+	case Prototype_Mesh_CIRCLE:
+		return TEXT("circle.fbx");
+		break;
+	case Prototype_Mesh_CIRCLE_DIST4:
+		return TEXT("circleDist4.fbx");
+		break;
+	case Prototype_Mesh_CIRCLE_DIST5:
+		return TEXT("circleDist5.fbx");
+		break;
+	case Prototype_Mesh_IMPECTFX_02:
+		return TEXT("SM_4E_ImpactFX_02.fbx");
+		break;
+	case Prototype_Mesh_RING:
+		return TEXT("SM_AOG_Ring.fbx");
+		break;
+	case Prototype_Mesh_LOVE:
+		return TEXT("SM_EM_LoveLetter_02.fbx");
+		break;
+	case Prototype_Mesh_WING:
+		return TEXT("SM_Bow_Em_Wing_T.fbx");
+		break;
+	case Prototype_Mesh_BOW1:
+		return TEXT("SM_Bow_Em_01.fbx");
+		break;
+	case Prototype_Mesh_BOW2:
+		return TEXT("SM_Bow_Em_02.fbx");
+		break;
 
-
-		
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");
 		break;

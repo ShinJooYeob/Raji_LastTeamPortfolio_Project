@@ -108,6 +108,7 @@ private:
 	CTimer*				m_pTimer_Destroy = nullptr;
 	_float				m_fMaxTime_Destroy = 3.f;
 	_float				m_fCurTime_Destroy = 0.f;
+	_bool				m_bEffect_Head = false;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

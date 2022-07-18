@@ -49,6 +49,7 @@ private:
 	vector<CTransform*> m_vecInstancedTransform;
 
 	CCollider*			m_pCollider = nullptr;
+	_bool				m_bEffect_Head = false;
 
 public:
 	static CShellingArrow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

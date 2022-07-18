@@ -37,6 +37,7 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
+	m_pTransformCom->Scaled_All(m_tMeshDesc.vScale);
 
 	return S_OK;
 }
@@ -45,23 +46,75 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (m_eUpdateType == CNonInstanceMeshEffect::E_NonInstanceMeshEffect_NONE)
+	{
+		m_fCurTime_Duration += (_float)fDeltaTime;
 
-	m_fCurTime_Duration += (_float)fDeltaTime;
+		m_tMeshDesc.NoiseTextureIndex = 381;
+		m_tMeshDesc.MaskTextureIndex = 10;
+		m_tMeshDesc.iDiffuseTextureIndex = 300;
+		m_tMeshDesc.m_iPassIndex = 19;
+		m_tMeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		m_tMeshDesc.vLimLight = _float4(1, 0, 0, 1);
 
-	m_tMeshDesc.NoiseTextureIndex = 381;
-	m_tMeshDesc.MaskTextureIndex = 10;
-	m_tMeshDesc.iDiffuseTextureIndex = 300;
-	m_tMeshDesc.m_iPassIndex = 19;
-	m_tMeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-	m_tMeshDesc.vLimLight = _float4(1, 0, 0, 1);
+		Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+	}
+	if (m_eUpdateType == CNonInstanceMeshEffect::E_NonInstanceMeshEffect_BASE)
+	{
+		m_fCurTime_Duration += (_float)fDeltaTime;
+
+		Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+
+		if (m_pParentTranscom)
+		{
+			if (m_pParentTranscom->Get_RefCount() == 0)
+			{
+				Set_IsDead();
+				return _int();
+			}
+
+			m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
+			_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+			_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+			_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+
+			_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
+			_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
+
+			if (m_tMeshDesc.eRUL == CTransform::STATE_RIGHT)
+				m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.fRotSpeed);
+			else if (m_tMeshDesc.eRUL == CTransform::STATE_UP)
+				m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.fRotSpeed);
+			else if (m_tMeshDesc.eRUL == CTransform::STATE_LOOK)
+				m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.fRotSpeed);
+
+			else
+			{ }
 
 
-	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
+
+		}
+		else
+		{
+			// FIXPos
+
+		}
+
+		if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
+			Set_IsDead();
+
+
+	}
+
+
+
 
 	//if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
 	//{
 	//	Set_IsDead();
 	//}
+
 	return _int();
 }
 
@@ -192,4 +245,6 @@ void CNonInstanceMeshEffect::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pParentTranscom);
+
 }

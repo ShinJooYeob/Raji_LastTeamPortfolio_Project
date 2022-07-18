@@ -364,6 +364,9 @@
     <Filter Include="01.GameObject\08.Effect\00.NonInstanceMeshEffect">
       <UniqueIdentifier>{fde42bc4-6ac8-4175-8951-b07a89c71625}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\08.Effect\03.ParticleMgr">
+      <UniqueIdentifier>{fbb0f076-d5b8-48bb-ad99-7ece43dd4c5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -803,6 +806,9 @@
     <ClInclude Include="..\public\NonInstanceMeshEffect.h">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PartilceCreateMgr.h">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1221,6 +1227,9 @@
     </ClCompile>
     <ClCompile Include="..\private\NonInstanceMeshEffect.cpp">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PartilceCreateMgr.cpp">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

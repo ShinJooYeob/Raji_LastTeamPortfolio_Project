@@ -20,7 +20,7 @@
 
 
 #include "NonInstanceMeshEffect.h"
-
+#include "PartilceCreateMgr.h"
 
 
 
@@ -87,6 +87,31 @@ _int CPlayer::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
+
+		//COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
+		//_float4				vColor = _float4(1);
+		//_float				fMaxTime_Duration = 5.f;
+
+		//_uint				NoiseTextureIndex = 0;
+		//_uint				MaskTextureIndex = 0;
+		//_uint				iDiffuseTextureIndex = 299;
+
+		//_float3				vPosition = _float3(0);
+		//_float3				vLookDir = _float3(0, 1, 0);
+		//_float3				vScale = _float3(1);
+
+
+		//_float4				vLimLight = _float4(0);
+		//_float4				vEmissive = _float4(0);
+
+		//_float2				noisingdir = _float2(1, 1).Get_Nomalize();
+		//_float				fDistortionNoisingPushPower = 0.5f;
+		//_float				fAppearTime = 2.f;
+
+
+		//_uint				m_iPassIndex = 16;
+
+
 		CNonInstanceMeshEffect::NONINSTNESHEFTDESC tNIMEDesc;
 
 		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -94,8 +119,14 @@ _int CPlayer::Update(_double fDeltaTime)
 		tNIMEDesc.fMaxTime_Duration = 10.f;
 		tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK);
 
+		//tNIMEDesc.m_iPassIndex = 16;
+		//tNIMEDesc.m_iPassIndex = 17;
+		//tNIMEDesc.m_iPassIndex = 18;
+		tNIMEDesc.m_iPassIndex = 19;
+
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 	}
+
 
 	{
 		// Test
@@ -3224,10 +3255,12 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 		case BOWMAINATK_LOOP:
 		{
 			m_fAnimSpeed = 0.8f;
-			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
+			if(m_fChargingTime>0.1f)
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
+
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
@@ -5984,7 +6017,6 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 
 void CPlayer::Set_PhysX_Head()
 {
-	// 머리 뼈 정보 넘기기
 	CCollider_PhysX_Base::PHYSXDESC_JOINT  createJoint;
 
 	const _uint length = 9;
@@ -6704,9 +6736,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
-
-
-
 	//	1
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	m_vecTextureParticleDesc[1].FollowingTarget = nullptr;
@@ -6728,16 +6757,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 HRESULT CPlayer::Update_Partilce_WeaponDefault()
 {
-	if (m_eCurWeapon == CPlayer::WEAPON_BOW)
-	{
-		_int randValue = GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f);
-
-		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(0, randValue));
-		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2, randValue+0.1f));
-
-
-	}
-
 	return S_OK;
 }
 
