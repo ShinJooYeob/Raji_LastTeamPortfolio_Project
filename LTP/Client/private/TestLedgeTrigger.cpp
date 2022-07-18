@@ -50,6 +50,8 @@ _int CTestLedgeTrigger::Update(_double fDeltaTime)
 		//DeActive_Trigger(fDeltaTime);
 	}
 
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
+
 	return _int();
 }
 
@@ -58,6 +60,11 @@ _int CTestLedgeTrigger::LateUpdate(_double fDeltaTimer)
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
+
+
+#ifdef _DEBUG
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pColliderCom));
+#endif // _DEBUG
 
 	return _int();
 }
@@ -146,6 +153,40 @@ CTestLedgeTrigger::EParkourTriggerType  CTestLedgeTrigger::Get_ParkourTriggerTyp
 	return EParkourTriggerType::PACUR_LEDGE;
 }
 
+void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		switch (m_eLedgeTriggerType)
+		{
+		case ELedgeTriggerState::STATE_START:
+		{
+		}
+			break;
+		case ELedgeTriggerState::STATE_LEDGE:
+		{
+			CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+			if (CPlayer::EPLAYER_STATE::STATE_JUMP == pPlayer->Get_PlayerState() ||
+				CPlayer::EPLAYER_STATE::STATE_FALL == pPlayer->Get_PlayerState())
+			{
+				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
+			}
+		}
+			break;
+		case ELedgeTriggerState::STATE_LAST_LEDGE:
+		{
+			if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
+			{
+				CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+				pPlayer->Set_State_LedgeClimbDownStart(g_fDeltaTime);
+			}
+		}
+			break;
+		}
+
+	}
+}
+
 CTestLedgeTrigger::ELedgeTriggerState CTestLedgeTrigger::Get_LedgeType()
 {
 	return m_eLedgeTriggerType;
@@ -207,13 +248,13 @@ _bool CTestLedgeTrigger::Check_CollisionToPlayer()
 
 HRESULT CTestLedgeTrigger::SetUp_Components()
 {
-	// Main Transform
-	CTransform::TRANSFORMDESC tDesc = {};
-	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
-	tDesc.fScalingPerSec = 1;
-	tDesc.vPivot = _float3(0, 0, 0);
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+	//// Main Transform
+	//CTransform::TRANSFORMDESC tDesc = {};
+	//tDesc.fMovePerSec = 5;
+	//tDesc.fRotationPerSec = XMConvertToRadians(60);
+	//tDesc.fScalingPerSec = 1;
+	//tDesc.vPivot = _float3(0, 0, 0);
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 	// For Debug
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
