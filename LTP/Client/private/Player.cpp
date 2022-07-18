@@ -77,6 +77,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
+
+	m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
 	return S_OK;
 }
 

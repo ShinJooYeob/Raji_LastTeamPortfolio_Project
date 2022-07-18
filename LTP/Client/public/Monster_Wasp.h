@@ -40,10 +40,12 @@ private:
 
 private:
 	HRESULT FollowMe(_double dDeltaTime);
+	HRESULT	Update_Collider(_double fDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
+	CCollider*			m_pColliderCom = nullptr;
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 

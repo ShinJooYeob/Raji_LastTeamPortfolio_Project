@@ -58,12 +58,8 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 
 
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
-	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
-	{
-		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
-			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
 
-	}
+	Update_Collider(dDeltaTime);
 
 	return _int();
 }
@@ -81,6 +77,7 @@ _int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 
 	return _int();
 }
@@ -102,6 +99,8 @@ _int CMonster_Wasp::Render()
 		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i]));
 	}
 
+	
+
 	return _int();
 }
 
@@ -117,10 +116,19 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
+
+	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
+	{
+		int a = 10;
+	}
 }
 
 _float CMonster_Wasp::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	//CCollider* MonsterCollider = static_cast<CCollider*>(pTargetObject->Get_Component(TAG_COM(Com_Collider)));
+
+	m_pColliderCom->Set_Conflicted(0.f);
+
 	return _float();
 }
 
@@ -170,12 +178,22 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 		//////////Navigation
 		CNavigation::NAVIDESC		NaviDesc;
-		NaviDesc.iCurrentIndex = 0;
+		NaviDesc.iCurrentIndex = RandomPlayerIndex;
 
 		tDesc.pNavigation = (CNavigation*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), &NaviDesc);
 
-		tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		//tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		///////////////
+
+		/////////////////////////////////////Collider
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pColliderCom->Set_ParantBuffer();
+		///////////////////
 
 		m_vecInstancedTransform.push_back(tDesc);
 	}
@@ -322,6 +340,26 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(fDeltaTime);
+
+	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
+
+
+	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
+
+		m_pColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+
+	return S_OK;
+}
+
 
 
 HRESULT CMonster_Wasp::SetUp_Components()
@@ -330,6 +368,15 @@ HRESULT CMonster_Wasp::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+	
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(200.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	SetUp_Info();
 
@@ -428,6 +475,7 @@ void CMonster_Wasp::Free()
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
