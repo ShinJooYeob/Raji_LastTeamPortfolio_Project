@@ -126,6 +126,21 @@ void CMonster_Bullet_Universal::Set_IsDead()
 	m_bIsDead = true;
 }
 
+void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
+}
+
+_float CMonster_Bullet_Universal::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
+}
+
 HRESULT CMonster_Bullet_Universal::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));

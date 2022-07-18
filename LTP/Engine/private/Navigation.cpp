@@ -97,6 +97,17 @@ _bool CNavigation::Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* 
 		/* 나간쪽에 이웃이 있다라면. */
 		if (0 <= iNeighborIndex)
 		{
+			/* if move to Block Zone Option Cell */
+			if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_Cells[iNeighborIndex]->Get_CellOption())
+			{
+				_Vector Line = m_Cells[m_NaviDesc.iCurrentIndex]->Get_LineDir(iLineNumber);
+				Line = XMVector3Normalize(Line);
+				vDir = XMVector3Normalize(vDir);
+
+				_float CosValue = XMVectorGetX(XMVector3Dot(Line, vDir));
+				*vSlidingVec = Line * CosValue;
+			}
+
 			while (true)
 			{
 				_int	iCurrentNeighborIndex = -1;
@@ -267,6 +278,21 @@ HRESULT CNavigation::FindCellIndex(_Vector Pos)
 		}
 	}
 	return S_OK;
+}
+
+CCell::CELL_OPTION CNavigation::Get_CurCellOption()
+{
+	return m_Cells[m_NaviDesc.iCurrentIndex]->Get_CellOption();
+}
+
+_uint CNavigation::Get_CurNavCellIndex()
+{
+	return m_NaviDesc.iCurrentIndex;
+}
+
+void CNavigation::Set_CurNavCellIndex(_uint iIndex)
+{
+	m_NaviDesc.iCurrentIndex = iIndex;
 }
 
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, const _tchar * pNaviDataFilePath)

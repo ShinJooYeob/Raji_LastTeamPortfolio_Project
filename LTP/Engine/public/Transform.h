@@ -63,16 +63,16 @@ public:
 
 public:
 	//Move////////////////////////////////////////////////////////////////////////
-	void Move_Forward(_double fDeltaTime, class CNavigation* pNavigation =nullptr);
-	void Move_Backward(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
-	void Move_Right(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
-	void Move_Left(_double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void Move_Forward(_double fDeltaTime, class CNavigation* pNavigation =nullptr, _bool bOnBlockZone = false);
+	void Move_Backward(_double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
+	void Move_Right(_double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
+	void Move_Left(_double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
 	void Move_Up(_double fDeltaTime);
 	void Move_Down(_double fDeltaTime);
 
-	void MovetoDir(_fVector vDir, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
-	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime, class CNavigation* pNavigation = nullptr);
-	void MovetoTarget(_fVector vTarget, _double fDeltaTime, class CNavigation* pNavigation = nullptr);
+	void MovetoDir(_fVector vDir, _double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
+	void MovetoDir_bySpeed(_fVector vDir,_float fSpeed ,_double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
+	void MovetoTarget(_fVector vTarget, _double fDeltaTime, class CNavigation* pNavigation = nullptr, _bool bOnBlockZone = false);
 	void MovetoTarget_ErrRange(_fVector vTarget, _double fDeltaTime, _float fErrRange);
 
 	_bool MovetoBezierCurve(_float fTimeAcc, _fVector vStartPos, _fVector vControlPos, _fVector vEndPos);

@@ -41,11 +41,11 @@ _int CTrigger_ChangeCameraView::Update(_double fDeltaTime)
 	
 	if (true == Check_CollisionToPlayer())
 	{
-		Active_Trigger(fDeltaTime);
+		//Active_Trigger(null fDeltaTime);
 	}
 	else
 	{
-		DeActive_Trigger(fDeltaTime);
+		//DeActive_Trigger(fDeltaTime);
 	}
 	
 	//Active_Trigger(fDeltaTime);
@@ -107,7 +107,7 @@ _int CTrigger_ChangeCameraView::LateRender()
 	return _int();
 }
 
-_int CTrigger_ChangeCameraView::Active_Trigger(_double fDeltaTime)
+_int CTrigger_ChangeCameraView::Active_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
 	switch (m_tChangeCameraViewDesc.eChangeCameraViewType)
 	{
@@ -124,7 +124,7 @@ _int CTrigger_ChangeCameraView::Active_Trigger(_double fDeltaTime)
 	return _int();
 }
 
-_int CTrigger_ChangeCameraView::DeActive_Trigger(_double fDeltaTime)
+_int CTrigger_ChangeCameraView::DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
 	switch (m_tChangeCameraViewDesc.eChangeCameraViewType)
 	{

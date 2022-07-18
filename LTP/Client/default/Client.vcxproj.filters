@@ -364,6 +364,9 @@
     <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
       <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\01. JumpTrigger">
+      <UniqueIdentifier>{77149153-f4dd-4279-b594-ff6a0f4514b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -804,6 +807,10 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticInstanceMapObject.h" />
+    </ClInclude>
+    <ClInclude Include="..\public\JumpTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\01. JumpTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1224,6 +1231,8 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
+    <ClCompile Include="..\private\JumpTrigger.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -96,14 +96,14 @@ void CTransform::Set_Matrix(const _Matrix& mat)
 
 
 
-void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation)
+void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
-	vPos += Get_MatrixState_Normalized(CTransform::STATE_LOOK) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
-
 	_Vector vPrevPos = vPos;
+
+	vPos += Get_MatrixState_Normalized(CTransform::STATE_LOOK) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
@@ -115,8 +115,26 @@ void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation)
 		return;
 	}
 
+	_uint iPreNavIndex = pNavigation->Get_CurNavCellIndex();
 	if (true == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-		Set_MatrixState(CTransform::STATE_POS, vPos);
+	{
+		if (false == bOnBlockZone && CCell::CELL_BLOCKZONE == pNavigation->Get_CurCellOption())
+		{
+			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vPrevPos = XMVectorSetW(vPrevPos, 1);
+
+			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			}
+
+			pNavigation->Set_CurNavCellIndex(iPreNavIndex);
+		}
+		else
+		{
+			Set_MatrixState(CTransform::STATE_POS, vPos);
+		}
+	}
 	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
@@ -135,12 +153,12 @@ void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation)
 
 }
 
-void CTransform::Move_Backward(_double fDeltaTime, CNavigation* pNavigation)
+void CTransform::Move_Backward(_double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
-	Move_Forward(-fDeltaTime, pNavigation);
+	Move_Forward(-fDeltaTime, pNavigation, bOnBlockZone);
 }
 
-void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
+void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vRight = Get_MatrixState(CTransform::STATE_RIGHT);
@@ -159,8 +177,26 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
 		return;
 	}
 
+	_uint iPreNavIndex = pNavigation->Get_CurNavCellIndex();
 	if (true == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-		Set_MatrixState(CTransform::STATE_POS, vPos);
+	{
+		if (false == bOnBlockZone && CCell::CELL_BLOCKZONE == pNavigation->Get_CurCellOption())
+		{
+			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vPrevPos = XMVectorSetW(vPrevPos, 1);
+
+			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			}
+
+			pNavigation->Set_CurNavCellIndex(iPreNavIndex);
+		}
+		else
+		{
+			Set_MatrixState(CTransform::STATE_POS, vPos);
+		}
+	}
 	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
@@ -183,9 +219,9 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
 	//Set_MatrixState(CTransform::STATE_POS, vPos);
 }
 
-void CTransform::Move_Left(_double fDeltaTime, CNavigation* pNavigation)
+void CTransform::Move_Left(_double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
-	Move_Right(-fDeltaTime, pNavigation);
+	Move_Right(-fDeltaTime, pNavigation, bOnBlockZone);
 }
 
 void CTransform::Move_Up(_double fDeltaTime)
@@ -202,14 +238,14 @@ void CTransform::Move_Down(_double fDeltaTime)
 	Move_Up(-fDeltaTime);
 }
 
-void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavigation)
+void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
-	vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
 	_Vector vPrevPos = vPos;
+	vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector Dir = vPos - vPrevPos;
@@ -221,8 +257,26 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 		return;
 	}
 
+	_uint iPreNavIndex = pNavigation->Get_CurNavCellIndex();
 	if (true == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
-		Set_MatrixState(CTransform::STATE_POS, vPos);
+	{
+		if (false == bOnBlockZone && CCell::CELL_BLOCKZONE == pNavigation->Get_CurCellOption())
+		{
+			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vPrevPos = XMVectorSetW(vPrevPos, 1);
+
+			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			}
+
+			pNavigation->Set_CurNavCellIndex(iPreNavIndex);
+		}
+		else
+		{
+			Set_MatrixState(CTransform::STATE_POS, vPos);
+		}
+	}
 	else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
@@ -244,7 +298,7 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 	//Set_MatrixState(CTransform::STATE_POS, vPos);
 }
 
-void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaTime, CNavigation* pNavigation)
+void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
@@ -263,8 +317,26 @@ void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaT
 		return;
 	}
 
+	_uint iPreNavIndex = pNavigation->Get_CurNavCellIndex();
 	if (true == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
-		Set_MatrixState(CTransform::STATE_POS, vPos);
+	{
+		if (false == bOnBlockZone && CCell::CELL_BLOCKZONE == pNavigation->Get_CurCellOption())
+		{
+			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vPrevPos = XMVectorSetW(vPrevPos, 1);
+
+			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			}
+
+			pNavigation->Set_CurNavCellIndex(iPreNavIndex);
+		}
+		else
+		{
+			Set_MatrixState(CTransform::STATE_POS, vPos);
+		}
+	}
 	else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
@@ -286,7 +358,7 @@ void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaT
 	Set_MatrixState(CTransform::STATE_POS, vPos);*/
 }
 
-void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation* pNavigation)
+void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation* pNavigation, _bool bOnBlockZone)
 {
 
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
@@ -306,8 +378,26 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation*
 		return;
 	}
 
+	_uint iPreNavIndex = pNavigation->Get_CurNavCellIndex();
 	if (true == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-		Set_MatrixState(CTransform::STATE_POS, vPos);
+	{
+		if (false == bOnBlockZone && CCell::CELL_BLOCKZONE == pNavigation->Get_CurCellOption())
+		{
+			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vPrevPos = XMVectorSetW(vPrevPos, 1);
+
+			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+			}
+
+			pNavigation->Set_CurNavCellIndex(iPreNavIndex);
+		}
+		else
+		{
+			Set_MatrixState(CTransform::STATE_POS, vPos);
+		}
+	}
 	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;

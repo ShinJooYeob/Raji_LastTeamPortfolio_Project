@@ -43,8 +43,8 @@ public:
 	virtual _int				Render() override;
 	virtual _int				LateRender() override;
 
-	virtual _int				Active_Trigger(_double fDeltaTime) override;
-	virtual _int				DeActive_Trigger(_double fDeltaTime) override;
+	virtual _int				Active_Trigger(CGameObject* pTarget, _double fDeltaTime) override;
+	virtual _int				DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime) override;
 
 public:
 	_bool				Check_CollisionToPlayer();
