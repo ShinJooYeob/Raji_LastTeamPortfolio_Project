@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Cell.h"
 
 BEGIN(Engine)
 
@@ -22,10 +23,16 @@ public:
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
 public:
+	CCell::CELL_OPTION	Get_CurCellOption();
+	_uint				Get_CurNavCellIndex();
+	_Vector				Get_IndexPosition(_uint iIndex);
+	void				Set_CurNavCellIndex(_uint iIndex);
+public:
 	_bool Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* vSlidingVec);
 	_Vector Get_NaviPosition(_fVector vTargetPos);
 	_float	Get_NaviHeight(_fVector vTargetPos);
 	HRESULT	FindCellIndex(_Vector Pos);
+	
 
 #ifdef _DEBUG
 public:

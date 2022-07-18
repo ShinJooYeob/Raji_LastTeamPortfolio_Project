@@ -271,6 +271,29 @@ HRESULT CNavigation::FindCellIndex(_Vector Pos)
 	return S_OK;
 }
 
+
+CCell::CELL_OPTION CNavigation::Get_CurCellOption()
+{
+		return m_Cells[m_NaviDesc.iCurrentIndex]->Get_CellOption();	
+}
+
+_uint CNavigation::Get_CurNavCellIndex()
+{
+	return m_NaviDesc.iCurrentIndex;
+}
+
+_Vector CNavigation::Get_IndexPosition(_uint iIndex)
+{
+	return (m_Cells[iIndex]->Get_Point(CCell::POINT_A) + m_Cells[iIndex]->Get_Point(CCell::POINT_B) + m_Cells[iIndex]->Get_Point(CCell::POINT_C)) / 3;
+
+	//return XMPlaneFromPoints(m_Cells[iIndex]->Get_Point(CCell::POINT_A), m_Cells[iIndex]->Get_Point(CCell::POINT_B), m_Cells[iIndex]->Get_Point(CCell::POINT_C));
+}
+
+void CNavigation::Set_CurNavCellIndex(_uint iIndex)
+{
+	m_NaviDesc.iCurrentIndex = iIndex;
+}
+
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, const _tchar * pNaviDataFilePath)
 {
 	CNavigation*	pInstance = new CNavigation(pDevice, pDeviceContext);

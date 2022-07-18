@@ -61,7 +61,7 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
 		if (m_vecInstancedTransform[i].iType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iType <= ANIM_RUN_Frame2)
-			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f));
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
 
 	}
 
@@ -116,7 +116,11 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
 
+	CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
+
 	RELEASE_INSTANCE(CGameInstance);
+
+	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
 	for (_uint i = 0; i < 64; i++)
 	{
@@ -131,13 +135,23 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
 
-		_Vector vDis = (m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+		_uint Random = (rand() % 6) - 3;
 
-		_Vector PlayerPos = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-		PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * pUtil->RandomFloat(2, 5));
+		_uint RandomPlayerIndex = iPlayerIndex + Random;
 
-		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+
+
+		/////////////////////////////////////////////PlayerPosition Create
+		//_Vector vDis = (m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+		//_Vector PlayerPos = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		//PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * pUtil->RandomFloat(2, 5));
+
+		//tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+		///////////////////////////////////////////////
 
 
 		//////////Navigation
