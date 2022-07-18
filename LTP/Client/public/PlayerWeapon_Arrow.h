@@ -81,7 +81,6 @@ public:
 public:
 	void				Update_ParticleTransform(_double fDeltaTime);
 	HRESULT				Set_Play_Particle(_uint ParticleIndex, _float Timer = -1);
-	HRESULT				Set_PlayOff_ALL();
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -126,9 +125,7 @@ private:
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pMeshParticleTransform = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
+
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

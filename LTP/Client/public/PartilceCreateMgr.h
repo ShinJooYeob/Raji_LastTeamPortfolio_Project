@@ -6,13 +6,13 @@
 
 BEGIN(Client)
 
-// 기타 이펙트 생성용
+// J_WHAN Effect Creater
 class CPartilceCreateMgr final :public CBase
 {
 	DECLARE_SINGLETON(CPartilceCreateMgr)
 
 public:
-	enum E_MESHEFFECT
+	enum E_MESH_EFFECTJ
 	{
 		MESHEFFECT_PRE_CONMESH,
 		MESHEFFECT_PRE_CIRCLE,
@@ -36,6 +36,20 @@ public:
 
 	};
 
+	enum E_TEXTURE_EFFECTJ
+	{
+		TEXTURE_EFFECTJ_Bow_Default,
+		TEXTURE_EFFECTJ_Bow_ArrowHit,
+		TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail,
+		TEXTURE_EFFECTJ_Bow_Charze_ArrowHead,
+		TEXTURE_EFFECTJ_Bow_Charze_Circle,
+		TEXTURE_EFFECTJ_Bow_Charze_Dash,
+		TEXTURE_EFFECTJ_Bow_Charze_Long,
+		TEXTURE_EFFECTJ_Bow_Charze_Suck,
+		TEXTURE_EFFECTJ_END,
+
+	};
+
 private:
 	explicit CPartilceCreateMgr();
 	virtual ~CPartilceCreateMgr() = default;
@@ -45,11 +59,18 @@ public:
 	HRESULT Initialize_ParticleMgr();
 
 
-	NONINSTNESHEFTDESC Get_TypeDesc(E_MESHEFFECT e)
+	NONINSTNESHEFTDESC Get_TypeDesc_NonInstacne(E_MESH_EFFECTJ e)
 	{
 		if (e >= MESHEFFECT_END)
 			return NONINSTNESHEFTDESC();
 		return mVecMeshEffectDesc[e];
+	}
+
+	INSTPARTICLEDESC Get_TypeDesc_TextureInstance(E_TEXTURE_EFFECTJ e)
+	{
+		if (e >= TEXTURE_EFFECTJ_END)
+			return INSTPARTICLEDESC();
+		return mVecTextureEffectDesc[e];
 	}
 
 public:
@@ -60,16 +81,24 @@ public:
 	//HRESULT ReadyParticleData_MeshInstance();
 
 	// TextureEffect
+	HRESULT Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform);
+	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
+
+	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc);
+
+	
+
+
 
 	// MeshEffect
 
-	HRESULT Create_MeshEffect(E_MESHEFFECT type, CTransform * parentTransform, _float3 Offset);
-	HRESULT Create_MeshEffect_World(E_MESHEFFECT type, _float3 Postion, _float3 LookDir);
+	HRESULT Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform, _float3 Offset);
+	HRESULT Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir);
 
 	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffectDesc_World(NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir);
 
-	HRESULT Create_MeshEffectDesc_Hard(E_MESHEFFECT type, CTransform* Transfomr = nullptr);
+	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
 	HRESULT Update_MeshEffect(_double timer);
 	HRESULT Remove_MeshEffect(enum MeshEffect);
@@ -77,11 +106,14 @@ public:
 	HRESULT Clear_MeshEffect();
 
 
+private:
+	HRESULT Ready_MeshEffect();
+	HRESULT Ready_TextureEffect();
 
 
 private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
-//	list<CNonInstanceMeshEffect*>						mListEffects;
+	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
 
 public:
 	virtual void Free()override;

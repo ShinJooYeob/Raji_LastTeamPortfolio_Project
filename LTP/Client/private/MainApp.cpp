@@ -76,13 +76,13 @@ _int CMainApp::Update(_double fDeltaTime)
 	g_fDeltaTime = fDeltaTime * m_SlowTimes;
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_M) & DIS_Down)
-	{
-		for (_uint i = POSTPROCESSING_SHADOW; i <= POSTPROCESSING_DDFOG; i++)
-		{
-			m_pComRenderer->OnOff_PostPorcessing(POSTPROCESSINGID(i));
-		}
-	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_M) & DIS_Down)
+	//{
+	//	for (_uint i = POSTPROCESSING_SHADOW; i <= POSTPROCESSING_DDFOG; i++)
+	//	{
+	//		m_pComRenderer->OnOff_PostPorcessing(POSTPROCESSINGID(i));
+	//	}
+	//}
 
 
 

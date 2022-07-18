@@ -483,20 +483,19 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 
 void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
 {
-	// º»Ã¼ À§Ä¡¿¡ ¾÷µ¥ÀÌÆ®
 
-	_Matrix mat = m_pTransformCom->Get_WorldMatrix();// * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
-	_Vector vPos = mat.r[3];
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
-
+	//_Matrix mat = m_pTransformCom->Get_WorldMatrix();// * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+	//_Vector vPos = mat.r[3];
+	//m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
 
 
-	for (auto& timer : m_fPlayParticleTimer)
-	{
-		timer -= _float(fDeltaTime);
-		if (timer <= -100)
-			timer = -1;
-	}
+
+	//for (auto& timer : m_fPlayParticleTimer)
+	//{
+	//	timer -= _float(fDeltaTime);
+	//	if (timer <= -100)
+	//		timer = -1;
+	//}
 
 
 }
@@ -504,37 +503,28 @@ void CPlayerWeapon_Arrow::Update_ParticleTransform(_double fDeltaTime)
 HRESULT CPlayerWeapon_Arrow::Set_Play_Particle(_uint ParticleIndex, _float Timer)
 {
 
-	if (PARTILCECOUNT <= ParticleIndex)
-		return E_FAIL;
-	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
-		return E_FAIL;
+	//if (PARTILCECOUNT <= ParticleIndex)
+	//	return E_FAIL;
+	//if (m_vecTextureParticleDesc.size() <= ParticleIndex)
+	//	return E_FAIL;
 
-	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
-	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
-		if (Timer == -1)
-		{
-			m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
-		}
-		else
-			m_fPlayParticleTimer[ParticleIndex] = Timer;
-	}
+	//if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
+	//{
+	//	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
+	//	if (Timer == -1)
+	//	{
+	//		m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
+	//	}
+	//	else
+	//		m_fPlayParticleTimer[ParticleIndex] = Timer;
+	//}
 
 
 	return S_OK;
 
 }
 
-HRESULT CPlayerWeapon_Arrow::Set_PlayOff_ALL()
-{
-	for (_uint i = 0; i < PARTILCECOUNT; ++i)
-	{
-		ZeroMemory(m_fPlayParticleTimer, sizeof(_float) * PARTILCECOUNT);
-	}
 
-	m_pTextureParticleTransform->Set_IsOwnerDead(true);
-	return S_OK;
-}
 
 
 HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
@@ -545,23 +535,23 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
 
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+	//CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
-	_uint num = 0;
+	//// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
+	//_uint num = 0;
 
-	num = 0;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze_ArrowHead"));
-	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
+	//num = 0;
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze_ArrowHead"));
+	//m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
 
-	num = 1;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowTrail"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+	//num = 1;
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowTrail"));
+	//m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
 
 
-	num = 2;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowHit"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+	//num = 2;
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_ArrowHit"));
+	//m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
 
 
 	return S_OK;
@@ -588,8 +578,8 @@ void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 	case EArrowState::Arrow_State_NormalReady:
 		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
 
-		m_vecTextureParticleDesc[0].vFixedPosition = (*pMat).r[3] + (*pMat).r[2] * 0.75f;
-		FAILED_CHECK_NONERETURN(Set_Play_Particle(0));
+	//	m_vecTextureParticleDesc[0].vFixedPosition = (*pMat).r[3] + (*pMat).r[2] * 0.75f;
+	//	FAILED_CHECK_NONERETURN(Set_Play_Particle(0));
 		break;
 	case EArrowState::Arrow_State_NormalShot:
 	case EArrowState::Arrow_State_PowerShot_Combo_0:

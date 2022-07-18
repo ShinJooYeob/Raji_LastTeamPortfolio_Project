@@ -84,9 +84,7 @@ private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	_float							m_fPlayParticleTimer[PARTILCECOUNT] = {0,};
+
 
 private:
 	_float4x4			m_fAttachedMatrix;

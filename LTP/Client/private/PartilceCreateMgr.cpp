@@ -10,65 +10,48 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 {
 	// 
-	mVecMeshEffectDesc.resize((int)MESHEFFECT_END);
-
-	// BASE TYPE
-	NONINSTNESHEFTDESC tNIMEDesc;
-	tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
-	tNIMEDesc.fMaxTime_Duration = 10.f;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CONMESH] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST5;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST4] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST4;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST5] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_IMPECTFX_02;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_IMPECTFX_02] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_RING;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_RING] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_LOVE;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_LOVE] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_WING;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_WING] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_BOW1;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW1] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_BOW2;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW2] = tNIMEDesc;
-
-	// Define MeshEffect
-	//tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
-	//tNIMEDesc.fMaxTime_Duration = 2.0f;
-	//tNIMEDesc.iDiffuseTextureIndex = 48;
-	//tNIMEDesc.NoiseTextureIndex = 0;
-	//tNIMEDesc.MaskTextureIndex = 0;
-	//mVecMeshEffectDesc[MESHEFFECT_ARROW_HEAD] = tNIMEDesc;
-
-
-	//tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
-	//tNIMEDesc.fMaxTime_Duration = 2.0f;
-	//tNIMEDesc.iDiffuseTextureIndex = 48;
-	//tNIMEDesc.NoiseTextureIndex = 0;
-	//tNIMEDesc.MaskTextureIndex = 0;
-	//mVecMeshEffectDesc[MESHEFFECT_ARROW_END] = tNIMEDesc;
-
+	FAILED_CHECK(Ready_MeshEffect());
+	FAILED_CHECK(Ready_TextureEffect());
 
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESHEFFECT type, CTransform * parentTransform,_float3 Offset)
+HRESULT CPartilceCreateMgr::Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform)
+{
+	INSTPARTICLEDESC texdesc = Get_TypeDesc_TextureInstance(type);
+	texdesc.FollowingTarget = parentTransform;
+
+	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(SceneNum,texdesc));
+
+	return S_OK;
+}
+
+HRESULT CPartilceCreateMgr::Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 WorldPos)
+{
+	INSTPARTICLEDESC texdesc = Get_TypeDesc_TextureInstance(type);
+	texdesc.vFixedPosition = WorldPos;
+
+	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(SceneNum, texdesc));
+
+	return S_OK;
+}
+
+
+HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc)
 {
 
-	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
+	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(SceneNum, desc));
+
+	return S_OK;
+}
+
+HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform,_float3 Offset)
+{
+
+	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc_NonInstacne(type);
 	meshDesc.vPosition = Offset;
 	meshDesc.vLookDir = parentTransform->Get_MatrixState(CTransform::STATE_LOOK);
 
@@ -87,9 +70,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESHEFFECT type, CTransform * pa
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESHEFFECT type, _float3 Postion, _float3 LookDir)
+HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir)
 {
-	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
+	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc_NonInstacne(type);
 	meshDesc.vPosition = Postion;
 	meshDesc.vLookDir = LookDir;
 
@@ -132,7 +115,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_World( NONINSTNESHEFTDESC desc
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTransform* Transfom)
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTransform* Transfom)
 {
 	if (type <= MESHEFFECT_PRE_END)
 		return E_FAIL;
@@ -140,7 +123,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 	// 하드 코딩으로 제작
 	if (type == MESHEFFECT_ARROW_HEAD)
 	{
-		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_IMPECTFX_02);
+		NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_IMPECTFX_02);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -178,7 +161,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 
 	if (type == MESHEFFECT_ARROW_WING)
 	{
-		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
+		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -216,7 +199,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 
 	if (type == MESHEFFECT_ARROW_BOW1)
 	{
-		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
+		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -267,6 +250,85 @@ HRESULT CPartilceCreateMgr::Update_MeshEffect(_double timer)
 
 HRESULT CPartilceCreateMgr::Clear_MeshEffect()
 {
+	return S_OK;
+}
+
+HRESULT CPartilceCreateMgr::Ready_MeshEffect()
+{
+	// #MESHPARTILCEINIT
+	mVecMeshEffectDesc.resize((int)MESHEFFECT_END);
+
+	NONINSTNESHEFTDESC tNIMEDesc;
+	tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
+	tNIMEDesc.fMaxTime_Duration = 10.f;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_CONMESH] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST5;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST4] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST4;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST5] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_IMPECTFX_02;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_IMPECTFX_02] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_RING;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_RING] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_LOVE;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_LOVE] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_WING;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_WING] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_BOW1;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW1] = tNIMEDesc;
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_BOW2;
+	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW2] = tNIMEDesc;
+
+	// Define MeshEffect
+	//tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
+	//tNIMEDesc.fMaxTime_Duration = 2.0f;
+	//tNIMEDesc.iDiffuseTextureIndex = 48;
+	//tNIMEDesc.NoiseTextureIndex = 0;
+	//tNIMEDesc.MaskTextureIndex = 0;
+	//mVecMeshEffectDesc[MESHEFFECT_ARROW_HEAD] = tNIMEDesc;
+
+
+	//tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
+	//tNIMEDesc.fMaxTime_Duration = 2.0f;
+	//tNIMEDesc.iDiffuseTextureIndex = 48;
+	//tNIMEDesc.NoiseTextureIndex = 0;
+	//tNIMEDesc.MaskTextureIndex = 0;
+	//mVecMeshEffectDesc[MESHEFFECT_ARROW_END] = tNIMEDesc;
+
+	return S_OK;
+}
+
+HRESULT CPartilceCreateMgr::Ready_TextureEffect()
+{
+	// #TEXTUREPARTILCEINIT
+	mVecTextureEffectDesc.resize((int)TEXTURE_EFFECTJ_END);
+
+	auto  pUtil = GetSingle(CUtilityMgr);
+	
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Default] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Default"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_ArrowHit] = pUtil->Get_TextureParticleDesc(TEXT("Bow_ArrowHit"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail] = pUtil->Get_TextureParticleDesc(TEXT("Bow_ArrowTrail"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Charze_ArrowHead] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Charze_ArrowHead"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Charze_Circle] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Charze_Circle"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Charze_Dash] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Charze_Dash"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Charze_Long] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Charze_Long"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Charze_Suck] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Charze_Suck"));
+
+	// DefaultSetting
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Default].TotalParticleTime = 99999.f;
+
+
 	return S_OK;
 }
 
