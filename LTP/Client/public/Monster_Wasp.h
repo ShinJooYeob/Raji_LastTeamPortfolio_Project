@@ -9,7 +9,8 @@ class CMonster_Wasp final : public CMonster
 
 	typedef struct tagState
 	{
-		CTransform*	pTransform = nullptr;
+		CTransform*		pTransform = nullptr;
+		CNavigation*	pNavigation = nullptr;
 		_uint iType = ANIM_END;
 	}TRANSFORM_STATE;
 
@@ -43,7 +44,6 @@ private:
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 
