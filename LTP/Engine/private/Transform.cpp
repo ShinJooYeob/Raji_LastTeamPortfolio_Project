@@ -101,9 +101,9 @@ void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation)
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
+	_Vector vPrevPos = vPos;
 	vPos += Get_MatrixState_Normalized(CTransform::STATE_LOOK) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
-	_Vector vPrevPos = vPos;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
@@ -145,9 +145,9 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation)
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vRight = Get_MatrixState(CTransform::STATE_RIGHT);
 
+	_Vector vPrevPos = vPos;
 	vPos += Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
-	_Vector vPrevPos = vPos;
 	//vPos += XMVector3Normalize(vRight) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;
@@ -207,9 +207,9 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
+	_Vector vPrevPos = vPos;
 	vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
-	_Vector vPrevPos = vPos;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector Dir = vPos - vPrevPos;
@@ -223,7 +223,7 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 
 	if (true == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
 		Set_MatrixState(CTransform::STATE_POS, vPos);
-	else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
+	else
 	{
 		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 		vPrevPos = XMVectorSetW(vPrevPos, 1);
@@ -238,6 +238,34 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
 		m_WorldMatrix._44 = 1;*/
 	}
+	/*else
+	{
+		_Vector OriDir = XMVector3Normalize(vSlidingVec);
+		
+		_uint iCount = 1;
+		while (true)
+		{
+			_Vector vSlideAffterPos = vPrevPos + XMVector3Normalize(vSlidingVec) 
+				* m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+			vSlideAffterPos = XMVectorSetW(vSlideAffterPos, 1);
+
+
+			if (pNavigation->Move_OnNavigation(vSlideAffterPos, vSlidingVec, &vSlidingVec))
+			{
+				Set_MatrixState(CTransform::STATE_POS, vSlideAffterPos);
+				break;
+			}
+
+			if (iCount++ > 10) break;
+		}
+
+	}*/
+
+		/*_float3 vNewPos;
+		XMStoreFloat3(&vNewPos, vPrevPos);
+		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+		m_WorldMatrix._44 = 1;*/
+	
 
 	//vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
@@ -249,9 +277,9 @@ void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaT
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
+	_Vector vPrevPos = vPos;
 	vPos += XMVector3Normalize(vDir)* fSpeed *(_float)fDeltaTime;
 
-	_Vector vPrevPos = vPos;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector Dir = vPos - vPrevPos;
@@ -292,9 +320,9 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation*
 	_Vector vPos = Get_MatrixState(CTransform::STATE_POS);
 	_Vector	vLook = Get_MatrixState(CTransform::STATE_LOOK);
 
+	_Vector vPrevPos = vPos;
 	vPos += XMVector3Normalize(vTarget - vPos)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
-	_Vector vPrevPos = vPos;
 	//vPos += XMVector3Normalize(vLook) * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
 	_Vector vSlidingVec;
 	_Vector vDir = vPos - vPrevPos;

@@ -102,14 +102,14 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		}
 
-		if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-		{
-			m_pDissolveCom->Set_DissolveOn(false, 5.5f);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-		{
-			m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-		}
+		//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+		//{
+		//	m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+		//}
+		//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+		//{
+		//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+		//}
 	}
 
 	// Check Player Key Input
@@ -300,7 +300,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	//m_pNavigationCom->Render(m_pTransformCom);
+	m_pNavigationCom->Render(m_pTransformCom);
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG

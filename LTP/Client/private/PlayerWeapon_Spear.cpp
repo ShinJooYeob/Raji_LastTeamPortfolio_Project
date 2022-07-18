@@ -539,6 +539,7 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pCollider_Range);
 	Safe_Release(m_pTextureParticleTransform);
 
 	Safe_Release(m_pDissolveCom);
