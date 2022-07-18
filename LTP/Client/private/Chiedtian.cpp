@@ -431,32 +431,28 @@ _int CChiedtian::LateRender()
 	return _int();
 }
 
-void CChiedtian::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CChiedtian::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	//if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
-	//{
-	//	m_pHPUI->Set_ADD_HitCount();
-	//	m_pCollider->Set_Conflicted(0.3f);
-	//	//Take_Damage(pConflictedObj, 1.f, vDamageDir, true, 10.f);
-	//}
-	//m_IsConfilicted = true;
-	//if (iMyColliderIndex == 2)
-	//{
-	//
-	//}
-	//
-	//if (!lstrcmp(pConflictedObj->Get_NameTag(), "Ä¡ÇÁÅ¸ÀÌÅº"))
-	//{
-	//	//
-	//}
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		if (m_pFireCollider == pMyCollider)
+		{
+			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(1.f);
+		}
+		else if (m_pJumpCollider == pMyCollider)
+		{
+			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(1.f);
+		}
+	}
+}
 
-	//pConflictedObj->Get_NowHP() < 10
-
-	//eConflictedObjCollisionType
-	//m_pCollider->Get_ColliderPosition(iMyColliderIndex);
-	//pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex);
-
-	//pConflictedObj->Get_NameTag();
+_float CChiedtian::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
 }
 
 HRESULT CChiedtian::SetUp_Components()

@@ -294,7 +294,7 @@ _int CMahabalasura_Weapon::LateRender()
 	return _int();
 }
 
-void CMahabalasura_Weapon::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CMahabalasura_Weapon::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	pConflictedCollider->Set_Conflicted();
 }

@@ -181,6 +181,21 @@ void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 	}
 }
 
+void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		pConflictedCollider->Set_Conflicted(0.5f);
+
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+	}
+}
+
 _fVector CPlayerWeapon_Spear::Get_BonePos(const char * pBoneName)
 {
 	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
@@ -201,19 +216,6 @@ _fMatrix CPlayerWeapon_Spear::Get_BoneMatrix(const char * pBoneName)
 
 void CPlayerWeapon_Spear::Update_AttachCamPos()
 {
-}
-
-void CPlayerWeapon_Spear::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
-{
-	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
-	{
-		pConflictedCollider->Set_Conflicted(0.5f);
-
-		_int iSelectSoundFileIndex = rand() % 2;
-		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
-		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
-	}
 }
 
 _bool CPlayerWeapon_Spear::AbleToChangeWeapon()

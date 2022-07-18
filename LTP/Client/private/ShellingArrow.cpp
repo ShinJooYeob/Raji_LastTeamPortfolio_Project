@@ -97,11 +97,14 @@ _int CShellingArrow::LateRender()
 	return _int();
 }
 
-void CShellingArrow::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CShellingArrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
+		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(0.5f);
+
+
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Impact_0.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_EFFECT, 0.1f);
 
 	}
