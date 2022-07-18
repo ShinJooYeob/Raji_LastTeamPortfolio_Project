@@ -294,7 +294,7 @@ _int CPlayer::LateRender()
 	return _int();
 }
 
-void CPlayer::CollisionTriger(_uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CPlayer::CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
 	{
@@ -6293,7 +6293,6 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 
 void CPlayer::Set_PhysX_Head()
 {
-	// 머리 뼈 정보 넘기기
 	CCollider_PhysX_Base::PHYSXDESC_JOINT  createJoint;
 
 	const _uint length = 9;
