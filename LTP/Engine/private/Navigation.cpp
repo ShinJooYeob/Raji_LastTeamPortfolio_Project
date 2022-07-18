@@ -315,21 +315,6 @@ void CNavigation::Set_CurNavCellIndex(_uint iIndex)
 	m_NaviDesc.iCurrentIndex = iIndex;
 }
 
-CCell::CELL_OPTION CNavigation::Get_CurCellOption()
-{
-	return m_Cells[m_NaviDesc.iCurrentIndex]->Get_CellOption();
-}
-
-_uint CNavigation::Get_CurNavCellIndex()
-{
-	return m_NaviDesc.iCurrentIndex;
-}
-
-void CNavigation::Set_CurNavCellIndex(_uint iIndex)
-{
-	m_NaviDesc.iCurrentIndex = iIndex;
-}
-
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, const _tchar * pNaviDataFilePath)
 {
 	CNavigation*	pInstance = new CNavigation(pDevice, pDeviceContext);

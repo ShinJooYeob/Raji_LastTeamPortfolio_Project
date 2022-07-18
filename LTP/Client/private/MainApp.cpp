@@ -76,6 +76,16 @@ _int CMainApp::Update(_double fDeltaTime)
 	g_fDeltaTime = fDeltaTime * m_SlowTimes;
 
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_M) & DIS_Down)
+	{
+		for (_uint i = POSTPROCESSING_SHADOW; i <= POSTPROCESSING_DDFOG; i++)
+		{
+			m_pComRenderer->OnOff_PostPorcessing(POSTPROCESSINGID(i));
+		}
+	}
+
+
+
 	// 업데이트 -> 충돌 시물레이션 -> 레이트 업데이트
 	if (FAILED(m_pGameInstance->Update_Engine(fDeltaTime * m_SlowTimes)))
 	{

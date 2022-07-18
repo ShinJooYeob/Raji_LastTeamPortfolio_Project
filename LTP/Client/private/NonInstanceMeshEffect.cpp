@@ -109,12 +109,12 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 			_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 			_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
 
-			if (m_tMeshDesc.eRUL == CTransform::STATE_RIGHT)
-				m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.fRotSpeed);
-			else if (m_tMeshDesc.eRUL == CTransform::STATE_UP)
-				m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.fRotSpeed);
-			else if (m_tMeshDesc.eRUL == CTransform::STATE_LOOK)
-				m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.fRotSpeed);
+			if (m_tMeshDesc.RotAxis == CTransform::STATE_RIGHT)
+				m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+			else if (m_tMeshDesc.RotAxis == CTransform::STATE_UP)
+				m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+			else if (m_tMeshDesc.RotAxis == CTransform::STATE_LOOK)
+				m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
 
 			else
 			{ }

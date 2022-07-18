@@ -7303,11 +7303,11 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 
 	}
-	// 3
-		_int randValue = GetSingle(CUtilityMgr)->RandomFloat(2.f, 5.f);
-		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(0, randValue));
-		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2, randValue+0.1f));
 
+
+	// 3
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
 		tNIMEDesc.eMeshType = Prototype_Mesh_JY_Tornado;
 		tNIMEDesc.fMaxTime_Duration = 3.0f;
 
@@ -7328,6 +7328,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.RotationSpeedPerSec = 360.f;
 		tNIMEDesc.vSize = _float3(2.f, 0.2f, 2.f);
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
 #pragma endregion
 	return S_OK;
 }

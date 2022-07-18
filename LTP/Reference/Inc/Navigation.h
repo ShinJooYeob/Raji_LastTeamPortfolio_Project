@@ -34,9 +34,6 @@ public:
 	HRESULT	FindCellIndex(_Vector Pos);
 	
 
-	CCell::CELL_OPTION Get_CurCellOption();
-	_uint Get_CurNavCellIndex();
-	void Set_CurNavCellIndex(_uint iIndex);
 
 #ifdef _DEBUG
 public:

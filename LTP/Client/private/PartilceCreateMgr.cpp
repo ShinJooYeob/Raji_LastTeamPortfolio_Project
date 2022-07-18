@@ -13,7 +13,7 @@ HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 	mVecMeshEffectDesc.resize((int)MESHEFFECT_END);
 
 	// BASE TYPE
-	CNonInstanceMeshEffect::NONINSTNESHEFTDESC tNIMEDesc;
+	NONINSTNESHEFTDESC tNIMEDesc;
 	tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
 	tNIMEDesc.fMaxTime_Duration = 10.f;
 	mVecMeshEffectDesc[MESHEFFECT_PRE_CONMESH] = tNIMEDesc;
@@ -68,7 +68,7 @@ HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESHEFFECT type, CTransform * parentTransform,_float3 Offset)
 {
 
-	CNonInstanceMeshEffect::NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
+	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
 	meshDesc.vPosition = Offset;
 	meshDesc.vLookDir = parentTransform->Get_MatrixState(CTransform::STATE_LOOK);
 
@@ -89,7 +89,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESHEFFECT type, CTransform * pa
 
 HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESHEFFECT type, _float3 Postion, _float3 LookDir)
 {
-	CNonInstanceMeshEffect::NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
+	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc(type);
 	meshDesc.vPosition = Postion;
 	meshDesc.vLookDir = LookDir;
 
@@ -101,7 +101,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESHEFFECT type, _float3 P
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(CNonInstanceMeshEffect::NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset)
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc( NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset)
 {
 	desc.vPosition = Offset;
 
@@ -117,7 +117,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(CNonInstanceMeshEffect::NONINS
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_World(CNonInstanceMeshEffect::NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir)
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_World( NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir)
 {
 
 	desc.vPosition = Postion;
@@ -140,7 +140,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 	// «œµÂ ƒ⁄µ˘¿∏∑Œ ¡¶¿€
 	if (type == MESHEFFECT_ARROW_HEAD)
 	{
-		CNonInstanceMeshEffect::NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_IMPECTFX_02);
+		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_IMPECTFX_02);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -160,10 +160,10 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 		ArrowDesc.vLookDir = _float3(0, 1, 0);
 		//	ArrowDesc.vRotAxis = _float3(1, 0, 0);
 		_float3 offset = _float3(0, 0, 1.2f);
-		ArrowDesc.vScale = _float3(0.3f);
+		ArrowDesc.vSize = _float3(0.3f);
 
-		ArrowDesc.eRUL = CTransform::STATE_RIGHT;
-		ArrowDesc.fRotSpeed = 10.0f;
+		ArrowDesc.RotAxis= FollowingDir_Right;
+		ArrowDesc.RotationSpeedPerSec = 10.0f;
 
 		//	ArrowDesc.m_iPassIndex = 16; // ø÷∞Ó
 		//	ArrowDesc.m_iPassIndex = 17; // ø÷∞Ó µÓ¿Â
@@ -178,7 +178,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 
 	if (type == MESHEFFECT_ARROW_WING)
 	{
-		CNonInstanceMeshEffect::NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
+		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -198,10 +198,10 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 		ArrowDesc.vLookDir = _float3(0, 1, 0);
 		//	ArrowDesc.vRotAxis = _float3(1, 0, 0);
 		_float3 offset = _float3(0, 0, 1.2f);
-		ArrowDesc.vScale = _float3(0.3f);
+		ArrowDesc.vSize = _float3(0.3f);
 
-		ArrowDesc.eRUL = CTransform::STATE_RIGHT;
-		ArrowDesc.fRotSpeed = 10.0f;
+		ArrowDesc.RotAxis = FollowingDir_Right;
+		ArrowDesc.RotationSpeedPerSec = 10.0f;
 
 		//	ArrowDesc.m_iPassIndex = 16; // ø÷∞Ó
 		//	ArrowDesc.m_iPassIndex = 17; // ø÷∞Ó µÓ¿Â
@@ -216,7 +216,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 
 	if (type == MESHEFFECT_ARROW_BOW1)
 	{
-		CNonInstanceMeshEffect::NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
+		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
 
 		ArrowDesc.fMaxTime_Duration = 3.0f;
 
@@ -236,10 +236,10 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESHEFFECT type , CTran
 		ArrowDesc.vLookDir = _float3(0, 1, 0);
 		//	ArrowDesc.vRotAxis = _float3(1, 0, 0);
 		_float3 offset = _float3(0, 0, 1.2f);
-		ArrowDesc.vScale = _float3(0.3f);
+		ArrowDesc.vSize = _float3(0.3f);
 
-		ArrowDesc.eRUL = CTransform::STATE_RIGHT;
-		ArrowDesc.fRotSpeed = 10.0f;
+		ArrowDesc.RotAxis = FollowingDir_Right;
+		ArrowDesc.RotationSpeedPerSec = 10.0f;
 
 		//	ArrowDesc.m_iPassIndex = 16; // ø÷∞Ó
 		//	ArrowDesc.m_iPassIndex = 17; // ø÷∞Ó µÓ¿Â

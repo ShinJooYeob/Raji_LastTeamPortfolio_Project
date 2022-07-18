@@ -15,55 +15,56 @@ public:
 	};
 
 public:
-	typedef struct tagNonInstanceMeshEffect
-	{
-		tagNonInstanceMeshEffect() {}
-		tagNonInstanceMeshEffect(COMPONENTPROTOTYPEID type, _float3 pos, _float timeMax, _int defaultTex, _int maskTex, _int noiseTex, _uint Passindex = 16)
-		{
-			eMeshType = type;
-			fMaxTime_Duration = timeMax;
-			NoiseTextureIndex = defaultTex;
-			MaskTextureIndex = maskTex;
-			iDiffuseTextureIndex = noiseTex;
-			m_iPassIndex = Passindex;
-			vPosition = pos;
+	//typedef struct tagNonInstanceMeshEffect
+	//{
+	//	tagNonInstanceMeshEffect() {}
+	//	tagNonInstanceMeshEffect(COMPONENTPROTOTYPEID type, _float3 pos, _float timeMax, _int defaultTex, _int maskTex, _int noiseTex, _uint Passindex = 16)
+	//	{
+	//		eMeshType = type;
+	//		fMaxTime_Duration = timeMax;
+	//		NoiseTextureIndex = defaultTex;
+	//		MaskTextureIndex = maskTex;
+	//		iDiffuseTextureIndex = noiseTex;
+	//		m_iPassIndex = Passindex;
+	//		vPosition = pos;
 
-			vColor = _float4(1);
-			vLookDir = _float3(0, 1, 0);
-			vLimLight = _float4(0);
-			vEmissive = _float4(0);
-			noisingdir = _float2(1, 1).Get_Nomalize();
-			fDistortionNoisingPushPower = 0.5f;
-			fAppearTime = 2.f;
+	//		vColor = _float4(1);
+	//		vLookDir = _float3(0, 1, 0);
+	//		vLimLight = _float4(0);
+	//		vEmissive = _float4(0);
+	//		noisingdir = _float2(1, 1).Get_Nomalize();
+	//		fDistortionNoisingPushPower = 0.5f;
+	//		fAppearTime = 2.f;
 
-		}
+	//	}
 
-		COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
-		_float4				vColor = _float4(1);
-		_float				fMaxTime_Duration = 5.f;
+	//	COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
+	//	_float4				vColor = _float4(1);
+	//	_float				fMaxTime_Duration = 5.f;
 
-		_uint				NoiseTextureIndex = 0;
-		_uint				MaskTextureIndex = 0;
-		_uint				iDiffuseTextureIndex = 299;
+	//	_uint				NoiseTextureIndex = 0;
+	//	_uint				MaskTextureIndex = 0;
+	//	_uint				iDiffuseTextureIndex = 299;
 
-		_float3				vPosition = _float3(0);
-		_float3				vLookDir = _float3(0, 1, 0);
-		_float3				vScale = _float3(1);
-		CTransform::TransformState	eRUL = CTransform::STATE_END;
-		_float				fRotSpeed = 1.0f;
+	//	_float3				vPosition = _float3(0);
+	//	_float3				vLookDir = _float3(0, 1, 0);
 
-
-		_float4				vLimLight = _float4(0);
-		_float4				vEmissive = _float4(0);
-
-		_float2				noisingdir = _float2(1, 1).Get_Nomalize();
-		_float				fDistortionNoisingPushPower = 0.5f;
-		_float				fAppearTime = 2.f;
+	//	_float3						vSize = _float3(1);
+	//	CTransform::TransformState	RotAxis = CTransform::STATE_END;
+	//	_float						RotationSpeedPerSec = 1.0f;
 
 
-		_uint				m_iPassIndex = 16;
+	//	_float4				vLimLight = _float4(0);
+	//	_float4				vEmissive = _float4(0);
 
-	}NONINSTNESHEFTDESC;
+	//	_float2				noisingdir = _float2(1, 1).Get_Nomalize();
+	//	_float				fDistortionNoisingPushPower = 0.5f;
+	//	_float				fAppearTime = 2.f;
+
+
+	//	_uint				m_iPassIndex = 16;
+
+	//}NONINSTNESHEFTDESC;
 
 	
 

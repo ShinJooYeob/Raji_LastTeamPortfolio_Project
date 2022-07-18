@@ -114,6 +114,27 @@ typedef struct tagFonts
 
 	typedef struct tagNonInstanceMeshEffect
 	{
+		tagNonInstanceMeshEffect() {}
+		tagNonInstanceMeshEffect(COMPONENTPROTOTYPEID type, _float3 pos, _float timeMax, _int defaultTex, _int maskTex, _int noiseTex, _uint Passindex = 16)
+		{
+			eMeshType = type;
+			fMaxTime_Duration = timeMax;
+			NoiseTextureIndex = defaultTex;
+			MaskTextureIndex = maskTex;
+			iDiffuseTextureIndex = noiseTex;
+			m_iPassIndex = Passindex;
+			vPosition = pos;
+
+			vColor = _float4(1);
+			vLookDir = _float3(0, 1, 0);
+			vLimLight = _float4(0);
+			vEmissive = _float4(0);
+			noisingdir = _float2(1, 1).Get_Nomalize();
+			fDistortionNoisingPushPower = 0.5f;
+			fAppearTime = 2.f;
+
+		}
+
 		COMPONENTPROTOTYPEID eMeshType = Prototype_Mesh_ConeMesh;
 		_float4				vColor = _float4(1);
 		_float				fMaxTime_Duration = 5.f;

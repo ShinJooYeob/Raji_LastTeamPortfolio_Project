@@ -810,7 +810,6 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticInstanceMapObject.h" />
-    </ClInclude>
     <ClInclude Include="..\public\JumpTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\01. JumpTrigger</Filter>
     </ClInclude>

@@ -45,10 +45,10 @@ public:
 	HRESULT Initialize_ParticleMgr();
 
 
-	CNonInstanceMeshEffect::NONINSTNESHEFTDESC Get_TypeDesc(E_MESHEFFECT e)
+	NONINSTNESHEFTDESC Get_TypeDesc(E_MESHEFFECT e)
 	{
 		if (e >= MESHEFFECT_END)
-			return CNonInstanceMeshEffect::NONINSTNESHEFTDESC();
+			return NONINSTNESHEFTDESC();
 		return mVecMeshEffectDesc[e];
 	}
 
@@ -66,8 +66,8 @@ public:
 	HRESULT Create_MeshEffect(E_MESHEFFECT type, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffect_World(E_MESHEFFECT type, _float3 Postion, _float3 LookDir);
 
-	HRESULT Create_MeshEffectDesc(CNonInstanceMeshEffect::NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset);
-	HRESULT Create_MeshEffectDesc_World(CNonInstanceMeshEffect::NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir);
+	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset);
+	HRESULT Create_MeshEffectDesc_World(NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir);
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESHEFFECT type, CTransform* Transfomr = nullptr);
 
@@ -80,7 +80,7 @@ public:
 
 
 private:
-	vector<CNonInstanceMeshEffect::NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
+	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
 //	list<CNonInstanceMeshEffect*>						mListEffects;
 
 public:
