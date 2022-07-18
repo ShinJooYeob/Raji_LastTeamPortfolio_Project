@@ -6,6 +6,7 @@
 #include "MapObject.h"
 #include "StaticInstanceMapObject.h"
 #include "AssimpCreateMgr.h"
+#include "TriggerObject.h"
 
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -30,7 +31,8 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
-
+	FAILED_CHECK(Ready_TriggerObject(L"TestTrigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	
 	
 	
 	
@@ -254,6 +256,78 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wormgrub)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Spider)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wolf)));
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag )
+{
+
+
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+			_uint eNumber = 0;
+			_uint eObjectID = Prototype_Trigger_ChangeCameraView;
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(OBJECTPROTOTYPEID(eObjectID)), &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+
+		}
+
+		CloseHandle(hFile);
+	}
+
+
+
+
+
 
 
 

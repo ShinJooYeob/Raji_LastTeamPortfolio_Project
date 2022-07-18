@@ -18,6 +18,17 @@ public:
 	virtual HRESULT Initialize_Prototype(void* pArg) override;
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
+	_float4x4 Get_ValueMat() {	return m_fValueMat;	};
+	void Set_ValueMat(_float4x4* pMat){memcpy(&m_fValueMat, pMat, sizeof(_float4x4));};
+
+	void Set_eNumberNObjectID(_uint eNumber, _uint eObjectID)
+	{
+		m_eNumber = eNumber; m_eObjectID = eObjectID;
+	}
+	_uint Get_eNumber() { return m_eNumber; }
+	_uint Get_eObjectID() { return m_eObjectID; }
+
+
 public:
 	virtual _int					Update(_double fDeltaTime) override;
 	virtual _int					LateUpdate(_double fDeltaTimer) override;
@@ -29,6 +40,15 @@ public:
 
 	virtual EParkourTriggerType 	Get_ParkourTriggerType();
 
+
+protected:
+	CTransform*						m_pTransformCom	 = nullptr;
+	CCollider*						m_pColliderCom	= nullptr;
+	_float4x4						m_fValueMat = XMMatrixIdentity();
+
+private:
+	_uint							m_eNumber = 0;
+	_uint							m_eObjectID = Prototype_Trigger_ChangeCameraView;
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;
 	virtual void				Free() override;

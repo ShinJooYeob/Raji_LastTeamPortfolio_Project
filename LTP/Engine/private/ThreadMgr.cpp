@@ -58,8 +58,6 @@ void CALLBACK EraseFinishedThread(void* _Prameter)
 
 	}
 
-
-
 }
 
 CThreadMgr::CThreadMgr()

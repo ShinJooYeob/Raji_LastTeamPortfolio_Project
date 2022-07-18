@@ -27,13 +27,13 @@ HRESULT CTestLedgeTrigger::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_EtcInfo());
 
-	FAILED_CHECK(SetUp_PlayerAndCameraInfo());
+	//FAILED_CHECK(SetUp_PlayerAndCameraInfo());
 
-	LEDGETRIGGERDESC			tLedgeTriggerDesc;
-	memcpy(&tLedgeTriggerDesc, pArg, sizeof(LEDGETRIGGERDESC));
+	//LEDGETRIGGERDESC			tLedgeTriggerDesc;
+	//memcpy(&tLedgeTriggerDesc, pArg, sizeof(LEDGETRIGGERDESC));
 
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, tLedgeTriggerDesc.fSpawnPos);
-	m_eLedgeTriggerType = tLedgeTriggerDesc.eLedgeTriggerState;
+	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, tLedgeTriggerDesc.fSpawnPos);
+	//m_eLedgeTriggerType = tLedgeTriggerDesc.eLedgeTriggerState;
 	return S_OK;
 }
 
@@ -41,14 +41,14 @@ _int CTestLedgeTrigger::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (true == Check_CollisionToPlayer())
-	{
-		//Active_Trigger(fDeltaTime);
-	}
-	else
-	{
-		//DeActive_Trigger(fDeltaTime);
-	}
+	//if (true == Check_CollisionToPlayer())
+	//{
+	//	//Active_Trigger(fDeltaTime);
+	//}
+	//else
+	//{
+	//	//DeActive_Trigger(fDeltaTime);
+	//}
 
 	return _int();
 }
@@ -66,18 +66,18 @@ _int CTestLedgeTrigger::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
-	CGameInstance* pInstance = GetSingle(CGameInstance);
-	NULL_CHECK_RETURN(m_pVIBufferCom, E_FAIL);
+	//CGameInstance* pInstance = GetSingle(CGameInstance);
+	//NULL_CHECK_RETURN(m_pVIBufferCom, E_FAIL);
 
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
-		return E_FAIL;
+	//if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
+	//	return E_FAIL;
 
-	m_pVIBufferCom->Render(m_pShaderCom, 3);
+	//m_pVIBufferCom->Render(m_pShaderCom, 3);
 
 
 	return _int();
@@ -207,13 +207,13 @@ _bool CTestLedgeTrigger::Check_CollisionToPlayer()
 
 HRESULT CTestLedgeTrigger::SetUp_Components()
 {
-	// Main Transform
-	CTransform::TRANSFORMDESC tDesc = {};
-	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
-	tDesc.fScalingPerSec = 1;
-	tDesc.vPivot = _float3(0, 0, 0);
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+	//// Main Transform
+	//CTransform::TRANSFORMDESC tDesc = {};
+	//tDesc.fMovePerSec = 5;
+	//tDesc.fRotationPerSec = XMConvertToRadians(60);
+	//tDesc.fScalingPerSec = 1;
+	//tDesc.vPivot = _float3(0, 0, 0);
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 	// For Debug
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
@@ -227,8 +227,8 @@ HRESULT CTestLedgeTrigger::SetUp_Components()
 
 HRESULT CTestLedgeTrigger::SetUp_PlayerAndCameraInfo()
 {
-	m_pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
-	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(TAG_COM(Com_Transform)));
+	//m_pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+	//m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(TAG_COM(Com_Transform)));
 
 	return S_OK;
 }

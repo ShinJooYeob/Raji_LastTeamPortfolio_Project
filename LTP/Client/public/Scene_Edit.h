@@ -33,7 +33,7 @@ class CScene_Edit final : public CScene
 		Data_Navigation,
 
 		Data_Trigger,
-		Data_Monster,
+		Data_MonsterTrigger,
 
 		Datatype_End
 	};
@@ -116,15 +116,12 @@ private:
 #pragma region TriggerTab
 
 	HRESULT Update_TriggerTab(_double fDeltatime);
-	HRESULT Widget_TriggerSRT(_double fDeltatime);
+	HRESULT Widget_TriggerData(_double fDeltatime);
 
-	HRESULT Widget_BatchedTriggerList(_double fDeltatime);
-	HRESULT Widget_CreateDeleteTrigger(_double fDeltatime);
-	HRESULT Widget_SaveLoadTriggerData(_double fDeltatime);
-	HRESULT	RenewTriggerTransform(OBJELEMENT* pObjElement);
-
-	//CTriggerObject
-
+	_int						eNumber	 = 0;
+	_uint						eObjectID = Prototype_Trigger_ChangeCameraView;
+	vector<CTriggerObject*>		m_vecTriggerObject;
+	_int						iTriggerIndex = 0;
 
 #pragma endregion TriggerTab
 
