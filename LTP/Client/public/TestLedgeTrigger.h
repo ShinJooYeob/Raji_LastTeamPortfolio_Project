@@ -3,8 +3,6 @@
 #include "TriggerObject.h"
 
 BEGIN(Client)
-class CPlayer;
-class CCamera_Main;
 
 class CTestLedgeTrigger final : public CTriggerObject
 {
@@ -28,6 +26,8 @@ protected:
 public:
 	virtual HRESULT		Initialize_Prototype(void* pArg) override;
 	virtual HRESULT		Initialize_Clone(void* pArg) override;
+	virtual HRESULT		After_Initialize() override;
+
 
 public:
 	virtual _int					Update(_double fDeltaTime) override;
@@ -48,19 +48,15 @@ public:
 	ELedgeTriggerState				Get_LedgeType();
 	_bool							Is_Cornor();
 	ELedgeCornorType				Get_CornorType();
-
-public:
-	void				Ledge_Start();
-	void				Ledge_Hanging();
-	void				Ledge_LastHanging();
-	void				Ledge_End();
+	void							Set_Pos(_float3 fPos);
+	void							Set_LookDir(_float3 fLookDir);
+	void							Set_LedgeType(ELedgeTriggerState eType);
 
 public:
 	_bool				Check_CollisionToPlayer();
 
 private:
 	HRESULT				SetUp_Components();
-	HRESULT				SetUp_PlayerAndCameraInfo();
 	HRESULT				SetUp_EtcInfo();
 
 private:
@@ -68,16 +64,7 @@ private:
 	_bool						m_bOnTriggered = false;
 	_bool						m_bCornor = false;
 	ELedgeCornorType			m_eConorType = CONORTYPE_END;
-
-private:
-	CPlayer*					m_pPlayer = nullptr;
-	CTransform*					m_pPlayerTransform = nullptr;
-
-	// for Debug
-	CShader*					m_pShaderCom = nullptr;
-	CTexture*					m_pTextureCom = nullptr;
-	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
+	_float3						m_fLookDir = _float3(0.f, 0.f, 0.f);
 
 public:
 	static CTestLedgeTrigger*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

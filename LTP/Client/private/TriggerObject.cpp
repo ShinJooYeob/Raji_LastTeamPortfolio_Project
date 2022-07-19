@@ -71,6 +71,7 @@ _int CTriggerObject::LateUpdate(_double fDeltaTimer)
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pColliderCom));
 #endif // _DEBUG
 
+	m_pColliderCom->Update_ConflictPassedTime(fDeltaTimer);
 	return _int();
 }
 

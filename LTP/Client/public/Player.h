@@ -124,6 +124,7 @@ private:
 		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
 	};
 
+public:
 	enum EPARKOUR_LEDGESTATE {
 		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP,
 		LEDGE_HANGING_CLIMBUP, LEDGE_HANGING_CLIMBDOWN
@@ -159,12 +160,12 @@ public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 	CTransform* Get_Transform() const { return m_pTransformCom; }
-
+	_bool Get_IsLedgeReachBackState();
 
 public: /* public Setter */
 	void	Set_JumpPower(_float fJumpPower);
 	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
-
+	void	Set_PlayerNavIndex(_uint iNavIndex);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
@@ -172,10 +173,16 @@ public: /* Damage Logic*/
 
 public:
 	void	Set_State_ParkourStart(_double fDeltaTime);
-	void	Set_State_LedgeClimbDownStart(_double fDeltaTime);
+	void	Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime);
+	void	Set_State_LedgeClimbUpStart(_double fDeltaTime);
 
 public:
 	EPLAYER_STATE Get_PlayerState();
+	EPARKOUR_LEDGESTATE Get_LedgeState();
+
+public:
+	void				Set_CurParkurLedge(class CTestLedgeTrigger* pTargetLedge);
+	CTriggerObject*		Get_CurParkurLedge();
 
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
@@ -308,8 +315,8 @@ private:
 private: /* Relate Parkour */
 	CTriggerObject::EParkourTriggerType 		m_eCurParkourState;
 	CTriggerObject*								m_pCurParkourTrigger = nullptr;
-	CTriggerObject*								m_pPreParkourTrigger = nullptr;
 	EPARKOUR_LEDGESTATE							m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_JUMP;
+
 
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
@@ -391,6 +398,10 @@ private: /* Animation Control */
 
 	_bool					m_bActiveCollider = true;
 
+	_float3					m_fLookDir = _float3(0.f, 0.f, 0.f);
+
+	_bool					m_bLedge_ReachBackState = false;
+
 private: /* For Navi */
 	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
 
@@ -441,6 +452,9 @@ private:
 
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
+
+	CCollider*				m_pCollider_Parkur = nullptr;
+	vector<ATTACHEDESC>		m_vecAttachedDesc_Parkur;
 
 	class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
 

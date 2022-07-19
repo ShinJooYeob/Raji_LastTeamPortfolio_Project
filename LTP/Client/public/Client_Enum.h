@@ -289,8 +289,8 @@ enum OBJECTPROTOTYPEID
 
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_Trigger_ChangeCameraView,
-
-
+	Prototype_Trigger_ChangeNavIndex,
+	Prototype_Trigger_PILLARTRIGGER,
 	Prototype_Trigger_TestLedgeTrigger,
 	//////////////////////////////////////////////////////////////////////////
 
@@ -438,6 +438,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_TestLedgeTrigger:
 		return TEXT("Prototype_Trigger_TestLedgeTrigger");
+		break;
+	case Prototype_Trigger_ChangeNavIndex:
+		return TEXT("Prototype_Trigger_ChangeNavIndex");
+		break;
+	case Prototype_Trigger_PILLARTRIGGER:
+		return TEXT("Prototype_Trigger_Pillartrigger");
 		break;
 		
 	case Prototype_PlayerSkill_ShellingArrow:

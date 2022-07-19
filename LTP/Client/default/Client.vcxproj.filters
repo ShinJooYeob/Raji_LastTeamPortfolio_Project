@@ -370,6 +370,12 @@
     <Filter Include="01.GameObject\08.Effect\03.ParticleMgr">
       <UniqueIdentifier>{fbb0f076-d5b8-48bb-ad99-7ece43dd4c5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger">
+      <UniqueIdentifier>{c4bdca09-b129-4d18-a5b2-89a8d067409d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\03. PillarTrigger">
+      <UniqueIdentifier>{4b813f59-1db8-4146-b17d-90e902224f04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -816,6 +822,12 @@
     <ClInclude Include="..\public\PartilceCreateMgr.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ChangeNavIndexTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PillarTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1236,11 +1248,15 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
-    <ClCompile Include="..\private\JumpTrigger.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\PartilceCreateMgr.cpp">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JumpTrigger.cpp" />
+    <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PillarTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
