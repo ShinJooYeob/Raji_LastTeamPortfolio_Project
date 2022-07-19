@@ -55,7 +55,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * 
 	meshDesc.vLookDir = parentTransform->Get_MatrixState(CTransform::STATE_LOOK);
 
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
-	CGameObject* obj  = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &meshDesc);
+	CGameObject* obj  = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT), &meshDesc);
 	NULL_CHECK_BREAK(obj);
 	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
@@ -76,7 +76,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3
 
 
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
-	g_pGameInstance->Add_GameObject_To_Layer(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &meshDesc);
+	g_pGameInstance->Add_GameObject_To_Layer(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT), &meshDesc);
 
 
 	return S_OK;
@@ -87,7 +87,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc( NONINSTNESHEFTDESC desc, CTra
 	desc.vPosition = Offset;
 
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
-	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &desc);
+	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT), &desc);
 	NULL_CHECK_BREAK(obj);
 	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
@@ -103,7 +103,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_World( NONINSTNESHEFTDESC desc
 	desc.vPosition = Postion;
 	desc.vLookDir = LookDir;
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
-	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &desc);
+	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT), &desc);
 	NULL_CHECK_BREAK(obj);
 	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);

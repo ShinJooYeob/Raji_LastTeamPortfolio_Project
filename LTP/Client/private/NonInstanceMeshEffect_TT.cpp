@@ -65,23 +65,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
-	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime);
 
-	//m_tMeshDesc.NoiseTextureIndex = 381;
-	//m_tMeshDesc.MaskTextureIndex = 10;
-	//m_tMeshDesc.iDiffuseTextureIndex = 300;
-	//m_tMeshDesc.m_iPassIndex = 19;
-	//m_tMeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-	//m_tMeshDesc.vLimLight = _float4(1, 0, 0, 1);
-
-
-	//Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
-
-
-
-	m_fCurTime_Duration += (_float)fDeltaTime;
-
-	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
 
 	if (m_pParentTranscom)
 	{
@@ -99,16 +83,14 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 		_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
 
-		if (m_tMeshDesc.RotAxis == CTransform::STATE_RIGHT)
+		if (m_tMeshDesc.RotAxis == FollowingDir_Right)
 			m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-		else if (m_tMeshDesc.RotAxis == CTransform::STATE_UP)
+		else if (m_tMeshDesc.RotAxis == FollowingDir_Up)
 			m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-		else if (m_tMeshDesc.RotAxis == CTransform::STATE_LOOK)
+		else if (m_tMeshDesc.RotAxis == FollowingDir_Look)
 			m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-
 		else
-		{
-		}
+		{}
 
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
@@ -119,6 +101,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		// FIXPos
 
 	}
+	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
 
 
 	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)

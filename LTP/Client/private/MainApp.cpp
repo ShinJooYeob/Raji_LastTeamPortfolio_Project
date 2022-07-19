@@ -10,6 +10,7 @@
 #include "InstanceEffect.h"
 #include "MeshEffect.h"
 #include "NonInstanceMeshEffect.h"
+#include "NonInstanceMeshEffect_TT.h"
 #include "PartilceCreateMgr.h"
 
 #include "PhysX/Collider_PhysX_Static.h"
@@ -464,7 +465,8 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TEXT("ProtoType_GameObjectObject_MeshEffect_Suck"),		CMeshEffect_Suck::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect), CNonInstanceMeshEffect::Create(m_pDevice, m_pDeviceContext)));
-
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect_TT), CNonInstanceMeshEffect_TT::Create(m_pDevice, m_pDeviceContext)));
+	
 
 	
 
