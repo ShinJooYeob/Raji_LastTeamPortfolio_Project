@@ -95,7 +95,7 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 
 			m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
 		}
-		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+		//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 	}
 
 #endif // _DEBUG

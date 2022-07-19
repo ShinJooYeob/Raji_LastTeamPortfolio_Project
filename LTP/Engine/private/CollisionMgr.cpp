@@ -105,6 +105,7 @@ HRESULT CCollisionMgr::Inspect_Collision()
 	Start_InspectRepelCollision();
 	Start_InspectMainCollision();
 
+	FAILED_CHECK(Inspect_PlayerParkur_To_ParkurObj());
 
 
 	//FAILED_CHECK(Inspect_RepelGroup());
@@ -153,6 +154,26 @@ void CCollisionMgr::Start_InspectRepelCollision()
 		m_eRepelCollisionThreadState = CollsionThreadStateID::CTS_ENTER;
 		LeaveCriticalSection(m_pCriSec);
 	}
+}
+
+HRESULT CCollisionMgr::Inspect_PlayerParkur_To_ParkurObj()
+{
+	_uint2 ConflictedIndex;
+
+	for (auto& SrcElement : m_CollisionGroupList[CollisionType_PlayerParkur])
+	{
+		for (auto& DestElemet : m_CollisionGroupList[CollisionType_NPC])
+		{
+			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
+			{
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_NPC);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_PlayerParkur);
+			}
+
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)

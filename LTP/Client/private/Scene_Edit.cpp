@@ -946,14 +946,17 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 		for (auto& pTrigObj : m_vecTriggerObject)
 		{
 			_uint eNumber = pTrigObj->Get_eNumber();
-			_uint eObjectID = pTrigObj->Get_eObjectID();
+			wstring eObjectID = pTrigObj->Get_eObjectID();
 
 			_float4x4 WorldMat = ((CTransform*)pTrigObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
 			_float4x4 ValueData = pTrigObj->Get_ValueMat();
 
 
 			WriteFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
-			WriteFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			
+			iIDLength = eObjectID.length();
+			WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			WriteFile(hFile, eObjectID.c_str(), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 			WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			WriteFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
 
@@ -1594,13 +1597,16 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 
 			_uint eNumber = 0;
-			_uint eObjectID = Prototype_Trigger_ChangeCameraView;
+			_tchar eObjectID[MAX_PATH];
 			_float4x4 WorldMat = XMMatrixIdentity();
 			_float4x4 ValueData = XMMatrixIdentity();
 
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
 
 			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
-			ReadFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
 			if (0 == dwByte) break;
@@ -1608,7 +1614,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 			CTriggerObject* pObject = nullptr;
 
-			FAILED_CHECK(pInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_EDIT, TAG_OP(OBJECTPROTOTYPEID(eObjectID)), &eNumber));
+			FAILED_CHECK(pInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_EDIT, eObjectID, &eNumber));
 
 			NULL_CHECK_RETURN(pObject, E_FAIL);
 
@@ -3393,7 +3399,7 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 	if (ImGui::BeginListBox("Trigger Object Prototype"))
 	{
 
-		for (int i = Prototype_Trigger_ChangeCameraView; i <= Prototype_Trigger_TestLedgeTrigger; i++)
+		for (int i = Prototype_Trigger_ChangeCameraView; i <= Prototype_PlayerSkill_ShellingArrow - 1; i++)
 		{
 			const bool is_selected = false;
 
@@ -3428,7 +3434,7 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 
 	if (ImGui::Button("Create Trigger"))
 	{
-		CTriggerObject*	pObject;
+		CTriggerObject*	pObject = nullptr; 
 		g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_STATIC, TAG_OP(OBJECTPROTOTYPEID(eObjectID)),&eNumber);
 		NULL_CHECK_RETURN(pObject, E_FAIL);
 
@@ -3441,7 +3447,7 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 		memcpy(&vv, m_fPickingedPosition, sizeof(_float3));
 		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vv);
 
-		pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+		pObject->Set_eNumberNObjectID(eNumber, TAG_OP(OBJECTPROTOTYPEID(eObjectID)) );
 
 
 		m_vecTriggerObject.push_back(pObject);

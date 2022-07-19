@@ -75,6 +75,8 @@ private:
 	void	Start_InspectMainCollision();
 	void	Start_InspectRepelCollision();
 
+	HRESULT	Inspect_PlayerParkur_To_ParkurObj();
+
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
 	list<REPELELEMENT>		m_RepelObjectList;

@@ -52,10 +52,10 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
+	/*if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
 	{
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wasp)));
-	}
+	}*/
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -180,6 +180,7 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
 	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(242.479f, 21.198f, 178.668f));
 
 
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
@@ -211,10 +212,22 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 
 
 
-	CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
-	tLedgeTriggerDesc.fSpawnPos = _float3(242.284f, 27.910f, 181.879f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
+	//tLedgeTriggerDesc.fSpawnPos = _float3(242.284f, 27.910f, 183.879f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//CTestLedgeTrigger* pTrigger = (CTestLedgeTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	//pTrigger->Set_Pos(_float3(242.f, 28.f, 181.f));
+	//pTrigger->Set_LookDir(_float3(0.f, 0.f, 1.f));
+	//pTrigger->Set_LedgeType(CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE);
+
+	//tLedgeTriggerDesc.fSpawnPos = _float3(242.284f, 27.910f, 183.879f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//pTrigger = (CTestLedgeTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	//pTrigger->Set_Pos(_float3(241.95f, 25.f, 181.65f));
+	//pTrigger->Set_LookDir(_float3(0.f, 0.f, 1.f));
+	//pTrigger->Set_LedgeType(CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE);
 
 	return S_OK;
 }
@@ -314,21 +327,25 @@ HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 		{
 
 
+
 			_uint eNumber = 0;
-			_uint eObjectID = Prototype_Trigger_ChangeCameraView;
+			_tchar eObjectID[MAX_PATH];
 			_float4x4 WorldMat = XMMatrixIdentity();
 			_float4x4 ValueData = XMMatrixIdentity();
 
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
 
 			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
-			ReadFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
 			if (0 == dwByte) break;
 
 
 
-			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(OBJECTPROTOTYPEID(eObjectID)), &eNumber));
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
 
 			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
 
@@ -339,6 +356,7 @@ HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
 
 			pObject->Set_ValueMat(&ValueData);
+			pObject->After_Initialize();
 
 		}
 
