@@ -157,7 +157,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-	for (_uint i = 0; i < 1; i++)
+	for (_uint i = 0; i < 16; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -211,7 +211,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		/////////////////////////////////////AttackCollider
 		COLLIDERDESC			AttackColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		AttackColliderDesc.vScale = _float3(2.5f);
+		AttackColliderDesc.vScale = _float3(1.5f);
 		AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		AttackColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
 		FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
@@ -231,7 +231,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_1), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}
@@ -571,7 +571,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() > 0.4)
 			{
-				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime, m_vecInstancedTransform[i].pNavigation);
+				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime*4.264782, m_vecInstancedTransform[i].pNavigation);
 
 				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.8 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.85)
 				{
