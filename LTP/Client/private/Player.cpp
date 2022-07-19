@@ -1828,6 +1828,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_BOW)
 	{
@@ -1841,6 +1844,10 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(1));
+
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_SWORD)
 	{
@@ -1854,6 +1861,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
 		m_pPlayerWeapons[EWEAPON_TYPE::WEAPON_SHIELD - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_CHAKRA)
 	{
@@ -1867,6 +1877,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.1f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 
 	return true;
@@ -3447,8 +3460,12 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 			if (m_fChargingTime > 0.1f)
 			{
+			//	m_vecTextureParticleDesc[2].bEmissive = _float3(0);
+			//	m_vecTextureParticleDesc[3].;
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2));
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(3));
+
+
 			}
 			if (m_fChargingTime > 1.f)
 			{

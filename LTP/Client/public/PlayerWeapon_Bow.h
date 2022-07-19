@@ -86,6 +86,8 @@ private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
 
+
+
 private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\public\PlayerWeapon.h"
-#include "..\public\PartilceCreateMgr.h"
 
 
 CPlayerWeapon::CPlayerWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -115,7 +114,7 @@ HRESULT CPlayerWeapon::Ready_ParticleDesc()
 	return S_OK;
 }
 
-HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, CTransform* defaultTrans,_float3 offset, _float Timer)
+HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _float3 FixPos,_float3 offset, _float Timer)
 {
 	if (PARTILCECOUNT <= ParticleIndex)
 		return E_FAIL;
@@ -158,17 +157,19 @@ HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, CTransform* defaul
 		}
 		else
 		{
-			if (defaultTrans == nullptr)
-				return S_OK;
+			// if (defaultTrans == nullptr)
+			// 	return S_OK;
+			// 
+			// _Matrix WeaponMat = defaultTrans->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+			// 
+			// WeaponMat.r[0] = XMVector3Normalize(WeaponMat.r[0]);
+			// WeaponMat.r[1] = XMVector3Normalize(WeaponMat.r[1]);
+			// WeaponMat.r[2] = XMVector3Normalize(WeaponMat.r[2]);
+			// 
+			// _Vector WorldPos = WeaponMat.r[3];
+			// CreatePos = WorldPos + WeaponMat.r[0] * offset.z + WeaponMat.r[1] * offset.z + WeaponMat.r[2] * offset.z;
 
-			_Matrix WeaponMat = defaultTrans->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
-
-			WeaponMat.r[0] = XMVector3Normalize(WeaponMat.r[0]);
-			WeaponMat.r[1] = XMVector3Normalize(WeaponMat.r[1]);
-			WeaponMat.r[2] = XMVector3Normalize(WeaponMat.r[2]);
-
-			_Vector WorldPos = WeaponMat.r[3];
-			CreatePos = WorldPos + WeaponMat.r[0] * offset.z + WeaponMat.r[1] * offset.z + WeaponMat.r[2] * offset.z;
+			CreatePos = FixPos.XMVector() + offset.XMVector();
 
 			m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = CreatePos;
 			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
@@ -179,13 +180,103 @@ HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, CTransform* defaul
 	return S_OK;
 }
 
+HRESULT CPlayerWeapon::Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPos, _float3 offset, _float Timer)
+{
+	if (PARTILCECOUNT <= ParticleIndex)
+		return E_FAIL;
+
+	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
+		return E_FAIL;
+
+	bool isCreate = true;
+	m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
+
+
+	// 위치
+	if (isCreate)
+	{
+		_Vector CreatePos;
+
+		if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget)
+		{
+
+			if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Get_IsOwnerDead() == true)
+				(m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Set_IsOwnerDead(false));
+
+			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
+
+		
+
+		}
+		else
+		{
+
+			CreatePos = FixPos.XMVector() + offset.XMVector();
+
+			m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = CreatePos;
+			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
+
+		}
+	}
+
+
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon::Set_Dead_Transform(_uint ParticleIndex)
+{
+	
+	if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget)
+	{
+		m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Set_IsOwnerDead(true);
+
+	}
+	 
+	return S_OK;
+}
+
 HRESULT CPlayerWeapon::Update_Particle(_double timer)
 {
-	for (auto& timer : m_fPlayParticleTimer)
+	for (auto& t : m_fPlayParticleTimer)
 	{
-		timer -= (_float)timer;
-		if (timer <= -100)
-			timer = -1;
+		t -= (_float)timer;
+		if (t <= -100)
+			t = -1;
+	}
+
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon::Set_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool bb, bool * pb)
+{
+	NULL_CHECK_BREAK(trans);
+
+
+	if (bb == false)
+	{
+		// 삭제
+		if (trans)
+		{
+			trans->Set_IsOwnerDead(true);
+			if (pb)
+				*pb = false;
+		}
+	}
+
+
+	if (bb == true)
+	{
+		if (trans)
+		{
+			if (trans->Get_IsOwnerDead() == true)
+			{
+				trans->Set_IsOwnerDead(false);
+			}
+
+			GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(type, trans);
+			if (pb)
+				*pb = true;
+		}
 	}
 
 	return S_OK;

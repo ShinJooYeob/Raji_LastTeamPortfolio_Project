@@ -31,6 +31,8 @@ HRESULT CPlayerWeapon_Bow::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(Ready_ParticleDesc());
 
+	_bool							m_bEffect_Bow = false;
+
 
 	return S_OK;
 }
@@ -45,11 +47,16 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
 		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
 	{
 		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+
+
 	}
+	
+
 
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
@@ -352,21 +359,30 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowBack, E_FAIL);
 
 
+
 	// 0
 	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
 	instanceDesc.TotalParticleTime = 99999.f;
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowFront;
-	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
 	// 1
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
-	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	// 9999여도 죽는다. 
+	m_pTextureParticleTransform_BowFront->Set_IsOwnerDead(true);
+	m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
 
 	// 2
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Circle);
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
 
 	// 3
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Suck);
@@ -382,6 +398,10 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+
+
 	return S_OK;
 }
 

@@ -816,6 +816,9 @@
     <ClInclude Include="..\public\PartilceCreateMgr.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1236,11 +1239,12 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
-    <ClCompile Include="..\private\JumpTrigger.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\PartilceCreateMgr.cpp">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JumpTrigger.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "..\public\NonInstanceMeshEffect.h"
+#include "..\public\NonInstanceMeshEffect_TT.h"
 
 
-CNonInstanceMeshEffect::CNonInstanceMeshEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CNonInstanceMeshEffect_TT::CNonInstanceMeshEffect_TT(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
 {
 }
 
-CNonInstanceMeshEffect::CNonInstanceMeshEffect(const CNonInstanceMeshEffect & rhs)
+CNonInstanceMeshEffect_TT::CNonInstanceMeshEffect_TT(const CNonInstanceMeshEffect_TT & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CNonInstanceMeshEffect::Initialize_Prototype(void * pArg)
+HRESULT CNonInstanceMeshEffect_TT::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
 	return S_OK;
 }
 
-HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
+HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -60,12 +60,11 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CNonInstanceMeshEffect::Update(_double fDeltaTime)
+_int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
-
 	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime);
 
 	//m_tMeshDesc.NoiseTextureIndex = 381;
@@ -80,6 +79,48 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 
 
 
+	m_fCurTime_Duration += (_float)fDeltaTime;
+
+	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+
+	if (m_pParentTranscom)
+	{
+		if (m_pParentTranscom->Get_IsOwnerDead())
+		{
+			Set_IsDead();
+			return _int();
+		}
+
+		m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
+		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+
+		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
+		_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
+
+		if (m_tMeshDesc.RotAxis == CTransform::STATE_RIGHT)
+			m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+		else if (m_tMeshDesc.RotAxis == CTransform::STATE_UP)
+			m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+		else if (m_tMeshDesc.RotAxis == CTransform::STATE_LOOK)
+			m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+
+		else
+		{
+		}
+
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
+
+	}
+	else
+	{
+		// FIXPos
+
+	}
+
+
 	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
 	{
 		Set_IsDead();
@@ -88,7 +129,7 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 	return _int();
 }
 
-_int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
+_int CNonInstanceMeshEffect_TT::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
@@ -104,7 +145,7 @@ _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 	return _int();
 }
 
-_int CNonInstanceMeshEffect::Render()
+_int CNonInstanceMeshEffect_TT::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -120,6 +161,10 @@ _int CNonInstanceMeshEffect::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+
+	//_float2 noisingdir = _float2(1, 1).Get_Nomalize();
+	//_float	fDistortionNoisingPushPower = 0.5f;
+	//_float	fAppearTime = 2.f;
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
@@ -156,13 +201,13 @@ _int CNonInstanceMeshEffect::Render()
 	return _int();
 }
 
-_int CNonInstanceMeshEffect::LateRender()
+_int CNonInstanceMeshEffect_TT::LateRender()
 {
 	return _int();
 }
 
 
-HRESULT CNonInstanceMeshEffect::SetUp_Components()
+HRESULT CNonInstanceMeshEffect_TT::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
@@ -181,31 +226,31 @@ HRESULT CNonInstanceMeshEffect::SetUp_Components()
 }
 
 
-CNonInstanceMeshEffect * CNonInstanceMeshEffect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CNonInstanceMeshEffect_TT * CNonInstanceMeshEffect_TT::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CNonInstanceMeshEffect*	pInstance = NEW CNonInstanceMeshEffect(pDevice, pDeviceContext);
+	CNonInstanceMeshEffect_TT*	pInstance = NEW CNonInstanceMeshEffect_TT(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CNonInstanceMeshEffect");
+		MSGBOX("Failed to Created CNonInstanceMeshEffect_TT");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CNonInstanceMeshEffect::Clone(void * pArg)
+CGameObject * CNonInstanceMeshEffect_TT::Clone(void * pArg)
 {
-	CNonInstanceMeshEffect*	pInstance = NEW CNonInstanceMeshEffect(*this);
+	CNonInstanceMeshEffect_TT*	pInstance = NEW CNonInstanceMeshEffect_TT(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CNonInstanceMeshEffect");
+		MSGBOX("Failed to Created CNonInstanceMeshEffect_TT");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CNonInstanceMeshEffect::Free()
+void CNonInstanceMeshEffect_TT::Free()
 {
 	__super::Free();
 
@@ -213,6 +258,5 @@ void CNonInstanceMeshEffect::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pParentTranscom);
 
 }

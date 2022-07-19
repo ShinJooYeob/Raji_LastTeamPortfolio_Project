@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\PartilceCreateMgr.h"
+#include "..\public\NonInstanceMeshEffect_TT.h"
 
 
 IMPLEMENT_SINGLETON(CPartilceCreateMgr);
@@ -57,9 +58,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * 
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
 	CGameObject* obj  = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &meshDesc);
 	NULL_CHECK_BREAK(obj);
-	CNonInstanceMeshEffect * meshobj = static_cast<CNonInstanceMeshEffect*>(obj);
+	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
-	meshobj->Set_Base();
 	meshobj->Set_ParentTransform(parentTransform);
 
 
@@ -90,9 +90,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc( NONINSTNESHEFTDESC desc, CTra
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
 	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &desc);
 	NULL_CHECK_BREAK(obj);
-	CNonInstanceMeshEffect * meshobj = static_cast<CNonInstanceMeshEffect*>(obj);
+	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
-	meshobj->Set_Base();
 	meshobj->Set_ParentTransform(parentTransform);
 
 
@@ -107,9 +106,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_World( NONINSTNESHEFTDESC desc
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
 	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &desc);
 	NULL_CHECK_BREAK(obj);
-	CNonInstanceMeshEffect * meshobj = static_cast<CNonInstanceMeshEffect*>(obj);
+	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
-	meshobj->Set_Base();
 
 	return S_OK;
 }
@@ -170,24 +168,24 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 		ArrowDesc.noisingdir = _float2(0.5f, 0.5f).Get_Nomalize();
 		ArrowDesc.vColor = _float4(1, 1, 1, 1);
-		ArrowDesc.fAppearTime = 1.0f;
+		ArrowDesc.fAppearTime = 0.5f;
 		ArrowDesc.fDistortionNoisingPushPower = 5.0f;
 
 		ArrowDesc.vEmissive = _float4(0.3f, 0.3f, 1.0f, 1.0f);
 		ArrowDesc.vLimLight = _float4(0.0f, 0.4f, 1, 1);
 
 
-		ArrowDesc.vLookDir = _float3(0, 1, 0);
+		ArrowDesc.vLookDir = _float3(0, 0, 1);
 		//	ArrowDesc.vRotAxis = _float3(1, 0, 0);
-		_float3 offset = _float3(0, 0, 1.2f);
+		_float3 offset = _float3(0, 0, 0);
 		ArrowDesc.vSize = _float3(0.3f);
 
 		ArrowDesc.RotAxis = FollowingDir_Right;
-		ArrowDesc.RotationSpeedPerSec = 10.0f;
+		ArrowDesc.RotationSpeedPerSec = 0;
 
 		//	ArrowDesc.m_iPassIndex = 16; // ¿Ö°î
-		//	ArrowDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		ArrowDesc.m_iPassIndex = 18; // DisCard
+		ArrowDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	ArrowDesc.m_iPassIndex = 18; // DisCard
 	//	ArrowDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 	//	ArrowDesc.vLookDir = m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT);
@@ -200,7 +198,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	{
 		 NONINSTNESHEFTDESC ArrowDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
 
-		ArrowDesc.fMaxTime_Duration = 3.0f;
+		ArrowDesc.fMaxTime_Duration = 5.0f;
 
 		ArrowDesc.iDiffuseTextureIndex = 365;
 		ArrowDesc.MaskTextureIndex = 31;
@@ -208,25 +206,25 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 		ArrowDesc.noisingdir = _float2(0.5f, 0.5f).Get_Nomalize();
 		ArrowDesc.vColor = _float4(1, 1, 1, 1);
-		ArrowDesc.fAppearTime = 1.0f;
+		ArrowDesc.fAppearTime = 0.8f;
 		ArrowDesc.fDistortionNoisingPushPower = 5.0f;
 
 		ArrowDesc.vEmissive = _float4(0.3f, 0.3f, 1.0f, 1.0f);
 		ArrowDesc.vLimLight = _float4(0.0f, 0.4f, 1, 1);
 
 
-		ArrowDesc.vLookDir = _float3(0, 1, 0);
+		ArrowDesc.vLookDir = _float3(0, 0, 1);
 		//	ArrowDesc.vRotAxis = _float3(1, 0, 0);
-		_float3 offset = _float3(0, 0, 1.2f);
+		_float3 offset = _float3(0, 0, 0);
 		ArrowDesc.vSize = _float3(0.3f);
 
 		ArrowDesc.RotAxis = FollowingDir_Right;
-		ArrowDesc.RotationSpeedPerSec = 10.0f;
+		ArrowDesc.RotationSpeedPerSec = 0;
 
 		//	ArrowDesc.m_iPassIndex = 16; // ¿Ö°î
 		//	ArrowDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		ArrowDesc.m_iPassIndex = 18; // DisCard
-	//	ArrowDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+	//	ArrowDesc.m_iPassIndex = 18; // DisCard
+		ArrowDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 	//	ArrowDesc.vLookDir = m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT);
 
