@@ -6,17 +6,23 @@ BEGIN(Client)
 class CMonster_Wasp final : public CMonster
 {
 	enum AnimationType{ANIM_RUN_Frame1, ANIM_RUN_Frame2, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END};
+	enum RenderType{RENDER_IDLE,RENDER_HIT,RENDMER_DIE,RENDER_END};
 
 	typedef struct tagState
 	{
 		CTransform*		pTransform = nullptr;
 		CNavigation*	pNavigation = nullptr;
-		_uint			iType = ANIM_END;
+		_uint			iAnimType = ANIM_END;
+		_uint			iRenderType = RENDER_IDLE;
 
+		_float4			fRimRight = _float4(0.5f,0.5f,0.5f,0.8f);
+		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f);
+		_float4			fDissolve = _float4(0.5f,0.5f,0.5f,0.f);//1흐른시간, 디졸브 시간, 국밥가격 ,0이면 디졸브 안함 1이면 디졸브
+
+		
 		_int			iHp = 3;
-		_bool			bHit = false;
-		_bool			bOnceSwtich = false;
 		_double			dTime = 0;
+		_bool			bHit = false;
 	}TRANSFORM_STATE;
 
 private:
@@ -45,7 +51,10 @@ private:
 
 private:
 	HRESULT FollowMe(_double dDeltaTime);
-	HRESULT	Update_Collider(_double fDeltaTime);
+	HRESULT	SetUp_State(_double dDeltaTime);
+	HRESULT	Update_VectorGroup(_double dDeltaTime);
+	HRESULT	Update_Collider(_double dDeltaTime);
+	HRESULT	Update_Render(_double dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -60,6 +69,14 @@ private:
 	vector<TRANSFORM_STATE> m_vecInstancedTransform;
 
 	vector<CTransform*> m_ModelTransGroup[ANIM_END];
+	vector<_float4>		m_vecRimLight[ANIM_END];
+	vector<_float4>		m_vecEmissive[ANIM_END];
+	vector<_float4>		m_vecDissolve[ANIM_END];//1흐른시간, 디졸브 시간, 국밥가격 ,0이면 디졸브 안함 1이면 디졸브
+
+
+
+
+
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
