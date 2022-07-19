@@ -5448,27 +5448,28 @@ void CPlayer::Shelling(_double fDeltaTime)
 
 		m_fAnimSpeed = 1.f;
 
-
 		{
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			if (pBowArrow)
 			{
 
-				INSTPARTICLEDESC& s = pBowArrow->Get_VecParticle(3);
-				s.ParticleSize = _float3(0.08f, 0.25f, 0.08f);
-				s.SizeChageFrequency = 5;
-				s.fDistortionNoisingPushPower = -1.0f;
-				s.iFollowingDir = FollowingDir_Right;
+				INSTPARTICLEDESC& Desc = pBowArrow->Get_VecParticle(3);
+				Desc.ParticleSize = _float3(0.08f, 1.6f, 0.08f);
+				Desc.ParticleSize2 = _float3(0.08f, 0.6f, 0.08f);
+				Desc.SizeChageFrequency = 1;
+				Desc.fDistortionNoisingPushPower = 1.0f;
+				Desc.iFollowingDir = FollowingDir_Look;
 
-				pBowArrow->Set_VecParticle(3, s);
+				pBowArrow->Set_VecParticle(3, Desc);
 
 				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle
-				(5, _fVector(), _float3::Zero()));
+				(3, _fVector(), _float3::Zero()));
 			}
 
 
 
 		}
+
 
 
 

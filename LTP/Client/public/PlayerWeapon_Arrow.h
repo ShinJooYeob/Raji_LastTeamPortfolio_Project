@@ -56,6 +56,10 @@ public:
 
 	void				Set_TargetPos(_float3 fTargetPos);
 
+	CTransform*			Get_Transform_Hand()
+	{
+		return m_pTextureParticleTransform_Hand;
+	}
 
 public:
 	_int				UpdateState_NormalReady(_double fDeltaTime);
@@ -125,8 +129,8 @@ private:
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pMeshParticleTransform = nullptr;
-
+	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
+	
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

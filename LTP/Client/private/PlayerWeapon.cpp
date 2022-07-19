@@ -117,11 +117,16 @@ HRESULT CPlayerWeapon::Ready_ParticleDesc()
 HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _fVector FixVec,_float3 offset, _float Timer)
 {
 	if (PARTILCECOUNT <= ParticleIndex)
+	{
+		DEBUGBREAK;
 		return E_FAIL;
+	}
 
 	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
+	{
+		DEBUGBREAK;
 		return E_FAIL;
-
+	}
 	bool isCreate = false;
 
 	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)

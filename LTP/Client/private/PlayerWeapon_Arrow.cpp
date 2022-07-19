@@ -497,10 +497,10 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 
 	// Transform 
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	NULL_CHECK_BREAK(m_pTextureParticleTransform);
 
-	//m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	//NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Hand);
 
 	// Particle
 
@@ -522,7 +522,7 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 
 	// 3
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
@@ -542,8 +542,17 @@ HRESULT CPlayerWeapon_Arrow::Update_Particle(_double fDeltaTime)
 	//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
 
 	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
-	_Vector vPos = mat.r[3];
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
+	m_pTextureParticleTransform->Set_Matrix(mat);
+
+	_Matrix mat2 = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+	mat2.r[0] = XMVector3Normalize(mat2.r[0]);
+	mat2.r[1] = XMVector3Normalize(mat2.r[1]);
+	mat2.r[2] = XMVector3Normalize(mat2.r[2]);
+
+	mat2.r[3] += mat2.r[0] * 0 + mat2.r[1] * 0 + mat2.r[2]*1.0f;
+
+	m_pTextureParticleTransform_Hand->Set_Matrix(mat2);
+
 
 	return S_OK;
 }
@@ -817,6 +826,6 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pCollider);
 
 	Safe_Release(m_pTextureParticleTransform);
-	Safe_Release(m_pMeshParticleTransform);
+	Safe_Release(m_pTextureParticleTransform_Hand);
 
 }
