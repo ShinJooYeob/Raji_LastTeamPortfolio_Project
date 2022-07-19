@@ -36,5 +36,8 @@
 #define DEBUGVALUE3	GetSingle(CPhysXMgr)->gDebugValue3
 #define DEBUGVALUE4	GetSingle(CPhysXMgr)->gDebugValue4
 
+#define  PARTILCECOUNT		10
+
+
 
 

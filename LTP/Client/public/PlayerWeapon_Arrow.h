@@ -56,7 +56,6 @@ public:
 
 	void				Set_TargetPos(_float3 fTargetPos);
 
-	HRESULT				Ready_ParticleDesc();
 
 public:
 	_int				UpdateState_NormalReady(_double fDeltaTime);
@@ -78,9 +77,11 @@ public:
 	_int				UpdateState_Ultimate_Post_Ready(_double fDeltaTime);
 	_int				UpdateState_Ultimate_Post_Shot(_double fDeltaTime);
 
+
 public:
-	void				Update_ParticleTransform(_double fDeltaTime);
-	HRESULT				Set_Play_Particle(_uint ParticleIndex, _float Timer = -1);
+	virtual HRESULT Ready_ParticleDesc();
+//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
+	virtual HRESULT Update_Particle(_double fDeltaTime);
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;

@@ -44,6 +44,7 @@ _int CShellingArrow::Update(_double dDeltaTime)
 			{
 				for (_uint i = 0; i < 32; i++)
 				{
+					// Mesh Instance Effect
 					GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_vecInstancedTransform[i]);
 				}
 				m_bEffect_Head = true;

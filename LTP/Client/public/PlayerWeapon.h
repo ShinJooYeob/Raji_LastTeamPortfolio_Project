@@ -53,10 +53,22 @@ public:
 	void				Set_BlockUpdate(_bool bBlock);
 	_bool				Get_BlockUpdate() { return m_bBlockUpdate; }
 
-		
+	// #Particle Func
+	virtual HRESULT Ready_ParticleDesc();
+	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
+	virtual HRESULT Update_Particle(_double timer);
+
+
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
+
+protected:
+	/* Partilce */
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
 
 protected:
 	PlayerWeaponDesc			m_tPlayerWeaponDesc;

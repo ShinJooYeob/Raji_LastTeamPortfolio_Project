@@ -39,11 +39,10 @@ HRESULT CPartilceCreateMgr::Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, 
 }
 
 
-HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc)
+HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene)
 {
 
-	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(SceneNum, desc));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(scene, desc));
 
 	return S_OK;
 }

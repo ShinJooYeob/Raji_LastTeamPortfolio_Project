@@ -84,7 +84,7 @@ public:
 	HRESULT Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
 
-	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc);
+	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
 
 	
 

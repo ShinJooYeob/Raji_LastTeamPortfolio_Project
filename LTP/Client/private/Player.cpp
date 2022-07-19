@@ -3444,9 +3444,12 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
-			if(m_fChargingTime>0.1f)
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
 
+			if (m_fChargingTime > 0.1f)
+			{
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2,1.0f));
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(3, 1.0f));
+			}
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
