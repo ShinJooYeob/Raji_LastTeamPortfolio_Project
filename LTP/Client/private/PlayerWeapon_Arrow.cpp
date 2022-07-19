@@ -500,18 +500,18 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 
 	// Particle
 
-	// 1
+	// 0
 	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_ArrowHead);
 	instanceDesc.FollowingTarget = nullptr;
 	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	// 3
+	// 1
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail);
 	instanceDesc.FollowingTarget = nullptr;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	// 4
+	// 2
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit);
 	instanceDesc.FollowingTarget = nullptr;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
@@ -565,7 +565,7 @@ void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
 
 	//	m_vecTextureParticleDesc[0].vFixedPosition = (*pMat).r[3] + (*pMat).r[2] * 0.75f;
-	//	FAILED_CHECK_NONERETURN(Set_Play_Particle(0));
+		FAILED_CHECK_NONERETURN(Set_Play_Particle(0, m_pTransformCom,_float3(0,0.75f,0)));
 		break;
 	case EArrowState::Arrow_State_NormalShot:
 	case EArrowState::Arrow_State_PowerShot_Combo_0:
@@ -648,8 +648,8 @@ void CPlayerWeapon_Arrow::Active_Trail(_bool bActivate)
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.5f) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f),
 				m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 0.2f) - (m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 0.015f)
 			);
-			//	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
-			//	FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
+		//	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+			FAILED_CHECK_NONERETURN(Set_Play_Particle(1,m_pTransformCom));
 
 			break;
 		case EArrowState::Arrow_State_PowerShot_Combo_0:

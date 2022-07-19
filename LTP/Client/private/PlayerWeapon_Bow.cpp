@@ -374,14 +374,14 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 	// 4
-	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Dash);
-	//instanceDesc.FollowingTarget = nullptr;
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Dash);
+	instanceDesc.FollowingTarget = nullptr;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 	// 5
-	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
-	//instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 	return S_OK;
 }
 

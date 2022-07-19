@@ -115,7 +115,7 @@ HRESULT CPlayerWeapon::Ready_ParticleDesc()
 	return S_OK;
 }
 
-HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _float Timer,CTransform* defaultTrans,  _float3 offset)
+HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, CTransform* defaultTrans,_float3 offset, _float Timer)
 {
 	if (PARTILCECOUNT <= ParticleIndex)
 		return E_FAIL;

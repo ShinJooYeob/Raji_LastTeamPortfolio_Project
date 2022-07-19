@@ -55,7 +55,7 @@ public:
 
 	// #Particle Func
 	virtual HRESULT Ready_ParticleDesc();
-	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
+	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, CTransform* defaultTrans = nullptr, _float3 offset= _float3::Zero(), _float Timer = -1);
 	virtual HRESULT Update_Particle(_double timer);
 
 
