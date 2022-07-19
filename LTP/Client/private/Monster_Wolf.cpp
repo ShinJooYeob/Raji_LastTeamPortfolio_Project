@@ -4,20 +4,20 @@
 CMonster_Wolf::CMonster_Wolf(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
-	for (auto& p : m_pModel)	p = nullptr;
-	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 CMonster_Wolf::CMonster_Wolf(const CMonster_Wolf & rhs)
 	: CMonster(rhs)
 {
-	for (auto& p : m_pModel)	p = nullptr;
-	for (auto& p : m_pModelInstance)	p = nullptr;
 }
 
 HRESULT CMonster_Wolf::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
+
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
+
 
 
 	return S_OK;
@@ -25,10 +25,14 @@ HRESULT CMonster_Wolf::Initialize_Prototype(void * pArg)
 
 HRESULT CMonster_Wolf::Initialize_Clone(void * pArg)
 {
+
+	for (auto& p : m_pModel)	p = nullptr;
+	for (auto& p : m_pModelInstance)	p = nullptr;
+
+
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
-
 
 	return S_OK;
 }
@@ -36,6 +40,7 @@ HRESULT CMonster_Wolf::Initialize_Clone(void * pArg)
 _int CMonster_Wolf::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
 
 	FollowMe(dDeltaTime);
 
@@ -53,11 +58,9 @@ _int CMonster_Wolf::Update(_double dDeltaTime)
 
 
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
-	for (size_t i = 0; i < m_vecInstancedTransform.size(); i++)
-	{
-		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 1.f));
 
-	}
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -74,6 +77,8 @@ _int CMonster_Wolf::LateUpdate(_double dDeltaTime)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
 
 	return _int();
 }
@@ -87,13 +92,17 @@ _int CMonster_Wolf::Render()
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_DissolveTex_OnShader(m_pShaderCom, 1));
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
 		if (m_ModelTransGroup[i].size() == 0)
 			continue;
-		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i]));
+
+		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i], 0, &m_vecRimLight[i], &m_vecEmissive[i], &m_vecDissolve[i]));
 	}
+
+
 
 	return _int();
 }
@@ -110,10 +119,28 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
+
+	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex - 1].bHit == false)
+	{
+		m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDER_HIT;
+		m_vecInstancedTransform[iMyColliderIndex - 1].iHp += -1;
+		m_vecInstancedTransform[iMyColliderIndex - 1].dTime = 0;
+		m_vecInstancedTransform[iMyColliderIndex - 1].bHit = true;
+
+		m_vecInstancedTransform[iMyColliderIndex - 1].fRimRight.w = 1;
+
+		if (m_vecInstancedTransform[iMyColliderIndex - 1].iHp <= 0)
+		{
+			m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDMER_DIE;
+		}
+	}
 }
 
 _float CMonster_Wolf::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+
+	m_pColliderCom->Set_Conflicted(0.f);
+
 	return _float();
 }
 
@@ -123,16 +150,18 @@ HRESULT CMonster_Wolf::SetUp_Info()
 
 	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
 
+	CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
+
 	RELEASE_INSTANCE(CGameInstance);
 
-
+	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
 	for (_uint i = 0; i < 16; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
-		tDesc.iType = rand() % 2;
+		tDesc.iAnimType = rand() % 2;
 
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -140,15 +169,54 @@ HRESULT CMonster_Wolf::SetUp_Info()
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
 
-		_Vector vDis = (m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
-
-		_Vector PlayerPos = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
-		PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * pUtil->RandomFloat(2, 5));
-
-		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+		_uint Random = (rand() % 6) - 3;
 
 
+		_uint RandomPlayerIndex = iPlayerIndex + Random;
+
+		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+
+
+		/////////////////////////////////////////////PlayerPosition Create
+		//_Vector vDis = (m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1));
+
+		//_Vector PlayerPos = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		//PlayerPos = PlayerPos + (XMVector3Normalize(vDis) * pUtil->RandomFloat(2, 5));
+
+		//tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+		///////////////////////////////////////////////
+
+
+		//////////Navigation
+		CNavigation::NAVIDESC		NaviDesc;
+		NaviDesc.iCurrentIndex = RandomPlayerIndex;
+
+		tDesc.pNavigation = (CNavigation*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), &NaviDesc);
+
+		//tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		///////////////
+
+		/////////////////////////////////////Collider
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.7f, 0.f, 1);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pColliderCom->Set_ParantBuffer();
+		///////////////////
+
+		/////////////////////////////////////AttackCollider
+		COLLIDERDESC			AttackColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		AttackColliderDesc.vScale = _float3(0.8f);
+		AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		AttackColliderDesc.vPosition = _float4(0.f, 0.5f, 0.5f, 1);
+		FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
+		//m_pAttackColliderCom->Delete_ChildeBuffer(0,i+1);
+
+		///////////////////
 
 		m_vecInstancedTransform.push_back(tDesc);
 	}
@@ -172,16 +240,13 @@ HRESULT CMonster_Wolf::SetUp_Info()
 	{
 		if (i == ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
 		{
-			//m_pModel[i]->Change_AnimIndex_ReturnTo(1,1);
 			m_pModel[i]->Change_AnimIndex(0);
 		}
 		else if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 		{
-			//m_pModel[i]->Change_AnimIndex_ReturnTo(1,1);
 			m_pModel[i]->Change_AnimIndex(1);
 		}
 	}
-
 
 	_int	iNumber = 0;
 	_double	dpercent = 0.32;
@@ -211,6 +276,15 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 	{
 		m_ModelTransGroup[i].clear();
 		m_ModelTransGroup[i].reserve(m_vecInstancedTransform.size());
+
+		m_vecRimLight[i].clear();
+		m_vecRimLight[i].reserve(m_vecInstancedTransform.size());
+
+		m_vecEmissive[i].clear();
+		m_vecEmissive[i].reserve(m_vecInstancedTransform.size());
+
+		m_vecDissolve[i].clear();
+		m_vecDissolve[i].reserve(m_vecInstancedTransform.size());
 	}
 
 
@@ -228,61 +302,183 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
+		if (MeshInstance.iAnimType >= ANIM_RUN_Frame1 && MeshInstance.iAnimType <= ANIM_RUN_Frame2)
+		{
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
 
-		//_Vector vDistance = m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS);
+			MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
 
-		_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
-
-		MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
-
+			MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+		}
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
-		if (fDistance < 1)
+		//////////////////////RenderType
+
+		if (MeshInstance.bHit == true && MeshInstance.iHp > 0)
 		{
-			if (MeshInstance.iType >= ANIM_ATTACK_Frame1&& MeshInstance.iType <= ANIM_ATTACK_Frame5)
-				continue;
-			MeshInstance.iType = m_iTempAnimNumber;
+			MeshInstance.dTime += dDeltaTime;
+			MeshInstance.iRenderType = RENDER_HIT;
+
+			if (MeshInstance.dTime >= 0.2)
+			{
+				MeshInstance.bHit = false;
+				MeshInstance.iRenderType = RENDER_IDLE;
+				MeshInstance.fRimRight.w = 1;
+			}
+		}
+		else if (MeshInstance.iHp <= 0)
+		{
+			MeshInstance.iRenderType = RENDMER_DIE;
+			MeshInstance.iAnimType = rand() % 2;
 		}
 		else {
-			if (MeshInstance.iType >= ANIM_ATTACK_Frame1&& MeshInstance.iType <= ANIM_ATTACK_Frame5)
+			MeshInstance.iRenderType = RENDER_IDLE;
+		}
+
+		////////////////////////AnimType
+		if (fDistance < 2.0)
+		{
+			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
+				continue;
+			MeshInstance.iAnimType = m_iTempAnimNumber;
+		}
+		else {
+			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
 			{
-				if (m_pModel[MeshInstance.iType]->Get_PlayRate() > 0.95)
+				if (m_pModel[MeshInstance.iAnimType]->Get_PlayRate() > 0.95)
 				{
-					MeshInstance.iType = rand() % 2;
+					MeshInstance.iAnimType = rand() % 2;
 				}
 			}
 		}
 
 	}
 
+	Update_VectorGroup(dDeltaTime);
 
+
+	return S_OK;
+}
+
+HRESULT CMonster_Wolf::Update_Collider(_double fDeltaTime)
+{
+	//////////////Collider
+	m_pColliderCom->Update_ConflictPassedTime(fDeltaTime);
+	m_pAttackColliderCom->Update_ConflictPassedTime(fDeltaTime);
+
+	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
+	m_pAttackColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
+
+
+	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+		if (m_vecInstancedTransform[i].iAnimType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iAnimType <= ANIM_RUN_Frame2)
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
+
+		m_pColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+		m_pAttackColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+
+	if (m_bAttackOn == true)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
+	//////////////////////////
+
+
+	///////////////AttackCollider
+	///////////////
+	return S_OK;
+}
+
+HRESULT CMonster_Wolf::Update_Render(_double dDeltaTime)
+{
+	return S_OK;
+}
+
+HRESULT CMonster_Wolf::Update_VectorGroup(_double dDeltaTime)
+{
 
 	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
+		switch (m_vecInstancedTransform[i].iRenderType)
+		{
+		case RENDER_IDLE:
+			m_vecInstancedTransform[i].fRimRight = _float4(0.2f, 0.2f, 0.2f, 1.f);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
+			if (m_vecInstancedTransform[i].fDissolve.w == 1)
+			{
+				m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + (_float)dDeltaTime, 1.f, 0.4f, 1.f);
 
-		switch (m_vecInstancedTransform[i].iType)
+				if (m_vecInstancedTransform[i].fDissolve.x >= 1)
+				{
+					m_vecInstancedTransform[i].fDissolve.w = 0;
+				}
+			}
+			else {
+				m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
+			}
+			break;
+		case RENDER_HIT:
+			m_vecInstancedTransform[i].fRimRight = _float4(0.875f, 0.0234375f, 0.18359375f, m_vecInstancedTransform[i].fRimRight.w - (_float)dDeltaTime);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
+			m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
+			m_vecInstancedTransform[i].bHit;
+			break;
+		case RENDMER_DIE:
+			m_vecInstancedTransform[i].fRimRight = _float4(0.f, 0.f, 0.f, 0.f);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
+			m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + (_float)dDeltaTime, 1.f, 0.4f, 2.f);
+			break;
+		default:
+			break;
+		}
+
+		switch (m_vecInstancedTransform[i].iAnimType)
 		{
 		case ANIM_RUN_Frame1:
 			m_ModelTransGroup[ANIM_RUN_Frame1].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_RUN_Frame1].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_RUN_Frame1].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_RUN_Frame1].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_RUN_Frame2:
 			m_ModelTransGroup[ANIM_RUN_Frame2].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_RUN_Frame2].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_RUN_Frame2].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_RUN_Frame2].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_ATTACK_Frame1:
 			m_ModelTransGroup[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_ATTACK_Frame1].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_ATTACK_Frame2:
 			m_ModelTransGroup[ANIM_ATTACK_Frame2].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_ATTACK_Frame2].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_ATTACK_Frame2].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_ATTACK_Frame2].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_ATTACK_Frame3:
 			m_ModelTransGroup[ANIM_ATTACK_Frame3].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_ATTACK_Frame3].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_ATTACK_Frame3].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_ATTACK_Frame3].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_ATTACK_Frame4:
 			m_ModelTransGroup[ANIM_ATTACK_Frame4].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_ATTACK_Frame4].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_ATTACK_Frame4].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_ATTACK_Frame4].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		case ANIM_ATTACK_Frame5:
 			m_ModelTransGroup[ANIM_ATTACK_Frame5].push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRimLight[ANIM_ATTACK_Frame5].push_back(m_vecInstancedTransform[i].fRimRight);
+			m_vecEmissive[ANIM_ATTACK_Frame5].push_back(m_vecInstancedTransform[i].fEmissive);
+			m_vecDissolve[ANIM_ATTACK_Frame5].push_back(m_vecInstancedTransform[i].fDissolve);
 			break;
 		default:
 			break;
@@ -290,7 +486,6 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 
 
 	}
-
 
 	return S_OK;
 }
@@ -304,6 +499,25 @@ HRESULT CMonster_Wolf::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(200.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider2), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
+	m_pAttackColliderCom = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
+
+	COLLIDERDESC			AttackColliderDesc;
+	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
+	AttackColliderDesc.vScale = _float3(30.f);
+	AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
 
 	SetUp_Info();
 
@@ -313,48 +527,97 @@ HRESULT CMonster_Wolf::SetUp_Components()
 
 HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 {
-
-	for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
+	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
-		for (auto& pObjectTransform : m_ModelTransGroup[i])
+		if (m_vecInstancedTransform[i].iRenderType == RENDMER_DIE)
 		{
-			pObjectTransform->Move_Forward(dDeltatime);
+			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
+			{
+				CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+				CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
+
+				RELEASE_INSTANCE(CGameInstance);
+
+				_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
+
+				_uint Random = (rand() % 6) - 3;
+
+
+				_uint RandomPlayerIndex = iPlayerIndex + Random;
+
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+
+				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
+
+				m_vecInstancedTransform[i].iHp = 3;
+				m_vecInstancedTransform[i].dTime = 0;
+				m_vecInstancedTransform[i].bHit = false;
+				m_vecInstancedTransform[i].fDissolve.x = 0;
+				m_vecInstancedTransform[i].fDissolve.w = 1; //Live
+
+			}
+
+			continue;
+		}
+
+		switch (m_vecInstancedTransform[i].iAnimType)
+		{
+		case ANIM_RUN_Frame1:
+			m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime * 2.5, m_vecInstancedTransform[i].pNavigation);
+			break;
+		case ANIM_RUN_Frame2:
+			m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime * 2.5, m_vecInstancedTransform[i].pNavigation);
+			break;
+		default:
+		{
+			if (m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.77)
+			{
+				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime*4, m_vecInstancedTransform[i].pNavigation);
+
+				_float fY = (0.605 - m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate());
+				
+				m_vecInstancedTransform[i].pTransform->Move_Up(dDeltatime * fY * 10);
+
+				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.5)
+				{
+					m_bAttackOn = true;
+					m_pAttackColliderCom->Set_ParantBuffer(0, i + 1);
+
+					m_vecInstancedTransform[i].iSwtichIndex++;
+				}
+				else if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.62)
+				{
+
+					m_bAttackOn = false;
+					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
+
+					m_vecInstancedTransform[i].iSwtichIndex = 0;
+				}
+			}
+			break;
+		}
 		}
 	}
 
-	//_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
-	//_double PlayRate = m_pModel->Get_PlayRate();
-
-	//if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
-	//	m_iAdjMovedIndex = 0;
-
-
-	//if (PlayRate <= 0.98)
+	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
 	//{
-	//	//switch (iNowAnimIndex)
-	//	//{
-	//	//case 1://애니메이션 인덱스마다 잡아주면 됨
-	//	//	if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
-	//	//	{
-
-	//	//		m_iAdjMovedIndex++;
-	//	//	}
-	//	//	else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-	//	//	{
-
-
-	//	//		m_iAdjMovedIndex++;
-	//	//	}
-
-	//	//	break;
-	//	//case 2:
-
-	//	//	break;
-	//	//}
+	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	{
+	//		pObjectTransform->Move_Forward(dDeltatime, );
+	//	}
 	//}
 
+	//for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
+	//{
+	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	{
+	//		if (m_pModel[i]->Get_PlayRate() > 0.4)
+	//		{
+	//			pObjectTransform->Move_Forward(dDeltatime);
+	//		}
+	//	}
+	//}
 
-	//m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
 }
 
@@ -387,7 +650,10 @@ void CMonster_Wolf::Free()
 	__super::Free();
 
 	for (auto& pTransform : m_vecInstancedTransform)
+	{
 		Safe_Release(pTransform.pTransform);
+		Safe_Release(pTransform.pNavigation);
+	}
 	m_vecInstancedTransform.clear();
 
 	for (_int i = 0; i < ANIM_END; i++)
@@ -397,6 +663,8 @@ void CMonster_Wolf::Free()
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pAttackColliderCom);
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{

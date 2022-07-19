@@ -409,7 +409,7 @@ HRESULT CMonster_Wasp::Update_VectorGroup(_double dDeltaTime)
 			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
 			if (m_vecInstancedTransform[i].fDissolve.w == 1)
 			{
-				m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + dDeltaTime, 1.f, 0.4f, 1.f);
+				m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + (_float)dDeltaTime, 1.f, 0.4f, 1.f);
 
 				if (m_vecInstancedTransform[i].fDissolve.x >= 1)
 				{
@@ -421,7 +421,7 @@ HRESULT CMonster_Wasp::Update_VectorGroup(_double dDeltaTime)
 			}
 			break;
 		case RENDER_HIT:
-			m_vecInstancedTransform[i].fRimRight = _float4(0.875f, 0.0234375f, 0.18359375f, m_vecInstancedTransform[i].fRimRight.w - dDeltaTime);
+			m_vecInstancedTransform[i].fRimRight = _float4(0.875f, 0.0234375f, 0.18359375f, m_vecInstancedTransform[i].fRimRight.w - (_float)dDeltaTime);
 			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
 			m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
 			m_vecInstancedTransform[i].bHit;
@@ -429,7 +429,7 @@ HRESULT CMonster_Wasp::Update_VectorGroup(_double dDeltaTime)
 		case RENDMER_DIE:
 			m_vecInstancedTransform[i].fRimRight = _float4(0.f, 0.f, 0.f, 0.f);
 			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
-			m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + dDeltaTime, 1.f, 0.4f, 2.f);
+			m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + (_float)dDeltaTime, 1.f, 0.4f, 2.f);
 			break;
 		default:
 			break;

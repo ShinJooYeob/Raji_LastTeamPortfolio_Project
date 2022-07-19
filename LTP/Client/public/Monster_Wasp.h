@@ -41,6 +41,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+private:
+	HRESULT SetUp_Components();
+
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
@@ -55,6 +58,7 @@ private:
 	HRESULT	Update_VectorGroup(_double dDeltaTime);
 	HRESULT	Update_Collider(_double dDeltaTime);
 	HRESULT	Update_Render(_double dDeltaTime);
+	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -87,9 +91,6 @@ private:
 	_double				m_dAcceleration = 1.5;
 
 	_bool				m_bAttackOn = false;
-private:
-	HRESULT SetUp_Components();
-	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
 	static CMonster_Wasp* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
