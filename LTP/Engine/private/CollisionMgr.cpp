@@ -4,8 +4,9 @@
 #include "Transform.h"
 #include "Navigation.h"
 #include "ThreadMgr.h"
+#include "TimeMgr.h"
 
-
+#define CollisionFPS 0.01333333333
 
 _uint CALLBACK RepelCollisionThread(void* _Prameter)
 {
@@ -15,11 +16,25 @@ _uint CALLBACK RepelCollisionThread(void* _Prameter)
 
 
 	CCollisionMgr* pCollisionMgr = (CCollisionMgr*)tThreadArg.pArg;
-
 	FAILED_CHECK(pCollisionMgr->Processing_RepelCollision(tThreadArg.IsClientQuit, tThreadArg.CriSec));
 
 	return 0;
 }
+
+
+_uint CALLBACK MainCollisionThread(void* _Prameter)
+{
+	THREADARG tThreadArg{};
+	memcpy(&tThreadArg, _Prameter, sizeof(THREADARG));
+	delete _Prameter;
+
+
+	CCollisionMgr* pCollisionMgr = (CCollisionMgr*)tThreadArg.pArg;
+	FAILED_CHECK(pCollisionMgr->Processing_MainCollision(tThreadArg.IsClientQuit, tThreadArg.CriSec));
+
+	return 0;
+}
+
 
 IMPLEMENT_SINGLETON(CCollisionMgr);
 
@@ -35,6 +50,11 @@ HRESULT CCollisionMgr::Initialize_CollisionMgr(ID3D11Device * pDevice, ID3D11Dev
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
 
+
+	FAILED_CHECK(GetSingle(CTimeMgr)->Add_Timer(TEXT("Timer_MainTimer")));
+	FAILED_CHECK(GetSingle(CTimeMgr)->Add_Timer(TEXT("Timer_RepelTimer")));
+
+	GetSingle(CThreadMgr)->PlayThread(MainCollisionThread, this, nullptr);
 	GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
 
 	return S_OK;
@@ -42,7 +62,8 @@ HRESULT CCollisionMgr::Initialize_CollisionMgr(ID3D11Device * pDevice, ID3D11Dev
 
 HRESULT CCollisionMgr::Add_CollisionGroup(CollisionTypeID eType, CGameObject * pCollisionObject, CCollider * pCollider)
 {
-
+	if (m_eCollisionThreadState != CCollisionMgr::CTS_ENTER) return S_FALSE;
+	
 	COLLIDERELEMENTS tElement;
 	tElement.pCollider = pCollider;
 	tElement.pCollisionObject = pCollisionObject;
@@ -58,7 +79,7 @@ HRESULT CCollisionMgr::Add_CollisionGroup(CollisionTypeID eType, CGameObject * p
 
 HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation* pNavigation)
 {
-	if (m_eCollisionThreadState != CollsionThreadStateID::CTS_ENTER) return S_FALSE;
+	if (m_eRepelCollisionThreadState != CollsionThreadStateID::CTS_ENTER) return S_FALSE;
 
 
 	NULL_CHECK_RETURN(pTransform,E_FAIL);
@@ -82,28 +103,9 @@ HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, 
 HRESULT CCollisionMgr::Inspect_Collision()
 {
 	Start_InspectRepelCollision();
-	
-
-	FAILED_CHECK(Inspect_Player_To_MonsterWeapon());
-
-	FAILED_CHECK(Inspect_PlayerWeapon_To_Monster());
-
-	FAILED_CHECK(Inspect_DynamicObject_To_PlayerNPlayerWeapon());
-	
-	FAILED_CHECK(Inspect_NPC_To_Player());
-
-	FAILED_CHECK(Inspect_Terrain_To_All());
+	Start_InspectMainCollision();
 
 
-	for (_uint i = 0; i < CollisionType_END; i++)
-	{
-		for (auto& ColideElements : m_CollisionGroupList[i])
-		{
-			Safe_Release(ColideElements.pCollider);
-			Safe_Release(ColideElements.pCollisionObject);
-		}
-		m_CollisionGroupList[i].clear();
-	}
 
 	//FAILED_CHECK(Inspect_RepelGroup());
 
@@ -112,26 +114,45 @@ HRESULT CCollisionMgr::Inspect_Collision()
 
 void CCollisionMgr::Clear_CollisionGroup()
 {
-	for (_uint i = 0; i < CollisionType_END; i++)
+	EnterCriticalSection(m_pCriSec);
+	m_eCollisionThreadState = CollsionThreadStateID::CTS_SCENECHANGING;
+	m_eRepelCollisionThreadState = CCollisionMgr::CTS_SCENECHANGING;
+	LeaveCriticalSection(m_pCriSec);
+
+}
+
+void CCollisionMgr::Start_InspectMainCollision()
+{
+	if (m_eCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
 	{
-		for (auto& ColideElements : m_CollisionGroupList[i])
-		{
-			Safe_Release(ColideElements.pCollider);
-			Safe_Release(ColideElements.pCollisionObject);
-		}
-		m_CollisionGroupList[i].clear();
+		EnterCriticalSection(m_pCriSec);
+		m_eCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
+		LeaveCriticalSection(m_pCriSec);
 	}
 
-	m_eCollisionThreadState = CCollisionMgr::CTS_SCENECHANGING;
+	if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+	{
+		EnterCriticalSection(m_pCriSec);
+		m_eCollisionThreadState = CollsionThreadStateID::CTS_ENTER;
+		LeaveCriticalSection(m_pCriSec);
+	}
 }
 
 void CCollisionMgr::Start_InspectRepelCollision()
 {
-	if (m_eCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
-		m_eCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
+	if (m_eRepelCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
+	{
+		EnterCriticalSection(m_pCriSec);
+		m_eRepelCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
+		LeaveCriticalSection(m_pCriSec);
+	}
 
-	if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
-		m_eCollisionThreadState = CCollisionMgr::CTS_ENTER;
+	if (m_eRepelCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+	{
+		EnterCriticalSection(m_pCriSec);
+		m_eRepelCollisionThreadState = CollsionThreadStateID::CTS_ENTER;
+		LeaveCriticalSection(m_pCriSec);
+	}
 }
 
 HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)
@@ -172,40 +193,100 @@ CGameObject * CCollisionMgr::NaviPointCollision(_Vector pos, _Vector dir)
 }
 
 
-HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
-	_double ThreadPassedTime = 0;
+	m_pCriSec = _CriSec;
+
+	CTimeMgr* pTimerMgr = GetSingle(CTimeMgr);
+	_double			fTimeAcc = 0.f;
+
 
 	while (true)
 	{
-		Sleep(8);
-
 		if (*_IsClientQuit == true)
 			return S_OK;
 
-		if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+		fTimeAcc += pTimerMgr->Get_DeltaTime(L"Timer_MainTimer");
+
+		if (fTimeAcc > CollisionFPS)
 		{
-			if (m_RepelObjectList.size() > 0)
+			fTimeAcc = 0;
+
+			if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
 			{
-				for (auto& RepelElement : m_RepelObjectList)
-					Safe_Release(RepelElement.pRepelObjTransform);
-				m_RepelObjectList.clear();
+				for (_uint i = 0; i < CollisionType_END; i++)
+				{
+					for (auto& ColideElements : m_CollisionGroupList[i])
+					{
+						Safe_Release(ColideElements.pCollider);
+						Safe_Release(ColideElements.pCollisionObject);
+					}
+					m_CollisionGroupList[i].clear();
+				}
+
+				continue;
 			}
 
-			continue;
+
+			if (m_eCollisionThreadState != CCollisionMgr::CTS_PROCESSING) continue;
+
+			FAILED_CHECK(Inspect_MainCollision());
+
+			if (m_eCollisionThreadState != CCollisionMgr::CTS_SCENECHANGING)
+			{
+				EnterCriticalSection(_CriSec);
+				m_eCollisionThreadState = CCollisionMgr::CTS_ENTER;
+				LeaveCriticalSection(_CriSec);
+			}
+
 		}
+	}
+
+	return S_OK;
+}
 
 
-		if (m_eCollisionThreadState != CCollisionMgr::CTS_PROCESSING) continue;
-		FAILED_CHECK(Inspect_RepelGroup());
+HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CTimeMgr* pTimerMgr = GetSingle(CTimeMgr);
 
-		if (m_eCollisionThreadState != CCollisionMgr::CTS_SCENECHANGING)
+	_double			fTimeAcc = 0.f;
+
+	while (true)
+	{
+		if (*_IsClientQuit == true)
+			return S_OK;
+
+		fTimeAcc += pTimerMgr->Get_DeltaTime(L"Timer_RepelTimer");
+
+		if (fTimeAcc > CollisionFPS)
 		{
-			EnterCriticalSection(_CriSec);
-			m_eCollisionThreadState = CCollisionMgr::CTS_ENTER;
-			LeaveCriticalSection(_CriSec);
-		}
+			fTimeAcc = 0;
 
+
+			if (m_eRepelCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+			{
+				if (m_RepelObjectList.size() > 0)
+				{
+					for (auto& RepelElement : m_RepelObjectList)
+						Safe_Release(RepelElement.pRepelObjTransform);
+					m_RepelObjectList.clear();
+				}
+
+				continue;
+			}
+
+
+			if (m_eRepelCollisionThreadState != CCollisionMgr::CTS_PROCESSING) continue;
+			FAILED_CHECK(Inspect_RepelGroup());
+
+			if (m_eRepelCollisionThreadState != CCollisionMgr::CTS_SCENECHANGING)
+			{
+				EnterCriticalSection(_CriSec);
+				m_eRepelCollisionThreadState = CCollisionMgr::CTS_ENTER;
+				LeaveCriticalSection(_CriSec);
+			}
+		}
 
 	}
 
@@ -214,8 +295,116 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 	return S_OK;
 }
 
+HRESULT CCollisionMgr::Inspect_MainCollision()
+{
+	FAILED_CHECK(Inspect_Player_To_MonsterWeapon());
+
+	FAILED_CHECK(Inspect_PlayerWeapon_To_Monster());
+
+	FAILED_CHECK(Inspect_DynamicObject_To_PlayerNPlayerWeapon());
+
+	FAILED_CHECK(Inspect_NPC_To_Player());
+
+	FAILED_CHECK(Inspect_Terrain_To_All());
+
+
+
+	for (_uint i = 0; i < CollisionType_END; i++)
+	{
+		for (auto& ColideElements : m_CollisionGroupList[i])
+		{
+			Safe_Release(ColideElements.pCollider);
+			Safe_Release(ColideElements.pCollisionObject);
+		}
+		m_CollisionGroupList[i].clear();
+	}
+
+	return S_OK;
+}
+
+HRESULT CCollisionMgr::Inspect_RepelGroup()
+{
+
+#define PushingSpeed 5.f 
+
+	if (m_RepelObjectList.size() < 2)
+	{
+		for (auto& iter : m_RepelObjectList)
+			Safe_Release(iter.pRepelObjTransform);
+		m_RepelObjectList.clear();
+
+		return S_FALSE;
+	}
+
+	_Vector SourPos = XMVectorSet(0, 0, 0, 0);
+	_Vector DestPos = XMVectorSet(0, 0, 0, 0);
+	_Vector D2SDir = XMVectorSet(0, 0, 0, 0);
+
+	auto SourIter = m_RepelObjectList.begin();
+
+
+	for (; SourIter != m_RepelObjectList.end(); )
+	{
+		if (SourIter->pRepelObjTransform->Get_IsOwnerDead())
+		{
+			Safe_Release(SourIter->pRepelObjTransform);
+			SourIter = m_RepelObjectList.erase(SourIter);
+			continue;
+		}
+
+
+		auto DestIter = SourIter;
+		DestIter++;
+
+		for (; DestIter != m_RepelObjectList.end(); )
+		{
+			if (DestIter->pRepelObjTransform->Get_IsOwnerDead())
+			{
+				Safe_Release(DestIter->pRepelObjTransform);
+				DestIter = m_RepelObjectList.erase(DestIter);
+				continue;
+			}
+
+			SourPos = SourIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
+			DestPos = DestIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
+			D2SDir = SourPos - DestPos;
+			if (XMVectorGetX(XMVector3Length(D2SDir)) < SourIter->fRadious + DestIter->fRadious)
+			{
+				D2SDir = XMVector3Normalize(XMVectorSetY(D2SDir, 0));
+
+				if (SourIter->fRadious > DestIter->fRadious)
+				{
+					DestIter->pRepelObjTransform->MovetoDir_bySpeed(-D2SDir, PushingSpeed, 0.0166667f, DestIter->pNavigation);
+				}
+				else
+				{
+					SourIter->pRepelObjTransform->MovetoDir_bySpeed(D2SDir, PushingSpeed, 0.0166667f, SourIter->pNavigation);
+				}
+
+			}
+
+			DestIter++;
+		}
+
+		SourIter++;
+	}
+
+	for (auto iter : m_RepelObjectList)
+		Safe_Release(iter.pRepelObjTransform);
+	m_RepelObjectList.clear();
+
+
+
+
+
+	return S_OK;
+}
+
+
 HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 {
+	//if (m_CollisionGroupList[CollisionType_Player].size() == 0 ||
+	//	m_CollisionGroupList[CollisionType_MonsterWeapon].size() == 0) return S_FALSE;
 
 	_uint2 ConflictedIndex;
 	for (auto& SrcElement : m_CollisionGroupList[CollisionType_Player])
@@ -233,11 +422,11 @@ HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 
 	return S_OK;
 }
-
 HRESULT CCollisionMgr::Inspect_PlayerWeapon_To_Monster()
 {
-	//enum CollisionTypeID { CollisionType_Player, CollisionType_PlayerWeapon, CollisionType_Monster, CollisionType_MonsterWeapon, 
-	//CollisionType_NPC, CollisionType_Terrain, CollisionType_END };
+
+	//if (m_CollisionGroupList[CollisionType_PlayerWeapon].size() == 0 ||
+	//	m_CollisionGroupList[CollisionType_Monster].size() == 0) return S_FALSE;
 
 	_uint2 ConflictedIndex;
 	for (auto& SrcElement : m_CollisionGroupList[CollisionType_PlayerWeapon])
@@ -257,8 +446,10 @@ HRESULT CCollisionMgr::Inspect_PlayerWeapon_To_Monster()
 }
 HRESULT CCollisionMgr::Inspect_NPC_To_Player()
 {
-	//enum CollisionTypeID { CollisionType_Player, CollisionType_PlayerWeapon, CollisionType_Monster, CollisionType_MonsterWeapon, 
-	//CollisionType_NPC, CollisionType_Terrain, CollisionType_END };
+
+	//if (m_CollisionGroupList[CollisionType_NPC].size() == 0 ||
+	//	m_CollisionGroupList[CollisionType_Player].size() == 0) return S_FALSE;
+
 	_uint2 ConflictedIndex;
 
 	for (auto& SrcElement : m_CollisionGroupList[CollisionType_NPC])
@@ -280,6 +471,7 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 {
 	_uint2 ConflictedIndex;
 
+	//if (m_CollisionGroupList[CollisionType_DynaicObject].size() == 0 ) return S_FALSE;
 
 
 	for (auto& SrcElement : m_CollisionGroupList[CollisionType_DynaicObject])
@@ -309,6 +501,7 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 }
 HRESULT CCollisionMgr::Inspect_Terrain_To_All()
 {
+	return S_FALSE;
 
 	_uint2 ConflictedIndex;
 	for (auto& SrcElement : m_CollisionGroupList[CollisionType_Terrain])
@@ -326,84 +519,6 @@ HRESULT CCollisionMgr::Inspect_Terrain_To_All()
 			}
 		}
 	}
-	return S_OK;
-}
-
-HRESULT CCollisionMgr::Inspect_RepelGroup()
-{
-
-#define PushingSpeed 5.f 
-
-	if (m_RepelObjectList.size() < 2)
-	{
-		for (auto& iter : m_RepelObjectList)
-			Safe_Release(iter.pRepelObjTransform);
-		m_RepelObjectList.clear();
-
-		return S_FALSE;
-	}
-
-	_Vector SourPos = XMVectorSet(0, 0, 0, 0);
-	_Vector DestPos = XMVectorSet(0, 0, 0, 0);
-	_Vector D2SDir = XMVectorSet(0, 0, 0, 0);
-
-	auto SourIter = m_RepelObjectList.begin();
-	
-
-	for (;SourIter != m_RepelObjectList.end(); )
-	{
-		if (SourIter->pRepelObjTransform->Get_IsOwnerDead())
-		{
-			Safe_Release(SourIter->pRepelObjTransform);
-			SourIter =  m_RepelObjectList.erase(SourIter);
-			continue;
-		}
-
-
-		auto DestIter = SourIter;
-		DestIter++;
-
-		for (; DestIter != m_RepelObjectList.end(); )
-		{
-			if (DestIter->pRepelObjTransform->Get_IsOwnerDead())
-			{
-				Safe_Release(DestIter->pRepelObjTransform);
-				DestIter =  m_RepelObjectList.erase(DestIter);
-				continue;
-			}
-			
-			SourPos = SourIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
-			DestPos = DestIter->pRepelObjTransform->Get_MatrixState(CTransform::STATE_POS);
-			D2SDir = SourPos - DestPos;
-			if ( XMVectorGetX(XMVector3Length(D2SDir)) < SourIter->fRadious + DestIter->fRadious)
-			{
-				D2SDir = XMVector3Normalize(XMVectorSetY(D2SDir,0));
-
-				if (SourIter->fRadious > DestIter->fRadious)
-				{
-					DestIter->pRepelObjTransform->MovetoDir_bySpeed(-D2SDir, PushingSpeed, 0.0166667f, DestIter->pNavigation);
-				}
-				else
-				{
-					SourIter->pRepelObjTransform->MovetoDir_bySpeed(D2SDir, PushingSpeed, 0.0166667f, SourIter->pNavigation);
-				}
-
-			}
-
-			DestIter++;
-		}
-
-		SourIter++;
-	}
-
-	for (auto iter : m_RepelObjectList)
-		Safe_Release(iter.pRepelObjTransform);
-	m_RepelObjectList.clear();
-	
-
-
-
-
 	return S_OK;
 }
 
