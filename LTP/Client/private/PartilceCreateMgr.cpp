@@ -10,7 +10,6 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 
 HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 {
-	// 
 	FAILED_CHECK(Ready_MeshEffect());
 	FAILED_CHECK(Ready_TextureEffect());
 

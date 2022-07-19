@@ -257,6 +257,7 @@ void CNonInstanceMeshEffect_TT::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pModel);
-	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTransformCom); 
+	Safe_Release(m_pParentTranscom);
 
 }
