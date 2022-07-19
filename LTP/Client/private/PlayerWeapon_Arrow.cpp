@@ -80,7 +80,6 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 		break;
 	}
 
- // #BUG
 	if (
 		(m_eCurState != Arrow_State_NormalReady) ||
 		(m_eCurState != Arrow_State_UtilityReady) ||
@@ -90,7 +89,7 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 	{
 		if (!m_bEffect_Head)
 		{
-			Set_MeshParticle(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom, true, &m_bEffect_Head);
+			Set_Play_MeshParticle(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom, &m_bEffect_Head);
 		}
 
 	
@@ -500,6 +499,9 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 
+	//m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+
 	// Particle
 
 	// 0
@@ -518,6 +520,10 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
+	// 3
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
 

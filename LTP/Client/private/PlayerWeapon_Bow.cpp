@@ -44,17 +44,15 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+	//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	//{
+	//	m_pDissolveCom->Set_DissolveOn(false, 5.5f);
 
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-
-
-	}
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	//{
+	//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	//}
 	
 
 
@@ -278,13 +276,17 @@ HRESULT CPlayerWeapon_Bow::Update_Particle(_double fDeltaTime)
 	mat.r[2] = XMVector3Normalize(mat.r[2]);
 	_Vector vPos = mat.r[3];
 
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
+	m_pTextureParticleTransform->Set_Matrix(mat);
 
 	_Vector vPos2 = vPos + (mat.r[2] * 0.5f + mat.r[0] * 0.1f);
-	m_pTextureParticleTransform_BowFront->Set_MatrixState(CTransform::STATE_POS, vPos2);
+	mat.r[3] = vPos2;
+	m_pTextureParticleTransform_BowUp->Set_MatrixState(CTransform::STATE_POS, vPos2);
 	
 	_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
-	m_pTextureParticleTransform_BowBack->Set_MatrixState(CTransform::STATE_POS, vPos3);
+	mat.r[3] = vPos3;
+	m_pTextureParticleTransform_BowBack->Set_Matrix(mat);
+
+	
 
 	return S_OK;
 
@@ -352,10 +354,11 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	FAILED_CHECK(__super::Ready_ParticleDesc());
 
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	m_pTextureParticleTransform_BowFront = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pTextureParticleTransform_BowUp = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	m_pTextureParticleTransform_BowBack = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+//	m_pTextureParticleTransform_BowFront= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowFront, E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowUp, E_FAIL);
 	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowBack, E_FAIL);
 
 
@@ -363,7 +366,7 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	// 0
 	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
 	instanceDesc.TotalParticleTime = 99999.f;
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowFront;
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
 //	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
@@ -374,7 +377,7 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 	// 9999여도 죽는다. 
-	m_pTextureParticleTransform_BowFront->Set_IsOwnerDead(true);
+	m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
 	m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
 
 	// 2
@@ -395,9 +398,9 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 	// 5
-	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	m_vecTextureParticleDesc.push_back(instanceDesc);
+	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowFront;
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
 
@@ -440,7 +443,7 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pDissolveCom);
 
 	Safe_Release(m_pTextureParticleTransform);
-	Safe_Release(m_pTextureParticleTransform_BowFront);
+	Safe_Release(m_pTextureParticleTransform_BowUp);
 	Safe_Release(m_pTextureParticleTransform_BowBack);
 	
 }

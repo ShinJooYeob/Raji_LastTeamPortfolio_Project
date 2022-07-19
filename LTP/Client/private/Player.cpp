@@ -512,7 +512,15 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 		m_pModel->Change_AnimIndex_ReturnTo(SPEAR_ANIM_THROW_START, SPEAR_ANIM_THROW_LOOP, 0.1f, true);
 		break;
 	case WEAPON_BOW:
+		if (m_bMehsArrow == false)
+		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
+		}
 		m_pModel->Change_AnimIndex_ReturnTo(BOW_ANIM_UTILITY_START, BOW_ANIM_UTILITY_LOOP, 0.1f, true);
+
 		break;
 	case WEAPON_SWORD:
 		m_pModel->Change_AnimIndex(SWORD_ANIM_SHIELD_IDLE, 0.2f, true);
@@ -1467,6 +1475,7 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 		break;
 	case PETAL_THROW_LOOP:
 	{
+
 		if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Up)
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
@@ -1801,6 +1810,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 	else if (pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Up)
 	{
 		m_bPressedUtilityKey = false;
+		m_bMehsArrow = false;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Up)
@@ -3466,11 +3476,36 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(3));
 
 
+				_Matrix TargetMat= m_pTransformCom->Get_WorldMatrix();
+				TargetMat.r[0] = XMVector3Normalize(TargetMat.r[0]);
+				TargetMat.r[1] = XMVector3Normalize(TargetMat.r[1]);
+				_Sfloat3 Look  = TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
+
+				_Sfloat3 FixOffset = _Sfloat3(0,-0.3f,-0.3f);
+
+				_Vector FixPos = TargetMat.r[3] + TargetMat.r[0] * FixOffset.x + TargetMat.r[1] * FixOffset.y + TargetMat.r[2] * FixOffset.z;;
+				
+				INSTPARTICLEDESC& value4 = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_VecParticle(4);
+
+				value4.vPowerDirection = Look;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_VecParticle(4,value4);
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(4, FixPos));
+
 			}
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
+
+				if (m_bMehsArrow == false)
+				{
+					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW1, effecttrans,&m_bMehsArrow));
+				}
 			}
+
 			else
 			{
 				m_pMainCamera->Start_CameraShaking_Thread(0.1f, 2.f - m_fChargingTime, 0.015f);
@@ -3553,6 +3588,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_bAttackEnd = true;
 				m_pTransformCom->Set_MoveSpeed(5.f);
 			}
+			m_bMehsArrow = false;
 		}
 			break;
 		}
@@ -5411,6 +5447,30 @@ void CPlayer::Shelling(_double fDeltaTime)
 		m_fCurTime_ShellingDelay += (_float)g_pGameInstance->Get_DeltaTime(TEXT("Player_Timer_ShellingShot_Delay"));
 
 		m_fAnimSpeed = 1.f;
+
+
+		{
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			if (pBowArrow)
+			{
+
+				INSTPARTICLEDESC& s = pBowArrow->Get_VecParticle(3);
+				s.ParticleSize = _float3(0.08f, 0.25f, 0.08f);
+				s.SizeChageFrequency = 5;
+				s.fDistortionNoisingPushPower = -1.0f;
+				s.iFollowingDir = FollowingDir_Right;
+
+				pBowArrow->Set_VecParticle(3, s);
+
+				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle
+				(5, _fVector(), _float3::Zero()));
+			}
+
+
+
+		}
+
+
 
 		if (false == m_bPressedUtilityKey)
 		{

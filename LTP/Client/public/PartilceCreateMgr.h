@@ -7,9 +7,18 @@
 BEGIN(Client)
 
 // J_WHAN Effect Creater
+typedef struct tag_MESHADDDATA
+{
+	eFollowingDirID RotAxis = FollowingDir_Look;
+
+}MESHADDDATA;
+
 class CPartilceCreateMgr final :public CBase
 {
 	DECLARE_SINGLETON(CPartilceCreateMgr)
+public:
+
+
 
 public:
 	enum E_MESH_EFFECTJ
@@ -31,7 +40,7 @@ public:
 		MESHEFFECT_ARROW_END,
 		MESHEFFECT_ARROW_WING,
 		MESHEFFECT_ARROW_BOW1,
-		MESHEFFECT_ARROW_BOW2,
+		MESHEFFECT_ARROW_BOW_UP,
 		MESHEFFECT_END,
 
 	};
@@ -95,8 +104,7 @@ public:
 	HRESULT Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir);
 
-	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, CTransform * parentTransform, _float3 Offset);
-	HRESULT Create_MeshEffectDesc_World(NONINSTNESHEFTDESC desc, _float3 Postion, _float3 LookDir);
+	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform);
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 

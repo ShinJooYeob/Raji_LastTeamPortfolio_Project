@@ -114,7 +114,7 @@ HRESULT CPlayerWeapon::Ready_ParticleDesc()
 	return S_OK;
 }
 
-HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _float3 FixPos,_float3 offset, _float Timer)
+HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _fVector FixVec,_float3 offset, _float Timer)
 {
 	if (PARTILCECOUNT <= ParticleIndex)
 		return E_FAIL;
@@ -143,16 +143,25 @@ HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _float3 FixPos,_fl
 
 		if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget)
 		{
-			//_Matrix  TargetMat = m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Get_WorldMatrix();
+			if (offset.Get_Lenth() != 0)
+			{
+				_Matrix  TargetMat = m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Get_WorldMatrix();
 
-			//TargetMat.r[0] = XMVector3Normalize(TargetMat.r[0]);
-			//TargetMat.r[1] = XMVector3Normalize(TargetMat.r[1]);
-			//TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
+				TargetMat.r[0] = XMVector3Normalize(TargetMat.r[0]);
+				TargetMat.r[1] = XMVector3Normalize(TargetMat.r[1]);
+				TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
 
-			//_Vector WorldPos = TargetMat.r[3];
-			//CreatePos = WorldPos + TargetMat.r[0] * offset.z + TargetMat.r[1] * offset.z + TargetMat.r[2] * offset.z;
+				_Vector WorldPos = TargetMat.r[3];
+				CreatePos = WorldPos + TargetMat.r[0] * offset.x + TargetMat.r[1] * offset.y + TargetMat.r[2] * offset.z;
+				CTransform* cashtrans = m_vecTextureParticleDesc[ParticleIndex].FollowingTarget;
+				m_vecTextureParticleDesc[ParticleIndex].FollowingTarget = nullptr;
+				m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = CreatePos;
+				GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
+				m_vecTextureParticleDesc[ParticleIndex].FollowingTarget = cashtrans;
 
-			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
+			}
+			else
+				GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
 
 		}
 		else
@@ -169,9 +178,8 @@ HRESULT CPlayerWeapon::Set_Play_Particle(_uint ParticleIndex, _float3 FixPos,_fl
 			// _Vector WorldPos = WeaponMat.r[3];
 			// CreatePos = WorldPos + WeaponMat.r[0] * offset.z + WeaponMat.r[1] * offset.z + WeaponMat.r[2] * offset.z;
 
-			CreatePos = FixPos.XMVector() + offset.XMVector();
 
-			m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = CreatePos;
+			m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = FixVec;
 			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
 
 		}
@@ -247,40 +255,54 @@ HRESULT CPlayerWeapon::Update_Particle(_double timer)
 	return S_OK;
 }
 
-HRESULT CPlayerWeapon::Set_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool bb, bool * pb)
+HRESULT CPlayerWeapon::Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans,  bool * pb)
 {
 	NULL_CHECK_BREAK(trans);
 
+	//if (bb == false)
+	//{
+	//	// 삭제
+	//	if (trans)
+	//	{
+	//		trans->Set_IsOwnerDead(true);
+	//		if (pb)
+	//			*pb = false;
+	//	}
+	//}
 
-	if (bb == false)
+
+	if (trans)
 	{
-		// 삭제
-		if (trans)
+		if (trans->Get_IsOwnerDead() == true)
 		{
-			trans->Set_IsOwnerDead(true);
-			if (pb)
-				*pb = false;
+			trans->Set_IsOwnerDead(false);
 		}
-	}
 
-
-	if (bb == true)
-	{
-		if (trans)
-		{
-			if (trans->Get_IsOwnerDead() == true)
-			{
-				trans->Set_IsOwnerDead(false);
-			}
-
-			GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(type, trans);
-			if (pb)
-				*pb = true;
-		}
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(type, trans);
+		if (pb)
+			*pb = true;
 	}
 
 	return S_OK;
 }
+
+INSTPARTICLEDESC & CPlayerWeapon::Get_VecParticle(_uint index)
+{
+	if (m_vecTextureParticleDesc.size() < index)
+		return INSTPARTICLEDESC();
+
+	return m_vecTextureParticleDesc[index];
+}
+void CPlayerWeapon::Set_VecParticle(_uint index, INSTPARTICLEDESC & d)
+{
+	if (m_vecTextureParticleDesc.size() < index)
+		return;
+
+	m_vecTextureParticleDesc[index] = d;
+
+
+}
+
 
 _bool CPlayerWeapon::AbleToChangeWeapon()
 {
@@ -301,3 +323,4 @@ void CPlayerWeapon::Free()
 	__super::Free();
 
 }
+

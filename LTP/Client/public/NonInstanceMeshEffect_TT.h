@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "PartilceCreateMgr.h"
 
 BEGIN(Engine)
 class CTransform;
@@ -31,14 +32,22 @@ public:
 		Safe_AddRef(m_pParentTranscom);
 	}
 
+	void				Set_AddDesc(const MESHADDDATA& desc)
+	{
+		mAddDesc = desc;
+	}
+
+
 private:
 	HRESULT				SetUp_Components();
 
 private:
 	NONINSTNESHEFTDESC		m_tMeshDesc;
 	_float					m_fCurTime_Duration = 0.f;
+	_float3					m_vRotAxis = _float3(0, 1, 0);
+	_float3					m_vLookAxis = _float3(0, 0, 1);
 
-	_float3					m_vRotAxis = _float3(0,1,0); 
+	MESHADDDATA				mAddDesc;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

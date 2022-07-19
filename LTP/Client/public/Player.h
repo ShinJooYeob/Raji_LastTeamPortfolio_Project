@@ -439,7 +439,8 @@ private:
 
 	class CHpUI*			m_pHPUI = nullptr;
 
-	
+	_bool					m_bMehsArrow= false;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 

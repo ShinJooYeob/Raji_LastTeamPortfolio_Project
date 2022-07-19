@@ -34,10 +34,11 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 	
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tMeshDesc.vPosition);
-	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 
+	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 	m_pTransformCom->Scaled_All(m_tMeshDesc.vSize);
 
+	// RotAxis 회전 방향 결정 
 	switch (m_tMeshDesc.RotAxis)
 	{
 	case FollowingDir_Right:
@@ -53,7 +54,6 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 		__debugbreak();
 		break;
 	}
-
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
 
 
@@ -64,18 +64,20 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (m_pParentTranscom->Get_IsOwnerDead())
+	{
+		Set_IsDead();
+		return _int();
+	}
+
+
 	m_fCurTime_Duration += (_float)fDeltaTime;
 
 
 	if (m_pParentTranscom)
 	{
-		if (m_pParentTranscom->Get_IsOwnerDead())
-		{
-			Set_IsDead();
-			return _int();
-		}
 
-		m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
+	//	m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
 		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
 		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
 		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
@@ -83,14 +85,40 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 		_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
 
-		if (m_tMeshDesc.RotAxis == FollowingDir_Right)
-			m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-		else if (m_tMeshDesc.RotAxis == FollowingDir_Up)
-			m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-		else if (m_tMeshDesc.RotAxis == FollowingDir_Look)
-			m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+
+		// 바라보는 방향 결정
+		if (m_tMeshDesc.RotationSpeedPerSec ==0)
+		{
+
+			switch (mAddDesc.RotAxis)
+			{
+			case FollowingDir_Right:
+				m_vLookAxis = Right;
+				break;
+			case FollowingDir_Up:
+				m_vLookAxis = Up;
+				break;
+			case FollowingDir_Look:
+				m_vLookAxis = Up;
+				break;
+			default:
+				__debugbreak();
+				break;
+			}
+
+			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
+
+
+
+		}
 		else
-		{}
+		{
+			m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+
+		}
+		
+
+		
 
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);

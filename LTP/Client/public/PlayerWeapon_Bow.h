@@ -49,6 +49,11 @@ public:
 
 public:
 	void				Set_AnimSpeed(_float fAnimSpeed);
+	CTransform*			Get_EffectTransform()
+	{
+		return m_pTextureParticleTransform;
+	}
+
 
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc();
@@ -83,9 +88,10 @@ private:
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
-
+//	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+	
 
 
 private:
