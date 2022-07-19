@@ -6,6 +6,9 @@
 #include "MapObject.h"
 #include "StaticInstanceMapObject.h"
 #include "AssimpCreateMgr.h"
+#include "TriggerObject.h"
+#include "TestLedgeTrigger.h"
+#include "MonsterBatchTrigger.h"
 
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -29,8 +32,13 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
-	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	
 
+	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"TestTrigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 	
 	
@@ -44,10 +52,10 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
+	/*if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
 	{
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wasp)));
-	}
+	}*/
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -169,9 +177,12 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
-	
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(242.479f, 21.198f, 178.668f));
+
+
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
@@ -183,6 +194,7 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
+	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
 
 
 
@@ -198,6 +210,25 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	//pTransform->Set_Matrix(tt);
 
 	//((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag))->Set_FrustumSize(99999999.f);
+
+
+
+	//CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
+	//tLedgeTriggerDesc.fSpawnPos = _float3(242.284f, 27.910f, 183.879f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//CTestLedgeTrigger* pTrigger = (CTestLedgeTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	//pTrigger->Set_Pos(_float3(242.f, 28.f, 181.f));
+	//pTrigger->Set_LookDir(_float3(0.f, 0.f, 1.f));
+	//pTrigger->Set_LedgeType(CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE);
+
+	//tLedgeTriggerDesc.fSpawnPos = _float3(242.284f, 27.910f, 183.879f);
+	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
+	//pTrigger = (CTestLedgeTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
+	//pTrigger->Set_Pos(_float3(241.95f, 25.f, 181.65f));
+	//pTrigger->Set_LookDir(_float3(0.f, 0.f, 1.f));
+	//pTrigger->Set_LedgeType(CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE);
 
 	return S_OK;
 }
@@ -254,6 +285,156 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wormgrub)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wolf)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Spider)));
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_Layer_Boss(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag )
+{
+
+
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			pObject->After_Initialize();
+
+		}
+
+		CloseHandle(hFile);
+	}
+
+
+
+
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+
+
+	//../bin/Resources/Data/ParicleData/TextureParticle/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+	lstrcat(szFullPath, szTriggerDataName);
+	
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+	
+	
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	DWORD	dwByte = 0;
+	
+	_int iIDLength = 0;
+	
+	
+	_float4x4 WorldMat = XMMatrixIdentity();
+	_float4x4 ValueMat = XMMatrixIdentity();
+	_tchar	 eObjectID[MAX_PATH] = L"";
+	
+	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+	
+	
+	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag,TAG_OP(Prototype_MonsterBatchTrigger)));
+	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+	NULL_CHECK_RETURN(pMonsterBatchTrigger, E_FAIL);
+	
+	CTransform * pTrigTransform = (CTransform*)pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+	
+	//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+	
+	pTrigTransform->Set_Matrix(WorldMat);
+	pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+	
+	
+	while (true)
+	{
+		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+		
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+
+		if (0 == dwByte) break;
+		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
+	}
+	
+	
+	CloseHandle(hFile);
+
 
 
 

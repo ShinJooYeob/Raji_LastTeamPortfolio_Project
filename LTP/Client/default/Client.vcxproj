@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
+    <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
@@ -199,6 +200,8 @@
     <ClInclude Include="..\public\Monster_Weapon_Universal.h" />
     <ClInclude Include="..\public\Monster_Wolf.h" />
     <ClInclude Include="..\public\Monster_Wormgrub.h" />
+    <ClInclude Include="..\public\PillarTrigger.h" />
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h" />
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
     <ClInclude Include="..\public\CopyMahabalasura.h" />
     <ClInclude Include="..\public\Mahabalasura.h" />
@@ -277,6 +280,7 @@
     <ClInclude Include="..\public\TestStaticObject.h" />
     <ClInclude Include="..\public\TestObject_PhysX.h" />
     <ClInclude Include="..\public\TreeMesh.h" />
+    <ClInclude Include="..\public\MonsterBatchTrigger.h" />
     <ClInclude Include="..\public\TriggerObject.h" />
     <ClInclude Include="..\public\Trigger_ChangeCameraView.h" />
     <ClInclude Include="..\public\UI.h" />
@@ -291,6 +295,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
+    <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
     <ClCompile Include="..\private\HpUI.cpp" />
@@ -309,6 +314,8 @@
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Wolf.cpp" />
     <ClCompile Include="..\private\Monster_Wormgrub.cpp" />
+    <ClCompile Include="..\private\PillarTrigger.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />
     <ClCompile Include="..\private\CopyMahabalasura.cpp" />
     <ClCompile Include="..\private\Mahabalasura.cpp" />
@@ -382,6 +389,7 @@
     <ClCompile Include="..\private\Scene_Stage3.cpp" />
     <ClCompile Include="..\private\TestStaticObject.cpp" />
     <ClCompile Include="..\private\TreeMesh.cpp" />
+    <ClCompile Include="..\private\MonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\TriggerObject.cpp" />
     <ClCompile Include="..\private\Trigger_ChangeCameraView.cpp" />
     <ClCompile Include="..\private\UI.cpp" />

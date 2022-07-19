@@ -26,14 +26,24 @@ HRESULT CTestLedgeTrigger::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 
 	FAILED_CHECK(SetUp_EtcInfo());
+	
+	
 
-	FAILED_CHECK(SetUp_PlayerAndCameraInfo());
+	return S_OK;
+}
 
-	LEDGETRIGGERDESC			tLedgeTriggerDesc;
-	memcpy(&tLedgeTriggerDesc, pArg, sizeof(LEDGETRIGGERDESC));
+HRESULT CTestLedgeTrigger::After_Initialize()
+{
+	m_eLedgeTriggerType = static_cast<ELedgeTriggerState>((int)m_fValueMat._11);
+	switch (m_eLedgeTriggerType)
+	{
+	case ELedgeTriggerState::STATE_LAST_LEDGE:
+	{
+		m_fLookDir = _float3(m_fValueMat._12, m_fValueMat._13, m_fValueMat._14);
+	}
+		break;
+	}
 
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, tLedgeTriggerDesc.fSpawnPos);
-	m_eLedgeTriggerType = tLedgeTriggerDesc.eLedgeTriggerState;
 	return S_OK;
 }
 
@@ -41,23 +51,19 @@ _int CTestLedgeTrigger::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (true == Check_CollisionToPlayer())
-	{
-		//Active_Trigger(fDeltaTime);
-	}
-	else
-	{
-		//DeActive_Trigger(fDeltaTime);
-	}
-
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
+	
 	return _int();
 }
 
 _int CTestLedgeTrigger::LateUpdate(_double fDeltaTimer)
 {
-	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
+	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this));
+
+#ifdef _DEBUG
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pColliderCom));
+#endif // _DEBUG
 
 	return _int();
 }
@@ -65,20 +71,6 @@ _int CTestLedgeTrigger::LateUpdate(_double fDeltaTimer)
 _int CTestLedgeTrigger::Render()
 {
 	if (__super::Render() < 0)		return -1;
-
-	CGameInstance* pInstance = GetSingle(CGameInstance);
-	NULL_CHECK_RETURN(m_pVIBufferCom, E_FAIL);
-
-	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
-
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
-		return E_FAIL;
-
-	m_pVIBufferCom->Render(m_pShaderCom, 3);
-
 
 	return _int();
 }
@@ -90,53 +82,12 @@ _int CTestLedgeTrigger::LateRender()
 
 _int CTestLedgeTrigger::Active_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
-	switch (m_eLedgeTriggerType)
-	{
-	case ELedgeTriggerState::STATE_START:
-		Ledge_Start();
-		break;
-	case ELedgeTriggerState::STATE_LEDGE:
-		Ledge_Hanging();
-		break;
-	case ELedgeTriggerState::STATE_LAST_LEDGE:
-		Ledge_LastHanging();
-		break;
-	case ELedgeTriggerState::STATE_END:
-		Ledge_End();
-		break;
-	}
-
 	return _int();
 }
 
 _int CTestLedgeTrigger::DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime)
 {
-	switch (m_eLedgeTriggerType)
-	{
-	case ELedgeTriggerState::STATE_START:
-		if (true == m_bOnTriggered)
-		{
-			m_bOnTriggered = false;
-			m_pPlayer->Set_CurParkourTrigger(nullptr, this);
-		}
-		break;
-	case ELedgeTriggerState::STATE_LEDGE:
-		if (true == m_bOnTriggered)
-		{
-			m_bOnTriggered = false;
-			//m_pPlayer->Set_CurParkourTrigger(nullptr, this);
-		}
-		break;
-	case ELedgeTriggerState::STATE_LAST_LEDGE:
-		if (true == m_bOnTriggered)
-		{
-			m_bOnTriggered = false;
-		}
-		break;
-	case ELedgeTriggerState::STATE_END:
-	
-		break;
-	}
+
 
 	return _int();
 }
@@ -144,6 +95,67 @@ _int CTestLedgeTrigger::DeActive_Trigger(CGameObject* pTarget, _double fDeltaTim
 CTestLedgeTrigger::EParkourTriggerType  CTestLedgeTrigger::Get_ParkourTriggerType()
 {
 	return EParkourTriggerType::PACUR_LEDGE;
+}
+
+void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType || CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+		if (true == pPlayer->Get_IsLedgeReachBackState())
+		{
+			return;
+		}
+
+		switch (m_eLedgeTriggerType)
+		{
+		case ELedgeTriggerState::STATE_START:
+		{
+		}
+			break;
+		case ELedgeTriggerState::STATE_LEDGE:
+		{
+			if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN == pPlayer->Get_LedgeState() && CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType &&
+				pPlayer->Get_CurParkurLedge() != this)
+			{
+				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
+				pPlayer->Set_CurParkurLedge(this);
+			}
+		}
+			break;
+		case ELedgeTriggerState::STATE_LAST_LEDGE:
+		{
+			if (CPlayer::STATE_IDLE == pPlayer->Get_PlayerState())
+			{
+				if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
+				{
+					if (CPlayer::STATE_IDLE == pPlayer->Get_PlayerState())
+					{
+						pPlayer->Set_State_LedgeClimbDownStart(m_fLookDir, g_fDeltaTime);
+						pPlayer->Set_CurParkurLedge(this);
+					}
+				}
+			}
+			else if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_IDLE == pPlayer->Get_LedgeState())
+			{
+				if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+				{
+					pPlayer->Set_State_LedgeClimbUpStart(g_fDeltaTime);
+					pPlayer->Set_CurParkurLedge(this);
+				}
+			}
+			else if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP == pPlayer->Get_LedgeState() &&
+					 pPlayer->Get_CurParkurLedge() != this &&
+					 CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType)
+			{
+				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
+				pPlayer->Set_CurParkurLedge(this);
+			}
+		}
+			break; 
+		}
+	}
+	
 }
 
 CTestLedgeTrigger::ELedgeTriggerState CTestLedgeTrigger::Get_LedgeType()
@@ -161,74 +173,28 @@ CTestLedgeTrigger::ELedgeCornorType CTestLedgeTrigger::Get_CornorType()
 	return m_eConorType;
 }
 
-void CTestLedgeTrigger::Ledge_Start()
+void CTestLedgeTrigger::Set_Pos(_float3 fPos)
 {
-	m_pPlayer->Set_CurParkourTrigger(this, this);
-	m_bOnTriggered = true;
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, fPos);
 }
 
-void CTestLedgeTrigger::Ledge_Hanging()
+void CTestLedgeTrigger::Set_LookDir(_float3 fLookDir)
 {
-	if (false == m_bOnTriggered)
-	{
-		m_pPlayer->Set_CurParkourTrigger(this, this);
-		m_bOnTriggered = true;
-	}
+	m_fLookDir = fLookDir;
 }
 
-void CTestLedgeTrigger::Ledge_LastHanging()
+void CTestLedgeTrigger::Set_LedgeType(ELedgeTriggerState eType)
 {
-	if (false == m_bOnTriggered)
-	{
-		m_pPlayer->Set_CurParkourTrigger(this, this);
-		m_bOnTriggered = true;
-	}
-}
-
-void CTestLedgeTrigger::Ledge_End()
-{
+	m_eLedgeTriggerType = eType;
 }
 
 _bool CTestLedgeTrigger::Check_CollisionToPlayer()
 {
-	_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_Vector vTriggerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-
-	_float fDist = XMVectorGetX(XMVector3Length(vTriggerPos - vPlayerPos));
-	if (fDist <= 1.f)
-	{
-		return true;
-	}
-	//
-	return false;
-
 	return _bool();
 }
 
 HRESULT CTestLedgeTrigger::SetUp_Components()
 {
-	// Main Transform
-	CTransform::TRANSFORMDESC tDesc = {};
-	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(60);
-	tDesc.fScalingPerSec = 1;
-	tDesc.vPivot = _float3(0, 0, 0);
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
-
-	// For Debug
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_ShellingPoint), TAG_COM(Com_Texture), (CComponent**)&m_pTextureCom));
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
-	//
-
-	return S_OK;
-}
-
-HRESULT CTestLedgeTrigger::SetUp_PlayerAndCameraInfo()
-{
-	m_pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
-	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(TAG_COM(Com_Transform)));
 
 	return S_OK;
 }
@@ -266,9 +232,4 @@ void CTestLedgeTrigger::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 }

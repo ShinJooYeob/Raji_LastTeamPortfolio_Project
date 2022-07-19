@@ -11,7 +11,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "physx\Collider_PhysX_Joint.h"
-
+#include "TriggerObject.h"
 #include "TestLedgeTrigger.h"
 
 #include "HpUI.h"
@@ -87,46 +87,55 @@ _int CPlayer::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 
+	// TEST CODE
+	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+	//
+
+	
 #pragma region TestInputkey
 	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 			NONINSTNESHEFTDESC tNIMEDesc;
 
-			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f;
-			tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+			tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				
 
 
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_JY_Tornado;
-			tNIMEDesc.fMaxTime_Duration = 3.0f;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
+			tNIMEDesc.fMaxTime_Duration =1.5f;
 
 			tNIMEDesc.fAppearTime = 0.75f;
 
 			tNIMEDesc.noisingdir = _float2(0, 1);
 
-			tNIMEDesc.NoiseTextureIndex = 374;
-			tNIMEDesc.MaskTextureIndex = 61;
-			tNIMEDesc.iDiffuseTextureIndex = 305;
+			tNIMEDesc.NoiseTextureIndex = 350;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 275;
 			tNIMEDesc.m_iPassIndex = 17;
 			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-			tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
 			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.vColor = _float3(1.0, 0, 0);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
 
-			tNIMEDesc.RotAxis = FollowingDir_Up;
-			tNIMEDesc.RotationSpeedPerSec = 360.f;
-			tNIMEDesc.vSize = _float3(2.f, 0.2f, 2.f);
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.0155f);
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
 
 			//m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 		}
 
 
-
+		if (g_pGameInstance->Get_DIKeyState(DIK_P)&DIS_Down)
+		{
+			Set_State_PillarStart(fDeltaTime);
+		}
 	}
 #pragma endregion TestInputkey
 
@@ -268,6 +277,7 @@ _int CPlayer::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
 	Update_Collider(fDeltaTime);
+	Update_Partilce_Position();
 
 	Update_HPUI(fDeltaTime);
 
@@ -282,7 +292,8 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
-	
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Parkur));
+
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -316,7 +327,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom);
+//	m_pNavigationCom->Render(m_pTransformCom);
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -332,13 +343,6 @@ _int CPlayer::LateRender()
 
 void CPlayer::CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	/*if (CollisionTypeID::CollisionType_MonsterWeapon == eConflictedObjCollisionType)
-	{
-		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-		_Vector vConflicted_Col_Pos = pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector();
-		_Vector vDamageDir = XMVector3Normalize(vPlayerPos - vConflicted_Col_Pos);
-	}*/
-
 
 }
 
@@ -360,16 +364,26 @@ _fMatrix CPlayer::Get_BoneMatrix(const char * pBoneName)
 	return TransformMatrix;
 }
 
+_bool CPlayer::Get_IsLedgeReachBackState()
+{
+	return m_bLedge_ReachBackState;
+}
+
 void CPlayer::Set_CurParkourTrigger(CTriggerObject * pParkourTrigger, CTriggerObject* pCauser)
 {
-	if (nullptr == pParkourTrigger && m_pCurParkourTrigger != pCauser)
-		return;
+	//if (nullptr == pParkourTrigger && m_pCurParkourTrigger != pCauser)
+	//	return;
 
-	if (nullptr != m_pCurParkourTrigger)
-	{
-		m_pPreParkourTrigger = m_pCurParkourTrigger;
-	}
-	m_pCurParkourTrigger = pParkourTrigger;
+	//if (nullptr != m_pCurParkourTrigger)
+	//{
+
+	//}
+	//m_pCurParkourTrigger = pParkourTrigger;
+}
+
+void CPlayer::Set_PlayerNavIndex(_uint iNavIndex)
+{
+	m_pNavigationCom->Set_CurNavCellIndex(iNavIndex);
 }
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -514,7 +528,22 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 		m_pModel->Change_AnimIndex_ReturnTo(SPEAR_ANIM_THROW_START, SPEAR_ANIM_THROW_LOOP, 0.1f, true);
 		break;
 	case WEAPON_BOW:
+		if (m_bMehsArrow == false)
+		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_FLOOR, m_pTransformCom));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_ICE, m_pTransformCom));
+
+		}
 		m_pModel->Change_AnimIndex_ReturnTo(BOW_ANIM_UTILITY_START, BOW_ANIM_UTILITY_LOOP, 0.1f, true);
+
 		break;
 	case WEAPON_SWORD:
 		m_pModel->Change_AnimIndex(SWORD_ANIM_SHIELD_IDLE, 0.2f, true);
@@ -551,7 +580,14 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
 		break;
 	case WEAPON_SWORD:
+	{
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
+
+		m_vecNonInstMeshDesc[6].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		m_vecNonInstMeshDesc[6].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+			&m_vecNonInstMeshDesc[6]);
+	}
 		break;
 	}
 }
@@ -569,23 +605,55 @@ void CPlayer::Set_State_TurnBackStart(_double fDeltaTime)
 void CPlayer::Set_State_ParkourStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_PARKOUR;
-	m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
 
-	switch (m_eCurParkourState)
-	{
-	case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
-		if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-		{
-			m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
-			m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
-		}
-		else 
-		{
-			m_eCurLedgeState = LEDGE_JUMP;
-			m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
-		}
-		break;
-	}
+	m_eCurLedgeState = LEDGE_HANGING_IDLE;
+	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
+
+	//m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
+
+	//switch (m_eCurParkourState)
+	//{
+	//case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
+		//if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
+		//{
+//			m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
+			//m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
+		//}
+		//else 
+		//{
+//			m_eCurLedgeState = LEDGE_JUMP;
+			//m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
+		//}
+//		break;
+//	}
+}
+
+void CPlayer::Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime)
+{
+	m_eCurState = STATE_PARKOUR;
+	m_fLookDir = fLookDir;
+	m_eCurParkourState = CTriggerObject::EParkourTriggerType::PACUR_LEDGE;
+	m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
+	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
+
+}
+
+void CPlayer::Set_State_LedgeClimbUpStart(_double fDeltaTime)
+{
+	m_eCurState = STATE_PARKOUR;
+	m_eCurParkourState = CTriggerObject::EParkourTriggerType::PACUR_LEDGE;
+	m_eCurLedgeState = LEDGE_HANGING_CLIMBUP;
+	m_pModel->Change_AnimIndex(LEDGE_ANIM_CLAMB_UP);
+	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vLook = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 0.11f);
+	vPos -= (vLook * 0.06f);
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+} 
+
+CPlayer::EPLAYER_STATE CPlayer::Get_PlayerState()
+{
+	return m_eCurState;
 }
 
 void CPlayer::Set_State_CurtainStart(_double fDeltaTime)
@@ -712,14 +780,6 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 		else
 		{
 			Set_State_DodgeStart(fDeltaTime);
-		}
-	}
-	else if (true == m_bPressedInteractKey)
-	{
-//		Set_State_PetalStart(fDeltaTime);
-		if (nullptr != m_pCurParkourTrigger && CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-		{
-			Set_State_ParkourStart(fDeltaTime);
 		}
 	}
 	else if (true == m_bPressedMainAttackKey || true == m_bPressedPowerAttackKey)
@@ -856,7 +916,7 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		if (0.f < fCurAnimRate && 0.55f >= fCurAnimRate)
 		{
 			m_fFallingAcc += 0.02267f;
-			_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+			_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 			m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -942,12 +1002,13 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 	m_bOnNavigation = false;
 	m_fAnimSpeed = 1.f;
 	m_fFallingAcc += 0.03f;
-	_float fPos_y = m_fJumpStart_Y + ((3.f + m_fJumpPower) * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 	m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
 	if (fPos_y <= fOnNavPos_Y
+		&& fPos_y >= fOnNavPos_Y - 0.25f
 		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
 	{
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y);
@@ -1469,6 +1530,7 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 		break;
 	case PETAL_THROW_LOOP:
 	{
+
 		if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Up)
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
@@ -1571,6 +1633,24 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
 	}
 	m_IsConfilicted = false;
+
+
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+
+	m_pCollider_Parkur->Update_ConflictPassedTime(fDeltaTime);
+	iNumCollider = m_pCollider_Parkur->Get_NumColliderBuffer();
+	mat.r[3] += _float3(0.f, 0.5f, 0.f).XMVector();
+	m_pCollider_Parkur->Update_Transform(0, mat);
+
+	mat.r[3] = vPos + (vLook * 0.14f) + _float3(0.f, 1.73f, 0.f).XMVector();
+	m_pCollider_Parkur->Update_Transform(1, mat);
+	
+	mat.r[3] = vPos + (vLook * 0.14f) + _float3(0.f, 1.67f, 0.f).XMVector();
+	m_pCollider_Parkur->Update_Transform(2, mat);
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerParkur, this, m_pCollider_Parkur));
 
 	return S_OK;
 }
@@ -1803,6 +1883,7 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 	else if (pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Up)
 	{
 		m_bPressedUtilityKey = false;
+		m_bMehsArrow = false;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_Q) & DIS_Up)
@@ -1830,6 +1911,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SPEAR;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_BOW)
 	{
@@ -1843,6 +1927,10 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_BOW;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(1));
+
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_SWORD)
 	{
@@ -1856,6 +1944,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_SWORD;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
 		m_pPlayerWeapons[EWEAPON_TYPE::WEAPON_SHIELD - 1]->Dissolve_In(0.5f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_CHAKRA)
 	{
@@ -1869,6 +1960,9 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Swap_Weapon.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_eCurWeapon = EWEAPON_TYPE::WEAPON_CHAKRA;
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.1f);
+
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 	}
 
 	return true;
@@ -2881,6 +2975,40 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		if (false == m_bOncePlaySwingSound && 0.4f < fAnimPlayRate)
 		{
 			m_bOncePlaySwingSound = true;
+
+
+			m_vecNonInstMeshDesc[4].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 2.2f;
+			-m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f;
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				//- m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+				- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				//- m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+
+
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		}
 
@@ -2891,6 +3019,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		}
 		else
 		{
+			
+
 			m_fAnimSpeed = 1.f;
 		}
 
@@ -3065,7 +3195,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				//m_vecTextureParticleDesc[2].SizeChageFrequency = 1;
 				//m_vecTextureParticleDesc[2].EachParticleLifeTime = 0.4f;
 				//m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
-				m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
+				m_vecNonInstMeshDesc[5].vPosition = m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 					m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition = m_vecTextureParticleDesc[5].vFixedPosition=
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
 					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
@@ -3076,6 +3206,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 				m_vecTextureParticleDesc[2].vFixedPosition
 					= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
+				m_vecNonInstMeshDesc[5].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
@@ -3083,7 +3214,9 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[5]);
-				
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+					&m_vecNonInstMeshDesc[5]);
 
 				bParticleChecker = true;
 				m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Collision_1();
@@ -3145,6 +3278,40 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		if (false == m_bOncePlaySwingSound && 0.12f < fAnimPlayRate)
 		{
 			m_bOncePlaySwingSound = true;
+
+			m_vecNonInstMeshDesc[4].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 2.2f;
+			-m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f;
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				//- m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+				- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+
+			m_vecNonInstMeshDesc[4].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+				//- m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+				- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.25f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+
+
+
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		}
 
@@ -3303,7 +3470,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 
-			m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
+			m_vecNonInstMeshDesc[5].vPosition = m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 				m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition = m_vecTextureParticleDesc[5].vFixedPosition =
 				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
 				+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
@@ -3315,12 +3482,16 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			m_vecTextureParticleDesc[2].vFixedPosition
 				= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
 
+			m_vecNonInstMeshDesc[5].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[5]);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+				&m_vecNonInstMeshDesc[5]);
+
 
 		}
 
@@ -3446,13 +3617,45 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 			// Cal Bow Range
 			m_fChargingTime += (_float)g_fDeltaTime;
-			if(m_fChargingTime>0.1f)
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(1));
 
+			if (m_fChargingTime > 0.1f)
+			{
+			//	m_vecTextureParticleDesc[2].bEmissive = _float3(0);
+			//	m_vecTextureParticleDesc[3].;
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2));
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(3));
+
+
+				_Matrix TargetMat= m_pTransformCom->Get_WorldMatrix();
+				TargetMat.r[0] = XMVector3Normalize(TargetMat.r[0]);
+				TargetMat.r[1] = XMVector3Normalize(TargetMat.r[1]);
+				_Sfloat3 Look  = TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
+
+				_Sfloat3 FixOffset = _Sfloat3(0,-0.3f,-0.3f);
+
+				_Vector FixPos = TargetMat.r[3] + TargetMat.r[0] * FixOffset.x + TargetMat.r[1] * FixOffset.y + TargetMat.r[2] * FixOffset.z;;
+				
+				INSTPARTICLEDESC& value4 = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_VecParticle(4);
+
+				value4.vPowerDirection = Look;
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_VecParticle(4,value4);
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(4, FixPos));
+
+			}
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
+
+				if (m_bMehsArrow == false)
+				{
+					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW1, effecttrans,&m_bMehsArrow));
+				}
 			}
+
 			else
 			{
 				m_pMainCamera->Start_CameraShaking_Thread(0.1f, 2.f - m_fChargingTime, 0.015f);
@@ -3535,6 +3738,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				m_bAttackEnd = true;
 				m_pTransformCom->Set_MoveSpeed(5.f);
 			}
+			m_bMehsArrow = false;
 		}
 			break;
 		}
@@ -3550,6 +3754,11 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.15f <= fAnimPlayRate)
 			{
+				CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			}
@@ -3680,6 +3889,15 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.8f <= fAnimPlayRate)
 			{
+			
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
+
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			}
@@ -5394,6 +5612,21 @@ void CPlayer::Shelling(_double fDeltaTime)
 
 		m_fAnimSpeed = 1.f;
 
+		{
+			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+			if (pBowArrow)
+			{
+				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle
+				(3, _fVector(), _float3::Zero()));
+			}
+
+
+
+		}
+
+
+
+
 		if (false == m_bPressedUtilityKey)
 		{
 			m_fCurTime_ShellingDelay = 0.f;
@@ -5563,11 +5796,28 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	m_fAnimSpeed = 1.f;
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 
+
+
+
 	if (false == m_bAnimChangeSwitch && 0.25f <= fAnimPlayRate)
 	{
 		m_bAnimChangeSwitch = true;
 		_float fTargetPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 4.f;
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_UltimateMode(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), fTargetPos_Y);
+
+
+
+		{
+
+			m_vecNonInstMeshDesc[7].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+			m_vecNonInstMeshDesc[7].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+				&m_vecNonInstMeshDesc[7]);
+		}
+
+
 	}
 
 	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
@@ -5700,7 +5950,6 @@ void CPlayer::Ledging(_double fDeltaTime)
 					{
 						m_eCurLedgeState = LEDGE_HANGING_IDLE;
 						m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
-						m_pPreParkourTrigger = nullptr;
 						m_pCurParkourTrigger = nullptr;
 						return;
 					}
@@ -5757,69 +6006,48 @@ void CPlayer::Ledging(_double fDeltaTime)
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_DOUBLEJUMP:
 	{
+		m_bLedge_ReachBackState = false;
+		m_bOnNavigation = false;
 		m_fAnimSpeed = 1.5f;
 		if (0.f < fCurAnimRate)
 		{
-			if (0.031f < fCurAnimRate && 0.9f >= fCurAnimRate)
+			if (0.031f < fCurAnimRate && 0.7f >= fCurAnimRate)
 			{
 				if (0.359f <= fCurAnimRate)
 				{
-					m_fAnimSpeed = 0.f;
+					m_eCurLedgeState = LEDGE_HANGING_FALLINGDOWN;
+					m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 0.1f);
+					m_fJumpPower = 6.f;
+					return;
 				}
 
 				_float fPos_y = m_fFallingStart_Y + (6.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
-				m_fFallingAcc += 0.03f;
-				
-				if (m_fJumpStart_Y >= fPos_y)
-				{
-					fPos_y = m_fJumpStart_Y;
-					m_fAnimSpeed = 5.f;
-				}
-				else
-				{
-					m_pTransformCom->Move_Backward(fDeltaTime * 1.f);
-				}
+				m_fFallingAcc += 0.02f;
+			
+				m_pTransformCom->Move_Backward(fDeltaTime * 1.f);
+
 				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 				vPos = XMVectorSetY(vPos, fPos_y);
 				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
-			}
-			else if (0.98f <= fCurAnimRate)
-			{
-				_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
-				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
-
-				m_eCurState = STATE_IDLE;
-				Set_State_IdleStart(fDeltaTime);
-				m_pPreParkourTrigger = nullptr;
-				m_pCurParkourTrigger = nullptr;
-				m_fFallingAcc = 0.f;
 			}
 		}
 	}
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_IDLE:
 	{
-		m_pPreParkourTrigger = m_pCurParkourTrigger;
-
-		// Check to input FallingKey
+		m_bLedge_ReachBackState = false;
+		m_bOnNavigation = false;
+		m_fAnimSpeed = 1.f;
+		
 		if (0.f < fCurAnimRate && true == m_bPressedInteractKey)
 		{
 			m_eCurLedgeState = LEDGE_HANGING_FALLINGDOWN;
 			m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 			m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			m_fJumpPower = 0.f;
+			m_fFallingAcc = 0.f;
 			return;
 		} 
-		else if (0.f < fCurAnimRate && true == m_bPressedDodgeKey)
-		{
-			if (nullptr != m_pCurParkourTrigger && CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-			{
-				m_eCurLedgeState = LEDGE_HANGING_CLIMBUP;
-				m_pModel->Change_AnimIndex(LEDGE_ANIM_CLAMB_UP);
-				return;
-			}
-		}
 
 		if (LEDGE_ANIM_HANGING_REACHOUT_UP == m_pModel->Get_NowAnimIndex()) 
 		{
@@ -5833,19 +6061,20 @@ void CPlayer::Ledging(_double fDeltaTime)
 				m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP;
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 				m_fJumpPower = 8.f;
-				m_pPreParkourTrigger = nullptr;
-				m_pCurParkourTrigger = nullptr;
+				m_fFallingAcc = 0.f;
 			}
 		}
 		else
 		{
 			if (LEDGE_ANIM_HANGING_REACHOUT_BACK_IDLE == m_pModel->Get_NowAnimIndex())
 			{
+				m_bLedge_ReachBackState = true;
 				if (true == m_bPressedDodgeKey)
 				{
 					m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_DOUBLEJUMP;
 					m_pModel->Change_AnimIndex(LEDGE_ANIM_DOUBLEJUMP);
 					m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+					m_fFallingAcc = 0.f;
 					return;
 				}
 			}
@@ -5991,6 +6220,7 @@ void CPlayer::Ledging(_double fDeltaTime)
 	break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP:
 	{
+		m_bOnNavigation = false;
 		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_float fPrePos_Y = XMVectorGetY(vMyPos);
 		m_fFallingAcc += 0.03f;
@@ -6009,6 +6239,7 @@ void CPlayer::Ledging(_double fDeltaTime)
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLING:
 	{
+		m_bOnNavigation = false;
 		m_pTransformCom->Move_Down(fDeltaTime * 2.f);
 		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_float fPos_Y = XMVectorGetY(vMyPos);
@@ -6018,7 +6249,6 @@ void CPlayer::Ledging(_double fDeltaTime)
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 
 			Set_State_IdleStart(fDeltaTime);
-			m_pPreParkourTrigger = nullptr;
 			m_pCurParkourTrigger = nullptr;
 		}
 		
@@ -6043,40 +6273,21 @@ void CPlayer::Ledging(_double fDeltaTime)
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN:
 	{
-		if (nullptr != m_pCurParkourTrigger && m_pPreParkourTrigger != m_pCurParkourTrigger)
-		{
-			if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType() ||
-				CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-			{
-				m_eCurLedgeState = LEDGE_HANGING_IDLE; 
-				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
-				m_fFallingAcc = 0.f;
-				m_fFallingStart_Y = 0.f;
-				return;
-			}
-		}
+		m_bOnNavigation = false;
 
-		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-		_float fPos_Y = XMVectorGetY(vMyPos);
-		if (fPos_Y <= m_fJumpStart_Y)
-		{
-			vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
-			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
-			m_fFallingAcc = 0.f;
-			Set_State_IdleStart(fDeltaTime);
-			m_fFallingStart_Y = 0.f;
-			m_pPreParkourTrigger = nullptr;
-			m_pCurParkourTrigger = nullptr;
-			return;
-		}
-
+		_float fPrePos_y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		_float fPos_y = m_fFallingStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
-		m_fFallingAcc += 0.03f;
+		_float fNav_y = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
-		if (m_fJumpStart_Y >= fPos_y)
+		m_fFallingAcc += 0.03f;
+		if (fNav_y >= fPos_y && fPrePos_y >= fNav_y /*(fNav_y -0.1f) <= fPos_y*/ &&
+			CCell::CELL_OPTION::CELL_NOMAL == m_pNavigationCom->Get_CurCellOption())
 		{
-			fPos_y = m_fJumpStart_Y;
+			fPos_y = fNav_y;
 			m_fAnimSpeed = 5.f;
+			m_fFallingAcc = 0.f;
+			m_bOnNavigation = true;
+			Set_State_IdleStart(fDeltaTime);
 		}
 	
 		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -6086,32 +6297,73 @@ void CPlayer::Ledging(_double fDeltaTime)
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_CLIMBUP:
 	{
+		m_bOnNavigation = false;
 		if (0.f < fCurAnimRate)
 		{
-			if (0.8f > fCurAnimRate)
+			if (0.256f <= fCurAnimRate && 0.307f >= fCurAnimRate)
 			{
-				m_pTransformCom->Move_Up(fDeltaTime * 0.1f);
+				m_pTransformCom->Move_Forward(fDeltaTime * 0.9f);
+			} 
+			 
+			
+			if (0.128f < fCurAnimRate && 0.358f >= fCurAnimRate)
+			{
+				if(0.282f >= fCurAnimRate)
+					m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
+				else
+					m_pTransformCom->Move_Up(fDeltaTime * 0.6f);
 			}
-			else if (0.98f <= fCurAnimRate)
+				
+			if (0.512f <= fCurAnimRate && 0.820f >= fCurAnimRate)
+			{
+				m_pTransformCom->Move_Up(fDeltaTime * 0.2f);
+			}
+			//m_pTransformCom->Turn_Dir(m_fLookDir.XMVector(), 0.9f);
+
+			/*if (0.1f > fCurAnimRate)
+			{
+				m_pTransformCom->MovetoDir(m_fLookDir.XMVector(), fDeltaTime * 0.38f);
+			}
+
+			if ((0.179f <= fCurAnimRate && 0.384f >= fCurAnimRate))
+			{
+				m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
+			}
+			else if (0.76f <= fCurAnimRate)
+			{
+				m_pTransformCom->Move_Up(fDeltaTime * 0.65f);
+			}
+			*/
+			if (0.9f <= fCurAnimRate)
 			{
 				m_eCurState = STATE_IDLE;
 				Set_State_IdleStart(fDeltaTime);
-				m_fFallingAcc = 0.f;
-				m_pPreParkourTrigger = nullptr;
-				m_pCurParkourTrigger = nullptr;
+				m_bOnNavigation = true;
 			}
 		}
 	}
 		break;
 	case EPARKOUR_LEDGESTATE::LEDGE_HANGING_CLIMBDOWN:
 	{
+		m_bOnNavigation = false;
 		if (0.f < fCurAnimRate)
 		{
-			if (0.8f > fCurAnimRate)
+			m_pTransformCom->Turn_Dir(m_fLookDir.XMVector(), 0.9f);
+			if (0.1f > fCurAnimRate)
 			{
-				m_pTransformCom->Move_Down(fDeltaTime * 0.1f);
+				m_pTransformCom->MovetoDir(m_fLookDir.XMVector() * -1, fDeltaTime * 0.35f);
 			}
-			else if (0.98f <= fCurAnimRate)
+			
+			if ((0.179f <= fCurAnimRate && 0.384f >= fCurAnimRate))
+			{
+				m_pTransformCom->Move_Down(fDeltaTime * 0.5f);
+			}
+			else if (0.76f <= fCurAnimRate)
+			{
+				m_pTransformCom->Move_Down(fDeltaTime * 0.65f);
+			}
+
+			if (0.9f <= fCurAnimRate)
 			{
 				m_eCurLedgeState = LEDGE_HANGING_IDLE;
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
@@ -6750,6 +7002,21 @@ _fVector CPlayer::Get_MousePos()
 	return _fVector();
 }
 
+CPlayer::EPARKOUR_LEDGESTATE CPlayer::Get_LedgeState()
+{
+	return m_eCurLedgeState;
+}
+
+void CPlayer::Set_CurParkurLedge(CTestLedgeTrigger* pTargetLedge)
+{
+	m_pCurParkourTrigger = pTargetLedge;
+}
+
+CTriggerObject* CPlayer::Get_CurParkurLedge()
+{
+	return m_pCurParkourTrigger;
+}
+
 HRESULT CPlayer::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -6899,6 +7166,58 @@ HRESULT CPlayer::SetUp_Components()
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 	
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_ball", _float3(1), _float3(0), _float3(6.13672f, -9.69943f, -0.96666f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_ball", _float3(1), _float3(0), _float3(-6.28489f, -9.6995f, -0.966615f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+
+	// Parkur Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_1), (CComponent**)&m_pCollider_Parkur));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Parkur->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1), _float3(0), _float3(0.f));
+	m_vecAttachedDesc_Parkur.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.8f, 0.05f, 0.05f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Parkur->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_root", _float3(1), _float3(0), _float3(0.f));
+	m_vecAttachedDesc_Parkur.push_back(tAttachedDesc);
+	m_pCollider_Parkur->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.8f, 0.05f, 0.05f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Parkur->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_root", _float3(1), _float3(0), _float3(0.f));
+	m_vecAttachedDesc_Parkur.push_back(tAttachedDesc);
+	m_pCollider_Parkur->Set_ParantBuffer();
+	//
 
 	CNavigation::NAVIDESC NaviDesc;
 	NaviDesc.iCurrentIndex = 0;
@@ -6906,13 +7225,6 @@ HRESULT CPlayer::SetUp_Components()
 		return E_FAIL;
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-
-
-
-
-
-
-
 
 
 	return S_OK;
@@ -7274,13 +7586,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		NONINSTNESHEFTDESC tNIMEDesc;
 
-		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
-			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.95f
-			- m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
-		tNIMEDesc.vLookDir =
-			XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
-				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 10.f) - tNIMEDesc.vPosition.XMVector());
-
 
 
 		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_UltiEffect;
@@ -7331,7 +7636,142 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.vSize = _float3(2.f, 0.2f, 2.f);
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
+	// 4
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = -5.f;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_SecondAttack;
+		tNIMEDesc.fMaxTime_Duration = 0.3f;
+
+		tNIMEDesc.fAppearTime = 0.15f;
+
+		tNIMEDesc.noisingdir = _float2(-1, 0);
+
+		tNIMEDesc.NoiseTextureIndex = 249;
+		tNIMEDesc.MaskTextureIndex = 64;
+		tNIMEDesc.iDiffuseTextureIndex = 276;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(1.0, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 360.f;
+		tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.025f);
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	// 5 
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Aura2;
+		tNIMEDesc.fMaxTime_Duration = 1.f;
+
+		tNIMEDesc.fAppearTime = 0.5f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 249;
+		tNIMEDesc.MaskTextureIndex = 64;
+		tNIMEDesc.iDiffuseTextureIndex = 276;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(1.0, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.002f);
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	// 6 
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Beacon_Shape;
+		tNIMEDesc.fMaxTime_Duration = 5.5f;
+
+		tNIMEDesc.fAppearTime = 0.75f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 63;
+		tNIMEDesc.iDiffuseTextureIndex = 275;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.06f);
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	// 7 
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
+		tNIMEDesc.fMaxTime_Duration = 1.5f;
+
+		tNIMEDesc.fAppearTime = 0.75f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 63;
+		tNIMEDesc.iDiffuseTextureIndex = 275;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.0155f);
+
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+
 #pragma endregion
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_Partilce_Position()
+{
+	_Sfloat3 vec = m_pCollider->Get_ColliderPosition(2);
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	mat.r[3] = vec;
+	m_pTextureParticleTransform->Set_Matrix(mat);
 	return S_OK;
 }
 
@@ -7375,12 +7815,10 @@ void CPlayer::Free()
 	Safe_Release(m_pHeadJoint);
 
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pCollider_Parkur);
 	Safe_Release(m_pHPUI);
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
-
-
-
 
 }

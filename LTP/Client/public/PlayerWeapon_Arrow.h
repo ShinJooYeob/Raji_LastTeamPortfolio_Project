@@ -56,7 +56,10 @@ public:
 
 	void				Set_TargetPos(_float3 fTargetPos);
 
-	HRESULT				Ready_ParticleDesc();
+	CTransform*			Get_Transform_Hand()
+	{
+		return m_pTextureParticleTransform_Hand;
+	}
 
 public:
 	_int				UpdateState_NormalReady(_double fDeltaTime);
@@ -78,10 +81,11 @@ public:
 	_int				UpdateState_Ultimate_Post_Ready(_double fDeltaTime);
 	_int				UpdateState_Ultimate_Post_Shot(_double fDeltaTime);
 
+
 public:
-	void				Update_ParticleTransform(_double fDeltaTime);
-	HRESULT				Set_Play_Particle(_uint ParticleIndex, _float Timer = -1);
-	HRESULT				Set_PlayOff_ALL();
+	virtual HRESULT Ready_ParticleDesc();
+//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
+	virtual HRESULT Update_Particle(_double fDeltaTime);
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -125,10 +129,8 @@ private:
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pMeshParticleTransform = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
+	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
+	
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

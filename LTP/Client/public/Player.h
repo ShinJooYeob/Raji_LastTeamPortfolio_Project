@@ -15,6 +15,11 @@ class CShellingSkillRange;
 class CTriggerObject;
 class CPlayer final : public CGameObject
 {
+public:
+	enum EPLAYER_STATE {
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+	};
+
 private:
 	enum EINPUT_MOVDIR {
 		MOVDIR_F, MOVDIR_B, MOVDIR_L, MOVDIR_R, MOVDIR_FL, MOVDIR_FR, MOVDIR_BL, MOVDIR_BR, MOVDIR_END
@@ -36,9 +41,6 @@ private:
 		WEAPON_NONE, WEAPON_SPEAR, WEAPON_BOW, WEAPON_SWORD, WEAPON_CHAKRA, WEAPON_SHIELD, WEAPON_END
 	};
 	
-	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
-	};
 
 
 	//**	   Enum_Anim		**//
@@ -122,6 +124,7 @@ private:
 		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
 	};
 
+public:
 	enum EPARKOUR_LEDGESTATE {
 		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP,
 		LEDGE_HANGING_CLIMBUP, LEDGE_HANGING_CLIMBDOWN
@@ -157,16 +160,29 @@ public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 	CTransform* Get_Transform() const { return m_pTransformCom; }
-
+	_bool Get_IsLedgeReachBackState();
 
 public: /* public Setter */
 	void	Set_JumpPower(_float fJumpPower);
 	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
-
+	void	Set_PlayerNavIndex(_uint iNavIndex);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
+
+public:
+	void	Set_State_ParkourStart(_double fDeltaTime);
+	void	Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime);
+	void	Set_State_LedgeClimbUpStart(_double fDeltaTime);
+
+public:
+	EPLAYER_STATE Get_PlayerState();
+	EPARKOUR_LEDGESTATE Get_LedgeState();
+
+public:
+	void				Set_CurParkurLedge(class CTestLedgeTrigger* pTargetLedge);
+	CTriggerObject*		Get_CurParkurLedge();
 
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
@@ -177,8 +193,6 @@ private: /* Change Start State */
 	void	Set_State_UtilitySkillStart(_double fDeltaTime);						// Utility
 	void	Set_State_UltimateSkillStart(_double fDeltaTime);						// Ultimate
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
-
-	void	Set_State_ParkourStart(_double fDeltaTime);								// Dodge
 
 	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
 	void	Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime);			// WallRun
@@ -301,8 +315,8 @@ private:
 private: /* Relate Parkour */
 	CTriggerObject::EParkourTriggerType 		m_eCurParkourState;
 	CTriggerObject*								m_pCurParkourTrigger = nullptr;
-	CTriggerObject*								m_pPreParkourTrigger = nullptr;
 	EPARKOUR_LEDGESTATE							m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_JUMP;
+
 
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
@@ -384,6 +398,10 @@ private: /* Animation Control */
 
 	_bool					m_bActiveCollider = true;
 
+	_float3					m_fLookDir = _float3(0.f, 0.f, 0.f);
+
+	_bool					m_bLedge_ReachBackState = false;
+
 private: /* For Navi */
 	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
 
@@ -435,11 +453,15 @@ private:
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
 
+	CCollider*				m_pCollider_Parkur = nullptr;
+	vector<ATTACHEDESC>		m_vecAttachedDesc_Parkur;
+
 	class CCollider_PhysX_Joint*	m_pHeadJoint = nullptr;
 
 	class CHpUI*			m_pHPUI = nullptr;
 
-	
+	_bool					m_bMehsArrow= false;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 
@@ -448,7 +470,7 @@ private:
 	CTransform*												m_pMeshParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
-	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
 private:
 	HRESULT SetUp_Components();
@@ -460,7 +482,7 @@ private:
 
 	HRESULT Ready_ParticleDesc();
 
-	HRESULT Update_Partilce_WeaponDefault();
+	HRESULT Update_Partilce_Position();
 
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

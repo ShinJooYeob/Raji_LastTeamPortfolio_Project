@@ -24,6 +24,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+protected:
+	CNavigation*	 m_pNavigationCom = nullptr;
+
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

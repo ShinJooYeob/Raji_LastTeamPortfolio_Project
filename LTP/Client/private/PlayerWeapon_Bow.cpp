@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\PlayerWeapon_Bow.h"
+#include "..\public\PartilceCreateMgr.h"
 
 
 
@@ -30,6 +31,8 @@ HRESULT CPlayerWeapon_Bow::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(Ready_ParticleDesc());
 
+	_bool							m_bEffect_Bow = false;
+
 
 	return S_OK;
 }
@@ -41,14 +44,17 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	//{
+	//	m_pDissolveCom->Set_DissolveOn(false, 5.5f);
+
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	//{
+	//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	//}
+	
+
 
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
@@ -69,7 +75,7 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
-	Update_ParticleTransform(fDeltaTime);
+	FAILED_CHECK(Update_Particle(fDeltaTime));
 
 	return _int();
 }
@@ -200,42 +206,6 @@ void CPlayerWeapon_Bow::Set_AnimSpeed(_float fAnimSpeed)
 	m_fAnimSpeed = fAnimSpeed;
 }
 
-HRESULT CPlayerWeapon_Bow::Set_Play_Particle(_uint ParticleIndex,_float Timer,_float3 offset)
-{
-
-	if (PARTILCECOUNT <= ParticleIndex)
-		return E_FAIL;
-
-	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
-		return E_FAIL;
-
-//	m_vecTextureParticleDesc[ParticleIndex].
-
-	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
-	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
-		if (Timer == -1)
-		{
-			m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
-		}
-		else
-			m_fPlayParticleTimer[ParticleIndex] = Timer;
-	}
-	
-	return S_OK;
-
-}
-
-HRESULT CPlayerWeapon_Bow::Set_PlayOff_ALL()
-{
-	for (_uint i = 0; i < PARTILCECOUNT; ++i)
-	{
-		ZeroMemory(m_fPlayParticleTimer, sizeof(_float) * PARTILCECOUNT);
-	}
-
-	m_pTextureParticleTransform->Set_IsOwnerDead(true);
-	return S_OK;
-}
 
 _fVector CPlayerWeapon_Bow::Get_BonePos(const char * pBoneName)
 {
@@ -290,9 +260,10 @@ void CPlayerWeapon_Bow::Update_AttachMatrix()
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 }
 
-void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
+HRESULT CPlayerWeapon_Bow::Update_Particle(_double fDeltaTime)
 {
-	// º»Ã¼ À§Ä¡¿¡ ¾÷µ¥ÀÌÆ®
+
+	FAILED_CHECK(__super::Update_Particle(fDeltaTime));
 
 	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 
@@ -305,26 +276,19 @@ void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
 	mat.r[2] = XMVector3Normalize(mat.r[2]);
 	_Vector vPos = mat.r[3];
 
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
+	m_pTextureParticleTransform->Set_Matrix(mat);
 
-	//// È° ¾Õ µÚ ¼¼ÆÃ
 	_Vector vPos2 = vPos + (mat.r[2] * 0.5f + mat.r[0] * 0.1f);
-	m_pTextureParticleTransform_BowFront->Set_MatrixState(CTransform::STATE_POS, vPos2);
+	mat.r[3] = vPos2;
+	m_pTextureParticleTransform_BowUp->Set_MatrixState(CTransform::STATE_POS, vPos2);
 	
 	_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
-	m_pTextureParticleTransform_BowBack->Set_MatrixState(CTransform::STATE_POS, vPos3);
+	mat.r[3] = vPos3;
+	m_pTextureParticleTransform_BowBack->Set_Matrix(mat);
+
 	
-	//m_vecTextureParticleDesc[1].TotalParticleTime= 1.0f;
-	//m_vecTextureParticleDesc[1].EachParticleLifeTime= 0.1f;
 
-
-
-	for (auto& timer :m_fPlayParticleTimer)
-	{
-		timer -= (_float)fDeltaTime;
-		if (timer <= -100)
-			timer = -1;
-	}
+	return S_OK;
 
 }
 
@@ -387,38 +351,59 @@ HRESULT CPlayerWeapon_Bow::SetUp_EtcInfo()
 
 HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 {
-	// ÆÄÆ¼Å¬¿ë Transform Create
+	FAILED_CHECK(__super::Ready_ParticleDesc());
+
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	m_pTextureParticleTransform_BowFront = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pTextureParticleTransform_BowUp = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	m_pTextureParticleTransform_BowBack = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+//	m_pTextureParticleTransform_BowFront= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowFront, E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowUp, E_FAIL);
 	NULL_CHECK_RETURN(m_pTextureParticleTransform_BowBack, E_FAIL);
 
 
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
-
-	_uint num = 0;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform_BowFront;
-	m_vecTextureParticleDesc[num].TotalParticleTime = 99999.f;
-
+	// 0
+	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	instanceDesc.TotalParticleTime = 99999.f;
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
-	num = 1;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
+	// 1
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	// 9999여도 죽는다. 
+	m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+	// 2
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Circle);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
-	num = 2;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform_BowBack;
-	m_vecTextureParticleDesc[num].TotalParticleTime = 99999.f;
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]));
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]));
+	// 3
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Suck);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	// 4
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Dash);
+	instanceDesc.FollowingTarget = nullptr;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	// 5
+	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowFront;
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+
 
 	return S_OK;
 }
@@ -457,8 +442,13 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pDissolveCom);
 
+	TRANSDEAD(m_pTextureParticleTransform);
+	TRANSDEAD(m_pTextureParticleTransform_BowUp);
+	TRANSDEAD(m_pTextureParticleTransform_BowBack);
+
+
 	Safe_Release(m_pTextureParticleTransform);
-	Safe_Release(m_pTextureParticleTransform_BowFront);
+	Safe_Release(m_pTextureParticleTransform_BowUp);
 	Safe_Release(m_pTextureParticleTransform_BowBack);
 	
 }

@@ -59,16 +59,23 @@ public:
 
 public:
 	HRESULT		Processing_RepelCollision(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
+	HRESULT		Processing_MainCollision(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
 private:
+
+	HRESULT Inspect_MainCollision();
+	HRESULT Inspect_RepelGroup();
+
 	HRESULT Inspect_Player_To_MonsterWeapon();
 	HRESULT Inspect_PlayerWeapon_To_Monster();
 	HRESULT Inspect_DynamicObject_To_PlayerNPlayerWeapon();
 	HRESULT Inspect_NPC_To_Player();
 	HRESULT Inspect_Terrain_To_All();
 
-	HRESULT Inspect_RepelGroup();
+	void	Start_InspectMainCollision();
 	void	Start_InspectRepelCollision();
+
+	HRESULT	Inspect_PlayerParkur_To_ParkurObj();
 
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
@@ -76,8 +83,10 @@ private:
 	
 	list<EDITPOINTCOLLIDER>		m_EditPointCollider;
 
+	CollsionThreadStateID		m_eRepelCollisionThreadState = CTS_ENTER;
 	CollsionThreadStateID		m_eCollisionThreadState = CTS_ENTER;
 
+	CRITICAL_SECTION* m_pCriSec = nullptr;
 
 private:
 	ID3D11Device* m_pDevice = nullptr;

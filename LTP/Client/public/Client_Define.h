@@ -15,6 +15,9 @@ extern _bool g_bShowMouse;
 #define GETIMGUI GetSingle(CImguiMgr)
 #endif // USE_IMGUI
 
+#define GETPARTICLE GetSingle(CPartilceCreateMgr)
+
+
 namespace Client {};
 using namespace Client;
 

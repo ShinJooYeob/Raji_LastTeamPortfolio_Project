@@ -367,7 +367,10 @@ HRESULT CUtilityMgr::Ready_TextureParticles()
 
 
 		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			DEBUGBREAK;
 			return E_FAIL;
+		}
 
 
 		DWORD	dwByte = 0;
@@ -540,9 +543,11 @@ HRESULT CUtilityMgr::Ready_MeshParticles()
 
 		HANDLE hFile = ::CreateFileW(tPathList[i].szFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
 
-
 		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			DEBUGBREAK;
 			return E_FAIL;
+		}
 
 
 		DWORD	dwByte = 0;

@@ -118,6 +118,30 @@ _int CScene_Edit::Update(_double fDeltaTime)
 
 		if (m_pCreatedTerrain != nullptr)
 			m_pCreatedTerrain->Update(fDeltaTime);
+
+		for (auto& Element : m_vecTriggerObject)
+		{
+			if (Element->Update(fDeltaTime) < 0)
+			{
+				__debugbreak();
+				return -1;
+			}
+		}
+
+		if (m_pMonsterBatchTrigger != nullptr)
+		{
+
+			m_pMonsterBatchTrigger->Update(fDeltaTime);
+
+			for (auto& Element : m_vecBatchedMonster)
+			{
+				if (Element->Update(fDeltaTime) < 0)
+				{
+					__debugbreak();
+					return -1;
+				}
+			}
+		}
 		break;
 	case 1://UI 탭
 
@@ -191,6 +215,31 @@ _int CScene_Edit::LateUpdate(_double fDeltaTime)
 		}
 		if (m_pCreatedTerrain != nullptr)
 			m_pCreatedTerrain->LateUpdate(fDeltaTime);
+
+		for (auto& Element : m_vecTriggerObject)
+		{
+			if (Element->LateUpdate(fDeltaTime) < 0)
+			{
+				__debugbreak();
+				return -1;
+			}
+		}
+
+		if (m_pMonsterBatchTrigger != nullptr)
+		{
+
+			m_pMonsterBatchTrigger->LateUpdate(fDeltaTime);
+
+			for (auto& Element : m_vecBatchedMonster)
+			{
+				if (Element->LateUpdate(fDeltaTime) < 0)
+				{
+					__debugbreak();
+					return -1;
+				}
+			}
+		}
+
 		break;
 	case 1://UI 탭
 
@@ -459,6 +508,21 @@ HRESULT CScene_Edit::Update_First_Frame(_double fDeltatime, const char * szFrame
 			FAILED_CHECK(Update_HeightMap(fDeltatime));
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Trigger"))
+		{
+			m_iNowTab = 0;
+			FAILED_CHECK(Update_TriggerTab(fDeltatime));
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Monster"))
+		{
+			m_iNowTab = 0;
+			FAILED_CHECK(Update_MosnterBatchTool(fDeltatime));
+			ImGui::EndTabItem();
+		}
+		
+
+
 		ImGui::EndTabBar();
 	}
 
@@ -849,6 +913,59 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 	}
 	break;
+	case Client::CScene_Edit::Data_Trigger:
+	{
+		//../bin/Resources/Data/ParicleData/TextureParticle/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		//HANDLE hFile = CreateFileW(szFullPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, NULL);
+
+
+
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+
+		_int iIDLength = 0;
+
+
+		for (auto& pTrigObj : m_vecTriggerObject)
+		{
+			_uint eNumber = pTrigObj->Get_eNumber();
+			wstring eObjectID = pTrigObj->Get_eObjectID();
+
+			_float4x4 WorldMat = ((CTransform*)pTrigObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
+			_float4x4 ValueData = pTrigObj->Get_ValueMat();
+
+
+			WriteFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			
+			iIDLength = eObjectID.length();
+			WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			WriteFile(hFile, eObjectID.c_str(), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+			WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			WriteFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+
+		}
+
+		CloseHandle(hFile);
+	}
+	break;
+	
 
 	case Client::CScene_Edit::Data_Navigation:
 	{
@@ -900,6 +1017,67 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 	}
 	break;
 
+	case Client::CScene_Edit::Data_MonsterBatchTrigger:
+	{	
+		//../bin/Resources/Data/ParicleData/TextureParticle/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		//HANDLE hFile = CreateFileW(szFullPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, NULL);
+
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+
+		_int iIDLength = 0;
+
+
+		_tchar	 eObjectID[MAX_PATH] = L"";
+		_float4x4 WorldMat = ((CTransform*)m_pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();;
+		_float4x4 ValueMat = m_pMonsterBatchTrigger->Get_ValueMat();
+
+
+		WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+		WriteFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+
+
+		for (auto& pMonsterObj : m_vecBatchedMonster)
+		{
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			WorldMat = ((CTransform*)pMonsterObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
+
+			iIDLength = lstrlen(pMonsterObj->Get_eObjectID());
+
+			WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			
+			WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			WriteFile(hFile, pMonsterObj->Get_eObjectID(), sizeof(_tchar) *iIDLength, &dwByte, nullptr);
+		
+		}
+
+
+		CloseHandle(hFile);
+
+
+	}
+	break;
+
+	
+
 	default:
 
 		break;
@@ -930,12 +1108,12 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			ZeroMemory(m_ArrBuffer, sizeof(_float) * 4);
 			m_ArrBuffer[3] = 0.1f;
 			ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
-						m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
+			m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
 			m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
 
 			m_bIsModelMove = 0;
 			m_iKindsOfMoving = 0;
-			m_iSelectedXYZ = 0; 
+			m_iSelectedXYZ = 0;
 			m_iPassIndex = 0;
 		}
 
@@ -986,13 +1164,13 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			ReadFile(hFile, &(tData.PassIndex), sizeof(_uint), &dwByte, nullptr);
 			ReadFile(hFile, &(tData.FrustumRange), sizeof(_float), &dwByte, nullptr);
 			ReadFile(hFile, &(tData.bIsOcllsuion), sizeof(_bool), &dwByte, nullptr);
-			
+
 			ReadFile(hFile, &(tData.matSRT.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 			ReadFile(hFile, &(tData.matTransform.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
 
 			if (0 == dwByte)
 				break;
-			
+
 			//객채 생성해주기
 
 			pInstance->Add_GameObject_Out_of_Manager(&(tData.pObject), SCENE_EDIT, tData.ObjectID);
@@ -1018,7 +1196,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 				tDissolveDesc.pShader = (CShader*)tData.pObject->Get_Component(TAG_COM(Com_Shader));
 				tDissolveDesc.RampTextureIndex = 1;
 
-				tData.pObject->Change_Component_by_NewAssign(SCENE_EDIT, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve),&tDissolveDesc);
+				tData.pObject->Change_Component_by_NewAssign(SCENE_EDIT, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), &tDissolveDesc);
 
 				MeshIDList.push_back(tData.MeshID);
 			}
@@ -1042,7 +1220,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 		m_iPassIndex = (m_vecBatchedObject[m_iBatchedVecIndex].PassIndex);
 
 		CloseHandle(hFile);
-	
+
 		//wstring
 		OutputDebugStringW(L"TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));\n");
 		OutputDebugStringW(L"CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);\n");
@@ -1072,7 +1250,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		MultiByteToWideChar(CP_UTF8, 0, szFileFath, -1, szWidePath, sizeof(szWidePath));
 
-		FAILED_CHECK( LoadTextureByAssimp(szWidePath));
+		FAILED_CHECK(LoadTextureByAssimp(szWidePath));
 
 
 		if (m_TargetSRV == nullptr)			return E_FAIL;
@@ -1188,7 +1366,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 		CloseHandle(hFile);
 
 
-		
+
 	}
 	break;
 	case Client::CScene_Edit::Data_Particle_Mesh:
@@ -1330,7 +1508,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		CAMACTDESC tDesc;
 
-		for (_uint i = 0 ; i < iCount; i++)
+		for (_uint i = 0; i < iCount; i++)
 		{
 			ReadFile(hFile, &(tDesc.fDuration), sizeof(_float), &dwByte, nullptr);
 			ReadFile(hFile, &(tDesc.vPosition), sizeof(_float3), &dwByte, nullptr);
@@ -1382,6 +1560,73 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 
 
+	}
+	break;
+	case Client::CScene_Edit::Data_Trigger:
+
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		//../bin/Resources/Data/ParicleData/TextureParticle/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+			CTriggerObject* pObject = nullptr;
+
+			FAILED_CHECK(pInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_EDIT, eObjectID, &eNumber));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			m_vecTriggerObject.push_back(pObject);
+		}
+
+		CloseHandle(hFile);
 	}
 	break;
 	case Client::CScene_Edit::Data_FilterMap:
@@ -1539,6 +1784,93 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 	}
 	break;
+
+	case Client::CScene_Edit::Data_MonsterBatchTrigger:
+	{
+		for (auto& pTrigger : m_vecBatchedMonster)
+			Safe_Release(pTrigger);
+		m_vecBatchedMonster.clear();
+		Safe_Release(m_pMonsterBatchTrigger);
+
+
+		//../bin/Resources/Data/ParicleData/TextureParticle/
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+		_tchar wFileName[MAX_PATH] = L"";
+
+		MultiByteToWideChar(CP_UTF8, 0, szFileName, -1, wFileName, sizeof(wFileName));
+		//WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		lstrcat(szFullPath, wFileName);
+
+
+		//HANDLE hFile = CreateFileW(szFullPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+
+		_int iIDLength = 0;
+
+
+		_float4x4 WorldMat = XMMatrixIdentity();
+		_float4x4 ValueMat = XMMatrixIdentity();
+		_tchar	 eObjectID [MAX_PATH]= L"";
+
+		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+		ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+
+
+
+		g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&m_pMonsterBatchTrigger, SCENE_STATIC, TAG_OP(Prototype_MonsterBatchTrigger));
+		NULL_CHECK_RETURN(m_pMonsterBatchTrigger, E_FAIL);
+
+		CTransform * pTrigTransform = (CTransform*)m_pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+		//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+
+		pTrigTransform->Set_Matrix(WorldMat);
+		m_pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+
+
+		while(true)
+		{
+			ZeroMemory(eObjectID, sizeof(_tchar)* MAX_PATH);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+			CESCursor*	pObject = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_STATIC, TAG_OP(Prototype_EditorCursor));
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			CTransform * pMonsterTransform = (CTransform*)pObject->Get_Component(TAG_COM(Com_Transform));
+
+			//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+
+			pMonsterTransform->Set_Matrix(WorldMat);
+			pObject->Set_eObjectID(eObjectID);
+			pObject->Set_Color({ 0,0,1,1 });
+
+
+			m_vecBatchedMonster.push_back(pObject);
+		}
+
+
+		CloseHandle(hFile);
+
+
+	}
+	break;
+
 
 	default:
 
@@ -3059,34 +3391,1348 @@ HRESULT CScene_Edit::RenewElenmetTransform(OBJELEMENT * pObjElement)
 
 	return S_OK;
 }
+HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
+{
+
+
+
+	if (ImGui::BeginListBox("Trigger Object Prototype"))
+	{
+
+		for (int i = Prototype_Trigger_ChangeCameraView; i <= Prototype_PlayerSkill_ShellingArrow - 1; i++)
+		{
+			const bool is_selected = false;
+
+			char buf[MAX_PATH];
+			sprintf_s(buf, "%ws", TAG_OP(OBJECTPROTOTYPEID(i)));
+
+
+			if (ImGui::Selectable(buf, is_selected))
+			{
+				eObjectID = i;
+
+			}
+
+
+		}
+		ImGui::EndListBox();
+	}
+
+	{
+		wstring oo = TAG_OP(OBJECTPROTOTYPEID(eObjectID));
+		string ss;
+		ImGui::Text(ss.assign(oo.begin(), oo.end()).c_str());
+	}
+	// enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_END };
+
+	Make_VerticalSpacing(1);
+	ImGui::InputInt("E Number", &eNumber);
+	eNumber = max(min(eNumber, (CTriggerObject::PACUR_END - 1)), CTriggerObject::PACUR_LEDGE);
+
+	Make_VerticalSpacing(1);
+
+
+	if (ImGui::Button("Create Trigger"))
+	{
+		CTriggerObject*	pObject = nullptr; 
+		g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_STATIC, TAG_OP(OBJECTPROTOTYPEID(eObjectID)),&eNumber);
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+
+		CTransform * pTrigTransform= (CTransform*)pObject->Get_Component(TAG_COM(Com_Transform));
+		
+		//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+		_float3 vv;
+		m_fPickingedPosition;
+
+		memcpy(&vv, m_fPickingedPosition, sizeof(_float3));
+		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vv);
+
+		pObject->Set_eNumberNObjectID(eNumber, TAG_OP(OBJECTPROTOTYPEID(eObjectID)) );
+
+
+		m_vecTriggerObject.push_back(pObject);
+	}
+
+	Make_VerticalSpacing(1);
+
+	if (m_vecTriggerObject.size() > 0)
+	{
+
+		ImGui::InputInt("Trigger Index", &iTriggerIndex);
+		iTriggerIndex = max(min(iTriggerIndex, _int(m_vecTriggerObject.size() - 1)), 0);
+
+
+		Make_VerticalSpacing(1);
+
+		if (ImGui::Button("Delete Trigger"))
+		{
+			auto iter = m_vecTriggerObject.begin();
+			iter = iter+iTriggerIndex;
+			m_vecTriggerObject.erase(iter);
+			return S_OK;
+		}
+
+
+		Make_VerticalSpacing(1);
+
+		CTransform * pTrigTransform = (CTransform*)m_vecTriggerObject[iTriggerIndex]->Get_Component(TAG_COM(Com_Transform));
+
+
+		Make_VerticalSpacing(2);
+		ImGui::Text("Position");
+		static _float DragSpeed = 0.01f;
+		ImGui::DragFloat("Drag Speed", &DragSpeed, 0.013f, 0.00001f, 100.f);
+		DragSpeed = min(max(DragSpeed, 0.00001f), 100.f);
+
+		float ObjectPosition[3] = { 0,0,0 };
+		_float3 vPosition = pTrigTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		memcpy(ObjectPosition, &vPosition, sizeof(_float) * 3);
+		ImGui::DragFloat3("   ", ObjectPosition, DragSpeed, -FLT_MAX, FLT_MAX);
+
+		memcpy(&vPosition, ObjectPosition, sizeof(_float) * 3);
+
+		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+
+		Make_VerticalSpacing(2);
+		ImGui::Text("Rotation");
+		ImGui::SameLine(250);	ImGui::Text("Scaling");
+
+		static _float RotSpeed = 60.;
+		ImGui::DragFloat("Rot Speed", &RotSpeed, 0.1f, 0.001f, 360);
+		RotSpeed = min(max(RotSpeed, 0), 360);
+
+
+		ImGui::Button("-", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
+
+		ImGui::Button("+", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+
+
+		ImGui::SameLine(250);
+		_float3 OldScaled = pTrigTransform->Get_Scale();
+		_float Scaled = OldScaled.x;
+		ImGui::DragFloat("X ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.x = Scaled;
+
+
+
+		ImGui::Button("- ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("Y");			ImGui::SameLine(0, 10);
+		ImGui::Button("+ ", ImVec2(20, 18));
+
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+
+		ImGui::SameLine(250);
+		Scaled = OldScaled.y;
+		ImGui::DragFloat("Y ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.y = Scaled;
+		ImGui::Button("-  ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("Z");			ImGui::SameLine(0, 10);
+		ImGui::Button("+  ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+
+		ImGui::SameLine(250);
+		Scaled = OldScaled.z;
+		ImGui::DragFloat("Z ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.z = Scaled;
+
+		OldScaled.x = max(OldScaled.x, 0.001f);
+		OldScaled.y = max(OldScaled.y, 0.001f);
+		OldScaled.z = max(OldScaled.z, 0.001f);
+
+
+		pTrigTransform->Scaled_All(OldScaled);
+
+
+		Make_VerticalSpacing(1);
+		ImGui::SameLine(50);
+		if (ImGui::Button("ReSet Rot", ImVec2(80, 25)))
+		{
+			pTrigTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), 0);
+		}
+
+		ImGui::SameLine(250);
+		if (ImGui::Button("ReSet Scale", ImVec2(100, 25)))
+		{
+			pTrigTransform->Scaled_All(_float3(1, 1, 1));
+		}
+
+		Make_VerticalSpacing(5);
+
+
+		_float4x4 ValueMat = m_vecTriggerObject[iTriggerIndex]->Get_ValueMat();
+
+		_float Imguifloat4[4];
+		memcpy(Imguifloat4, &(ValueMat._11), sizeof(_float4));
+		ImGui::InputFloat4(": row 1", Imguifloat4);
+		memcpy(&(ValueMat._11), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(ValueMat._21), sizeof(_float4));
+		ImGui::InputFloat4(": row 2", Imguifloat4);
+		memcpy(&(ValueMat._21), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(ValueMat._31), sizeof(_float4));
+		ImGui::InputFloat4(": row 3", Imguifloat4);
+		memcpy(&(ValueMat._31), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(ValueMat._41), sizeof(_float4));
+		ImGui::InputFloat4(": row 4", Imguifloat4);
+		memcpy(&(ValueMat._41), Imguifloat4, sizeof(_float4));
+
+		m_vecTriggerObject[iTriggerIndex]->Set_ValueMat(&ValueMat);
+	}
+
+
+	FAILED_CHECK(Widget_TriggerData(fDeltatime));
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Widget_TriggerData(_double fDeltatime)
+{
+	if (ImGui::Button("New Trigger"))
+		ImGui::OpenPopup("New Trigger");
+	ImGui::SameLine();
+	if (ImGui::Button("Save Trigger"))
+		ImGui::OpenPopup("Save Trigger");
+	ImGui::SameLine();
+	if (ImGui::Button("Laod Trigger"))
+		ImGui::OpenPopup("Laod Trigger");
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("New Trigger", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("!!!!!!!!!!!!!!!!Waring!!!!!!!!!!!!!!!!\n\n Delete Batched Trigger Without Save!!!\n\n	Please Check Save One more\n\n\n");
+		ImGui::Separator();
+
+		//static int unused_i = 0;
+		//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+
+		//static bool dont_ask_me_next_time = false;
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+		//ImGui::PopStyleVar();
+
+		if (ImGui::Button("OK", ImVec2(130, 0))) {
+
+
+			for (auto& pTrigger : m_vecTriggerObject)
+				Safe_Release(pTrigger);
+			m_vecTriggerObject.clear();
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(130, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Save Trigger", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/Trigger/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+		ImGui::Text("Save Trigger!\n\nExist Trigger DataFiles");
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+		ImGui::Separator();
+		if (ImGui::Button("Save", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					ImGui::OpenPopup("One More Check");
+				}
+				else
+				{
+					//실제 저장
+
+					Sava_Data(filter.InputBuf, Data_Trigger);
+
+					ImGui::CloseCurrentPopup();
+					m_FilePathList.clear();
+
+
+				}
+			}
+
+
+
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+			m_FilePathList.clear();
+		}
+
+
+		//서브 팝업
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("One More Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			ImGui::Text("Trigger data Already Exist\nDo you want to Override on it?");
+
+			if (ImGui::Button("Ok", ImVec2(130, 0)))
+			{
+
+
+				//실제 저장
+				Sava_Data(filter.InputBuf, Data_Trigger);
+
+				ImGui::CloseCurrentPopup();
+				m_FilePathList.clear();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(130, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Laod Trigger", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Laod Trigger!\n\n");
+		ImGui::Separator();
+
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/Trigger/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+
+
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					for (auto& pTrigger : m_vecTriggerObject)
+						Safe_Release(pTrigger);
+					m_vecTriggerObject.clear();
+
+
+					Load_Data(filter.InputBuf, Data_Trigger);
+					m_FilePathList.clear();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			m_FilePathList.clear();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	return S_OK;
+
+
+	return S_OK;
+}
+
+//HRESULT CScene_Edit::Update_MosnterBatchTool(_double fDeltatime)
+//{
+//	return E_NOTIMPL;
+//}
+//
+//HRESULT CScene_Edit::Widget_MosnterBatchToolData(_double fDeltatime)
+//{
+//	return E_NOTIMPL;
+//}
+
+
 
 #pragma endregion MapTab
 
 #pragma region UITab
-HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
+
+
+HRESULT CScene_Edit::Update_MosnterBatchTool(_double fDeltatime)
 {
-	return E_NOTIMPL;
+
+	if (ImGui::TreeNode("MonsterBatch Trigger"))
+	{
+
+		if (ImGui::Button("Create Trigger"))
+		{
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&m_pMonsterBatchTrigger, SCENE_STATIC, TAG_OP(Prototype_MonsterBatchTrigger));
+			NULL_CHECK_RETURN(m_pMonsterBatchTrigger, E_FAIL);
+
+			CTransform * pTrigTransform = (CTransform*)m_pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+			//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+			_float3 vv;
+			m_fPickingedPosition;
+
+			memcpy(&vv, m_fPickingedPosition, sizeof(_float3));
+			pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vv);
+
+
+
+		}
+
+		ImGui::SameLine(0,10);
+
+		if (ImGui::Button("Delete Trigger"))
+		{
+			Safe_Release(m_pMonsterBatchTrigger);
+
+
+			for (auto& pTrigger : m_vecBatchedMonster)
+				Safe_Release(pTrigger);
+			m_vecBatchedMonster.clear();
+
+			ImGui::TreePop();
+			return S_OK;
+		}
+
+
+
+		Make_VerticalSpacing(1);
+
+
+		if (m_pMonsterBatchTrigger != nullptr)
+		{
+			CTransform * pTrigTransform = (CTransform*)m_pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+
+			Make_VerticalSpacing(2);
+			ImGui::Text("Position");
+			static _float DragSpeed = 0.01f;
+			ImGui::DragFloat("Drag Speed", &DragSpeed, 0.013f, 0.00001f, 100.f);
+			DragSpeed = min(max(DragSpeed, 0.00001f), 100.f);
+
+			float ObjectPosition[3] = { 0,0,0 };
+			_float3 vPosition = pTrigTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+			memcpy(ObjectPosition, &vPosition, sizeof(_float) * 3);
+			ImGui::DragFloat3("   ", ObjectPosition, DragSpeed, -FLT_MAX, FLT_MAX);
+
+			memcpy(&vPosition, ObjectPosition, sizeof(_float) * 3);
+
+			pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+
+			Make_VerticalSpacing(2);
+			ImGui::Text("Rotation");
+			ImGui::SameLine(250);	ImGui::Text("Scaling");
+
+			static _float RotSpeed = 60.;
+			ImGui::DragFloat("Rot Speed", &RotSpeed, 0.1f, 0.001f, 360);
+			RotSpeed = min(max(RotSpeed, 0), 360);
+
+
+			ImGui::Button("-", ImVec2(20, 18));
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+			}
+			ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
+
+			ImGui::Button("+", ImVec2(20, 18));
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+			}
+
+
+			ImGui::SameLine(250);
+			_float3 OldScaled = pTrigTransform->Get_Scale();
+			_float Scaled = OldScaled.x;
+			ImGui::DragFloat("X ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+			OldScaled.x = Scaled;
+
+
+
+			ImGui::Button("- ", ImVec2(20, 18));
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+			}
+			ImGui::SameLine(0, 10);		ImGui::Text("Y");			ImGui::SameLine(0, 10);
+			ImGui::Button("+ ", ImVec2(20, 18));
+
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+			}
+
+			ImGui::SameLine(250);
+			Scaled = OldScaled.y;
+			ImGui::DragFloat("Y ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+			OldScaled.y = Scaled;
+			ImGui::Button("-  ", ImVec2(20, 18));
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+			}
+			ImGui::SameLine(0, 10);		ImGui::Text("Z");			ImGui::SameLine(0, 10);
+			ImGui::Button("+  ", ImVec2(20, 18));
+			if (ImGui::IsItemHovered())
+			{
+				_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+				pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+				pTrigTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+				pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+			}
+
+			ImGui::SameLine(250);
+			Scaled = OldScaled.z;
+			ImGui::DragFloat("Z ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+			OldScaled.z = Scaled;
+
+			OldScaled.x = max(OldScaled.x, 0.001f);
+			OldScaled.y = max(OldScaled.y, 0.001f);
+			OldScaled.z = max(OldScaled.z, 0.001f);
+
+
+			pTrigTransform->Scaled_All(OldScaled);
+
+
+			Make_VerticalSpacing(1);
+			ImGui::SameLine(50);
+			if (ImGui::Button("ReSet Rot", ImVec2(80, 25)))
+			{
+				pTrigTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), 0);
+			}
+
+			ImGui::SameLine(250);
+			if (ImGui::Button("ReSet Scale", ImVec2(100, 25)))
+			{
+				pTrigTransform->Scaled_All(_float3(1, 1, 1));
+			}
+
+			Make_VerticalSpacing(5);
+
+
+			_float4x4 ValueMat = m_pMonsterBatchTrigger->Get_ValueMat();
+
+			_float Imguifloat4[4];
+			memcpy(Imguifloat4, &(ValueMat._11), sizeof(_float4));
+			ImGui::InputFloat4(": row 1", Imguifloat4);
+			memcpy(&(ValueMat._11), Imguifloat4, sizeof(_float4));
+
+			memcpy(Imguifloat4, &(ValueMat._21), sizeof(_float4));
+			ImGui::InputFloat4(": row 2", Imguifloat4);
+			memcpy(&(ValueMat._21), Imguifloat4, sizeof(_float4));
+
+			memcpy(Imguifloat4, &(ValueMat._31), sizeof(_float4));
+			ImGui::InputFloat4(": row 3", Imguifloat4);
+			memcpy(&(ValueMat._31), Imguifloat4, sizeof(_float4));
+
+			memcpy(Imguifloat4, &(ValueMat._41), sizeof(_float4));
+			ImGui::InputFloat4(": row 4", Imguifloat4);
+			memcpy(&(ValueMat._41), Imguifloat4, sizeof(_float4));
+
+			m_pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+
+
+		}
+
+		ImGui::TreePop();
+	}
+
+
+
+
+	if (ImGui::TreeNode("Add Monster To Trigger"))
+	{
+
+		if (m_pMonsterBatchTrigger != nullptr)
+		{
+
+			FAILED_CHECK(Update_Add_Mosnter_InTrigger(fDeltatime));
+		}
+
+		ImGui::TreePop();
+	}
+
+
+	FAILED_CHECK(Widget_MosnterBatchToolData(fDeltatime));
+
+	return S_OK;
 }
-HRESULT CScene_Edit::Widget_TriggerSRT(_double fDeltatime)
+
+HRESULT CScene_Edit::Update_Add_Mosnter_InTrigger(_double fDeltatime)
 {
-	return E_NOTIMPL;
+
+	if (ImGui::BeginListBox("Monster Object Prototype"))
+	{
+
+		for (int i = Prototype_Object_Monster_Mahinasura_Minion; i <= Prototype_Object_Monster_Gadasura_Rage; i++)
+		{
+			const bool is_selected = false;
+
+			char buf[MAX_PATH];
+			sprintf_s(buf, "%ws", TAG_OP(OBJECTPROTOTYPEID(i)));
+
+
+			if (ImGui::Selectable(buf, is_selected))
+			{
+				MonsterID = i;
+			}
+
+
+		}
+		ImGui::EndListBox();
+	}
+
+	{
+		wstring oo = TAG_OP(OBJECTPROTOTYPEID(MonsterID));
+		string ss;
+		ImGui::Text(ss.assign(oo.begin(), oo.end()).c_str());
+	}
+
+
+	Make_VerticalSpacing(1);
+
+
+	if (ImGui::Button("Add Monster"))
+	{
+		CESCursor*	pObject = nullptr;
+		g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pObject, SCENE_STATIC, TAG_OP(Prototype_EditorCursor), &eNumber);
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+
+		CTransform * pTrigTransform = (CTransform*)pObject->Get_Component(TAG_COM(Com_Transform));
+
+		//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+		_float3 vv;
+		m_fPickingedPosition;
+
+		memcpy(&vv, m_fPickingedPosition, sizeof(_float3));
+		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vv);
+
+		pObject->Set_eObjectID(TAG_OP(OBJECTPROTOTYPEID(MonsterID)));
+		pObject->Set_Color({ 0,0,1,1 });
+
+
+		m_vecBatchedMonster.push_back(pObject);
+	}
+
+
+
+	Make_VerticalSpacing(1);
+
+	if (m_vecBatchedMonster.size() > 0)
+	{
+
+		m_MonsterIndex = max(min(m_MonsterIndex, _int(m_vecBatchedMonster.size() - 1)), 0);
+		m_vecBatchedMonster[m_MonsterIndex]->Set_Color({ 0,0,1,1 });
+		ImGui::InputInt("Monster Index", &m_MonsterIndex);
+		m_MonsterIndex = max(min(m_MonsterIndex, _int(m_vecBatchedMonster.size() - 1)), 0);
+		m_vecBatchedMonster[m_MonsterIndex]->Set_Color({ 0,1,0,1 });
+
+
+		Make_VerticalSpacing(1);
+
+		if (ImGui::Button("Delete Monster"))
+		{
+			auto iter = m_vecBatchedMonster.begin();
+			iter = iter + iTriggerIndex;
+			m_vecBatchedMonster.erase(iter);
+			return S_OK;
+		}
+
+
+		Make_VerticalSpacing(5);
+
+		{
+
+			char buf[MAX_PATH];
+			sprintf_s(buf, "%ws", m_vecBatchedMonster[m_MonsterIndex]->Get_eObjectID());
+
+			string sText = "Selected Index Monster Prototype : " + string(buf);
+		
+			ImGui::Text(sText.c_str());
+			Make_VerticalSpacing(1);
+		}
+
+		CTransform * pTrigTransform = (CTransform*)m_vecBatchedMonster[m_MonsterIndex]->Get_Component(TAG_COM(Com_Transform));
+
+
+		Make_VerticalSpacing(2);
+		ImGui::Text("Position");
+		static _float DragSpeed = 0.01f;
+		ImGui::DragFloat("Drag Speed", &DragSpeed, 0.013f, 0.00001f, 100.f);
+		DragSpeed = min(max(DragSpeed, 0.00001f), 100.f);
+
+		float ObjectPosition[3] = { 0,0,0 };
+		_float3 vPosition = pTrigTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		memcpy(ObjectPosition, &vPosition, sizeof(_float) * 3);
+		ImGui::DragFloat3("   ", ObjectPosition, DragSpeed, -FLT_MAX, FLT_MAX);
+
+		memcpy(&vPosition, ObjectPosition, sizeof(_float) * 3);
+
+		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+
+		Make_VerticalSpacing(2);
+		ImGui::Text("Rotation");
+		ImGui::SameLine(250);	ImGui::Text("Scaling");
+
+		static _float RotSpeed = 60.;
+		ImGui::DragFloat("Rot Speed", &RotSpeed, 0.1f, 0.001f, 360);
+		RotSpeed = min(max(RotSpeed, 0), 360);
+
+
+		ImGui::Button("-", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
+
+		ImGui::Button("+", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+
+
+		ImGui::SameLine(250);
+		_float3 OldScaled = pTrigTransform->Get_Scale();
+		_float Scaled = OldScaled.x;
+		ImGui::DragFloat("X ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.x = Scaled;
+
+
+
+		ImGui::Button("- ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("Y");			ImGui::SameLine(0, 10);
+		ImGui::Button("+ ", ImVec2(20, 18));
+
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+
+		ImGui::SameLine(250);
+		Scaled = OldScaled.y;
+		ImGui::DragFloat("Y ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.y = Scaled;
+		ImGui::Button("-  ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+
+		}
+		ImGui::SameLine(0, 10);		ImGui::Text("Z");			ImGui::SameLine(0, 10);
+		ImGui::Button("+  ", ImVec2(20, 18));
+		if (ImGui::IsItemHovered())
+		{
+			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
+			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
+		}
+
+		ImGui::SameLine(250);
+		Scaled = OldScaled.z;
+		ImGui::DragFloat("Z ", &Scaled, 0.001f, 0.001f, FLT_MAX);
+		OldScaled.z = Scaled;
+
+		OldScaled.x = max(OldScaled.x, 0.001f);
+		OldScaled.y = max(OldScaled.y, 0.001f);
+		OldScaled.z = max(OldScaled.z, 0.001f);
+
+
+		pTrigTransform->Scaled_All(OldScaled);
+
+
+		Make_VerticalSpacing(1);
+		ImGui::SameLine(50);
+		if (ImGui::Button("ReSet Rot", ImVec2(80, 25)))
+		{
+			pTrigTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), 0);
+		}
+
+		ImGui::SameLine(250);
+		if (ImGui::Button("ReSet Scale", ImVec2(100, 25)))
+		{
+			pTrigTransform->Scaled_All(_float3(1, 1, 1));
+		}
+
+		Make_VerticalSpacing(5);
+
+
+		//_float4x4 ValueMat = m_vecTriggerObject[iTriggerIndex]->Get_ValueMat();
+
+		//_float Imguifloat4[4];
+		//memcpy(Imguifloat4, &(ValueMat._11), sizeof(_float4));
+		//ImGui::InputFloat4(": row 1", Imguifloat4);
+		//memcpy(&(ValueMat._11), Imguifloat4, sizeof(_float4));
+
+		//memcpy(Imguifloat4, &(ValueMat._21), sizeof(_float4));
+		//ImGui::InputFloat4(": row 2", Imguifloat4);
+		//memcpy(&(ValueMat._21), Imguifloat4, sizeof(_float4));
+
+		//memcpy(Imguifloat4, &(ValueMat._31), sizeof(_float4));
+		//ImGui::InputFloat4(": row 3", Imguifloat4);
+		//memcpy(&(ValueMat._31), Imguifloat4, sizeof(_float4));
+
+		//memcpy(Imguifloat4, &(ValueMat._41), sizeof(_float4));
+		//ImGui::InputFloat4(": row 4", Imguifloat4);
+		//memcpy(&(ValueMat._41), Imguifloat4, sizeof(_float4));
+
+		//m_vecTriggerObject[iTriggerIndex]->Set_ValueMat(&ValueMat);
+	}
+
+
+
+	return S_OK;
 }
-HRESULT CScene_Edit::Widget_BatchedTriggerList(_double fDeltatime)
+
+HRESULT CScene_Edit::Widget_MosnterBatchToolData(_double fDeltatime)
 {
-	return E_NOTIMPL;
+	if (ImGui::Button("New MonsBatch"))
+		ImGui::OpenPopup("New MonsBatch");
+	ImGui::SameLine();
+	if (ImGui::Button("Save MonsBatch"))
+		ImGui::OpenPopup("Save MonsBatch");
+	ImGui::SameLine();
+	if (ImGui::Button("Laod MonsBatch"))
+		ImGui::OpenPopup("Laod MonsBatch");
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("New MonsBatch", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("!!!!!!!!!!!!!!!!Waring!!!!!!!!!!!!!!!!\n\n Delete Batched Object Without Save!!!\n\n	Please Check Save One more\n\n\n");
+		ImGui::Separator();
+
+		//static int unused_i = 0;
+		//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+
+		//static bool dont_ask_me_next_time = false;
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+		//ImGui::PopStyleVar();
+
+		if (ImGui::Button("OK", ImVec2(130, 0))) {
+
+
+			for (auto& pTrigger : m_vecBatchedMonster)
+				Safe_Release(pTrigger);
+			m_vecBatchedMonster.clear();
+			Safe_Release(m_pMonsterBatchTrigger);
+
+
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(130, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Save MonsBatch", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/MonsterBatchData/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+		ImGui::Text("Save MonsBatch!\n\nExist MonsBatchDataFiles");
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+		ImGui::Separator();
+		if (ImGui::Button("Save", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+					ImGui::OpenPopup("One More Check");
+				}
+				else
+				{
+					//실제 저장
+
+					Sava_Data(filter.InputBuf, Data_MonsterBatchTrigger);
+
+					ImGui::CloseCurrentPopup();
+					m_FilePathList.clear();
+
+
+				}
+			}
+
+
+
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+			m_FilePathList.clear();
+		}
+
+
+		//서브 팝업
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("One More Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			ImGui::Text("MonsBatch data Already Exist\nDo you want to Override on it?");
+
+			if (ImGui::Button("Ok", ImVec2(130, 0)))
+			{
+
+				//실제 저장
+				Sava_Data(filter.InputBuf, Data_MonsterBatchTrigger);
+
+				ImGui::CloseCurrentPopup();
+				m_FilePathList.clear();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(130, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+
+		ImGui::EndPopup();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+	// Always center this window when appearing
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Laod MonsBatch", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Laod MonsBatch!\n\n");
+		ImGui::Separator();
+
+
+		if (m_FilePathList.size() == 0)
+		{
+			m_FilePathList.clear();
+			_tfinddata64_t fd;
+			__int64 handle = _tfindfirst64(TEXT("../bin/Resources/Data/MonsterBatchData/*.*"), &fd);
+			if (handle == -1 || handle == 0)
+				return E_FAIL;
+
+			_int iResult = 0;
+
+			//char szCurPath[128] = "../bin/Resources/Data/Map/";
+			//char szFullPath[128] = "";
+			char szFilename[MAX_PATH];
+
+			while (iResult != -1)
+			{
+				if (!lstrcmp(fd.name, L".") || !lstrcmp(fd.name, L".."))
+				{
+					iResult = _tfindnext64(handle, &fd);
+					continue;
+				}
+
+
+				WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+				//strcpy_s(szFullPath, szCurPath);
+				//strcat_s(szFullPath, szFilename);
+				m_FilePathList.push_back({ szFilename });
+
+
+				iResult = _tfindnext64(handle, &fd);
+			}
+
+
+			_findclose(handle);
+
+		}
+
+
+
+		static ImGuiTextFilter filter;
+
+		char	szCheckforSameFileName[256] = "";
+
+		if (ImGui::BeginListBox(" "))
+		{
+			auto iter = m_FilePathList.begin();
+
+
+			for (; iter != m_FilePathList.end(); iter++)
+			{
+				const bool is_selected = false;
+
+				if (filter.PassFilter(iter->c_str()))
+				{
+					if (ImGui::Selectable(iter->c_str(), is_selected))
+					{
+						strcpy_s(filter.InputBuf, iter->c_str());
+					}
+
+					if (!strcmp(iter->c_str(), filter.InputBuf))
+						strcpy_s(szCheckforSameFileName, filter.InputBuf);
+				}
+			}
+			ImGui::EndListBox();
+
+		}
+
+		filter.Draw("Input FileName");
+
+
+
+
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
+
+			if (strcmp(filter.InputBuf, ""))
+			{
+				if (!strcmp(szCheckforSameFileName, filter.InputBuf))
+				{
+
+					for (auto& pTrigger : m_vecBatchedMonster)
+						Safe_Release(pTrigger);
+					m_vecBatchedMonster.clear();
+					Safe_Release(m_pMonsterBatchTrigger);
+
+
+					Load_Data(filter.InputBuf, Data_MonsterBatchTrigger);
+					m_FilePathList.clear();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			m_FilePathList.clear();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+
+	return S_OK;
 }
-HRESULT CScene_Edit::Widget_CreateDeleteTrigger(_double fDeltatime)
-{
-	return E_NOTIMPL;
-}
-HRESULT CScene_Edit::Widget_SaveLoadTriggerData(_double fDeltatime)
-{
-	return E_NOTIMPL;
-}
-HRESULT CScene_Edit::RenewTriggerTransform(OBJELEMENT * pObjElement)
-{
-	return E_NOTIMPL;
-}
+
 HRESULT CScene_Edit::Ready_Layer_RendererEditUI(const _tchar * pLayerTag)
 {
 
@@ -6922,7 +8568,7 @@ HRESULT CScene_Edit::Ready_CamActionCursor(const _tchar * pLayerTag)
 	m_pCamCursor->Set_Color({1, 0, 0, 1});
 
 	CamDesc.fDuration = 1.f;
-
+	m_pMonsterBatchTrigger = nullptr;
 	return S_OK;
 }
 
@@ -7103,6 +8749,17 @@ void CScene_Edit::Free()
 	for (auto& CellName : m_vCellNames)
 		Safe_Delete(CellName);
 	m_vCellNames.clear();
+
+
+	for (auto& pTrigger : m_vecTriggerObject)
+		Safe_Release(pTrigger);
+	m_vecTriggerObject.clear();
+
+
+	for (auto& pTrigger : m_vecBatchedMonster)
+		Safe_Release(pTrigger);
+	m_vecBatchedMonster.clear();
+	Safe_Release(m_pMonsterBatchTrigger);
 
 
 	Safe_Release(m_pCreatedTerrain);

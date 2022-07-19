@@ -289,10 +289,12 @@ enum OBJECTPROTOTYPEID
 
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_Trigger_ChangeCameraView,
-
-
+	Prototype_Trigger_ChangeNavIndex,
+	Prototype_Trigger_PILLARTRIGGER,
 	Prototype_Trigger_TestLedgeTrigger,
 	//////////////////////////////////////////////////////////////////////////
+	Prototype_MonsterBatchTrigger,
+
 
 	Prototype_PlayerSkill_ShellingArrow,
 	Prototype_PlayerSkill_SpearWave,
@@ -317,6 +319,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_TestObject_Himeko,
 	Prototype_NaviPoint,
 	Prototype_NonInstanceMeshEffect,
+	Prototype_NonInstanceMeshEffect_TT,
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -439,6 +442,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Trigger_TestLedgeTrigger:
 		return TEXT("Prototype_Trigger_TestLedgeTrigger");
 		break;
+	case Prototype_MonsterBatchTrigger:
+		return TEXT("Prototype_MonsterBatchTrigger");
+		break;
+	case Prototype_Trigger_ChangeNavIndex:
+		return TEXT("Prototype_Trigger_ChangeNavIndex");
+		break;
+	case Prototype_Trigger_PILLARTRIGGER:
+		return TEXT("Prototype_Trigger_Pillartrigger");
+		break;
 		
 	case Prototype_PlayerSkill_ShellingArrow:
 		return TEXT("Prototype_PlayerSkill_ShellingArrow");
@@ -475,6 +487,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_NonInstanceMeshEffect:
 		return TEXT("Prototype_NonInstanceMeshEffect");
 		break;
+	case Prototype_NonInstanceMeshEffect_TT:
+		return TEXT("Prototype_NonInstanceMeshEffect_TT");
+		break;
+
 	case Prototype_NaviPoint:
 		return TEXT("Prototype_NaviPoint");
 		break;
@@ -738,6 +754,7 @@ enum LAYERID
 	Layer_ColBase,
 	Layer_ColStatic,
 	Layer_ColTrigger,
+	Layer_BatchMonsterTrigger,
 	Layer_ColDynamic,
 
 
@@ -789,7 +806,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_ColTrigger:
 		return TEXT("Layer_ColTrigger");
 		break;
-
+	case Layer_BatchMonsterTrigger:
+		return TEXT("Layer_BatchMonsterTrigger");
+		break;
+		
 	case Layer_ColDynamic:
 		return TEXT("Layer_ColDynamic");
 		
@@ -1004,6 +1024,33 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JY_Tornado,
 	Prototype_Mesh_Spear_UltiEffect,
 	Prototype_Mesh_Spear_NormalEffect,
+	Prototype_Mesh_Spear_SecondAttack,
+
+	Prototype_Mesh_Aura,
+	Prototype_Mesh_Aura2,
+	Prototype_Mesh_Beacon_Shape,
+	Prototype_Mesh_Big_Sheild,
+	Prototype_Mesh_Big_Sword,
+	Prototype_Mesh_Big_Sword2,
+	Prototype_Mesh_Bullet,
+	Prototype_Mesh_Elec_effect,
+	Prototype_Mesh_Elec_effect2,
+	Prototype_Mesh_Half_Sheild,
+	Prototype_Mesh_Spark_Mesh,
+	Prototype_Mesh_Spark_Mesh2,
+	Prototype_Mesh_Wing,
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	Prototype_Mesh_CIRCLE,
 	Prototype_Mesh_CIRCLE_DIST4,
@@ -1014,6 +1061,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_WING,
 	Prototype_Mesh_BOW1,
 	Prototype_Mesh_BOW2,
+	Prototype_Mesh_ICE,
 	
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
@@ -2251,7 +2299,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_ConeMesh:
 		return TEXT("ConeMesh.fbx");
 		break;
-
+		
+	case Prototype_Mesh_Spear_SecondAttack:
+		return TEXT("Spear_SecondAttack.fbx");
+		break;
 	case Prototype_Mesh_JY_Tornado:
 		return TEXT("JY_Tornado.fbx");
 		break;
@@ -2261,6 +2312,49 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Spear_UltiEffect:
 		return TEXT("Spear_UltiEffect.fbx");
 		break;
+
+
+	case Prototype_Mesh_Aura:
+		return TEXT("Aura.fbx");
+		break;
+	case Prototype_Mesh_Aura2:
+		return TEXT("Aura2.fbx");
+		break;
+	case Prototype_Mesh_Beacon_Shape:
+		return TEXT("Beacon_Shape.fbx");
+		break;
+	case Prototype_Mesh_Big_Sheild:
+		return TEXT("Big_Sheild.fbx");
+		break;
+	case Prototype_Mesh_Big_Sword:
+		return TEXT("Big_Sword.fbx");
+		break;
+	case Prototype_Mesh_Big_Sword2:
+		return TEXT("Big_Sword2.fbx");
+		break;
+	case Prototype_Mesh_Bullet:
+		return TEXT("Bullet.fbx");
+		break;
+	case Prototype_Mesh_Elec_effect:
+		return TEXT("Elec_effect.fbx");
+		break;
+
+	case Prototype_Mesh_Elec_effect2:
+		return TEXT("Elec_effect2.fbx");
+		break;
+	case Prototype_Mesh_Half_Sheild:
+		return TEXT("Half_Sheild.fbx");
+		break;
+	case Prototype_Mesh_Spark_Mesh:
+		return TEXT("Spark_Mesh.fbx");
+		break;
+	case Prototype_Mesh_Spark_Mesh2:
+		return TEXT("Spark_Mesh2.fbx");
+		break;
+	case Prototype_Mesh_Wing:
+		return TEXT("Wing.fbx");
+		break;
+
 
 
 		
@@ -2291,6 +2385,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_BOW2:
 		return TEXT("SM_Bow_Em_02.fbx");
 		break;
+	case Prototype_Mesh_ICE:
+		return TEXT("SM_ICE_01.fbx");
 
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");

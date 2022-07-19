@@ -6,13 +6,6 @@ BEGIN(Client)
 
 class CNonInstanceMeshEffect final : public CGameObject
 {
-public:
-	enum E_NonInstanceMeshEffect
-	{
-		E_NonInstanceMeshEffect_NONE,
-		E_NonInstanceMeshEffect_BASE,
-		E_NonInstanceMeshEffect_END,
-	};
 
 public:
 	//typedef struct tagNonInstanceMeshEffect
@@ -85,13 +78,6 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
-	void				Set_Base() { m_eUpdateType = E_NonInstanceMeshEffect_BASE; }
-
-	void				Set_ParentTransform(CTransform* parentTrans) {
-		Safe_Release(m_pParentTranscom);
-		m_pParentTranscom = parentTrans;
-		Safe_AddRef(m_pParentTranscom);
-	}
 
 private:
 	HRESULT				SetUp_Components();
@@ -100,7 +86,8 @@ private:
 	NONINSTNESHEFTDESC		m_tMeshDesc;
 	_float					m_fCurTime_Duration = 0.f;
 
-	_float3				m_vRotAxis = _float3(0,1,0); 
+	_float3				m_vRotAxis = _float3(0, 1, 0);
+	_float3				m_vMoveDir = _float3(0, 1, 0);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -109,7 +96,6 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CTransform*			m_pParentTranscom = nullptr;
 
-	E_NonInstanceMeshEffect m_eUpdateType = E_NonInstanceMeshEffect_NONE;
 
 
 public:

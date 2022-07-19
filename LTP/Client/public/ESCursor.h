@@ -25,6 +25,11 @@ public:
 	void Set_Color(_float4 vColor) { m_vColor = vColor; };
 	void Set_Position(_float3 vPosition) ;
 
+
+	const _tchar*  Get_eObjectID() { return m_eObjectID.c_str(); }
+	void Set_eObjectID(const _tchar* eID) { m_eObjectID = eID; }
+
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -32,6 +37,7 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 	_float4				m_vColor = _float4(1, 0, 0, 1);
+	wstring				m_eObjectID = TAG_OP(Prototype_Object_Monster_Mahinasura_Minion);
 private:
 	HRESULT SetUp_Components();
 

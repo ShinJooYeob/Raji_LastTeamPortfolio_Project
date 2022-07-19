@@ -269,3 +269,5 @@ static const char* Tag_ModelTextureTypeForEngine(unsigned int eTag)
 	}
 }
 #define  MODLETEXTYPEFORENGINE Tag_ModelTextureTypeForEngine
+
+#define ThreadSleepRate 1

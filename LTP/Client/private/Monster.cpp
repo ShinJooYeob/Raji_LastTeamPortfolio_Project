@@ -22,6 +22,12 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
+
+
+	CNavigation::NAVIDESC NaviDesc;
+	NaviDesc.iCurrentIndex = 0;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc));
+
 	return S_OK;
 }
 
@@ -60,4 +66,6 @@ _int CMonster::LateRender()
 void CMonster::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pNavigationCom);
 }

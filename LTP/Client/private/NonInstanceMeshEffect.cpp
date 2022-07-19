@@ -54,6 +54,22 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 		break;
 	}
 
+	switch (m_tMeshDesc.MoveDir)
+	{
+	case FollowingDir_Right:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
 
 
@@ -64,13 +80,15 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-
-
-	if (m_eUpdateType == CNonInstanceMeshEffect::E_NonInstanceMeshEffect_NONE)
-	{
-		m_fCurTime_Duration += (_float)fDeltaTime;
+	m_fCurTime_Duration += (_float)fDeltaTime;
 
 	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime);
+
+	if (m_tMeshDesc.MoveSpeed != 0)
+	{
+		m_pTransformCom->MovetoDir_bySpeed(m_vMoveDir.XMVector(), m_tMeshDesc.MoveSpeed, fDeltaTime);
+		
+	}
 
 	//m_tMeshDesc.NoiseTextureIndex = 381;
 	//m_tMeshDesc.MaskTextureIndex = 10;
@@ -81,60 +99,6 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 
 
 	//Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
-
-	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
-	{
-		Set_IsDead();
-	}
-	}
-	if (m_eUpdateType == CNonInstanceMeshEffect::E_NonInstanceMeshEffect_BASE)
-	{
-		m_fCurTime_Duration += (_float)fDeltaTime;
-
-		Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
-
-		if (m_pParentTranscom)
-		{
-			if (m_pParentTranscom->Get_RefCount() == 0)
-			{
-				Set_IsDead();
-				return _int();
-			}
-
-			m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
-			_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
-			_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
-			_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
-
-			_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
-			_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
-
-			if (m_tMeshDesc.RotAxis == CTransform::STATE_RIGHT)
-				m_pTransformCom->Turn_CW(Right, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-			else if (m_tMeshDesc.RotAxis == CTransform::STATE_UP)
-				m_pTransformCom->Turn_CW(Up, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-			else if (m_tMeshDesc.RotAxis == CTransform::STATE_LOOK)
-				m_pTransformCom->Turn_CW(Look, fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
-
-			else
-			{ }
-
-
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
-
-		}
-		else
-		{
-			// FIXPos
-
-		}
-
-		if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
-			Set_IsDead();
-
-
-	}
-
 
 
 
@@ -178,10 +142,6 @@ _int CNonInstanceMeshEffect::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
-
-	//_float2 noisingdir = _float2(1, 1).Get_Nomalize();
-	//_float	fDistortionNoisingPushPower = 0.5f;
-	//_float	fAppearTime = 2.f;
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
