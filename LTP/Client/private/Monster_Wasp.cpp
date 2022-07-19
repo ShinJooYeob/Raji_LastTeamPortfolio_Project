@@ -157,7 +157,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-	for (_uint i = 0; i < 16; i++)
+	for (_uint i = 0; i < 1; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -231,7 +231,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_1), &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}
@@ -526,12 +526,11 @@ HRESULT CMonster_Wasp::SetUp_Components()
 
 HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 {
-	for (auto & pInstance : m_vecInstancedTransform)
+	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
-		
-		if (pInstance.iRenderType == RENDMER_DIE)
+		if (m_vecInstancedTransform[i].iRenderType == RENDMER_DIE)
 		{
-			if (pInstance.fDissolve.x > 1.5)
+			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
 			{
 				CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 				CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
@@ -545,38 +544,49 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				_uint RandomPlayerIndex = iPlayerIndex + Random;
 
-				pInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
 
-				pInstance.iRenderType = RENDER_IDLE;
+				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
-				pInstance.iHp = 3;
-				pInstance.dTime = 0;
-				pInstance.bHit = false;
-				pInstance.fDissolve.x = 0;
-				pInstance.fDissolve.w = 1; //Live
+				m_vecInstancedTransform[i].iHp = 3;
+				m_vecInstancedTransform[i].dTime = 0;
+				m_vecInstancedTransform[i].bHit = false;
+				m_vecInstancedTransform[i].fDissolve.x = 0;
+				m_vecInstancedTransform[i].fDissolve.w = 1; //Live
 
 			}
 
 			continue;
 		}
 
-		switch (pInstance.iAnimType)
+		switch (m_vecInstancedTransform[i].iAnimType)
 		{
 		case ANIM_RUN_Frame1:
-			pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+			m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime, m_vecInstancedTransform[i].pNavigation);
 			break;
 		case ANIM_RUN_Frame2:
-			pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+			m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime, m_vecInstancedTransform[i].pNavigation);
 			break;
 		default:
 		{
-			if (m_pModel[pInstance.iAnimType]->Get_PlayRate() > 0.4)
+			if (m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() > 0.4)
 			{
-				pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime, m_vecInstancedTransform[i].pNavigation);
 
-				if (m_pModel[pInstance.iAnimType]->Get_PlayRate() > 0.8 && m_pModel[pInstance.iAnimType]->Get_PlayRate() <0.95)
+				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.8 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.85)
 				{
-					m_bAttackOn = true;
+						m_bAttackOn = true;
+						m_pAttackColliderCom->Set_ParantBuffer(0, i+1);
+
+						m_vecInstancedTransform[i].iSwtichIndex++;
+				}
+				else if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.93)
+				{
+
+					m_bAttackOn = false;
+					m_pAttackColliderCom->Delete_ChildeBuffer(0, i+1);
+
+					m_vecInstancedTransform[i].iSwtichIndex = 0;
 				}
 			}
 			break;

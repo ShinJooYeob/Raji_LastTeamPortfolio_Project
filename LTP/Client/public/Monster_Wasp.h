@@ -23,6 +23,7 @@ class CMonster_Wasp final : public CMonster
 		_int			iHp = 3;
 		_double			dTime = 0;
 		_bool			bHit = false;
+		_int			iSwtichIndex = 0;
 	}TRANSFORM_STATE;
 
 private:
