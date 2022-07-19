@@ -834,6 +834,9 @@
     <ClInclude Include="..\public\PillarTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1266,6 +1269,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PillarTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

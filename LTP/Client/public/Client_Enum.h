@@ -319,6 +319,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_TestObject_Himeko,
 	Prototype_NaviPoint,
 	Prototype_NonInstanceMeshEffect,
+	Prototype_NonInstanceMeshEffect_TT,
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -486,6 +487,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_NonInstanceMeshEffect:
 		return TEXT("Prototype_NonInstanceMeshEffect");
 		break;
+	case Prototype_NonInstanceMeshEffect_TT:
+		return TEXT("Prototype_NonInstanceMeshEffect_TT");
+		break;
+
 	case Prototype_NaviPoint:
 		return TEXT("Prototype_NaviPoint");
 		break;
@@ -1056,6 +1061,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_WING,
 	Prototype_Mesh_BOW1,
 	Prototype_Mesh_BOW2,
+	Prototype_Mesh_ICE,
 	
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
@@ -2379,6 +2385,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_BOW2:
 		return TEXT("SM_Bow_Em_02.fbx");
 		break;
+	case Prototype_Mesh_ICE:
+		return TEXT("SM_ICE_01.fbx");
 
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");

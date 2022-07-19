@@ -49,9 +49,17 @@ public:
 
 public:
 	void				Set_AnimSpeed(_float fAnimSpeed);
+	CTransform*			Get_EffectTransform()
+	{
+		return m_pTextureParticleTransform;
+	}
 
-	HRESULT				Set_Play_Particle(_uint ParticleIndex, _float Timer=-1,_float3 offset = _float3::Zero());
-	HRESULT				Set_PlayOff_ALL();
+
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc();
+//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer, CTransform* defaultTrans, _float3 offset);
+	virtual HRESULT Update_Particle(_double timer);
+
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -66,7 +74,6 @@ private:
 	_int				LateUpdate_NoEquip(_double fDeltaTime);
 
 	void				Update_AttachMatrix();
-	void				Update_ParticleTransform(_double fDeltaTime);
 
 	void				Set_Pivot();
 
@@ -77,16 +84,15 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
 
-	HRESULT				Ready_ParticleDesc();
 
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	_float							m_fPlayParticleTimer[PARTILCECOUNT] = {0,};
+//	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+	
+
 
 private:
 	_float4x4			m_fAttachedMatrix;

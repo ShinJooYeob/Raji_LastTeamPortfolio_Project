@@ -194,6 +194,7 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
+	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
 
 
 

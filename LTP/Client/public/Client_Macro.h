@@ -36,8 +36,8 @@
 #define DEBUGVALUE3	GetSingle(CPhysXMgr)->gDebugValue3
 #define DEBUGVALUE4	GetSingle(CPhysXMgr)->gDebugValue4
 
-#define  PARTILCECOUNT		5
-
+#define PARTILCECOUNT		10
+#define TRANSDEAD(x) if(x){x->Set_IsOwnerDead(true);}
 
 
 

@@ -460,7 +460,8 @@ private:
 
 	class CHpUI*			m_pHPUI = nullptr;
 
-	
+	_bool					m_bMehsArrow= false;
+
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 
@@ -469,7 +470,7 @@ private:
 	CTransform*												m_pMeshParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
-	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
 private:
 	HRESULT SetUp_Components();
@@ -481,7 +482,7 @@ private:
 
 	HRESULT Ready_ParticleDesc();
 
-	HRESULT Update_Partilce_WeaponDefault();
+	HRESULT Update_Partilce_Position();
 
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
