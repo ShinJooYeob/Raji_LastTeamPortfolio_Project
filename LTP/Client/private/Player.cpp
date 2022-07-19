@@ -89,40 +89,36 @@ _int CPlayer::Update(_double fDeltaTime)
 	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
-			//NONINSTNESHEFTDESC tNIMEDesc;
-			//
-			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) 
-			//	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
-			//	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
-			//
-			//
-			//tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
-			//	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
-			//	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f);
-			//
-			//
-			//
-			//tNIMEDesc.eMeshType = Prototype_Mesh_Spear_SecondAttack;
-			//tNIMEDesc.fMaxTime_Duration = 0.3f;
-			//
-			//tNIMEDesc.fAppearTime = 0.15f;
-			//
-			//tNIMEDesc.noisingdir = _float2(-1, 0);
-			//
-			//tNIMEDesc.NoiseTextureIndex = 249;
-			//tNIMEDesc.MaskTextureIndex = 64;
-			//tNIMEDesc.iDiffuseTextureIndex = 276;
-			//tNIMEDesc.m_iPassIndex = 19;
-			//tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-			//tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
-			//tNIMEDesc.NoiseTextureIndex = 381;
-			//tNIMEDesc.vColor = _float3(1.0, 0, 0);
-			//
-			//tNIMEDesc.RotAxis = FollowingDir_Look;
-			//tNIMEDesc.RotationSpeedPerSec = 360.f;
-			//tNIMEDesc.vSize = _float3(0.01f, 0.01f,0.025f);
-			//
-			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+			tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				
+
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
+			tNIMEDesc.fMaxTime_Duration =1.5f;
+
+			tNIMEDesc.fAppearTime = 0.75f;
+
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.NoiseTextureIndex = 350;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 275;
+			tNIMEDesc.m_iPassIndex = 17;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.0155f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 
 			//m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
@@ -586,7 +582,14 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
 		break;
 	case WEAPON_SWORD:
+	{
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
+
+		m_vecNonInstMeshDesc[6].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		m_vecNonInstMeshDesc[6].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+			&m_vecNonInstMeshDesc[6]);
+	}
 		break;
 	}
 }
@@ -3156,7 +3159,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				//m_vecTextureParticleDesc[2].SizeChageFrequency = 1;
 				//m_vecTextureParticleDesc[2].EachParticleLifeTime = 0.4f;
 				//m_vecTextureParticleDesc[2].ePassID = InstancePass_Distortion_DiffuseMix;
-				m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
+				m_vecNonInstMeshDesc[5].vPosition = m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 					m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition = m_vecTextureParticleDesc[5].vFixedPosition=
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
 					+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
@@ -3167,6 +3170,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 
 				m_vecTextureParticleDesc[2].vFixedPosition
 					= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
+				m_vecNonInstMeshDesc[5].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);		
@@ -3174,7 +3178,9 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[5]);
-				
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+					&m_vecNonInstMeshDesc[5]);
 
 				bParticleChecker = true;
 				m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Collision_1();
@@ -3428,7 +3434,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Fire_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 
-			m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
+			m_vecNonInstMeshDesc[5].vPosition = m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[2].vFixedPosition =
 				m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition = m_vecTextureParticleDesc[5].vFixedPosition =
 				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f
 				+ m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
@@ -3440,12 +3446,16 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			m_vecTextureParticleDesc[2].vFixedPosition
 				= m_vecTextureParticleDesc[2].vFixedPosition.XMVector() - m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.001f;
 
+			m_vecNonInstMeshDesc[5].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[5]);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+				&m_vecNonInstMeshDesc[5]);
+
 
 		}
 
@@ -5688,11 +5698,28 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	m_fAnimSpeed = 1.f;
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 
+
+
+
 	if (false == m_bAnimChangeSwitch && 0.25f <= fAnimPlayRate)
 	{
 		m_bAnimChangeSwitch = true;
 		_float fTargetPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 4.f;
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_UltimateMode(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), fTargetPos_Y);
+
+
+
+		{
+
+			m_vecNonInstMeshDesc[7].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+			m_vecNonInstMeshDesc[7].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+				&m_vecNonInstMeshDesc[7]);
+		}
+
+
 	}
 
 	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
@@ -7399,13 +7426,6 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		NONINSTNESHEFTDESC tNIMEDesc;
 
-		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
-			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.95f
-			- m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 0.251f;
-		tNIMEDesc.vLookDir =
-			XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
-				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 10.f) - tNIMEDesc.vPosition.XMVector());
-
 
 
 		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_UltiEffect;
@@ -7488,7 +7508,95 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
+	// 5 
+	{
 
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Aura2;
+		tNIMEDesc.fMaxTime_Duration = 1.f;
+
+		tNIMEDesc.fAppearTime = 0.5f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 249;
+		tNIMEDesc.MaskTextureIndex = 64;
+		tNIMEDesc.iDiffuseTextureIndex = 276;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(1.0, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.002f);
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	// 6 
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Beacon_Shape;
+		tNIMEDesc.fMaxTime_Duration = 5.5f;
+
+		tNIMEDesc.fAppearTime = 0.75f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 63;
+		tNIMEDesc.iDiffuseTextureIndex = 275;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.06f);
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	// 7 
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
+		tNIMEDesc.fMaxTime_Duration = 1.5f;
+
+		tNIMEDesc.fAppearTime = 0.75f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 63;
+		tNIMEDesc.iDiffuseTextureIndex = 275;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.0155f);
+
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
 
 #pragma endregion
 	return S_OK;

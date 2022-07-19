@@ -1014,7 +1014,22 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spear_UltiEffect,
 	Prototype_Mesh_Spear_NormalEffect,
 	Prototype_Mesh_Spear_SecondAttack,
-	
+
+	Prototype_Mesh_Aura,
+	Prototype_Mesh_Aura2,
+	Prototype_Mesh_Beacon_Shape,
+	Prototype_Mesh_Big_Sheild,
+	Prototype_Mesh_Big_Sword,
+	Prototype_Mesh_Big_Sword2,
+	Prototype_Mesh_Bullet,
+	Prototype_Mesh_Elec_effect,
+	Prototype_Mesh_Elec_effect2,
+	Prototype_Mesh_Half_Sheild,
+	Prototype_Mesh_Spark_Mesh,
+	Prototype_Mesh_Spark_Mesh2,
+	Prototype_Mesh_Wing,
+
+
 
 
 
@@ -2285,6 +2300,49 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Spear_UltiEffect:
 		return TEXT("Spear_UltiEffect.fbx");
 		break;
+
+
+	case Prototype_Mesh_Aura:
+		return TEXT("Aura.fbx");
+		break;
+	case Prototype_Mesh_Aura2:
+		return TEXT("Aura2.fbx");
+		break;
+	case Prototype_Mesh_Beacon_Shape:
+		return TEXT("Beacon_Shape.fbx");
+		break;
+	case Prototype_Mesh_Big_Sheild:
+		return TEXT("Big_Sheild.fbx");
+		break;
+	case Prototype_Mesh_Big_Sword:
+		return TEXT("Big_Sword.fbx");
+		break;
+	case Prototype_Mesh_Big_Sword2:
+		return TEXT("Big_Sword2.fbx");
+		break;
+	case Prototype_Mesh_Bullet:
+		return TEXT("Bullet.fbx");
+		break;
+	case Prototype_Mesh_Elec_effect:
+		return TEXT("Elec_effect.fbx");
+		break;
+
+	case Prototype_Mesh_Elec_effect2:
+		return TEXT("Elec_effect2.fbx");
+		break;
+	case Prototype_Mesh_Half_Sheild:
+		return TEXT("Half_Sheild.fbx");
+		break;
+	case Prototype_Mesh_Spark_Mesh:
+		return TEXT("Spark_Mesh.fbx");
+		break;
+	case Prototype_Mesh_Spark_Mesh2:
+		return TEXT("Spark_Mesh2.fbx");
+		break;
+	case Prototype_Mesh_Wing:
+		return TEXT("Wing.fbx");
+		break;
+
 
 
 		
