@@ -240,6 +240,10 @@ HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_
 			}
 
 		}
+		else
+		{
+			Sleep(ThreadSleepRate);
+		}
 	}
 
 	return S_OK;
@@ -287,7 +291,10 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 				LeaveCriticalSection(_CriSec);
 			}
 		}
-
+		else
+		{
+			Sleep(ThreadSleepRate);
+		}
 	}
 
 

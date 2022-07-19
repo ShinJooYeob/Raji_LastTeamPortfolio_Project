@@ -1042,7 +1042,7 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 		_int iIDLength = 0;
 
 
-		_uint	 eObjectID = 0;
+		_tchar	 eObjectID[MAX_PATH] = L"";
 		_float4x4 WorldMat = ((CTransform*)m_pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();;
 		_float4x4 ValueMat = m_pMonsterBatchTrigger->Get_ValueMat();
 
@@ -1053,12 +1053,16 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 		for (auto& pMonsterObj : m_vecBatchedMonster)
 		{
-			WorldMat = ((CTransform*)pMonsterObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();;
-			eObjectID = pMonsterObj->Get_eObjectID();
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
 
+			WorldMat = ((CTransform*)pMonsterObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
+
+			iIDLength = lstrlen(pMonsterObj->Get_eObjectID());
 
 			WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-			WriteFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			
+			WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			WriteFile(hFile, pMonsterObj->Get_eObjectID(), sizeof(_tchar) *iIDLength, &dwByte, nullptr);
 		
 		}
 
@@ -1810,7 +1814,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		_float4x4 WorldMat = XMMatrixIdentity();
 		_float4x4 ValueMat = XMMatrixIdentity();
-		_uint	 eObjectID = 0;
+		_tchar	 eObjectID [MAX_PATH]= L"";
 
 		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 		ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
@@ -1830,8 +1834,12 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 		while(true)
 		{
+			ZeroMemory(eObjectID, sizeof(_tchar)* MAX_PATH);
+
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-			ReadFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+			
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 			if (0 == dwByte) break;
 
 			CESCursor*	pObject = nullptr;
@@ -1843,7 +1851,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			//////////////////////////////////////////////////////////////////////////메트릭스 넣기
 
 			pMonsterTransform->Set_Matrix(WorldMat);
-			pObject->Set_eObjectID(MonsterID);
+			pObject->Set_eObjectID(eObjectID);
 			pObject->Set_Color({ 0,0,1,1 });
 
 
@@ -4211,7 +4219,7 @@ HRESULT CScene_Edit::Update_Add_Mosnter_InTrigger(_double fDeltatime)
 		memcpy(&vv, m_fPickingedPosition, sizeof(_float3));
 		pTrigTransform->Set_MatrixState(CTransform::STATE_POS, vv);
 
-		pObject->Set_eObjectID(MonsterID);
+		pObject->Set_eObjectID(TAG_OP(OBJECTPROTOTYPEID(MonsterID)));
 		pObject->Set_Color({ 0,0,1,1 });
 
 
@@ -4246,10 +4254,9 @@ HRESULT CScene_Edit::Update_Add_Mosnter_InTrigger(_double fDeltatime)
 		Make_VerticalSpacing(5);
 
 		{
-			_uint eID = m_vecBatchedMonster[m_MonsterIndex]->Get_eObjectID();
 
 			char buf[MAX_PATH];
-			sprintf_s(buf, "%ws", TAG_OP(OBJECTPROTOTYPEID(eID )));
+			sprintf_s(buf, "%ws", m_vecBatchedMonster[m_MonsterIndex]->Get_eObjectID());
 
 			string sText = "Selected Index Monster Prototype : " + string(buf);
 		

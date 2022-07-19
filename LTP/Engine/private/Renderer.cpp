@@ -1211,41 +1211,55 @@ HRESULT CRenderer::Render_GodRay()
 HRESULT CRenderer::Render_LesnFlare()
 {
 
+
+
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
+	if (!pLightDesc) return S_FALSE;
+
+	_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
+
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
+	_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
+
+	const float dotCamSun = -XMVectorGetX(XMVector3Dot(XMVectorSetW(vCamLook, 0), XMVectorSetW(vSunDir, 0)));
+	if (dotCamSun <= 0.0f)
+		return S_FALSE;
+
+	_float3 vSunPos = pLightDesc->vVector.XMVector();
+
+
+
+	_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
+	_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+
+	_Matrix mViewProjection = mView * mProj;
+
+	m_vSunPosSS = vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
+
+	m_vSunPosSS.x = (m_vSunPosSS.x * 0.5f) + 0.5f;
+	m_vSunPosSS.y = (m_vSunPosSS.y * -0.5f) + 0.5f;
+	m_vSunPosSS.w = 1.f;
+
+
+	static const float fMaxSunDist = 2.f;
+	float fMaxDist = max(abs(m_vSunPosSS.x), abs(m_vSunPosSS.y));
+
+	if (fMaxDist >= fMaxSunDist)
+	{
+		return S_FALSE;
+	}
+
+
+
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_LenseFlareNDefferd")));
 
-	if (m_vSunPosSS.w == 0)
-	{
-		LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(LIGHTDESC::TYPE_DIRECTIONAL, 0);
-		if (!pLightDesc) return S_FALSE;
 
-		_Vector vSunDir = XMVector3Normalize(XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1) - XMVectorSetW(pLightDesc->vVector.XMVector(), 1));
-
-		CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
-
-		_Matrix vCamWorldMat = pPipeLineMgr->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
-		_Vector vCamLook = XMVector3Normalize(vCamWorldMat.r[2]);
-
-		_float3 vSunPos = pLightDesc->vVector.XMVector();
-		//_float3 vSunPos = -200.0f * vSunDir;
-		//_float3 vEyePos = vCamWorldMat.r[3];
-		//vSunPos.x += vEyePos.x;
-		//vSunPos.z += vEyePos.z;
-
-		_Matrix mView = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
-		_Matrix mProj = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
-
-		_Matrix mViewProjection = mView * mProj;
-
-		m_vSunPosSS = vSunPos.Multiply_Matrix_AsPosVector(mViewProjection);
-
-		m_vSunPosSS.x = (m_vSunPosSS.x * 0.5f) + 0.5f;
-		m_vSunPosSS.y = (m_vSunPosSS.y * -0.5f) + 0.5f;
-		m_vSunPosSS.w = 1.f;
-	}
 
 	FAILED_CHECK(m_pShader->Set_RawValue("SunPos", &m_vSunPosSS, sizeof(_float2)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_LensfaleSupportSunSize", &m_LensfalreSupportSunSize, sizeof(_float)));
-	
+
 
 	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", m_iLensefalreNoiseTexIndex));
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));

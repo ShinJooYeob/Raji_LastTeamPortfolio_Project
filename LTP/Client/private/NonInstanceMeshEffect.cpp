@@ -54,6 +54,22 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 		break;
 	}
 
+	switch (m_tMeshDesc.MoveDir)
+	{
+	case FollowingDir_Right:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
 
 
@@ -71,6 +87,12 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 		m_fCurTime_Duration += (_float)fDeltaTime;
 
 	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime);
+
+	if (m_tMeshDesc.MoveSpeed != 0)
+	{
+		m_pTransformCom->MovetoDir_bySpeed(m_vMoveDir.XMVector(), m_tMeshDesc.MoveSpeed, fDeltaTime);
+		
+	}
 
 	//m_tMeshDesc.NoiseTextureIndex = 381;
 	//m_tMeshDesc.MaskTextureIndex = 10;

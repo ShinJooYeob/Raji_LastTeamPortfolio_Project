@@ -1013,6 +1013,18 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JY_Tornado,
 	Prototype_Mesh_Spear_UltiEffect,
 	Prototype_Mesh_Spear_NormalEffect,
+	Prototype_Mesh_Spear_SecondAttack,
+	
+
+
+
+
+
+
+
+
+
+
 	
 	Prototype_Mesh_CIRCLE,
 	Prototype_Mesh_CIRCLE_DIST4,
@@ -2260,7 +2272,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_ConeMesh:
 		return TEXT("ConeMesh.fbx");
 		break;
-
+		
+	case Prototype_Mesh_Spear_SecondAttack:
+		return TEXT("Spear_SecondAttack.fbx");
+		break;
 	case Prototype_Mesh_JY_Tornado:
 		return TEXT("JY_Tornado.fbx");
 		break;

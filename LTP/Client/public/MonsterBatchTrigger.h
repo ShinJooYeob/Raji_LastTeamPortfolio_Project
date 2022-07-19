@@ -9,7 +9,7 @@ class CMonsterBatchTrigger : public CGameObject
 	typedef struct tagMonsterBatch
 	{
 		_float4x4				vWorldMat = XMMatrixIdentity();
-		OBJECTPROTOTYPEID		eMonsterID = Prototype_Object_Monster_Mahinasura_Minion;
+		wstring					eMonsterID = TAG_OP(Prototype_Object_Monster_Mahinasura_Minion);
 		_uint					iNaviIndex = 0;
 	}MONSTERBATCH;
 
@@ -22,7 +22,7 @@ public:
 	virtual HRESULT Initialize_Prototype(void* pArg) override;
 	virtual HRESULT Initialize_Clone(void* pArg) override;
 
-	HRESULT Add_MonsterBatch(_float4x4& WorldMatrix, OBJECTPROTOTYPEID eID);
+	HRESULT Add_MonsterBatch(_float4x4& WorldMatrix, const _tchar* eID);
 
 	_float4x4 Get_ValueMat() { return m_ValueMat; };
 	void Set_ValueMat(_float4x4* pMat) { memcpy(&m_ValueMat, pMat, sizeof(_float4x4)); };

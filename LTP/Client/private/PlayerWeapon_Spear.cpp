@@ -362,10 +362,19 @@ void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
 	m_bThrowDir = vThrowDir;
 	m_iPassNum = 13;
 	m_iCurAnim = 8;
+
+
+
+	m_pMeshParticleTransform->Set_IsOwnerDead(false);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
+	
 }
 
 void CPlayerWeapon_Spear::Throw_End()
 {
+
+	m_pMeshParticleTransform->Set_IsOwnerDead(true);
+
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 	m_bThrowing = false;
 	m_bThrowDir = { 0.f, 0.f, 0.f };
@@ -375,6 +384,11 @@ void CPlayerWeapon_Spear::Throw_End()
 
 void CPlayerWeapon_Spear::Throw(_double fDeltaTimer)
 {
+
+
+	m_pMeshParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
+	m_pMeshParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(1).XMVector());
+
 	m_bActiveCollision = true;
 	m_pTransformCom->MovetoDir(m_bThrowDir.XMVector(), fDeltaTimer);
 }
@@ -496,8 +510,10 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	//	2
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSlamCircle"));
-	
-
+	//	3
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Spear_ThrowAttack"));
+	m_vecTextureParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
+	m_vecTextureParticleDesc[3].iFollowingDir = FollowingDir_Look;
 
 	return S_OK;
 }

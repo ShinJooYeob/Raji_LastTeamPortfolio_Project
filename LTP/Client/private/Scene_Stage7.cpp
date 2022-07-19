@@ -32,7 +32,7 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
-	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	
 
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
@@ -379,7 +379,7 @@ HRESULT CScene_Stage7::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	
 	_float4x4 WorldMat = XMMatrixIdentity();
 	_float4x4 ValueMat = XMMatrixIdentity();
-	_uint	 eObjectID = 0;
+	_tchar	 eObjectID[MAX_PATH] = L"";
 	
 	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
@@ -401,12 +401,16 @@ HRESULT CScene_Stage7::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	
 	while (true)
 	{
+		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
 		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-		ReadFile(hFile, &(eObjectID), sizeof(_uint), &dwByte, nullptr);
+		
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 
 
 		if (0 == dwByte) break;
-		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, OBJECTPROTOTYPEID(eObjectID));
+		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
 	}
 	
 	

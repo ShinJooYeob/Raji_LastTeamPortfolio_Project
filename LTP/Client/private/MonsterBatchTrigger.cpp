@@ -55,7 +55,7 @@ HRESULT CMonsterBatchTrigger::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMonsterBatchTrigger::Add_MonsterBatch(_float4x4 & WorldMatrix, OBJECTPROTOTYPEID eID)
+HRESULT CMonsterBatchTrigger::Add_MonsterBatch(_float4x4& WorldMatrix, const _tchar* eID)
 {
 	MONSTERBATCH tMonsterBatchTag;
 
@@ -88,7 +88,7 @@ HRESULT CMonsterBatchTrigger::Spwan_Monster(_uint iIndex, const _tchar * pLayerT
 
 	CGameInstance* pInstance =g_pGameInstance;
 
-	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, pLayerTag, TAG_OP(m_vecBatchedValue[iIndex].eMonsterID)));
+	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, pLayerTag, m_vecBatchedValue[iIndex].eMonsterID.c_str()));
 
 	CMonster* pMonster = (CMonster*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, pLayerTag));
 	NULL_CHECK_RETURN(pMonster, E_FAIL);
