@@ -15,8 +15,8 @@ class CMonster_Wasp final : public CMonster
 		_uint			iAnimType = ANIM_END;
 		_uint			iRenderType = RENDER_IDLE;
 
-		_float4			fRimRight = _float4(0.5f,0.5f,0.5f,0.8f);
-		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f);
+		_float4			fRimRight = _float4(0.5f,0.5f,0.5f,1.f);
+		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f); //R,G,B W==±¹¹ä°ª
 		_float4			fDissolve = _float4(0.5f,0.5f,0.5f,0.f);//1Èå¸¥½Ã°£, µðÁ¹ºê ½Ã°£, ±¹¹ä°¡°Ý ,0ÀÌ¸é µðÁ¹ºê ¾ÈÇÔ 1ÀÌ¸é µðÁ¹ºê
 
 		
@@ -51,7 +51,6 @@ private:
 
 private:
 	HRESULT FollowMe(_double dDeltaTime);
-	HRESULT	SetUp_State(_double dDeltaTime);
 	HRESULT	Update_VectorGroup(_double dDeltaTime);
 	HRESULT	Update_Collider(_double dDeltaTime);
 	HRESULT	Update_Render(_double dDeltaTime);
@@ -60,6 +59,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CCollider*			m_pColliderCom = nullptr;
+	CCollider*			m_pAttackColliderCom = nullptr;
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 

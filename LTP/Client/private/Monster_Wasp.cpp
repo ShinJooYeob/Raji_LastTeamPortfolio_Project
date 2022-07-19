@@ -42,8 +42,6 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	//SetUp_State(dDeltaTime);
-
 
 	FollowMe(dDeltaTime);
 
@@ -81,6 +79,7 @@ _int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
 
 	return _int();
 }
@@ -129,6 +128,8 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		m_vecInstancedTransform[iMyColliderIndex - 1].dTime = 0;
 		m_vecInstancedTransform[iMyColliderIndex - 1].bHit = true;
 
+		m_vecInstancedTransform[iMyColliderIndex - 1].fRimRight.w = 1;
+
 		if (m_vecInstancedTransform[iMyColliderIndex - 1].iHp <= 0)
 		{
 			m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDMER_DIE;
@@ -156,7 +157,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-	for (_uint i = 0; i < 4; i++)
+	for (_uint i = 0; i < 16; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -207,6 +208,16 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		m_pColliderCom->Set_ParantBuffer();
 		///////////////////
 
+		/////////////////////////////////////AttackCollider
+		COLLIDERDESC			AttackColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		AttackColliderDesc.vScale = _float3(2.5f);
+		AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		AttackColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
+		m_pAttackColliderCom->Set_ParantBuffer();
+		///////////////////
+
 		m_vecInstancedTransform.push_back(tDesc);
 	}
 
@@ -219,7 +230,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_4), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}
@@ -300,6 +311,29 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 
 		MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
+		//////////////////////RenderType
+
+		if (MeshInstance.bHit == true && MeshInstance.iHp > 0)
+		{
+			MeshInstance.dTime += dDeltaTime;
+			MeshInstance.iRenderType = RENDER_HIT;
+
+			if (MeshInstance.dTime >= 0.2)
+			{
+				MeshInstance.bHit = false;
+				MeshInstance.iRenderType = RENDER_IDLE;
+				MeshInstance.fRimRight.w = 1;
+			}
+		}
+		else if (MeshInstance.iHp <= 0)
+		{
+			MeshInstance.iRenderType = RENDMER_DIE;
+			MeshInstance.iAnimType = rand() % 2;
+		}
+		else {
+			MeshInstance.iRenderType = RENDER_IDLE;
+		}
+
 		////////////////////////AnimType
 		if (fDistance < 1.5)
 		{
@@ -317,41 +351,6 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 			}
 		}
 
-
-		//////////////////////RenderType
-
-		if (MeshInstance.bHit == true && MeshInstance.iHp > 0)
-		{
-			MeshInstance.dTime += dDeltaTime;
-			MeshInstance.iRenderType = RENDER_HIT;
-
-			if (MeshInstance.dTime >= 0.2)
-			{
-				MeshInstance.bHit = false;
-				MeshInstance.iRenderType = RENDER_IDLE;
-			}
-		}
-		else if (MeshInstance.iHp <= 0)
-		{
-			MeshInstance.iRenderType = RENDMER_DIE;
-			MeshInstance.iAnimType = rand() % 2;
-		}
-		else {
-			MeshInstance.iRenderType = RENDER_IDLE;
-		}
-		/*switch (MeshInstance.iRenderType)
-		{
-		case RENDER_HIT:
-			MeshInstance.dTime += dDeltaTime;
-			if (MeshInstance.dTime >= 0.2)
-			{
-				MeshInstance.iRenderType = RENDER_IDLE;
-			}
-			break;
-		default:
-			break;
-		}*/
-
 	}
 
 	Update_VectorGroup(dDeltaTime);
@@ -362,6 +361,7 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 
 HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 {
+	//////////////Collider
 	m_pColliderCom->Update_ConflictPassedTime(fDeltaTime);
 
 	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
@@ -376,31 +376,16 @@ HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 	}
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	//////////////////////////
 
+
+	///////////////AttackCollider
+	///////////////
 	return S_OK;
 }
 
 HRESULT CMonster_Wasp::Update_Render(_double dDeltaTime)
 {
-	return S_OK;
-}
-
-HRESULT CMonster_Wasp::SetUp_State(_double dDeltaTime)
-{
-	for (auto& Instance : m_vecInstancedTransform)
-	{
-		
-		if (Instance.iRenderType == RENDER_HIT)
-		{
-			Instance.dTime += dDeltaTime;
-
-			if (Instance.dTime >= 0.2)
-			{
-				Instance.iRenderType = RENDER_IDLE;
-			}
-		}
-	}
-
 	return S_OK;
 }
 
@@ -413,17 +398,29 @@ HRESULT CMonster_Wasp::Update_VectorGroup(_double dDeltaTime)
 		{
 		case RENDER_IDLE:
 			m_vecInstancedTransform[i].fRimRight = _float4(0.2f, 0.2f, 0.2f, 1.f);
-			m_vecInstancedTransform[i].fEmissive = _float4(0.2f, 0.2f, 0.2f, 1.f);
-			m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
+			if (m_vecInstancedTransform[i].fDissolve.w == 1)
+			{
+				m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + dDeltaTime, 1.f, 0.4f, 1.f);
+
+				if (m_vecInstancedTransform[i].fDissolve.x >= 1)
+				{
+					m_vecInstancedTransform[i].fDissolve.w = 0;
+				}
+			}
+			else {
+				m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
+			}
 			break;
 		case RENDER_HIT:
-			m_vecInstancedTransform[i].fRimRight = _float4(1.f, 0.f, 0.f, 1.f);
-			m_vecInstancedTransform[i].fEmissive = _float4(0.2f, 0.2f, 0.2f, 1.f);
+			m_vecInstancedTransform[i].fRimRight = _float4(0.875f, 0.0234375f, 0.18359375f, m_vecInstancedTransform[i].fRimRight.w - dDeltaTime);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
 			m_vecInstancedTransform[i].fDissolve = _float4(0.2f, 0.2f, 0.2f, 0.f);
+			m_vecInstancedTransform[i].bHit;
 			break;
 		case RENDMER_DIE:
-			m_vecInstancedTransform[i].fRimRight = _float4(0.f, 1.f, 0.f, 1.f);
-			m_vecInstancedTransform[i].fEmissive = _float4(0.2f, 0.2f, 0.2f, 1.f);
+			m_vecInstancedTransform[i].fRimRight = _float4(0.f, 0.f, 0.f, 0.f);
+			m_vecInstancedTransform[i].fEmissive = _float4(1.f, 0.5f, 1.f, 1.f);
 			m_vecInstancedTransform[i].fDissolve = _float4(m_vecInstancedTransform[i].fDissolve.x + dDeltaTime, 1.f, 0.4f, 2.f);
 			break;
 		default:
@@ -501,6 +498,17 @@ HRESULT CMonster_Wasp::SetUp_Components()
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
+
+	COLLIDERDESC			AttackColliderDesc;
+	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
+	AttackColliderDesc.vScale = _float3(200.f);
+	AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
 
 	SetUp_Info();
 
@@ -632,6 +640,7 @@ void CMonster_Wasp::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pAttackColliderCom);
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
