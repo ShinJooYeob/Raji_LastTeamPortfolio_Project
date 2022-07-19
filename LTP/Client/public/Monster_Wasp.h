@@ -84,6 +84,8 @@ private:
 	_uint				m_iTempAnimNumber = 0;
 
 	_double				m_dAcceleration = 1.5;
+
+	_bool				m_bAttackOn = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

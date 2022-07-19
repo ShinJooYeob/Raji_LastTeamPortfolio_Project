@@ -215,7 +215,8 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		AttackColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
 		FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
-		m_pAttackColliderCom->Set_ParantBuffer();
+		//m_pAttackColliderCom->Delete_ChildeBuffer(0,i+1);
+
 		///////////////////
 
 		m_vecInstancedTransform.push_back(tDesc);
@@ -380,7 +381,9 @@ HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 	}
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
+
+	if(m_bAttackOn == true)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
 	//////////////////////////
 
 
@@ -510,7 +513,7 @@ HRESULT CMonster_Wasp::SetUp_Components()
 
 	COLLIDERDESC			AttackColliderDesc;
 	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
-	AttackColliderDesc.vScale = _float3(200.f);
+	AttackColliderDesc.vScale = _float3(30.f);
 	AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
@@ -570,14 +573,15 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 			if (m_pModel[pInstance.iAnimType]->Get_PlayRate() > 0.4)
 			{
 				pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
+
+				if (m_pModel[pInstance.iAnimType]->Get_PlayRate() > 0.8 && m_pModel[pInstance.iAnimType]->Get_PlayRate() <0.95)
+				{
+					m_bAttackOn = true;
+				}
 			}
 			break;
 		}
 		}
-		//if (pInstance.iType == ANIM_RUN_Frame1 || pInstance.iType == ANIM_RUN_Frame2)
-		//{
-		//	pInstance.pTransform->Move_Forward(dDeltatime, pInstance.pNavigation);
-		//}
 	}
 
 	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
