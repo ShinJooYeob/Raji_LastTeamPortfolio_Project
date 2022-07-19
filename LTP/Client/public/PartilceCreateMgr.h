@@ -9,7 +9,10 @@ BEGIN(Client)
 // J_WHAN Effect Creater
 typedef struct tag_MESHADDDATA
 {
-	eFollowingDirID RotAxis = FollowingDir_Look;
+	eFollowingDirID LookRotAxis = FollowingDir_Look;
+	_float AccRotSpeed = 0.0f;
+	_float3 vAddDirectAngle = _float3::Zero();
+
 
 }MESHADDDATA;
 
@@ -33,6 +36,7 @@ public:
 		MESHEFFECT_PRE_WING,
 		MESHEFFECT_PRE_BOW1,
 		MESHEFFECT_PRE_BOW2,
+		MESHEFFECT_PRE_ICE,
 		MESHEFFECT_PRE_END,
 
 		
@@ -41,6 +45,13 @@ public:
 		MESHEFFECT_ARROW_WING,
 		MESHEFFECT_ARROW_BOW1,
 		MESHEFFECT_ARROW_BOW_UP,
+		MESHEFFECT_ARROW_BOW_SHIFT_FLOOR,
+		MESHEFFECT_ARROW_BOW_SHIFT_ICE,
+		MESHEFFECT_ARROW_BOW_R,
+		MESHEFFECT_ARROW_BOW_R_JUMP_WING1,
+		MESHEFFECT_ARROW_BOW_R_JUMP_WING2,
+
+
 		MESHEFFECT_END,
 
 	};

@@ -73,6 +73,8 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 
+	m_tMeshDesc.RotationSpeedPerSec += mAddDesc.AccRotSpeed*fDeltaTime;
+
 
 	if (m_pParentTranscom)
 	{
@@ -90,7 +92,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		if (m_tMeshDesc.RotationSpeedPerSec ==0)
 		{
 
-			switch (mAddDesc.RotAxis)
+			switch (mAddDesc.LookRotAxis)
 			{
 			case FollowingDir_Right:
 				m_vLookAxis = Right;
@@ -107,8 +109,12 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			}
 
 			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
-
-
+			if (mAddDesc.vAddDirectAngle.x != 0)
+				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+			else if (mAddDesc.vAddDirectAngle.y != 0)
+				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+			else if (mAddDesc.vAddDirectAngle.z != 0)
+				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
 
 		}
 		else
@@ -116,9 +122,6 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
 
 		}
-		
-
-		
 
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);

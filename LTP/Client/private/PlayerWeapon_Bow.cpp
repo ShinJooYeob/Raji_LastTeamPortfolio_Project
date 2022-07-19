@@ -442,6 +442,11 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pDissolveCom);
 
+	TRANSDEAD(m_pTextureParticleTransform);
+	TRANSDEAD(m_pTextureParticleTransform_BowUp);
+	TRANSDEAD(m_pTextureParticleTransform_BowBack);
+
+
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pTextureParticleTransform_BowUp);
 	Safe_Release(m_pTextureParticleTransform_BowBack);

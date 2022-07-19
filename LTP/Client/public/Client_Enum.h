@@ -1019,6 +1019,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_WING,
 	Prototype_Mesh_BOW1,
 	Prototype_Mesh_BOW2,
+	Prototype_Mesh_ICE,
 	
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
@@ -2296,6 +2297,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_BOW2:
 		return TEXT("SM_Bow_Em_02.fbx");
 		break;
+	case Prototype_Mesh_ICE:
+		return TEXT("SM_ICE_01.fbx");
 
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");

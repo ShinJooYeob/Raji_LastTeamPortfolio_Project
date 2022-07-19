@@ -266,6 +266,7 @@ _int CPlayer::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
 	Update_Collider(fDeltaTime);
+	Update_Partilce_Position();
 
 	Update_HPUI(fDeltaTime);
 
@@ -518,6 +519,13 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_FLOOR, m_pTransformCom));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_ICE, m_pTransformCom));
+
 		}
 		m_pModel->Change_AnimIndex_ReturnTo(BOW_ANIM_UTILITY_START, BOW_ANIM_UTILITY_LOOP, 0.1f, true);
 
@@ -3604,6 +3612,11 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.15f <= fAnimPlayRate)
 			{
+				CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			}
@@ -3734,6 +3747,15 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.8f <= fAnimPlayRate)
 			{
+			
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
+
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			}
@@ -5452,16 +5474,6 @@ void CPlayer::Shelling(_double fDeltaTime)
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			if (pBowArrow)
 			{
-
-				INSTPARTICLEDESC& Desc = pBowArrow->Get_VecParticle(3);
-				Desc.ParticleSize = _float3(0.08f, 1.6f, 0.08f);
-				Desc.ParticleSize2 = _float3(0.08f, 0.6f, 0.08f);
-				Desc.SizeChageFrequency = 1;
-				Desc.fDistortionNoisingPushPower = 1.0f;
-				Desc.iFollowingDir = FollowingDir_Look;
-
-				pBowArrow->Set_VecParticle(3, Desc);
-
 				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle
 				(3, _fVector(), _float3::Zero()));
 			}
@@ -6987,13 +6999,6 @@ HRESULT CPlayer::SetUp_Components()
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 
-
-
-
-
-
-
-
 	return S_OK;
 }
 
@@ -7411,6 +7416,19 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
 #pragma endregion
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_Partilce_Position()
+{
+	_Sfloat3 vec = m_pCollider->Get_ColliderPosition(2);
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	mat.r[3] = vec;
+	m_pTextureParticleTransform->Set_Matrix(mat);
 	return S_OK;
 }
 

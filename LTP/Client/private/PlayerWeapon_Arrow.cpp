@@ -549,7 +549,7 @@ HRESULT CPlayerWeapon_Arrow::Update_Particle(_double fDeltaTime)
 	mat2.r[1] = XMVector3Normalize(mat2.r[1]);
 	mat2.r[2] = XMVector3Normalize(mat2.r[2]);
 
-	mat2.r[3] += mat2.r[0] * 0 + mat2.r[1] * 0 + mat2.r[2]*1.0f;
+	mat2.r[3] += mat2.r[0] * 0 + mat2.r[1] * 0 + mat2.r[2]*0.8f;
 
 	m_pTextureParticleTransform_Hand->Set_Matrix(mat2);
 
@@ -824,6 +824,9 @@ void CPlayerWeapon_Arrow::Free()
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pSwordTrail2);
 	Safe_Release(m_pCollider);
+
+	TRANSDEAD(m_pTextureParticleTransform);
+	TRANSDEAD(m_pTextureParticleTransform_Hand);
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pTextureParticleTransform_Hand);
