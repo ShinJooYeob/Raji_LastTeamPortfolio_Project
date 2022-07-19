@@ -56,7 +56,7 @@ private:
 private:
 	/*네비메시를 사용하는 객체가 존재하고 있는 셀의 인덱스.*/
 	NAVIDESC						m_NaviDesc;
-	_Vector							m_vPreviousPos;
+	_float4							m_vPreviousPos;
 
 private:
 	HRESULT SetUp_Neighbor();

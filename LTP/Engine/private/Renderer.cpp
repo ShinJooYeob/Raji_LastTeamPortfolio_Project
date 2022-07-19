@@ -442,6 +442,8 @@ HRESULT CRenderer::Add_TrailGroup(TRAILGROUP eTrailID, CComponent * pTrailCompon
 
 HRESULT CRenderer::Add_DebugGroup(CComponent * pComponent)
 {
+	if (!m_PostProcessingOn[POSTPROCESSING_DEBUGCOLLIDER]) return S_FALSE;
+
 	m_DebugObjectList.push_back(pComponent);
 	Safe_AddRef(pComponent);
 

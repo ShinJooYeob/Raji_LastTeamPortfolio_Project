@@ -370,6 +370,9 @@
     <Filter Include="01.GameObject\08.Effect\03.ParticleMgr">
       <UniqueIdentifier>{fbb0f076-d5b8-48bb-ad99-7ece43dd4c5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\98.MonsterBatchTrigger">
+      <UniqueIdentifier>{44dc964e-594a-4c95-996d-898f97148d35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -816,6 +819,9 @@
     <ClInclude Include="..\public\PartilceCreateMgr.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MonsterBatchTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\98.MonsterBatchTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1236,11 +1242,12 @@
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
-    <ClCompile Include="..\private\JumpTrigger.cpp">
-      <Filter>01.GameObject\07.MapObject\02.StaticObject\StaticInstanceMapObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\PartilceCreateMgr.cpp">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JumpTrigger.cpp" />
+    <ClCompile Include="..\private\MonsterBatchTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\98.MonsterBatchTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

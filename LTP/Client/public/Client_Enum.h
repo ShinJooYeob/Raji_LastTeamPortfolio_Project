@@ -293,6 +293,8 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Trigger_TestLedgeTrigger,
 	//////////////////////////////////////////////////////////////////////////
+	Prototype_MonsterBatchTrigger,
+
 
 	Prototype_PlayerSkill_ShellingArrow,
 	Prototype_PlayerSkill_SpearWave,
@@ -438,6 +440,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_TestLedgeTrigger:
 		return TEXT("Prototype_Trigger_TestLedgeTrigger");
+		break;
+	case Prototype_MonsterBatchTrigger:
+		return TEXT("Prototype_MonsterBatchTrigger");
 		break;
 		
 	case Prototype_PlayerSkill_ShellingArrow:
@@ -738,6 +743,7 @@ enum LAYERID
 	Layer_ColBase,
 	Layer_ColStatic,
 	Layer_ColTrigger,
+	Layer_BatchMonsterTrigger,
 	Layer_ColDynamic,
 
 
@@ -789,7 +795,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_ColTrigger:
 		return TEXT("Layer_ColTrigger");
 		break;
-
+	case Layer_BatchMonsterTrigger:
+		return TEXT("Layer_BatchMonsterTrigger");
+		break;
+		
 	case Layer_ColDynamic:
 		return TEXT("Layer_ColDynamic");
 		

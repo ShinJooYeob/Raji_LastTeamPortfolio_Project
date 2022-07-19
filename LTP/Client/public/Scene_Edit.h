@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "TriggerObject.h"
+#include "MonsterBatchTrigger.h"
 
 #ifdef _DEBUG
 #include "ImguiMgr.h"
@@ -33,7 +34,7 @@ class CScene_Edit final : public CScene
 		Data_Navigation,
 
 		Data_Trigger,
-		Data_MonsterTrigger,
+		Data_MonsterBatchTrigger,
 
 		Datatype_End
 	};
@@ -124,6 +125,19 @@ private:
 	_int						iTriggerIndex = 0;
 
 #pragma endregion TriggerTab
+
+#pragma region MosnterBatchTool
+
+	HRESULT Update_MosnterBatchTool(_double fDeltatime);
+	HRESULT Update_Add_Mosnter_InTrigger(_double fDeltatime);
+	HRESULT Widget_MosnterBatchToolData(_double fDeltatime);
+	
+	CMonsterBatchTrigger*		m_pMonsterBatchTrigger = nullptr;
+	_uint						MonsterID = Prototype_Object_Monster_Mahinasura_Minion;
+	vector<CESCursor*>			m_vecBatchedMonster;
+	_int						m_MonsterIndex= 0;
+
+#pragma endregion MosnterBatchTool
 
 #pragma region UITab
 
