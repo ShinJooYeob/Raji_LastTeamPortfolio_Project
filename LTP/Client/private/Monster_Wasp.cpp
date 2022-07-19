@@ -121,7 +121,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 
-	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex-1].bHit == false)
+	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex - 1].bHit == false)
 	{
 		m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDER_HIT;
 		m_vecInstancedTransform[iMyColliderIndex - 1].iHp += -1;
@@ -363,8 +363,10 @@ HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 {
 	//////////////Collider
 	m_pColliderCom->Update_ConflictPassedTime(fDeltaTime);
+	m_pAttackColliderCom->Update_ConflictPassedTime(fDeltaTime);
 
 	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
+	m_pAttackColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
 
 
 	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
@@ -373,9 +375,12 @@ HRESULT CMonster_Wasp::Update_Collider(_double fDeltaTime)
 			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
 
 		m_pColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+		m_pAttackColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+
 	}
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
 	//////////////////////////
 
 
@@ -500,8 +505,8 @@ HRESULT CMonster_Wasp::SetUp_Components()
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 
-
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider2), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
+	m_pAttackColliderCom = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
 
 	COLLIDERDESC			AttackColliderDesc;
 	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
