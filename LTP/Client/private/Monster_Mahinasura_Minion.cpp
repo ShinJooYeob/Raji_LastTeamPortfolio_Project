@@ -143,7 +143,6 @@ HRESULT CMonster_Mahinasura_Minion::SetUp_Info()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-
 	return S_OK;
 }
 
