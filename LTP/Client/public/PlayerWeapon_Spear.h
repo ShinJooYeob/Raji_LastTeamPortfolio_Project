@@ -71,8 +71,8 @@ private:
 
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pMeshParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	CTransform*						m_pMeshParticleTransform = nullptr;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 
 private:

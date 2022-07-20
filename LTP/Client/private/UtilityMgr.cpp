@@ -260,7 +260,16 @@ INSTPARTICLEDESC CUtilityMgr::Get_TextureParticleDesc(const _tchar * szFileName)
 
 INSTMESHDESC CUtilityMgr::Get_MeshParticleDesc(const _tchar * szFileName)
 {
-	return INSTMESHDESC();
+	auto iter = find_if(m_mapMeshParticles.begin(), m_mapMeshParticles.end(), CTagStringFinder(szFileName));
+
+	if (iter == m_mapMeshParticles.end())
+	{
+		__debugbreak();
+		return INSTMESHDESC();
+	}
+
+	return iter->second;
+
 }
 
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()

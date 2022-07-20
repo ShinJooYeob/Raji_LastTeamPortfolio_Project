@@ -1947,6 +1947,18 @@ HRESULT CRenderer::Render_DistortionObject()
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DistortionObject")));
 
+	for (auto& pSwordTrailComponet : m_TrailList[TRAIL_SWORD_DISTORT])
+	{
+		if (pSwordTrailComponet != nullptr)
+		{
+			FAILED_CHECK(pSwordTrailComponet->Render());
+		}
+
+		Safe_Release(pSwordTrailComponet);
+	}
+	m_TrailList[TRAIL_SWORD_DISTORT].clear();
+
+
 	for (auto& RenderObject : m_RenderObjectList[RENDER_DISTORTION])
 	{
 		if (RenderObject != nullptr)

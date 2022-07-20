@@ -36,12 +36,12 @@ HRESULT CScene_Stage7::Initialize()
 	
 
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_TriggerObject(L"TestTrigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	
+	FAILED_CHECK(Ready_TriggerObject(L"TestTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 	
-	
+
 	//FAILED_CHECK(teST());
 	
 	return S_OK;
@@ -194,7 +194,6 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
-	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
 
 
 
@@ -251,7 +250,7 @@ HRESULT CScene_Stage7::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader))); //속도 올라가는거 고치고 다시
 
@@ -480,7 +479,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 	{
 
 
-
+		/**/
 		OBJELEMENT	tData{};
 		_tchar szBuffer[MAX_PATH] = L"";
 		// key 값 로드
@@ -505,6 +504,8 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
 
 		FAILED_CHECK(pInstanceMapObject->Add_InstanceMapObject(tData));
+
+
 
 /*
 

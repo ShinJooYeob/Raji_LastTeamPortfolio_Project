@@ -50,6 +50,8 @@ public:
 	virtual void		Active_Trail(_bool bActivate);
 	virtual _bool		AbleToChangeWeapon();
 
+	virtual void		EffectParticleOn(_uint iIndex,  void* pArg = nullptr) {};
+
 public:
 	void				Set_BlockUpdate(_bool bBlock);
 	_bool				Get_BlockUpdate() { return m_bBlockUpdate; }

@@ -1278,6 +1278,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
 
+	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	for (_uint i = Prototype_Mesh_JY_Tornado; i <= Prototype_Mesh_Wing; i++)
+	{
+		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(COMPONENTPROTOTYPEID(i)), TransformMatrix);
+	}
+
+
 
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	//	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);

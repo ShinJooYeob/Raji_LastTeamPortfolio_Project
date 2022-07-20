@@ -33,6 +33,8 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 	
+
+
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tMeshDesc.vPosition);
 	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 
@@ -53,6 +55,9 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 		__debugbreak();
 		break;
 	}
+
+	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), m_tMeshDesc.StartRot);
+	
 
 	switch (m_tMeshDesc.MoveDir)
 	{
