@@ -40,7 +40,7 @@ public:
 		mAddDesc = desc;
 	}
 
-	HRESULT				Set_EasingMoveDesc(const MESHAEASING* desc, int count);
+	HRESULT				Set_EasingMoveDesc(const MESHAEASING* desc, _uint count);
 
 private:
 	HRESULT				SetUp_Components();

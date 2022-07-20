@@ -146,7 +146,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		_Vector NPos = GetSingle(CGameInstance)->Easing_Vector
 		(mCurrentEasingDesc.EasingID, mStartPoint, mEndPoint, mEasingTimer, mCurrentEasingDesc.MaxTime).XMVector();
 
-		mEasingTimer += fDeltaTime;
+		mEasingTimer += _float(fDeltaTime);
 
 		if(mEasingTimer >=mCurrentEasingDesc.MaxTime)
 		{
@@ -338,7 +338,7 @@ void CNonInstanceMeshEffect_TT::Set_ParentTransform(CTransform * parentTrans)
 }
 
 
-HRESULT CNonInstanceMeshEffect_TT::Set_EasingMoveDesc(const MESHAEASING* desc, int count)
+HRESULT CNonInstanceMeshEffect_TT::Set_EasingMoveDesc(const MESHAEASING* desc, _uint count)
 {
 	if (count <= 0)
 		return E_FAIL;

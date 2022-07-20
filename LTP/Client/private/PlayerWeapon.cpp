@@ -236,6 +236,7 @@ HRESULT CPlayerWeapon::Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPo
 	return S_OK;
 }
 
+
 HRESULT CPlayerWeapon::Set_Dead_Transform(_uint ParticleIndex)
 {
 	
@@ -263,18 +264,6 @@ HRESULT CPlayerWeapon::Update_Particle(_double timer)
 HRESULT CPlayerWeapon::Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans,  bool * pb)
 {
 	NULL_CHECK_BREAK(trans);
-
-	//if (bb == false)
-	//{
-	//	// »èÁ¦
-	//	if (trans)
-	//	{
-	//		trans->Set_IsOwnerDead(true);
-	//		if (pb)
-	//			*pb = false;
-	//	}
-	//}
-
 
 	if (trans)
 	{

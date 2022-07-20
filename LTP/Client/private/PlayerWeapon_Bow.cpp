@@ -340,6 +340,8 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 	tDissolveDesc.RampTextureIndex = 1;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
 
+
+
 	return S_OK;
 }
 
@@ -396,6 +398,24 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Dash);
 	instanceDesc.FollowingTarget = nullptr;
 	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	// 5
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_R_FlyBall);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	// 6
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_R_FlyFire);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	// 7
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Q_Ball);
+	instanceDesc.FollowingTarget = nullptr;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
+
 
 	// 5
 	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);

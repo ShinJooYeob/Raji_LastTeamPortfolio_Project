@@ -85,6 +85,9 @@ public:
 		MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE,
 		MESHEFFECT_ARROW_BOW_SP_BOM_SPEHERE,
 		MESHEFFECT_ARROW_BOW_SP_PLANE,
+		MESHEFFECT_ARROW_BOW_SP_PLANE2,
+		MESHEFFECT_ARROW_BOW_SP_TON,
+		MESHEFFECT_ARROW_BOW_SP_ICES,
 
 
 		MESHEFFECT_END,
@@ -101,9 +104,24 @@ public:
 		TEXTURE_EFFECTJ_Bow_Charze_Dash,
 		TEXTURE_EFFECTJ_Bow_Charze_Long,
 		TEXTURE_EFFECTJ_Bow_Charze_Suck,
+		TEXTURE_EFFECTJ_Bow_Shift_Image,
+		TEXTURE_EFFECTJ_Bow_Q_Ball,
+		TEXTURE_EFFECTJ_Bow_R_FlyFire,
+		TEXTURE_EFFECTJ_Bow_R_FlyBall,
+
 		TEXTURE_EFFECTJ_END,
 
 	};
+
+	enum E_MESHINST_EFFECTJ
+	{
+		MESHINST_EFFECTJ_BOW_Q_ICE,
+		MESHINST_EFFECTJ_BOW_Q_ICE2,
+		MESHINST_EFFECTJ_BOW_Q_PLANE,
+		MESHINST_EFFECTJ_END,
+	};
+
+
 
 private:
 	explicit CPartilceCreateMgr();
@@ -127,6 +145,13 @@ public:
 			return INSTPARTICLEDESC();
 		return mVecTextureEffectDesc[e];
 	}
+	INSTMESHDESC Get_TypeDesc_MeshInstance(E_MESHINST_EFFECTJ e)
+	{
+		if (e >= MESHINST_EFFECTJ_END)
+			return INSTMESHDESC();
+		return mVecMeshInstDesc[e];
+	}
+
 
 public:
 	HRESULT Update_EffectMgr(_double Timer);
@@ -138,17 +163,20 @@ public:
 	// TextureEffect
 	HRESULT Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
-
 	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
 
-	
 
+	// Meshinst
+	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);
+	HRESULT Create_MeshInst_Effect_World(E_MESHINST_EFFECTJ type, _float3 worldPos);
+	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
 
 
 	// MeshEffect
 
 	HRESULT Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir);
+
 
 	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform, MESHAEASING* easing = nullptr,_uint Count = 0);
 
@@ -163,12 +191,18 @@ public:
 private:
 	HRESULT			Ready_MeshEffect();
 	HRESULT			Ready_TextureEffect();
+	HRESULT			Ready_MeshInstanceEffect();
+	
 	
 	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
 private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
+	vector<INSTMESHDESC>		mVecMeshInstDesc;
+
+
+
 
 public:
 	virtual void Free()override;
