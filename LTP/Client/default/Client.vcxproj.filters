@@ -837,6 +837,9 @@
     <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ParticleCreater.h">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1272,6 +1275,9 @@
     </ClCompile>
     <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ParticleCreater.cpp">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

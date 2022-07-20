@@ -246,7 +246,7 @@ HRESULT CScene_Stage6::Ready_Layer_Monster_Boss(const _tchar * pLayerTag)
 	// 몬스터들
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader))); //속도 올라가는거 고치고 다시
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader))); 
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Minion)));
 
