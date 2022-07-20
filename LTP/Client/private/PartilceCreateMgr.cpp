@@ -82,7 +82,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2,CTransform * parentTransform)
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform, MESHAEASING* easingdesc,  _uint MoveCount)
 {
 
 	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
@@ -90,8 +90,15 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHA
 	NULL_CHECK_BREAK(obj);
 	CNonInstanceMeshEffect_TT * meshobj = static_cast<CNonInstanceMeshEffect_TT*>(obj);
 	NULL_CHECK_BREAK(meshobj);
-	meshobj->Set_ParentTransform(parentTransform);
 	meshobj->Set_AddDesc(desc2);
+	meshobj->Set_ParentTransform(parentTransform);
+
+	if (easingdesc)
+	{
+		meshobj->Set_EasingMoveDesc(easingdesc, MoveCount);
+		Safe_Delete_Array(easingdesc);
+
+	}
 
 	return S_OK;
 }
@@ -102,7 +109,26 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 		return E_FAIL;
 
 	MESHADDDATA			AddDesc;
+	MESHAEASING*		pEaseDesc = nullptr;
 
+	// RANDOM
+	static bool bRandomVal  = true;
+	static bool bRandomVal1 = true;
+	static bool bRandomVal2 = true;
+	static bool bRandomVal3 = true;
+	static bool bRandomVal4 = true;
+	static bool bRandomVal5 = true;
+	static bool bRandomVal6 = true;
+
+	bRandomVal = !bRandomVal;
+	bRandomVal1 = !bRandomVal1;
+	bRandomVal2 = !bRandomVal2;
+	bRandomVal3 = !bRandomVal3;
+	bRandomVal4 = !bRandomVal4;
+	bRandomVal5 = !bRandomVal5;
+
+
+#pragma region BOW
 
 	// ÇÏµå ÄÚµùÀ¸·Î Á¦ÀÛ
 	if (type == MESHEFFECT_ARROW_HEAD)
@@ -157,7 +183,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 		MeshDesc.fDistortionNoisingPushPower = 5.0f;
 
 		MeshDesc.vEmissive = _float4(0.3f, 0.3f, 0.5f, 0.8f);
-		MeshDesc.vLimLight = _float4(0.1f, 0.76f, 0.77, 0.2f);
+		MeshDesc.vLimLight = _float4(0.1f, 0.76f, 0.77f, 0.2f);
 
 
 		MeshDesc.vPosition = _float3(-0.0f, 0.0f, -0.0f);
@@ -186,7 +212,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	{
 
 		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_BOW1);
-		MESHADDDATA			AddDesc;
 
 		MeshDesc.fMaxTime_Duration = 3.0f;
 
@@ -231,7 +256,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	{
 
 		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_CIRCLE);
-		MESHADDDATA			AddDesc;
 
 		MeshDesc.fMaxTime_Duration = 3.0f;
 
@@ -250,7 +274,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
 		MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
-		MeshDesc.vSize = _float3(15.0f);
+		MeshDesc.vSize = _float3(45.0f);
 
 		MeshDesc.RotAxis = FollowingDir_Look;
 		MeshDesc.RotationSpeedPerSec = 0;
@@ -275,7 +299,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	{
 
 		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_ICE);
-		MESHADDDATA			AddDesc;
 
 		MeshDesc.fMaxTime_Duration = 1.5f;
 
@@ -319,9 +342,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	if (type == MESHEFFECT_ARROW_BOW_R)
 	{
 		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_BOW2);
-		MESHADDDATA			AddDesc;
 
-		MeshDesc.fMaxTime_Duration = 2.0f;
+		MeshDesc.fMaxTime_Duration = 0.18f;
 
 		MeshDesc.iDiffuseTextureIndex = 364;
 		MeshDesc.MaskTextureIndex = 57;
@@ -329,84 +351,43 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 		MeshDesc.noisingdir = _float2(0.5f, 1.5f).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.f;
+		MeshDesc.fAppearTime = 0.0f;
 		MeshDesc.fDistortionNoisingPushPower = 1.0f;
 
-		MeshDesc.vLimLight = _float4(0.98f,0.56f,0.56f, 1.0f);
+
+
+		MeshDesc.vLimLight = bRandomVal?_float4(0.56f, 0.97f, 0.98f, 1.0f):_float4(0.58f, 0.99f, 1.00f, 1.0f);
 		MeshDesc.vEmissive = _float4(1.0f, 0.f, 0.f, 0.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
 		MeshDesc.vPosition= _float3(-0.0f, 0, -0.0f);
-		MeshDesc.vSize = _float3(0.8f);
+		MeshDesc.vSize = _float3(1.0f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
 		MeshDesc.RotationSpeedPerSec = 0;
 
-		MeshDesc.vLookDir = _float3(1, 0, 0);
+		MeshDesc.vLookDir = _float3(0, 0, 1);
 
 
-		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
 		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
 		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		AddDesc.LookRotAxis = FollowingDir_Look;
 		// AddDesc.AccRotSpeed = -28.0f;
-		AddDesc.vAddDirectAngle = _float3(0,10.0f,0);
+		AddDesc.vAddDirectAngle = _float3(0,-30,0);
 		
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 	}
 
-	static bool bWingRand = true;
-	bWingRand = !bWingRand;
+	
 
 	if (type == MESHEFFECT_ARROW_BOW_R_JUMP_WING1)
 	{
 		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
-		MESHADDDATA			AddDesc;
-
-		MeshDesc.fMaxTime_Duration = 1.0f;
-
-		MeshDesc.iDiffuseTextureIndex = 364;
-		MeshDesc.MaskTextureIndex = 57;
-		MeshDesc.NoiseTextureIndex = 366;
-
-		MeshDesc.noisingdir = _float2(-1,0).Get_Nomalize();
-		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.5f;
-		MeshDesc.fDistortionNoisingPushPower = 3.0f;
-
-		MeshDesc.vLimLight = _float4(0.98f, 0.56f, 0.56f, 1.0f);
-		MeshDesc.vEmissive = _float4(1.0f, 0.f, 0.f, 0.f);
-
-
-		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(0.0f, 0.0f, -0.3f);
-		MeshDesc.vSize = _float3(2.5f);
-
-		MeshDesc.RotAxis = FollowingDir_Up;
-		MeshDesc.RotationSpeedPerSec = 0;
-
-		MeshDesc.vLookDir = _float3(1, 0, 0);
-
-
-		MeshDesc.m_iPassIndex = bWingRand ? 17 : 19; // ¿Ö°î
-	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-	//	MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
-
-		AddDesc.LookRotAxis = FollowingDir_Right;
-		AddDesc.AccRotSpeed = 0;
-		AddDesc.vAddDirectAngle = _float3(0, 90, 0);
-
-		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
-	}
-	if (type == MESHEFFECT_ARROW_BOW_R_JUMP_WING2)
-	{
-		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
-		MESHADDDATA			AddDesc;
 
 		MeshDesc.fMaxTime_Duration = 1.0f;
 
@@ -416,11 +397,11 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.8f;
-		MeshDesc.fDistortionNoisingPushPower = 3.0f;
+		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fDistortionNoisingPushPower = 5.0f;
 
-		MeshDesc.vLimLight = _float4(0.98f, 0.56f, 0.56f, 1.0f);
-		MeshDesc.vEmissive = _float4(1.0f, 0.f, 0.f, 0.f);
+		MeshDesc.vLimLight = _float4(0.10f, 0.21f, 0.50f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.0f, 0.5f, 0.5f, 0.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
@@ -428,12 +409,53 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 		MeshDesc.vSize = _float3(2.5f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
-		MeshDesc.RotationSpeedPerSec =0;
+		MeshDesc.RotationSpeedPerSec = 0;
 
 		MeshDesc.vLookDir = _float3(1, 0, 0);
 
 
-		MeshDesc.m_iPassIndex = bWingRand ? 17 : 19; // ¿Ö°î
+		MeshDesc.m_iPassIndex = bRandomVal ? 17 : 19; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.vAddDirectAngle = _float3(0, 90, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+	if (type == MESHEFFECT_ARROW_BOW_R_JUMP_WING2)
+	{
+		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_WING);
+
+		MeshDesc.fMaxTime_Duration = 1.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 364;
+		MeshDesc.MaskTextureIndex = 57;
+		MeshDesc.NoiseTextureIndex = 366;
+
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fDistortionNoisingPushPower = 5.0f;
+
+		MeshDesc.vLimLight = _float4(0.10f, 0.21f, 0.50f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.0f, 0.5f, 0.5f, 0.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(0.0f, 0.0f, -0.3f);
+		MeshDesc.vSize = _float3(2.5f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 0;
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+		MeshDesc.m_iPassIndex = bRandomVal ? 17 : 19; // ¿Ö°î
 	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
@@ -447,6 +469,148 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 	}
 
 	
+	if (type == MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE)
+	{
+		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_Sphere);
+		pEaseDesc = NEW MESHAEASING[2];
+
+		MeshDesc.fMaxTime_Duration = 3.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 364;
+		MeshDesc.MaskTextureIndex = 60;
+		MeshDesc.NoiseTextureIndex = 283;
+
+		MeshDesc.noisingdir = _float2(0.1f, -0.5f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.0f;
+		MeshDesc.fDistortionNoisingPushPower = 1.0f;
+
+		MeshDesc.vLimLight = _float4(0.75f, 0.29f, 0.66f, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.f, 0.f, 0.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0.5f, -0.0f);
+		MeshDesc.vSize = _float3(5.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 0;
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 30;
+
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+			MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		// AddDesc.AccRotSpeed = -28.0f;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.AccMoveSpeed = 100;
+
+
+		pEaseDesc[0] = CreateEasingDesc(TYPE_Linear, _float3(0, 5.2f, 0), 0.2f);
+		pEaseDesc[1] = CreateEasingDesc(TYPE_Linear, _float3(0, 5.2f, 0), 3.0f);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom, pEaseDesc,2);
+	}
+
+	if (type == MESHEFFECT_ARROW_BOW_SP_BOM_SPEHERE)
+	{
+		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_SM_sphere_melon);
+
+		// MAX
+
+		MeshDesc.fMaxTime_Duration = 7.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 44;
+		MeshDesc.MaskTextureIndex = 20;
+		MeshDesc.NoiseTextureIndex = 30;
+
+		MeshDesc.noisingdir = _float2(0.f,-1.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.3f;
+		MeshDesc.fDistortionNoisingPushPower = 3.0f;
+
+
+
+		MeshDesc.vLimLight = _float4(0.87f, 0.55f, 0.82f, 1.0f);
+		MeshDesc.vEmissive = _float3(0.0f, 0.5f, 0.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(0.2f, 4.0f, 0.2f);
+		MeshDesc.vSize = _float3(8.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 50.0f;
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+			//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+		
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.FixFlag = true;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_ARROW_BOW_SP_PLANE)
+	{
+		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_RING);
+
+		MeshDesc.fMaxTime_Duration = 3.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 236;
+		MeshDesc.MaskTextureIndex = 31;
+		MeshDesc.NoiseTextureIndex = 325;
+
+		MeshDesc.noisingdir = _float2(0.0f, 1.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.5f;
+		MeshDesc.fDistortionNoisingPushPower = 5.0f;
+
+		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.82f, 1.f);
+		MeshDesc.vEmissive = _float4(0.03f, 0.06f, 0.82f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
+		MeshDesc.vSize = _float3(4.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 13;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.FixFlag = true;
+		AddDesc.AccRotSpeed = -5.0f;
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+#pragma endregion BOW
 
 
 	return S_OK;
@@ -466,45 +630,40 @@ HRESULT CPartilceCreateMgr::Clear_MeshEffect()
 	return S_OK;
 }
 
+#define MESHINPORT(x,y)						MeshEffectDESC.eMeshType = x; mVecMeshEffectDesc[y] = MeshEffectDESC;
+
 HRESULT CPartilceCreateMgr::Ready_MeshEffect()
 {
 	// #MESHPARTILCEINIT
 	mVecMeshEffectDesc.resize((int)MESHEFFECT_END);
 
-	NONINSTNESHEFTDESC tNIMEDesc;
-	tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
-	tNIMEDesc.fMaxTime_Duration = 10.f;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CONMESH] = tNIMEDesc;
+	NONINSTNESHEFTDESC MeshEffectDESC;
+	MESHINPORT(Prototype_Mesh_ConeMesh, MESHEFFECT_PRE_CONMESH);
+	MESHINPORT(Prototype_Mesh_CIRCLE, MESHEFFECT_PRE_CIRCLE);
+	MESHINPORT(Prototype_Mesh_CIRCLE_DIST5, MESHEFFECT_PRE_CIRCLE_DIST4);
+	MESHINPORT(Prototype_Mesh_CIRCLE_DIST4, MESHEFFECT_PRE_CIRCLE_DIST5);
+	MESHINPORT(Prototype_Mesh_IMPECTFX_02, MESHEFFECT_PRE_IMPECTFX_02);
+	MESHINPORT(Prototype_Mesh_RING, MESHEFFECT_PRE_RING);
 
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE] = tNIMEDesc;
 
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST5;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST4] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_CIRCLE_DIST4;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_CIRCLE_DIST5] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_IMPECTFX_02;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_IMPECTFX_02] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_RING;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_RING] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_LOVE;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_LOVE] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_WING;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_WING] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_BOW1;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW1] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_BOW2;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_BOW2] = tNIMEDesc;
-
-	tNIMEDesc.eMeshType = Prototype_Mesh_ICE;
-	mVecMeshEffectDesc[MESHEFFECT_PRE_ICE] = tNIMEDesc;
+	MESHINPORT(Prototype_Mesh_LOVE, MESHEFFECT_PRE_LOVE);
+	MESHINPORT(Prototype_Mesh_WING, MESHEFFECT_PRE_WING);
+	MESHINPORT(Prototype_Mesh_BOW1, MESHEFFECT_PRE_BOW1);
+	MESHINPORT(Prototype_Mesh_BOW2, MESHEFFECT_PRE_BOW2);
+	MESHINPORT(Prototype_Mesh_ICE, MESHEFFECT_PRE_ICE);
+	MESHINPORT(Prototype_Mesh_Sphere, MESHEFFECT_PRE_Sphere);
+	MESHINPORT(Prototype_Mesh_SM_sphere_melon, MESHEFFECT_PRE_SM_sphere_melon);
+	MESHINPORT(Prototype_Mesh_SM_4E_IceSpike_01, MESHEFFECT_PRE_SM_4E_IceSpike_01);
+	MESHINPORT(Prototype_Mesh_MoonStone00, MESHEFFECT_PRE_MoonStone00);
+	MESHINPORT(Prototype_Mesh_MoonStone02, MESHEFFECT_PRE_MoonStone04);
+	MESHINPORT(Prototype_Mesh_MoonStone04, MESHEFFECT_PRE_MoonStone04);
+	MESHINPORT(Prototype_Mesh_PurpCrystal01, MESHEFFECT_PRE_PurpCrystal01);
+	MESHINPORT(Prototype_Mesh_Rock001, MESHEFFECT_PRE_Rock001);
+	MESHINPORT(Prototype_Mesh_Rock002, MESHEFFECT_PRE_Rock002);
+	MESHINPORT(Prototype_Mesh_Rock003, MESHEFFECT_PRE_Rock003);
+	MESHINPORT(Prototype_Mesh_Rock004, MESHEFFECT_PRE_Rock004);
+	MESHINPORT(Prototype_Mesh_Rock005, MESHEFFECT_PRE_Rock005);
+	MESHINPORT(Prototype_Mesh_SM_4E_Ice2, MESHEFFECT_PRE_Ice2);
 
 
 	return S_OK;
@@ -537,6 +696,16 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	
 
 	return S_OK;
+}
+
+MESHAEASING CPartilceCreateMgr::CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax)
+{
+	MESHAEASING desc;
+	desc.EasingID = id;
+	desc.EndPos = endpos;
+	desc.MaxTime = timemax;
+
+	return desc;
 }
 
 

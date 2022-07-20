@@ -263,7 +263,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 		TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-		for (_uint i = Prototype_Mesh_JY_Tornado; i <= Prototype_Mesh_Wing ;i++)
+		for (_uint i = Prototype_Mesh_JY_Tornado; i <= Prototype_Mesh_Wing; i++)
 		{
 			GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(COMPONENTPROTOTYPEID(i)), TransformMatrix);
 		}
@@ -296,19 +296,33 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 		// #LOAD EFFECTMESH LOAD
+#define STATIC_EFFECTLOAD(x) GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(x), TransformMatrix)
+
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_ConeMesh), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_CIRCLE), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_CIRCLE_DIST4), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_CIRCLE_DIST5), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_IMPECTFX_02), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_RING), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_LOVE), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_WING), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_BOW1), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_BOW2), TransformMatrix);
-		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_ICE), TransformMatrix);
-		
+		STATIC_EFFECTLOAD(Prototype_Mesh_CIRCLE);
+		STATIC_EFFECTLOAD(Prototype_Mesh_CIRCLE_DIST4);
+		STATIC_EFFECTLOAD(Prototype_Mesh_CIRCLE_DIST5);
+		STATIC_EFFECTLOAD(Prototype_Mesh_IMPECTFX_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_RING);
+		STATIC_EFFECTLOAD(Prototype_Mesh_LOVE);
+		STATIC_EFFECTLOAD(Prototype_Mesh_WING);
+		STATIC_EFFECTLOAD(Prototype_Mesh_BOW1);
+		STATIC_EFFECTLOAD(Prototype_Mesh_BOW2);
+		STATIC_EFFECTLOAD(Prototype_Mesh_ICE);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sphere);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MoonStone00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MoonStone02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MoonStone04);
+		STATIC_EFFECTLOAD(Prototype_Mesh_PurpCrystal01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Rock001);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Rock002);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Rock003);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Rock004);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Rock005);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_Ice2);
 	}
 
 

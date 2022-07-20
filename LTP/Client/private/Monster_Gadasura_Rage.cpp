@@ -18,8 +18,6 @@ CMonster_Gadasura_Rage::CMonster_Gadasura_Rage(const CMonster_Gadasura_Rage & rh
 HRESULT CMonster_Gadasura_Rage::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
-
-
 	return S_OK;
 }
 

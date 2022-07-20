@@ -158,9 +158,8 @@ typedef struct tagNonInstanceMeshEffect
 	eFollowingDirID		RotAxis = FollowingDir_Up;
 	_float				RotationSpeedPerSec = 0.f;
 
-
-		eFollowingDirID		MoveDir = FollowingDir_Look;
-		_float				MoveSpeed = 0.f;
+	eFollowingDirID		MoveDir = FollowingDir_Look;
+	_float				MoveSpeed = 0.f;
 
 	_uint				m_iPassIndex = 16;
 

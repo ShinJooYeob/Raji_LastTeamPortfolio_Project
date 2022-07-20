@@ -11,10 +11,23 @@ typedef struct tag_MESHADDDATA
 {
 	eFollowingDirID LookRotAxis = FollowingDir_Look;
 	_float AccRotSpeed = 0.0f;
+	_float AccMoveSpeed = 0.0f;
 	_float3 vAddDirectAngle = _float3::Zero();
+	_bool FixFlag = false;
+
 
 
 }MESHADDDATA;
+
+typedef struct tag_EASINGDESC
+{
+//	_float3 StartPos = _float3();
+	_float3 EndPos = _float3();
+	_float	MaxTime = 1.0f;
+	EasingTypeID EasingID = TYPE_Linear;
+
+}MESHAEASING;
+
 
 class CPartilceCreateMgr final :public CBase
 {
@@ -27,19 +40,38 @@ public:
 	enum E_MESH_EFFECTJ
 	{
 		MESHEFFECT_PRE_CONMESH,
+
+		// PLANE MESH
 		MESHEFFECT_PRE_CIRCLE,
 		MESHEFFECT_PRE_CIRCLE_DIST4,
 		MESHEFFECT_PRE_CIRCLE_DIST5,
 		MESHEFFECT_PRE_IMPECTFX_02,
 		MESHEFFECT_PRE_RING,
+
+		// IMAGE MESH
 		MESHEFFECT_PRE_LOVE,
 		MESHEFFECT_PRE_WING,
 		MESHEFFECT_PRE_BOW1,
 		MESHEFFECT_PRE_BOW2,
 		MESHEFFECT_PRE_ICE,
+		MESHEFFECT_PRE_Sphere,
+		MESHEFFECT_PRE_SM_sphere_melon,
+		MESHEFFECT_PRE_SM_4E_IceSpike_01,
+		MESHEFFECT_PRE_MoonStone00,
+		MESHEFFECT_PRE_MoonStone02,
+		MESHEFFECT_PRE_MoonStone04,
+		MESHEFFECT_PRE_PurpCrystal01,
+		MESHEFFECT_PRE_Rock001,
+		MESHEFFECT_PRE_Rock002,
+		MESHEFFECT_PRE_Rock003,
+		MESHEFFECT_PRE_Rock004,
+		MESHEFFECT_PRE_Rock005,
+		MESHEFFECT_PRE_Ice2,
+
 		MESHEFFECT_PRE_END,
 
 		
+		// PLAY EFFECT
 		MESHEFFECT_ARROW_HEAD,
 		MESHEFFECT_ARROW_END,
 		MESHEFFECT_ARROW_WING,
@@ -50,6 +82,9 @@ public:
 		MESHEFFECT_ARROW_BOW_R,
 		MESHEFFECT_ARROW_BOW_R_JUMP_WING1,
 		MESHEFFECT_ARROW_BOW_R_JUMP_WING2,
+		MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE,
+		MESHEFFECT_ARROW_BOW_SP_BOM_SPEHERE,
+		MESHEFFECT_ARROW_BOW_SP_PLANE,
 
 
 		MESHEFFECT_END,
@@ -115,7 +150,7 @@ public:
 	HRESULT Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir);
 
-	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform);
+	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform, MESHAEASING* easing = nullptr,_uint Count = 0);
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
@@ -126,9 +161,10 @@ public:
 
 
 private:
-	HRESULT Ready_MeshEffect();
-	HRESULT Ready_TextureEffect();
-
+	HRESULT			Ready_MeshEffect();
+	HRESULT			Ready_TextureEffect();
+	
+	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
 private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;

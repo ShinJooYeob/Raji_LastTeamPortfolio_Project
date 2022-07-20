@@ -105,7 +105,6 @@ HRESULT CCollisionMgr::Inspect_Collision()
 	Start_InspectRepelCollision();
 	Start_InspectMainCollision();
 
-	FAILED_CHECK(Inspect_PlayerParkur_To_ParkurObj());
 
 
 	//FAILED_CHECK(Inspect_RepelGroup());
@@ -335,6 +334,7 @@ HRESULT CCollisionMgr::Inspect_MainCollision()
 
 	FAILED_CHECK(Inspect_Terrain_To_All());
 
+	FAILED_CHECK(Inspect_PlayerParkur_To_ParkurObj());
 
 
 	for (_uint i = 0; i < CollisionType_END; i++)

@@ -1,6 +1,7 @@
-#include "..\public\Input_Device.h"
+ï»¿#include "..\public\Input_Device.h"
 
 IMPLEMENT_SINGLETON(CInput_Device)
+HWND			g_hWnd;
 
 CInput_Device::CInput_Device()
 {
@@ -28,6 +29,7 @@ HRESULT CInput_Device::Ready_Input_Device(HINSTANCE hInst, HWND hWnd, _double fD
 
 	//////////////////////////////////////////////////////////////////////////
 	m_DoubleInterver = fDoubleTimeInterver;
+	g_hWnd = hWnd;
 
 	ZeroMemory(m_byKeyState, sizeof(_byte) * 256);
 	ZeroMemory(m_byOldKeyState, sizeof(_byte) * 256);
@@ -47,33 +49,33 @@ HRESULT CInput_Device::Ready_Input_Device(HINSTANCE hInst, HWND hWnd, _double fD
 
 _byte CInput_Device::Get_DIKeyState(_ubyte eKeyID)
 {
-	//´õºí Å°ÀÔ·Â°ªÀ» °Ë»çÇØ¾ßÇÏ´Â »óÈ²ÀÌ°í ÇöÀç ÇÁ·¹ÀÓ¿¡ µ¨Å¸Å¸ÀÓÀ» ¿Ã·ÁÁØ ÀûÀÌ ¾ø´Ù¸é
+	//ë”ë¸” í‚¤ìž…ë ¥ê°’ì„ ê²€ì‚¬í•´ì•¼í•˜ëŠ” ìƒí™©ì´ê³  í˜„ìž¬ í”„ë ˆìž„ì— ë¸íƒ€íƒ€ìž„ì„ ì˜¬ë ¤ì¤€ ì ì´ ì—†ë‹¤ë©´
 	if (m_byDoubleKeyState[eKeyID] && !m_bIsKeyPulsDeltaTime[eKeyID])
 	{
-		//µ¨Å¸Å¸ÀÓÀ» ¿Ã¸®°í ÀÌ¹ø ÇÁ·¹ÀÓ¿¡´Â ÇØ´ç Å°¿¡ ´ëÇÑ ÇÁ·¹ÀÓ Áõ°¡¸¦ ½ÃÄÑÁá´Ù´Â°ÍÀ» Ç¥½Ã
+		//ë¸íƒ€íƒ€ìž„ì„ ì˜¬ë¦¬ê³  ì´ë²ˆ í”„ë ˆìž„ì—ëŠ” í•´ë‹¹ í‚¤ì— ëŒ€í•œ í”„ë ˆìž„ ì¦ê°€ë¥¼ ì‹œì¼œì¤¬ë‹¤ëŠ”ê²ƒì„ í‘œì‹œ
 		m_byDoubleKeyState[eKeyID] += m_fDeltaTime;
 		m_bIsKeyPulsDeltaTime[eKeyID] = true;
 
-		//´õºí Å°ÀÔ·Â °Ë»ç½Ã°£À» ÃÊ°úÇß´Ù¸é 0À¸·Î ¹Ù²ã¶ó
+		//ë”ë¸” í‚¤ìž…ë ¥ ê²€ì‚¬ì‹œê°„ì„ ì´ˆê³¼í–ˆë‹¤ë©´ 0ìœ¼ë¡œ ë°”ê¿”ë¼
 		if (m_byDoubleKeyState[eKeyID] > m_DoubleInterver)
 			m_byDoubleKeyState[eKeyID] = 0;
 	}
 
 	if (m_byKeyState[eKeyID] & 0x80)
 	{
-		//Áö±Ý ´­·È°í ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´­¸®Áö ¾Ê¾ÒÀ»¶§(DOWN)
+		//ì§€ê¸ˆ ëˆŒë ¸ê³  ì´ì „ í”„ë ˆìž„ì— ëˆŒë¦¬ì§€ ì•Šì•˜ì„ë•Œ(DOWN)
 		if (!m_byOldKeyState[eKeyID])
 		{
-			//ÀÌÀü¿¡ ´­¸°ÀûÀÌ ¾øÀ¸¸é ´ÙÀ½ÇÁ·¹ÀÓºÎÅÍ µ¨Å¸Å¸ÀÓÀ» °Ë»çÇÒ ¼ö ÀÖµµ·Ï ÇÑ¹ø Áõ°¡½ÃÄÑÁÖ°í
+			//ì´ì „ì— ëˆŒë¦°ì ì´ ì—†ìœ¼ë©´ ë‹¤ìŒí”„ë ˆìž„ë¶€í„° ë¸íƒ€íƒ€ìž„ì„ ê²€ì‚¬í•  ìˆ˜ ìžˆë„ë¡ í•œë²ˆ ì¦ê°€ì‹œì¼œì£¼ê³ 
 			if (!m_byDoubleKeyState[eKeyID])
 			{
 				m_byDoubleKeyState[eKeyID] += m_fDeltaTime;
 				m_bIsKeyPulsDeltaTime[eKeyID] = true;
-				return 0b00000010;//´Ù¿î
+				return 0b00000010;//ë‹¤ìš´
 			}
-			//ÇÑ ÇÁ·¹ÀÓ ³»¿¡¼­ ¿©·¯¹ø È£Ãâ µÉ ¶§ ´õºí Å°ÀÔ·ÂÀ¸·Î µÇ´Â °ÍÀ» ¹æÁöÇÏ°í ´õºí Å°ÀÔ·Â ÀÎÅÍ¹ú ³»·Î Å° ÀÔ·ÂÀ» ´Ù½Ã ¹ÞÀº °ÍÀÌ¶ó¸é
+			//í•œ í”„ë ˆìž„ ë‚´ì—ì„œ ì—¬ëŸ¬ë²ˆ í˜¸ì¶œ ë  ë•Œ ë”ë¸” í‚¤ìž…ë ¥ìœ¼ë¡œ ë˜ëŠ” ê²ƒì„ ë°©ì§€í•˜ê³  ë”ë¸” í‚¤ìž…ë ¥ ì¸í„°ë²Œ ë‚´ë¡œ í‚¤ ìž…ë ¥ì„ ë‹¤ì‹œ ë°›ì€ ê²ƒì´ë¼ë©´
 			else if (m_byDoubleKeyState[eKeyID] > m_fDeltaTime && m_byDoubleKeyState[eKeyID] <= m_DoubleInterver)
-				return 0b00000100;//´õºí´Ù¿î
+				return 0b00000100;//ë”ë¸”ë‹¤ìš´
 			
 			else
 				return 0b00000010;
@@ -81,17 +83,17 @@ _byte CInput_Device::Get_DIKeyState(_ubyte eKeyID)
 
 		}
 
-		//Áö±Ý ´­·È°í ÀÌÀü ÇÁ·¹ÀÓ¿¡µµ ´­·ÈÀ» ‹š(Pressing)
+		//ì§€ê¸ˆ ëˆŒë ¸ê³  ì´ì „ í”„ë ˆìž„ì—ë„ ëˆŒë ¸ì„ ë–„(Pressing)
 		else
 			return 0b00001000;
 	}
 	else 
 	{
-		//Áö±Ý ¾È´­·È°í ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´­¸®Áö ¾Ê¾ÒÀ»¶§(NoPressing)
+		//ì§€ê¸ˆ ì•ˆëˆŒë ¸ê³  ì´ì „ í”„ë ˆìž„ì— ëˆŒë¦¬ì§€ ì•Šì•˜ì„ë•Œ(NoPressing)
 		if ((!m_byOldKeyState[eKeyID]))
 			return 0b00000000;
 
-		//Áö±Ý ¾È´­·È°í ÀÌÀü ÇÁ·¹ÀÓ¿¡ ´­·ÈÀ» ‹š(Up)
+		//ì§€ê¸ˆ ì•ˆëˆŒë ¸ê³  ì´ì „ í”„ë ˆìž„ì— ëˆŒë ¸ì„ ë–„(Up)
 		else
 			return 0b00000001;
 
@@ -143,11 +145,15 @@ HRESULT CInput_Device::SetUp_InputDeviceState(_double fDeltaTime)
 	if (nullptr == m_pKeyboard ||
 		nullptr == m_pMouse)
 		return E_FAIL;
+	
+	HWND Wnd = GetForegroundWindow();
+	if (Wnd != g_hWnd)
+		return  S_FALSE;
 
-	//¸ÅÇÁ·¹ÀÓ¸¶´Ù ´õºí Å°ÀÔ·Â °Ë»ç¸¦ À§ÇØ m_byDoubleKeyState(float * 256)°³ÀÇ 
-	//¸ðµçÅ°ÀÇ °ªÀ» °Ë»çÇÏ´Â °ÍÀº ºñÈ¿À² ÀûÀÎ °Í °°¾Æ¼­
-	//´õºí Å° ÀÔ·Â°Ë»ç¸¦ Å°°Ë»ç È£ÃâµÇ´Â °÷À¸·Î ³Ñ±â±â À§ÇØ µ¨Å¸Å¸ÀÓÀ» ³Ñ±â°í
-	//ÇÑÇÁ·¹ÀÓ ³»¿¡¼­ ¿©·¯¹ø È£ÃâµÇ´õ¶óµµ ÇÑ¹ø¸¸ DeltaTimeÀ» ¿Ã¸®±â À§ÇØ ÇØ´ç Å°¿¡ ¿Ã·ÁÁá´ÂÁö¸¦ memcpy·Î false·Î ¹Ù²Þ 
+	//ë§¤í”„ë ˆìž„ë§ˆë‹¤ ë”ë¸” í‚¤ìž…ë ¥ ê²€ì‚¬ë¥¼ ìœ„í•´ m_byDoubleKeyState(float * 256)ê°œì˜ 
+	//ëª¨ë“ í‚¤ì˜ ê°’ì„ ê²€ì‚¬í•˜ëŠ” ê²ƒì€ ë¹„íš¨ìœ¨ ì ì¸ ê²ƒ ê°™ì•„ì„œ
+	//ë”ë¸” í‚¤ ìž…ë ¥ê²€ì‚¬ë¥¼ í‚¤ê²€ì‚¬ í˜¸ì¶œë˜ëŠ” ê³³ìœ¼ë¡œ ë„˜ê¸°ê¸° ìœ„í•´ ë¸íƒ€íƒ€ìž„ì„ ë„˜ê¸°ê³ 
+	//í•œí”„ë ˆìž„ ë‚´ì—ì„œ ì—¬ëŸ¬ë²ˆ í˜¸ì¶œë˜ë”ë¼ë„ í•œë²ˆë§Œ DeltaTimeì„ ì˜¬ë¦¬ê¸° ìœ„í•´ í•´ë‹¹ í‚¤ì— ì˜¬ë ¤ì¤¬ëŠ”ì§€ë¥¼ memcpyë¡œ falseë¡œ ë°”ê¿ˆ 
 	m_fDeltaTime = fDeltaTime;
 
 
