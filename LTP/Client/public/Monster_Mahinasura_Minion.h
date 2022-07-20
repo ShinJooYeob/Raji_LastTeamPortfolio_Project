@@ -8,6 +8,8 @@ END
 BEGIN(Client)
 class CMonster_Mahinasura_Minion final : public CMonster
 {
+public:
+	enum ColliderType {HANDATTACK,TAILATTACK,COLLIDER_END};
 private:
 	explicit CMonster_Mahinasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Mahinasura_Minion(const CMonster_Mahinasura_Minion& rhs);
@@ -31,8 +33,10 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -50,13 +54,30 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+	CCollider*			m_pHandAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecHandAttackAttachedDesc;
+
+	CCollider*			m_pTailAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecTailAttackAttachedDesc;
+
+	//ColliderType
+	ColliderType		m_eColliderType;
+	_bool				m_bColliderAttackOn = false;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
-private://애니메이션 동작 및 이벤트
 	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
@@ -82,6 +103,12 @@ private:
 
 	_bool				m_bFastRunOn = false;
 
+
+private://speed
+	_double				m_dAcceleration = 1;
+
+	///Knockback
+	_float3				m_fKnockbackDir;
 
 private:
 	HRESULT SetUp_Components();
