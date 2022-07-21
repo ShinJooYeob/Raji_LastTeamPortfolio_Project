@@ -35,7 +35,6 @@ HRESULT CChangeNavIndexTrigger::After_Initialize()
 {
 	m_iChangeNavIndex = (_uint)m_fValueMat._11;
 
-
 	return S_OK;
 }
 
@@ -103,7 +102,7 @@ _uint CChangeNavIndexTrigger::Get_ChangeNavIndex()
 HRESULT CChangeNavIndexTrigger::SetUp_Components()
 {
 	return S_OK;
-}
+} 
 
 HRESULT CChangeNavIndexTrigger::SetUp_EtcInfo()
 {

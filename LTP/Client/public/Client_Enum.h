@@ -200,7 +200,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 enum ECameraMode
 {
-	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING
+	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX
 };
 
 enum UPGRADEID
@@ -291,6 +291,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_ChangeCameraView,
 	Prototype_Trigger_ChangeNavIndex,
 	Prototype_Trigger_PILLARTRIGGER,
+	Prototype_Trigger_BLOCKZONE,
+	Prototype_Trigger_DEADZONE,
 	Prototype_Trigger_TestLedgeTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_MonsterBatchTrigger,
@@ -450,6 +452,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_PILLARTRIGGER:
 		return TEXT("Prototype_Trigger_Pillartrigger");
+		break;
+	case Prototype_Trigger_BLOCKZONE:
+		return TEXT("Prototype_Trigger_BlockZone");
+		break;
+	case Prototype_Trigger_DEADZONE:
+		return TEXT("Prototype_Trigger_Deadzone");
 		break;
 		
 	case Prototype_PlayerSkill_ShellingArrow:
@@ -5694,7 +5702,8 @@ enum COMPONENTID
 	Com_Dissolve,
 	//JJB
 	Com_HPUI,
-	Com_Collider_1
+	Com_Collider_1,
+	Com_SubTransform2
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
 {
@@ -5712,7 +5721,10 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 	case Com_SubTransform:
 		return TEXT("Com_SubTransform");
 		break;
-		
+	case Com_SubTransform2:
+		return TEXT("Com_SubTransform2");
+		break;
+
 	case Com_Texture:
 		return TEXT("Com_Texture");
 		break;

@@ -379,6 +379,12 @@
     <Filter Include="01.GameObject\98.TriggerObject\03. PillarTrigger">
       <UniqueIdentifier>{4b813f59-1db8-4146-b17d-90e902224f04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\04. BlockZone">
+      <UniqueIdentifier>{43188a7a-2454-4e08-8eaf-abc327772899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\05. DeadZone">
+      <UniqueIdentifier>{b2060dd8-0c3a-4782-993a-662023ca3ca1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -837,6 +843,12 @@
     <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BlockZone.h">
+      <Filter>01.GameObject\98.TriggerObject\04. BlockZone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DeadZone.h">
+      <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1272,6 +1284,12 @@
     </ClCompile>
     <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
       <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlockZone.cpp">
+      <Filter>01.GameObject\98.TriggerObject\04. BlockZone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DeadZone.cpp">
+      <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

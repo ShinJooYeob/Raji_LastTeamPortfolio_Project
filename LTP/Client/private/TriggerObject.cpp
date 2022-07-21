@@ -54,7 +54,7 @@ _int CTriggerObject::Update(_double fDeltaTime)
 
 	for (_uint i = 0 ; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
 		m_pColliderCom->Update_Transform(i,m_pTransformCom->Get_WorldMatrix());
-	
+	 
 
 
 	return _int();

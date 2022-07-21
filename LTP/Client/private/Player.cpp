@@ -88,7 +88,8 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	// TEST CODE
-	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+	_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	//
 
 	
@@ -129,12 +130,6 @@ _int CPlayer::Update(_double fDeltaTime)
 
 			//m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-		}
-
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_P)&DIS_Down)
-		{
-			Set_State_PillarStart(fDeltaTime);
 		}
 	}
 #pragma endregion TestInputkey
@@ -327,7 +322,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-//	m_pNavigationCom->Render(m_pTransformCom);
+	//m_pNavigationCom->Render(m_pTransformCom);
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -369,21 +364,31 @@ _bool CPlayer::Get_IsLedgeReachBackState()
 	return m_bLedge_ReachBackState;
 }
 
-void CPlayer::Set_CurParkourTrigger(CTriggerObject * pParkourTrigger, CTriggerObject* pCauser)
+_int CPlayer::Get_CurPlayAnimation()
 {
-	//if (nullptr == pParkourTrigger && m_pCurParkourTrigger != pCauser)
-	//	return;
+	return m_pModel->Get_NowAnimIndex();
+}
 
-	//if (nullptr != m_pCurParkourTrigger)
-	//{
-
-	//}
-	//m_pCurParkourTrigger = pParkourTrigger;
+void CPlayer::Set_CurParkourTrigger(CTriggerObject * pParkourTrigger)
+{
+	m_pCurParkourTrigger = pParkourTrigger;
 }
 
 void CPlayer::Set_PlayerNavIndex(_uint iNavIndex)
 {
 	m_pNavigationCom->Set_CurNavCellIndex(iNavIndex);
+}
+
+void CPlayer::Set_PillarBlockClimbUp(_bool bBlock, _float vBlockLimitHeight)
+{
+	m_bBlockClimbUp = bBlock;
+	m_fPillarClimbUpBlockHeight = vBlockLimitHeight;
+}
+
+void CPlayer::Set_FallingDead(_bool bFallingDead)
+{
+	m_bOnNavigation = false;
+	m_bFallingDead = bFallingDead;
 }
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -419,6 +424,7 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 		}
 		else
 		{
+			m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
 			Set_State_DeathStart();
 			return fRemainHP;
 		}
@@ -677,7 +683,52 @@ void CPlayer::Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime)
 
 void CPlayer::Set_State_PillarStart(_double fDeltaTime)
 {
-	m_pModel->Change_AnimIndex(PILLAR_ANIM_GRAB);
+	if (STATE_PILLAR != m_eCurState)
+	{
+		m_pModel->Change_AnimIndex(PILLAR_ANIM_GRAB);
+		m_eCurState = STATE_PILLAR;
+
+		_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vPillarPos = XMVectorSetY(vPillarPos, XMVectorGetY(vPlayerPos));
+
+		_Vector vDir = XMVector3Normalize(vPlayerPos - vPillarPos);
+		m_fPillarParkourInitPos = vPillarPos + (vDir * 0.35f);
+	}
+}
+
+void CPlayer::Set_State_PillarGrabStart(_bool bTurnReflect, _double fDeltaTime)
+{
+
+	_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	vPillarPos = XMVectorSetY(vPillarPos, XMVectorGetY(vPlayerPos));
+
+	_Vector vDir;
+	if (STATE_JUMP != m_eCurState && STATE_FALL != m_eCurState)
+	{
+		vDir = XMVector3Normalize(vPlayerPos - vPillarPos);
+		m_fPillarParkourInitPos = vPillarPos + (vDir * 0.35f);
+
+		_Vector vLookDir = XMVector3Normalize(vPlayerPos - vPillarPos);
+
+		m_pTransformCom->LookDir(vLookDir);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, m_fPillarParkourInitPos);
+	}
+	else
+	{
+		vDir = XMVector3Normalize(vPlayerPos - vPillarPos);
+		m_fPillarParkourInitPos = vPillarPos + (vDir * -0.35f);
+
+		_Vector vLookDir = XMVector3Normalize(vPillarPos - vPlayerPos);
+
+		m_pTransformCom->LookDir(vLookDir);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, m_fPillarParkourInitPos);
+		
+	}
+
+	m_pTransformCom->Turn_Direct(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 	m_eCurState = STATE_PILLAR;
 }
 
@@ -948,52 +999,6 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		break;
 	}
 
-
-	//_float fCurAnimRate = (_float)m_pModel->Get_PlayRate();
-
-	//if (0.f <= fCurAnimRate)
-	//{
-	//	if (0.194f <= fCurAnimRate && 0.694f >= fCurAnimRate)
-	//	{
-	//		m_fFallingAcc += 0.02267f;
-	//		_float fPos_y = m_fJumpStart_Y + (5.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
-
-	//		m_pTransformCom->Move_Forward(fDeltaTime * 2.f, m_pNavigationCom, true); 
-	//		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	//		vMyPos = XMVectorSetY(vMyPos, fPos_y);
-	//		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
-	//	}
-	//	
-	//	_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	//	if (fMyPos_Y < m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) 
-	//		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
-	//	{
-	//		m_bOnNavigation = true;
-	//		Set_State_IdleStart(fDeltaTime);
-	//		m_fFallingAcc = 0.f;
-	//	}
-	//	/*if (0.98f <= fCurAnimRate)
-	//	{
-	//			m_bOnNavigation = true;
-	//			Set_State_IdleStart(fDeltaTime);
-	//			m_fFallingAcc = 0.f;
-
-	//		m_bOnNavigation = true;
-	//		Set_State_IdleStart(fDeltaTime);
-	//		m_fFallingAcc = 0.f; 
-	//	}
-	//	else */if (0.6f <= fCurAnimRate)
-	//	{
-	//		_float fMyPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	//		if (fMyPos_Y - 0.5f > m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)))
-	//		{
-	//			m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 1.f);
-	//			m_eCurState = STATE_FALL;
-	//			m_fJumpPower = 5.f;
-	//		}
-	//	}
-	//}
-
 	return S_OK;
 }
 
@@ -1001,7 +1006,7 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 {
 	m_bOnNavigation = false;
 	m_fAnimSpeed = 1.f;
-	m_fFallingAcc += 0.03f;
+	m_fFallingAcc += 0.02f;
 	_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 	m_pTransformCom->Move_Forward(fDeltaTime * m_fJumpPower, m_pNavigationCom, true);
@@ -1203,12 +1208,20 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 	{
 	case PILLAR_ANIM_GRAB:
 	{
+		m_bOnNavigation = false;
+		_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		vPillarPos = XMVectorSetY(vPillarPos, XMVectorGetY(vPlayerPos));
+		_Vector vLookDir = vPillarPos - vPlayerPos;
+		m_pTransformCom->Turn_Dir(vLookDir, 0.9f);
+		m_pTransformCom->MovetoTarget_ErrRange(m_fPillarParkourInitPos.XMVector(), fDeltaTime, 0.1f);
+		
 		if (0.f < fAnimPlayRate)
 		{
 			if (0.214f <= fAnimPlayRate && 0.392f >= fAnimPlayRate)
 			{
-				m_pTransformCom->Move_Forward(fDeltaTime * 0.1f);
-				m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
+				m_pTransformCom->Move_Up(fDeltaTime * 1.f);
+				m_fPillarParkourInitPos.y = XMVectorGetY(vPlayerPos);
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
@@ -1219,28 +1232,32 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		break;
 	case PILLAR_ANIM_IDLE:
 	{
+		m_bOnNavigation = false;
 		if (true == m_bPressedInteractKey)
 		{
-			m_pModel->Change_AnimIndex(PILLAR_ANIM_MOVE_DOWN);
+			_float fPlayerPos_y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+			if (true == m_bBlockClimbUp && fPlayerPos_y + 0.2f > m_fPillarClimbUpBlockHeight)
+			{
+				m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
+			}
+			else
+			{
+				m_pModel->Change_AnimIndex(PILLAR_ANIM_MOVE_DOWN);
+			}
 		}
 		else 
 		{
 			if (true == m_bPressedDodgeKey)
 			{
 				m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+				m_fFallingAcc = 0.f;
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_JUMP);
 			}
 			else if (MOVDIR_F == m_eInputDir)
 			{
 				// Check Pillar's Top Col
-				//if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
-				//{
-				//	m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_CLIMB);
-				//}
-				//else
-				//{
-					m_pModel->Change_AnimIndex(PILLAR_ANIM_CLIMB_UP);
-				//}
+				m_pModel->Change_AnimIndex(PILLAR_ANIM_CLIMB_UP);
+				//
 			}
 			else if (MOVDIR_B == m_eInputDir)
 			{
@@ -1255,6 +1272,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_ROT_ANTICLOCK);
 			}
 		}
+		m_bBlockClimbUp = false;
 	}
 		break;
 	case PILLAR_ANIM_CLIMB_UP:
@@ -1263,11 +1281,24 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.16f <= fAnimPlayRate && 0.6f >= fAnimPlayRate)
 			{
-				m_pTransformCom->Move_Up(fDeltaTime); 
+				m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
+
+				if (true == m_bBlockClimbUp)
+				{
+					_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+					_float fCur_PlayerHeight = XMVectorGetY(vPlayerPos);
+					if (m_fPillarClimbUpBlockHeight <= fCur_PlayerHeight)
+					{
+						vPlayerPos = XMVectorSetY(vPlayerPos, m_fPillarClimbUpBlockHeight);
+						m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPlayerPos);
+					}
+				}
+
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
+				m_bBlockClimbUp = false;
 			}
 		}
 	}
@@ -1278,7 +1309,15 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.4f <= fAnimPlayRate && 0.84f >= fAnimPlayRate)
 			{
-				m_pTransformCom->Move_Down(fDeltaTime * 0.5f);
+				m_pTransformCom->Move_Down(fDeltaTime * 0.3f);
+				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				_float	fPos_y = XMVectorGetY(vPos);
+				_float	fNavPos_y = m_pNavigationCom->Get_NaviHeight(vPos);
+				if (fPos_y <= (fNavPos_y + 0.8f))
+				{
+					vPos = XMVectorSetY(vPos, fNavPos_y + 0.8f);
+					m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+				}
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
@@ -1291,8 +1330,15 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 	{
 		if (0.f < fAnimPlayRate)
 		{
-			m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+			_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vPillarPos = XMVectorSetY(vPillarPos, XMVectorGetY(vPlayerPos));
+			m_pTransformCom->Turn_Revolution_CCW(vPillarPos, -0.35f, fDeltaTime); 
 			if (0.95f < fAnimPlayRate)
+			{
+				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
+			}
+			else if (MOVDIR_L != m_eInputDir)
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 			}
@@ -1303,8 +1349,16 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 	{
 		if (0.f < fAnimPlayRate)
 		{
-			m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+			_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			vPillarPos = XMVectorSetY(vPillarPos, XMVectorGetY(vPlayerPos));
+			m_pTransformCom->Turn_Revolution_CW(vPillarPos, -0.35f, fDeltaTime);
+
 			if (0.95f < fAnimPlayRate)
+			{
+				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
+			}
+			else if (MOVDIR_R != m_eInputDir)
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 			}
@@ -1319,7 +1373,15 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			m_fFallingAcc = 5.f;
 		}
 		m_pTransformCom->Move_Down(fDeltaTime * m_fFallingAcc);
-		
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		_float	fPos_y = XMVectorGetY(vPos);
+		_float	fNavPos_y = m_pNavigationCom->Get_NaviHeight(vPos);
+		if (fPos_y <= (fNavPos_y + 0.8f))
+		{
+			vPos = XMVectorSetY(vPos, fNavPos_y + 0.8f);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+		}
+
 		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Up)
 		{
 			m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
@@ -1333,7 +1395,10 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.22f <= fAnimPlayRate && 0.5f >= fAnimPlayRate)
 			{
-				m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
+				_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vPillarPos = XMVectorSetY(vPillarPos, m_fPillarClimbUpBlockHeight + 0.5f);
+				m_pTransformCom->MovetoTarget_ErrRange(vPillarPos, fDeltaTime, 0.1f);
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
@@ -1349,6 +1414,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			if (true == m_bPressedDodgeKey)
 			{
 				m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+				m_fFallingAcc = 0.f;
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_TOP_JUMP);
 			}
 			else if (true == m_bPressedInteractKey)
@@ -1398,6 +1464,11 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			if (0.5f <= fAnimPlayRate && 0.72f >= fAnimPlayRate)
 			{
 				m_pTransformCom->Move_Down(fDeltaTime * 0.5f);
+				m_pTransformCom->Move_Backward(fDeltaTime * 0.2f);
+				/*_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				vPillarPos = XMVectorSetY(vPillarPos, m_fPillarClimbUpBlockHeight + 0.5f);
+				m_pTransformCom->MovetoTarget_ErrRange(vPillarPos, fDeltaTime, 0.1f);*/
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
@@ -1408,6 +1479,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		break;
 	case PILLAR_ANIM_JUMP:
 	{
+		m_bOnNavigation = false;
 		if (0.f < fAnimPlayRate)
 		{
 			if (0.12f > fAnimPlayRate)
@@ -1422,7 +1494,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			else if (true == m_bActionSwitch)
 			{
 				m_fFallingAcc += 0.03f;
-				m_pTransformCom->Move_Forward(fDeltaTime * 2.f);
+				m_pTransformCom->Move_Forward(fDeltaTime * 1.f, m_pNavigationCom, true);
 				_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 				_float fPrePos_Y = XMVectorGetY(vMyPos);
 				_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
@@ -1430,7 +1502,6 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 				{
 					m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 					m_bActionSwitch = false;
-					break;
 				}
 				vMyPos = XMVectorSetY(vMyPos, fPos_y);
 				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
@@ -1440,15 +1511,18 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		break;
 	case PILLAR_ANIM_TOP_JUMP:
 	{
+		m_bOnNavigation = false;
 		if (0.f < fAnimPlayRate)
 		{
 			m_fFallingAcc += 0.03f;
-			m_pTransformCom->Move_Forward(fDeltaTime * 2.f);
+			m_pTransformCom->Move_Forward(fDeltaTime * 1.f, m_pNavigationCom, true);
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 			_float fPrePos_Y = XMVectorGetY(vMyPos);
 			_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 			if (fPrePos_Y >= fPos_y)
 			{
+				/*m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+				m_fFallingAcc = 0.f;*/
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 				m_bActionSwitch = false;
 				break;
@@ -1460,19 +1534,24 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		break;
 	case LEDGE_ANIM_FALLING:
 	{
+		m_bOnNavigation = false;
 		m_fFallingAcc += 0.03f;
-		m_pTransformCom->Move_Forward(fDeltaTime * (m_fJumpPower * 0.5f));
+		m_pTransformCom->Move_Forward(fDeltaTime * 1.f, m_pNavigationCom, true);
 		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 		_float fPrePos_Y = XMVectorGetY(vMyPos);
-		_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
-		vMyPos = XMVectorSetY(vMyPos, fPos_y);
-		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
-		
-		if (0.f >= XMVectorGetY(vMyPos))
+		_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);	
+		_float fNavPos_y = m_pNavigationCom->Get_NaviHeight(vMyPos);
+
+		if (fNavPos_y <= fPrePos_Y && fNavPos_y >= fPos_y && CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())  
 		{
+			m_bOnNavigation = true;
+			fPos_y = fNavPos_y;
 			m_fFallingAcc = 0.f;
 			Set_State_IdleStart(fDeltaTime);
 		}
+
+		vMyPos = XMVectorSetY(vMyPos, fPos_y);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 	}
 		break;
 	}
@@ -1572,10 +1651,11 @@ HRESULT CPlayer::Update_State_Damage(_double fDeltaTime)
 			m_pTransformCom->MovetoDir_bySpeed(m_fKnockbackDir.XMVector(), fKnockbackPower, fDeltaTime, m_pNavigationCom);
 			m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector() * -1.f, 0.7f);
 		}
-		else //if (0.5f <= fAnimPlayRate)
+		else
 		{
 			if(0.f >= m_fHP && 0.98f <= fAnimPlayRate)
 			{
+				m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
 				Set_State_DeathStart();
 				return S_OK;
 			}
@@ -1603,6 +1683,12 @@ HRESULT CPlayer::Update_State_Execution(_double fDeltaTime)
 HRESULT CPlayer::Update_State_Dead(_double fDeltaTime)
 {
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
+
+	if (true == m_bFallingDead)
+	{
+		m_pTransformCom->Move_Down(fDeltaTime * 2.5f);
+	}
+
 	if (0.f < fAnimPlayRate)
 	{
 		if (0.98f < fAnimPlayRate)
@@ -7012,7 +7098,7 @@ void CPlayer::Set_CurParkurLedge(CTestLedgeTrigger* pTargetLedge)
 	m_pCurParkourTrigger = pTargetLedge;
 }
 
-CTriggerObject* CPlayer::Get_CurParkurLedge()
+CTriggerObject * CPlayer::Get_CurParkurTriger()
 {
 	return m_pCurParkourTrigger;
 }

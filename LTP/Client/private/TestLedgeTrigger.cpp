@@ -116,7 +116,7 @@ void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 		case ELedgeTriggerState::STATE_LEDGE:
 		{
 			if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN == pPlayer->Get_LedgeState() && CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType &&
-				pPlayer->Get_CurParkurLedge() != this)
+				pPlayer->Get_CurParkurTriger() != this)
 			{
 				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
 				pPlayer->Set_CurParkurLedge(this);
@@ -145,7 +145,7 @@ void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 				}
 			}
 			else if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP == pPlayer->Get_LedgeState() &&
-					 pPlayer->Get_CurParkurLedge() != this &&
+					 pPlayer->Get_CurParkurTriger() != this &&
 					 CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType)
 			{
 				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
