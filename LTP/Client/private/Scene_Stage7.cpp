@@ -29,7 +29,7 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
-	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 
 	
 	
@@ -349,7 +349,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 
 			CDissolve::DISSOLVEDESC	tDissolveDesc;
-
+			dw
 			tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
 			tDissolveDesc.pModel = (CModel*)pObject->Get_Component(TAG_COM(Com_Model));
 			tDissolveDesc.pShader = (CShader*)pObject->Get_Component(TAG_COM(Com_Shader));
