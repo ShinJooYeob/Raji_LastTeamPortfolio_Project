@@ -53,10 +53,15 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	/*if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
+	if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
 	{
+
+
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wasp)));
-	}*/
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wormgrub)));
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Spider)));
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wolf)));
+	}
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
