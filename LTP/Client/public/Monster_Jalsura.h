@@ -55,6 +55,20 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 
 private:
+	HRESULT	Ready_ParticleDesc();
+	HRESULT	Update_ParticleTransform(_double fDeltaTime);
+	_float4 vTargetRimLightColor = _float4(0);
+	_float4 vOldRimLightColor = _float4(0);
+	_float fRimLightPassedTime= _float(0);
+	_float fTransformAngle = 0;
+	CTransform*												m_pTextureParticleTransform = nullptr;
+	CTransform*												m_pMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecNonMeshParticleDesc;
+	
+
+private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트

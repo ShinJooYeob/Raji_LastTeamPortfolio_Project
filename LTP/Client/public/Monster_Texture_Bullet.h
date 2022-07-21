@@ -19,6 +19,8 @@ public:
 		_float3			fScale;
 		_float3			fLook;
 
+		_float4			vColor = _float4(1);
+
 		CTransform*		Object_Transform = nullptr;
 
 		_float3			fPositioning;
@@ -92,6 +94,8 @@ private:
 private:
 	_bool				m_bOnceSwtich = false;
 
+private:
+	_float				m_fAngle = 0;
 
 
 private: //Jalsura Dis

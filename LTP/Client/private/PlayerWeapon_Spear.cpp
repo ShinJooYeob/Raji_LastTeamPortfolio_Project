@@ -493,8 +493,8 @@ HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 {
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
@@ -514,6 +514,7 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Spear_ThrowAttack"));
 	m_vecTextureParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
 	m_vecTextureParticleDesc[3].iFollowingDir = FollowingDir_Look;
+	m_vecTextureParticleDesc[3].bBillboard = true;
 
 	return S_OK;
 }

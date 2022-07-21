@@ -7,6 +7,7 @@
 #include "physX/PhyxSampleTest.h"
 #include "TestObject_PhysX.h"
 #include "physX/Collider_PhysX_Dynamic.h"
+#include "MapObject.h"
 
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -23,14 +24,14 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Light());
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
-//	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
+//	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
 
-
+	
 	// Assimp Test
-	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
+//	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 //	GetSingle(CPhysXMgr)->CreateDemoMap();
-
-
 
 	return S_OK;
 }
@@ -204,19 +205,72 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player)));
-
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
+
+	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+
+
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 
-	m_pMainCam->Set_CameraMode(CAM_MODE_NOMAL);
+	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
-	return S_OK;
 
+	return S_OK;
 }
+
+
+HRESULT CScene_Stage6::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -3, 0);
+	pTransform->Set_Matrix(tt);
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag))->Set_FrustumSize(99999999.f);
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, L"TestNonAnimInstance"));
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_Layer_Monster_Boss(const _tchar * pLayerTag)
+{
+	// 몬스터들
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader))); 
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Minion)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Ninjasura)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Black)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram)));
+
+
+	// 보스들
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
+
+	return S_OK;
+}
+
+
+
 
 HRESULT CScene_Stage6::Ready_Layer_Phycis()
 {
@@ -252,3 +306,5 @@ void CScene_Stage6::Free()
 	__super::Free();
 //	Safe_Release(m_pPhySample);
 }
+
+

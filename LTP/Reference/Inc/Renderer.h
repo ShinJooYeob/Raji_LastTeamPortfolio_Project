@@ -25,7 +25,7 @@ public:
 	};
 	enum TRAILGROUP
 	{
-		TRAIL_MOTION, TRAIL_SWORD, TRAIL_END
+		TRAIL_MOTION, TRAIL_SWORD, TRAIL_SWORD_DISTORT, TRAIL_END
 	};
 
 private:
@@ -154,6 +154,9 @@ private:
 
 	_bool						m_PostProcessingOn[POSTPROCESSING_END];
 
+	_float4x4					m_OldViewMat = XMMatrixIdentity();
+	_float4x4					m_OldProjMat = XMMatrixIdentity();
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
@@ -184,6 +187,10 @@ private:
 	HRESULT Render_SwordTrail();
 	HRESULT Render_EmissiveBlur();
 
+	HRESULT Copy_NowWorld2OldWorld();
+	HRESULT Make_VelocityMap();
+	HRESULT Render_CameraMotionBlur();
+
 private:
 	HRESULT Render_DepthOfField();
 	HRESULT Render_ShadowMap();
@@ -193,8 +200,8 @@ private:
 	HRESULT Ready_For_Update(_double fDelataTimme);
 
 public:
-	void OnOff_PostPorcessing(POSTPROCESSINGID eID) { m_PostProcessingOn[eID] = !m_PostProcessingOn[eID]; };
-	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool) { m_PostProcessingOn[eID] = bBool; };
+	void OnOff_PostPorcessing(POSTPROCESSINGID eID);
+	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool);
 	_bool Get_IsOnPostPorcessing(POSTPROCESSINGID eID) { return m_PostProcessingOn[eID]; };
 
 	_float Get_DofLength() { return m_fDofLength; };

@@ -31,6 +31,10 @@ texture2D			g_UpScaledTexture3;
 texture2D			g_UpScaledTexture4;
 texture2D			g_UpScaledTexture5;
 
+texture2D			g_OldWorldPosTexture;
+texture2D			g_VelocityMapTexture;
+
+
 cbuffer	RenderingPipeLine
 {
 	matrix			g_WorldMatrix;
@@ -111,6 +115,15 @@ cbuffer RayTraceConstants
 	float	g_SunSize =  10.f;
 	float	g_LensfaleSupportSunSize = 128.f;
 }
+cbuffer VelocityMatrix
+{
+	matrix		g_matNowView;
+	matrix		g_matNowProj;
+
+	matrix		g_matOldView;
+	matrix		g_matOldProj;
+}
+
 
 
 sampler DefaultSampler = sampler_state
@@ -281,6 +294,16 @@ struct VS_OUT_ForAvgLumi
 	float2		vTexUV : TEXCOORD0;
 	float		fNeedToDraw : TEXCOORD1;
 };
+struct VS_OUTVelocityMap
+{
+	float4		vPosition : SV_POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vNormal : TEXCOORD1;
+	float4		vDir : TEXCOORD2;
+	
+};
+
+
 struct VS_OUT_BLUR
 {
 	float4		vPosition : SV_POSITION;
@@ -312,6 +335,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	return Out;
 }
+
 VS_OUT_ForAvgLumi VS_ForLumi(VS_IN In)
 {
 	VS_OUT_ForAvgLumi			Out = (VS_OUT_ForAvgLumi)0;
@@ -1129,6 +1153,88 @@ PS_OUT PS_Emissive(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MakeVelocityMap(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+
+	vector		WorldPosDesc = g_WorldPosTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		OldWorldPosDesc = g_OldWorldPosTexture.Sample(DefaultSampler, In.vTexUV);
+	vector		NormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+	
+	float4 vTargetPosition;
+	float4 vTargetDir;
+
+
+	float4 vNewPos = mul(vector(WorldPosDesc.xyz,1), g_matNowView);
+	vNewPos = mul(vNewPos, g_matNowProj);
+
+
+	float4 vOldPos = mul(vector(OldWorldPosDesc.xyz, 1), g_matOldView);
+	vOldPos = mul(vOldPos, g_matOldProj);
+
+
+	float3 vDir = vNewPos.xyz - vOldPos.xyz;
+	float a = dot(normalize(vDir), normalize(NormalDesc.xyz));
+
+	if (a < 0.f)
+		vTargetPosition = vOldPos;
+	else
+		vTargetPosition = vNewPos;
+
+	float2 velocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
+
+	vTargetDir.xy = velocity * 0.5f;
+	vTargetDir.y *= -1.f;
+	vTargetDir.z = vTargetPosition.z;
+	vTargetDir.w = vTargetPosition.w;
+
+
+	Out.vColor.xy = vTargetDir.xy;
+	Out.vColor.z = 1.0f;
+	Out.vColor.w = vTargetDir.z / vTargetDir.w;
+
+	return Out;
+}
+
+PS_OUT PS_MotionBlur(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+#define NumBlurSample  20
+	// 샘플링을 위한 개수입니다.
+	// 샘플링을 늘린다면 조금 더 부드러워 지겠지만, 연산량 증가
+	
+	vector		Velocity = g_VelocityMapTexture.Sample(DefaultSampler, In.vTexUV);
+	// Velocity Map에서 방향벡터 및 깊이를 가져옵니다.
+
+	Velocity.xy;
+	// 속도를 샘플링을 수행 할 개수 만큼 나눠줍니다.
+
+	int iCount = 1;
+
+	float4 BColor; 
+	
+	for (int i = iCount; i < NumBlurSample; ++i)
+	{
+		
+		BColor = g_TargetTexture.Sample(DefaultSampler, In.vTexUV + (Velocity.xy) * (float)i);
+		// 현재 UV( 검사하는 픽셀 ) 위치에서 Velocity , ( 벡터 ) * SampleNum 만큼.이니
+		// 현재픽셀에서 이동하는 방향쪽으로 샘플링해주는 것.
+		//if (Velocity.a < BColor.a + 0.04f)
+		//	// 깊이를 비교하여 그려줄 지 판단합니다. ( 뒤쪽에 묻어나는걸 방지 )
+		//{
+			iCount++;
+			Out.vColor += BColor;
+
+		//}
+	}
+	Out.vColor /= (float)iCount;
+	Out.vColor.a = 1.f;
+	return Out;
+}
+
+
 
 
 
@@ -1412,5 +1518,26 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_RECT();
+	}
+
+	pass MakeVelocityMap// 21
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MakeVelocityMap();
+	}
+	pass MotionBlur// 22
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MotionBlur();
 	}
 }

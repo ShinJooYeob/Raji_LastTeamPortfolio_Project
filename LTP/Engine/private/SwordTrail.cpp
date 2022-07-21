@@ -19,11 +19,14 @@ CSwordTrail::CSwordTrail(const CSwordTrail & rhs)
 	m_pVIBuffer(rhs.m_pVIBuffer),
 	m_pShader(rhs.m_pShader),
 	m_pTexture(rhs.m_pTexture),
+	m_pNoiseTexture(rhs.m_pNoiseTexture),
 	m_iNumTrailPoints(rhs.m_iNumTrailPoints)
 {
+
 	Safe_AddRef(m_pVIBuffer);
 	Safe_AddRef(m_pShader);
 	Safe_AddRef(m_pTexture);
+	Safe_AddRef(m_pNoiseTexture);
 }
 
 
@@ -41,6 +44,9 @@ HRESULT CSwordTrail::Initialize_Prototype(const _tchar*	szTextureFilePath , _uin
 	m_pTexture = (CTexture*)GetSingle(CGameInstance)->Clone_Component(0, L"Prototype_TrailTexture");
 	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
 
+	m_pNoiseTexture = (CTexture*)GetSingle(CGameInstance)->Clone_Component(0, L"Prototype_Texture_Util");
+	NULL_CHECK_RETURN(m_pNoiseTexture, E_FAIL);
+	FAILED_CHECK(m_pNoiseTexture->Change_TextureLayer(L"NoiseTexture"));
 
 	return S_OK;
 }
@@ -165,25 +171,39 @@ HRESULT CSwordTrail::Render()
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_DiffuseTexture", m_tDesc.iTextureIndex));
 
 
-
-	if (m_tDesc.iPassIndex == 2)
+	switch (m_tDesc.iPassIndex)
 	{
-		FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", 0));
-		FAILED_CHECK(m_pShader->Set_Texture("g_BackBufferTexture", GetSingle(CRenderTargetMgr)->Get_SRV(L"Target_AfterDefferred")));
+	case 2:
+	{
+		FAILED_CHECK(m_pNoiseTexture->Bind_OnShader(m_pShader, "g_DiffuseTexture", m_tDesc.iTextureIndex));
+		FAILED_CHECK(m_pNoiseTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", m_tDesc.NoiseTextureIndex));
+		FAILED_CHECK(m_pShader->Set_Texture("g_BackBufferTexture", GetSingle(CRenderTargetMgr)->Get_SRV(L"Target_ReferenceDefferred")));
 		FAILED_CHECK(m_pShader->Set_RawValue("g_fTime", &m_PassedTime, sizeof(_float)));
+		FAILED_CHECK(m_pShader->Set_RawValue("noisingdir", &m_tDesc.NoiseDir, sizeof(_float2)));
 
 		FAILED_CHECK(m_pVIBuffer->Render(m_pShader, m_tDesc.iPassIndex));
-
 	}
-	else
+	break;
+	case 3:
 	{
+		
+		FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_DiffuseTexture", m_tDesc.iTextureIndex));
+		FAILED_CHECK(m_pNoiseTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", m_tDesc.NoiseTextureIndex));
+		FAILED_CHECK(m_pNoiseTexture->Bind_OnShader(m_pShader, "g_SourTexture", m_tDesc.MaskTextureIndex));
+		//FAILED_CHECK(m_pShader->Set_Texture("g_BackBufferTexture", GetSingle(CRenderTargetMgr)->Get_SRV(L"Target_AfterDefferred")));
+		FAILED_CHECK(m_pShader->Set_RawValue("g_fTime", &m_PassedTime, sizeof(_float)));
+		FAILED_CHECK(m_pShader->Set_RawValue("noisingdir", &m_tDesc.NoiseDir, sizeof(_float2)));
+
 		FAILED_CHECK(m_pVIBuffer->Render(m_pShader, m_tDesc.iPassIndex));
 	}
-
-
+	break;
+	default:
+		FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_DiffuseTexture", m_tDesc.iTextureIndex));
+		FAILED_CHECK(m_pVIBuffer->Render(m_pShader, m_tDesc.iPassIndex));
+		break;
+	}
 
 	return S_OK;
 }
@@ -221,6 +241,7 @@ void CSwordTrail::Free()
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pNoiseTexture);
 
 
 	m_TrailPointList.clear();

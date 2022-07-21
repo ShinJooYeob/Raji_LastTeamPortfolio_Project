@@ -57,7 +57,6 @@ public:
 
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc();
-//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer, CTransform* defaultTrans, _float3 offset);
 	virtual HRESULT Update_Particle(_double timer);
 
 

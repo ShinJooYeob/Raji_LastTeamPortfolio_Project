@@ -38,11 +38,11 @@ HRESULT CScene_Stage7::Initialize()
 
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	
+
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 	
-	
+
 	//FAILED_CHECK(teST());
 	
 	return S_OK;
@@ -53,10 +53,15 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	/*if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
+	if (g_pGameInstance->Get_DIKeyState(DIK_N)&DIS_Down)
 	{
+
+
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wasp)));
-	}*/
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wormgrub)));
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Spider)));
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Monster), TAG_OP(Prototype_Object_Monster_Wolf)));
+	}
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -249,23 +254,13 @@ HRESULT CScene_Stage7::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader))); //속도 올라가는거 고치고 다시
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Minion)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Minion)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion)));
 
@@ -277,6 +272,14 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 	
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram)));
 
+
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
 
 	//Mesh Instance
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Wasp)));
@@ -507,7 +510,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 	{
 
 
-
+		/**/
 		OBJELEMENT	tData{};
 		_tchar szBuffer[MAX_PATH] = L"";
 		// key 값 로드
@@ -533,6 +536,8 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 		FAILED_CHECK(pInstanceMapObject->Add_InstanceMapObject(tData));
 
+
+
 /*
 
 		//객채 생성해주기
@@ -557,7 +562,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 
 			CDissolve::DISSOLVEDESC	tDissolveDesc;
-
+			dw
 			tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
 			tDissolveDesc.pModel = (CModel*)pObject->Get_Component(TAG_COM(Com_Model));
 			tDissolveDesc.pShader = (CShader*)pObject->Get_Component(TAG_COM(Com_Shader));

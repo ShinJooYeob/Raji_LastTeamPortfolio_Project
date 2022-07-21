@@ -15,6 +15,9 @@ public:
 		_uint	iTextureIndex = 1;
 		_uint	iPassIndex = 0;
 		_float	NoiseSpeed = 1;
+		_float2 NoiseDir = _float2(0, 1);
+		_uint	NoiseTextureIndex = 0;
+		_uint	MaskTextureIndex = 0;
 	}TRAILDESC;
 
 private:
@@ -50,7 +53,8 @@ public:
 private:
 	class CVIBuffer_Point_Instance*	m_pVIBuffer = nullptr;
 	class CShader*					m_pShader   = nullptr;
-	class CTexture*					m_pTexture  = nullptr;
+	class CTexture*					m_pTexture = nullptr;
+	class CTexture*					m_pNoiseTexture = nullptr;
 
 private:
 	list<TRAILPOINT>				m_TrailPointList;

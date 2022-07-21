@@ -8,6 +8,8 @@ END
 BEGIN(Client)
 class CMonster_Mahinasura_Minion final : public CMonster
 {
+public:
+	enum ColliderType {HANDATTACK,TAILATTACK,COLLIDER_END};
 private:
 	explicit CMonster_Mahinasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Mahinasura_Minion(const CMonster_Mahinasura_Minion& rhs);
@@ -29,10 +31,17 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc();
+	virtual HRESULT Update_Particle(_double timer);
+
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -50,13 +59,30 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 
 
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+	CCollider*			m_pHandAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecHandAttackAttachedDesc;
+
+	CCollider*			m_pTailAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecTailAttackAttachedDesc;
+
+	//ColliderType
+	ColliderType		m_eColliderType;
+	_bool				m_bColliderAttackOn = false;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
-private://애니메이션 동작 및 이벤트
 	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
@@ -82,6 +108,20 @@ private:
 
 	_bool				m_bFastRunOn = false;
 
+
+
+private:/*For Particle*/
+	CTransform*						m_pTextureParticleTransform = nullptr;
+//	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
+//	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
+
+
+
+private://speed
+	_double				m_dAcceleration = 1;
+
+	///Knockback
+	_float3				m_fKnockbackDir;
 
 private:
 	HRESULT SetUp_Components();

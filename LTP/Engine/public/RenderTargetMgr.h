@@ -17,7 +17,7 @@ public:
 public:
 	HRESULT Initialize_RenderTargetMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	
-	HRESULT Add_RenderTarget(const _tchar* pRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor);
+	HRESULT Add_RenderTarget(const _tchar* pRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor, _bool bAutoClearing = true);
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pRenderTargetTag);
 
 	HRESULT Begin(const _tchar* pMRTTag);

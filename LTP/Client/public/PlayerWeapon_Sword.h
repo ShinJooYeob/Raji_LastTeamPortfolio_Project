@@ -34,7 +34,7 @@ public:
 public:
 	virtual void		Dissolve_In(_double fTargetTime) override;
 	virtual void		Dissolve_Out(_double fTargetTime) override;
-
+	virtual void		EffectParticleOn(_uint iIndex , void* pArg = nullptr) override;
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -51,6 +51,8 @@ private:
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 	void				Update_Colliders();
+
+	HRESULT Ready_ParticleDesc();
 
 public:
 	void				Change_Pivot(ESwordPivot ePitvot);
@@ -76,7 +78,14 @@ private:
 	CCollider*			m_pCollider = nullptr;
 
 	CDissolve*			m_pDissolveCom = nullptr;
-
+private:
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	CTransform*						m_pMeshParticleTransform = nullptr;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	_float							m_ParticlePassedTime = 0;
+	_float							m_ParticleTargetTime = 0;
+	_float3							m_vParticleMovingDir = _float3(0, 0, 1);
 public:
 	static CPlayerWeapon_Sword*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);

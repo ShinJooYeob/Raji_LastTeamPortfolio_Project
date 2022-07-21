@@ -26,6 +26,7 @@ HRESULT CPlayerWeapon_Sword::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_EtcInfo());
 
+	FAILED_CHECK(Ready_ParticleDesc());
 
 	return S_OK;
 }
@@ -34,9 +35,9 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 {
 	if (false == m_pDissolveCom->Get_IsFadeIn() && 1.f <= m_pDissolveCom->Get_DissolvingRate())
 	{
+		m_pTextureParticleTransform->Set_IsOwnerDead(true);
 		return 0;
 	}
-
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	switch (m_tPlayerWeaponDesc.eWeaponState)
@@ -58,14 +59,31 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(0); 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 	
+	Update_Colliders();
 	if (true == m_bActiveCollision)
 	{
-		Update_Colliders();
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
 	}
 
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 
+
+
+	if (m_pTextureParticleTransform->Get_IsOwnerDead())
+	{
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+		m_pTextureParticleTransform->Set_IsOwnerDead(false);
+	}
+	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(rand() % 4 + 1));
+	
+	if (m_ParticlePassedTime < m_ParticleTargetTime)
+	{
+
+		m_ParticlePassedTime += (_float)fDeltaTime;
+		m_pMeshParticleTransform->MovetoDir_bySpeed(m_vParticleMovingDir.XMVector(), 10.f, (_float)fDeltaTime);
+	}
+	
 	return _int();
 }
 
@@ -118,7 +136,8 @@ _int CPlayerWeapon_Sword::LateUpdate(_double fDeltaTimer)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
-	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD_DISTORT, m_pSwordTrail));
+
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
@@ -163,6 +182,8 @@ void CPlayerWeapon_Sword::Active_Trail(_bool bActivate)
 			mat.r[3] + mat.r[2] * 1.31f - mat.r[0] * 0.33f + mat.r[1] * 0.05f,
 			mat.r[3] + mat.r[2] * 1.2f - mat.r[0] * 0.1f + mat.r[1] * 0.015f
 		);
+
+
 	}
 	/*else
 	{
@@ -198,6 +219,28 @@ void CPlayerWeapon_Sword::Dissolve_In(_double fTargetTime)
 void CPlayerWeapon_Sword::Dissolve_Out(_double fTargetTime)
 {
 	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
+}
+
+void CPlayerWeapon_Sword::EffectParticleOn(_uint iIndex, void* pArg)
+{
+	switch (iIndex)
+	{
+	case 0:
+		m_ParticlePassedTime = 0;
+		m_ParticleTargetTime = m_vecMeshParticleDesc[0].TotalParticleTime;
+		m_vParticleMovingDir = *(_float3*)(pArg);
+
+		m_pMeshParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(4));
+
+
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+		break;
+	default:
+		break;
+	}
+
 }
 
 _fVector CPlayerWeapon_Sword::Get_BonePos(const char * pBoneName)
@@ -256,7 +299,7 @@ void CPlayerWeapon_Sword::Update_AttachMatrix()
 void CPlayerWeapon_Sword::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 {
 	m_pSwordTrail->Update_SwordTrail(((*pMat).r[3] + (*pMat).r[2] * 1.31f - (*pMat).r[0] * 0.33f + (*pMat).r[1] * 0.05f),
-		((*pMat).r[3] + (*pMat).r[2] * 1.2f - (*pMat).r[0] * 0.1f + (*pMat).r[1] * 0.015f),	fDeltaTime, 0.5f);
+		((*pMat).r[3] + (*pMat).r[2] * 1.2f - (*pMat).r[0] * 0.1f + (*pMat).r[1] * 0.015f),	fDeltaTime, 0.488765131f);
 }
 
 void CPlayerWeapon_Sword::Change_Pivot(ESwordPivot ePitvot)
@@ -294,10 +337,19 @@ HRESULT CPlayerWeapon_Sword::SetUp_Components()
 
 
 	CSwordTrail::TRAILDESC tSwordDesc;
-	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
-	tSwordDesc.iTextureIndex = 3;
-	tSwordDesc.NoiseSpeed = 0;
+	tSwordDesc.iPassIndex = 2;
+	//
+	//m_pSwordTrail->Set_Color({ 0.065f, 0.065f, 0.065f, 1.f });
+	tSwordDesc.vColor = _float4(0.065f, 0.065f, 0.065f, 1.f);
+	//tSwordDesc.vColor = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+	//tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
+
+
+	tSwordDesc.iTextureIndex = 7;
+	tSwordDesc.NoiseSpeed = 10000.f;
+	tSwordDesc.NoiseDir = _float2(-1, 0);
+	tSwordDesc.NoiseTextureIndex = 351;
+	tSwordDesc.MaskTextureIndex = 158;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
@@ -403,6 +455,50 @@ void CPlayerWeapon_Sword::Update_Colliders()
 	m_pCollider->Update_Transform(5, mat);
 }
 
+HRESULT CPlayerWeapon_Sword::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+
+#pragma region Texture
+	//	0
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Sword_Saprk"));
+	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
+
+	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+
+	//1
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Sword_Saprk2"));
+	m_vecTextureParticleDesc[1].FollowingTarget = m_pMeshParticleTransform;
+	m_vecTextureParticleDesc[1].iFollowingDir = FollowingDir_Up;
+
+#pragma endregion
+
+
+
+#pragma region Mesh
+	//	GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+	m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"Sword_PowerAttack"));
+	
+	m_vecMeshParticleDesc[0].FollowingTarget = m_pMeshParticleTransform;
+	m_vecMeshParticleDesc[0].iFollowingDir = FollowingDir_Up;
+	m_vecTextureParticleDesc[1].TotalParticleTime = m_vecMeshParticleDesc[0].TotalParticleTime;
+
+#pragma endregion
+
+	
+
+	return S_OK;
+}
+
+
 CPlayerWeapon_Sword * CPlayerWeapon_Sword::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CPlayerWeapon_Sword*	pInstance = NEW CPlayerWeapon_Sword(pDevice, pDeviceContext);
@@ -438,4 +534,8 @@ void CPlayerWeapon_Sword::Free()
 	Safe_Release(m_pSwordTrail);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pDissolveCom);
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+	
+	
 }

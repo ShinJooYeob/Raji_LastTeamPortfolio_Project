@@ -50,6 +50,8 @@ public:
 	virtual void		Active_Trail(_bool bActivate);
 	virtual _bool		AbleToChangeWeapon();
 
+	virtual void		EffectParticleOn(_uint iIndex,  void* pArg = nullptr) {};
+
 public:
 	void				Set_BlockUpdate(_bool bBlock);
 	_bool				Get_BlockUpdate() { return m_bBlockUpdate; }
@@ -58,6 +60,11 @@ public:
 	virtual HRESULT Ready_ParticleDesc();
 	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);
 	virtual HRESULT Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPos = _float3::Zero(), _float3 offset = _float3::Zero(), _float Timer = -1);
+
+//	virtual HRESULT Set_Play_MeshInstParticle(CPartilceCreateMgr::E_MESHINST_EFFECTJ instType, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);
+
+
+
 	virtual HRESULT Set_Dead_Transform(_uint ParticleIndex);
 	virtual HRESULT Update_Particle(_double timer);
 
@@ -79,6 +86,10 @@ protected:
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
+
+	CModelInstance*					m_pModelInstance = nullptr;
+	vector<CTransform*>				m_vecInstancedTransform;
+
 
 protected:
 	PlayerWeaponDesc			m_tPlayerWeaponDesc;

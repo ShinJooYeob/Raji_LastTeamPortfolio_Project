@@ -78,7 +78,7 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
 
-	m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
+	//m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
 	return S_OK;
 }
 
@@ -97,38 +97,28 @@ _int CPlayer::Update(_double fDeltaTime)
 	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
-			NONINSTNESHEFTDESC tNIMEDesc;
+			m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
 
-			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			{
+	
 
-			tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
-				
+				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			}
 
 
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
-			tNIMEDesc.fMaxTime_Duration =1.5f;
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
+		{
+			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
 
-			tNIMEDesc.fAppearTime = 0.75f;
+			{
 
-			tNIMEDesc.noisingdir = _float2(0, 1);
 
-			tNIMEDesc.NoiseTextureIndex = 350;
-			tNIMEDesc.MaskTextureIndex = 63;
-			tNIMEDesc.iDiffuseTextureIndex = 275;
-			tNIMEDesc.m_iPassIndex = 17;
-			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
-			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			}
 
-			tNIMEDesc.RotAxis = FollowingDir_Look;
-			tNIMEDesc.RotationSpeedPerSec = 0.f;
-			tNIMEDesc.vSize = _float3(0.0155f);
 
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-
-			//m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 		}
 	}
@@ -542,7 +532,7 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_FLOOR, m_pTransformCom));
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_PLANE, m_pTransformCom));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_ICE, m_pTransformCom));
@@ -3711,20 +3701,15 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(2));
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(3));
 
-
-				_Matrix TargetMat= m_pTransformCom->Get_WorldMatrix();
+				_Matrix TargetMat = m_pTransformCom->Get_WorldMatrix();
 				TargetMat.r[0] = XMVector3Normalize(TargetMat.r[0]);
 				TargetMat.r[1] = XMVector3Normalize(TargetMat.r[1]);
-				_Sfloat3 Look  = TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
-
-				_Sfloat3 FixOffset = _Sfloat3(0,-0.3f,-0.3f);
-
-				_Vector FixPos = TargetMat.r[3] + TargetMat.r[0] * FixOffset.x + TargetMat.r[1] * FixOffset.y + TargetMat.r[2] * FixOffset.z;;
-				
-				INSTPARTICLEDESC& value4 = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_VecParticle(4);
-
+				_Sfloat3 Look = TargetMat.r[2] = XMVector3Normalize(TargetMat.r[2]);
+				_Sfloat3 FixOffset = _Sfloat3(0, -0.3f, -0.3f);
+				_Vector FixPos = TargetMat.r[3] + TargetMat.r[0] * FixOffset.x + TargetMat.r[1] * FixOffset.y + TargetMat.r[2] * FixOffset.z;
+				INSTPARTICLEDESC& value4 = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_VecParticle(4);				
 				value4.vPowerDirection = Look;
-				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_VecParticle(4,value4);
+				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_VecParticle(4, value4);
 
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(4, FixPos));
 
@@ -3732,14 +3717,15 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			if (m_fChargingTime > 1.f)
 			{
 				m_fArrowRange = 30.f;
-
+			
 				if (m_bMehsArrow == false)
 				{
 					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 
 					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW1, effecttrans,&m_bMehsArrow));
+						CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW1, effecttrans, &m_bMehsArrow));
 				}
+				
 			}
 
 			else
@@ -3840,10 +3826,13 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.15f <= fAnimPlayRate)
 			{
-				CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+				{
+					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
 
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+				
+				}
 
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
@@ -3875,6 +3864,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 				m_bAnimChangeSwitch = false;
 
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+
 				// Shot Arrow //
 				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
 				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
@@ -3900,6 +3891,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			else if (0.3 < fAnimPlayRate)
 			{
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+
 			}
 			//
 
@@ -3975,17 +3967,24 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			// Play Sound
 			if (false == m_bOncePlaySound && 0.8f <= fAnimPlayRate)
 			{
-			
-
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
-
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
-
-
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+				
+				{
+					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+						CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+						CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+
+
+				}
 			}
 
 			m_bOnNavigation = true;
@@ -4009,6 +4008,11 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(6.f);
 				m_bAnimChangeSwitch = true;
+
+				_Matrix TargetMat = m_pTransformCom->Get_WorldMatrix();
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(6, TargetMat.r[3]));
+
+
 			}
 			else if (true == m_bAnimChangeSwitch && 0.806f < fAnimPlayRate)
 			{
@@ -4101,6 +4105,13 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			{
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+
+				{
+					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+
+				}
 			}
 
 			m_fAnimSpeed = 1.3f;
@@ -4394,6 +4405,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		//// Main Attack ////
 	case SWORD_ANIM_MAIN_ATK_COMBO_0:
 	{
+
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.2f < fAnimPlayRate)
 		{
@@ -4589,6 +4602,32 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = false;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		
+
+			m_vecNonInstMeshDesc[12].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+			m_vecNonInstMeshDesc[12].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[12]);
+
+			m_vecNonInstMeshDesc[13].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+			m_vecNonInstMeshDesc[13].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[13]);
+
+			m_vecNonInstMeshDesc[14].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+			m_vecNonInstMeshDesc[14].vLookDir = m_vecNonInstMeshDesc[14].vPosition.XMVector() - (
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[14]);
+		
 		}
 
 		m_bOnNavigation = true;
@@ -4700,6 +4739,32 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = false;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	
+
+			m_vecNonInstMeshDesc[12].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+			m_vecNonInstMeshDesc[12].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[12]);
+
+			m_vecNonInstMeshDesc[13].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+			m_vecNonInstMeshDesc[13].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[13]);
+
+			m_vecNonInstMeshDesc[14].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+			m_vecNonInstMeshDesc[14].vLookDir = m_vecNonInstMeshDesc[14].vPosition.XMVector() - (
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[14]);
+		
 		}
 
 		m_bOnNavigation = true;
@@ -5000,6 +5065,16 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
 		{
+			m_vecNonInstMeshDesc[11].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.5f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.f;
+
+			m_vecNonInstMeshDesc[11].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[11]);
+
+
 			m_bOncePlaySound = true; 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
@@ -5225,7 +5300,10 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (true == m_bActive_ActionCameraShake && 0.4f <= fAnimPlayRate)
 		{
 			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
-			m_bActive_ActionCameraShake = false;
+			m_bActive_ActionCameraShake = false;			
+			m_pPlayerWeapons[WEAPON_SWORD - 1]->EffectParticleOn(0, &m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK));
+
+
 		}
 		//
 	}
@@ -5235,6 +5313,16 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
 		{
+			m_vecNonInstMeshDesc[11].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.5f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.f;
+
+			m_vecNonInstMeshDesc[11].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[11]);
+
+
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
@@ -5478,7 +5566,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.15f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);			
+			m_pPlayerWeapons[WEAPON_SWORD - 1]->EffectParticleOn(0, &m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK));
+
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -5773,6 +5863,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	if (0.98f <= m_pModel->Get_PlayRate())
 	{
 		Set_State_IdleStart(fDeltaTime);
+
 	}
 	else if (0.774f <= m_pModel->Get_PlayRate())
 	{
@@ -5789,6 +5880,49 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Post_Shot();
 		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
+
+		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+			_Vector FixPos =  pBowArrow->Get_Transform_Hand()->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(7, FixPos));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_TON, m_pTextureParticleTransform));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_ICES, m_pTextureParticleTransform));
+			
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE3, m_pTextureParticleTransform));
+
+			
+			INSTMESHDESC instancedesc;
+			instancedesc.FollowingTarget = nullptr;
+
+			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE);
+			instancedesc.vFixedPosition = FixPos;
+			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
+
+			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2);
+			instancedesc.vFixedPosition = FixPos;
+			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
+
+			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_PLANE);
+			instancedesc.FollowingTarget = m_pTextureParticleTransform;
+			instancedesc.iFollowingDir = FollowingDir_Up;
+			instancedesc.TotalParticleTime = 3;
+			instancedesc.ParticleStartRandomPosMin = _float3(-5,0,-5);
+			instancedesc.ParticleStartRandomPosMax = _float3(5, 0, 5);;
+
+			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
+
+
+		}
+
 	}
 	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
 	{
@@ -5802,6 +5936,8 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Post_Ready();
+
+		
 	}
 	else if (true == m_bAnimChangeSwitch && 0.191f <= m_pModel->Get_PlayRate() && 0.446f >= m_pModel->Get_PlayRate())
 	{
@@ -5811,6 +5947,20 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Pre_Shot();
 		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
+
+
+		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE, m_pTextureParticleTransform));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
+
+
+		}
+
 	}
 	else if (false == m_bAnimChangeSwitch && 0.106f <= m_pModel->Get_PlayRate() && 0.191f >= m_pModel->Get_PlayRate())
 	{
@@ -5823,6 +5973,17 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Pre_Ready();
+
+		{
+			//FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+			//	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE, m_pTextureParticleTransform));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE2, m_pTextureParticleTransform));
+
+		
+		}
+
 	}
 }
 
@@ -5895,10 +6056,28 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
 				&m_vecNonInstMeshDesc[7]);
+
+
+
 		}
 
 
 	}
+
+	static _bool bEffectChecker = false;
+
+	if (fAnimPlayRate < 0.5f) bEffectChecker = false;
+	else if (!bEffectChecker)
+	{
+		bEffectChecker = true;
+
+		m_vecNonInstMeshDesc[10].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+			+ (m_pTransformCom->Get_MatrixState(CTransform::STATE_UP)) * 4.0f;
+		m_vecNonInstMeshDesc[10].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_UP);
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
+			&m_vecNonInstMeshDesc[10]);
+	}
+
 
 	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
 	{
@@ -5908,6 +6087,25 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 			m_pMainCamera->Start_CameraShaking_Fov(58.f, 1.f, 0.6f);
 			m_pMainCamera->Start_CameraShaking_Thread(2.4f, 4.f, 0.005f);
 			m_bActive_ActionCameraShake = true;
+
+			m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ (m_pTransformCom->Get_MatrixState(CTransform::STATE_UP)) * 4.0f;
+			m_vecNonInstMeshDesc[8].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT));
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+
+			m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				+ (XMVectorSet(0, 1, 0, 0)) * 4.0f;
+
+			m_vecNonInstMeshDesc[9].vLookDir = ((m_vecNonInstMeshDesc[9].vPosition.XMVector()) - (m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f
+				));
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
+
+
 		}
 	}
 
@@ -7784,7 +7982,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 
 		tNIMEDesc.eMeshType = Prototype_Mesh_Beacon_Shape;
-		tNIMEDesc.fMaxTime_Duration = 5.5f;
+		tNIMEDesc.fMaxTime_Duration = 4.5f;
 
 		tNIMEDesc.fAppearTime = 0.75f;
 
@@ -7838,7 +8036,225 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
+	// 8
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
 
+
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Elec_effect2;
+		tNIMEDesc.fMaxTime_Duration = 1.5f;
+
+		tNIMEDesc.fAppearTime = 0.75f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 18;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = -1620.f;
+		tNIMEDesc.vSize = _float3(-0.02f, -0.013f, -0.02f);
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+
+
+	}
+	//9
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword;
+		tNIMEDesc.fMaxTime_Duration = 2.35f;
+
+
+		tNIMEDesc.fAppearTime = 0.35f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 5;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.OnceStartRot = -90.f;
+
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.08f, 0.08f, 0.08f);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0;
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+	}
+	// 10
+	{
+
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+
+		tNIMEDesc.fMaxTime_Duration = 2.3f;
+		tNIMEDesc.fAppearTime = 0.35f;
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 5;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 1);
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.007f, -0.007f, 0.007f);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0;
+
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+
+
+	}
+	// 11
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sheild;
+		tNIMEDesc.fMaxTime_Duration = 0.15f;
+
+		tNIMEDesc.fAppearTime = 0.075f;
+
+		tNIMEDesc.noisingdir = _float2(0, -3);
+
+		tNIMEDesc.MaskTextureIndex = 16;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+
+		tNIMEDesc.m_iPassIndex = 18;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.0015f, 0.001f, -0.003f);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = -10.f;
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	//12
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.175f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 10;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.RotationSpeedPerSec = -180;
+		tNIMEDesc.StartRot = -0.5f;
+		tNIMEDesc.vSize = _float3(0.5f, -1, 1.f);
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+
+	}
+	//13
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+		tNIMEDesc.fAppearTime = 0.175f;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 10;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.RotationSpeedPerSec = 180;
+		tNIMEDesc.StartRot = -0.5f;
+		tNIMEDesc.vSize = _float3(0.5f, 1, 1.f);
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	//14
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.175f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 10;
+		tNIMEDesc.iDiffuseTextureIndex = 378;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 1080.f;
+		tNIMEDesc.vSize = _float3(1.f, -0.1f, 1.f);
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+	}
 #pragma endregion
 	return S_OK;
 }
