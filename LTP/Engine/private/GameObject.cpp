@@ -76,6 +76,7 @@ _float CGameObject::Take_Damage(CGameObject * pTargetObject, _float fDamageAmoun
 	return _float();
 }
 
+
 _fVector CGameObject::Get_BonePos(const char * pBoneName)
 {
 	return _fVector();

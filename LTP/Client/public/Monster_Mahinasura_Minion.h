@@ -31,6 +31,11 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc();
+	virtual HRESULT Update_Particle(_double timer);
+
 private:
 	HRESULT				SetUp_Info();
 	HRESULT				SetUp_Collider();
@@ -102,6 +107,14 @@ private:
 	_uint				m_iBoolOnce = 0;
 
 	_bool				m_bFastRunOn = false;
+
+
+
+private:/*For Particle*/
+	CTransform*						m_pTextureParticleTransform = nullptr;
+//	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
+//	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
+
 
 
 private://speed

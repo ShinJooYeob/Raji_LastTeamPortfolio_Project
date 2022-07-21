@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "PartilceCreateMgr.h"
 
 BEGIN(Engine)
 class CNavigation;
@@ -23,6 +24,34 @@ public:
 	virtual _int LateUpdate(_double dDeltaTime)override;
 	virtual _int Render()override;
 	virtual _int LateRender()override;
+
+
+
+
+protected:
+//	 #Particle Func
+	virtual HRESULT		Ready_ParticleDesc();
+	virtual HRESULT		Set_Play_Particle(_uint ParticleIndex, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);
+	virtual HRESULT		Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPos = _float3::Zero(), _float3 offset = _float3::Zero(), _float Timer = -1);
+	virtual HRESULT		Set_Dead_Transform(_uint ParticleIndex);
+
+	virtual HRESULT		Update_Particle(_double timer);
+
+	virtual HRESULT		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool * pb = nullptr);
+	INSTPARTICLEDESC&	Get_VecParticle(_uint index);
+	void				Set_VecParticle(_uint index, INSTPARTICLEDESC& d);
+
+protected:
+	/* Partilce */
+	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
+
+	CModelInstance*					m_pModelInstance = nullptr;
+	vector<CTransform*>				m_vecInstancedTransform;
+
+
+
 
 protected:
 	CNavigation*	 m_pNavigationCom = nullptr;

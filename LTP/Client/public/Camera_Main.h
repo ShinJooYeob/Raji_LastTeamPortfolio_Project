@@ -88,6 +88,8 @@ public: /* Setting State */
 	void				Set_TargetingLook(_fVector vTargetingLook);
 	void				Set_CameraLookWeight(_float fCamMoveWeight);
 	void				Set_CameraMoveWeight(_float fCamMoveWeight);
+	void				Set_MaxTargetArmLength(_float fMaxTargetArmLength);
+	void				Set_MinTargetArmLength(_float fMinTargetArmLength);
 
 public: /* Getter */
 	_float				Get_TargetArmLength();

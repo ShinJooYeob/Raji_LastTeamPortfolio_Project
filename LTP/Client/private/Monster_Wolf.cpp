@@ -574,7 +574,7 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 			{
 				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime*4, m_vecInstancedTransform[i].pNavigation);
 
-				_float fY = (0.605 - m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate());
+				_float fY = (0.605f - _float(m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate()));
 				
 				m_vecInstancedTransform[i].pTransform->Move_Up(dDeltatime * fY * 10);
 

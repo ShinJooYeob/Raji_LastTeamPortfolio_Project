@@ -56,6 +56,15 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 		break;
 	}
 
+	if (m_tMeshDesc.OnceStartRot)
+	{
+		_float Old = m_pTransformCom->Get_TurnSpeed();
+		m_pTransformCom->Set_TurnSpeed(1);
+		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), XMConvertToRadians(m_tMeshDesc.OnceStartRot));
+		m_pTransformCom->Set_TurnSpeed(Old);
+
+	}
+
 	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), m_tMeshDesc.StartRot);
 	
 

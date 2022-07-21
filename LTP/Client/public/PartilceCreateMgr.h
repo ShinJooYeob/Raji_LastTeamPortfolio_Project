@@ -11,10 +11,23 @@ typedef struct tag_MESHADDDATA
 {
 	eFollowingDirID LookRotAxis = FollowingDir_Look;
 	_float AccRotSpeed = 0.0f;
+	_float AccMoveSpeed = 0.0f;
 	_float3 vAddDirectAngle = _float3::Zero();
+	_bool FixFlag = false;
+
 
 
 }MESHADDDATA;
+
+typedef struct tag_EASINGDESC
+{
+//	_float3 StartPos = _float3();
+	_float3 EndPos = _float3();
+	_float	MaxTime = 1.0f;
+	EasingTypeID EasingID = TYPE_Linear;
+
+}MESHAEASING;
+
 
 class CPartilceCreateMgr final :public CBase
 {
@@ -27,29 +40,90 @@ public:
 	enum E_MESH_EFFECTJ
 	{
 		MESHEFFECT_PRE_CONMESH,
+
+		// PLANE MESH
 		MESHEFFECT_PRE_CIRCLE,
 		MESHEFFECT_PRE_CIRCLE_DIST4,
 		MESHEFFECT_PRE_CIRCLE_DIST5,
 		MESHEFFECT_PRE_IMPECTFX_02,
 		MESHEFFECT_PRE_RING,
+		MESHEFFECT_PRE_SM_Ring_03,
+		MESHEFFECT_PRE_SM_ky_sphere_dist_wind,
+
+		// IMAGE MESH
 		MESHEFFECT_PRE_LOVE,
 		MESHEFFECT_PRE_WING,
 		MESHEFFECT_PRE_BOW1,
 		MESHEFFECT_PRE_BOW2,
 		MESHEFFECT_PRE_ICE,
+		MESHEFFECT_PRE_Sphere,
+		MESHEFFECT_PRE_SM_sphere_melon,
+		MESHEFFECT_PRE_SM_4E_IceSpike_01,
+		MESHEFFECT_PRE_MoonStone00,
+		MESHEFFECT_PRE_MoonStone02,
+		MESHEFFECT_PRE_MoonStone04,
+		MESHEFFECT_PRE_PurpCrystal01,
+		MESHEFFECT_PRE_Rock001,
+		MESHEFFECT_PRE_Rock002,
+		MESHEFFECT_PRE_Rock003,
+		MESHEFFECT_PRE_Rock004,
+		MESHEFFECT_PRE_Rock005,
+		MESHEFFECT_PRE_Ice2,
+		MESHEFFECT_PRE_POTAL,
+		MESHEFFECT_PRE_SM_Helix_Crystal,
+		MESHEFFECT_PRE_SM_Karin_Weapon_03,
+		MESHEFFECT_PRE_SM_ky_tornado6,
+		MESHEFFECT_PRE_SM_L_DS_Dashcombo_Y_L,
+		MESHEFFECT_PRE_SM_Reorgea_Hand_R_New_3,
+
 		MESHEFFECT_PRE_END,
 
 		
+		// PLAY EFFECT
 		MESHEFFECT_ARROW_HEAD,
 		MESHEFFECT_ARROW_END,
 		MESHEFFECT_ARROW_WING,
 		MESHEFFECT_ARROW_BOW1,
 		MESHEFFECT_ARROW_BOW_UP,
-		MESHEFFECT_ARROW_BOW_SHIFT_FLOOR,
+		MESHEFFECT_ARROW_BOW_SHIFT_PLANE,
 		MESHEFFECT_ARROW_BOW_SHIFT_ICE,
 		MESHEFFECT_ARROW_BOW_R,
 		MESHEFFECT_ARROW_BOW_R_JUMP_WING1,
 		MESHEFFECT_ARROW_BOW_R_JUMP_WING2,
+		MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE,
+		MESHEFFECT_ARROW_BOW_SP_BOM_SPEHERE,
+		MESHEFFECT_ARROW_BOW_SP_PLANE,
+		MESHEFFECT_ARROW_BOW_SP_PLANE2,
+		MESHEFFECT_ARROW_BOW_SP_PLANE3,
+		MESHEFFECT_ARROW_BOW_SP_TON,
+		MESHEFFECT_ARROW_BOW_SP_ICES,
+		MESHEFFECT_ARROW_BOW_SP_BOW,
+
+		// Monster EFFECT
+		MESHEFFECT_MONSTER_CREATE1,
+		MESHEFFECT_MONSTER_CREATE2,
+		MESHEFFECT_MONSTER_CREATE3,
+		MESHEFFECT_MONSTER_CREATE4,
+
+		
+		// M 일반 L 리더
+		MESHEFFECT_MONSTER_MM_ATT1,
+		MESHEFFECT_MONSTER_MM_ATT2,
+		MESHEFFECT_MONSTER_ML_ATT1,
+		MESHEFFECT_MONSTER_ML_ATT2,
+
+		
+
+		MESHEFFECT_MONSTER_VM_ATT,
+		MESHEFFECT_MONSTER_VL_ATT,
+
+
+		MESHEFFECT_MONSTER_NM_ATT,
+		MESHEFFECT_MONSTER_NL_ATT,
+
+
+		MESHEFFECT_MONSTER_GM_ATT,
+		MESHEFFECT_MONSTER_GL_ATT,
 
 
 		MESHEFFECT_END,
@@ -66,9 +140,24 @@ public:
 		TEXTURE_EFFECTJ_Bow_Charze_Dash,
 		TEXTURE_EFFECTJ_Bow_Charze_Long,
 		TEXTURE_EFFECTJ_Bow_Charze_Suck,
+		TEXTURE_EFFECTJ_Bow_Shift_Image,
+		TEXTURE_EFFECTJ_Bow_Q_Ball,
+		TEXTURE_EFFECTJ_Bow_R_FlyFire,
+		TEXTURE_EFFECTJ_Bow_R_FlyBall,
+
 		TEXTURE_EFFECTJ_END,
 
 	};
+
+	enum E_MESHINST_EFFECTJ
+	{
+		MESHINST_EFFECTJ_BOW_Q_ICE,
+		MESHINST_EFFECTJ_BOW_Q_ICE2,
+		MESHINST_EFFECTJ_BOW_Q_PLANE,
+		MESHINST_EFFECTJ_END,
+	};
+
+
 
 private:
 	explicit CPartilceCreateMgr();
@@ -92,6 +181,13 @@ public:
 			return INSTPARTICLEDESC();
 		return mVecTextureEffectDesc[e];
 	}
+	INSTMESHDESC Get_TypeDesc_MeshInstance(E_MESHINST_EFFECTJ e)
+	{
+		if (e >= MESHINST_EFFECTJ_END)
+			return INSTMESHDESC();
+		return mVecMeshInstDesc[e];
+	}
+
 
 public:
 	HRESULT Update_EffectMgr(_double Timer);
@@ -103,11 +199,13 @@ public:
 	// TextureEffect
 	HRESULT Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
-
 	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
 
-	
 
+	// Meshinst
+	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);
+	HRESULT Create_MeshInst_Effect_World(E_MESHINST_EFFECTJ type, _float3 worldPos);
+	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
 
 
 	// MeshEffect
@@ -115,7 +213,8 @@ public:
 	HRESULT Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform, _float3 Offset);
 	HRESULT Create_MeshEffect_World(E_MESH_EFFECTJ type, _float3 Postion, _float3 LookDir);
 
-	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform);
+
+	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform, MESHAEASING* easing = nullptr,_uint Count = 0);
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
@@ -126,13 +225,20 @@ public:
 
 
 private:
-	HRESULT Ready_MeshEffect();
-	HRESULT Ready_TextureEffect();
-
+	HRESULT			Ready_MeshEffect();
+	HRESULT			Ready_TextureEffect();
+	HRESULT			Ready_MeshInstanceEffect();
+	
+	
+	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
 private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
+	vector<INSTMESHDESC>		mVecMeshInstDesc;
+
+
+
 
 public:
 	virtual void Free()override;

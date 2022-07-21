@@ -24,22 +24,25 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	NULL_CHECK_RETURN(pArg, E_FAIL);
-	memcpy(&m_tMeshDesc, pArg, sizeof(NONINSTNESHEFTDESC));
+	memcpy(&mMeshDesc, pArg, sizeof(NONINSTNESHEFTDESC));
 
 
-	if (m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 19)
+	if (mMeshDesc.m_iPassIndex < 16 || mMeshDesc.m_iPassIndex > 19)
 		return E_FAIL;
 
 
 	FAILED_CHECK(SetUp_Components());
 	
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tMeshDesc.vPosition);
+	
 
-	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
-	m_pTransformCom->Scaled_All(m_tMeshDesc.vSize);
 
-	// RotAxis 회전 방향 결정 
-	switch (m_tMeshDesc.RotAxis)
+	m_pTransformCom->LookDir(mMeshDesc.vLookDir.XMVector());
+	m_pTransformCom->Scaled_All(mMeshDesc.vSize);
+
+	
+
+	// RotAxis ROTDIR
+	switch (mMeshDesc.RotAxis)
 	{
 	case FollowingDir_Right:
 		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
@@ -54,7 +57,25 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 		__debugbreak();
 		break;
 	}
-	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
+
+	// MoveDIR
+	switch (mMeshDesc.MoveDir)
+	{
+	case FollowingDir_Right:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
+	Set_LimLight_N_Emissive( mMeshDesc.vLimLight ,  mMeshDesc.vEmissive );
 
 
 	return S_OK;
@@ -70,72 +91,127 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		return _int();
 	}
 
+	if (m_pParentTranscom == nullptr)return -1;
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
+	mMeshDesc.RotationSpeedPerSec += _float(mAddDesc.AccRotSpeed*fDeltaTime);
 
-	m_tMeshDesc.RotationSpeedPerSec += mAddDesc.AccRotSpeed*fDeltaTime;
+	_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+	_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+	_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+	_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 
-
-	if (m_pParentTranscom)
+	if (me_MoveType == CNonInstanceMeshEffect_TT::MOVETYPE_NONE)
 	{
 
-	//	m_pTransformCom->LookDir(m_pParentTranscom->Get_MatrixState(CTransform::STATE_LOOK));
-		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
-		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
-		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+		_Vector PosLocal = (Right*  mMeshDesc.vPosition.x) +
+			(Up* mMeshDesc.vPosition.y) + 
+			(Look * mMeshDesc.vPosition.z);
 
-		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
-		_Vector PosLocal = (Right*  m_tMeshDesc.vPosition.x) + (Up* m_tMeshDesc.vPosition.y) + (Look * m_tMeshDesc.vPosition.z);
-
-
-		// 바라보는 방향 결정
-		if (m_tMeshDesc.RotationSpeedPerSec ==0)
+		if (mAddDesc.AccMoveSpeed != 0)
 		{
+			_float Minvalue = mAddDesc.AccMoveSpeed * m_fCurTime_Duration*m_fCurTime_Duration;
+			mMeshDesc.MoveSpeed += Minvalue;
+		}
 
-			switch (mAddDesc.LookRotAxis)
+
+		_Vector MoveSpeed = m_vMoveDir.XMVector() * mMeshDesc.MoveSpeed  * _float(fDeltaTime);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal + MoveSpeed);
+
+
+	}
+	else if (me_MoveType == CNonInstanceMeshEffect_TT::MOVETYPE_EASE)
+	{
+
+		if (mbEasingStart == false)
+		{
+			mbEasingStart = true;
+			mCurrentEasingDesc = mEasingDesc[mEasingCount];
+			mStartPoint = Pos;
+			if (mEasingCount != 0)
 			{
-			case FollowingDir_Right:
-				m_vLookAxis = Right;
-				break;
-			case FollowingDir_Up:
-				m_vLookAxis = Up;
-				break;
-			case FollowingDir_Look:
-				m_vLookAxis = Up;
-				break;
-			default:
-				__debugbreak();
-				break;
+				mStartPoint = mEndPoint;
 			}
 
-			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
-			if (mAddDesc.vAddDirectAngle.x != 0)
-				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-			else if (mAddDesc.vAddDirectAngle.y != 0)
-				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-			else if (mAddDesc.vAddDirectAngle.z != 0)
-				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+			_float3 EndLocal = mCurrentEasingDesc.EndPos;
+			_Vector PosLocal = (Right*  EndLocal.x) +
+				(Up* EndLocal.y) +
+				(Look * EndLocal.z);
 
+			mEndPoint = Pos + PosLocal;
+
+			mEasingTimer = 0;
 		}
-		else
+
+		_Vector NPos = GetSingle(CGameInstance)->Easing_Vector
+		(mCurrentEasingDesc.EasingID, mStartPoint, mEndPoint, mEasingTimer, mCurrentEasingDesc.MaxTime).XMVector();
+
+		mEasingTimer += _float(fDeltaTime);
+
+		if(mEasingTimer >=mCurrentEasingDesc.MaxTime)
 		{
-			m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*m_tMeshDesc.RotationSpeedPerSec);
+			mEasingCount++;
+			if (mEasingCount >= mEasingCountMAX)
+			{
+				Set_IsDead();
+				return 0;
+			}
 
+			mbEasingStart = false;
 		}
 
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, NPos);
 
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
+
+	}
+	else if (me_MoveType == CNonInstanceMeshEffect_TT::MOVETYPE_FIX)
+	{
+
+		// 로컬 위치 기준으로 위치 고정
+
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, mFIXPos);
+
+
+	}
+
+	// ROT
+			// 바라보는 방향 결정
+	if (mMeshDesc.RotationSpeedPerSec == 0)
+	{
+
+		switch (mAddDesc.LookRotAxis)
+		{
+		case FollowingDir_Right:
+			m_vLookAxis = Right;
+			break;
+		case FollowingDir_Up:
+			m_vLookAxis = Up;
+			break;
+		case FollowingDir_Look:
+			m_vLookAxis = Look;
+			break;
+		default:
+			__debugbreak();
+			break;
+		}
+
+		m_pTransformCom->LookDir(m_vLookAxis.XMVector());
+		if (mAddDesc.vAddDirectAngle.x != 0)
+			m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+		else if (mAddDesc.vAddDirectAngle.y != 0)
+			m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+		else if (mAddDesc.vAddDirectAngle.z != 0)
+			m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
 
 	}
 	else
 	{
-		// FIXPos
-
+		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
 	}
-	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
 
-
-	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
+	// Timer
+	if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration)
 	{
 		Set_IsDead();
 	}
@@ -147,7 +223,7 @@ _int CNonInstanceMeshEffect_TT::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	if (m_tMeshDesc.m_iPassIndex > 17)
+	if (mMeshDesc.m_iPassIndex > 17)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
@@ -169,7 +245,7 @@ _int CNonInstanceMeshEffect_TT::Render()
 
 
 	//_float4 color = _float4(1.f, 0.734375f, 0.75234375f, 1);
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &m_tMeshDesc.vColor, sizeof(_float4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &mMeshDesc.vColor, sizeof(_float4)));
 	
 	
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
@@ -181,16 +257,16 @@ _int CNonInstanceMeshEffect_TT::Render()
 	//_float	fAppearTime = 2.f;
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tMeshDesc.fMaxTime_Duration, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &mMeshDesc.fAppearTime, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &mMeshDesc.fMaxTime_Duration, sizeof(_float)));
 	
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tMeshDesc.noisingdir, sizeof(_float2)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tMeshDesc.fDistortionNoisingPushPower, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &mMeshDesc.noisingdir, sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &mMeshDesc.fDistortionNoisingPushPower, sizeof(_float)));
 
 
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tMeshDesc.NoiseTextureIndex));
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tMeshDesc.MaskTextureIndex));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", mMeshDesc.NoiseTextureIndex));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", mMeshDesc.MaskTextureIndex));
 	FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
@@ -201,7 +277,7 @@ _int CNonInstanceMeshEffect_TT::Render()
 		{
 			if (j == 1)
 			{
-				FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", m_tMeshDesc.iDiffuseTextureIndex));
+				FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", mMeshDesc.iDiffuseTextureIndex));
 			}
 			else
 			{
@@ -209,7 +285,7 @@ _int CNonInstanceMeshEffect_TT::Render()
 			}
 		}
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_tMeshDesc.m_iPassIndex, i));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, mMeshDesc.m_iPassIndex, i));
 	}
 
 	return _int();
@@ -220,6 +296,66 @@ _int CNonInstanceMeshEffect_TT::LateRender()
 	return _int();
 }
 
+void CNonInstanceMeshEffect_TT::Set_ParentTransform(CTransform * parentTrans)
+{
+
+	Safe_Release(m_pParentTranscom);
+	m_pParentTranscom = parentTrans;
+	Safe_AddRef(m_pParentTranscom);
+
+	// 상대 취치로 지장
+	if (m_pParentTranscom != nullptr)
+	{
+		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
+
+		_Vector PosLocal = (Right*  mMeshDesc.vPosition.x) +
+			(Up* mMeshDesc.vPosition.y) +
+			(Look * mMeshDesc.vPosition.z);
+
+
+		if (mAddDesc.FixFlag == false)
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
+
+		}
+		else
+		{
+			mFIXPos = Pos + PosLocal;
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, mFIXPos);
+			me_MoveType = CNonInstanceMeshEffect_TT::MOVETYPE_FIX;
+
+		}
+
+	}
+	else
+	{
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, mMeshDesc.vPosition);
+	}
+
+}
+
+
+HRESULT CNonInstanceMeshEffect_TT::Set_EasingMoveDesc(const MESHAEASING* desc, _uint count)
+{
+	if (count <= 0)
+		return E_FAIL;
+
+	me_MoveType = MOVETYPE_EASE;
+
+	mEasingDesc = NEW MESHAEASING[count];
+
+	for (_uint i = 0; i < count; ++i)
+	{
+		memcpy(&mEasingDesc[i], &desc[i], sizeof(MESHAEASING));
+	}
+	mEasingCount = 0;
+	mEasingCountMAX = count;
+	mbEasingStart = false;
+	return S_OK;
+}
 
 HRESULT CNonInstanceMeshEffect_TT::SetUp_Components()
 {
@@ -227,11 +363,11 @@ HRESULT CNonInstanceMeshEffect_TT::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(m_tMeshDesc.eMeshType), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(mMeshDesc.eMeshType), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30;
-	tDesc.fRotationPerSec = XMConvertToRadians(m_tMeshDesc.RotationSpeedPerSec);
+	tDesc.fRotationPerSec = XMConvertToRadians(mMeshDesc.RotationSpeedPerSec);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
@@ -273,5 +409,7 @@ void CNonInstanceMeshEffect_TT::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pTransformCom); 
 	Safe_Release(m_pParentTranscom);
+
+	Safe_Delete_Array(mEasingDesc);
 
 }

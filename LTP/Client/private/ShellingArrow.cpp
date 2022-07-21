@@ -52,8 +52,20 @@ _int CShellingArrow::Update(_double dDeltaTime)
 		{
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Shelling.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 
-			// Effect
-			// GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_END, m_vecInstancedTransform[16]);
+			_Vector CenterPos = _Vector();
+			for (auto trans: m_vecInstancedTransform)
+			{
+				CenterPos += trans->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
+			}
+
+			CenterPos /= _float(m_vecInstancedTransform.size());
+
+			auto texDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Shift_Image);
+			XMStoreFloat3(&texDesc.vFixedPosition ,CenterPos);
+			texDesc.ParticleSize = _float3(1.3f);
+			texDesc.ParticleSize2 = _float3(2.5f);
+			texDesc.TotalParticleTime = 0.5f;
+			GetSingle(CPartilceCreateMgr)->Create_Texture_Effect_Desc(texDesc, m_eNowSceneNum);
 
 			m_bOnceDamage = true;
 			Update_Colliders();
@@ -113,6 +125,7 @@ void CShellingArrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Impact_0.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_EFFECT, 0.1f);
 
+		
 		
 	}
 }

@@ -20,7 +20,6 @@ public:
 		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
-private:
 	enum EINPUT_MOVDIR {
 		MOVDIR_F, MOVDIR_B, MOVDIR_L, MOVDIR_R, MOVDIR_FL, MOVDIR_FR, MOVDIR_BL, MOVDIR_BR, MOVDIR_END
 	};
@@ -124,7 +123,6 @@ private:
 		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
 	};
 
-public:
 	enum EPARKOUR_LEDGESTATE {
 		LEDGE_JUMP, LEDGE_DOUBLEJUMP, LEDGE_HANGING_IDLE, LEDGE_HANGING_MOVE, LEDGE_HANGING_TURN, LEDGE_HANGING_JUMPUP, LEDGE_HANGING_FALLING, LEDGE_HANGING_FALLINGDOWN, LEDGE_LOOP,
 		LEDGE_HANGING_CLIMBUP, LEDGE_HANGING_CLIMBDOWN
@@ -161,20 +159,26 @@ public:
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 	CTransform* Get_Transform() const { return m_pTransformCom; }
 	_bool Get_IsLedgeReachBackState();
+	_int Get_CurPlayAnimation();
 
 public: /* public Setter */
 	void	Set_JumpPower(_float fJumpPower);
-	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger, CTriggerObject* pCauser);
+	void	Set_CurParkourTrigger(CTriggerObject* pParkourTrigger);
 	void	Set_PlayerNavIndex(_uint iNavIndex);
+	void	Set_PillarBlockClimbUp(_bool bBlock, _float vBlockLimitHeight);
+	void	Set_FallingDead(_bool bFallingDead);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 public:
-	void	Set_State_ParkourStart(_double fDeltaTime);
+	void	Set_State_ParkourStart(_double fDeltaTime);								// Ledge
 	void	Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime);
 	void	Set_State_LedgeClimbUpStart(_double fDeltaTime);
+
+	void	Set_State_PillarStart(_double fDeltaTime);									// Pillar
+	void	Set_State_PillarGrabStart(_bool bTurnReflect, _double fDeltaTime);
 
 public:
 	EPLAYER_STATE Get_PlayerState();
@@ -182,7 +186,7 @@ public:
 
 public:
 	void				Set_CurParkurLedge(class CTestLedgeTrigger* pTargetLedge);
-	CTriggerObject*		Get_CurParkurLedge();
+	CTriggerObject*		Get_CurParkurTriger();
 
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
@@ -197,7 +201,6 @@ private: /* Change Start State */
 	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
 	void	Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime);			// WallRun
 
-	void	Set_State_PillarStart(_double fDeltaTime);								// Pillar
 	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
 
 	void	Set_State_JumpStart(_double fDeltaTime);								// Jump
@@ -317,6 +320,9 @@ private: /* Relate Parkour */
 	CTriggerObject*								m_pCurParkourTrigger = nullptr;
 	EPARKOUR_LEDGESTATE							m_eCurLedgeState = EPARKOUR_LEDGESTATE::LEDGE_JUMP;
 
+	_float3										m_fPillarParkourInitPos = _float3(0.f);
+	_bool										m_bBlockClimbUp = false;
+	_float										m_fPillarClimbUpBlockHeight = 0.f;
 
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
@@ -401,6 +407,8 @@ private: /* Animation Control */
 	_float3					m_fLookDir = _float3(0.f, 0.f, 0.f);
 
 	_bool					m_bLedge_ReachBackState = false;
+
+	_bool					m_bFallingDead = false;
 
 private: /* For Navi */
 	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
