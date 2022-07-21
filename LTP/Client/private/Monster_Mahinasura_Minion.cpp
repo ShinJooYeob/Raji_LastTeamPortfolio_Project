@@ -34,6 +34,9 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+	// CreateEffect
+	FAILED_CHECK(Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom));
+
 	return S_OK;
 }
 
@@ -42,6 +45,7 @@ _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	// #TEXT ANIFUNC
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
 	//m_pModel->Change_AnimIndex_ReturnTo(); //어떤 애니메이션을 돌리고 특정 애니메이션으로 보냄
@@ -129,6 +133,68 @@ void CMonster_Mahinasura_Minion::CollisionTriger(CCollider * pMyCollider, _uint 
 _float CMonster_Mahinasura_Minion::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 	return _float();
+}
+
+HRESULT CMonster_Mahinasura_Minion::Ready_ParticleDesc()
+{
+
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+
+//	m_pTextureParticleTransform_One = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+//	m_pTextureParticleTransform_Tow = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//	m_pTextureParticleTransform_BowFront= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999여도 죽는다. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
+{
+
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+
+	//	EX)
+	//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
+	//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	_Vector vPos = mat.r[3];
+
+	m_pTextureParticleTransform->Set_Matrix(mat);
+
+	//_Vector vPos2 = vPos + (mat.r[2] * 0.5f + mat.r[0] * 0.1f);
+	//mat.r[3] = vPos2;
+	//m_pTextureParticleTransform_BowUp->Set_MatrixState(CTransform::STATE_POS, vPos2);
+
+	//_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
+	//mat.r[3] = vPos3;
+
+	// m_pTextureParticleTransform_BowBack->Set_Matrix(mat);
+	return S_OK;
 }
 
 HRESULT CMonster_Mahinasura_Minion::SetUp_Info()
@@ -596,4 +662,6 @@ void CMonster_Mahinasura_Minion::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pTextureParticleTransform);
+	
 }

@@ -849,6 +849,9 @@
     <ClInclude Include="..\public\DeadZone.h">
       <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ParticleCreater.h">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1290,6 +1293,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DeadZone.cpp">
       <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ParticleCreater.cpp">
+      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

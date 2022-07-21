@@ -202,6 +202,7 @@
     <ClInclude Include="..\public\Monster_Weapon_Universal.h" />
     <ClInclude Include="..\public\Monster_Wolf.h" />
     <ClInclude Include="..\public\Monster_Wormgrub.h" />
+    <ClInclude Include="..\public\ParticleCreater.h" />
     <ClInclude Include="..\public\PillarTrigger.h" />
     <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h" />
     <ClInclude Include="..\public\PlayerWeapon_Arrow.h" />
@@ -318,6 +319,7 @@
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Wolf.cpp" />
     <ClCompile Include="..\private\Monster_Wormgrub.cpp" />
+    <ClCompile Include="..\private\ParticleCreater.cpp" />
     <ClCompile Include="..\private\PillarTrigger.cpp" />
     <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Arrow.cpp" />

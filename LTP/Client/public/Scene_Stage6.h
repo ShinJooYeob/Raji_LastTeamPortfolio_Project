@@ -31,7 +31,9 @@ private:
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_AssimpModelTest(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
-
+	HRESULT Ready_Layer_TestMapObject(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Monster_Boss(const _tchar* pLayerTag);
+	
 
 	HRESULT Ready_Layer_Phycis();
 

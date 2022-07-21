@@ -1048,18 +1048,6 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spark_Mesh2,
 	Prototype_Mesh_Wing,
 
-
-
-
-
-
-
-
-
-
-
-
-	
 	Prototype_Mesh_CIRCLE,
 	Prototype_Mesh_CIRCLE_DIST4,
 	Prototype_Mesh_CIRCLE_DIST5,
@@ -1070,7 +1058,27 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_BOW1,
 	Prototype_Mesh_BOW2,
 	Prototype_Mesh_ICE,
-	
+	Prototype_Mesh_Sphere,
+	Prototype_Mesh_SM_sphere_melon,
+	Prototype_Mesh_SM_4E_IceSpike_01,
+	Prototype_Mesh_SM_4E_Ice2,
+	Prototype_Mesh_MoonStone00,	
+	Prototype_Mesh_MoonStone02,
+	Prototype_Mesh_MoonStone04,
+	Prototype_Mesh_PurpCrystal01,
+	Prototype_Mesh_Rock001,
+	Prototype_Mesh_Rock002,
+	Prototype_Mesh_Rock003,
+	Prototype_Mesh_Rock004,
+	Prototype_Mesh_Rock005,
+	Prototype_Mesh_POTAL,
+	Prototype_Mesh_SM_Helix_Crystal,
+	Prototype_Mesh_SM_Karin_Weapon_03,
+	Prototype_Mesh_SM_ky_tornado6,
+	Prototype_Mesh_SM_ky_sphere_dist_wind,
+	Prototype_Mesh_SM_L_DS_Dashcombo_Y_L,
+	Prototype_Mesh_SM_Reorgea_Hand_R_New_3,
+	Prototype_Mesh_SM_Ring_03,
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
 	Prototype_Mesh_ENV_BLD_Palace_05,
@@ -2420,7 +2428,48 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_ICE:
 		return TEXT("SM_ICE_01.fbx");
-
+	case Prototype_Mesh_Sphere:
+		return TEXT("Sphere.fbx");
+	case Prototype_Mesh_SM_sphere_melon:
+		return TEXT("SM_sphere_melon.fbx");
+	case Prototype_Mesh_SM_4E_IceSpike_01:
+		return TEXT("SM_4E_IceSpike_01.fbx");
+	case Prototype_Mesh_SM_4E_Ice2:
+		return TEXT("ice2.fbx");
+	case Prototype_Mesh_MoonStone00:
+		return TEXT("MoonStone00.fbx");
+	case Prototype_Mesh_MoonStone02:
+		return TEXT("MoonStone02.fbx");
+	case Prototype_Mesh_MoonStone04:
+		return TEXT("MoonStone04.fbx");
+	case Prototype_Mesh_PurpCrystal01:
+		return TEXT("PurpCrystal01.fbx");
+	case Prototype_Mesh_Rock001:
+		return TEXT("Rock001.fbx");
+	case Prototype_Mesh_Rock002:
+		return TEXT("Rock002.fbx");
+	case Prototype_Mesh_Rock003:
+		return TEXT("Rock003.fbx");
+	case Prototype_Mesh_Rock004:
+		return TEXT("Rock004.fbx");
+	case Prototype_Mesh_Rock005:
+		return TEXT("Rock005.fbx");
+	case Prototype_Mesh_POTAL:
+		return TEXT("MS_ST3_Portal_00.fbx");
+	case Prototype_Mesh_SM_Helix_Crystal			:
+		return TEXT("SM_Helix_Crystal.fbx");
+	case Prototype_Mesh_SM_Karin_Weapon_03:
+		return TEXT("SM_Karin_Weapon_03.fbx");
+	case Prototype_Mesh_SM_ky_tornado6:
+		return TEXT("SM_ky_tornado6.fbx");
+	case Prototype_Mesh_SM_ky_sphere_dist_wind:
+		return TEXT("SM_ky_sphere_dist_wind.fbx");
+	case Prototype_Mesh_SM_L_DS_Dashcombo_Y_L:
+		return TEXT("SM_L_DS_Dashcombo_Y_L.fbx");
+	case Prototype_Mesh_SM_Reorgea_Hand_R_New_3:
+		return TEXT("SM_Reorgea_Hand_R_New_3.fbx");
+	case Prototype_Mesh_SM_Ring_03:
+		return TEXT("SM_Ring_03.fbx");
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");
 		break;

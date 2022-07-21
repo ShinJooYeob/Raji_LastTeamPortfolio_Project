@@ -236,6 +236,7 @@ HRESULT CPlayerWeapon::Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPo
 	return S_OK;
 }
 
+
 HRESULT CPlayerWeapon::Set_Dead_Transform(_uint ParticleIndex)
 {
 	
@@ -264,18 +265,6 @@ HRESULT CPlayerWeapon::Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ 
 {
 	NULL_CHECK_BREAK(trans);
 
-	//if (bb == false)
-	//{
-	//	// »èÁ¦
-	//	if (trans)
-	//	{
-	//		trans->Set_IsOwnerDead(true);
-	//		if (pb)
-	//			*pb = false;
-	//	}
-	//}
-
-
 	if (trans)
 	{
 		if (trans->Get_IsOwnerDead() == true)
@@ -294,7 +283,10 @@ HRESULT CPlayerWeapon::Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ 
 INSTPARTICLEDESC & CPlayerWeapon::Get_VecParticle(_uint index)
 {
 	if (m_vecTextureParticleDesc.size() < index)
+	{
+		
 		return INSTPARTICLEDESC();
+	}
 
 	return m_vecTextureParticleDesc[index];
 }
