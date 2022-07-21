@@ -10,6 +10,9 @@
 #include "PhysX/Collider_PhysX_Dynamic.h"
 #include "PhysX/Collider_PhysX_Joint.h"
 
+#include "Monster_Mahinasura_Minion.h"
+#include "Monster_Mahinasura_Leader.h"
+
 
 #ifdef _DEBUG
 
@@ -1247,6 +1250,20 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 	}
 	ImGui::Separator();
 
+	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	{
+		IMGUITREE("EFFECT_TEST")
+		{
+
+			Update_DebugWnd_EffectTest(fDeltaTime);
+
+			IMGUITREE_END
+		}
+
+	}
+
+	ImGui::Separator();
+
 	End_Update_Frame();
 	return _int();
 }
@@ -1720,13 +1737,49 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 		}
 
 	}
-
-	
-
-
-
-
 	return _int();
+}
+
+_int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
+{
+	
+	static _float3 CreatePos = _float3(30.f, 37.460f, 60.f);
+	ImGui::DragFloat3("CreatePos:", (float*)&CreatePos, 0.1f, -100, 100);
+	static const wchar_t* layer_Monster = TAG_LAY(Layer_Monster);
+
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Minion"))
+	{		
+		CGameObject* monsterobj =  (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion),&CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Leader"))
+	{
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
+	if (ImGui::Button("Delete_Monster"))
+	{
+		auto vecDelete = g_pGameInstance->Get_ObjectList_from_Layer(g_pGameInstance->Get_NowSceneNum(), layer_Monster);
+		for (auto obj : *vecDelete)
+		{
+			obj->Set_IsDead();
+		}
+	}
+
+
+
+
+	return S_OK;
+	
 }
 
 

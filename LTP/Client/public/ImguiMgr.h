@@ -33,6 +33,7 @@ public: /*For Debug*/
 	_int	Update_DebugWnd(_double fDeltaTime);
 	_int	Update_DebugWnd_PhysX(_double fDeltaTime);
 	_int	Update_DebugWnd_Sound3D(_double fDeltaTime);
+	_int	Update_DebugWnd_EffectTest(_double fDeltaTime);
 	_int	LateUpdate_DebugWnd(_double fDeltaTime);
 	_int	Render_DebugWnd();
 

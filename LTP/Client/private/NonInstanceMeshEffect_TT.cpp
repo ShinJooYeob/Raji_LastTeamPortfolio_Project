@@ -115,7 +115,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		}
 
 
-		_Vector MoveSpeed = m_vMoveDir.XMVector() * mMeshDesc.MoveSpeed  * fDeltaTime;
+		_Vector MoveSpeed = m_vMoveDir.XMVector() * mMeshDesc.MoveSpeed  * _float(fDeltaTime);
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal + MoveSpeed);
 
 
@@ -189,7 +189,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			m_vLookAxis = Up;
 			break;
 		case FollowingDir_Look:
-			m_vLookAxis = Up;
+			m_vLookAxis = Look;
 			break;
 		default:
 			__debugbreak();
@@ -210,7 +210,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
 	}
 
-
+	// Timer
 	if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration)
 	{
 		Set_IsDead();

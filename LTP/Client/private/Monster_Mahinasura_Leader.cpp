@@ -34,6 +34,9 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+	FAILED_CHECK(Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE2, m_pTransformCom));
+
+
 	return S_OK;
 }
 

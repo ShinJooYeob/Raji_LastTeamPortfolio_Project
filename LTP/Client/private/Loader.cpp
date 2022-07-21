@@ -323,6 +323,15 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_Rock004);
 		STATIC_EFFECTLOAD(Prototype_Mesh_Rock005);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_Ice2);
+		STATIC_EFFECTLOAD(Prototype_Mesh_POTAL);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Helix_Crystal);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Karin_Weapon_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado6);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgea_Hand_R_New_3);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
+
 	}
 
 

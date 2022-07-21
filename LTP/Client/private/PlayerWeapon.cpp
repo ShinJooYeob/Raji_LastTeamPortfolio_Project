@@ -283,7 +283,10 @@ HRESULT CPlayerWeapon::Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ 
 INSTPARTICLEDESC & CPlayerWeapon::Get_VecParticle(_uint index)
 {
 	if (m_vecTextureParticleDesc.size() < index)
+	{
+		
 		return INSTPARTICLEDESC();
+	}
 
 	return m_vecTextureParticleDesc[index];
 }

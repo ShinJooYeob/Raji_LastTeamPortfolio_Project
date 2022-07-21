@@ -536,7 +536,7 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
-				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_FLOOR, m_pTransformCom));
+				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_PLANE, m_pTransformCom));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_ICE, m_pTransformCom));
@@ -5733,32 +5733,42 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
 
 		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
 			_Vector FixPos =  pBowArrow->Get_Transform_Hand()->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(7, FixPos));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_TON, m_pTextureParticleTransform));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_ICES, m_pTextureParticleTransform));
+			
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE3, m_pTextureParticleTransform));
 
-			// #BUG InstanceMesh
+			
 			INSTMESHDESC instancedesc;
 			instancedesc.FollowingTarget = nullptr;
 
 			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE);
 			instancedesc.vFixedPosition = FixPos;
-			lstrcpy(instancedesc.szModelMeshProtoTypeTag, L"ice2.fbx");
 			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
 
 			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2);
 			instancedesc.vFixedPosition = FixPos;
-			lstrcpy(instancedesc.szModelMeshProtoTypeTag, L"ice2.fbx");
 			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
 
 			instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_PLANE);
-			instancedesc.FollowingTarget = pBowArrow->Get_Transform_Hand();
-			lstrcpy(instancedesc.szModelMeshProtoTypeTag, L"circle.fbx");
+			instancedesc.FollowingTarget = m_pTextureParticleTransform;
+			instancedesc.iFollowingDir = FollowingDir_Up;
+			instancedesc.TotalParticleTime = 3;
+			instancedesc.ParticleStartRandomPosMin = _float3(-5,0,-5);
+			instancedesc.ParticleStartRandomPosMax = _float3(5, 0, 5);;
+
 			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
 
 
@@ -5791,8 +5801,15 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 
 
 		{
+			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE, m_pTextureParticleTransform));
+
+			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
+
+
 		}
 
 	}
@@ -5809,13 +5826,13 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		pBowArrow->Set_State_Ultimate_Pre_Ready();
 
 		{
-			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
-				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE, m_pTextureParticleTransform));
+			//FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+			//	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE, m_pTextureParticleTransform));
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE2, m_pTextureParticleTransform));
 
-
+		
 		}
 
 	}

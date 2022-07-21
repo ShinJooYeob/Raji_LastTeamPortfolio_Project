@@ -26,7 +26,7 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
+//	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
 
 	
 	// Assimp Test
