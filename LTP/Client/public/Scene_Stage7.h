@@ -27,12 +27,12 @@ private:
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT	Ready_Layer_Monster(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Boss(const _tchar* pLayerTag);
-
 	
 	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 
 	HRESULT	Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 
+	HRESULT Ready_Layer_CameraTrigger(const _tchar* pLayerTag);
 
 	
 	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID ,const _tchar* pLayerTag);
@@ -42,6 +42,7 @@ private:
 
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
+
 public:
 	static CScene_Stage7* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual void Free() override;

@@ -27,6 +27,7 @@ public:
 		class  CTransform* pRepelObjTransform = nullptr;
 		_float fRadious = 0.5f;
 		class CNavigation* pNavigation = nullptr;
+		_bool IsKinect = false;
 	}REPELELEMENT;
 
 public:
@@ -47,7 +48,7 @@ public:
 
 public:
 	HRESULT Add_CollisionGroup(CollisionTypeID eType, class CGameObject* pCollisionObject, class CCollider* pCollider);
-	HRESULT Add_RepelGroup(class CTransform* pTransform, _float fRadious  = 0.5f, class CNavigation* pNavigation = nullptr);
+	HRESULT Add_RepelGroup(class CTransform* pTransform, _float fRadious = 0.5f, class CNavigation* pNavigation = nullptr, _bool IsKinect = false);
 	
 	void	Clear_CollisionGroup();
 

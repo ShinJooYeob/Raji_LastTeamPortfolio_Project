@@ -32,6 +32,7 @@ HRESULT CPillarTrigger::Initialize_Clone(void * pArg)
 
 HRESULT CPillarTrigger::After_Initialize()
 {
+	m_ePillarTriggerType = static_cast<EPillarTriggerState>((_int)m_fValueMat._11);
 
 	return S_OK;
 }
@@ -86,6 +87,40 @@ CPillarTrigger::EParkourTriggerType CPillarTrigger::Get_ParkourTriggerType()
 
 void CPillarTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
+		switch (m_ePillarTriggerType)
+		{
+		case EPillarTriggerState::STATE_NORMAL:
+		{
+			pPlayer->Set_CurParkourTrigger(this);
+			if (pPlayer->Get_CurParkurTriger() != this &&
+				CPlayer::PILLAR_ANIM_JUMP == pPlayer->Get_CurPlayAnimation() ||
+				CPlayer::LEDGE_ANIM_FALLING == pPlayer->Get_CurPlayAnimation() ||
+				CPlayer::BASE_ANIM_JUMP == pPlayer->Get_CurPlayAnimation())
+			{
+				pPlayer->Set_State_PillarGrabStart(true, g_fDeltaTime);
+			}
+			else if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+			{
+				pPlayer->Set_State_PillarStart(g_fDeltaTime);
+			}
+		}
+			break;
+		case EPillarTriggerState::STATE_TOP:
+		{
+			pPlayer->Set_CurParkourTrigger(this);
+			pPlayer->Set_PillarBlockClimbUp(true, m_pTransformCom->Get_MatrixState_Float3(CTransform::TransformState::STATE_POS).y);
+			/*if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+			{*/
+				//pPlayer->Set_State_PillarStart(g_fDeltaTime);
+			//}
+		}
+			break;
+		}
+
+	}
 }
 
 void CPillarTrigger::Set_Pos(_float3 fPos)

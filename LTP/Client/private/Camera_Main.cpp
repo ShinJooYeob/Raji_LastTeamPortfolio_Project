@@ -63,7 +63,8 @@ HRESULT CCamera_Main::Initialize_Clone(void * pArg)
 	if (FAILED(SetUp_EtcInfo()))
 		return E_FAIL;
 
-	m_fMin_TargetArmLength = -10.f;
+	m_fMax_TargetArmLength = 10.f;
+	m_fMin_TargetArmLength = 3.f;
 	return S_OK;
 }
 
@@ -142,6 +143,11 @@ void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
 		m_eCurCamMode = eCameraMode;
 	}
 		break;
+	case ECameraMode::CAM_MODE_FIX:
+	{
+		m_eCurCamMode = eCameraMode;
+	}
+		break;
 	}
 }
 
@@ -170,6 +176,16 @@ void CCamera_Main::Set_CameraLookWeight(_float fCamMoveWeight)
 void CCamera_Main::Set_CameraMoveWeight(_float fCamMoveWeight)
 {
 	m_fTarget_CamMoveWeight = fCamMoveWeight;
+}
+
+void CCamera_Main::Set_MaxTargetArmLength(_float fMaxTargetArmLength)
+{
+	m_fMax_TargetArmLength = fMaxTargetArmLength;
+}
+
+void CCamera_Main::Set_MinTargetArmLength(_float fMinTargetArmLength)
+{
+	m_fMin_TargetArmLength = fMinTargetArmLength;
 }
 
 _float CCamera_Main::Get_TargetArmLength()
@@ -236,6 +252,11 @@ _int CCamera_Main::Update(_double fDeltaTime)
 		Update_TargetingMode(fDeltaTime);
 	}
 		break;
+	case ECameraMode::CAM_MODE_FIX:
+	{
+		// None Update
+	}
+	break;
 	}
 	//
 
@@ -717,20 +738,46 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) < 0)
 	{
 		m_fTargetArmLength += 1.f;
-		if (m_fTargetArmLength > 10.f)
-		{
-			m_fTargetArmLength = 10.f;
-		}
+		//if (m_fTargetArmLength > m_fMax_TargetArmLength)
+		//{
+		//	m_fTargetArmLength -= 1.5f;
+		//	if (m_fTargetArmLength < m_fMax_TargetArmLength)
+		//	{
+		//		m_fTargetArmLength = m_fMax_TargetArmLength;
+		//	}
+		//}
 		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
 	}
 	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
 	{
 		m_fTargetArmLength -= 1.f;
-		if (m_fTargetArmLength < 3.f)
-		{
-			m_fTargetArmLength = 3.f;
-		}
+		//if (m_fTargetArmLength < m_fMin_TargetArmLength)
+		//{
+		//	m_fTargetArmLength += 1.5f;
+		//	if (m_fTargetArmLength > m_fMin_TargetArmLength)
+		//	{
+		//		m_fTargetArmLength = m_fMin_TargetArmLength;
+		//	}
+		//}
 		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
+	}
+
+
+	if (m_fTargetArmLength > m_fMax_TargetArmLength)
+	{
+		m_fTargetArmLength -= 0.1f;
+		if (m_fTargetArmLength < m_fMax_TargetArmLength)
+		{
+			m_fTargetArmLength = m_fMax_TargetArmLength;
+		}
+	}
+	else if (m_fTargetArmLength < m_fMin_TargetArmLength)
+	{
+		m_fTargetArmLength += 0.1f;
+		if (m_fTargetArmLength > m_fMin_TargetArmLength)
+		{
+			m_fTargetArmLength = m_fMin_TargetArmLength;
+		}
 	}
 
 	ChaseTarget_NormalMode(fDeltaTime);

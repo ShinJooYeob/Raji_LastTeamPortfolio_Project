@@ -950,15 +950,17 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 			_float4x4 WorldMat = ((CTransform*)pTrigObj->Get_Component(TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
 			_float4x4 ValueData = pTrigObj->Get_ValueMat();
+			_float4x4 SubValueData = pTrigObj->Get_SubValueMat();
 
 
 			WriteFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
 			
-			iIDLength = eObjectID.length();
+			iIDLength = _int(eObjectID.length());
 			WriteFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
 			WriteFile(hFile, eObjectID.c_str(), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 			WriteFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			WriteFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			WriteFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
 
 		}
 
@@ -1600,6 +1602,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			_tchar eObjectID[MAX_PATH];
 			_float4x4 WorldMat = XMMatrixIdentity();
 			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
 
 			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
 
@@ -1609,6 +1612,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
 			if (0 == dwByte) break;
 
 
@@ -1623,6 +1627,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
 
 			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
 			m_vecTriggerObject.push_back(pObject);
 		}
 
@@ -3503,23 +3508,23 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 		RotSpeed = min(max(RotSpeed, 0), 360);
 
 
-		ImGui::Button("-", ImVec2(20, 18));
-		if (ImGui::IsItemHovered())
+		;
+		if (ImGui::Button("-", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Turn_CW(XMVectorSet(1, 0, 0, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 
 		}
 		ImGui::SameLine(0, 10);		ImGui::Text("X");			ImGui::SameLine(0, 10);
 
-		ImGui::Button("+", ImVec2(20, 18));
-		if (ImGui::IsItemHovered())
+		;
+		if (ImGui::Button("+", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), fDeltatime);
+			pTrigTransform->Turn_CCW(XMVectorSet(1, 0, 0, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 		}
 
@@ -3532,22 +3537,22 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 
 
 
-		ImGui::Button("- ", ImVec2(20, 18));
-		if (ImGui::IsItemHovered())
+		;
+		if (ImGui::Button("- ", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 		}
 		ImGui::SameLine(0, 10);		ImGui::Text("Y");			ImGui::SameLine(0, 10);
-		ImGui::Button("+ ", ImVec2(20, 18));
+		;
 
-		if (ImGui::IsItemHovered())
+		if (ImGui::Button("+ ", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), fDeltatime);
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 1, 0, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 
 		}
@@ -3556,22 +3561,22 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 		Scaled = OldScaled.y;
 		ImGui::DragFloat("Y ", &Scaled, 0.001f, 0.001f, FLT_MAX);
 		OldScaled.y = Scaled;
-		ImGui::Button("-  ", ImVec2(20, 18));
-		if (ImGui::IsItemHovered())
+		;
+		if (ImGui::Button("-  ", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Turn_CW(XMVectorSet(0, 0, 1, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 
 		}
 		ImGui::SameLine(0, 10);		ImGui::Text("Z");			ImGui::SameLine(0, 10);
-		ImGui::Button("+  ", ImVec2(20, 18));
-		if (ImGui::IsItemHovered())
+		;
+		if (ImGui::Button("+  ", ImVec2(20, 18)))
 		{
 			_float OldTurnSpeed = pTrigTransform->Get_TurnSpeed();
 			pTrigTransform->Set_TurnSpeed(XMConvertToRadians(RotSpeed));
-			pTrigTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), fDeltatime);
+			pTrigTransform->Turn_CCW(XMVectorSet(0, 0, 1, 0), 1);
 			pTrigTransform->Set_TurnSpeed(OldTurnSpeed);
 		}
 
@@ -3624,6 +3629,31 @@ HRESULT CScene_Edit::Update_TriggerTab(_double fDeltatime)
 		memcpy(&(ValueMat._41), Imguifloat4, sizeof(_float4));
 
 		m_vecTriggerObject[iTriggerIndex]->Set_ValueMat(&ValueMat);
+
+
+		Make_VerticalSpacing(2);
+
+
+		_float4x4 SubValueMat = m_vecTriggerObject[iTriggerIndex]->Get_SubValueMat();
+
+		memcpy(Imguifloat4, &(SubValueMat._11), sizeof(_float4));
+		ImGui::InputFloat4(": Subrow 1", Imguifloat4);
+		memcpy(&(SubValueMat._11), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(SubValueMat._21), sizeof(_float4));
+		ImGui::InputFloat4(": Subrow 2", Imguifloat4);
+		memcpy(&(SubValueMat._21), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(SubValueMat._31), sizeof(_float4));
+		ImGui::InputFloat4(": Subrow 3", Imguifloat4);
+		memcpy(&(SubValueMat._31), Imguifloat4, sizeof(_float4));
+
+		memcpy(Imguifloat4, &(SubValueMat._41), sizeof(_float4));
+		ImGui::InputFloat4(": Subrow 4", Imguifloat4);
+		memcpy(&(SubValueMat._41), Imguifloat4, sizeof(_float4));
+
+		m_vecTriggerObject[iTriggerIndex]->Set_SubValueMat(&SubValueMat);
+
 	}
 
 

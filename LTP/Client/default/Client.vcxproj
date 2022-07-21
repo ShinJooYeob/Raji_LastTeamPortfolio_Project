@@ -179,10 +179,12 @@
     <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h" />
     <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp" />
     <ClInclude Include="..\public\AssimpCreateMgr.h" />
+    <ClInclude Include="..\public\BlockZone.h" />
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
+    <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
@@ -293,9 +295,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
+    <ClCompile Include="..\private\BlockZone.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
     <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
+    <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
     <ClCompile Include="..\private\HpUI.cpp" />

@@ -7,7 +7,7 @@ BEGIN(Client)
 class CTriggerObject abstract : public CGameObject
 {
 public:
-	enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_CHANGE_NAV_INDEX, PACUR_PILLAR, PACUR_END };
+	enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_CHANGE_NAV_INDEX, PACUR_PILLAR, BLOCK_ZONE, DEAD_ZONE, TRIGGER_CHANGE_CAMERA_VIEW, PACUR_END };
 
 protected:
 	CTriggerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -20,8 +20,10 @@ public:
 	virtual HRESULT After_Initialize() { return S_OK; };
 
 
-	_float4x4 Get_ValueMat() {	return m_fValueMat;	};
-	void Set_ValueMat(_float4x4* pMat){memcpy(&m_fValueMat, pMat, sizeof(_float4x4));};
+	_float4x4 Get_ValueMat() { return m_fValueMat; };
+	void Set_ValueMat(_float4x4* pMat) { memcpy(&m_fValueMat, pMat, sizeof(_float4x4)); };
+	_float4x4 Get_SubValueMat() {	return m_fSubValueMat;	};
+	void Set_SubValueMat(_float4x4* pMat){memcpy(&m_fSubValueMat, pMat, sizeof(_float4x4));};
 
 	void Set_eNumberNObjectID(_uint eNumber, const _tchar* eObjectID)
 	{
@@ -47,6 +49,7 @@ protected:
 	CTransform*						m_pTransformCom	 = nullptr;
 	CCollider*						m_pColliderCom	= nullptr;
 	_float4x4						m_fValueMat = XMMatrixIdentity();
+	_float4x4						m_fSubValueMat = XMMatrixIdentity();
 
 private:
 	_uint							m_eNumber = 0;

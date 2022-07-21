@@ -9,6 +9,7 @@
 #include "TriggerObject.h"
 #include "TestLedgeTrigger.h"
 #include "MonsterBatchTrigger.h"
+#include "Trigger_ChangeCameraView.h"
 
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -31,14 +32,14 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
-	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
+	//FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	
 
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_TriggerObject(L"TestTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 	
 
@@ -177,11 +178,12 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
-	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(242.479f, 21.198f, 178.668f));
-
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(280.874f, 22.85f, 179.978f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(296.946f, 38.713f, 214.058f));
 
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	
@@ -193,9 +195,6 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
-
-
-
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 
@@ -330,6 +329,7 @@ HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 			_tchar eObjectID[MAX_PATH];
 			_float4x4 WorldMat = XMMatrixIdentity();
 			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
 
 			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
 
@@ -339,6 +339,7 @@ HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
 			if (0 == dwByte) break;
 
 
@@ -354,6 +355,8 @@ HRESULT CScene_Stage7::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
 
 			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
+
 			pObject->After_Initialize();
 
 		}
@@ -432,6 +435,31 @@ HRESULT CScene_Stage7::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	
 	CloseHandle(hFile);
 
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_Layer_CameraTrigger(const _tchar * pLayerTag)
+{
+	//CTrigger_ChangeCameraView::CHANGECAMERAVIEWDESC ChangeCameraViewDesc;
+	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_TWO_INTERP;
+	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 6.f, -2.f);
+	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, -1.f, 1.f);
+	//ChangeCameraViewDesc.fMain_Pos = _float3(5.f, 0.01f, 5.f);
+	////ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f); 
+	// 
+	//ChangeCameraViewDesc.fSub_CamPos = _float3(-2.f, 6.f, 0.f);
+	//ChangeCameraViewDesc.fSub_CamLook = _float3(1.f, -1.f, 0.f);
+	//ChangeCameraViewDesc.fSub_Pos = _float3(-10.f, 0.01f, 5.f);
+	////ChangeCameraViewDesc.fSub_Scale = _float3(3.f, 3.f, 3.f);
+	//ChangeCameraViewDesc.bLockCamLook = true;
+	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.9f;
+	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.9f;
+	//ChangeCameraViewDesc.fSub_CamMoveWeight = 0.5f;
+	//ChangeCameraViewDesc.fSub_CamLookWeight = 0.5f;
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
 
 
 

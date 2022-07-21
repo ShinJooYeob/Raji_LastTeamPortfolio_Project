@@ -77,7 +77,7 @@ HRESULT CCollisionMgr::Add_CollisionGroup(CollisionTypeID eType, CGameObject * p
 	return S_OK;
 }
 
-HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation* pNavigation)
+HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, CNavigation* pNavigation, _bool IsKinect)
 {
 	if (m_eRepelCollisionThreadState != CollsionThreadStateID::CTS_ENTER) return S_FALSE;
 
@@ -92,7 +92,8 @@ HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, 
 	tDesc.pRepelObjTransform = pTransform;
 	tDesc.fRadious			= fRadious;
 	tDesc.pNavigation	= pNavigation;
-
+	tDesc.IsKinect = IsKinect;
+	
 	Safe_AddRef(tDesc.pRepelObjTransform);
 
 	m_RepelObjectList.push_back(tDesc);
@@ -167,6 +168,19 @@ HRESULT CCollisionMgr::Inspect_PlayerParkur_To_ParkurObj()
 			{
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_NPC);
 				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_PlayerParkur);
+			}
+
+		}
+	}
+
+	for (auto& SrcElement : m_CollisionGroupList[CollisionType_Player])
+	{
+		for (auto& DestElemet : m_CollisionGroupList[CollisionType_NPC])
+		{
+			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
+			{
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_NPC);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_Player);
 			}
 
 		}
@@ -278,6 +292,7 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 
 	while (true)
 	{
+
 		if (*_IsClientQuit == true)
 			return S_OK;
 
@@ -400,13 +415,24 @@ HRESULT CCollisionMgr::Inspect_RepelGroup()
 			{
 				D2SDir = XMVector3Normalize(XMVectorSetY(D2SDir, 0));
 
-				if (SourIter->fRadious > DestIter->fRadious)
+				if (SourIter->IsKinect )
 				{
 					DestIter->pRepelObjTransform->MovetoDir_bySpeed(-D2SDir, PushingSpeed, 0.0166667f, DestIter->pNavigation);
 				}
-				else
+				else if(DestIter->IsKinect)
 				{
 					SourIter->pRepelObjTransform->MovetoDir_bySpeed(D2SDir, PushingSpeed, 0.0166667f, SourIter->pNavigation);
+				}
+				else
+				{
+					if (SourIter->fRadious > DestIter->fRadious)
+					{
+						DestIter->pRepelObjTransform->MovetoDir_bySpeed(-D2SDir, PushingSpeed, 0.0166667f, DestIter->pNavigation);
+					}
+					else
+					{
+						SourIter->pRepelObjTransform->MovetoDir_bySpeed(D2SDir, PushingSpeed, 0.0166667f, SourIter->pNavigation);
+					}
 				}
 
 			}

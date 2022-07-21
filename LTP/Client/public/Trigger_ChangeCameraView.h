@@ -14,18 +14,23 @@ public:
 	{
 		EChangeCameraViewType		eChangeCameraViewType;
 		_float3						fMain_Pos;
-		_float3						fSub_Pos;
 		_float3						fMain_CamPos;
-		_float3						fSub_CamPos;
 		_float3						fMain_CamLook;
-		_float3						fSub_CamLook;
-		_float3						fMain_Scale;
-		_float3						fSub_Scale;
 		_float						fMain_CamMoveWeight;
 		_float						fMain_CamLookWeight;
+		_bool						bMainLockCamLook;
+		_float						fMainMaxTargetArmLength;
+		_float						fMainMinTargetArmLength;
+
+		_float3						fSub_Pos;
+		_float3						fSub_CamPos;
+		_float3						fSub_CamLook;
 		_float						fSub_CamMoveWeight;
 		_float						fSub_CamLookWeight;
-		_bool						bLockCamLook;
+		_bool						bSubLockCamLook;
+
+		_float						fSubMaxTargetArmLength;
+		_float						fSubMinTargetArmLength;
 	}CHANGECAMERAVIEWDESC;
 
 protected:
@@ -45,6 +50,11 @@ public:
 
 	virtual _int				Active_Trigger(CGameObject* pTarget, _double fDeltaTime) override;
 	virtual _int				DeActive_Trigger(CGameObject* pTarget, _double fDeltaTime) override;
+
+	virtual HRESULT				After_Initialize() override;
+
+	virtual void				CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
 public:
 	_bool				Check_CollisionToPlayer();
@@ -80,12 +90,7 @@ private:
 	CTransform*					m_pTransformCom_Main = nullptr;
 	CTransform*					m_pTransformCom_Sub = nullptr;
 
-
-	// for Debug
-	CShader*					m_pShaderCom = nullptr;
-	CTexture*					m_pTextureCom = nullptr;
-	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
+	CCollider*					m_pCollider_DEBUG = nullptr;
 
 public:
 	static CTrigger_ChangeCameraView*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
