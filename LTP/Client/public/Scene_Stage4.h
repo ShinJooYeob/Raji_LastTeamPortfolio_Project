@@ -29,6 +29,8 @@ private:
 	HRESULT Ready_Layer_MapObject(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_Player(const _tchar * pLayerTag);
 
+	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 public:

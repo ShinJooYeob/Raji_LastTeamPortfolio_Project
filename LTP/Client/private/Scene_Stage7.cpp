@@ -557,7 +557,7 @@ HRESULT CScene_Stage7::Ready_MapData(const _tchar* szMapDataFileName, SCENEID eS
 
 
 			CDissolve::DISSOLVEDESC	tDissolveDesc;
-
+			dw
 			tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
 			tDissolveDesc.pModel = (CModel*)pObject->Get_Component(TAG_COM(Com_Model));
 			tDissolveDesc.pShader = (CShader*)pObject->Get_Component(TAG_COM(Com_Shader));
