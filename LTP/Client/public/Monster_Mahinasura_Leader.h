@@ -8,6 +8,8 @@ END
 BEGIN(Client)
 class CMonster_Mahinasura_Leader final : public CMonster
 {
+public:
+	enum ColliderType { HANDATTACK, TAILATTACK, COLLIDER_END };
 private:
 	explicit CMonster_Mahinasura_Leader(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Mahinasura_Leader(const CMonster_Mahinasura_Leader& rhs);
@@ -31,8 +33,10 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -48,9 +52,25 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
 
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
 
+	CCollider*			m_pHandAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecHandAttackAttachedDesc;
+
+	CCollider*			m_pTailAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecTailAttackAttachedDesc;
+
+	//ColliderType
+	ColliderType		m_eColliderType;
+	_bool				m_bColliderAttackOn = false;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 
@@ -88,6 +108,9 @@ private:
 
 	_bool				m_bFastRunOn = false;
 
+private:
+	///Knockback
+	_float3				m_fKnockbackDir;
 
 private:
 	HRESULT SetUp_Components();
