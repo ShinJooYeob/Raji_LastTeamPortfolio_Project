@@ -35,6 +35,8 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+	FAILED_CHECK(Ready_ParticleDesc());
+
 	return S_OK;
 }
 
@@ -42,6 +44,17 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
+	{
+
+
+		//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+		//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+
+	}
+
+
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -59,7 +72,8 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
-
+	FAILED_CHECK(Update_ParticleTransform(dDeltaTime));
+	
 	return _int();
 }
 
@@ -335,6 +349,97 @@ HRESULT CMonster_Jalsura::Special_Trigger(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Jalsura::Ready_ParticleDesc()
+{
+		m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+		m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+		NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+		NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+
+		m_pTextureParticleTransform->Set_TurnSpeed(1);
+		m_pMeshParticleTransform->Set_TurnSpeed(XMConvertToRadians(90));
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		//0
+		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle"));
+		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
+		//1
+		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle2"));
+		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
+
+		m_vecTextureParticleDesc[0].TotalParticleTime = m_vecTextureParticleDesc[1].TotalParticleTime = 2.f;
+		m_vecTextureParticleDesc[0].ParticleSize = m_vecTextureParticleDesc[1].ParticleSize = _float3(0.3f, 0.5f, 0.3f);
+		//2
+		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle3"));
+		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pMeshParticleTransform;
+		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+
+		//pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+		//pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		//////////////////////////////////////////////////////////////////////////
+		// 0
+		
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.175f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 33;
+		tNIMEDesc.iDiffuseTextureIndex = 338;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 1, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float3(1.0, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = -1080.f;
+		tNIMEDesc.vSize = _float3(0.75f, -0.075f, 0.75f);
+
+		m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Jalsura::Update_ParticleTransform(_double fDeltaTime)
+{
+	//fTransformAngle += (_float)fDeltaTime * 1080.f;
+	//
+	m_pTextureParticleTransform->Set_Matrix(m_pTransformCom->Get_WorldMatrix());
+	m_pTextureParticleTransform->MovetoDir_bySpeed(XMVectorSet(0, 1, 0, 0), 1.5f, 1.f);
+	m_pTextureParticleTransform->MovetoDir_bySpeed(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 0.5f, 1.f);
+
+	m_pMeshParticleTransform->Set_Matrix(m_pTextureParticleTransform->Get_WorldMatrix());
+	m_pMeshParticleTransform->Turn_CW(m_pMeshParticleTransform->Get_MatrixState(CTransform::STATE_RIGHT), 0.999f);
+
+	//m_pTextureParticleTransform->Turn_CW(m_pTextureParticleTransform->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(fTransformAngle));
+	//
+	return S_OK;
+}
+
+
+
 HRESULT CMonster_Jalsura::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -406,9 +511,53 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 		case 2:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4842105)
+#define JalsuraColorChangeTime 0.15f
+			if (PlayRate <= 0 && m_iAdjMovedIndex == 0)
+			{
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				fRimLightPassedTime = 0;
+				vOldRimLightColor = _float4(0);
+				vTargetRimLightColor = pUtil->RandomFloat3(0,1);
+
+
+
+				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[2]);
+				m_iAdjMovedIndex++;
+			}
+			else if (PlayRate < 0.4842105)
+			{
+				fRimLightPassedTime += (_float)dDeltaTime;
+
+				if (fRimLightPassedTime < JalsuraColorChangeTime)
+				{
+					_float3 vRimLightColor = g_pGameInstance->Easing_Vector(TYPE_Linear,
+						vOldRimLightColor, vTargetRimLightColor, fRimLightPassedTime, JalsuraColorChangeTime);
+
+					_float Rate = _float(PlayRate / 0.4842105f);
+
+					Set_LimLight_N_Emissive(_float4(vRimLightColor, Rate),
+						_float4(Rate, Rate *0.2f, Rate, 1));
+				}
+				else
+				{
+
+					vOldRimLightColor = vTargetRimLightColor;
+					vTargetRimLightColor = GetSingle(CUtilityMgr)->RandomFloat3(0, 1);
+
+					_float Rate = _float(PlayRate / 0.4842105f);
+
+					Set_LimLight_N_Emissive(_float4(_float3(vOldRimLightColor), Rate),
+						_float4(Rate, Rate *0.2f, Rate, 1));
+				}
+
+			}
+			else if (m_iAdjMovedIndex == 1)
 			{
 				m_bLookAtOn = false;
+				vOldRimLightColor = vTargetRimLightColor = Get_LimLightValue();
 
 				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
 
@@ -418,15 +567,41 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
 				Monster_Texture_BulletDesc.fPositioning = _float3(0.f,1.2f, -0.3f);
-
-
+				Monster_Texture_BulletDesc.vColor = _float4(_float3(vOldRimLightColor), 0.5f);
 				Monster_Texture_BulletDesc.Object = this;
 
 				Monster_Texture_BulletDesc.dDuration = 1;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
+
+				m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+				m_vecNonMeshParticleDesc[0].vLookDir = m_vecNonMeshParticleDesc[0].vPosition.XMVector() - (
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+				m_vecNonMeshParticleDesc[0].vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonMeshParticleDesc[0]);
+
+				fRimLightPassedTime = 0;
 				m_iAdjMovedIndex++;
+			}
+			else
+			{
+				//fRimLightPassedTime += (_float)dDeltaTime;
+
+				_float3 vRimLightColor = g_pGameInstance->Easing_Vector(TYPE_Linear,
+					vOldRimLightColor, _float3(0), _float(PlayRate - 0.4842105), 0.5157895f);
+
+				_float Rate = 1.f - _float((PlayRate - 0.4842105f) / 0.5157895f);
+
+				Set_LimLight_N_Emissive(_float4(vRimLightColor, Rate),
+					_float4(Rate, Rate* 0.2f, Rate, 1));
 			}
 		}
 
@@ -472,4 +647,9 @@ void CMonster_Jalsura::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
 }

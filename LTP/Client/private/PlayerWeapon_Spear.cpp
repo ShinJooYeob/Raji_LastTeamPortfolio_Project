@@ -514,6 +514,7 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Spear_ThrowAttack"));
 	m_vecTextureParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
 	m_vecTextureParticleDesc[3].iFollowingDir = FollowingDir_Look;
+	m_vecTextureParticleDesc[3].bBillboard = true;
 
 	return S_OK;
 }

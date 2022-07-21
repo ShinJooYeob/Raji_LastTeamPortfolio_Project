@@ -99,67 +99,42 @@ _int CPlayer::Update(_double fDeltaTime)
 			//m_pPlayerWeapons[WEAPON_SWORD - 1]->EffectParticleOn(0, &m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK));
 
 			{
-
+				//m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_CAMMOTIONBLUR);
 				//NONINSTNESHEFTDESC tNIMEDesc;
-
-				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)+
-				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f + 
+				//
+				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
 				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
 				//tNIMEDesc.vLookDir = tNIMEDesc.vPosition.XMVector() - (
 				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
 				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
 				//	m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
-
-
+				//
+				//
 				//tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
 				//tNIMEDesc.fMaxTime_Duration = 0.35f;
 				//tNIMEDesc.fAppearTime = 0.175f;
-
-				//tNIMEDesc.noisingdir = _float2(0, -1);
-
+				//
+				//tNIMEDesc.noisingdir = _float2(0, 1);
+				//
 				//tNIMEDesc.NoiseTextureIndex = 381;
-				//tNIMEDesc.MaskTextureIndex = 10;
-				//tNIMEDesc.iDiffuseTextureIndex = 378;
+				//tNIMEDesc.MaskTextureIndex = 33;
+				//tNIMEDesc.iDiffuseTextureIndex = 338;
 				//tNIMEDesc.m_iPassIndex = 19;
 				//tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-				//tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+				//tNIMEDesc.vLimLight = _float4(1, 1, 1, 1);
 				//tNIMEDesc.NoiseTextureIndex = 381;
 				//tNIMEDesc.vColor = _float3(1.0, 0, 0);
-
+				//
 				//tNIMEDesc.RotAxis = FollowingDir_Up;
-				//tNIMEDesc.RotationSpeedPerSec = 1080.f;
-				//tNIMEDesc.vSize = _float3(1.f, -0.1f, 1.f);
-
-
+				//tNIMEDesc.RotationSpeedPerSec = -1080.f;
+				//tNIMEDesc.vSize = _float3(0.5f, -0.05f, 0.5f);
+				//
+				//
 				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			}
 
 
-			m_vecNonInstMeshDesc[12].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 2.5f
-				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
-			m_vecNonInstMeshDesc[12].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[12]);
-
-			m_vecNonInstMeshDesc[13].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
-				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
-			m_vecNonInstMeshDesc[13].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[13]);
-
-			m_vecNonInstMeshDesc[14].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
-			m_vecNonInstMeshDesc[14].vLookDir = m_vecNonInstMeshDesc[14].vPosition.XMVector() - (
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
-
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[14]);
-
-			//m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 		}
 

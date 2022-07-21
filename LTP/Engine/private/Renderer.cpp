@@ -60,6 +60,13 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LimLight"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_OldWorldPosition"), (_uint)Viewport.Width, (_uint)Viewport.Height,
+		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 0.f, 0.f, 1.f),false));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_VelocityMap"), (_uint)Viewport.Width, (_uint)Viewport.Height,
+		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 0.f, 0.f, 1.f)));
+
 	/* For.Target_Shade */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LightShade"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f)));
 	/* For.Target_Specular */
@@ -117,6 +124,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_Depth")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_WorldPosition")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_LimLight")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OldWorld"), TEXT("Target_OldWorldPosition")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_VelocityMap"), TEXT("Target_VelocityMap")));
+	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlDiffuse")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_MtrlNormal")));
@@ -219,6 +230,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_Oclussion"), 1280 - 250, 50, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_GodRay"), 1280 - 250, 150, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_LenseFlare"), 1280 - 250, 250, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_VelocityMap"), 1280 - 250, 350, 100, 100));
 	
 	
 	
@@ -333,6 +345,8 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderID, CGameObject * pGameObj
 HRESULT CRenderer::Add_ShadowGroup(SHADOWGROUP eShadowID, CGameObject * pGameObject, CTransform * pTransform, 
 	CShader * pShader, CModel* pModel, _float4x4 * AttacehdMatrix, CDissolve* pDissolve)
 {
+	if (!m_PostProcessingOn[POSTPROCESSING_SHADOW]) return S_FALSE;
+
 	if (pGameObject == nullptr || pTransform == nullptr || pShader == nullptr)
 	{
 		__debugbreak();
@@ -379,6 +393,8 @@ HRESULT CRenderer::Add_ShadowGroup_InstanceModel(INSTANCESHADOWGROUP eShadowID, 
 	vector<CTransform*>* pvecTransform, CModelInstance* pModelInst,
 	CShader * pShader, CModel * pModel, vector<_float4x4>* pvecTransformfloat4x4, vector<_float4>* pvecTimer)
 {
+	if (!m_PostProcessingOn[POSTPROCESSING_SHADOW]) return S_FALSE;
+
 	if (pGameObject == nullptr || pShader == nullptr || pModelInst == nullptr)
 	{
 		__debugbreak();
@@ -490,6 +506,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 
 	FAILED_CHECK(Render_EmissiveBlur());
+	if (m_PostProcessingOn[POSTPROCESSING_CAMMOTIONBLUR])
+		FAILED_CHECK(Render_CameraMotionBlur());
 	if (m_PostProcessingOn[POSTPROCESSING_SHADOW] && m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
@@ -510,18 +528,16 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 
 #ifdef _DEBUG
-
-
 	if (m_PostProcessingOn[POSTPROCESSING_DEBUGCOLLIDER])
 		FAILED_CHECK(Render_Debug());
 	if (m_PostProcessingOn[POSTPROCESSING_DEBUGTARGET])
 		FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_DebugRender")));
+#endif
+
+
 
 	ID3D11ShaderResourceView* pSRV[8] = { nullptr };
 	m_pDeviceContext->PSSetShaderResources(0, 8, pSRV);
-
-
-#endif
 
 	return S_OK;
 }
@@ -1395,6 +1411,101 @@ HRESULT CRenderer::Render_EmissiveBlur()
 	return S_OK;
 }
 
+HRESULT CRenderer::Copy_NowWorld2OldWorld()
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_OldWorld")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_OldWorld")));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 0));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_OldWorld")));
+
+
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+
+	m_OldViewMat = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
+	m_OldProjMat = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+	return S_OK;
+}
+
+HRESULT CRenderer::Make_VelocityMap()
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_VelocityMap")));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_WorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_WorldPosition"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_OldWorldPosTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_OldWorldPosition"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_NormalTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlNormal"))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+
+	
+		
+
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+
+	_float4x4		NowViewMatrix, NowProjMatrix;
+
+	_float4x4		OldViewMatrix = m_OldViewMat.TransposeXMatrix();
+	_float4x4		OldProjMatrix = m_OldProjMat.TransposeXMatrix();
+
+	XMStoreFloat4x4(&NowViewMatrix, XMMatrixTranspose(pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW)));
+	XMStoreFloat4x4(&NowProjMatrix, XMMatrixTranspose(pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ)));
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_matNowView", &NowViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_matNowProj", &NowProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_matOldView", &OldViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_matOldProj", &OldProjMatrix, sizeof(_float4x4)));
+
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 21));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_VelocityMap")));
+
+
+	return S_OK;
+}
+ 
+HRESULT CRenderer::Render_CameraMotionBlur()
+{
+	FAILED_CHECK(Make_VelocityMap());
+	//g_VelocityMapTexture
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_VelocityMapTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_VelocityMap"))));
+	//FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_VelocityMap"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
+
+	
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 22));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
+
+	FAILED_CHECK(Copy_NowWorld2OldWorld());
+	FAILED_CHECK(Copy_DeferredToReference());
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_DepthOfField()
 {
 	m_fTexleSize = 2.f;
@@ -1665,7 +1776,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 #pragma region SHADOW_NONANIMMODEL_ATTACHED
 
 		m_bShadowLightMatBindedChecker = false;
-		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED])
+		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_NONANIMMODEL_ATTACHED])
 		{
 			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
 				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
@@ -1700,7 +1811,7 @@ HRESULT CRenderer::Render_ShadowGroup()
 			Safe_Release(ShadowDesc.pGameObject);
 
 		}
-		m_ShadowObjectList[SHADOW_ANIMMODEL_ATTACHED].clear();
+		m_ShadowObjectList[SHADOW_NONANIMMODEL_ATTACHED].clear();
 
 #pragma endregion
 
@@ -1710,23 +1821,23 @@ HRESULT CRenderer::Render_ShadowGroup()
 		m_bShadowLightMatBindedChecker = false;
 		for (auto& ShadowDesc : m_ShadowObjectList[SHADOW_TERRAIN])
 		{
-			if (!ShadowDesc.pGameObject->Get_IsOwerDead())
-				//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
-			{
-				if (!m_bShadowLightMatBindedChecker)
-				{
-					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
-					FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
-					m_bShadowLightMatBindedChecker = true;
-				}
+			//if (!ShadowDesc.pGameObject->Get_IsOwerDead())
+			//	//	&& XMVectorGetX(XMVector3Length(ShadowDesc.pTransform->Get_MatrixState(CTransform::STATE_POS) - vCamWorldPosition)) < CAMERAFAR )
+			//{
+			//	if (!m_bShadowLightMatBindedChecker)
+			//	{
+			//		FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightViewMatrix", &m_LightWVPmat.ViewMatrix, sizeof(_float4x4)));
+			//		FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_LightProjMatrix", &m_LightWVPmat.ProjMatrix, sizeof(_float4x4)));
+			//		m_bShadowLightMatBindedChecker = true;
+			//	}
 
-				FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
-				CVIBuffer* pVIBuffer = (CVIBuffer*)ShadowDesc.pGameObject->Get_Component(L"Com_VIBuffer");
-				NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
+			//	FAILED_CHECK(ShadowDesc.pShader->Set_RawValue("g_fOclussionObject", &ShadowDesc.fIsOcllusion, sizeof(_float)));
+			//	CVIBuffer* pVIBuffer = (CVIBuffer*)ShadowDesc.pGameObject->Get_Component(L"Com_VIBuffer");
+			//	NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
 
-				FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
-				FAILED_CHECK(pVIBuffer->Render(ShadowDesc.pShader, 0));
-			}
+			//	FAILED_CHECK(ShadowDesc.pTransform->Bind_OnShader(ShadowDesc.pShader, "g_WorldMatrix"));
+			//	FAILED_CHECK(pVIBuffer->Render(ShadowDesc.pShader, 0));
+			//}
 			Safe_Release(ShadowDesc.pGameObject);
 		}
 		m_ShadowObjectList[SHADOW_TERRAIN].clear();
@@ -1852,6 +1963,28 @@ HRESULT CRenderer::Ready_For_Update(_double fDelataTimme)
 	return S_OK;
 }
 
+void CRenderer::OnOff_PostPorcessing(POSTPROCESSINGID eID)
+{
+	m_PostProcessingOn[eID] = !m_PostProcessingOn[eID];
+
+	if (eID == POSTPROCESSING_CAMMOTIONBLUR && m_PostProcessingOn[eID])
+	{
+		m_OldViewMat = GetSingle(CPipeLineMgr)->Get_Transform_Matrix(PLM_VIEW);
+		m_OldProjMat = GetSingle(CPipeLineMgr)->Get_Transform_Matrix(PLM_PROJ);
+	}
+}
+
+void CRenderer::OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool)
+{
+	 m_PostProcessingOn[eID] = bBool;
+
+	if (eID == POSTPROCESSING_CAMMOTIONBLUR && m_PostProcessingOn[eID])
+	{
+		m_OldViewMat = GetSingle(CPipeLineMgr)->Get_Transform_Matrix(PLM_VIEW);
+		m_OldProjMat = GetSingle(CPipeLineMgr)->Get_Transform_Matrix(PLM_PROJ);
+	}
+
+}
 
 HRESULT CRenderer::Render_NonBlend_NoLight()
 {

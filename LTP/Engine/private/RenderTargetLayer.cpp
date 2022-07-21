@@ -10,11 +10,12 @@ CRenderTargetLayer::CRenderTargetLayer(ID3D11Device* pDevice, ID3D11DeviceContex
 	Safe_AddRef(m_pDeviceContext);
 }
 
-HRESULT CRenderTargetLayer::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor)
+HRESULT CRenderTargetLayer::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor, _bool bAutoClearing)
 {
 	NULL_CHECK_RETURN(m_pDevice, E_FAIL);
 
 	m_vClearColor = vClearColor; 
+	m_bAutoClearing = bAutoClearing;
 
 	/* 1. */
 
@@ -92,11 +93,12 @@ HRESULT CRenderTargetLayer::Render_DebugBuffer(CShader* pShader, CVIBuffer_Rect 
 
 #endif // _DEBUG
 
-CRenderTargetLayer * CRenderTargetLayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor)
+CRenderTargetLayer * CRenderTargetLayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, _uint iSizeX, _uint iSizeY,
+	DXGI_FORMAT eFormat, _float4 vClearColor , _bool bAutoClearing)
 {
 	CRenderTargetLayer*	pInstance = new CRenderTargetLayer(pDevice, pDeviceContext);
 
-	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, eFormat, vClearColor)))
+	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, eFormat, vClearColor, bAutoClearing)))
 	{
 		MSGBOX("Failed to Created CRenderTarget");
 		Safe_Release(pInstance);

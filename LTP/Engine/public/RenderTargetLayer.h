@@ -20,8 +20,9 @@ public:
 	}
 
 public:
-	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor);
+	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor, _bool bAutoClearing);
 	HRESULT Clear();
+	_bool Get_IsAutoClearing() { return m_bAutoClearing; };
 
 #ifdef _DEBUG
 public:
@@ -38,6 +39,7 @@ private:
 
 private:
 	_float4					m_vClearColor;
+	_bool					m_bAutoClearing = true;
 
 #ifdef _DEBUG
 private:
@@ -47,7 +49,7 @@ private:
 #endif // _DEBUG
 
 public:
-	static CRenderTargetLayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor);
+	static CRenderTargetLayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor ,_bool bAutoClearing);
 	virtual void Free() override;
 };
 

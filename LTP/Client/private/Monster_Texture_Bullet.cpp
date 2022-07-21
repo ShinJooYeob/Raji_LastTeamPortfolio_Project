@@ -34,6 +34,7 @@ HRESULT CMonster_Texture_Bullet::Initialize_Clone(void * pArg)
 		memcpy(&m_Monster_Texture_BulletDesc, pArg, sizeof(MONSTER_TEXTURE_BULLETDESC));
 	}
 	else {
+		__debugbreak();
 		MSGBOX("Monster_Bullet의 pArg가 Nullptr입니다.");
 	}
 
@@ -51,6 +52,15 @@ HRESULT CMonster_Texture_Bullet::Initialize_Clone(void * pArg)
 	switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
 	{
 	case Client::CMonster_Texture_Bullet::JALSURA_BULLET:
+	{
+		m_Monster_Texture_BulletDesc.vColor.x = pow(m_Monster_Texture_BulletDesc.vColor.x, 1.f / 1.8f);
+		m_Monster_Texture_BulletDesc.vColor.y = pow(m_Monster_Texture_BulletDesc.vColor.y, 1.f / 1.8f);
+		m_Monster_Texture_BulletDesc.vColor.z = pow(m_Monster_Texture_BulletDesc.vColor.z, 1.f / 1.8f);
+
+		m_pTransformCom->Set_TurnSpeed(1);
+		
+
+	}
 		break;
 	case Client::CMonster_Texture_Bullet::GADASURA_TERRAIN_BULLET:
 	{
@@ -70,6 +80,7 @@ _int CMonster_Texture_Bullet::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	m_dDeltaTime += dDeltaTime;
+	m_fAngle = _float(dDeltaTime) * 2080.f;
 
 	if (m_Monster_Texture_BulletDesc.dDuration <= m_dDeltaTime)
 	{
@@ -86,7 +97,7 @@ _int CMonster_Texture_Bullet::LateUpdate(_double dDeltaTime)
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 	if(m_Monster_Texture_BulletDesc.iBulletTextureNumber != GADASURA_TERRAIN_BULLET)
-		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this));
 
 	return _int();
 }
@@ -104,10 +115,49 @@ _int CMonster_Texture_Bullet::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
-		return E_FAIL;
 
-	m_pVIBufferCom->Render(m_pShaderCom, 2);
+	if (m_Monster_Texture_BulletDesc.iBulletTextureNumber == JALSURA_BULLET)
+	{
+
+
+		_float Timer = _float(m_dDeltaTime);
+		_float MaxTime = (_float)m_Monster_Texture_BulletDesc.dDuration;
+		_float AppearTime = MaxTime*0.5f;
+		_float2 NoisingDir = _float2(-1, 0);
+		_float PushPower = 1.;
+		
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &Timer, sizeof(_float)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &AppearTime, sizeof(_float)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &MaxTime, sizeof(_float)));
+
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &NoisingDir, sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &PushPower, sizeof(_float)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &m_Monster_Texture_BulletDesc.vColor, sizeof(_float4)));
+		
+
+
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 388));
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 74));		//10
+
+		//FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", 298));
+
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
+
+
+
+		m_pVIBufferCom->Render(m_pShaderCom, 4);
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
+			return E_FAIL;
+
+		m_pVIBufferCom->Render(m_pShaderCom, 2);
+
+
+	}
+
+
 
 	return _int();
 }
@@ -147,7 +197,7 @@ HRESULT CMonster_Texture_Bullet::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 
@@ -247,24 +297,41 @@ HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_UP, -vRight *XMVectorGetX(m_pTransformCom->Get_MatrixScale(CTransform::STATE_RIGHT)));
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, -vUp * XMVectorGetY(m_pTransformCom->Get_MatrixScale(CTransform::STATE_UP)));
 
+
+
+
+		m_pTransformCom->Scaled(CTransform::STATE_RIGHT, 30);
+
+		_Vector vPosition = XMLoadFloat4(&m_fTempPos);
+
+		vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (30 * 0.5f);
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+
+
 		m_bOnceSwtich = true;
+
 	}
+	m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), XMConvertToRadians(m_fAngle));
 
 	///////////////////////
-	_float fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat4(&m_fTempPlayerPos));
-
-	_float fDispersec = 2;
 
 
-	m_fTempDis += fDispersec;
+	
+	//_float fDispersec = 2;
 
-	m_pTransformCom->Scaled(CTransform::STATE_RIGHT, m_fTempDis);
 
-	_Vector vPosition = XMLoadFloat4(&m_fTempPos);
+	//m_fTempDis += fDispersec;
 
-	vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5f);
+	//m_pTransformCom->Scaled(CTransform::STATE_RIGHT, m_fTempDis);
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	//_Vector vPosition = XMLoadFloat4(&m_fTempPos);
+
+	//vPosition += XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT)) * (m_fTempDis * 0.5f);
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	//
 	/////////////////////////////
 
 

@@ -43,7 +43,7 @@ HRESULT CRenderTargetMgr::Initialize_RenderTargetMgr(ID3D11Device* pDevice, ID3D
 	return S_OK;
 }
 
-HRESULT CRenderTargetMgr::Add_RenderTarget(const _tchar * pRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor)
+HRESULT CRenderTargetMgr::Add_RenderTarget(const _tchar * pRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, _float4 vClearColor,_bool bAutoClearing)
 {
 	//NULL_CHECK_RETURN(!(Find_RenderTarget(pRenderTargetTag)), E_FAIL);
 	if (Find_RenderTarget(pRenderTargetTag) != nullptr)
@@ -52,7 +52,7 @@ HRESULT CRenderTargetMgr::Add_RenderTarget(const _tchar * pRenderTargetTag, _uin
 		return E_FAIL;
 	}
 
-	CRenderTargetLayer*		pRenderTarget = CRenderTargetLayer::Create(m_pDevice, m_pDeviceContext, iSizeX, iSizeY, eFormat, vClearColor);
+	CRenderTargetLayer*		pRenderTarget = CRenderTargetLayer::Create(m_pDevice, m_pDeviceContext, iSizeX, iSizeY, eFormat, vClearColor, bAutoClearing);
 
 	NULL_CHECK_RETURN(pRenderTarget, E_FAIL);
 
@@ -178,7 +178,10 @@ HRESULT CRenderTargetMgr::Clear_All_RenderTargetColor()
 {
 
 	for (auto& pRenderTarget : m_mapRenderTarget)
-		pRenderTarget.second->Clear();
+	{
+		if (pRenderTarget.second->Get_IsAutoClearing())
+			pRenderTarget.second->Clear();
+	}
 
 	return S_OK;
 }
