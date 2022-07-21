@@ -32,14 +32,15 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
 	HRESULT				CoolTime_Manager(_double dDeltaTime);
-	//HRESULT				Once_AnimMotion(_double	dDeltaTime);
-	//HRESULT				Pattern_Change();
+	HRESULT				Once_AnimMotion(_double	dDeltaTime);
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
 private:
@@ -47,8 +48,16 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
 
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+	CCollider*			m_pAttackColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttackAttachedDesc;
+
+	_bool				m_bColliderAttackOn = false;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -56,13 +65,13 @@ private:
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
-//private://애니메이션 동작 및 이벤트
-//		//Anim Once Pattern
-//	_double				m_dOnceCoolTime = 0;
-//	_uint				m_iOncePattern = 0;
-//	_uint				m_iOnceAnimNumber = 0;
-//
-//	_bool				m_bIOnceAnimSwitch = false;
+private://애니메이션 동작 및 이벤트
+		//Anim Once Pattern
+	_double				m_dOnceCoolTime = 0;
+	_uint				m_iOncePattern = 0;
+	_uint				m_iOnceAnimNumber = 0;
+
+	_bool				m_bIOnceAnimSwitch = false;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;

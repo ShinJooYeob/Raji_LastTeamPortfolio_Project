@@ -44,7 +44,7 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	/////////////////test
 	
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	/////////////////
@@ -303,7 +303,7 @@ HRESULT CMonster_Mahinasura_Minion::SetUp_Collider()
 
 	////////////////////////////////////m_pTailAttackColliderCom!@#!@##!#@
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vScale = _float3(7.f, 7.f, 7.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -628,7 +628,7 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 15; //LightHit
 		break;
 	case 41:
-		m_iOnceAnimNumber = 16; //HeavHit
+		m_iOnceAnimNumber = 16; //HeavyHit
 		break;
 	case 42:
 		m_iOnceAnimNumber = 8; //groggy
@@ -848,7 +848,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left;
 				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.5f, 0.75f, (_float)PlayRate - 0.1f, 0.38f);
-				m_pTransformCom->MovetoDir(vRight, dDeltaTime * fSpeed, m_pNavigationCom);
+				m_pTransformCom->MovetoDir(-vRight, dDeltaTime * fSpeed, m_pNavigationCom);
 			}
 			break;
 		}
@@ -891,9 +891,15 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		}
 		case 18:
 		{
-			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
+			if (m_iAdjMovedIndex == 0)
 			{
 				m_bLookAtOn = false;
+				m_bColliderAttackOn = true;
+				m_eColliderType = CMonster_Mahinasura_Minion::HANDATTACK;
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
+			{
 
 				_float EasingSpeed;
 				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.25 , 3.3f, (_float)PlayRate -0.27272f, 0.17128f);
@@ -910,7 +916,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 19: {
-			if (m_iAdjMovedIndex == 0)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;

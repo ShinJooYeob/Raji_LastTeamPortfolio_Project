@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\Monster_Mahinasura_Leader.h"
 
+#include "HpUI.h"
+
 
 CMonster_Mahinasura_Leader::CMonster_Mahinasura_Leader(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -34,6 +36,14 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+	/////////////////test
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	/////////////////
+
 	return S_OK;
 }
 
@@ -59,6 +69,11 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -77,6 +92,19 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHandAttackColliderCom));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pTailAttackColliderCom));
+#endif
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	
+	if (m_pHPUI != nullptr)
+	{
+		m_pHPUI->LateUpdate(dDeltaTime);
+	}
 	return _int();
 }
 
@@ -128,6 +156,38 @@ void CMonster_Mahinasura_Leader::CollisionTriger(CCollider * pMyCollider, _uint 
 
 _float CMonster_Mahinasura_Leader::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+	m_dSpecial_CoolTime = 0;
+	m_dOnceCoolTime = 0;
+	m_dInfinity_CoolTime = 0;
+
+	m_bIOnceAnimSwitch = true;
+
+	if (bKnockback == false)
+	{
+		m_iOncePattern = 40;
+	}
+	else {
+		m_iOncePattern = 41;
+
+		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+	}
+
+	if (m_fHP < 5 && m_iBoolOnce == 0)
+	{
+		m_iOncePattern = 42;
+		m_dSpecial_CoolTime = 0;
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+
+		m_iBoolOnce += 1;
+	}
+	if (m_fHP <= 0)
+	{
+		Set_IsDead();
+	}
 	return _float();
 }
 
@@ -147,6 +207,230 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CMonster_Mahinasura_Leader::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pHandAttackColliderCom));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSubSub), (CComponent**)&m_pTailAttackColliderCom));
+
+	/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.f, 3.f, 3.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.5f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.8f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.8f, 0.8f, 0.8f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_02", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.1f, -0.45f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_cloth_02", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.15f, -0.2f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+	//////////////////////////////////////////////////////////////////////
+
+
+
+
+	/////////////////m_pAttackColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pHandAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.5f));
+	m_vecHandAttackAttachedDesc.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pHandAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_index_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.34938f, -0.11046f, -0.32727f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecHandAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pHandAttackColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pHandAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_index_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.34938f, -0.11046f, -0.32727f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecHandAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pHandAttackColliderCom->Set_ParantBuffer();
+	//////////////////////////////////////////////////////////////////////
+
+
+
+	////////////////////////////////////m_pTailAttackColliderCom!@#!@##!#@
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(15.f, 15.f, 15.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.5f));
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_end", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 1.3931f, -0.3834f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_10", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 1.18f, -0.42061f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_09", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 1.0177f, -0.41792f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_08", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.9001f, -0.41846f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_07", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.7588f, -0.41846f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_06", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.62504f, -0.41846f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_05", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.5134f, -0.419f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_04", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.39583f, -0.419f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_03", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.27448f, -0.41954f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_02", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.15097f, -0.41792f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pTailAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_tail_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.040943f, -0.419f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecTailAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pTailAttackColliderCom->Set_ParantBuffer();
+
+	//////////////////////////////////////////////////////////////////////
+
+	return S_OK;
+}
+
 HRESULT CMonster_Mahinasura_Leader::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -157,13 +441,13 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Fight(_double dDeltaTime)
 		switch (m_iInfinityAnimNumber)
 		{
 		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
+			m_pTransformCom->Move_Backward(dDeltaTime * 0.6, m_pNavigationCom);
 			break;
 		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
+			m_pTransformCom->Move_Backward(dDeltaTime * 1.2, m_pNavigationCom);
 			break;
 		default:
-			m_pTransformCom->Move_Backward(dDeltaTime);
+			m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
 			break;
 
 		}
@@ -197,6 +481,62 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Mahinasura_Leader::Update_Collider(_double dDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+	m_pHandAttackColliderCom->Update_ConflictPassedTime(dDeltaTime);
+	m_pTailAttackColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	if (m_bColliderAttackOn == true)
+	{
+		switch (m_eColliderType)
+		{
+		case Client::CMonster_Mahinasura_Leader::HANDATTACK:
+			//HandAttackCollider
+			iNumCollider = m_pHandAttackColliderCom->Get_NumColliderBuffer();
+			for (_uint i = 0; i < iNumCollider; i++)
+				m_pHandAttackColliderCom->Update_Transform(i, m_vecHandAttackAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+			break;
+		case Client::CMonster_Mahinasura_Leader::TAILATTACK:
+			//TailAttackCollider
+			iNumCollider = m_pTailAttackColliderCom->Get_NumColliderBuffer();
+			for (_uint i = 0; i < iNumCollider; i++)
+				m_pTailAttackColliderCom->Update_Transform(i, m_vecTailAttackAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+			break;
+		default:
+			break;
+		}
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+
+
+
+
+	if (m_bColliderAttackOn == true)
+	{
+		switch (m_eColliderType)
+		{
+		case Client::CMonster_Mahinasura_Leader::HANDATTACK:
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pHandAttackColliderCom));
+			break;
+		case Client::CMonster_Mahinasura_Leader::TAILATTACK:
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pTailAttackColliderCom));
+			break;
+		default:
+			break;
+		}
+	}
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+
+	return S_OK;
+}
+
 HRESULT CMonster_Mahinasura_Leader::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
@@ -223,7 +563,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 	m_dOnceCoolTime += dDeltaTime;
 
-	if (m_dOnceCoolTime > 2 && m_fDistance < 3 || m_bComboAnimSwitch == true)
+	if (m_dOnceCoolTime > 4 && m_fDistance < 3 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
@@ -258,62 +598,76 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 3;
 	switch (m_iOncePattern)
 	{
 	case 0:
 		m_iOnceAnimNumber = 2; //_Dodge_Back
+		m_bComboAnimSwitch = true;
 		break;
 	case 1:
+		m_iOnceAnimNumber = 20; //TailWhip
+		m_bComboAnimSwitch = false;
+		break;
+	case 2:
 		m_iOnceAnimNumber = 3; //_Dodge_Right
 		m_bComboAnimSwitch = true;
 		break;
-	case 2:
+	case 3:
 		m_iOnceAnimNumber = 18; //LungeAttack
 		m_bComboAnimSwitch = true;
-		break;
-	case 3:
-		m_iOnceAnimNumber = 21; //Scorpion_Attack
-		m_bComboAnimSwitch = false;
 		break;
 	case 4:
-		m_iOnceAnimNumber = 4; //_Dodge_Left
-		m_bComboAnimSwitch = true;
+		m_iOnceAnimNumber = 19; //Scorpion_Attack
+		m_bComboAnimSwitch = false;
 		break;
 	case 5:
-		m_iOnceAnimNumber = 18; //LungeAttack
+		m_iOnceAnimNumber = 4; //_Dodge_Left
 		m_bComboAnimSwitch = true;
 		break;
 	case 6:
-		m_iOnceAnimNumber = 19; //QuickAttack
-		m_bComboAnimSwitch = true;
-		break;
-	case 7:
-		m_iOnceAnimNumber = 21; //Scorpion_Attack
-		m_bComboAnimSwitch = false;
-		break;
-	case 8:
-		m_iOnceAnimNumber = 4; //_Dodge_Left
-		m_bComboAnimSwitch = true;
-		break;
-	case 9:
 		m_iOnceAnimNumber = 18; //LungeAttack
 		m_bComboAnimSwitch = true;
 		break;
-	case 10:
-		m_iOnceAnimNumber = 20; //TailWhip
+	case 7:
+		m_iOnceAnimNumber = 19; //QuickAttack
 		m_bComboAnimSwitch = true;
 		break;
-	case 11:
+	case 8:
 		m_iOnceAnimNumber = 21; //Scorpion_Attack
 		m_bComboAnimSwitch = false;
 		break;
+	case 9:
+		m_iOnceAnimNumber = 4; //_Dodge_Left
+		m_bComboAnimSwitch = true;
+		break;
+	case 10:
+		m_iOnceAnimNumber = 18; //LungeAttack
+		m_bComboAnimSwitch = true;
+		break;
+	case 11:
+		m_iOnceAnimNumber = 20; //TailWhip
+		m_bComboAnimSwitch = true;
+		break;
 	case 12:
+		m_iOnceAnimNumber = 21; //Scorpion_Attack
+		m_bComboAnimSwitch = false;
+		break;
+	case 13:
 		m_iOnceAnimNumber = 2; //_Dodge_Back
 		break;
 	case 30:
 		m_iOnceAnimNumber = 7; //Taunt
 		break;
+	case 40:
+		m_iOnceAnimNumber = 15; //LightHit
+		break;
+	case 41:
+		m_iOnceAnimNumber = 16; //HeavyHit
+		break;
+	case 42:
+		m_iOnceAnimNumber = 8; //groggy
+		break;
+
 	}
 
 	return S_OK;
@@ -338,12 +692,11 @@ HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.4, m_pNavigationCom);
 		m_iInfinityAnimNumber = 1;
 		break;
 	case 1:
-		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
-		m_iInfinityAnimNumber = 1;
+		m_iInfinityAnimNumber = 22;
 		break;
 	case 2:
 		m_iInfinityAnimNumber = 22;
@@ -370,7 +723,7 @@ HRESULT CMonster_Mahinasura_Leader::Special_Trigger(_double dDeltaTime)
 	m_dSpecial_CoolTime += dDeltaTime;
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 25)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -404,6 +757,18 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
+
+	SetUp_Collider();
+
 	return S_OK;
 }
 
@@ -418,6 +783,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		m_dAcceleration = 1;
 
 		m_bLookAtOn = true;
+		m_bColliderAttackOn = false;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
@@ -463,7 +829,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 
 				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.f, 1.f, (_float)PlayRate - 0.175f, 0.325f);
-				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed);
+				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed, m_pNavigationCom);
 			}
 			break;
 		}
@@ -477,15 +843,11 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 					m_iAdjMovedIndex += 1;
 				}
+
+
 				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
-
-				_float3 vDir;
-
-				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 14.f, 7.f, (_float)PlayRate - 0.1f, 0.38f);
-				XMStoreFloat3(&vDir, XMVector3Normalize(vRight) * fSpeed * (_float)dDeltaTime);
-
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.5f, 0.75f, (_float)PlayRate - 0.1f, 0.38f);
+				m_pTransformCom->MovetoDir(vRight, dDeltaTime * fSpeed, m_pNavigationCom);
 			}
 			break;
 		}
@@ -499,20 +861,64 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 					m_iAdjMovedIndex += 1;
 				}
+				//_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
+				//_float3 vDir;
+				//_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 14.f, 7.f, (_float)PlayRate - 0.1f, 0.38f);
+				//XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * fSpeed * (_float)dDeltaTime);
+				//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
+
 				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
+				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.5f, 0.75f, (_float)PlayRate - 0.1f, 0.38f);
+				m_pTransformCom->MovetoDir(-vRight, dDeltaTime * fSpeed, m_pNavigationCom);
+			}
+			break;
+		}
+		case 8:
+		{
+			if (PlayRate > 0 && PlayRate <= 0.98)
+			{
+				m_bLookAtOn = false;
 
-				_float3 vDir;
+				m_dAcceleration = 0.3;
+			}
+			break;
+		}
+		case 15:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_dAcceleration = 0.5;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 16:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_bLookAtOn = false;
+				m_dAcceleration = 1;
+				m_iAdjMovedIndex++;
+			}
+			else if (0.f < PlayRate && PlayRate <= 0.478f)
+			{
+				m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
 
-				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 14.f, 7.f, (_float)PlayRate - 0.1f, 0.38f);
-				XMStoreFloat3(&vDir, XMVector3Normalize(-vRight) * fSpeed * (_float)dDeltaTime);
+				m_fKnockbackDir.y = 0;
 
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMLoadFloat3(&vDir));
+				m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
 			}
 			break;
 		}
 		case 18:
 		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.27272)
+			{
+				m_bLookAtOn = false;
+				m_bColliderAttackOn = true;
+				m_eColliderType = CMonster_Mahinasura_Leader::HANDATTACK;
+				m_iAdjMovedIndex++;
+			}
 			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
 			{
 				m_bLookAtOn = false;
@@ -520,41 +926,56 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				_float EasingSpeed;
 				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 1.7f, 2.5f, (_float)PlayRate - 0.27272f, 0.17128f);
 
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
 			else if (PlayRate >= 0.444 && PlayRate <= 0.6)
 			{
 				_float EasingSpeed;
 				EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadOut, 2.5f, 1.7f, (_float)PlayRate - 0.444f, 0.156f);
 
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
 			break;
 		}
 		case 19: {
-			if (PlayRate >= 0.24 && PlayRate <= 0.48)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
+				m_bColliderAttackOn = true;
+				m_eColliderType = CMonster_Mahinasura_Leader::HANDATTACK;
+
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate >= 0.24 && PlayRate <= 0.48)
+			{
 
 				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.24f, 0.2f);
 
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
 			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
 			{
 				_float EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_QuadIn, 2.5f, 0.5f, (_float)PlayRate - 0.49f, 0.35f);
 
-				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
 			break;
 		}
 		case 20: {
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_bLookAtOn = false;
+				m_bColliderAttackOn = true;
+				m_eColliderType = CMonster_Mahinasura_Leader::TAILATTACK;
+
+				m_iAdjMovedIndex++;
+			}
 			if (PlayRate >= 0.24 && PlayRate <= 0.6)
 			{
 				m_bLookAtOn = false;
 
 				_float fSpeed = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 1.24f, 2.5f, (_float)PlayRate - 0.24f, 0.36f); // PlayRate - 0.266666 and 0.5 - 0.266666
-				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed);
+				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed, m_pNavigationCom);
 
 				//_float EasingSpeed;
 				//EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, (_float)PlayRate - 0.24f, 0.36f);
@@ -574,6 +995,15 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			else if (PlayRate >= 0.43859 && PlayRate <= 0.78947)
 			{
 				m_dAcceleration = 2;
+
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_bLookAtOn = false;
+					m_bColliderAttackOn = true;
+					m_eColliderType = CMonster_Mahinasura_Leader::TAILATTACK;
+
+					m_iAdjMovedIndex++;
+				}
 			}
 			else {
 				m_dAcceleration = 1;
@@ -583,12 +1013,12 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		case 22: {
 			if (PlayRate > 0 && PlayRate >= 0.125 && m_bFastRunOn == false)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
 				m_bFastRunOn = true;
 			}
 			else if (m_bFastRunOn = true)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
 			}
 			break;
 		}
@@ -631,4 +1061,8 @@ void CMonster_Mahinasura_Leader::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHandAttackColliderCom);
+	Safe_Release(m_pTailAttackColliderCom);
+	Safe_Release(m_pHPUI);
 }
