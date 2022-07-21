@@ -967,7 +967,52 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type , CTr
 
 	}
 
+	if (type == MESHEFFECT_MONSTER_MM_ATT1)
+	{
+		NONINSTNESHEFTDESC	MeshDesc = GetSingle(CPartilceCreateMgr)->Get_TypeDesc_NonInstacne(CPartilceCreateMgr::MESHEFFECT_PRE_SM_Karin_Weapon_03);
 
+		MeshDesc.fMaxTime_Duration = 0.8f;
+
+		MeshDesc.iDiffuseTextureIndex = 372;
+		MeshDesc.MaskTextureIndex = 55;
+		MeshDesc.NoiseTextureIndex = 374;
+
+		MeshDesc.noisingdir = _float2(0.0f, 1.f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(1, 1, 1, 1.f);
+		MeshDesc.vEmissive = _float4(1, 1, 1, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
+		MeshDesc.vSize = _float3(1.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // 왜곡
+		//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+
+		AddDesc.vAddDirectAngle = _float3(90, 0, 00);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+
+	
 
 
 
