@@ -5694,7 +5694,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 		break;
 	case UTILITY_LOOP:
-		m_fCurTime_ShellingDelay += (_float)g_pGameInstance->Get_DeltaTime(TEXT("Player_Timer_ShellingShot_Delay"));
+		m_fCurTime_ShellingDelay += (_float)g_fDeltaTime;//(_float)g_pGameInstance->Get_DeltaTime(TEXT("Player_Timer_ShellingShot_Delay"));
 
 		m_fAnimSpeed = 1.f;
 
@@ -5705,13 +5705,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 				FAILED_CHECK_NONERETURN(pBowArrow->Set_Play_Particle
 				(3, _fVector(), _float3::Zero()));
 			}
-
-
-
 		}
-
-
-
 
 		if (false == m_bPressedUtilityKey)
 		{
@@ -7076,10 +7070,11 @@ void CPlayer::LookAt_MousePos()
 		fResult.x = vTargetPos.x;
 		fResult.y = fPos_Y;
 		fResult.z = vTargetPos.z;
+
+		_Vector vTargetDir = XMVector3Normalize(XMLoadFloat3(&fResult) - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		m_pTransformCom->Turn_Dir(vTargetDir, 0.85f);
 	}
 
-	_Vector vTargetDir = XMVector3Normalize(XMLoadFloat3(&fResult) - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	m_pTransformCom->Turn_Dir(vTargetDir, 0.85f);
 }
 
 _fVector CPlayer::Get_MousePos()

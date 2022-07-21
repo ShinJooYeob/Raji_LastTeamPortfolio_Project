@@ -143,6 +143,7 @@ void CShellingSkillAttackPoint::Set_MaxRange(_float fMaxRange)
 _fVector CShellingSkillAttackPoint::Get_AttackPointPos()
 {
 	_Vector vPos = m_pTransformCom_Point->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	vPos = XMVectorSetY(vPos, m_pOwnerTransform->Get_MatrixState_Float3(CTransform::TransformState::STATE_POS).y);
 	return vPos;
 }
 
