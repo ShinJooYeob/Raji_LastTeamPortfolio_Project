@@ -852,6 +852,9 @@
     <ClInclude Include="..\public\ParticleCreater.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Client_Str.h">
+      <Filter>99.Define</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

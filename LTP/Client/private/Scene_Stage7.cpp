@@ -599,7 +599,6 @@ HRESULT CScene_Stage7::teST()
 	vector<wstring> wwString;
 	vector<wstring> wwPro;
 
-
 	{
 		wwString.push_back(L"ENV_BLD_Palace_02.FBX");
 		wwString.push_back(L"ENV_BLD_Palace_05.fbx");

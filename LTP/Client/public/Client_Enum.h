@@ -1048,37 +1048,987 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spark_Mesh2,
 	Prototype_Mesh_Wing,
 
-	Prototype_Mesh_CIRCLE,
-	Prototype_Mesh_CIRCLE_DIST4,
-	Prototype_Mesh_CIRCLE_DIST5,
-	Prototype_Mesh_IMPECTFX_02,
-	Prototype_Mesh_RING,
-	Prototype_Mesh_LOVE,
-	Prototype_Mesh_WING,
-	Prototype_Mesh_BOW1,
-	Prototype_Mesh_BOW2,
-	Prototype_Mesh_ICE,
-	Prototype_Mesh_Sphere,
-	Prototype_Mesh_SM_sphere_melon,
+	// kurtzpel_ModelName
+	Prototype_Mesh_KurtzpelStart,
+	Prototype_Mesh_01_R_Punch_SM_01_Mesh003,
+	Prototype_Mesh_01_R_Punch_SM_01_Mesh004,
+	Prototype_Mesh_02_L_Upper_SM,
+	Prototype_Mesh_Aura_Arrow,
+	Prototype_Mesh_Aura_Arrow_Wing,
+	Prototype_Mesh_auraHousya,
+	Prototype_Mesh_chantDeco2,
+	Prototype_Mesh_circle,
+	Prototype_Mesh_circle_inv,
+	Prototype_Mesh_circleDist2,
+	Prototype_Mesh_circleDist4,
+	Prototype_Mesh_circleDist5,
+	Prototype_Mesh_circleDist5_02,
+	Prototype_Mesh_doomBvert,
+	Prototype_Mesh_doomBvert2Inv,
+	Prototype_Mesh_FX_Aura_Trail_02,
+	Prototype_Mesh_FX_Aura_Trail_05,
+	Prototype_Mesh_Grudge_Wraith_weapon_mesh,
+	Prototype_Mesh_ice2,
+	Prototype_Mesh_Line_SM_Low_R_Re,
+	Prototype_Mesh_Lire_Leaf01,
+	Prototype_Mesh_Mesh_Ama,
+	Prototype_Mesh_Mesh_Ama_Sword,
+	Prototype_Mesh_Mesh_BasicAttack_02_04,
+	Prototype_Mesh_Mesh_cylinder,
+	Prototype_Mesh_Mesh_Cylinder_03,
+	Prototype_Mesh_Mesh_Dust08_SUB_5X4_L,
+	Prototype_Mesh_Mesh_Dust08_SUB_5X4_R,
+	Prototype_Mesh_Mesh_HFB_Arrow_Square_M01,
+	Prototype_Mesh_Mesh_HFB_Arrow_Square_M02,
+	Prototype_Mesh_Mesh_HFB_Arrow_Square_M03,
+	Prototype_Mesh_Mesh_HFB_Arrow_Square_M04,
+	Prototype_Mesh_Mesh_HFB_Arrow_Wing_L,
+	Prototype_Mesh_Mesh_HFB_Arrow_Wing_R,
+	Prototype_Mesh_Mesh_HFB_CIRCLE,
+	Prototype_Mesh_Mesh_HFB_Grand_Git,
+	Prototype_Mesh_Mesh_HFB_Hit_M01,
+	Prototype_Mesh_Mesh_HFB_Uplight_M01,
+	Prototype_Mesh_Mesh_HFH_Dash_Wind01,
+	Prototype_Mesh_Mesh_HFH_Dash_Wind02,
+	Prototype_Mesh_Mesh_HFH_Dash_Wind03,
+	Prototype_Mesh_Mesh_HFS_Charge_Wind_01_Inv,
+	Prototype_Mesh_Mesh_HFS_Charge_Wind_02,
+	Prototype_Mesh_Mesh_HFS_ChargeAttack_M01,
+	Prototype_Mesh_Mesh_HFS_ChargeAttack_M02,
+	Prototype_Mesh_Mesh_Leap_Ground_Light,
+	Prototype_Mesh_Mesh_Leap_Ground_Light2,
+	Prototype_Mesh_Mesh_Leap_Ground_M04,
+	Prototype_Mesh_Mesh_Leap_Wind_M01,
+	Prototype_Mesh_Mesh_Leap_Wind_M02,
+	Prototype_Mesh_Mesh_Plane_03,
+	Prototype_Mesh_Mesh_Trace_M01,
+	Prototype_Mesh_Mesh_Trace_M02,
+	Prototype_Mesh_Mesh_Trace_M03,
+	Prototype_Mesh_Mesh_Trace_M04,
+	Prototype_Mesh_Mesh_Trace_M05,
+	Prototype_Mesh_Mesh_Trace_M06,
+	Prototype_Mesh_Mesh_Trace_M07,
+	Prototype_Mesh_Mesh_TS_Double_Slash_01,
+	Prototype_Mesh_Mesh_TS_Double_Slash_05,
+	Prototype_Mesh_MS_Arc_00,
+	Prototype_Mesh_MS_Cloud,
+	Prototype_Mesh_MS_Cylinder_00,
+	Prototype_Mesh_MS_Cylinder_02,
+	Prototype_Mesh_MS_Cylinder_05,
+	Prototype_Mesh_MS_GeoSphere,
+	Prototype_Mesh_MS_HalfSphere,
+	Prototype_Mesh_MS_Land_Half_Cylinder,
+	Prototype_Mesh_MS_LandCrack_00,
+	Prototype_Mesh_MS_Line_00,
+	Prototype_Mesh_MS_Line_01,
+	Prototype_Mesh_MS_Line_02,
+	Prototype_Mesh_MS_Line_03,
+	Prototype_Mesh_MS_Line_04,
+	Prototype_Mesh_MS_Line_05,
+	Prototype_Mesh_MS_Shield_Sphere_00,
+	Prototype_Mesh_MS_Shot_Cylinder_00,
+	Prototype_Mesh_MS_Shpere_00,
+	Prototype_Mesh_MS_SmokePlane,
+	Prototype_Mesh_MS_Sphere_00,
+	Prototype_Mesh_MS_Sphere_Bill_00,
+	Prototype_Mesh_MS_Sphere_Bill_01,
+	Prototype_Mesh_MS_ST3_Portal_00,
+	Prototype_Mesh_MS_ST3_Portal_01,
+	Prototype_Mesh_MS_St3_Tornado_Bottom_Cyl_01,
+	Prototype_Mesh_MS_St3_Tornado_Bottom_Cyl_10,
+	Prototype_Mesh_MS_Tornado_Cyl,
+	Prototype_Mesh_MS_Tornado_Cyl_2side,
+	Prototype_Mesh_MS_Tornado_Cyl_2side_01,
+	Prototype_Mesh_MS_Tornado_Cyl_2side_03,
+	Prototype_Mesh_MS_Tornado_Helix_00,
+	Prototype_Mesh_MS_Trail_00,
+	Prototype_Mesh_MS_Trail_Twist_00,
+	Prototype_Mesh_MS_Trail_Twist_01,
+	Prototype_Mesh_MS_Twis_Attack,
+	Prototype_Mesh_MS_Twis_Attack_01,
+	Prototype_Mesh_myCylinderKaiRotB,
+	Prototype_Mesh_mySphere,
+	Prototype_Mesh_S_BasicAttack00_M01,
+	Prototype_Mesh_S_BasicAttack00_M03,
+	Prototype_Mesh_S_JumpAttack_02_M01,
+	Prototype_Mesh_S_JumpAttack_02_M02,
+	Prototype_Mesh_S_JumpAttack_02_M04,
+	Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting,
+	Prototype_Mesh_Sample_Mesh_Fresnal,
+	Prototype_Mesh_Sample_Mesh_Hit,
+	Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z,
+	Prototype_Mesh_shield,
+	Prototype_Mesh_SK_03_L_Foot,
+	Prototype_Mesh_SK_BF_Skill07_AuraMesh,
+	Prototype_Mesh_SK_BF_Skill07_RectangleMesh,
+	Prototype_Mesh_SK_EM_CatPot_Stick,
+	Prototype_Mesh_SK_Guadian_Skill07_Loop,
+	Prototype_Mesh_SK_Guadian_Skill07_Loop_02,
+	Prototype_Mesh_SM_02_L_Upper_Mesh02,
+	Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M1,
+	Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M2,
+	Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M3,
+	Prototype_Mesh_SM_4E_DarkTails_01,
+	Prototype_Mesh_SM_4E_IceShards_01,
+	Prototype_Mesh_SM_4E_IceShards_02,
+	Prototype_Mesh_SM_4E_IceShards_03,
 	Prototype_Mesh_SM_4E_IceSpike_01,
-	Prototype_Mesh_SM_4E_Ice2,
-	Prototype_Mesh_MoonStone00,	
-	Prototype_Mesh_MoonStone02,
-	Prototype_Mesh_MoonStone04,
-	Prototype_Mesh_PurpCrystal01,
-	Prototype_Mesh_Rock001,
-	Prototype_Mesh_Rock002,
-	Prototype_Mesh_Rock003,
-	Prototype_Mesh_Rock004,
-	Prototype_Mesh_Rock005,
-	Prototype_Mesh_POTAL,
+	Prototype_Mesh_SM_4E_ImpactFX_01,
+	Prototype_Mesh_SM_4E_ImpactFX_02,
+	Prototype_Mesh_SM_4E_LightCastRing_01,
+	Prototype_Mesh_SM_4E_LightCircle_01,
+	Prototype_Mesh_SM_4E_LightCircle_02,
+	Prototype_Mesh_SM_4E_LightningArcs_01,
+	Prototype_Mesh_SM_4E_LightningArcs_02_re,
+	Prototype_Mesh_SM_4E_LightningArcs_03,
+	Prototype_Mesh_SM_4E_LightningArcs_04,
+	Prototype_Mesh_SM_4E_LightningArcs_05,
+	Prototype_Mesh_SM_4E_LightningBolt_01,
+	Prototype_Mesh_SM_4E_LightningOrb_01,
+	Prototype_Mesh_SM_4E_LightRay_01,
+	Prototype_Mesh_SM_4E_LightSpike_02,
+	Prototype_Mesh_SM_4E_RegularPlane_01,
+	Prototype_Mesh_SM_4E_RegularPlane_02,
+	Prototype_Mesh_SM_4E_SpiralRay_01,
+	Prototype_Mesh_SM_06_06_SM001,
+	Prototype_Mesh_SM_06_06_SM002,
+	Prototype_Mesh_SM_06_06_SM003,
+	Prototype_Mesh_SM_07_Mesh001,
+	Prototype_Mesh_SM_07_Mesh002,
+	Prototype_Mesh_SM_07_Mesh003,
+	Prototype_Mesh_SM_21_Christmas_01,
+	Prototype_Mesh_SM_AB_Lightning_01,
+	Prototype_Mesh_SM_AB_Lightning_02,
+	Prototype_Mesh_SM_AB_Lightning_03,
+	Prototype_Mesh_SM_AB_Lightning_04,
+	Prototype_Mesh_SM_AB_Trail_01,
+	Prototype_Mesh_SM_AB_Trail_02,
+	Prototype_Mesh_SM_AB_Trail_03,
+	Prototype_Mesh_SM_AB_Tree,
+	Prototype_Mesh_SM_AB_Wind_01,
+	Prototype_Mesh_SM_AB_Wind_02,
+	Prototype_Mesh_SM_AB_Wind_03,
+	Prototype_Mesh_SM_AOG_Helix01,
+	Prototype_Mesh_SM_AOG_Helix02,
+	Prototype_Mesh_SM_AOG_Plan01,
+	Prototype_Mesh_SM_AOG_Ring,
+	Prototype_Mesh_SM_AOG_Weapon,
+	Prototype_Mesh_SM_AOG_Weapon_Jewllery,
+	Prototype_Mesh_SM_Arc_00,
+	Prototype_Mesh_SM_Arc_01,
+	Prototype_Mesh_SM_Arrow_Circle_01,
+	Prototype_Mesh_SM_Arrow_Circle_02,
+	Prototype_Mesh_SM_Arrow_Wing_01,
+	Prototype_Mesh_SM_Arrow_Wing_02,
+	Prototype_Mesh_SM_ArrowBurstTrail_01_New,
+	Prototype_Mesh_SM_ArrowBurstTrail_02_New,
+	Prototype_Mesh_SM_ArrowCase,
+	Prototype_Mesh_SM_Asura_Cillynder01,
+	Prototype_Mesh_SM_Asura_Circle01,
+	Prototype_Mesh_SM_Asura_Sphere02,
+	Prototype_Mesh_SM_Aura_Foot_L_03,
+	Prototype_Mesh_SM_Aura_Linear_01,
+	Prototype_Mesh_SM_Aura_Linear_03,
+	Prototype_Mesh_SM_Aura_Trail01,
+	Prototype_Mesh_SM_auraHousya,
+	Prototype_Mesh_SM_auraWallSq,
+	Prototype_Mesh_SM_auraWallSq2,
+	Prototype_Mesh_SM_AXTrail_01,
+	Prototype_Mesh_SM_Baren_Weapon,
+	Prototype_Mesh_SM_Baren_Weapon_1,
+	Prototype_Mesh_SM_Baren_Weapon_2,
+	Prototype_Mesh_SM_Basic_Cy01_Cylinder001,
+	Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Doddgy,
+	Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Main,
+	Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Sub,
+	Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Sub_vectorUV,
+	Prototype_Mesh_SM_Basic_EX03_2_Doddgy_Y,
+	Prototype_Mesh_SM_Basic_EX03_2_Main_Y,
+	Prototype_Mesh_SM_Basic_EX03_2_Sub_Y,
+	Prototype_Mesh_SM_Basic_Trail_SM_Dodggy_X,
+	Prototype_Mesh_SM_Basic_Trail_SM_Dodggy_Z,
+	Prototype_Mesh_SM_Basic_Trail_SM_Main_X,
+	Prototype_Mesh_SM_Basic_Trail_SM_Main_Z,
+	Prototype_Mesh_SM_Basic_Trail_SM_Sub_X,
+	Prototype_Mesh_SM_Basic_Trail_SM_Sub_Z,
+	Prototype_Mesh_SM_Basic_windLine,
+	Prototype_Mesh_SM_BBT_Paw,
+	Prototype_Mesh_SM_BBT_Paw_L,
+	Prototype_Mesh_SM_BBT_Teeth_Down,
+	Prototype_Mesh_SM_BBT_Teeth_UP,
+	Prototype_Mesh_SM_BerserkerRush_01_Doddgy_Trail_X,
+	Prototype_Mesh_SM_BerserkerRush_01_Doddgy_Trail_Y,
+	Prototype_Mesh_SM_BerserkerRush_01_Main_Trail_X,
+	Prototype_Mesh_SM_BerserkerRush_01_Main_Trail_Y,
+	Prototype_Mesh_SM_BerserkerRush_01_Sub_Trail_X,
+	Prototype_Mesh_SM_BerserkerRush_01_Sub_Trail_Y,
+	Prototype_Mesh_SM_BF_Skill_01_2_Base,
+	Prototype_Mesh_SM_BF_Skill_01_2_Base_Z,
+	Prototype_Mesh_SM_BF_Skill_01_2_Doddgy,
+	Prototype_Mesh_SM_BF_Skill_01_2_Doddgy_Z,
+	Prototype_Mesh_SM_BF_Skill_01_2_Sub,
+	Prototype_Mesh_SM_BF_Skill_01_2_Sub_Z,
+	Prototype_Mesh_SM_BF_Skill_01_2_X_Small,
+	Prototype_Mesh_SM_BF_Skill_01_2_XY_SM_X,
+	Prototype_Mesh_SM_BF_Skill_01_2_XY_SM_Y,
+	Prototype_Mesh_SM_BF_Skill_01_2_Y_Small,
+	Prototype_Mesh_SM_BF_Skill_01_03_01_D1,
+	Prototype_Mesh_SM_BF_Skill_01_03_01_D2,
+	Prototype_Mesh_SM_BF_Skill_01_03_01_Main,
+	Prototype_Mesh_SM_BF_Skill_01_03_01_Sub,
+	Prototype_Mesh_SM_BF_XY,
+	Prototype_Mesh_SM_Bow_Base,
+	Prototype_Mesh_SM_Bow_Em_01,
+	Prototype_Mesh_SM_Bow_Em_02,
+	Prototype_Mesh_SM_Bow_Em_Wing_T,
+	Prototype_Mesh_SM_bowing_01,
+	Prototype_Mesh_SM_bowing_02,
+	Prototype_Mesh_SM_bowing_03,
+	Prototype_Mesh_SM_bowing_04,
+	Prototype_Mesh_SM_bowing_05,
+	Prototype_Mesh_SM_Box_Basic,
+	Prototype_Mesh_SM_BufRing_01,
+	Prototype_Mesh_SM_BufSwirl_01,
+	Prototype_Mesh_SM_BufSwirl_02,
+	Prototype_Mesh_SM_Bullet,
+	Prototype_Mesh_SM_Chain,
+	Prototype_Mesh_SM_Chain_Buff,
+	Prototype_Mesh_SM_Chaos_Dust_01,
+	Prototype_Mesh_SM_Chaos_leg,
+	Prototype_Mesh_SM_Chaos_legMesh,
+	Prototype_Mesh_SM_Cine_Mask_00,
+	Prototype_Mesh_SM_Cine_Mask_01,
+	Prototype_Mesh_SM_Cine_Mask_02,
+	Prototype_Mesh_SM_Cine_Mask_03,
+	Prototype_Mesh_SM_Cine_Mask_04,
+	Prototype_Mesh_SM_Cine_Nae_Bow,
+	Prototype_Mesh_SM_circle,
+	Prototype_Mesh_SM_circle_inv,
+	Prototype_Mesh_SM_Circle_Magic,
+	Prototype_Mesh_SM_Cone_01,
+	Prototype_Mesh_SM_ControlPointMatch_Square_01,
+	Prototype_Mesh_SM_ControlPointMatch_Square_02,
+	Prototype_Mesh_SM_CoreRing_3,
+	Prototype_Mesh_SM_CoreRing_4,
+	Prototype_Mesh_SM_Crack_In_H,
+	Prototype_Mesh_SM_Crack_In_V,
+	Prototype_Mesh_SM_Crack_Out_H,
+	Prototype_Mesh_SM_Crack_Out_V,
+	Prototype_Mesh_SM_Crack_OutLine,
+	Prototype_Mesh_SM_Critical_R_D_Plane,
+	Prototype_Mesh_SM_Critical_R_X_Plane,
+	Prototype_Mesh_SM_Critical_R_Z_Plane,
+	Prototype_Mesh_SM_Cross,
+	Prototype_Mesh_SM_Crossbowman_Arrow_chork,
+	Prototype_Mesh_SM_CS_SWTrail_02,
+	Prototype_Mesh_SM_CS_SWTrail_02UFlip,
+	Prototype_Mesh_SM_CS_SWTrail_03UFlip,
+	Prototype_Mesh_SM_CS_Trail_01,
+	Prototype_Mesh_SM_CW_Trail_04,
+	Prototype_Mesh_SM_Cylinder,
+	Prototype_Mesh_SM_cylinderKaiRotB_vc,
+	Prototype_Mesh_SM_Darknight_Skill01_01,
+	Prototype_Mesh_SM_Darknight_Skill01_02,
+	Prototype_Mesh_SM_Darknight_Skill01_03,
+	Prototype_Mesh_SM_Darknight_Skill01_04,
+	Prototype_Mesh_SM_DivineLaserBeam_02,
+	Prototype_Mesh_SM_doomBvert2Inv,
+	Prototype_Mesh_SM_Dough,
+	Prototype_Mesh_SM_DoughSide,
+	Prototype_Mesh_SM_DS_250010_L_01,
+	Prototype_Mesh_SM_DS_AirCombo01_D_L,
+	Prototype_Mesh_SM_DS_AirCombo01_D_R,
+	Prototype_Mesh_SM_DS_AirCombo01_X_L,
+	Prototype_Mesh_SM_DS_AirCombo01_X_R,
+	Prototype_Mesh_SM_DS_AirCombo01_Z_L,
+	Prototype_Mesh_SM_DS_AirCombo01_Z_R,
+	Prototype_Mesh_SM_DS_AirTrail_02_L_D,
+	Prototype_Mesh_SM_DS_AirTrail_02_L_X,
+	Prototype_Mesh_SM_DS_AirTrail_02_L_Z,
+	Prototype_Mesh_SM_DS_AirTrail_02_R_D,
+	Prototype_Mesh_SM_DS_AirTrail_02_R_X,
+	Prototype_Mesh_SM_DS_AirTrail_02_R_Z,
+	Prototype_Mesh_SM_DS_AirTrail_03_L_D,
+	Prototype_Mesh_SM_DS_AirTrail_03_L_X,
+	Prototype_Mesh_SM_DS_AirTrail_03_L_Z,
+	Prototype_Mesh_SM_DS_AirTrail_03_R_D,
+	Prototype_Mesh_SM_DS_AirTrail_03_R_X,
+	Prototype_Mesh_SM_DS_AirTrail_03_R_Z,
+	Prototype_Mesh_SM_DS_Basic_01_2_Trail_H,
+	Prototype_Mesh_SM_DS_Basic_01_2_Trail_P,
+	Prototype_Mesh_SM_DS_Basic_01_2_Trail_X,
+	Prototype_Mesh_SM_DS_Basic_01_Trail_H,
+	Prototype_Mesh_SM_DS_Basic_01_Trail_X,
+	Prototype_Mesh_SM_DS_Basic_01_Trail_Z,
+	Prototype_Mesh_SM_DS_Basic_02_1_X_Doddgy,
+	Prototype_Mesh_SM_DS_Basic_02_1_X_Plane,
+	Prototype_Mesh_SM_DS_Basic_02_1_Z_Plane,
+	Prototype_Mesh_SM_DS_Basic_02_2_Cross,
+	Prototype_Mesh_SM_DS_Basic_03_1_X_Plane,
+	Prototype_Mesh_SM_DS_Basic_03_1_Z_Plane,
+	Prototype_Mesh_SM_DS_Basic_03_2_X_Orign,
+	Prototype_Mesh_SM_DS_Basic_03_2_Z_Orign,
+	Prototype_Mesh_SM_DS_Basic_03_3_D_L,
+	Prototype_Mesh_SM_DS_Basic_03_3_D_R,
+	Prototype_Mesh_SM_DS_Basic_03_3_X_L,
+	Prototype_Mesh_SM_DS_Basic_03_3_X_R,
+	Prototype_Mesh_SM_DS_Basic_03_3_Z_L,
+	Prototype_Mesh_SM_DS_Basic_03_3_Z_R,
+	Prototype_Mesh_SM_DS_Basic04_1_X_Doddgy_R,
+	Prototype_Mesh_SM_DS_Basic04_1_X_R,
+	Prototype_Mesh_SM_DS_Basic04_1_Z_R,
+	Prototype_Mesh_SM_DS_Basic04_2_X_Doddgy_L,
+	Prototype_Mesh_SM_DS_Basic04_2_X_L,
+	Prototype_Mesh_SM_DS_Basic04_2_Z_L,
+	Prototype_Mesh_SM_DS_Basic04_3_X_Doddgy_R,
+	Prototype_Mesh_SM_DS_Basic04_3_X_R,
+	Prototype_Mesh_SM_DS_Basic04_3_Z_R,
+	Prototype_Mesh_SM_DS_Basic05_1_R_Doddgy,
+	Prototype_Mesh_SM_DS_Basic05_1_R_X,
+	Prototype_Mesh_SM_DS_Basic05_1_R_Z,
+	Prototype_Mesh_SM_DS_Basic05_2_L_Doddgy,
+	Prototype_Mesh_SM_DS_Basic05_2_L_X,
+	Prototype_Mesh_SM_DS_Basic05_2_L_Z,
+	Prototype_Mesh_SM_DS_Basic05_3_R_Doddgy,
+	Prototype_Mesh_SM_DS_Basic05_3_R_X,
+	Prototype_Mesh_SM_DS_Basic05_3_R_Z,
+	Prototype_Mesh_SM_DS_BasicTrace_01,
+	Prototype_Mesh_SM_DS_Blade_D_L_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_D_L_2_Plane,
+	Prototype_Mesh_SM_DS_Blade_D_R_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_D_R_2_Plane,
+	Prototype_Mesh_SM_DS_Blade_X_L_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_X_L_2_Plane,
+	Prototype_Mesh_SM_DS_Blade_X_R_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_X_R_2_Plane,
+	Prototype_Mesh_SM_DS_Blade_Z_L_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_Z_L_2_Plane,
+	Prototype_Mesh_SM_DS_Blade_Z_R_1_Plane,
+	Prototype_Mesh_SM_DS_Blade_Z_R_2_Plane,
+	Prototype_Mesh_SM_DS_Dash_Dust_01,
+	Prototype_Mesh_SM_DS_Dragon_Weapon,
+	Prototype_Mesh_SM_DS_Dust_Dash_01,
+	Prototype_Mesh_SM_DS_Dust_Dash_02,
+	Prototype_Mesh_SM_DS_Fated_Proj_X,
+	Prototype_Mesh_SM_DS_Fated_Proj_Z,
+	Prototype_Mesh_SM_DS_Fated_Proj_Z_02,
+	Prototype_Mesh_SM_DS_Fated_Proj_Z_03,
+	Prototype_Mesh_SM_DS_FatedCircle_F_L003,
+	Prototype_Mesh_SM_DS_FatedCircle_F_L004,
+	Prototype_Mesh_SM_DS_FatedCircle_F_L005,
+	Prototype_Mesh_SM_DS_FatedCircle_F_R003,
+	Prototype_Mesh_SM_DS_FatedCircle_F_R004,
+	Prototype_Mesh_SM_DS_FatedCircle_F_R005,
+	Prototype_Mesh_SM_DS_FatedCircle_Front_L001,
+	Prototype_Mesh_SM_DS_FatedCircle_Front_R001,
+	Prototype_Mesh_SM_DS_FatedCircle_Front_R002_1,
+	Prototype_Mesh_SM_DS_FatedCircle_Front_R002_2,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_L001,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_L003,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_L004,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_L005,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R001,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R002_1,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R002_2,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R003,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R004,
+	Prototype_Mesh_SM_DS_FatedCircle_Top_R005,
+	Prototype_Mesh_SM_Ds_Genocide_01,
+	Prototype_Mesh_SM_DS_Genocide_Trace_D_L,
+	Prototype_Mesh_SM_DS_Genocide_Trace_D_R,
+	Prototype_Mesh_SM_DS_Genocide_Trace_X_L,
+	Prototype_Mesh_SM_DS_Genocide_Trace_X_R,
+	Prototype_Mesh_SM_DS_Genocide_Trace_Z_L,
+	Prototype_Mesh_SM_DS_Genocide_Trace_Z_R,
+	Prototype_Mesh_SM_DS_Helix_Aura_02,
+	Prototype_Mesh_SM_DS_Plane_D_L,
+	Prototype_Mesh_SM_DS_Plane_D_R,
+	Prototype_Mesh_SM_DS_Plane_X_L,
+	Prototype_Mesh_SM_DS_Plane_X_R,
+	Prototype_Mesh_SM_DS_Plane_Z_L,
+	Prototype_Mesh_SM_DS_Plane_Z_R,
+	Prototype_Mesh_SM_DS_Projectile_Main_X_High,
+	Prototype_Mesh_SM_DS_Projectile_Main_Y_High,
+	Prototype_Mesh_SM_DS_Projectile_Sub_Y_High,
+	Prototype_Mesh_SM_DS_Projectile_Wind_Y,
+	Prototype_Mesh_SM_DS_Projectile_Wind_Y_High,
+	Prototype_Mesh_SM_DS_Projectile_Wind_Y_High02,
+	Prototype_Mesh_SM_DS_Rage_Buff_L_D,
+	Prototype_Mesh_SM_DS_Rage_Buff_L_X,
+	Prototype_Mesh_SM_DS_Rage_Buff_L_Z,
+	Prototype_Mesh_SM_DS_Rage_Buff_R_D,
+	Prototype_Mesh_SM_DS_Rage_Buff_R_X,
+	Prototype_Mesh_SM_DS_Rage_Buff_R_Z,
+	Prototype_Mesh_SM_DS_Rage_Genocide_01,
+	Prototype_Mesh_SM_DS_Rage_Genocide_02,
+	Prototype_Mesh_SM_DS_Rage_Genocide_03,
+	Prototype_Mesh_SM_DS_Rage_Genocide_D_L,
+	Prototype_Mesh_SM_DS_Rage_Genocide_D_R,
+	Prototype_Mesh_SM_DS_Rage_Genocide_X_L,
+	Prototype_Mesh_SM_DS_Rage_Genocide_X_R,
+	Prototype_Mesh_SM_DS_Rage_Genocide_Z_L,
+	Prototype_Mesh_SM_DS_Rage_Genocide_Z_R,
+	Prototype_Mesh_SM_DS_Scart_X,
+	Prototype_Mesh_SM_DS_Scart_X_D,
+	Prototype_Mesh_SM_DS_Scart_Z,
+	Prototype_Mesh_SM_DS_Skill_Fate_Trail_Front01,
+	Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Front02,
+	Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Top01,
+	Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Top02,
+	Prototype_Mesh_SM_DS_Skill_Trace_Front01,
+	Prototype_Mesh_SM_DS_Skill_Trace_Top01,
+	Prototype_Mesh_SM_DS_SP_Charging_Ground_01,
+	Prototype_Mesh_SM_DS_SP_Charging_Ground_02,
+	Prototype_Mesh_SM_DS_SP_EX1_D_L,
+	Prototype_Mesh_SM_DS_SP_EX1_D_R,
+	Prototype_Mesh_SM_DS_SP_EX1_X_L,
+	Prototype_Mesh_SM_DS_SP_EX1_X_R,
+	Prototype_Mesh_SM_DS_SP_EX1_Z_L,
+	Prototype_Mesh_SM_DS_SP_EX1_Z_R,
+	Prototype_Mesh_SM_DS_Switching_L_D_Plane,
+	Prototype_Mesh_SM_DS_Switching_L_X_Plane,
+	Prototype_Mesh_SM_DS_Switching_L_Z_Plane,
+	Prototype_Mesh_SM_DS_Switching_R_D_Plane,
+	Prototype_Mesh_SM_DS_Switching_R_X_Plane,
+	Prototype_Mesh_SM_DS_Switching_R_Z_Plane,
+	Prototype_Mesh_SM_DS_SwitchingA_L_D,
+	Prototype_Mesh_SM_DS_SwitchingA_L_X,
+	Prototype_Mesh_SM_DS_SwitchingA_L_Z,
+	Prototype_Mesh_SM_DS_SwitchingA_R_D,
+	Prototype_Mesh_SM_DS_SwitchingA_R_X,
+	Prototype_Mesh_SM_DS_SwitchingA_R_Z,
+	Prototype_Mesh_SM_DS_T_BasicTrace_L,
+	Prototype_Mesh_SM_DS_Tornado_001,
+	Prototype_Mesh_SM_DS_Trail_01_L_D,
+	Prototype_Mesh_SM_DS_Trail_01_L_X,
+	Prototype_Mesh_SM_DS_Trail_01_L_Z,
+	Prototype_Mesh_SM_DS_Trail_02_L_D,
+	Prototype_Mesh_SM_DS_Trail_02_L_X,
+	Prototype_Mesh_SM_DS_Trail_02_L_Z,
+	Prototype_Mesh_SM_DS_Trail_02_R_D,
+	Prototype_Mesh_SM_DS_Trail_02_R_X,
+	Prototype_Mesh_SM_DS_Trail_02_R_X2,
+	Prototype_Mesh_SM_DS_Trail_02_R_Z,
+	Prototype_Mesh_SM_DS_Trail_Cross,
+	Prototype_Mesh_SM_DS_Trail_Cross_Invs,
+	Prototype_Mesh_SM_DS_Trail_Front,
+	Prototype_Mesh_SM_DS_Trail_Top,
+	Prototype_Mesh_SM_DS_Trail_Top_Spindle,
+	Prototype_Mesh_SM_DS_Trail_X,
+	Prototype_Mesh_SM_DS_Trail_Z,
+	Prototype_Mesh_SM_DS_Trail03_L,
+	Prototype_Mesh_SM_DualSword_Basic,
+	Prototype_Mesh_SM_DualSword_Basic_01,
+	Prototype_Mesh_SM_Dust01,
+	Prototype_Mesh_SM_DW_ring,
+	Prototype_Mesh_SM_DW_Weapon,
+	Prototype_Mesh_SM_Dynamite_03,
+	Prototype_Mesh_SM_EB_Bullet,
+	Prototype_Mesh_SM_EB_Bullet_01,
+	Prototype_Mesh_SM_EB_Bullet_Extend,
+	Prototype_Mesh_SM_EB_Rage_Bullet_,
+	Prototype_Mesh_SM_EB_Trap_01,
+	Prototype_Mesh_SM_EB_Trap_02,
+	Prototype_Mesh_SM_EB_Trap_03,
+	Prototype_Mesh_SM_EB_Trap_04,
+	Prototype_Mesh_SM_Edan_Sword,
+	Prototype_Mesh_SM_Edan_Sword_Tuto,
+	Prototype_Mesh_SM_eggshell,
+	Prototype_Mesh_SM_EM_AngelSword,
+	Prototype_Mesh_SM_EM_AngelSword_01,
+	Prototype_Mesh_SM_EM_barbell_01,
+	Prototype_Mesh_SM_EM_Batting,
+	Prototype_Mesh_SM_EM_Bench,
+	Prototype_Mesh_SM_EM_Boombox,
+	Prototype_Mesh_SM_EM_Bouquet,
+	Prototype_Mesh_SM_EM_Box,
+	Prototype_Mesh_SM_EM_BrokenKeyboard_01,
+	Prototype_Mesh_SM_EM_BrokenKeyboard_02,
+	Prototype_Mesh_SM_EM_Broom,
+	Prototype_Mesh_SM_EM_CampingChair,
+	Prototype_Mesh_SM_EM_CampingWood,
+	Prototype_Mesh_SM_EM_Chair,
+	Prototype_Mesh_SM_EM_Coin,
+	Prototype_Mesh_SM_EM_Cook_Dish,
+	Prototype_Mesh_SM_EM_Cook_fryingFan,
+	Prototype_Mesh_SM_EM_Copycat_03,
+	Prototype_Mesh_SM_EM_CopyCow_grass_01,
+	Prototype_Mesh_SM_EM_DanceGame,
+	Prototype_Mesh_SM_EM_DanceGame_01,
+	Prototype_Mesh_SM_EM_Dumbbell_01,
+	Prototype_Mesh_SM_EM_EyeCover,
+	Prototype_Mesh_SM_EM_FireworkRocket,
+	Prototype_Mesh_SM_EM_Flashlight,
+	Prototype_Mesh_SM_EM_Grank_01,
+	Prototype_Mesh_SM_EM_GRankS04,
+	Prototype_Mesh_SM_EM_GRankS04_Sword,
+	Prototype_Mesh_SM_EM_GRankS06,
+	Prototype_Mesh_SM_EM_Gun,
+	Prototype_Mesh_SM_EM_Hula,
+	Prototype_Mesh_SM_EM_Kettlebelll_01,
+	Prototype_Mesh_SM_EM_Keyboard_01,
+	Prototype_Mesh_SM_EM_Keyboard_part_01,
+	Prototype_Mesh_SM_EM_Lightning_01,
+	Prototype_Mesh_SM_EM_Lightning_02,
+	Prototype_Mesh_SM_EM_Lightning_06,
+	Prototype_Mesh_SM_EM_Lightning_07,
+	Prototype_Mesh_SM_EM_Lightning_08,
+	Prototype_Mesh_SM_EM_LoveLetter,
+	Prototype_Mesh_SM_EM_LoveLetter_02,
+	Prototype_Mesh_SM_EM_MagnifierBig,
+	Prototype_Mesh_SM_EM_MagnifierSmall,
+	Prototype_Mesh_SM_EM_Marionette,
+	Prototype_Mesh_SM_EM_Mic,
+	Prototype_Mesh_SM_EM_Mic_01,
+	Prototype_Mesh_SM_EM_MoneyGun,
+	Prototype_Mesh_SM_EM_MoneyPaper,
+	Prototype_Mesh_SM_EM_Mrank_05,
+	Prototype_Mesh_SM_EM_Notebook,
+	Prototype_Mesh_SM_EM_Phone,
+	Prototype_Mesh_SM_EM_PowerBow,
+	Prototype_Mesh_SM_EM_Powered01,
+	Prototype_Mesh_SM_EM_PowerSwordShield,
+	Prototype_Mesh_SM_EM_PowerTSword,
+	Prototype_Mesh_SM_EM_Pumpkin_06,
+	Prototype_Mesh_SM_EM_RoyalSaluteSword,
+	Prototype_Mesh_SM_EM_ShoulderPress_Bench_01,
+	Prototype_Mesh_SM_EM_Shuriken,
+	Prototype_Mesh_SM_EM_Shuriken_02,
+	Prototype_Mesh_SM_EM_Shuriken_03,
+	Prototype_Mesh_SM_EM_SkyLantern,
+	Prototype_Mesh_SM_EM_SpotLight,
+	Prototype_Mesh_SM_EM_SpotLight_01,
+	Prototype_Mesh_SM_EM_Sunbed,
+	Prototype_Mesh_SM_EM_SurfingBoard,
+	Prototype_Mesh_SM_EM_Tennis_Racket,
+	Prototype_Mesh_SM_EM_Tournament,
+	Prototype_Mesh_SM_EM_Two,
+	Prototype_Mesh_SM_EM_Ukulele,
+	Prototype_Mesh_SM_EM_VRGearL,
+	Prototype_Mesh_SM_EM_VRGearR,
+	Prototype_Mesh_SM_EM_VRHead,
+	Prototype_Mesh_SM_EM_WineGlass,
+	Prototype_Mesh_SM_EM_Zero,
+	Prototype_Mesh_SM_Embossing,
+	Prototype_Mesh_SM_FallingSun_Aura01,
+	Prototype_Mesh_SM_FallingSun_Aura02,
+	Prototype_Mesh_SM_FallingSun_Light02,
+	Prototype_Mesh_SM_FallingSun_Light03,
+	Prototype_Mesh_SM_FallingSun_Light04,
+	Prototype_Mesh_SM_FallingSun_Wind01,
+	Prototype_Mesh_SM_Fire_Cylinder_02,
+	Prototype_Mesh_SM_Fire_Cylinder_03,
+	Prototype_Mesh_SM_Fire_Piece,
+	Prototype_Mesh_SM_FireBall_Helix_Wind_01,
+	Prototype_Mesh_SM_FireBall_Helix_Wind_02,
+	Prototype_Mesh_SM_FireBall_Round_Wind_01,
+	Prototype_Mesh_SM_FireBall_Round_Wind_03,
+	Prototype_Mesh_SM_FireBall_Round_Wind_05,
+	Prototype_Mesh_SM_FireBall_Sphere_01,
+	Prototype_Mesh_SM_FireBall_Sphere_02,
+	Prototype_Mesh_SM_FireBall_Sphere_Front_01,
+	Prototype_Mesh_SM_FireBall_Sphere_Wind_01,
+	Prototype_Mesh_SM_FireBall_Sphere_Wind_03,
+	Prototype_Mesh_SM_Fireball_Sphere01,
+	Prototype_Mesh_SM_fish,
+	Prototype_Mesh_SM_FrontWind,
+	Prototype_Mesh_SM_FrontWind_02,
+	Prototype_Mesh_SM_FrozenSpear_Meteo03,
+	Prototype_Mesh_SM_FrozenSpear_Meteo04,
+	Prototype_Mesh_SM_Garvan_Trail_01,
+	Prototype_Mesh_SM_Garvan_Trail_02,
+	Prototype_Mesh_SM_Garvan_Trail_03,
+	Prototype_Mesh_SM_Garvan_Trail_04,
+	Prototype_Mesh_SM_Garvan_Trail_05,
+	Prototype_Mesh_SM_Garvan_Trail_06,
+	Prototype_Mesh_SM_Garvan_Weapon,
+	Prototype_Mesh_SM_Gem,
+	Prototype_Mesh_SM_GH_GodHands_Wing,
+	Prototype_Mesh_SM_GH_GodHands_Wing_01,
+	Prototype_Mesh_SM_GH_GodHands_Wing_02,
+	Prototype_Mesh_SM_GH_Guard_01,
+	Prototype_Mesh_SM_GH_Guard_cross,
+	Prototype_Mesh_SM_GH_Guard_cross_01,
+	Prototype_Mesh_SM_Ghost_Chase_Sphere01,
+	Prototype_Mesh_SM_Giantic_Creature_Hit01,
+	Prototype_Mesh_SM_Giantic_Creature_Skill01_L01,
+	Prototype_Mesh_SM_Giantic_Creature_Skill01_L02,
+	Prototype_Mesh_SM_Giantic_Creature_Skill01_R01,
+	Prototype_Mesh_SM_Giantic_Creature_Skill01_R02,
+	Prototype_Mesh_SM_Giantic_Creature_Skill02_L01,
+	Prototype_Mesh_SM_Giantic_Creature_Skill02_L02,
+	Prototype_Mesh_SM_Giantic_Creature_Skill04_L01,
+	Prototype_Mesh_SM_Giantic_Creature_Skill04_L02,
+	Prototype_Mesh_SM_Giantic_Creature_Skill05_Base,
+	Prototype_Mesh_SM_Giantic_Creature_Skill05_Edge,
+	Prototype_Mesh_SM_GN_Projectile_01,
+	Prototype_Mesh_SM_GN_Spring01,
+	Prototype_Mesh_SM_GN_Spring02,
+	Prototype_Mesh_SM_GN_Wind,
+	Prototype_Mesh_SM_GN_Wind01,
+	Prototype_Mesh_SM_Grudge_Wraith_skill05,
+	Prototype_Mesh_SM_Grudge_Wraith_skill05_mesh,
+	Prototype_Mesh_SM_Grudge_Wraith_skill05_mesh_02,
+	Prototype_Mesh_SM_GT_AirCombo01_01,
+	Prototype_Mesh_SM_GT_AirCombo01_02_Trace_Y,
+	Prototype_Mesh_SM_GT_AirCombo01_02_Trace_Z,
+	Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Fire_Y,
+	Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Main_X,
+	Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Main_Y,
+	Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Sub_X,
+	Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Sub_Y,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Fire_X_Mesh,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Main_X_Mesh,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Main_Y_Mesh,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_X_Mesh,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_X_Mesh_1,
+	Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_Y_Mesh,
+	Prototype_Mesh_SM_GT_AirCombo04_Doddgy_Trace,
+	Prototype_Mesh_SM_GT_AirCombo04_Main_Trace,
+	Prototype_Mesh_SM_GT_AirCombo04_Sub_Trace,
+	Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Base,
+	Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Doddgy,
+	Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Sub,
+	Prototype_Mesh_SM_GT_Cyinder_01,
+	Prototype_Mesh_SM_GT_DashCombo_DashCombo_Doddgy_Mesh,
+	Prototype_Mesh_SM_GT_DashCombo_DashCombo_Main_Mesh,
+	Prototype_Mesh_SM_GT_DashCombo_DashCombo_Sub_Mesh,
+	Prototype_Mesh_SM_GT_Hellpunch_Line01_V,
+	Prototype_Mesh_SM_GT_SphereHarf,
+	Prototype_Mesh_SM_GT_Trail_Main_X01,
+	Prototype_Mesh_SM_Guadian_Skill07_Shild_Center,
+	Prototype_Mesh_SM_Guardian_Shield,
+	Prototype_Mesh_SM_Guardian_Shield_01,
+	Prototype_Mesh_SM_Guardian_Spear,
+	Prototype_Mesh_SM_Guardian_Trail_01,
+	Prototype_Mesh_SM_Guardian_Trail_01_2,
+	Prototype_Mesh_SM_Guardian_Trail_02,
+	Prototype_Mesh_SM_half_ball,
+	Prototype_Mesh_SM_half_ball_closed,
+	Prototype_Mesh_SM_half_ball_closed_1,
+	Prototype_Mesh_SM_half_cylinder,
+	Prototype_Mesh_SM_Harf_Donut00,
+	Prototype_Mesh_SM_Helix_01,
+	Prototype_Mesh_SM_Helix_01_Small,
+	Prototype_Mesh_SM_Helix_02,
+	Prototype_Mesh_SM_Helix_02_Small,
+	Prototype_Mesh_SM_helix_2,
+	Prototype_Mesh_SM_helix_04,
+	Prototype_Mesh_SM_Helix_05,
+	Prototype_Mesh_SM_Helix_07,
+	Prototype_Mesh_SM_Helix_08,
+	Prototype_Mesh_SM_Helix_09,
 	Prototype_Mesh_SM_Helix_Crystal,
+	Prototype_Mesh_SM_Helix_Crystal2,
+	Prototype_Mesh_SM_Helix_Crystal2_01,
+	Prototype_Mesh_SM_Helix_Crystal2_02,
+	Prototype_Mesh_SM_helix003,
+	Prototype_Mesh_SM_Hit_01,
+	Prototype_Mesh_SM_Hit_02,
+	Prototype_Mesh_SM_HolyCross02,
+	Prototype_Mesh_SM_HP_Sphere_01,
+	Prototype_Mesh_SM_ice2,
+	Prototype_Mesh_SM_IceTrap_Ice,
+	Prototype_Mesh_SM_IceWall_2,
+	Prototype_Mesh_SM_Incomplete_Palaspel_Weapon,
+	Prototype_Mesh_SM_Karin_Weapon_01,
+	Prototype_Mesh_SM_Karin_Weapon_02,
 	Prototype_Mesh_SM_Karin_Weapon_03,
-	Prototype_Mesh_SM_ky_tornado6,
+	Prototype_Mesh_SM_ky_auraHousya,
+	Prototype_Mesh_SM_ky_auraWall_distA,
+	Prototype_Mesh_SM_ky_auraWall_distB,
+	Prototype_Mesh_SM_ky_auraWallSq3,
+	Prototype_Mesh_SM_ky_auraWallSq4,
+	Prototype_Mesh_SM_ky_auraWallSq4_H,
+	Prototype_Mesh_SM_ky_circle,
+	Prototype_Mesh_SM_ky_circle_inv,
+	Prototype_Mesh_SM_ky_circle_inv_midpoly,
+	Prototype_Mesh_SM_ky_circle_midpoly,
+	Prototype_Mesh_SM_ky_cylinder_harf01,
+	Prototype_Mesh_SM_ky_cylinder_lowPoly,
+	Prototype_Mesh_SM_ky_cylinder_superLow,
+	Prototype_Mesh_SM_ky_cylinder_superLow_inv,
+	Prototype_Mesh_SM_ky_cylinderBend03_RE,
+	Prototype_Mesh_SM_ky_cylinderBend03_RE02,
+	Prototype_Mesh_SM_ky_doomBvert2Inv,
+	Prototype_Mesh_SM_ky_dust_triangle,
+	Prototype_Mesh_SM_ky_lans_rot,
+	Prototype_Mesh_SM_ky_needle01,
+	Prototype_Mesh_SM_ky_planeBend2,
+	Prototype_Mesh_SM_ky_quad_centerRot,
+	Prototype_Mesh_SM_ky_quadA,
+	Prototype_Mesh_SM_ky_quadA_02,
+	Prototype_Mesh_SM_ky_quadA_03,
+	Prototype_Mesh_SM_ky_quadCross,
+	Prototype_Mesh_SM_ky_quadCross02,
+	Prototype_Mesh_SM_ky_quadCross03,
+	Prototype_Mesh_SM_ky_quads,
+	Prototype_Mesh_SM_ky_rayOffset,
+	Prototype_Mesh_SM_ky_rayOffset2,
+	Prototype_Mesh_SM_ky_rock_single,
+	Prototype_Mesh_SM_ky_rock2B,
+	Prototype_Mesh_SM_ky_rock06,
+	Prototype_Mesh_SM_ky_rock07,
+	Prototype_Mesh_SM_ky_sphere,
+	Prototype_Mesh_SM_ky_sphere_dist,
 	Prototype_Mesh_SM_ky_sphere_dist_wind,
+	Prototype_Mesh_SM_ky_sphereHarf,
+	Prototype_Mesh_SM_ky_sphereHarf01Inv,
+	Prototype_Mesh_SM_ky_sphereHarf02_dist,
+	Prototype_Mesh_SM_ky_sphereHarf03,
+	Prototype_Mesh_SM_ky_sphereHarf05,
+	Prototype_Mesh_SM_ky_sphereIco,
+	Prototype_Mesh_SM_ky_sphereThree_01,
+	Prototype_Mesh_SM_ky_tornado3,
+	Prototype_Mesh_SM_ky_tornado6,
+	Prototype_Mesh_SM_ky_tornado7,
+	Prototype_Mesh_SM_ky_wallCylinder_center_smooth,
+	Prototype_Mesh_SM_ky_windLine10B,
+	Prototype_Mesh_SM_ky_windLine13b,
+	Prototype_Mesh_SM_ky_windLine19_1,
+	Prototype_Mesh_SM_ky_windLine20,
+	Prototype_Mesh_SM_ky_windLine22,
+	Prototype_Mesh_SM_ky_windLine23,
+	Prototype_Mesh_SM_ky_windLine24,
+	Prototype_Mesh_SM_ky_windLine26,
+	Prototype_Mesh_SM_ky_windLine27midPoly,
+	Prototype_Mesh_SM_ky_windLine29Inv,
+	Prototype_Mesh_SM_ky_windLine32,
+	Prototype_Mesh_SM_ky_windSmoke,
+	Prototype_Mesh_SM_ky_windSmoke_spin,
+	Prototype_Mesh_SM_ky_windSmokeDist,
+	Prototype_Mesh_SM_ky_windSmokeVertRot,
+	Prototype_Mesh_SM_ky_windSmokeVertRot_01,
+	Prototype_Mesh_SM_ky_windSmokeVertRot_02,
+	Prototype_Mesh_SM_ky_wing,
+	Prototype_Mesh_SM_L_DS_DashCombo_H_R,
+	Prototype_Mesh_SM_L_DS_Dashcombo_X_L,
+	Prototype_Mesh_SM_L_DS_DashCombo_X_R,
 	Prototype_Mesh_SM_L_DS_Dashcombo_Y_L,
+	Prototype_Mesh_SM_L_DS_DashCombo_Y_R,
+	Prototype_Mesh_SM_lans,
+	Prototype_Mesh_SM_lans_rot,
+	Prototype_Mesh_SM_lans_UV_HorizenFlip,
+	Prototype_Mesh_SM_lans_UV_VerticalFlip,
+	Prototype_Mesh_SM_LB_Arrow_001,
+	Prototype_Mesh_SM_LB_Arrow_002,
+	Prototype_Mesh_SM_LB_Arrow_003,
+	Prototype_Mesh_SM_LB_Arrow_004,
+	Prototype_Mesh_SM_LB_Arrow_005_1,
+	Prototype_Mesh_SM_LB_Arrow_005_2,
+	Prototype_Mesh_SM_LB_Arrow_005_3,
+	Prototype_Mesh_SM_LB_Arrow_005_4,
+	Prototype_Mesh_SM_LB_Arrow_Aura_01,
+	Prototype_Mesh_SM_LB_Arrow_Aura_01_Inv,
+	Prototype_Mesh_SM_LB_Arrow_Charging_001,
+	Prototype_Mesh_SM_LB_Arrow_Charging_002,
+	Prototype_Mesh_SM_LB_Arrow_Charging_003,
+	Prototype_Mesh_SM_LB_Arrow_Charging_004,
+	Prototype_Mesh_SM_LB_Arrow_Charging_005,
+	Prototype_Mesh_SM_LB_Arrow_Main_01,
+	Prototype_Mesh_SM_LB_Basic_Projectile_Base,
+	Prototype_Mesh_SM_LB_H_Arrow_aura,
+	Prototype_Mesh_SM_LB_H_Arrow_aura2,
+	Prototype_Mesh_SM_LB_Invisibility_01,
+	Prototype_Mesh_SM_LB_Invisibility_02,
+	Prototype_Mesh_SM_LB_Invisibility_03,
+	Prototype_Mesh_SM_LB_Projectile_01,
+	Prototype_Mesh_SM_LB_Rain_Arrow,
+	Prototype_Mesh_SM_Lighting,
+	Prototype_Mesh_SM_Lighting_01,
+	Prototype_Mesh_SM_Lightning_Base,
+	Prototype_Mesh_SM_Lightning_Cyl_00,
+	Prototype_Mesh_SM_Lire_Weapon_Tuto,
+	Prototype_Mesh_SM_LongBow_1020050,
+	Prototype_Mesh_SM_Map_Aura_1,
+	Prototype_Mesh_SM_Map_Aura_2,
+	Prototype_Mesh_SM_Map_Aura_3,
+	Prototype_Mesh_SM_Map_Aura_4,
+	Prototype_Mesh_SM_meteo,
+	Prototype_Mesh_SM_Meteo_Sphere,
+	Prototype_Mesh_SM_Meteo_Sphere3,
+	Prototype_Mesh_SM_Muzzle,
+	Prototype_Mesh_SM_Muzzle_01,
+	Prototype_Mesh_SM_Muzzle_02,
+	Prototype_Mesh_SM_Nae_Arrow,
+	Prototype_Mesh_SM_Nae_Arrow_01,
+	Prototype_Mesh_SM_Nae_Arrow_02,
+	Prototype_Mesh_SM_Nae_Arrow_03,
+	Prototype_Mesh_SM_Nae_Bow,
+	Prototype_Mesh_SM_Nae_kick,
+	Prototype_Mesh_SM_Nae_Pro_Base,
+	Prototype_Mesh_SM_OB_01,
+	Prototype_Mesh_SM_OB_Helix_01,
+	Prototype_Mesh_SM_OB_Helix_02,
+	Prototype_Mesh_SM_OB_Helix_03,
+	Prototype_Mesh_SM_Palaspel,
+	Prototype_Mesh_SM_Palaspel_01,
+	Prototype_Mesh_SM_Pheonix_Aura_Wind01,
+	Prototype_Mesh_SM_Pheonix_MagicSquare01,
+	Prototype_Mesh_SM_Pheonix_MagicSquare02,
+	Prototype_Mesh_SM_Pheonix_UP_Z_Wind01,
+	Prototype_Mesh_SM_Pheonix_UP_Z_Wind02,
+	Prototype_Mesh_SM_Pheonix_Wind01,
+	Prototype_Mesh_SM_Pheonix_Wind02,
+	Prototype_Mesh_SM_Pheonix_Wind03,
+	Prototype_Mesh_SM_Pheonix_Wind04,
+	Prototype_Mesh_SM_Pheonix_Wind05,
+	Prototype_Mesh_SM_Pheonix_Wing_01,
+	Prototype_Mesh_SM_Pheonix_Wing_02,
+	Prototype_Mesh_SM_PiercingArrow_Arrow,
+	Prototype_Mesh_SM_PiercingArrow_Aura_01,
+	Prototype_Mesh_SM_PiercingArrow_Aura_02,
+	Prototype_Mesh_SM_PiercingArrow_Aura_06,
+	Prototype_Mesh_SM_plane_pillar,
+	Prototype_Mesh_SM_PlaneSlash_01,
+	Prototype_Mesh_SM_quad_centerRot,
+	Prototype_Mesh_SM_RainDrop,
+	Prototype_Mesh_SM_Reorgea_Hand_L_New_888,
 	Prototype_Mesh_SM_Reorgea_Hand_R_New_3,
+	Prototype_Mesh_SM_Reorgeaskil04_cylinder,
+	Prototype_Mesh_SM_Reorgeaskil04_Dust_mesh,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_1,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_2,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_3,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_4,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_5,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_6,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_7,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_8,
+	Prototype_Mesh_SM_Reorgeaskil04_stone1_9,
+	Prototype_Mesh_SM_Reorgeaskil04_stone2_3,
+	Prototype_Mesh_SM_Reorgeaskil04_stone2_4,
+	Prototype_Mesh_SM_Reorgeaskil04_stone2_5,
+	Prototype_Mesh_SM_Reorgeaskil04_stone2_8,
+	Prototype_Mesh_SM_Reorgeaskil04_stone2_10,
+	Prototype_Mesh_SM_Ring_01,
 	Prototype_Mesh_SM_Ring_03,
+	Prototype_Mesh_SM_rockRing,
+	Prototype_Mesh_SM_Sae_Trail,
+	Prototype_Mesh_SM_Sae_Weapon,
+	Prototype_Mesh_SM_Sae_wind,
+	Prototype_Mesh_SM_sakura_patal,
+	Prototype_Mesh_SM_SC_01,
+	Prototype_Mesh_SM_SC_Helix_01,
+	Prototype_Mesh_SM_SC_Helix_02,
+	Prototype_Mesh_SM_SC_Helix_03,
+	Prototype_Mesh_SM_Scart_Doddgy_X,
+	Prototype_Mesh_SM_Scart_Main_X,
+	Prototype_Mesh_SM_Scart_Main_Z,
+	Prototype_Mesh_SM_Scart_Main_Z02,
+	Prototype_Mesh_SM_Scart_Main_Z03,
+	Prototype_Mesh_SM_Scart_Sub_Z,
+	Prototype_Mesh_SM_Scart_Wind_Z,
+	Prototype_Mesh_SM_SG_corn,
+	Prototype_Mesh_SM_SG_corn_1,
+	Prototype_Mesh_SM_SG_Projectile_Main_Y_High,
+	Prototype_Mesh_SM_SG_Projectile_Main_Y_High_01,
+	Prototype_Mesh_SM_SG_spin_sub,
+	Prototype_Mesh_SM_SG_tornado,
+	Prototype_Mesh_SM_SG_tornado_sub,
+	Prototype_Mesh_SM_SG_tornado_sub_2,
+	Prototype_Mesh_SM_SG_tornado_sub_2_02,
+	Prototype_Mesh_SM_Shard,
+	Prototype_Mesh_SM_shock_wind,
+	Prototype_Mesh_SM_Shot_Cylinder_01,
+	Prototype_Mesh_SM_Shot_Cylinder_03,
+	Prototype_Mesh_SM_side_wind_down,
+	Prototype_Mesh_SM_side_wind_golem,
+	Prototype_Mesh_SM_side_wind_golem_1,
+	Prototype_Mesh_SM_SP_End_X_L,
+	Prototype_Mesh_SM_SP_End_X_R,
+	Prototype_Mesh_SM_SP_End_Z_L,
+	Prototype_Mesh_SM_SP_End_Z_R,
+	Prototype_Mesh_SM_sphere,
+	Prototype_Mesh_SM_Sphere_01_Dom,
+	Prototype_Mesh_SM_Sphere_02_Dom,
+	Prototype_Mesh_SM_sphere_melon,
+	Prototype_Mesh_SM_Sphere_Plane_01,
+	Prototype_Mesh_SM_Sphere_RPG,
+	Prototype_Mesh_SM_SpherePlate_01,
+	Prototype_Mesh_SM_sphereUV_lowpoly,
+	Prototype_Mesh_SM_SpinningSlash_O_L_X,
+	Prototype_Mesh_SM_SpinningSlash_O_L_XD,
+	Prototype_Mesh_SM_SpinningSlash_O_L_Z,
+	Prototype_Mesh_SM_SpinningSlash_O_R_DX,
+	Prototype_Mesh_SM_SpinningSlash_O_R_X,
+	Prototype_Mesh_SM_SpinningSlash_O_R_Z,
+	Prototype_Mesh_SM_SS_Aura_01,
+	Prototype_Mesh_SM_SS_Aura_02,
+	Prototype_Mesh_SM_SS_Shield,
+	Prototype_Mesh_SM_SS_Shield_pivot,
+	Prototype_Mesh_SM_SS_Shield_Throw,
+	Prototype_Mesh_SM_SS_ShieldEdge,
+	Prototype_Mesh_SM_SS_Stone_01,
+	Prototype_Mesh_SM_SS_Stone_02,
+	Prototype_Mesh_SM_SS_Stone_03,
+	Prototype_Mesh_SM_SS_Trail_01,
+	Prototype_Mesh_SM_SS_Trail_02,
+	Prototype_Mesh_SM_SS_Trail_03,
+	Prototype_Mesh_SM_ST3_Portal_00,
+	Prototype_Mesh_SM_ST3_Portal_01,
+	Prototype_Mesh_SM_Stone_01,
+	Prototype_Mesh_SM_Stone_02,
+	Prototype_Mesh_SM_Stone_L,
+	Prototype_Mesh_SM_Stone_R,
+	Prototype_Mesh_SM_Survivor_Buff,
+	Prototype_Mesh_SM_Survivor_Buff_plane,
+	Prototype_Mesh_SM_Text_Floor,
+	Prototype_Mesh_SM_Theo_Trail_01,
+	Prototype_Mesh_SM_Theo_Trail_02,
+	Prototype_Mesh_SM_Theo_Trail01,
+	Prototype_Mesh_SM_ToonKaboom01,
+	Prototype_Mesh_SM_Tornado_01,
+	Prototype_Mesh_SM_Tornado_02,
+	Prototype_Mesh_SM_Tornado_360_01,
+	Prototype_Mesh_SM_Trail_Line,
+	Prototype_Mesh_SM_Trail_Twist_02,
+	Prototype_Mesh_SM_Trail_Twist_03,
+	Prototype_Mesh_SM_tray,
+	Prototype_Mesh_SM_TS_Basic_combo_01_Front,
+	Prototype_Mesh_SM_TS_Basic_combo_01_Top,
+	Prototype_Mesh_SM_TS_Basic_combo_Cyl01,
+	Prototype_Mesh_SM_TS_Basic_combo_EX2_Aura,
+	Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword,
+	Prototype_Mesh_SM_TS_Basic_Trail_Main_X,
+	Prototype_Mesh_SM_TS_Basic_Trail_Main_Z,
+	Prototype_Mesh_SM_TS_Basic_Trail_Main_Z_UVHorizenFlip,
+	Prototype_Mesh_SM_TS_Basic_Trail_Slash_X,
+	Prototype_Mesh_SM_TS_Basic_Trail_Sub_X,
+	Prototype_Mesh_SM_TS_Basic_Trail_Sub_Z,
+	Prototype_Mesh_SM_TS_Double_Slash_01,
+	Prototype_Mesh_SM_TS_Double_Slash_02,
+	Prototype_Mesh_SM_TS_Dragon_Weapon,
+	Prototype_Mesh_SM_TS_Trace_01_Re,
+	Prototype_Mesh_SM_Upright_noFloor,
+	Prototype_Mesh_SM_wallCylinder_center_smooth,
+	Prototype_Mesh_SM_Wave_01,
+	Prototype_Mesh_SM_Wave_02,
+	Prototype_Mesh_SM_Wind_Line13b_F,
+	Prototype_Mesh_SM_Wind_Line13b_R,
+	Prototype_Mesh_SM_Wind_M02,
+	Prototype_Mesh_SM_Wind_RTR_Base,
+	Prototype_Mesh_SM_Wind_RTR_Base2,
+	Prototype_Mesh_SM_windLine11C,
+	Prototype_Mesh_SM_windLine13_multi,
+	Prototype_Mesh_SM_windLine15,
+	Prototype_Mesh_SM_windLine16,
+	Prototype_Mesh_SM_windLine16_midPoly,
+	Prototype_Mesh_SM_windLine19,
+	Prototype_Mesh_SM_windMesh,
+	Prototype_Mesh_SM_windMesh_a,
+	Prototype_Mesh_SM_windMesh_b,
+	Prototype_Mesh_SM_windSmoke,
+	Prototype_Mesh_SM_Wing_T_01,
+	Prototype_Mesh_KurtzpelEnd,
+
+
+	// Other_ModelName
+
+
+
+
+		
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
 	Prototype_Mesh_ENV_BLD_Palace_05,
@@ -2397,79 +3347,2920 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 
-
-		
-	case Prototype_Mesh_CIRCLE:
+	// kuzpel
+	case Prototype_Mesh_01_R_Punch_SM_01_Mesh003:
+		return TEXT("01_R_Punch_SM_01_Mesh003.fbx");
+		break;
+	case Prototype_Mesh_01_R_Punch_SM_01_Mesh004:
+		return TEXT("01_R_Punch_SM_01_Mesh004.fbx");
+		break;
+	case Prototype_Mesh_02_L_Upper_SM:
+		return TEXT("02_L_Upper_SM.fbx");
+		break;
+	case Prototype_Mesh_Aura_Arrow:
+		return TEXT("Aura_Arrow.fbx");
+		break;
+	case Prototype_Mesh_Aura_Arrow_Wing:
+		return TEXT("Aura_Arrow_Wing.fbx");
+		break;
+	case Prototype_Mesh_auraHousya:
+		return TEXT("auraHousya.fbx");
+		break;
+	case Prototype_Mesh_chantDeco2:
+		return TEXT("chantDeco2.fbx");
+		break;
+	case Prototype_Mesh_circle:
 		return TEXT("circle.fbx");
 		break;
-	case Prototype_Mesh_CIRCLE_DIST4:
+	case Prototype_Mesh_circle_inv:
+		return TEXT("circle_inv.fbx");
+		break;
+	case Prototype_Mesh_circleDist2:
+		return TEXT("circleDist2.fbx");
+		break;
+	case Prototype_Mesh_circleDist4:
 		return TEXT("circleDist4.fbx");
 		break;
-	case Prototype_Mesh_CIRCLE_DIST5:
+	case Prototype_Mesh_circleDist5:
 		return TEXT("circleDist5.fbx");
 		break;
-	case Prototype_Mesh_IMPECTFX_02:
-		return TEXT("SM_4E_ImpactFX_02.fbx");
+	case Prototype_Mesh_circleDist5_02:
+		return TEXT("circleDist5_02.fbx");
 		break;
-	case Prototype_Mesh_RING:
-		return TEXT("SM_AOG_Ring.fbx");
+	case Prototype_Mesh_doomBvert:
+		return TEXT("doomBvert.fbx");
 		break;
-	case Prototype_Mesh_LOVE:
-		return TEXT("SM_EM_LoveLetter_02.fbx");
+	case Prototype_Mesh_doomBvert2Inv:
+		return TEXT("doomBvert2Inv.fbx");
 		break;
-	case Prototype_Mesh_WING:
-		return TEXT("SM_Bow_Em_Wing_T.fbx");
+	case Prototype_Mesh_FX_Aura_Trail_02:
+		return TEXT("FX_Aura_Trail_02.fbx");
 		break;
-	case Prototype_Mesh_BOW1:
-		return TEXT("SM_Bow_Em_01.fbx");
+	case Prototype_Mesh_FX_Aura_Trail_05:
+		return TEXT("FX_Aura_Trail_05.fbx");
 		break;
-	case Prototype_Mesh_BOW2:
-		return TEXT("SM_Bow_Em_02.fbx");
+	case Prototype_Mesh_Grudge_Wraith_weapon_mesh:
+		return TEXT("Grudge_Wraith_weapon_mesh.fbx");
 		break;
-	case Prototype_Mesh_ICE:
-		return TEXT("SM_ICE_01.fbx");
-	case Prototype_Mesh_Sphere:
-		return TEXT("Sphere.fbx");
-	case Prototype_Mesh_SM_sphere_melon:
-		return TEXT("SM_sphere_melon.fbx");
+	case Prototype_Mesh_ice2:
+		return TEXT("ice2.fbx");
+		break;
+	case Prototype_Mesh_Line_SM_Low_R_Re:
+		return TEXT("Line_SM_Low_R_Re.fbx");
+		break;
+	case Prototype_Mesh_Lire_Leaf01:
+		return TEXT("Lire_Leaf01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Ama:
+		return TEXT("Mesh_Ama.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Ama_Sword:
+		return TEXT("Mesh_Ama_Sword.fbx");
+		break;
+	case Prototype_Mesh_Mesh_BasicAttack_02_04:
+		return TEXT("Mesh_BasicAttack_02_04.fbx");
+		break;
+	case Prototype_Mesh_Mesh_cylinder:
+		return TEXT("Mesh_cylinder.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Cylinder_03:
+		return TEXT("Mesh_Cylinder_03.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Dust08_SUB_5X4_L:
+		return TEXT("Mesh_Dust08_SUB_5X4_L.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Dust08_SUB_5X4_R:
+		return TEXT("Mesh_Dust08_SUB_5X4_R.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Square_M01:
+		return TEXT("Mesh_HFB_Arrow_Square_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Square_M02:
+		return TEXT("Mesh_HFB_Arrow_Square_M02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Square_M03:
+		return TEXT("Mesh_HFB_Arrow_Square_M03.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Square_M04:
+		return TEXT("Mesh_HFB_Arrow_Square_M04.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Wing_L:
+		return TEXT("Mesh_HFB_Arrow_Wing_L.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Arrow_Wing_R:
+		return TEXT("Mesh_HFB_Arrow_Wing_R.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_CIRCLE:
+		return TEXT("Mesh_HFB_CIRCLE.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Grand_Git:
+		return TEXT("Mesh_HFB_Grand_Git.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Hit_M01:
+		return TEXT("Mesh_HFB_Hit_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFB_Uplight_M01:
+		return TEXT("Mesh_HFB_Uplight_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFH_Dash_Wind01:
+		return TEXT("Mesh_HFH_Dash_Wind01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFH_Dash_Wind02:
+		return TEXT("Mesh_HFH_Dash_Wind02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFH_Dash_Wind03:
+		return TEXT("Mesh_HFH_Dash_Wind03.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFS_Charge_Wind_01_Inv:
+		return TEXT("Mesh_HFS_Charge_Wind_01_Inv.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFS_Charge_Wind_02:
+		return TEXT("Mesh_HFS_Charge_Wind_02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFS_ChargeAttack_M01:
+		return TEXT("Mesh_HFS_ChargeAttack_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_HFS_ChargeAttack_M02:
+		return TEXT("Mesh_HFS_ChargeAttack_M02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Leap_Ground_Light:
+		return TEXT("Mesh_Leap_Ground_Light.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Leap_Ground_Light2:
+		return TEXT("Mesh_Leap_Ground_Light2.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Leap_Ground_M04:
+		return TEXT("Mesh_Leap_Ground_M04.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Leap_Wind_M01:
+		return TEXT("Mesh_Leap_Wind_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Leap_Wind_M02:
+		return TEXT("Mesh_Leap_Wind_M02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Plane_03:
+		return TEXT("Mesh_Plane_03.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M01:
+		return TEXT("Mesh_Trace_M01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M02:
+		return TEXT("Mesh_Trace_M02.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M03:
+		return TEXT("Mesh_Trace_M03.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M04:
+		return TEXT("Mesh_Trace_M04.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M05:
+		return TEXT("Mesh_Trace_M05.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M06:
+		return TEXT("Mesh_Trace_M06.fbx");
+		break;
+	case Prototype_Mesh_Mesh_Trace_M07:
+		return TEXT("Mesh_Trace_M07.fbx");
+		break;
+	case Prototype_Mesh_Mesh_TS_Double_Slash_01:
+		return TEXT("Mesh_TS_Double_Slash_01.fbx");
+		break;
+	case Prototype_Mesh_Mesh_TS_Double_Slash_05:
+		return TEXT("Mesh_TS_Double_Slash_05.fbx");
+		break;
+	case Prototype_Mesh_MS_Arc_00:
+		return TEXT("MS_Arc_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Cloud:
+		return TEXT("MS_Cloud.fbx");
+		break;
+	case Prototype_Mesh_MS_Cylinder_00:
+		return TEXT("MS_Cylinder_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Cylinder_02:
+		return TEXT("MS_Cylinder_02.fbx");
+		break;
+	case Prototype_Mesh_MS_Cylinder_05:
+		return TEXT("MS_Cylinder_05.fbx");
+		break;
+	case Prototype_Mesh_MS_GeoSphere:
+		return TEXT("MS_GeoSphere.fbx");
+		break;
+	case Prototype_Mesh_MS_HalfSphere:
+		return TEXT("MS_HalfSphere.fbx");
+		break;
+	case Prototype_Mesh_MS_Land_Half_Cylinder:
+		return TEXT("MS_Land_Half_Cylinder.fbx");
+		break;
+	case Prototype_Mesh_MS_LandCrack_00:
+		return TEXT("MS_LandCrack_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_00:
+		return TEXT("MS_Line_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_01:
+		return TEXT("MS_Line_01.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_02:
+		return TEXT("MS_Line_02.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_03:
+		return TEXT("MS_Line_03.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_04:
+		return TEXT("MS_Line_04.fbx");
+		break;
+	case Prototype_Mesh_MS_Line_05:
+		return TEXT("MS_Line_05.fbx");
+		break;
+	case Prototype_Mesh_MS_Shield_Sphere_00:
+		return TEXT("MS_Shield_Sphere_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Shot_Cylinder_00:
+		return TEXT("MS_Shot_Cylinder_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Shpere_00:
+		return TEXT("MS_Shpere_00.fbx");
+		break;
+	case Prototype_Mesh_MS_SmokePlane:
+		return TEXT("MS_SmokePlane.fbx");
+		break;
+	case Prototype_Mesh_MS_Sphere_00:
+		return TEXT("MS_Sphere_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Sphere_Bill_00:
+		return TEXT("MS_Sphere_Bill_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Sphere_Bill_01:
+		return TEXT("MS_Sphere_Bill_01.fbx");
+		break;
+	case Prototype_Mesh_MS_ST3_Portal_00:
+		return TEXT("MS_ST3_Portal_00.fbx");
+		break;
+	case Prototype_Mesh_MS_ST3_Portal_01:
+		return TEXT("MS_ST3_Portal_01.fbx");
+		break;
+	case Prototype_Mesh_MS_St3_Tornado_Bottom_Cyl_01:
+		return TEXT("MS_St3_Tornado_Bottom_Cyl_01.fbx");
+		break;
+	case Prototype_Mesh_MS_St3_Tornado_Bottom_Cyl_10:
+		return TEXT("MS_St3_Tornado_Bottom_Cyl_10.fbx");
+		break;
+	case Prototype_Mesh_MS_Tornado_Cyl:
+		return TEXT("MS_Tornado_Cyl.fbx");
+		break;
+	case Prototype_Mesh_MS_Tornado_Cyl_2side:
+		return TEXT("MS_Tornado_Cyl_2side.fbx");
+		break;
+	case Prototype_Mesh_MS_Tornado_Cyl_2side_01:
+		return TEXT("MS_Tornado_Cyl_2side_01.fbx");
+		break;
+	case Prototype_Mesh_MS_Tornado_Cyl_2side_03:
+		return TEXT("MS_Tornado_Cyl_2side_03.fbx");
+		break;
+	case Prototype_Mesh_MS_Tornado_Helix_00:
+		return TEXT("MS_Tornado_Helix_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Trail_00:
+		return TEXT("MS_Trail_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Trail_Twist_00:
+		return TEXT("MS_Trail_Twist_00.fbx");
+		break;
+	case Prototype_Mesh_MS_Trail_Twist_01:
+		return TEXT("MS_Trail_Twist_01.fbx");
+		break;
+	case Prototype_Mesh_MS_Twis_Attack:
+		return TEXT("MS_Twis_Attack.fbx");
+		break;
+	case Prototype_Mesh_MS_Twis_Attack_01:
+		return TEXT("MS_Twis_Attack_01.fbx");
+		break;
+	case Prototype_Mesh_myCylinderKaiRotB:
+		return TEXT("myCylinderKaiRotB.fbx");
+		break;
+	case Prototype_Mesh_mySphere:
+		return TEXT("mySphere.fbx");
+		break;
+	case Prototype_Mesh_S_BasicAttack00_M01:
+		return TEXT("S_BasicAttack00_M01.fbx");
+		break;
+	case Prototype_Mesh_S_BasicAttack00_M03:
+		return TEXT("S_BasicAttack00_M03.fbx");
+		break;
+	case Prototype_Mesh_S_JumpAttack_02_M01:
+		return TEXT("S_JumpAttack_02_M01.fbx");
+		break;
+	case Prototype_Mesh_S_JumpAttack_02_M02:
+		return TEXT("S_JumpAttack_02_M02.fbx");
+		break;
+	case Prototype_Mesh_S_JumpAttack_02_M04:
+		return TEXT("S_JumpAttack_02_M04.fbx");
+		break;
+	case Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting:
+		return TEXT("Sample_Mesh_Fake_Mesh_Lighting.fbx");
+		break;
+	case Prototype_Mesh_Sample_Mesh_Fresnal:
+		return TEXT("Sample_Mesh_Fresnal.fbx");
+		break;
+	case Prototype_Mesh_Sample_Mesh_Hit:
+		return TEXT("Sample_Mesh_Hit.fbx");
+		break;
+	case Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z:
+		return TEXT("Sample_Mesh_WP_Cylinder_Z.fbx");
+		break;
+	case Prototype_Mesh_shield:
+		return TEXT("shield.fbx");
+		break;
+	case Prototype_Mesh_SK_03_L_Foot:
+		return TEXT("SK_03_L_Foot.fbx");
+		break;
+	case Prototype_Mesh_SK_BF_Skill07_AuraMesh:
+		return TEXT("SK_BF_Skill07_AuraMesh.fbx");
+		break;
+	case Prototype_Mesh_SK_BF_Skill07_RectangleMesh:
+		return TEXT("SK_BF_Skill07_RectangleMesh.fbx");
+		break;
+	case Prototype_Mesh_SK_EM_CatPot_Stick:
+		return TEXT("SK_EM_CatPot_Stick.fbx");
+		break;
+	case Prototype_Mesh_SK_Guadian_Skill07_Loop:
+		return TEXT("SK_Guadian_Skill07_Loop.fbx");
+		break;
+	case Prototype_Mesh_SK_Guadian_Skill07_Loop_02:
+		return TEXT("SK_Guadian_Skill07_Loop_02.fbx");
+		break;
+	case Prototype_Mesh_SM_02_L_Upper_Mesh02:
+		return TEXT("SM_02_L_Upper_Mesh02.fbx");
+		break;
+	case Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M1:
+		return TEXT("SM_03_L_Foot_SM_03_L_Foot_M1.fbx");
+		break;
+	case Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M2:
+		return TEXT("SM_03_L_Foot_SM_03_L_Foot_M2.fbx");
+		break;
+	case Prototype_Mesh_SM_03_L_Foot_SM_03_L_Foot_M3:
+		return TEXT("SM_03_L_Foot_SM_03_L_Foot_M3.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_DarkTails_01:
+		return TEXT("SM_4E_DarkTails_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_IceShards_01:
+		return TEXT("SM_4E_IceShards_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_IceShards_02:
+		return TEXT("SM_4E_IceShards_02.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_IceShards_03:
+		return TEXT("SM_4E_IceShards_03.fbx");
+		break;
 	case Prototype_Mesh_SM_4E_IceSpike_01:
 		return TEXT("SM_4E_IceSpike_01.fbx");
-	case Prototype_Mesh_SM_4E_Ice2:
-		return TEXT("ice2.fbx");
-	case Prototype_Mesh_MoonStone00:
-		return TEXT("MoonStone00.fbx");
-	case Prototype_Mesh_MoonStone02:
-		return TEXT("MoonStone02.fbx");
-	case Prototype_Mesh_MoonStone04:
-		return TEXT("MoonStone04.fbx");
-	case Prototype_Mesh_PurpCrystal01:
-		return TEXT("PurpCrystal01.fbx");
-	case Prototype_Mesh_Rock001:
-		return TEXT("Rock001.fbx");
-	case Prototype_Mesh_Rock002:
-		return TEXT("Rock002.fbx");
-	case Prototype_Mesh_Rock003:
-		return TEXT("Rock003.fbx");
-	case Prototype_Mesh_Rock004:
-		return TEXT("Rock004.fbx");
-	case Prototype_Mesh_Rock005:
-		return TEXT("Rock005.fbx");
-	case Prototype_Mesh_POTAL:
-		return TEXT("MS_ST3_Portal_00.fbx");
-	case Prototype_Mesh_SM_Helix_Crystal			:
+		break;
+	case Prototype_Mesh_SM_4E_ImpactFX_01:
+		return TEXT("SM_4E_ImpactFX_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_ImpactFX_02:
+		return TEXT("SM_4E_ImpactFX_02.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightCastRing_01:
+		return TEXT("SM_4E_LightCastRing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightCircle_01:
+		return TEXT("SM_4E_LightCircle_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightCircle_02:
+		return TEXT("SM_4E_LightCircle_02.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningArcs_01:
+		return TEXT("SM_4E_LightningArcs_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningArcs_02_re:
+		return TEXT("SM_4E_LightningArcs_02_re.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningArcs_03:
+		return TEXT("SM_4E_LightningArcs_03.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningArcs_04:
+		return TEXT("SM_4E_LightningArcs_04.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningArcs_05:
+		return TEXT("SM_4E_LightningArcs_05.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningBolt_01:
+		return TEXT("SM_4E_LightningBolt_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightningOrb_01:
+		return TEXT("SM_4E_LightningOrb_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightRay_01:
+		return TEXT("SM_4E_LightRay_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_LightSpike_02:
+		return TEXT("SM_4E_LightSpike_02.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_RegularPlane_01:
+		return TEXT("SM_4E_RegularPlane_01.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_RegularPlane_02:
+		return TEXT("SM_4E_RegularPlane_02.fbx");
+		break;
+	case Prototype_Mesh_SM_4E_SpiralRay_01:
+		return TEXT("SM_4E_SpiralRay_01.fbx");
+		break;
+	case Prototype_Mesh_SM_06_06_SM001:
+		return TEXT("SM_06_06_SM001.fbx");
+		break;
+	case Prototype_Mesh_SM_06_06_SM002:
+		return TEXT("SM_06_06_SM002.fbx");
+		break;
+	case Prototype_Mesh_SM_06_06_SM003:
+		return TEXT("SM_06_06_SM003.fbx");
+		break;
+	case Prototype_Mesh_SM_07_Mesh001:
+		return TEXT("SM_07_Mesh001.fbx");
+		break;
+	case Prototype_Mesh_SM_07_Mesh002:
+		return TEXT("SM_07_Mesh002.fbx");
+		break;
+	case Prototype_Mesh_SM_07_Mesh003:
+		return TEXT("SM_07_Mesh003.fbx");
+		break;
+	case Prototype_Mesh_SM_21_Christmas_01:
+		return TEXT("SM_21_Christmas_01.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Lightning_01:
+		return TEXT("SM_AB_Lightning_01.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Lightning_02:
+		return TEXT("SM_AB_Lightning_02.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Lightning_03:
+		return TEXT("SM_AB_Lightning_03.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Lightning_04:
+		return TEXT("SM_AB_Lightning_04.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Trail_01:
+		return TEXT("SM_AB_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Trail_02:
+		return TEXT("SM_AB_Trail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Trail_03:
+		return TEXT("SM_AB_Trail_03.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Tree:
+		return TEXT("SM_AB_Tree.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Wind_01:
+		return TEXT("SM_AB_Wind_01.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Wind_02:
+		return TEXT("SM_AB_Wind_02.fbx");
+		break;
+	case Prototype_Mesh_SM_AB_Wind_03:
+		return TEXT("SM_AB_Wind_03.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Helix01:
+		return TEXT("SM_AOG_Helix01.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Helix02:
+		return TEXT("SM_AOG_Helix02.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Plan01:
+		return TEXT("SM_AOG_Plan01.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Ring:
+		return TEXT("SM_AOG_Ring.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Weapon:
+		return TEXT("SM_AOG_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_AOG_Weapon_Jewllery:
+		return TEXT("SM_AOG_Weapon_Jewllery.fbx");
+		break;
+	case Prototype_Mesh_SM_Arc_00:
+		return TEXT("SM_Arc_00.fbx");
+		break;
+	case Prototype_Mesh_SM_Arc_01:
+		return TEXT("SM_Arc_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Arrow_Circle_01:
+		return TEXT("SM_Arrow_Circle_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Arrow_Circle_02:
+		return TEXT("SM_Arrow_Circle_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Arrow_Wing_01:
+		return TEXT("SM_Arrow_Wing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Arrow_Wing_02:
+		return TEXT("SM_Arrow_Wing_02.fbx");
+		break;
+	case Prototype_Mesh_SM_ArrowBurstTrail_01_New:
+		return TEXT("SM_ArrowBurstTrail_01_New.fbx");
+		break;
+	case Prototype_Mesh_SM_ArrowBurstTrail_02_New:
+		return TEXT("SM_ArrowBurstTrail_02_New.fbx");
+		break;
+	case Prototype_Mesh_SM_ArrowCase:
+		return TEXT("SM_ArrowCase.fbx");
+		break;
+	case Prototype_Mesh_SM_Asura_Cillynder01:
+		return TEXT("SM_Asura_Cillynder01.fbx");
+		break;
+	case Prototype_Mesh_SM_Asura_Circle01:
+		return TEXT("SM_Asura_Circle01.fbx");
+		break;
+	case Prototype_Mesh_SM_Asura_Sphere02:
+		return TEXT("SM_Asura_Sphere02.fbx");
+		break;
+	case Prototype_Mesh_SM_Aura_Foot_L_03:
+		return TEXT("SM_Aura_Foot_L_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Aura_Linear_01:
+		return TEXT("SM_Aura_Linear_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Aura_Linear_03:
+		return TEXT("SM_Aura_Linear_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Aura_Trail01:
+		return TEXT("SM_Aura_Trail01.fbx");
+		break;
+	case Prototype_Mesh_SM_auraHousya:
+		return TEXT("SM_auraHousya.fbx");
+		break;
+	case Prototype_Mesh_SM_auraWallSq:
+		return TEXT("SM_auraWallSq.fbx");
+		break;
+	case Prototype_Mesh_SM_auraWallSq2:
+		return TEXT("SM_auraWallSq2.fbx");
+		break;
+	case Prototype_Mesh_SM_AXTrail_01:
+		return TEXT("SM_AXTrail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Baren_Weapon:
+		return TEXT("SM_Baren_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_Baren_Weapon_1:
+		return TEXT("SM_Baren_Weapon_1.fbx");
+		break;
+	case Prototype_Mesh_SM_Baren_Weapon_2:
+		return TEXT("SM_Baren_Weapon_2.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Cy01_Cylinder001:
+		return TEXT("SM_Basic_Cy01_Cylinder001.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Doddgy:
+		return TEXT("SM_Basic_EX02_Basic_EX02_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Main:
+		return TEXT("SM_Basic_EX02_Basic_EX02_Main.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Sub:
+		return TEXT("SM_Basic_EX02_Basic_EX02_Sub.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX02_Basic_EX02_Sub_vectorUV:
+		return TEXT("SM_Basic_EX02_Basic_EX02_Sub_vectorUV.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX03_2_Doddgy_Y:
+		return TEXT("SM_Basic_EX03_2_Doddgy_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX03_2_Main_Y:
+		return TEXT("SM_Basic_EX03_2_Main_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_EX03_2_Sub_Y:
+		return TEXT("SM_Basic_EX03_2_Sub_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Dodggy_X:
+		return TEXT("SM_Basic_Trail_SM_Dodggy_X.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Dodggy_Z:
+		return TEXT("SM_Basic_Trail_SM_Dodggy_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Main_X:
+		return TEXT("SM_Basic_Trail_SM_Main_X.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Main_Z:
+		return TEXT("SM_Basic_Trail_SM_Main_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Sub_X:
+		return TEXT("SM_Basic_Trail_SM_Sub_X.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_Trail_SM_Sub_Z:
+		return TEXT("SM_Basic_Trail_SM_Sub_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_Basic_windLine:
+		return TEXT("SM_Basic_windLine.fbx");
+		break;
+	case Prototype_Mesh_SM_BBT_Paw:
+		return TEXT("SM_BBT_Paw.fbx");
+		break;
+	case Prototype_Mesh_SM_BBT_Paw_L:
+		return TEXT("SM_BBT_Paw_L.fbx");
+		break;
+	case Prototype_Mesh_SM_BBT_Teeth_Down:
+		return TEXT("SM_BBT_Teeth_Down.fbx");
+		break;
+	case Prototype_Mesh_SM_BBT_Teeth_UP:
+		return TEXT("SM_BBT_Teeth_UP.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Doddgy_Trail_X:
+		return TEXT("SM_BerserkerRush_01_Doddgy_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Doddgy_Trail_Y:
+		return TEXT("SM_BerserkerRush_01_Doddgy_Trail_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Main_Trail_X:
+		return TEXT("SM_BerserkerRush_01_Main_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Main_Trail_Y:
+		return TEXT("SM_BerserkerRush_01_Main_Trail_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Sub_Trail_X:
+		return TEXT("SM_BerserkerRush_01_Sub_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_BerserkerRush_01_Sub_Trail_Y:
+		return TEXT("SM_BerserkerRush_01_Sub_Trail_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Base:
+		return TEXT("SM_BF_Skill_01_2_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Base_Z:
+		return TEXT("SM_BF_Skill_01_2_Base_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Doddgy:
+		return TEXT("SM_BF_Skill_01_2_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Doddgy_Z:
+		return TEXT("SM_BF_Skill_01_2_Doddgy_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Sub:
+		return TEXT("SM_BF_Skill_01_2_Sub.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Sub_Z:
+		return TEXT("SM_BF_Skill_01_2_Sub_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_X_Small:
+		return TEXT("SM_BF_Skill_01_2_X_Small.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_XY_SM_X:
+		return TEXT("SM_BF_Skill_01_2_XY_SM_X.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_XY_SM_Y:
+		return TEXT("SM_BF_Skill_01_2_XY_SM_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_2_Y_Small:
+		return TEXT("SM_BF_Skill_01_2_Y_Small.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_03_01_D1:
+		return TEXT("SM_BF_Skill_01_03_01_D1.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_03_01_D2:
+		return TEXT("SM_BF_Skill_01_03_01_D2.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_03_01_Main:
+		return TEXT("SM_BF_Skill_01_03_01_Main.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_Skill_01_03_01_Sub:
+		return TEXT("SM_BF_Skill_01_03_01_Sub.fbx");
+		break;
+	case Prototype_Mesh_SM_BF_XY:
+		return TEXT("SM_BF_XY.fbx");
+		break;
+	case Prototype_Mesh_SM_Bow_Base:
+		return TEXT("SM_Bow_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_Bow_Em_01:
+		return TEXT("SM_Bow_Em_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Bow_Em_02:
+		return TEXT("SM_Bow_Em_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Bow_Em_Wing_T:
+		return TEXT("SM_Bow_Em_Wing_T.fbx");
+		break;
+	case Prototype_Mesh_SM_bowing_01:
+		return TEXT("SM_bowing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_bowing_02:
+		return TEXT("SM_bowing_02.fbx");
+		break;
+	case Prototype_Mesh_SM_bowing_03:
+		return TEXT("SM_bowing_03.fbx");
+		break;
+	case Prototype_Mesh_SM_bowing_04:
+		return TEXT("SM_bowing_04.fbx");
+		break;
+	case Prototype_Mesh_SM_bowing_05:
+		return TEXT("SM_bowing_05.fbx");
+		break;
+	case Prototype_Mesh_SM_Box_Basic:
+		return TEXT("SM_Box_Basic.fbx");
+		break;
+	case Prototype_Mesh_SM_BufRing_01:
+		return TEXT("SM_BufRing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_BufSwirl_01:
+		return TEXT("SM_BufSwirl_01.fbx");
+		break;
+	case Prototype_Mesh_SM_BufSwirl_02:
+		return TEXT("SM_BufSwirl_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Bullet:
+		return TEXT("SM_Bullet.fbx");
+		break;
+	case Prototype_Mesh_SM_Chain:
+		return TEXT("SM_Chain.fbx");
+		break;
+	case Prototype_Mesh_SM_Chain_Buff:
+		return TEXT("SM_Chain_Buff.fbx");
+		break;
+	case Prototype_Mesh_SM_Chaos_Dust_01:
+		return TEXT("SM_Chaos_Dust_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Chaos_leg:
+		return TEXT("SM_Chaos_leg.fbx");
+		break;
+	case Prototype_Mesh_SM_Chaos_legMesh:
+		return TEXT("SM_Chaos_legMesh.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Mask_00:
+		return TEXT("SM_Cine_Mask_00.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Mask_01:
+		return TEXT("SM_Cine_Mask_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Mask_02:
+		return TEXT("SM_Cine_Mask_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Mask_03:
+		return TEXT("SM_Cine_Mask_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Mask_04:
+		return TEXT("SM_Cine_Mask_04.fbx");
+		break;
+	case Prototype_Mesh_SM_Cine_Nae_Bow:
+		return TEXT("SM_Cine_Nae_Bow.fbx");
+		break;
+	case Prototype_Mesh_SM_circle:
+		return TEXT("SM_circle.fbx");
+		break;
+	case Prototype_Mesh_SM_circle_inv:
+		return TEXT("SM_circle_inv.fbx");
+		break;
+	case Prototype_Mesh_SM_Circle_Magic:
+		return TEXT("SM_Circle_Magic.fbx");
+		break;
+	case Prototype_Mesh_SM_Cone_01:
+		return TEXT("SM_Cone_01.fbx");
+		break;
+	case Prototype_Mesh_SM_ControlPointMatch_Square_01:
+		return TEXT("SM_ControlPointMatch_Square_01.fbx");
+		break;
+	case Prototype_Mesh_SM_ControlPointMatch_Square_02:
+		return TEXT("SM_ControlPointMatch_Square_02.fbx");
+		break;
+	case Prototype_Mesh_SM_CoreRing_3:
+		return TEXT("SM_CoreRing_3.fbx");
+		break;
+	case Prototype_Mesh_SM_CoreRing_4:
+		return TEXT("SM_CoreRing_4.fbx");
+		break;
+	case Prototype_Mesh_SM_Crack_In_H:
+		return TEXT("SM_Crack_In_H.fbx");
+		break;
+	case Prototype_Mesh_SM_Crack_In_V:
+		return TEXT("SM_Crack_In_V.fbx");
+		break;
+	case Prototype_Mesh_SM_Crack_Out_H:
+		return TEXT("SM_Crack_Out_H.fbx");
+		break;
+	case Prototype_Mesh_SM_Crack_Out_V:
+		return TEXT("SM_Crack_Out_V.fbx");
+		break;
+	case Prototype_Mesh_SM_Crack_OutLine:
+		return TEXT("SM_Crack_OutLine.fbx");
+		break;
+	case Prototype_Mesh_SM_Critical_R_D_Plane:
+		return TEXT("SM_Critical_R_D_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_Critical_R_X_Plane:
+		return TEXT("SM_Critical_R_X_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_Critical_R_Z_Plane:
+		return TEXT("SM_Critical_R_Z_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_Cross:
+		return TEXT("SM_Cross.fbx");
+		break;
+	case Prototype_Mesh_SM_Crossbowman_Arrow_chork:
+		return TEXT("SM_Crossbowman_Arrow_chork.fbx");
+		break;
+	case Prototype_Mesh_SM_CS_SWTrail_02:
+		return TEXT("SM_CS_SWTrail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_CS_SWTrail_02UFlip:
+		return TEXT("SM_CS_SWTrail_02UFlip.fbx");
+		break;
+	case Prototype_Mesh_SM_CS_SWTrail_03UFlip:
+		return TEXT("SM_CS_SWTrail_03UFlip.fbx");
+		break;
+	case Prototype_Mesh_SM_CS_Trail_01:
+		return TEXT("SM_CS_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_CW_Trail_04:
+		return TEXT("SM_CW_Trail_04.fbx");
+		break;
+	case Prototype_Mesh_SM_Cylinder:
+		return TEXT("SM_Cylinder.fbx");
+		break;
+	case Prototype_Mesh_SM_cylinderKaiRotB_vc:
+		return TEXT("SM_cylinderKaiRotB_vc.fbx");
+		break;
+	case Prototype_Mesh_SM_Darknight_Skill01_01:
+		return TEXT("SM_Darknight_Skill01_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Darknight_Skill01_02:
+		return TEXT("SM_Darknight_Skill01_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Darknight_Skill01_03:
+		return TEXT("SM_Darknight_Skill01_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Darknight_Skill01_04:
+		return TEXT("SM_Darknight_Skill01_04.fbx");
+		break;
+	case Prototype_Mesh_SM_DivineLaserBeam_02:
+		return TEXT("SM_DivineLaserBeam_02.fbx");
+		break;
+	case Prototype_Mesh_SM_doomBvert2Inv:
+		return TEXT("SM_doomBvert2Inv.fbx");
+		break;
+	case Prototype_Mesh_SM_Dough:
+		return TEXT("SM_Dough.fbx");
+		break;
+	case Prototype_Mesh_SM_DoughSide:
+		return TEXT("SM_DoughSide.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_250010_L_01:
+		return TEXT("SM_DS_250010_L_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_D_L:
+		return TEXT("SM_DS_AirCombo01_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_D_R:
+		return TEXT("SM_DS_AirCombo01_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_X_L:
+		return TEXT("SM_DS_AirCombo01_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_X_R:
+		return TEXT("SM_DS_AirCombo01_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_Z_L:
+		return TEXT("SM_DS_AirCombo01_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirCombo01_Z_R:
+		return TEXT("SM_DS_AirCombo01_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_L_D:
+		return TEXT("SM_DS_AirTrail_02_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_L_X:
+		return TEXT("SM_DS_AirTrail_02_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_L_Z:
+		return TEXT("SM_DS_AirTrail_02_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_R_D:
+		return TEXT("SM_DS_AirTrail_02_R_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_R_X:
+		return TEXT("SM_DS_AirTrail_02_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_02_R_Z:
+		return TEXT("SM_DS_AirTrail_02_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_L_D:
+		return TEXT("SM_DS_AirTrail_03_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_L_X:
+		return TEXT("SM_DS_AirTrail_03_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_L_Z:
+		return TEXT("SM_DS_AirTrail_03_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_R_D:
+		return TEXT("SM_DS_AirTrail_03_R_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_R_X:
+		return TEXT("SM_DS_AirTrail_03_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_AirTrail_03_R_Z:
+		return TEXT("SM_DS_AirTrail_03_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_2_Trail_H:
+		return TEXT("SM_DS_Basic_01_2_Trail_H.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_2_Trail_P:
+		return TEXT("SM_DS_Basic_01_2_Trail_P.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_2_Trail_X:
+		return TEXT("SM_DS_Basic_01_2_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_Trail_H:
+		return TEXT("SM_DS_Basic_01_Trail_H.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_Trail_X:
+		return TEXT("SM_DS_Basic_01_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_01_Trail_Z:
+		return TEXT("SM_DS_Basic_01_Trail_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_02_1_X_Doddgy:
+		return TEXT("SM_DS_Basic_02_1_X_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_02_1_X_Plane:
+		return TEXT("SM_DS_Basic_02_1_X_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_02_1_Z_Plane:
+		return TEXT("SM_DS_Basic_02_1_Z_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_02_2_Cross:
+		return TEXT("SM_DS_Basic_02_2_Cross.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_1_X_Plane:
+		return TEXT("SM_DS_Basic_03_1_X_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_1_Z_Plane:
+		return TEXT("SM_DS_Basic_03_1_Z_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_2_X_Orign:
+		return TEXT("SM_DS_Basic_03_2_X_Orign.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_2_Z_Orign:
+		return TEXT("SM_DS_Basic_03_2_Z_Orign.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_D_L:
+		return TEXT("SM_DS_Basic_03_3_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_D_R:
+		return TEXT("SM_DS_Basic_03_3_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_X_L:
+		return TEXT("SM_DS_Basic_03_3_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_X_R:
+		return TEXT("SM_DS_Basic_03_3_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_Z_L:
+		return TEXT("SM_DS_Basic_03_3_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic_03_3_Z_R:
+		return TEXT("SM_DS_Basic_03_3_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_1_X_Doddgy_R:
+		return TEXT("SM_DS_Basic04_1_X_Doddgy_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_1_X_R:
+		return TEXT("SM_DS_Basic04_1_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_1_Z_R:
+		return TEXT("SM_DS_Basic04_1_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_2_X_Doddgy_L:
+		return TEXT("SM_DS_Basic04_2_X_Doddgy_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_2_X_L:
+		return TEXT("SM_DS_Basic04_2_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_2_Z_L:
+		return TEXT("SM_DS_Basic04_2_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_3_X_Doddgy_R:
+		return TEXT("SM_DS_Basic04_3_X_Doddgy_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_3_X_R:
+		return TEXT("SM_DS_Basic04_3_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic04_3_Z_R:
+		return TEXT("SM_DS_Basic04_3_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_1_R_Doddgy:
+		return TEXT("SM_DS_Basic05_1_R_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_1_R_X:
+		return TEXT("SM_DS_Basic05_1_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_1_R_Z:
+		return TEXT("SM_DS_Basic05_1_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_2_L_Doddgy:
+		return TEXT("SM_DS_Basic05_2_L_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_2_L_X:
+		return TEXT("SM_DS_Basic05_2_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_2_L_Z:
+		return TEXT("SM_DS_Basic05_2_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_3_R_Doddgy:
+		return TEXT("SM_DS_Basic05_3_R_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_3_R_X:
+		return TEXT("SM_DS_Basic05_3_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Basic05_3_R_Z:
+		return TEXT("SM_DS_Basic05_3_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_BasicTrace_01:
+		return TEXT("SM_DS_BasicTrace_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_D_L_1_Plane:
+		return TEXT("SM_DS_Blade_D_L_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_D_L_2_Plane:
+		return TEXT("SM_DS_Blade_D_L_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_D_R_1_Plane:
+		return TEXT("SM_DS_Blade_D_R_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_D_R_2_Plane:
+		return TEXT("SM_DS_Blade_D_R_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_X_L_1_Plane:
+		return TEXT("SM_DS_Blade_X_L_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_X_L_2_Plane:
+		return TEXT("SM_DS_Blade_X_L_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_X_R_1_Plane:
+		return TEXT("SM_DS_Blade_X_R_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_X_R_2_Plane:
+		return TEXT("SM_DS_Blade_X_R_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_Z_L_1_Plane:
+		return TEXT("SM_DS_Blade_Z_L_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_Z_L_2_Plane:
+		return TEXT("SM_DS_Blade_Z_L_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_Z_R_1_Plane:
+		return TEXT("SM_DS_Blade_Z_R_1_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Blade_Z_R_2_Plane:
+		return TEXT("SM_DS_Blade_Z_R_2_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Dash_Dust_01:
+		return TEXT("SM_DS_Dash_Dust_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Dragon_Weapon:
+		return TEXT("SM_DS_Dragon_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Dust_Dash_01:
+		return TEXT("SM_DS_Dust_Dash_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Dust_Dash_02:
+		return TEXT("SM_DS_Dust_Dash_02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Fated_Proj_X:
+		return TEXT("SM_DS_Fated_Proj_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Fated_Proj_Z:
+		return TEXT("SM_DS_Fated_Proj_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Fated_Proj_Z_02:
+		return TEXT("SM_DS_Fated_Proj_Z_02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Fated_Proj_Z_03:
+		return TEXT("SM_DS_Fated_Proj_Z_03.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_L003:
+		return TEXT("SM_DS_FatedCircle_F_L003.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_L004:
+		return TEXT("SM_DS_FatedCircle_F_L004.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_L005:
+		return TEXT("SM_DS_FatedCircle_F_L005.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_R003:
+		return TEXT("SM_DS_FatedCircle_F_R003.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_R004:
+		return TEXT("SM_DS_FatedCircle_F_R004.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_F_R005:
+		return TEXT("SM_DS_FatedCircle_F_R005.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Front_L001:
+		return TEXT("SM_DS_FatedCircle_Front_L001.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Front_R001:
+		return TEXT("SM_DS_FatedCircle_Front_R001.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Front_R002_1:
+		return TEXT("SM_DS_FatedCircle_Front_R002_1.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Front_R002_2:
+		return TEXT("SM_DS_FatedCircle_Front_R002_2.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_L001:
+		return TEXT("SM_DS_FatedCircle_Top_L001.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_L003:
+		return TEXT("SM_DS_FatedCircle_Top_L003.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_L004:
+		return TEXT("SM_DS_FatedCircle_Top_L004.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_L005:
+		return TEXT("SM_DS_FatedCircle_Top_L005.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R001:
+		return TEXT("SM_DS_FatedCircle_Top_R001.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R002_1:
+		return TEXT("SM_DS_FatedCircle_Top_R002_1.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R002_2:
+		return TEXT("SM_DS_FatedCircle_Top_R002_2.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R003:
+		return TEXT("SM_DS_FatedCircle_Top_R003.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R004:
+		return TEXT("SM_DS_FatedCircle_Top_R004.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_FatedCircle_Top_R005:
+		return TEXT("SM_DS_FatedCircle_Top_R005.fbx");
+		break;
+	case Prototype_Mesh_SM_Ds_Genocide_01:
+		return TEXT("SM_Ds_Genocide_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_D_L:
+		return TEXT("SM_DS_Genocide_Trace_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_D_R:
+		return TEXT("SM_DS_Genocide_Trace_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_X_L:
+		return TEXT("SM_DS_Genocide_Trace_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_X_R:
+		return TEXT("SM_DS_Genocide_Trace_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_Z_L:
+		return TEXT("SM_DS_Genocide_Trace_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Genocide_Trace_Z_R:
+		return TEXT("SM_DS_Genocide_Trace_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Helix_Aura_02:
+		return TEXT("SM_DS_Helix_Aura_02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_D_L:
+		return TEXT("SM_DS_Plane_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_D_R:
+		return TEXT("SM_DS_Plane_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_X_L:
+		return TEXT("SM_DS_Plane_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_X_R:
+		return TEXT("SM_DS_Plane_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_Z_L:
+		return TEXT("SM_DS_Plane_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Plane_Z_R:
+		return TEXT("SM_DS_Plane_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Main_X_High:
+		return TEXT("SM_DS_Projectile_Main_X_High.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Main_Y_High:
+		return TEXT("SM_DS_Projectile_Main_Y_High.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Sub_Y_High:
+		return TEXT("SM_DS_Projectile_Sub_Y_High.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Wind_Y:
+		return TEXT("SM_DS_Projectile_Wind_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Wind_Y_High:
+		return TEXT("SM_DS_Projectile_Wind_Y_High.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Projectile_Wind_Y_High02:
+		return TEXT("SM_DS_Projectile_Wind_Y_High02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_L_D:
+		return TEXT("SM_DS_Rage_Buff_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_L_X:
+		return TEXT("SM_DS_Rage_Buff_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_L_Z:
+		return TEXT("SM_DS_Rage_Buff_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_R_D:
+		return TEXT("SM_DS_Rage_Buff_R_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_R_X:
+		return TEXT("SM_DS_Rage_Buff_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Buff_R_Z:
+		return TEXT("SM_DS_Rage_Buff_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_01:
+		return TEXT("SM_DS_Rage_Genocide_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_02:
+		return TEXT("SM_DS_Rage_Genocide_02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_03:
+		return TEXT("SM_DS_Rage_Genocide_03.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_D_L:
+		return TEXT("SM_DS_Rage_Genocide_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_D_R:
+		return TEXT("SM_DS_Rage_Genocide_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_X_L:
+		return TEXT("SM_DS_Rage_Genocide_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_X_R:
+		return TEXT("SM_DS_Rage_Genocide_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_Z_L:
+		return TEXT("SM_DS_Rage_Genocide_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Rage_Genocide_Z_R:
+		return TEXT("SM_DS_Rage_Genocide_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Scart_X:
+		return TEXT("SM_DS_Scart_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Scart_X_D:
+		return TEXT("SM_DS_Scart_X_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Scart_Z:
+		return TEXT("SM_DS_Scart_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Fate_Trail_Front01:
+		return TEXT("SM_DS_Skill_Fate_Trail_Front01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Front02:
+		return TEXT("SM_DS_Skill_Fate_Trail_Stop_Front02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Top01:
+		return TEXT("SM_DS_Skill_Fate_Trail_Stop_Top01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Fate_Trail_Stop_Top02:
+		return TEXT("SM_DS_Skill_Fate_Trail_Stop_Top02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Trace_Front01:
+		return TEXT("SM_DS_Skill_Trace_Front01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Skill_Trace_Top01:
+		return TEXT("SM_DS_Skill_Trace_Top01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_Charging_Ground_01:
+		return TEXT("SM_DS_SP_Charging_Ground_01.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_Charging_Ground_02:
+		return TEXT("SM_DS_SP_Charging_Ground_02.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_D_L:
+		return TEXT("SM_DS_SP_EX1_D_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_D_R:
+		return TEXT("SM_DS_SP_EX1_D_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_X_L:
+		return TEXT("SM_DS_SP_EX1_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_X_R:
+		return TEXT("SM_DS_SP_EX1_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_Z_L:
+		return TEXT("SM_DS_SP_EX1_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SP_EX1_Z_R:
+		return TEXT("SM_DS_SP_EX1_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_L_D_Plane:
+		return TEXT("SM_DS_Switching_L_D_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_L_X_Plane:
+		return TEXT("SM_DS_Switching_L_X_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_L_Z_Plane:
+		return TEXT("SM_DS_Switching_L_Z_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_R_D_Plane:
+		return TEXT("SM_DS_Switching_R_D_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_R_X_Plane:
+		return TEXT("SM_DS_Switching_R_X_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Switching_R_Z_Plane:
+		return TEXT("SM_DS_Switching_R_Z_Plane.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_L_D:
+		return TEXT("SM_DS_SwitchingA_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_L_X:
+		return TEXT("SM_DS_SwitchingA_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_L_Z:
+		return TEXT("SM_DS_SwitchingA_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_R_D:
+		return TEXT("SM_DS_SwitchingA_R_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_R_X:
+		return TEXT("SM_DS_SwitchingA_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_SwitchingA_R_Z:
+		return TEXT("SM_DS_SwitchingA_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_T_BasicTrace_L:
+		return TEXT("SM_DS_T_BasicTrace_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Tornado_001:
+		return TEXT("SM_DS_Tornado_001.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_01_L_D:
+		return TEXT("SM_DS_Trail_01_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_01_L_X:
+		return TEXT("SM_DS_Trail_01_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_01_L_Z:
+		return TEXT("SM_DS_Trail_01_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_L_D:
+		return TEXT("SM_DS_Trail_02_L_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_L_X:
+		return TEXT("SM_DS_Trail_02_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_L_Z:
+		return TEXT("SM_DS_Trail_02_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_R_D:
+		return TEXT("SM_DS_Trail_02_R_D.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_R_X:
+		return TEXT("SM_DS_Trail_02_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_R_X2:
+		return TEXT("SM_DS_Trail_02_R_X2.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_02_R_Z:
+		return TEXT("SM_DS_Trail_02_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Cross:
+		return TEXT("SM_DS_Trail_Cross.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Cross_Invs:
+		return TEXT("SM_DS_Trail_Cross_Invs.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Front:
+		return TEXT("SM_DS_Trail_Front.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Top:
+		return TEXT("SM_DS_Trail_Top.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Top_Spindle:
+		return TEXT("SM_DS_Trail_Top_Spindle.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_X:
+		return TEXT("SM_DS_Trail_X.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail_Z:
+		return TEXT("SM_DS_Trail_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_DS_Trail03_L:
+		return TEXT("SM_DS_Trail03_L.fbx");
+		break;
+	case Prototype_Mesh_SM_DualSword_Basic:
+		return TEXT("SM_DualSword_Basic.fbx");
+		break;
+	case Prototype_Mesh_SM_DualSword_Basic_01:
+		return TEXT("SM_DualSword_Basic_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Dust01:
+		return TEXT("SM_Dust01.fbx");
+		break;
+	case Prototype_Mesh_SM_DW_ring:
+		return TEXT("SM_DW_ring.fbx");
+		break;
+	case Prototype_Mesh_SM_DW_Weapon:
+		return TEXT("SM_DW_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_Dynamite_03:
+		return TEXT("SM_Dynamite_03.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Bullet:
+		return TEXT("SM_EB_Bullet.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Bullet_01:
+		return TEXT("SM_EB_Bullet_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Bullet_Extend:
+		return TEXT("SM_EB_Bullet_Extend.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Rage_Bullet_:
+		return TEXT("SM_EB_Rage_Bullet_.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Trap_01:
+		return TEXT("SM_EB_Trap_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Trap_02:
+		return TEXT("SM_EB_Trap_02.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Trap_03:
+		return TEXT("SM_EB_Trap_03.fbx");
+		break;
+	case Prototype_Mesh_SM_EB_Trap_04:
+		return TEXT("SM_EB_Trap_04.fbx");
+		break;
+	case Prototype_Mesh_SM_Edan_Sword:
+		return TEXT("SM_Edan_Sword.fbx");
+		break;
+	case Prototype_Mesh_SM_Edan_Sword_Tuto:
+		return TEXT("SM_Edan_Sword_Tuto.fbx");
+		break;
+	case Prototype_Mesh_SM_eggshell:
+		return TEXT("SM_eggshell.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_AngelSword:
+		return TEXT("SM_EM_AngelSword.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_AngelSword_01:
+		return TEXT("SM_EM_AngelSword_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_barbell_01:
+		return TEXT("SM_EM_barbell_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Batting:
+		return TEXT("SM_EM_Batting.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Bench:
+		return TEXT("SM_EM_Bench.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Boombox:
+		return TEXT("SM_EM_Boombox.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Bouquet:
+		return TEXT("SM_EM_Bouquet.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Box:
+		return TEXT("SM_EM_Box.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_BrokenKeyboard_01:
+		return TEXT("SM_EM_BrokenKeyboard_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_BrokenKeyboard_02:
+		return TEXT("SM_EM_BrokenKeyboard_02.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Broom:
+		return TEXT("SM_EM_Broom.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_CampingChair:
+		return TEXT("SM_EM_CampingChair.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_CampingWood:
+		return TEXT("SM_EM_CampingWood.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Chair:
+		return TEXT("SM_EM_Chair.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Coin:
+		return TEXT("SM_EM_Coin.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Cook_Dish:
+		return TEXT("SM_EM_Cook_Dish.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Cook_fryingFan:
+		return TEXT("SM_EM_Cook_fryingFan.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Copycat_03:
+		return TEXT("SM_EM_Copycat_03.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_CopyCow_grass_01:
+		return TEXT("SM_EM_CopyCow_grass_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_DanceGame:
+		return TEXT("SM_EM_DanceGame.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_DanceGame_01:
+		return TEXT("SM_EM_DanceGame_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Dumbbell_01:
+		return TEXT("SM_EM_Dumbbell_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_EyeCover:
+		return TEXT("SM_EM_EyeCover.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_FireworkRocket:
+		return TEXT("SM_EM_FireworkRocket.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Flashlight:
+		return TEXT("SM_EM_Flashlight.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Grank_01:
+		return TEXT("SM_EM_Grank_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_GRankS04:
+		return TEXT("SM_EM_GRankS04.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_GRankS04_Sword:
+		return TEXT("SM_EM_GRankS04_Sword.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_GRankS06:
+		return TEXT("SM_EM_GRankS06.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Gun:
+		return TEXT("SM_EM_Gun.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Hula:
+		return TEXT("SM_EM_Hula.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Kettlebelll_01:
+		return TEXT("SM_EM_Kettlebelll_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Keyboard_01:
+		return TEXT("SM_EM_Keyboard_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Keyboard_part_01:
+		return TEXT("SM_EM_Keyboard_part_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Lightning_01:
+		return TEXT("SM_EM_Lightning_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Lightning_02:
+		return TEXT("SM_EM_Lightning_02.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Lightning_06:
+		return TEXT("SM_EM_Lightning_06.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Lightning_07:
+		return TEXT("SM_EM_Lightning_07.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Lightning_08:
+		return TEXT("SM_EM_Lightning_08.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_LoveLetter:
+		return TEXT("SM_EM_LoveLetter.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_LoveLetter_02:
+		return TEXT("SM_EM_LoveLetter_02.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_MagnifierBig:
+		return TEXT("SM_EM_MagnifierBig.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_MagnifierSmall:
+		return TEXT("SM_EM_MagnifierSmall.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Marionette:
+		return TEXT("SM_EM_Marionette.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Mic:
+		return TEXT("SM_EM_Mic.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Mic_01:
+		return TEXT("SM_EM_Mic_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_MoneyGun:
+		return TEXT("SM_EM_MoneyGun.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_MoneyPaper:
+		return TEXT("SM_EM_MoneyPaper.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Mrank_05:
+		return TEXT("SM_EM_Mrank_05.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Notebook:
+		return TEXT("SM_EM_Notebook.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Phone:
+		return TEXT("SM_EM_Phone.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_PowerBow:
+		return TEXT("SM_EM_PowerBow.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Powered01:
+		return TEXT("SM_EM_Powered01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_PowerSwordShield:
+		return TEXT("SM_EM_PowerSwordShield.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_PowerTSword:
+		return TEXT("SM_EM_PowerTSword.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Pumpkin_06:
+		return TEXT("SM_EM_Pumpkin_06.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_RoyalSaluteSword:
+		return TEXT("SM_EM_RoyalSaluteSword.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_ShoulderPress_Bench_01:
+		return TEXT("SM_EM_ShoulderPress_Bench_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Shuriken:
+		return TEXT("SM_EM_Shuriken.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Shuriken_02:
+		return TEXT("SM_EM_Shuriken_02.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Shuriken_03:
+		return TEXT("SM_EM_Shuriken_03.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_SkyLantern:
+		return TEXT("SM_EM_SkyLantern.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_SpotLight:
+		return TEXT("SM_EM_SpotLight.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_SpotLight_01:
+		return TEXT("SM_EM_SpotLight_01.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Sunbed:
+		return TEXT("SM_EM_Sunbed.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_SurfingBoard:
+		return TEXT("SM_EM_SurfingBoard.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Tennis_Racket:
+		return TEXT("SM_EM_Tennis_Racket.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Tournament:
+		return TEXT("SM_EM_Tournament.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Two:
+		return TEXT("SM_EM_Two.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Ukulele:
+		return TEXT("SM_EM_Ukulele.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_VRGearL:
+		return TEXT("SM_EM_VRGearL.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_VRGearR:
+		return TEXT("SM_EM_VRGearR.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_VRHead:
+		return TEXT("SM_EM_VRHead.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_WineGlass:
+		return TEXT("SM_EM_WineGlass.fbx");
+		break;
+	case Prototype_Mesh_SM_EM_Zero:
+		return TEXT("SM_EM_Zero.fbx");
+		break;
+	case Prototype_Mesh_SM_Embossing:
+		return TEXT("SM_Embossing.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Aura01:
+		return TEXT("SM_FallingSun_Aura01.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Aura02:
+		return TEXT("SM_FallingSun_Aura02.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Light02:
+		return TEXT("SM_FallingSun_Light02.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Light03:
+		return TEXT("SM_FallingSun_Light03.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Light04:
+		return TEXT("SM_FallingSun_Light04.fbx");
+		break;
+	case Prototype_Mesh_SM_FallingSun_Wind01:
+		return TEXT("SM_FallingSun_Wind01.fbx");
+		break;
+	case Prototype_Mesh_SM_Fire_Cylinder_02:
+		return TEXT("SM_Fire_Cylinder_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Fire_Cylinder_03:
+		return TEXT("SM_Fire_Cylinder_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Fire_Piece:
+		return TEXT("SM_Fire_Piece.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Helix_Wind_01:
+		return TEXT("SM_FireBall_Helix_Wind_01.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Helix_Wind_02:
+		return TEXT("SM_FireBall_Helix_Wind_02.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Round_Wind_01:
+		return TEXT("SM_FireBall_Round_Wind_01.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Round_Wind_03:
+		return TEXT("SM_FireBall_Round_Wind_03.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Round_Wind_05:
+		return TEXT("SM_FireBall_Round_Wind_05.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Sphere_01:
+		return TEXT("SM_FireBall_Sphere_01.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Sphere_02:
+		return TEXT("SM_FireBall_Sphere_02.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Sphere_Front_01:
+		return TEXT("SM_FireBall_Sphere_Front_01.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Sphere_Wind_01:
+		return TEXT("SM_FireBall_Sphere_Wind_01.fbx");
+		break;
+	case Prototype_Mesh_SM_FireBall_Sphere_Wind_03:
+		return TEXT("SM_FireBall_Sphere_Wind_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Fireball_Sphere01:
+		return TEXT("SM_Fireball_Sphere01.fbx");
+		break;
+	case Prototype_Mesh_SM_fish:
+		return TEXT("SM_fish.fbx");
+		break;
+	case Prototype_Mesh_SM_FrontWind:
+		return TEXT("SM_FrontWind.fbx");
+		break;
+	case Prototype_Mesh_SM_FrontWind_02:
+		return TEXT("SM_FrontWind_02.fbx");
+		break;
+	case Prototype_Mesh_SM_FrozenSpear_Meteo03:
+		return TEXT("SM_FrozenSpear_Meteo03.fbx");
+		break;
+	case Prototype_Mesh_SM_FrozenSpear_Meteo04:
+		return TEXT("SM_FrozenSpear_Meteo04.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_01:
+		return TEXT("SM_Garvan_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_02:
+		return TEXT("SM_Garvan_Trail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_03:
+		return TEXT("SM_Garvan_Trail_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_04:
+		return TEXT("SM_Garvan_Trail_04.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_05:
+		return TEXT("SM_Garvan_Trail_05.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Trail_06:
+		return TEXT("SM_Garvan_Trail_06.fbx");
+		break;
+	case Prototype_Mesh_SM_Garvan_Weapon:
+		return TEXT("SM_Garvan_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_Gem:
+		return TEXT("SM_Gem.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_GodHands_Wing:
+		return TEXT("SM_GH_GodHands_Wing.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_GodHands_Wing_01:
+		return TEXT("SM_GH_GodHands_Wing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_GodHands_Wing_02:
+		return TEXT("SM_GH_GodHands_Wing_02.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_Guard_01:
+		return TEXT("SM_GH_Guard_01.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_Guard_cross:
+		return TEXT("SM_GH_Guard_cross.fbx");
+		break;
+	case Prototype_Mesh_SM_GH_Guard_cross_01:
+		return TEXT("SM_GH_Guard_cross_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Ghost_Chase_Sphere01:
+		return TEXT("SM_Ghost_Chase_Sphere01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Hit01:
+		return TEXT("SM_Giantic_Creature_Hit01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill01_L01:
+		return TEXT("SM_Giantic_Creature_Skill01_L01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill01_L02:
+		return TEXT("SM_Giantic_Creature_Skill01_L02.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill01_R01:
+		return TEXT("SM_Giantic_Creature_Skill01_R01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill01_R02:
+		return TEXT("SM_Giantic_Creature_Skill01_R02.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill02_L01:
+		return TEXT("SM_Giantic_Creature_Skill02_L01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill02_L02:
+		return TEXT("SM_Giantic_Creature_Skill02_L02.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill04_L01:
+		return TEXT("SM_Giantic_Creature_Skill04_L01.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill04_L02:
+		return TEXT("SM_Giantic_Creature_Skill04_L02.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill05_Base:
+		return TEXT("SM_Giantic_Creature_Skill05_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_Giantic_Creature_Skill05_Edge:
+		return TEXT("SM_Giantic_Creature_Skill05_Edge.fbx");
+		break;
+	case Prototype_Mesh_SM_GN_Projectile_01:
+		return TEXT("SM_GN_Projectile_01.fbx");
+		break;
+	case Prototype_Mesh_SM_GN_Spring01:
+		return TEXT("SM_GN_Spring01.fbx");
+		break;
+	case Prototype_Mesh_SM_GN_Spring02:
+		return TEXT("SM_GN_Spring02.fbx");
+		break;
+	case Prototype_Mesh_SM_GN_Wind:
+		return TEXT("SM_GN_Wind.fbx");
+		break;
+	case Prototype_Mesh_SM_GN_Wind01:
+		return TEXT("SM_GN_Wind01.fbx");
+		break;
+	case Prototype_Mesh_SM_Grudge_Wraith_skill05:
+		return TEXT("SM_Grudge_Wraith_skill05.fbx");
+		break;
+	case Prototype_Mesh_SM_Grudge_Wraith_skill05_mesh:
+		return TEXT("SM_Grudge_Wraith_skill05_mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_Grudge_Wraith_skill05_mesh_02:
+		return TEXT("SM_Grudge_Wraith_skill05_mesh_02.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo01_01:
+		return TEXT("SM_GT_AirCombo01_01.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo01_02_Trace_Y:
+		return TEXT("SM_GT_AirCombo01_02_Trace_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo01_02_Trace_Z:
+		return TEXT("SM_GT_AirCombo01_02_Trace_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Fire_Y:
+		return TEXT("SM_GT_AirCombo02_SM_Air02_Fire_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Main_X:
+		return TEXT("SM_GT_AirCombo02_SM_Air02_Main_X.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Main_Y:
+		return TEXT("SM_GT_AirCombo02_SM_Air02_Main_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Sub_X:
+		return TEXT("SM_GT_AirCombo02_SM_Air02_Sub_X.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo02_SM_Air02_Sub_Y:
+		return TEXT("SM_GT_AirCombo02_SM_Air02_Sub_Y.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Fire_X_Mesh:
+		return TEXT("SM_GT_AirCombo03_Air03_Fire_X_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Main_X_Mesh:
+		return TEXT("SM_GT_AirCombo03_Air03_Main_X_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Main_Y_Mesh:
+		return TEXT("SM_GT_AirCombo03_Air03_Main_Y_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_X_Mesh:
+		return TEXT("SM_GT_AirCombo03_Air03_Sub_X_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_X_Mesh_1:
+		return TEXT("SM_GT_AirCombo03_Air03_Sub_X_Mesh_1.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo03_Air03_Sub_Y_Mesh:
+		return TEXT("SM_GT_AirCombo03_Air03_Sub_Y_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo04_Doddgy_Trace:
+		return TEXT("SM_GT_AirCombo04_Doddgy_Trace.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo04_Main_Trace:
+		return TEXT("SM_GT_AirCombo04_Main_Trace.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirCombo04_Sub_Trace:
+		return TEXT("SM_GT_AirCombo04_Sub_Trace.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Base:
+		return TEXT("SM_GT_AirComboEX_Trail_SM_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Doddgy:
+		return TEXT("SM_GT_AirComboEX_Trail_SM_Doddgy.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_AirComboEX_Trail_SM_Sub:
+		return TEXT("SM_GT_AirComboEX_Trail_SM_Sub.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_Cyinder_01:
+		return TEXT("SM_GT_Cyinder_01.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_DashCombo_DashCombo_Doddgy_Mesh:
+		return TEXT("SM_GT_DashCombo_DashCombo_Doddgy_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_DashCombo_DashCombo_Main_Mesh:
+		return TEXT("SM_GT_DashCombo_DashCombo_Main_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_DashCombo_DashCombo_Sub_Mesh:
+		return TEXT("SM_GT_DashCombo_DashCombo_Sub_Mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_Hellpunch_Line01_V:
+		return TEXT("SM_GT_Hellpunch_Line01_V.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_SphereHarf:
+		return TEXT("SM_GT_SphereHarf.fbx");
+		break;
+	case Prototype_Mesh_SM_GT_Trail_Main_X01:
+		return TEXT("SM_GT_Trail_Main_X01.fbx");
+		break;
+	case Prototype_Mesh_SM_Guadian_Skill07_Shild_Center:
+		return TEXT("SM_Guadian_Skill07_Shild_Center.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Shield:
+		return TEXT("SM_Guardian_Shield.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Shield_01:
+		return TEXT("SM_Guardian_Shield_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Spear:
+		return TEXT("SM_Guardian_Spear.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Trail_01:
+		return TEXT("SM_Guardian_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Trail_01_2:
+		return TEXT("SM_Guardian_Trail_01_2.fbx");
+		break;
+	case Prototype_Mesh_SM_Guardian_Trail_02:
+		return TEXT("SM_Guardian_Trail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_half_ball:
+		return TEXT("SM_half_ball.fbx");
+		break;
+	case Prototype_Mesh_SM_half_ball_closed:
+		return TEXT("SM_half_ball_closed.fbx");
+		break;
+	case Prototype_Mesh_SM_half_ball_closed_1:
+		return TEXT("SM_half_ball_closed_1.fbx");
+		break;
+	case Prototype_Mesh_SM_half_cylinder:
+		return TEXT("SM_half_cylinder.fbx");
+		break;
+	case Prototype_Mesh_SM_Harf_Donut00:
+		return TEXT("SM_Harf_Donut00.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_01:
+		return TEXT("SM_Helix_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_01_Small:
+		return TEXT("SM_Helix_01_Small.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_02:
+		return TEXT("SM_Helix_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_02_Small:
+		return TEXT("SM_Helix_02_Small.fbx");
+		break;
+	case Prototype_Mesh_SM_helix_2:
+		return TEXT("SM_helix_2.fbx");
+		break;
+	case Prototype_Mesh_SM_helix_04:
+		return TEXT("SM_helix_04.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_05:
+		return TEXT("SM_Helix_05.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_07:
+		return TEXT("SM_Helix_07.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_08:
+		return TEXT("SM_Helix_08.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_09:
+		return TEXT("SM_Helix_09.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_Crystal:
 		return TEXT("SM_Helix_Crystal.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_Crystal2:
+		return TEXT("SM_Helix_Crystal2.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_Crystal2_01:
+		return TEXT("SM_Helix_Crystal2_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Helix_Crystal2_02:
+		return TEXT("SM_Helix_Crystal2_02.fbx");
+		break;
+	case Prototype_Mesh_SM_helix003:
+		return TEXT("SM_helix003.fbx");
+		break;
+	case Prototype_Mesh_SM_Hit_01:
+		return TEXT("SM_Hit_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Hit_02:
+		return TEXT("SM_Hit_02.fbx");
+		break;
+	case Prototype_Mesh_SM_HolyCross02:
+		return TEXT("SM_HolyCross02.fbx");
+		break;
+	case Prototype_Mesh_SM_HP_Sphere_01:
+		return TEXT("SM_HP_Sphere_01.fbx");
+		break;
+	case Prototype_Mesh_SM_ice2:
+		return TEXT("SM_ice2.fbx");
+		break;
+	case Prototype_Mesh_SM_IceTrap_Ice:
+		return TEXT("SM_IceTrap_Ice.fbx");
+		break;
+	case Prototype_Mesh_SM_IceWall_2:
+		return TEXT("SM_IceWall_2.fbx");
+		break;
+	case Prototype_Mesh_SM_Incomplete_Palaspel_Weapon:
+		return TEXT("SM_Incomplete_Palaspel_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_Karin_Weapon_01:
+		return TEXT("SM_Karin_Weapon_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Karin_Weapon_02:
+		return TEXT("SM_Karin_Weapon_02.fbx");
+		break;
 	case Prototype_Mesh_SM_Karin_Weapon_03:
 		return TEXT("SM_Karin_Weapon_03.fbx");
-	case Prototype_Mesh_SM_ky_tornado6:
-		return TEXT("SM_ky_tornado6.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraHousya:
+		return TEXT("SM_ky_auraHousya.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraWall_distA:
+		return TEXT("SM_ky_auraWall_distA.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraWall_distB:
+		return TEXT("SM_ky_auraWall_distB.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraWallSq3:
+		return TEXT("SM_ky_auraWallSq3.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraWallSq4:
+		return TEXT("SM_ky_auraWallSq4.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_auraWallSq4_H:
+		return TEXT("SM_ky_auraWallSq4_H.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_circle:
+		return TEXT("SM_ky_circle.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_circle_inv:
+		return TEXT("SM_ky_circle_inv.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_circle_inv_midpoly:
+		return TEXT("SM_ky_circle_inv_midpoly.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_circle_midpoly:
+		return TEXT("SM_ky_circle_midpoly.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinder_harf01:
+		return TEXT("SM_ky_cylinder_harf01.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinder_lowPoly:
+		return TEXT("SM_ky_cylinder_lowPoly.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinder_superLow:
+		return TEXT("SM_ky_cylinder_superLow.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinder_superLow_inv:
+		return TEXT("SM_ky_cylinder_superLow_inv.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinderBend03_RE:
+		return TEXT("SM_ky_cylinderBend03_RE.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_cylinderBend03_RE02:
+		return TEXT("SM_ky_cylinderBend03_RE02.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_doomBvert2Inv:
+		return TEXT("SM_ky_doomBvert2Inv.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_dust_triangle:
+		return TEXT("SM_ky_dust_triangle.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_lans_rot:
+		return TEXT("SM_ky_lans_rot.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_needle01:
+		return TEXT("SM_ky_needle01.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_planeBend2:
+		return TEXT("SM_ky_planeBend2.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quad_centerRot:
+		return TEXT("SM_ky_quad_centerRot.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadA:
+		return TEXT("SM_ky_quadA.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadA_02:
+		return TEXT("SM_ky_quadA_02.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadA_03:
+		return TEXT("SM_ky_quadA_03.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadCross:
+		return TEXT("SM_ky_quadCross.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadCross02:
+		return TEXT("SM_ky_quadCross02.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quadCross03:
+		return TEXT("SM_ky_quadCross03.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_quads:
+		return TEXT("SM_ky_quads.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rayOffset:
+		return TEXT("SM_ky_rayOffset.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rayOffset2:
+		return TEXT("SM_ky_rayOffset2.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rock_single:
+		return TEXT("SM_ky_rock_single.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rock2B:
+		return TEXT("SM_ky_rock2B.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rock06:
+		return TEXT("SM_ky_rock06.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_rock07:
+		return TEXT("SM_ky_rock07.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphere:
+		return TEXT("SM_ky_sphere.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphere_dist:
+		return TEXT("SM_ky_sphere_dist.fbx");
+		break;
 	case Prototype_Mesh_SM_ky_sphere_dist_wind:
 		return TEXT("SM_ky_sphere_dist_wind.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereHarf:
+		return TEXT("SM_ky_sphereHarf.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereHarf01Inv:
+		return TEXT("SM_ky_sphereHarf01Inv.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereHarf02_dist:
+		return TEXT("SM_ky_sphereHarf02_dist.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereHarf03:
+		return TEXT("SM_ky_sphereHarf03.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereHarf05:
+		return TEXT("SM_ky_sphereHarf05.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereIco:
+		return TEXT("SM_ky_sphereIco.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_sphereThree_01:
+		return TEXT("SM_ky_sphereThree_01.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_tornado3:
+		return TEXT("SM_ky_tornado3.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_tornado6:
+		return TEXT("SM_ky_tornado6.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_tornado7:
+		return TEXT("SM_ky_tornado7.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_wallCylinder_center_smooth:
+		return TEXT("SM_ky_wallCylinder_center_smooth.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine10B:
+		return TEXT("SM_ky_windLine10B.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine13b:
+		return TEXT("SM_ky_windLine13b.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine19_1:
+		return TEXT("SM_ky_windLine19_1.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine20:
+		return TEXT("SM_ky_windLine20.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine22:
+		return TEXT("SM_ky_windLine22.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine23:
+		return TEXT("SM_ky_windLine23.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine24:
+		return TEXT("SM_ky_windLine24.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine26:
+		return TEXT("SM_ky_windLine26.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine27midPoly:
+		return TEXT("SM_ky_windLine27midPoly.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine29Inv:
+		return TEXT("SM_ky_windLine29Inv.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windLine32:
+		return TEXT("SM_ky_windLine32.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmoke:
+		return TEXT("SM_ky_windSmoke.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmoke_spin:
+		return TEXT("SM_ky_windSmoke_spin.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmokeDist:
+		return TEXT("SM_ky_windSmokeDist.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmokeVertRot:
+		return TEXT("SM_ky_windSmokeVertRot.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmokeVertRot_01:
+		return TEXT("SM_ky_windSmokeVertRot_01.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_windSmokeVertRot_02:
+		return TEXT("SM_ky_windSmokeVertRot_02.fbx");
+		break;
+	case Prototype_Mesh_SM_ky_wing:
+		return TEXT("SM_ky_wing.fbx");
+		break;
+	case Prototype_Mesh_SM_L_DS_DashCombo_H_R:
+		return TEXT("SM_L_DS_DashCombo_H_R.fbx");
+		break;
+	case Prototype_Mesh_SM_L_DS_Dashcombo_X_L:
+		return TEXT("SM_L_DS_Dashcombo_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_L_DS_DashCombo_X_R:
+		return TEXT("SM_L_DS_DashCombo_X_R.fbx");
+		break;
 	case Prototype_Mesh_SM_L_DS_Dashcombo_Y_L:
 		return TEXT("SM_L_DS_Dashcombo_Y_L.fbx");
+		break;
+	case Prototype_Mesh_SM_L_DS_DashCombo_Y_R:
+		return TEXT("SM_L_DS_DashCombo_Y_R.fbx");
+		break;
+	case Prototype_Mesh_SM_lans:
+		return TEXT("SM_lans.fbx");
+		break;
+	case Prototype_Mesh_SM_lans_rot:
+		return TEXT("SM_lans_rot.fbx");
+		break;
+	case Prototype_Mesh_SM_lans_UV_HorizenFlip:
+		return TEXT("SM_lans_UV_HorizenFlip.fbx");
+		break;
+	case Prototype_Mesh_SM_lans_UV_VerticalFlip:
+		return TEXT("SM_lans_UV_VerticalFlip.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_001:
+		return TEXT("SM_LB_Arrow_001.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_002:
+		return TEXT("SM_LB_Arrow_002.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_003:
+		return TEXT("SM_LB_Arrow_003.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_004:
+		return TEXT("SM_LB_Arrow_004.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_005_1:
+		return TEXT("SM_LB_Arrow_005_1.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_005_2:
+		return TEXT("SM_LB_Arrow_005_2.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_005_3:
+		return TEXT("SM_LB_Arrow_005_3.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_005_4:
+		return TEXT("SM_LB_Arrow_005_4.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Aura_01:
+		return TEXT("SM_LB_Arrow_Aura_01.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Aura_01_Inv:
+		return TEXT("SM_LB_Arrow_Aura_01_Inv.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Charging_001:
+		return TEXT("SM_LB_Arrow_Charging_001.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Charging_002:
+		return TEXT("SM_LB_Arrow_Charging_002.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Charging_003:
+		return TEXT("SM_LB_Arrow_Charging_003.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Charging_004:
+		return TEXT("SM_LB_Arrow_Charging_004.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Charging_005:
+		return TEXT("SM_LB_Arrow_Charging_005.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Arrow_Main_01:
+		return TEXT("SM_LB_Arrow_Main_01.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Basic_Projectile_Base:
+		return TEXT("SM_LB_Basic_Projectile_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_H_Arrow_aura:
+		return TEXT("SM_LB_H_Arrow_aura.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_H_Arrow_aura2:
+		return TEXT("SM_LB_H_Arrow_aura2.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Invisibility_01:
+		return TEXT("SM_LB_Invisibility_01.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Invisibility_02:
+		return TEXT("SM_LB_Invisibility_02.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Invisibility_03:
+		return TEXT("SM_LB_Invisibility_03.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Projectile_01:
+		return TEXT("SM_LB_Projectile_01.fbx");
+		break;
+	case Prototype_Mesh_SM_LB_Rain_Arrow:
+		return TEXT("SM_LB_Rain_Arrow.fbx");
+		break;
+	case Prototype_Mesh_SM_Lighting:
+		return TEXT("SM_Lighting.fbx");
+		break;
+	case Prototype_Mesh_SM_Lighting_01:
+		return TEXT("SM_Lighting_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Lightning_Base:
+		return TEXT("SM_Lightning_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_Lightning_Cyl_00:
+		return TEXT("SM_Lightning_Cyl_00.fbx");
+		break;
+	case Prototype_Mesh_SM_Lire_Weapon_Tuto:
+		return TEXT("SM_Lire_Weapon_Tuto.fbx");
+		break;
+	case Prototype_Mesh_SM_LongBow_1020050:
+		return TEXT("SM_LongBow_1020050.fbx");
+		break;
+	case Prototype_Mesh_SM_Map_Aura_1:
+		return TEXT("SM_Map_Aura_1.fbx");
+		break;
+	case Prototype_Mesh_SM_Map_Aura_2:
+		return TEXT("SM_Map_Aura_2.fbx");
+		break;
+	case Prototype_Mesh_SM_Map_Aura_3:
+		return TEXT("SM_Map_Aura_3.fbx");
+		break;
+	case Prototype_Mesh_SM_Map_Aura_4:
+		return TEXT("SM_Map_Aura_4.fbx");
+		break;
+	case Prototype_Mesh_SM_meteo:
+		return TEXT("SM_meteo.fbx");
+		break;
+	case Prototype_Mesh_SM_Meteo_Sphere:
+		return TEXT("SM_Meteo_Sphere.fbx");
+		break;
+	case Prototype_Mesh_SM_Meteo_Sphere3:
+		return TEXT("SM_Meteo_Sphere3.fbx");
+		break;
+	case Prototype_Mesh_SM_Muzzle:
+		return TEXT("SM_Muzzle.fbx");
+		break;
+	case Prototype_Mesh_SM_Muzzle_01:
+		return TEXT("SM_Muzzle_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Muzzle_02:
+		return TEXT("SM_Muzzle_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Arrow:
+		return TEXT("SM_Nae_Arrow.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Arrow_01:
+		return TEXT("SM_Nae_Arrow_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Arrow_02:
+		return TEXT("SM_Nae_Arrow_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Arrow_03:
+		return TEXT("SM_Nae_Arrow_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Bow:
+		return TEXT("SM_Nae_Bow.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_kick:
+		return TEXT("SM_Nae_kick.fbx");
+		break;
+	case Prototype_Mesh_SM_Nae_Pro_Base:
+		return TEXT("SM_Nae_Pro_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_OB_01:
+		return TEXT("SM_OB_01.fbx");
+		break;
+	case Prototype_Mesh_SM_OB_Helix_01:
+		return TEXT("SM_OB_Helix_01.fbx");
+		break;
+	case Prototype_Mesh_SM_OB_Helix_02:
+		return TEXT("SM_OB_Helix_02.fbx");
+		break;
+	case Prototype_Mesh_SM_OB_Helix_03:
+		return TEXT("SM_OB_Helix_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Palaspel:
+		return TEXT("SM_Palaspel.fbx");
+		break;
+	case Prototype_Mesh_SM_Palaspel_01:
+		return TEXT("SM_Palaspel_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Aura_Wind01:
+		return TEXT("SM_Pheonix_Aura_Wind01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_MagicSquare01:
+		return TEXT("SM_Pheonix_MagicSquare01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_MagicSquare02:
+		return TEXT("SM_Pheonix_MagicSquare02.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_UP_Z_Wind01:
+		return TEXT("SM_Pheonix_UP_Z_Wind01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_UP_Z_Wind02:
+		return TEXT("SM_Pheonix_UP_Z_Wind02.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wind01:
+		return TEXT("SM_Pheonix_Wind01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wind02:
+		return TEXT("SM_Pheonix_Wind02.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wind03:
+		return TEXT("SM_Pheonix_Wind03.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wind04:
+		return TEXT("SM_Pheonix_Wind04.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wind05:
+		return TEXT("SM_Pheonix_Wind05.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wing_01:
+		return TEXT("SM_Pheonix_Wing_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Pheonix_Wing_02:
+		return TEXT("SM_Pheonix_Wing_02.fbx");
+		break;
+	case Prototype_Mesh_SM_PiercingArrow_Arrow:
+		return TEXT("SM_PiercingArrow_Arrow.fbx");
+		break;
+	case Prototype_Mesh_SM_PiercingArrow_Aura_01:
+		return TEXT("SM_PiercingArrow_Aura_01.fbx");
+		break;
+	case Prototype_Mesh_SM_PiercingArrow_Aura_02:
+		return TEXT("SM_PiercingArrow_Aura_02.fbx");
+		break;
+	case Prototype_Mesh_SM_PiercingArrow_Aura_06:
+		return TEXT("SM_PiercingArrow_Aura_06.fbx");
+		break;
+	case Prototype_Mesh_SM_plane_pillar:
+		return TEXT("SM_plane_pillar.fbx");
+		break;
+	case Prototype_Mesh_SM_PlaneSlash_01:
+		return TEXT("SM_PlaneSlash_01.fbx");
+		break;
+	case Prototype_Mesh_SM_quad_centerRot:
+		return TEXT("SM_quad_centerRot.fbx");
+		break;
+	case Prototype_Mesh_SM_RainDrop:
+		return TEXT("SM_RainDrop.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgea_Hand_L_New_888:
+		return TEXT("SM_Reorgea_Hand_L_New_888.fbx");
+		break;
 	case Prototype_Mesh_SM_Reorgea_Hand_R_New_3:
 		return TEXT("SM_Reorgea_Hand_R_New_3.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_cylinder:
+		return TEXT("SM_Reorgeaskil04_cylinder.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_Dust_mesh:
+		return TEXT("SM_Reorgeaskil04_Dust_mesh.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_1:
+		return TEXT("SM_Reorgeaskil04_stone1_1.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_2:
+		return TEXT("SM_Reorgeaskil04_stone1_2.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_3:
+		return TEXT("SM_Reorgeaskil04_stone1_3.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_4:
+		return TEXT("SM_Reorgeaskil04_stone1_4.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_5:
+		return TEXT("SM_Reorgeaskil04_stone1_5.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_6:
+		return TEXT("SM_Reorgeaskil04_stone1_6.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_7:
+		return TEXT("SM_Reorgeaskil04_stone1_7.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_8:
+		return TEXT("SM_Reorgeaskil04_stone1_8.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone1_9:
+		return TEXT("SM_Reorgeaskil04_stone1_9.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone2_3:
+		return TEXT("SM_Reorgeaskil04_stone2_3.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone2_4:
+		return TEXT("SM_Reorgeaskil04_stone2_4.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone2_5:
+		return TEXT("SM_Reorgeaskil04_stone2_5.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone2_8:
+		return TEXT("SM_Reorgeaskil04_stone2_8.fbx");
+		break;
+	case Prototype_Mesh_SM_Reorgeaskil04_stone2_10:
+		return TEXT("SM_Reorgeaskil04_stone2_10.fbx");
+		break;
+	case Prototype_Mesh_SM_Ring_01:
+		return TEXT("SM_Ring_01.fbx");
+		break;
 	case Prototype_Mesh_SM_Ring_03:
 		return TEXT("SM_Ring_03.fbx");
+		break;
+	case Prototype_Mesh_SM_rockRing:
+		return TEXT("SM_rockRing.fbx");
+		break;
+	case Prototype_Mesh_SM_Sae_Trail:
+		return TEXT("SM_Sae_Trail.fbx");
+		break;
+	case Prototype_Mesh_SM_Sae_Weapon:
+		return TEXT("SM_Sae_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_Sae_wind:
+		return TEXT("SM_Sae_wind.fbx");
+		break;
+	case Prototype_Mesh_SM_sakura_patal:
+		return TEXT("SM_sakura_patal.fbx");
+		break;
+	case Prototype_Mesh_SM_SC_01:
+		return TEXT("SM_SC_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SC_Helix_01:
+		return TEXT("SM_SC_Helix_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SC_Helix_02:
+		return TEXT("SM_SC_Helix_02.fbx");
+		break;
+	case Prototype_Mesh_SM_SC_Helix_03:
+		return TEXT("SM_SC_Helix_03.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Doddgy_X:
+		return TEXT("SM_Scart_Doddgy_X.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Main_X:
+		return TEXT("SM_Scart_Main_X.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Main_Z:
+		return TEXT("SM_Scart_Main_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Main_Z02:
+		return TEXT("SM_Scart_Main_Z02.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Main_Z03:
+		return TEXT("SM_Scart_Main_Z03.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Sub_Z:
+		return TEXT("SM_Scart_Sub_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_Scart_Wind_Z:
+		return TEXT("SM_Scart_Wind_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_corn:
+		return TEXT("SM_SG_corn.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_corn_1:
+		return TEXT("SM_SG_corn_1.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_Projectile_Main_Y_High:
+		return TEXT("SM_SG_Projectile_Main_Y_High.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_Projectile_Main_Y_High_01:
+		return TEXT("SM_SG_Projectile_Main_Y_High_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_spin_sub:
+		return TEXT("SM_SG_spin_sub.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_tornado:
+		return TEXT("SM_SG_tornado.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_tornado_sub:
+		return TEXT("SM_SG_tornado_sub.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_tornado_sub_2:
+		return TEXT("SM_SG_tornado_sub_2.fbx");
+		break;
+	case Prototype_Mesh_SM_SG_tornado_sub_2_02:
+		return TEXT("SM_SG_tornado_sub_2_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Shard:
+		return TEXT("SM_Shard.fbx");
+		break;
+	case Prototype_Mesh_SM_shock_wind:
+		return TEXT("SM_shock_wind.fbx");
+		break;
+	case Prototype_Mesh_SM_Shot_Cylinder_01:
+		return TEXT("SM_Shot_Cylinder_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Shot_Cylinder_03:
+		return TEXT("SM_Shot_Cylinder_03.fbx");
+		break;
+	case Prototype_Mesh_SM_side_wind_down:
+		return TEXT("SM_side_wind_down.fbx");
+		break;
+	case Prototype_Mesh_SM_side_wind_golem:
+		return TEXT("SM_side_wind_golem.fbx");
+		break;
+	case Prototype_Mesh_SM_side_wind_golem_1:
+		return TEXT("SM_side_wind_golem_1.fbx");
+		break;
+	case Prototype_Mesh_SM_SP_End_X_L:
+		return TEXT("SM_SP_End_X_L.fbx");
+		break;
+	case Prototype_Mesh_SM_SP_End_X_R:
+		return TEXT("SM_SP_End_X_R.fbx");
+		break;
+	case Prototype_Mesh_SM_SP_End_Z_L:
+		return TEXT("SM_SP_End_Z_L.fbx");
+		break;
+	case Prototype_Mesh_SM_SP_End_Z_R:
+		return TEXT("SM_SP_End_Z_R.fbx");
+		break;
+	case Prototype_Mesh_SM_sphere:
+		return TEXT("SM_sphere.fbx");
+		break;
+	case Prototype_Mesh_SM_Sphere_01_Dom:
+		return TEXT("SM_Sphere_01_Dom.fbx");
+		break;
+	case Prototype_Mesh_SM_Sphere_02_Dom:
+		return TEXT("SM_Sphere_02_Dom.fbx");
+		break;
+	case Prototype_Mesh_SM_sphere_melon:
+		return TEXT("SM_sphere_melon.fbx");
+		break;
+	case Prototype_Mesh_SM_Sphere_Plane_01:
+		return TEXT("SM_Sphere_Plane_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Sphere_RPG:
+		return TEXT("SM_Sphere_RPG.fbx");
+		break;
+	case Prototype_Mesh_SM_SpherePlate_01:
+		return TEXT("SM_SpherePlate_01.fbx");
+		break;
+	case Prototype_Mesh_SM_sphereUV_lowpoly:
+		return TEXT("SM_sphereUV_lowpoly.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_L_X:
+		return TEXT("SM_SpinningSlash_O_L_X.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_L_XD:
+		return TEXT("SM_SpinningSlash_O_L_XD.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_L_Z:
+		return TEXT("SM_SpinningSlash_O_L_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_R_DX:
+		return TEXT("SM_SpinningSlash_O_R_DX.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_R_X:
+		return TEXT("SM_SpinningSlash_O_R_X.fbx");
+		break;
+	case Prototype_Mesh_SM_SpinningSlash_O_R_Z:
+		return TEXT("SM_SpinningSlash_O_R_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Aura_01:
+		return TEXT("SM_SS_Aura_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Aura_02:
+		return TEXT("SM_SS_Aura_02.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Shield:
+		return TEXT("SM_SS_Shield.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Shield_pivot:
+		return TEXT("SM_SS_Shield_pivot.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Shield_Throw:
+		return TEXT("SM_SS_Shield_Throw.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_ShieldEdge:
+		return TEXT("SM_SS_ShieldEdge.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Stone_01:
+		return TEXT("SM_SS_Stone_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Stone_02:
+		return TEXT("SM_SS_Stone_02.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Stone_03:
+		return TEXT("SM_SS_Stone_03.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Trail_01:
+		return TEXT("SM_SS_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Trail_02:
+		return TEXT("SM_SS_Trail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_SS_Trail_03:
+		return TEXT("SM_SS_Trail_03.fbx");
+		break;
+	case Prototype_Mesh_SM_ST3_Portal_00:
+		return TEXT("SM_ST3_Portal_00.fbx");
+		break;
+	case Prototype_Mesh_SM_ST3_Portal_01:
+		return TEXT("SM_ST3_Portal_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Stone_01:
+		return TEXT("SM_Stone_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Stone_02:
+		return TEXT("SM_Stone_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Stone_L:
+		return TEXT("SM_Stone_L.fbx");
+		break;
+	case Prototype_Mesh_SM_Stone_R:
+		return TEXT("SM_Stone_R.fbx");
+		break;
+	case Prototype_Mesh_SM_Survivor_Buff:
+		return TEXT("SM_Survivor_Buff.fbx");
+		break;
+	case Prototype_Mesh_SM_Survivor_Buff_plane:
+		return TEXT("SM_Survivor_Buff_plane.fbx");
+		break;
+	case Prototype_Mesh_SM_Text_Floor:
+		return TEXT("SM_Text_Floor.fbx");
+		break;
+	case Prototype_Mesh_SM_Theo_Trail_01:
+		return TEXT("SM_Theo_Trail_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Theo_Trail_02:
+		return TEXT("SM_Theo_Trail_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Theo_Trail01:
+		return TEXT("SM_Theo_Trail01.fbx");
+		break;
+	case Prototype_Mesh_SM_ToonKaboom01:
+		return TEXT("SM_ToonKaboom01.fbx");
+		break;
+	case Prototype_Mesh_SM_Tornado_01:
+		return TEXT("SM_Tornado_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Tornado_02:
+		return TEXT("SM_Tornado_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Tornado_360_01:
+		return TEXT("SM_Tornado_360_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Trail_Line:
+		return TEXT("SM_Trail_Line.fbx");
+		break;
+	case Prototype_Mesh_SM_Trail_Twist_02:
+		return TEXT("SM_Trail_Twist_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Trail_Twist_03:
+		return TEXT("SM_Trail_Twist_03.fbx");
+		break;
+	case Prototype_Mesh_SM_tray:
+		return TEXT("SM_tray.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_combo_01_Front:
+		return TEXT("SM_TS_Basic_combo_01_Front.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_combo_01_Top:
+		return TEXT("SM_TS_Basic_combo_01_Top.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_combo_Cyl01:
+		return TEXT("SM_TS_Basic_combo_Cyl01.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_combo_EX2_Aura:
+		return TEXT("SM_TS_Basic_combo_EX2_Aura.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword:
+		return TEXT("SM_TS_Basic_combo_EX2_Sword.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Main_X:
+		return TEXT("SM_TS_Basic_Trail_Main_X.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Main_Z:
+		return TEXT("SM_TS_Basic_Trail_Main_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Main_Z_UVHorizenFlip:
+		return TEXT("SM_TS_Basic_Trail_Main_Z_UVHorizenFlip.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Slash_X:
+		return TEXT("SM_TS_Basic_Trail_Slash_X.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Sub_X:
+		return TEXT("SM_TS_Basic_Trail_Sub_X.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Basic_Trail_Sub_Z:
+		return TEXT("SM_TS_Basic_Trail_Sub_Z.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Double_Slash_01:
+		return TEXT("SM_TS_Double_Slash_01.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Double_Slash_02:
+		return TEXT("SM_TS_Double_Slash_02.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Dragon_Weapon:
+		return TEXT("SM_TS_Dragon_Weapon.fbx");
+		break;
+	case Prototype_Mesh_SM_TS_Trace_01_Re:
+		return TEXT("SM_TS_Trace_01_Re.fbx");
+		break;
+	case Prototype_Mesh_SM_Upright_noFloor:
+		return TEXT("SM_Upright_noFloor.fbx");
+		break;
+	case Prototype_Mesh_SM_wallCylinder_center_smooth:
+		return TEXT("SM_wallCylinder_center_smooth.fbx");
+		break;
+	case Prototype_Mesh_SM_Wave_01:
+		return TEXT("SM_Wave_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Wave_02:
+		return TEXT("SM_Wave_02.fbx");
+		break;
+	case Prototype_Mesh_SM_Wind_Line13b_F:
+		return TEXT("SM_Wind_Line13b_F.fbx");
+		break;
+	case Prototype_Mesh_SM_Wind_Line13b_R:
+		return TEXT("SM_Wind_Line13b_R.fbx");
+		break;
+	case Prototype_Mesh_SM_Wind_M02:
+		return TEXT("SM_Wind_M02.fbx");
+		break;
+	case Prototype_Mesh_SM_Wind_RTR_Base:
+		return TEXT("SM_Wind_RTR_Base.fbx");
+		break;
+	case Prototype_Mesh_SM_Wind_RTR_Base2:
+		return TEXT("SM_Wind_RTR_Base2.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine11C:
+		return TEXT("SM_windLine11C.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine13_multi:
+		return TEXT("SM_windLine13_multi.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine15:
+		return TEXT("SM_windLine15.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine16:
+		return TEXT("SM_windLine16.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine16_midPoly:
+		return TEXT("SM_windLine16_midPoly.fbx");
+		break;
+	case Prototype_Mesh_SM_windLine19:
+		return TEXT("SM_windLine19.fbx");
+		break;
+	case Prototype_Mesh_SM_windMesh:
+		return TEXT("SM_windMesh.fbx");
+		break;
+	case Prototype_Mesh_SM_windMesh_a:
+		return TEXT("SM_windMesh_a.fbx");
+		break;
+	case Prototype_Mesh_SM_windMesh_b:
+		return TEXT("SM_windMesh_b.fbx");
+		break;
+	case Prototype_Mesh_SM_windSmoke:
+		return TEXT("SM_windSmoke.fbx");
+		break;
+	case Prototype_Mesh_SM_Wing_T_01:
+		return TEXT("SM_Wing_T_01.fbx");
+		break;
+
+
+
 	case Prototype_Mesh_ENV_BLD_Palace_02:
 		return TEXT("ENV_BLD_Palace_02.fbx");
 		break;

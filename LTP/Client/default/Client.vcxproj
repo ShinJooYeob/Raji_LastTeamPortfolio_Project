@@ -184,6 +184,7 @@
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
+    <ClInclude Include="..\public\Client_Str.h" />
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />

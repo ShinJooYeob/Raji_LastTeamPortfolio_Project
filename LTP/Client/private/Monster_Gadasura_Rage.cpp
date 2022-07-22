@@ -285,6 +285,9 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	m_iOncePattern = 51;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -543,6 +546,14 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 17:
 		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.1f)
+			{
+				// #TIME Attack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+
+
 			m_bLookAtOn = false;
 			break;
 		}
@@ -609,6 +620,9 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
+				// #TIME StopBoundAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -646,6 +660,9 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
+				// #TIME BoundAttack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+							   
 				m_iAdjMovedIndex++;
 			}
 			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4689655)
@@ -666,6 +683,9 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
+				// #TIME BoundAttack2
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+
 				m_iAdjMovedIndex++;
 			}
 			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.751724)
@@ -685,6 +705,9 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_Texture_BulletDesc.dDuration = 0.7;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+				
+				// #TIME BoundAttack3
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
 
 				m_iAdjMovedIndex++;
 			}

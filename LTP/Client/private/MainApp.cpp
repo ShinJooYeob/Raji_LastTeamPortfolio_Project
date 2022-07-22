@@ -33,6 +33,7 @@ CMainApp::CMainApp()
 {
 	Safe_AddRef(m_pGameInstance);
 }
+static void TestStr();
 
 HRESULT CMainApp::Initialize()
 {
@@ -530,4 +531,3 @@ void CMainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
 }
-

@@ -63,7 +63,7 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_One(const wchar_t* fbxName, _fMatri
 	// 특정 모델 Desc에 저장 후 모델 생성
 	FAILED_CHECK(Load_ModelFBXName_CreateModel(fbxName, DefaultMat));
 	mCurrent_NameIter = mList_CreateModelName.begin();
-//	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
 
 	return S_OK;
 }

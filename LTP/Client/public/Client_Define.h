@@ -21,6 +21,7 @@ extern _bool g_bShowMouse;
 namespace Client {};
 using namespace Client;
 
+#include "Client_Str.h"
 #include "Client_Enum.h"
 #include "Client_Struct.h"
 #include "Client_Macro.h"

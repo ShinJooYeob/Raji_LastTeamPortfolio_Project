@@ -55,8 +55,7 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 	//m_pModel->Change_AnimIndex_UntilNReturn_Must(); //1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 수 있지만 다른 애니메이션을 동작시킬 수 있음
 
 	 
-	//camera moving test!@#!@#!@$#@$!@$@!$@!$@!#$@!#$@!#$@!#$!@%#$%#@%#@%#@%#@^^$%^#$^#$^%&
-	//PlayAnim(dDeltaTime);
+	PlayAnim(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
@@ -65,7 +64,7 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 	////////////////Motion Test
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 	///////////////////////////
-	//@#$#$@%#@$%#@$%#$%#$%#$%#$%#%#$%#$%@#^$#%^%$&%^&%*^%&*^%*^%&*^%*^%&!@$@!$!@$!@$!@$!@$
+
 	return _int();
 }
 
@@ -287,6 +286,9 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	m_iOncePattern = 16;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -538,6 +540,13 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 17:
 		{
+			// #TIME Attack1
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.1f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+
 			m_bLookAtOn = false;
 			break;
 		}
@@ -575,6 +584,10 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_Texture_BulletDesc.dDuration = 0.7;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				// #TIME SmashAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -612,6 +625,9 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate <= 0.588235)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+
+				// #TIME Run Attack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
 			}
 			break;
 		}

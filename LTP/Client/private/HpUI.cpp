@@ -378,8 +378,13 @@ void CHpUI::Free()
 
 	m_vPosTransforms.clear();
 
-	for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
-		Safe_Release(m_vecInstancedHPTransform[i]);
+	// #RICK 
+	if (m_pTransformCom)
+	{
+
+		for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+			Safe_Release(m_vecInstancedHPTransform[i]);
+	}
 
 	m_vecInstancedHPTransform.clear();
 

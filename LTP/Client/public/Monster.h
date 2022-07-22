@@ -43,6 +43,7 @@ protected:
 
 protected:
 	/* Partilce */
+//	CTransform*						m_PartilceTransform = nullptr;
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };

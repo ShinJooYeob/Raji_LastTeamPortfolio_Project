@@ -36,12 +36,14 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+	// Particle
 	FAILED_CHECK(Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE2, m_pTransformCom));
+
+	// #BUG NAVIONPLEASE
 	/////////////////test
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	/////////////////
 
 	return S_OK;
@@ -99,7 +101,7 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pTailAttackColliderCom));
 #endif
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
 	if (m_pHPUI != nullptr)
 	{
@@ -598,6 +600,9 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	m_iOncePattern = 7;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -650,6 +655,7 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 12:
 		m_iOnceAnimNumber = 21; //Scorpion_Attack
+
 		m_bComboAnimSwitch = false;
 		break;
 	case 13:
@@ -771,6 +777,72 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Components()
 
 	return S_OK;
 }
+
+HRESULT CMonster_Mahinasura_Leader::Ready_ParticleDesc()
+{
+	// HandPos
+
+	m_pTextureParticleTransform_RHand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_RHand, E_FAIL);
+
+	m_pTextureParticleTransform_LHand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_LHand, E_FAIL);
+
+	// TailPos
+	m_pTextureParticleTransform_Tail = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Tail, E_FAIL);
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999¿©µµ Á×´Â´Ù. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
+{
+
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+
+	//	EX)
+	//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
+	//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];ddd
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+
+	mat.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_RHand->Set_Matrix(mat);
+
+	mat.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
+	m_pTextureParticleTransform_LHand->Set_Matrix(mat);
+
+
+	mat.r[3] = m_pTailAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_Tail->Set_Matrix(mat);
+
+	return S_OK;
+}
+
 
 HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 {
@@ -917,6 +989,11 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Leader::HANDATTACK;
+
+				// #TIME HandAttack 3 
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND, m_pTextureParticleTransform_LHand);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND, m_pTextureParticleTransform_RHand);
+
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
@@ -944,6 +1021,9 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Leader::HANDATTACK;
 
+				// #TIME HandAttack 4
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND, m_pTextureParticleTransform_LHand);
+
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate >= 0.24 && PlayRate <= 0.48)
@@ -959,6 +1039,13 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.5f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND, m_pTextureParticleTransform_RHand);
+
+				m_iAdjMovedIndex++;
+			}
 			break;
 		}
 		case 20: {
@@ -967,7 +1054,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Leader::TAILATTACK;
-
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate >= 0.24 && PlayRate <= 0.6)
@@ -980,9 +1066,16 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				//_float EasingSpeed;
 				//EasingSpeed = GetSingle(CGameInstance)->Easing(TYPE_CircularOut, 1.7f, 1.f, (_float)PlayRate - 0.24f, 0.36f);
 
-				//m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);
+				//m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed);			
 
 			}
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3f)
+			{
+				// #TIME Tailattack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL, m_pTextureParticleTransform_Tail);
+				m_iAdjMovedIndex++;
+			}
+
 			break;
 		}
 		case 21: {
@@ -1001,8 +1094,12 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 					m_bLookAtOn = false;
 					m_bColliderAttackOn = true;
 					m_eColliderType = CMonster_Mahinasura_Leader::TAILATTACK;
-
 					m_iAdjMovedIndex++;
+
+					// #TIME Tailattack2
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL, m_pTextureParticleTransform_Tail);
+
+
 				}
 			}
 			else {

@@ -33,8 +33,8 @@ public:
 
 public:
 	/* Particle */
-	virtual HRESULT Ready_ParticleDesc();
-	virtual HRESULT Update_Particle(_double timer);
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
 
 private:
 	HRESULT				SetUp_Info();
@@ -83,6 +83,13 @@ private:
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
+	// Particle
+	CTransform*						m_pTextureParticleTransform_RHand = nullptr;
+	CTransform*						m_pTextureParticleTransform_LHand = nullptr;
+	CTransform*						m_pTextureParticleTransform_Tail = nullptr;
+
+	
+
 	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
@@ -110,10 +117,6 @@ private:
 
 
 
-private:/*For Particle*/
-	CTransform*						m_pTextureParticleTransform = nullptr;
-//	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
-//	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
 
 
 
