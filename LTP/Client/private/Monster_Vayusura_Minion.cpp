@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Vayusura_Minion.h"
 
+#include "HpUI.h"
 
 CMonster_Vayusura_Minion::CMonster_Vayusura_Minion(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -36,7 +37,7 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 
 	///////////////////test
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(198.943f, 30.2f, 179.853f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 31.2f, 185.583f));
 
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
@@ -67,6 +68,9 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
 	Update_Collider(dDeltaTime);
 
 	return _int();
@@ -92,6 +96,10 @@ _int CMonster_Vayusura_Minion::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
 #endif
 
+	if (m_pHPUI != nullptr)
+	{
+		m_pHPUI->LateUpdate(dDeltaTime);
+	}
 	return _int();
 }
 
@@ -145,6 +153,10 @@ void CMonster_Vayusura_Minion::CollisionTriger(CCollider * pMyCollider, _uint iM
 
 _float CMonster_Vayusura_Minion::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+	m_bIOnceAnimSwitch = true;
+
 	return _float();
 }
 
@@ -450,21 +462,14 @@ HRESULT CMonster_Vayusura_Minion::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
-	//m_dOnceCoolTime += dDeltaTime;
 
-	//if (m_dOnceCoolTime > 2 && m_fDistance < 3 || m_bComboAnimSwitch == true)
-	//{
-	//	m_dOnceCoolTime = 0;
-	//	m_dInfinity_CoolTime = 0;
+	if (m_bIOnceAnimSwitch == true)
+	{
+		m_dInfinity_CoolTime = 0;
+		m_iInfinityPattern = 0;
 
-	//	if (m_bIOnceAnimSwitch == false)
-	//	{
-	//		Pattern_Change();
-
-
-	//		m_bIOnceAnimSwitch = true;
-	//	}
-	//}
+		m_iOncePattern = 40;
+	}
 
 	//반복적으로 동작하는 애니메이션
 	m_dInfinity_CoolTime += dDeltaTime;
@@ -503,12 +508,11 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 
 	switch (m_iOncePattern)
 	{
-	case 0:
-		m_iOnceAnimNumber = 5; //Vayusura_Dive
+	case 40:
+	{
+		m_iOnceAnimNumber = 4;
 		break;
-	case 1:
-		m_iOnceAnimNumber = 5; //Vayusura_Dive
-		break;
+	}
 
 	}
 
@@ -667,6 +671,16 @@ HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
+
 	SetUp_Collider();
 
 	return S_OK;
@@ -681,12 +695,14 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		m_iAdjMovedIndex = 0;
 		m_bColliderAttackOn = false;
+		m_dAcceleration = 1;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
 			m_dOnceCoolTime = 0;
-			m_dInfinity_CoolTime = 0;
+			m_dInfinity_CoolTime = 20;
+			int a = 10;
 		}
 	}
 
@@ -694,6 +710,23 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		switch (iNowAnimIndex)
 		{
+		case 4:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1;
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				m_bIOnceAnimSwitch = true;
+			}
+			else if (PlayRate >= 0.95)
+			{
+				m_bIOnceAnimSwitch = false;
+			}
+			break;
+		}
 		case 5:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
@@ -771,4 +804,5 @@ void CMonster_Vayusura_Minion::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pAttackColliderCom);
+	Safe_Release(m_pHPUI);
 }

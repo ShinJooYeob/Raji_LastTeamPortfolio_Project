@@ -59,6 +59,10 @@ private:
 
 	_bool				m_bColliderAttackOn = false;
 
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 
