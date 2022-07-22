@@ -47,9 +47,11 @@ private:
 
 private:
 	HRESULT	SetUp_Info();
+	HRESULT	SetUp_Collider();
 	HRESULT	SetUp_BoneMatrix();
 
-	void	Update_AttachMatrix();
+	HRESULT	Update_AttachMatrix();
+	HRESULT	Update_Collider(_double dDeltaTime);
 
 private:
 	HRESULT Update_Weapon(_double dDeltaTime);
@@ -71,7 +73,9 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
 
-
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
 
 private:
 	_float4x4			m_fAttachedMatrix;
