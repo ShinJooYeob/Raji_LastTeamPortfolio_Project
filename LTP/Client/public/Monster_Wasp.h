@@ -12,6 +12,7 @@ class CMonster_Wasp final : public CMonster
 	{
 		CTransform*		pTransform = nullptr;
 		CNavigation*	pNavigation = nullptr;
+		CCollider*		pCollider = nullptr;
 		_uint			iAnimType = ANIM_END;
 		_uint			iRenderType = RENDER_IDLE;
 
@@ -63,7 +64,6 @@ private:
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
-	CCollider*			m_pColliderCom = nullptr;
 	CCollider*			m_pAttackColliderCom = nullptr;
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
