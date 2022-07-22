@@ -79,6 +79,8 @@ _bool CCollider::Inspect_Collision(CCollider* pTargetCollider, _uint iBufferInde
 	return Inspect_ChildBuffer(iBufferIndex, pTargetCollider, iTargetIndex, pOutIndex);
 }
 
+
+
 HRESULT CCollider::Set_ParantBuffer(_uint iParantIndex, _int iIndex)
 {
 	if (iIndex == -1) iIndex = _int(_int(m_vecColliderBuffer.size()) - 1);
@@ -217,6 +219,8 @@ _bool CCollider::Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetColli
 
 	return  false;
 }
+
+
 
 CCollider * CCollider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {

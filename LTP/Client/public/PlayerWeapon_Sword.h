@@ -36,6 +36,9 @@ public:
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 	virtual void		EffectParticleOn(_uint iIndex , void* pArg = nullptr) override;
 
+public:
+	void				Set_ShieldBashAttack(_bool bShieldBashAttack);
+
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
@@ -51,8 +54,11 @@ private:
 	void				Update_AttachMatrix();
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 	void				Update_Colliders();
+	void				Update_Colliders_MainAttackCombo3();
+	void				Update_Colliders_PowerAttackCombo3();
+	void				Update_Colliders_UltimateAttack();
 
-	HRESULT Ready_ParticleDesc();
+	HRESULT				Ready_ParticleDesc();
 
 public:
 	void				Change_Pivot(ESwordPivot ePitvot);
@@ -68,6 +74,7 @@ private:
 	CHierarchyNode*		m_pAttachedNode = nullptr;
 	_float				m_fMaxTime_ClearTrail = 0.f;
 	_float				m_fCurTime_ClearTrail = 0.f;
+	_bool				m_bShieldBashAttack = false;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -76,8 +83,12 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CSwordTrail*		m_pSwordTrail = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CCollider*			m_pCollider_MainAttack_Combo3 = nullptr;
+	CCollider*			m_pCollider_PowerAttack_Combo3 = nullptr;
+	CCollider*			m_pCollider_Ultimate = nullptr;
 
 	CDissolve*			m_pDissolveCom = nullptr;
+
 private:
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;

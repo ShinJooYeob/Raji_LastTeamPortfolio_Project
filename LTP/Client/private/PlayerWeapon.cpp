@@ -97,6 +97,26 @@ void CPlayerWeapon::DeActive_Collision_2()
 	m_bActiveCollision_2 = false;
 }
 
+void CPlayerWeapon::Active_Collision_3()
+{
+	m_bActiveCollision_3 = true;
+}
+
+void CPlayerWeapon::DeActive_Collision_3()
+{
+	m_bActiveCollision_3 = false;
+}
+
+void CPlayerWeapon::Active_Collision_4()
+{
+	m_bActiveCollision_4 = true;
+}
+
+void CPlayerWeapon::DeActive_Collision_4()
+{
+	m_bActiveCollision_4 = false;
+}
+
 void CPlayerWeapon::Active_Trail(_bool bActivate)
 {
 	m_bActiveTrail = bActivate;

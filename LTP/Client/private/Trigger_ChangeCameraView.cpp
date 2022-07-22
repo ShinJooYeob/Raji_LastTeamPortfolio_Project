@@ -196,26 +196,44 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	_float fDist_MainToPlayer = XMVectorGetX(XMVector3Length(m_tChangeCameraViewDesc.fMain_Pos.XMVector() - vPlayerPos));
 	_float fWeight_MainToPlayer = fDist_MainToPlayer / m_fDist_MainToSub;
 
-	_float3 fResult_CamPos = (m_tChangeCameraViewDesc.fMain_CamPos.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamPos.XMVector() * fWeight_MainToPlayer);
+	_float3 fResult_CamPos = g_pGameInstance->Easing_Vector(TYPE_Linear, m_tChangeCameraViewDesc.fMain_CamPos.XMVector(), m_tChangeCameraViewDesc.fSub_CamPos.XMVector(), fWeight_MainToPlayer, 1.f);
+	//_float3 fResult_CamPos = (m_tChangeCameraViewDesc.fMain_CamPos.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamPos.XMVector() * fWeight_MainToPlayer);
 	_float3 fResult_CamLook = (m_tChangeCameraViewDesc.fMain_CamLook.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamLook.XMVector() * fWeight_MainToPlayer);
 	_float fResult_MoveWeight = (m_tChangeCameraViewDesc.fMain_CamMoveWeight * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamMoveWeight * fWeight_MainToPlayer);
 	_float fResult_LookWeight = (m_tChangeCameraViewDesc.fMain_CamLookWeight * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamLookWeight * fWeight_MainToPlayer);
 
+	_bool bCamLookLock = false;
+
+
 	if (fWeight_MainToPlayer < 0.5f)
 	{
-		m_pMainCamera->Lock_CamLook(m_tChangeCameraViewDesc.bMainLockCamLook, fResult_CamLook.XMVector());
+		if (false == m_tChangeCameraViewDesc.bMainLockCamLook && fWeight_MainToPlayer > 0.1f)
+		{
+			m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
+		}
+		else
+		{
+			m_pMainCamera->Lock_CamLook(m_tChangeCameraViewDesc.bMainLockCamLook, fResult_CamLook.XMVector());
+		}
 		m_pMainCamera->Set_MaxTargetArmLength(m_tChangeCameraViewDesc.fMainMaxTargetArmLength);
 		m_pMainCamera->Set_MinTargetArmLength(m_tChangeCameraViewDesc.fMainMinTargetArmLength);
 	}
 	else
 	{
-		m_pMainCamera->Lock_CamLook(m_tChangeCameraViewDesc.bSubLockCamLook, fResult_CamLook.XMVector());
+		if (false == m_tChangeCameraViewDesc.bSubLockCamLook && fWeight_MainToPlayer < 0.9f)
+		{
+			m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
+		}
+		else
+		{
+			m_pMainCamera->Lock_CamLook(m_tChangeCameraViewDesc.bSubLockCamLook, fResult_CamLook.XMVector());
+		}
 		m_pMainCamera->Set_MaxTargetArmLength(m_tChangeCameraViewDesc.fSubMaxTargetArmLength);
 		m_pMainCamera->Set_MinTargetArmLength(m_tChangeCameraViewDesc.fSubMinTargetArmLength);
 	}
 
-	m_pMainCamera->Set_CameraMoveWeight(0.91f);
-	m_pMainCamera->Set_CameraLookWeight(0.91f);
+	m_pMainCamera->Set_CameraMoveWeight(0.9f); 
+	m_pMainCamera->Set_CameraLookWeight(0.9f);
 
 	m_pPlayer->Set_AttachCamPosOffset(fResult_CamPos);
 	

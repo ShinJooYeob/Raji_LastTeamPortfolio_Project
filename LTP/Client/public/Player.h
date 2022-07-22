@@ -309,7 +309,7 @@ private:
 
 
 private: /* Getter */
-	void				LookAt_MousePos();
+	void				LookAt_MousePos(_float fWeight = 0.85f);
 	_fVector			Get_MousePos();
 
 private:

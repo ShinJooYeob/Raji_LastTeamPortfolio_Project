@@ -5841,6 +5841,9 @@ enum COMPONENTID
 	//JJB
 	Com_HPUI,
 	Com_Collider_1,
+	Com_Collider_2,
+	Com_Collider_3,
+	Com_Collider_4,
 	Com_SubTransform2
 };
 static const _tchar* Tag_Component(COMPONENTID eTag)
@@ -5887,6 +5890,15 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 		break;
 	case Com_Collider_1:
 		return TEXT("Com_Collider_1");
+		break;
+	case Com_Collider_2:
+		return TEXT("Com_Collider_2");
+		break;
+	case Com_Collider_3:
+		return TEXT("Com_Collider_3");
+		break;
+	case Com_Collider_4:
+		return TEXT("Com_Collider_4");
 		break;
 
 	case Com_ColliderSub:

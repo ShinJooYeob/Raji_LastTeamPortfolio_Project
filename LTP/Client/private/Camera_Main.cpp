@@ -802,20 +802,20 @@ void CCamera_Main::Update_CamMoveWeight()
 {
 	if (m_fCur_CamLookWeight < m_fTarget_CamLookWeight)
 	{
-		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.001f) + (m_fTarget_CamLookWeight * 0.999f);
+		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.01f) + (m_fTarget_CamLookWeight * 0.99f);
 	}
 	else
 	{
-		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.999f) + (m_fTarget_CamLookWeight * 0.001f);
+		m_fCur_CamLookWeight = (m_fCur_CamLookWeight * 0.99f) + (m_fTarget_CamLookWeight * 0.01f);
 	}
 
 	if (m_fCur_CamMoveWeight < m_fTarget_CamMoveWeight)
 	{
-		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.001f) + (m_fTarget_CamMoveWeight * 0.999f);
+		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.01f) + (m_fTarget_CamMoveWeight * 0.99f);
 	}
 	else
 	{
-		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.999f) + (m_fTarget_CamMoveWeight * 0.001f);
+		m_fCur_CamMoveWeight = (m_fCur_CamMoveWeight * 0.99f) + (m_fTarget_CamMoveWeight * 0.01f);
 	}
 }
 
