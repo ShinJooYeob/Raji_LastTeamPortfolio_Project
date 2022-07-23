@@ -55,8 +55,6 @@ _int CStaticInstanceMapObject::LateUpdate(_double fDeltaTime)
 
 	for (auto& InstancMapObject : m_mapInstancMapObjects)
 	{
-	
-
 			Set_IsOcllusion(InstancMapObject.second.bIsOcllusion);
 
 			m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE,

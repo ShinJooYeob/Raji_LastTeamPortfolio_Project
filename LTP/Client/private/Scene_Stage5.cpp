@@ -236,12 +236,13 @@ HRESULT CScene_Stage5::Ready_Layer_Terrain(const _tchar * pLayerTag)
 HRESULT CScene_Stage5::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
+	
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
 
 
 

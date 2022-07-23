@@ -44,7 +44,8 @@ HRESULT CModelInstance::Initialize_Clone(void * pArg)
 }
 
 
-HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer)
+HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize,
+	vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer, _bool bPrimitiveCullingOn)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -56,17 +57,20 @@ HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
+		
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
 
+
 		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i,  m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive, pvecTimmer));
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive, pvecTimmer, bPrimitiveCullingOn));
 	}
 
 	return 0;
 }
 
-HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize, vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive , vector<_float4>*  pvecTiemer)
+HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize,
+	vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive , vector<_float4>*  pvecTiemer, _bool bPrimitiveCullingOn)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -83,7 +87,7 @@ HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, 
 
 
 		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive,pvecTiemer));
+			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive,pvecTiemer, bPrimitiveCullingOn));
 	}
 
 

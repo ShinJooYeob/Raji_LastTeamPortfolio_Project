@@ -67,6 +67,8 @@ VS_OUT_SHADOW VS_Shadow_NoWeightW(VS_IN In)
 		g_BoneMatrices.BoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
 		g_BoneMatrices.BoneMatrices[In.vBlendIndex.w] * In.vBlendWeight.w;
 
+	
+
 	vector		vLocalPosition = mul(vector(In.vModelDataPosition, 1.f), BoneMatrix);
 
 

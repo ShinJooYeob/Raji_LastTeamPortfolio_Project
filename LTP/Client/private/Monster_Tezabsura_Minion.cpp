@@ -36,7 +36,6 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 
 
 	m_fJumpPower = 3.f;
-
 	return S_OK;
 }
 
@@ -44,6 +43,35 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
+	{
+
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -73,6 +101,7 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
+	FAILED_CHECK(Update_ParticleTransform(dDeltaTime));
 	return _int();
 }
 
@@ -283,8 +312,10 @@ HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+	//m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), dDeltaTime);
 	switch (m_iOncePattern)
 	{
+
 	case 1:
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
@@ -335,7 +366,7 @@ HRESULT CMonster_Tezabsura_Minion::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 9)
+	if (m_iOncePattern >9)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -445,12 +476,107 @@ HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
 		}
 
 
+		_float Value = max(min(fJumpY / m_fJumpPower, 1.f), 0.f);
+		Set_LimLight_N_Emissive(_float4(0.35f, 0.9f, 0.35f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
 		_float3		fPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 		fPosition.y = m_fJumpTempPos.y + fJumpY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat3(&fPosition));
 	}
 
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Minion::Ready_ParticleDesc()
+{
+	//m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//m_pMeshParticleTransform	= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	//NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	//m_pTextureParticleTransform->Set_TurnSpeed(1);
+
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	//Monster_Tazabsura_Minon_1
+	//
+
+
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Tazabsura_Minon_3"));
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].eParticleTypeID = InstanceEffect_Fountain;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].Particle_Power = 10;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].EachParticleLifeTime = 0.35f;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].fMaxBoundaryRadius = 2.f;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].vPowerDirection = _float3(0, 1, 0);
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].Particle_Power = 20.f;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].SizeChageFrequency = 1;
+	//m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].ParticleSize2 = _float3(0.5f);
+
+
+
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Tazabsura_Minon_4"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].SizeChageFrequency = 1;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].Particle_Power = 20;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].ParticleSize2 = _float3(0.1f);
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].EachParticleLifeTime = (0.4f);
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].bBillboard = true;
+
+	//////////////////////////////////////////////////////////////////////////
+
+	m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"Monster_Tezabsura_Spring"));
+	ZeroMemory(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+	lstrcpy(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_Tornado));
+	m_vecMeshParticleDesc[0].ParticleSize = _float3(0.4f, 0.15f, 0.4f);
+	m_vecMeshParticleDesc[0].fAppearTimer = 0.15f;
+	m_vecMeshParticleDesc[0].EachParticleLifeTime = 0.4f;
+	m_vecMeshParticleDesc[0].vNoisePushingDir = _float2(0, 1.f);
+	m_vecMeshParticleDesc[0].ParticleSize = _float3(0.4f, 0.1f, 0.4f);
+
+	m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"Monster_Tezabsura_Br"));
+
+
+	//////////////////////////////////////////////////////////////////////////
+#pragma region Mesh
+	NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+	tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
+	tNIMEDesc.fAppearTime = 0.5f;
+	tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f + 0.15f;
+
+	tNIMEDesc.noisingdir = _float2(-1, 0);
+
+	tNIMEDesc.NoiseTextureIndex = 381;
+	tNIMEDesc.MaskTextureIndex = 33;
+	tNIMEDesc.iDiffuseTextureIndex = 369;
+	tNIMEDesc.m_iPassIndex = 19;
+	tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+	tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+	tNIMEDesc.NoiseTextureIndex = 381;
+	tNIMEDesc.vColor = _float4(0.35f, 0.85f, 0.35f, 1);
+
+	tNIMEDesc.RotAxis = FollowingDir_Right;
+	tNIMEDesc.RotationSpeedPerSec = 90.f / (tNIMEDesc.fMaxTime_Duration - tNIMEDesc.fAppearTime*2.f);
+	tNIMEDesc.vSize = _float3(0.1125f, 0.1125f, 0.1125f);
+	tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+	tNIMEDesc.MoveDir = FollowingDir_Look;
+	tNIMEDesc.MoveSpeed = 15.f;
+
+
+	tNIMEDesc.m_CheckerBuffer = Prototype_Object_Monster_Tezabsura_Minion;
+	//0
+	m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
+#pragma endregion
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Minion::Update_ParticleTransform(_double fDeltaTime)
+{
 	return S_OK;
 }
 
@@ -472,6 +598,7 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
 	tDesc.fScalingPerSec = 1;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
 
 
 	return S_OK;
@@ -534,6 +661,35 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_dAcceleration = 1.6452f;
+
+				m_iAdjMovedIndex++;
+			}
+			else if ( PlayRate > 0.2f && m_iAdjMovedIndex == 1)
+			{
+
+
+				//m_vecMeshParticleDesc[0].vFixedPosition = (m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				//	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *0.2f +
+				//	+m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) *1.f);
+
+				//m_vecMeshParticleDesc[0].vPowerDirection =
+				//	XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+				//		 - (m_vecMeshParticleDesc[0].vFixedPosition.XMVector())));
+					
+				m_vecTextureParticleDesc[0].vFixedPosition = m_vecMeshParticleDesc[0].vFixedPosition 
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				m_vecMeshParticleDesc[0].vPowerDirection = 
+					-((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *0.15f +
+					+m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) *1.f)-
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+				GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+
+
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+
+
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -554,16 +710,69 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
+
+			else if (PlayRate > 0.6f && m_iAdjMovedIndex == 1)
+			{
+
+				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition 
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+
+
+				m_iAdjMovedIndex++;
+			}
+
 			break;
 		}
 		case 11:
-			if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
-			{
-				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
-			}
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.35f, 0.9f, 0.35f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
+		if(PlayRate > 0.2f && m_iAdjMovedIndex == 0)
+		{
+
+
+			m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.55f;
+			m_vecNonMeshParticleDesc[0].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+			m_vecTextureParticleDesc[1].vFixedPosition = m_vecTextureParticleDesc[0].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 6.f;
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_Monster_Bullet_Plat), &m_vecNonMeshParticleDesc[0]);
+			m_iAdjMovedIndex++;
+		}
+		if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
+		{
+			m_bLookAtOn = false;
+			m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+		}
+		if (PlayRate > 0.5744f && m_iAdjMovedIndex == 1)
+		{
+
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+
+
+			m_iAdjMovedIndex++;
+
+		}
 			break;
 		case 12:
+
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.35f, 0.9f, 0.35f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
 			{
 				m_bLookAtOn = false;
@@ -636,4 +845,12 @@ void CMonster_Tezabsura_Minion::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+
+	
+		
 }

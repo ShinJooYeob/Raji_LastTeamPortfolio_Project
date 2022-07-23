@@ -1,5 +1,6 @@
 
 #define FloatCorrectionValue 0.00000125f
+//#define FloatCorrectionValue 0.000125f
 #define XTexelSize		0.00078125f
 #define YTexelSize		0.00138889f
 #define	DiagTexelSize	0.00159353f
@@ -781,7 +782,7 @@ PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 	matrix LightViewProj = mul(g_LightViewMatrix, g_LightProjMatrix);
 	float3 ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, In.vTexUV, LightViewProj);
 
-	vector		vWorldPos = vector(vWorldPosition.xyz,1);
+	vector		vWorldPos = vector(vWorldPosition.xyz, 1);
 	vector		vShadowDesc = g_TargetTexture.Sample(DefaultSampler, ClipUV_N_CurrentDepth.xy);
 
 	//if ()
@@ -791,61 +792,63 @@ PS_OUT_AfterDeferred PS_ShadowDrawLightWorldToWorld(PS_IN In)
 	float ShadowDepth = vShadowDesc.r;
 
 
-	if (length(float2(SunPos.x *iResolution.x / iResolution.y, SunPos.y ) - 
-		float2(In.vTexUV.x  *iResolution.x / iResolution.y, In.vTexUV.y))  < DiagTexelSize * g_SunSize)
+	if (length(float2(SunPos.x *iResolution.x / iResolution.y, SunPos.y) -
+		float2(In.vTexUV.x  *iResolution.x / iResolution.y, In.vTexUV.y)) < DiagTexelSize * g_SunSize)
 	{
 		//(vWorldPosition.x == 1 && )
 		Out.vColor2 = 1.f;
 
 	}
-		if (ClipUV_N_CurrentDepth.z > ShadowDepth + FloatCorrectionValue)
+
+
+	if (ClipUV_N_CurrentDepth.z > ShadowDepth + FloatCorrectionValue)
+	{
+		if (vShadowDesc.a != 0.0f && vWorldPosition.x != 1)
 		{
-			if (vShadowDesc.a != 0.0f && vWorldPosition.x != 1)
-			{
-				Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive, g_fShadowIntensive, 1);
-				Out.vColor2 = 0.f;
-			}
+			Out.vColor = vector(g_fShadowIntensive, g_fShadowIntensive, g_fShadowIntensive, 1);
+			Out.vColor2 = 0.f;
 		}
-		else if (vShadowDesc.a < 1.f)
+	}
+	else if (vShadowDesc.a < 1.f)
+	{
+
+		float OriginDepth = ClipUV_N_CurrentDepth.z;
+		bool IsGodRay = false;
+
+		[unroll(10)]
+		for (int i = -5; i <= 5; i++)
 		{
-
-			float OriginDepth = ClipUV_N_CurrentDepth.z;
-			bool IsGodRay = false;
-
 			[unroll(10)]
-			for (int i = -5; i <= 5; i++)
+			for (int j = -5; j <= 5; j++)
 			{
-				[unroll(10)]
-				for (int j = -5; j <= 5; j++)
+				float2 NewUV = In.vTexUV + float2(float(i) * XTexelSize, float(j) * YTexelSize);
+				ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, NewUV, LightViewProj);
+
+				vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, NewUV);
+				vWorldPos = vector(vWorldPosition.xyz, 1);
+				vShadowDesc = g_TargetTexture.Sample(DefaultSampler, ClipUV_N_CurrentDepth.xy);
+
+				if (ClipUV_N_CurrentDepth.z > OriginDepth + FloatCorrectionValue)
+					//||(vWorldPosition.x == 1 && length(SunPos - NewUV)  < 0.00159353f * 100 ))
 				{
-					float2 NewUV = In.vTexUV + float2(float(i) * XTexelSize, float(j) * YTexelSize);
-					ClipUV_N_CurrentDepth = Calculate_ClipUV_N_CurrentDepth(g_WorldPosTexture, NewUV, LightViewProj);
-
-					vWorldPosition = g_WorldPosTexture.Sample(DefaultSampler, NewUV);
-					vWorldPos = vector(vWorldPosition.xyz, 1);
-					vShadowDesc = g_TargetTexture.Sample(DefaultSampler, ClipUV_N_CurrentDepth.xy);
-
-					if (ClipUV_N_CurrentDepth.z > OriginDepth + FloatCorrectionValue)
-						//||(vWorldPosition.x == 1 && length(SunPos - NewUV)  < 0.00159353f * 100 ))
-					{
-						IsGodRay = true;
-						break;
-					}
-
+					IsGodRay = true;
+					break;
 				}
-				if (IsGodRay) break;
-			}
 
-			if (IsGodRay)
-			{
-				Out.vColor2 = 1.f;
 			}
+			if (IsGodRay) break;
 		}
 
+		if (IsGodRay)
+		{
+			Out.vColor2 = 1.f;
+		}
+	}
 
 
 
-	
+
+
 
 
 

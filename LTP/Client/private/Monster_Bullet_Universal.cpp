@@ -11,7 +11,7 @@ const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_
 	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Bomber.fbx"),
 	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
-	TEXT("Monster_Bullet_Tezabsura_Landmine.fbx"),
+	TEXT("Missile.fbx"),
 	TEXT("Ninjasura_Knife.fbx"),
 	TEXT("sinkhole.fbx")
 
@@ -23,13 +23,132 @@ CMonster_Bullet_Universal::CMonster_Bullet_Universal(ID3D11Device * pDevice, ID3
 }
 
 CMonster_Bullet_Universal::CMonster_Bullet_Universal(const CMonster_Bullet_Universal & rhs)
-	: CMonster_Bullet(rhs)
+	: CMonster_Bullet(rhs),
+	m_vecJYTextureParticleDesc(rhs.m_vecJYTextureParticleDesc),
+	m_vecJYMeshParticleDesc(rhs.m_vecJYMeshParticleDesc),
+	m_vecJYNonMeshParticleDesc(rhs.m_vecJYNonMeshParticleDesc)
 {
+
 }
 
 HRESULT CMonster_Bullet_Universal::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+#pragma region Tezabsura_Minion
+	//0
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Tazabsura_Minon_1"));
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].TotalParticleTime = 15.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].Particle_Power = 5.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].EachParticleLifeTime = 0.15f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].eParticleTypeID = InstanceEffect_Ball;
+
+	//1
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Tazabsura_Minon_2"));
+
+#pragma  endregion Tezabsura_Minion
+
+#pragma region Tezabsura_LandMine
+	//2
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_1"));
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].TotalParticleTime = 1.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].Particle_Power = 5.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].EachParticleLifeTime = 0.15f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].eParticleTypeID = InstanceEffect_Ball;
+	//3
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_2"));
+	//4
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_3"));
+	//5
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_4"));
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].TotalParticleTime = 1.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].Particle_Power = 5.f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].EachParticleLifeTime = 0.15f;
+	m_vecJYTextureParticleDesc[m_vecJYTextureParticleDesc.size() - 1].eParticleTypeID = InstanceEffect_Ball;
+
+	//6
+	m_vecJYTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_5"));
+
+#pragma  endregion Tezabsura_LandMine
+
+
+
+
+#pragma region Mesh
+
+
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Tornado;
+		tNIMEDesc.fAppearTime = 0.25f;
+		tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+		tNIMEDesc.NoiseTextureIndex = 6;
+		tNIMEDesc.MaskTextureIndex = 81;
+		tNIMEDesc.iDiffuseTextureIndex = 299;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = -1080.f;
+		tNIMEDesc.vSize = _float3(1.f, 1.5f, 1.f);
+		tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+
+		m_vecJYNonMeshParticleDesc.push_back(tNIMEDesc);
+	}
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
+		tNIMEDesc.fAppearTime = 0.25f;
+		tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+
+		tNIMEDesc.noisingdir = _float2(1, 0);
+
+		tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+		tNIMEDesc.NoiseTextureIndex = 6;
+		tNIMEDesc.MaskTextureIndex = 81;
+		tNIMEDesc.iDiffuseTextureIndex = 299;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = -1080.f;
+		tNIMEDesc.vSize = _float3(1.f, 1.5f, 1.f);
+		tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+		m_vecJYNonMeshParticleDesc.push_back(tNIMEDesc);
+	}
+
+	m_vecJYNonMeshParticleDesc[1].vLookDir = m_vecJYNonMeshParticleDesc[0].vLookDir
+		= _float3(1.f, 0, 0);
+	m_vecJYTextureParticleDesc[4].vPowerDirection = _float3(0.00001f, 1.f, 0);
+	m_vecJYTextureParticleDesc[3].vPowerDirection = _float3(1.f, 0, 0);
+	m_vecJYTextureParticleDesc[4].EachParticleLifeTime = m_vecJYTextureParticleDesc[3].EachParticleLifeTime = 0.35f;
+	m_vecJYTextureParticleDesc[4].Particle_Power = 20.f;
+	m_vecJYTextureParticleDesc[4].TotalParticleTime = m_vecJYTextureParticleDesc[3].TotalParticleTime = 0.1f;
+#pragma endregion
+
 
 
 	return S_OK;
@@ -55,6 +174,7 @@ HRESULT CMonster_Bullet_Universal::Initialize_Clone(void * pArg)
 	SetUp_BoneMatrix();
 
 
+	FAILED_CHECK(Ready_JYParticleDesc());
 
 	return S_OK;
 }
@@ -71,6 +191,8 @@ _int CMonster_Bullet_Universal::Update(_double dDeltaTime)
 	}
 
 	SetUp_Fire(dDeltaTime);
+
+	FAILED_CHECK(Update_JYParticleTransform(dDeltaTime));
 
 	return _int();
 }
@@ -203,6 +325,56 @@ HRESULT CMonster_Bullet_Universal::SetUp_Info()
 		XMStoreFloat3(&m_fTempLook, m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 
 		m_fTempPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+
+
+
+
+
+
+
+		switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+		{
+		case Client::CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET:
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_MINION_BULLET:
+		{
+			Set_LimLight_N_Emissive(_float4(0.5f, 0.8f, 0.5f, 1.f), _float4(1.f, 0.5f, 1.f, 1.f));
+			m_pTransformCom->LookDir_ver2(m_Monster_Bullet_UniversalDesc.Object_Transform->Get_MatrixState(CTransform::STATE_LOOK));
+		}
+		break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET:
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_PRIMARY_BULLET:
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET:
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET:
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET:
+		{
+			Set_LimLight_N_Emissive(_float4(_float3(0.98046875f, 0.03359375f, 0.09140625f), 1.f), _float4(1.f, 1.f, 1.f, 1.f));
+
+		}
+
+			break;
+		case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL:
+		{
+
+			Set_LimLight_N_Emissive(_float4(_float3(0.98046875f, 0.03359375f, 0.09140625f), 1.f), _float4(1.f, 1.f, 1.f, 1.f));
+			m_pTransformCom->LookDir_ver2(m_Monster_Bullet_UniversalDesc.Object_Transform->Get_MatrixState(CTransform::STATE_LOOK));
+		}
+			break;
+		case Client::CMonster_Bullet_Universal::NINJASURA_KNIFE:
+			break;
+		case Client::CMonster_Bullet_Universal::GADASURA_SINKHOLE:
+			break;
+		case Client::CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END:
+			break;
+		default:
+			break;
+		}
+
 
 	}
 	else {
@@ -359,7 +531,33 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 		m_bOnceSwtich = true;
 	}
 
-	m_pTransformCom->Move_Forward(dDeltaTime);
+	if (m_dDeltaTime < 1)
+	{
+		
+		if (m_dDeltaTime > 0.65f)
+		{
+			_Vector NewLook =  XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) );
+			NewLook = m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f + NewLook * 0.15f;
+			m_pTransformCom->LookDir_ver2(NewLook);
+		}
+		else
+		{
+
+			m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(680.f * (_float)m_dDeltaTime));
+			m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), dDeltaTime);
+		}
+	}
+
+
+	m_pTransformCom->Move_Forward((1+ m_dDeltaTime * 2.f)*dDeltaTime);
+
+	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y)
+	{
+		m_vecJYTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[1]);
+		Set_IsDead();
+	}
+	
 
 	return S_OK;
 }
@@ -423,35 +621,100 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Howitzer_Bullet(_double dDel
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Default_Bullet(_double dDeltaTime)
 {
-	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
 
-	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+	if (m_bOnceSwtich == false)
+	{
+		CTransform* Monster_Transform = static_cast<CTransform*>(static_cast<CGameObject*>(m_Monster_Bullet_UniversalDesc.Object)->Get_Component(TAG_COM(Com_Transform)));
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_LOOK, Monster_Transform->Get_MatrixState(CTransform::STATE_LOOK));
+
+
+		m_bOnceSwtich = true;
+	}
+
+	if (m_dDeltaTime < 1)
+	{
+
+		if (m_dDeltaTime > 0.65f)
+		{
+			_Vector NewLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			NewLook = m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.85f + NewLook * 0.15f;
+			m_pTransformCom->LookDir_ver2(NewLook);
+		}
+		else
+		{
+
+			m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(680.f * (_float)m_dDeltaTime));
+			m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), dDeltaTime);
+		}
+	}
+
+
+	m_pTransformCom->Move_Forward((1 + m_dDeltaTime * 2.f)*dDeltaTime);
+
+	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y)
+	{
+		m_vecJYTextureParticleDesc[6].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[6]);
+		Set_IsDead();
+	}
 
 	return S_OK;
 }
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime)
 {
-	if (m_dBezierTime <= 1)
+	if (m_dBezierTime < 1)
 	{
 		m_dBezierTime += dDeltaTime;
+		_Vector  CenterPos = (XMLoadFloat4(&m_fTempPos) - XMLoadFloat4(&m_fTempPlayerPos));
+		CenterPos = XMLoadFloat4(&m_fTempPos) + (CenterPos * .1f); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
+		_float4 TempCenter;
+		XMStoreFloat4(&TempCenter, CenterPos);
+		TempCenter.y = TempCenter.y + 10;
+		_Vector BezierPos = ((1 - (_float)m_dBezierTime)*(1 - (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPos)) + (2 * (_float)m_dBezierTime*(1 - (_float)m_dBezierTime) *XMLoadFloat4(&TempCenter)) + ((_float)m_dBezierTime* (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPlayerPos);
+		_Vector OldPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
+		m_pTransformCom->LookDir(XMVector3Normalize(OldPos - BezierPos ));
+
+		if (m_dBezierTime > 1)
+		{
+
+		}
+	}
+	else
+	{
+		m_dBezierTime += dDeltaTime;
+		if (m_dBezierTime > 1.3f) m_dBezierTime = 1.;
+
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK), dDeltaTime * 4);
+
+		_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)m_dBezierTime - 1.f, 0.3f);
+		Value = max(min(Value, 1.f), 0.f);
+		Set_LimLight_N_Emissive(_float4(_float3(0.98046875f, 0.03359375f, 0.09140625f), Value), _float4(1.f, 1.f, min(Value + 0.001f,1.f), 1.f));
+
+
 	}
 
-	_Vector  CenterPos = (XMLoadFloat4(&m_fTempPos) - XMLoadFloat4(&m_fTempPlayerPos));
+	if (m_dDeltaTime > 4)
+	{
 
-	CenterPos = XMLoadFloat4(&m_fTempPos) + (CenterPos * 0.1f); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
+		m_vecJYNonMeshParticleDesc[1].vPosition =m_vecJYNonMeshParticleDesc[0].vPosition 
+			= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-	_float4 TempCenter;
-	XMStoreFloat4(&TempCenter, CenterPos);
 
-	TempCenter.y = TempCenter.y + 10;
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[0]);
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[1]);
 
-	_Vector BezierPos = ((1 - (_float)m_dBezierTime)*(1 - (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPos)) + (2 * (_float)m_dBezierTime*(1 - (_float)m_dBezierTime) *XMLoadFloat4(&TempCenter)) + ((_float)m_dBezierTime* (_float)m_dBezierTime)*XMLoadFloat4(&m_fTempPlayerPos);
+		m_vecJYTextureParticleDesc[4].vFixedPosition =m_vecJYTextureParticleDesc[3].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, BezierPos);
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[3]);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[4]);
+		Set_IsDead();
+	}
+
+
 	return S_OK;
 }
 
@@ -493,6 +756,116 @@ HRESULT CMonster_Bullet_Universal::Gadasura_Black(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Bullet_Universal::Ready_JYParticleDesc()
+{
+	CGameInstance* pInstance = g_pGameInstance;
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+#pragma region DescCreate
+	m_pJYTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pJYMeshParticleTransform		= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pJYTextureParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pJYMeshParticleTransform, E_FAIL);
+
+	m_pJYTextureParticleTransform->Set_TurnSpeed(1);
+	m_pJYMeshParticleTransform->Set_TurnSpeed(XMConvertToRadians(90));
+
+
+
+#pragma  endregion 
+
+
+#pragma region Init
+
+
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case Client::CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_MINION_BULLET:
+	{
+		m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(180));
+		m_vecJYTextureParticleDesc[0].FollowingTarget = m_pTransformCom;
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[0]);
+		m_StartY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+		m_vecJYTextureParticleDesc[0].FollowingTarget = nullptr;
+	}
+	break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_PRIMARY_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET:
+		m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(180));
+		m_vecJYTextureParticleDesc[5].FollowingTarget = m_pTransformCom;
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[5]);
+		m_vecJYTextureParticleDesc[5].FollowingTarget = nullptr;
+
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL:
+		m_pTransformCom->Scaled_All(_float3(0.05f));
+		m_vecJYTextureParticleDesc[2].FollowingTarget = m_pTransformCom;
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[2]);
+		m_vecJYTextureParticleDesc[2].FollowingTarget = nullptr;
+
+		break;
+	case Client::CMonster_Bullet_Universal::NINJASURA_KNIFE:
+		break;
+	case Client::CMonster_Bullet_Universal::GADASURA_SINKHOLE:
+		break;
+	case Client::CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END:
+		break;
+	default:
+		break;
+	}
+
+
+
+#pragma  endregion
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Update_JYParticleTransform(_double fDeltaTime)
+{
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case Client::CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_MINION_BULLET:
+
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_PRIMARY_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET:
+		break;
+	case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_INSTALL:
+		break;
+	case Client::CMonster_Bullet_Universal::NINJASURA_KNIFE:
+		break;
+	case Client::CMonster_Bullet_Universal::GADASURA_SINKHOLE:
+		break;
+	case Client::CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END:
+		break;
+	default:
+		break;
+	}
+
+
+
+	return S_OK;
+}
+
 CMonster_Bullet_Universal * CMonster_Bullet_Universal::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CMonster_Bullet_Universal*	pInstance = NEW CMonster_Bullet_Universal(pDevice, pDeviceContext);
@@ -526,4 +899,8 @@ void CMonster_Bullet_Universal::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+
+	Safe_Release(m_pJYTextureParticleTransform);
+	Safe_Release(m_pJYMeshParticleTransform);
 }

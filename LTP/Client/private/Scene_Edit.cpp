@@ -2793,121 +2793,129 @@ HRESULT CScene_Edit::Widget_CreateDeleteObject(_double fDeltatime)
 
 
 		{
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
+
+			if (ImGui::TreeNode("All Object List"))
 			{
 
-				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-				ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 330), true, window_flags);
 
-
-				if (ImGui::BeginMenuBar())
+				ImGuiWindowFlags window_flags = ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
 				{
-					if (ImGui::BeginMenu("ObjectList"))
+
+					ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 330), true, window_flags);
+
+
+					if (ImGui::BeginMenuBar())
 					{
-						ImGui::EndMenu();
-					}
-					ImGui::EndMenuBar();
-
-					//char buf[128];
-					//sprintf_s(buf, "%ws\n", TAG_OP(OBJECTPROTOTYPEID(m_iSelectedObjectNMesh[0])));
-					//ImGui::Text(buf);
-
-				}
-
-				if (ImGui::BeginTable("split", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
-				{
-					for (int i = Prototype_StaticMapObject; i >= Prototype_StaticMapObject; i--)
-					{
-						
-						char buf[MAX_PATH];
-						sprintf_s(buf, "%ws", TAG_OP(OBJECTPROTOTYPEID(i)));
-						ImGui::TableNextColumn();
-
-						if (ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f)))
-							m_iSelectedObjectNMesh[0] = i;
-
-						if (m_iBatchedVecIndex != 0 && ImGui::IsItemHovered())
+						if (ImGui::BeginMenu("ObjectList"))
 						{
-							m_iBatchedVecIndex = 0;
-							m_bIsModelMove = 0;
-							m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
-							m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
-							m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
-							m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
-
-							ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
-							m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
-							m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
-
+							ImGui::EndMenu();
 						}
+						ImGui::EndMenuBar();
+
+						//char buf[128];
+						//sprintf_s(buf, "%ws\n", TAG_OP(OBJECTPROTOTYPEID(m_iSelectedObjectNMesh[0])));
+						//ImGui::Text(buf);
+
 					}
-					ImGui::EndTable();
-				}
-				ImGui::EndChild();
-				ImGui::PopStyleVar();
-			}
 
-			ImGui::SameLine();
-
-			{
-				ImGui::BeginChild("ChildR", ImVec2(0, 330), true, window_flags);
-
-
-				if (ImGui::BeginMenuBar())
-				{
-					if (ImGui::BeginMenu("Mesh List"))
+					if (ImGui::BeginTable("split", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
 					{
-						ImGui::EndMenu();
-					}
-					ImGui::EndMenuBar();
-
-					//char buf[128];
-					//sprintf_s(buf, "%ws\n", TAG_MESH(MESHTYPEID(m_iSelectedObjectNMesh[1])));
-					//ImGui::Text(buf);
-				}
-
-				if (ImGui::BeginTable("split", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
-				{
-
-					for (int i = Prototype_Mesh_None + 1; i < Prototype_Mesh_Player; i++)
-					{
-						char buf[MAX_PATH];
-						sprintf_s(buf, "%ws", TAG_CP(COMPONENTPROTOTYPEID(i)));
-						ImGui::TableNextColumn();
-						if (ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f)))
-							m_iSelectedObjectNMesh[1] = i;
-
-						if (m_iBatchedVecIndex != 0 && ImGui::IsItemHovered())
+						for (int i = Prototype_StaticMapObject; i >= Prototype_StaticMapObject; i--)
 						{
-							m_iBatchedVecIndex = 0; m_bIsModelMove = 0;
-							m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
-							m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
-							m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
-							m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
-							ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
-							m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
-							m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
 
+							char buf[MAX_PATH];
+							sprintf_s(buf, "%ws", TAG_OP(OBJECTPROTOTYPEID(i)));
+							ImGui::TableNextColumn();
+
+							if (ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f)))
+								m_iSelectedObjectNMesh[0] = i;
+
+							if (m_iBatchedVecIndex != 0 && ImGui::IsItemHovered())
+							{
+								m_iBatchedVecIndex = 0;
+								m_bIsModelMove = 0;
+								m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+								m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
+								m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
+								m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
+
+								ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
+								m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
+								m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
+
+							}
 						}
+						ImGui::EndTable();
 					}
-
-
-					ImGui::EndTable();
-
-
-
-					Make_VerticalSpacing(5);
-
-
+					ImGui::EndChild();
+					ImGui::PopStyleVar();
 				}
 
-				Make_VerticalSpacing(1);
+				ImGui::SameLine();
 
-				ImGui::EndChild();
-				Make_VerticalSpacing(1);
+				{
+					ImGui::BeginChild("ChildR", ImVec2(0, 330), true, window_flags);
+
+
+					if (ImGui::BeginMenuBar())
+					{
+						if (ImGui::BeginMenu("Mesh List"))
+						{
+							ImGui::EndMenu();
+						}
+						ImGui::EndMenuBar();
+
+						//char buf[128];
+						//sprintf_s(buf, "%ws\n", TAG_MESH(MESHTYPEID(m_iSelectedObjectNMesh[1])));
+						//ImGui::Text(buf);
+					}
+
+					if (ImGui::BeginTable("split", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
+					{
+
+						for (int i = Prototype_Mesh_None + 1; i < Prototype_Mesh_Player; i++)
+						{
+							char buf[MAX_PATH];
+							sprintf_s(buf, "%ws", TAG_CP(COMPONENTPROTOTYPEID(i)));
+							ImGui::TableNextColumn();
+							if (ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f)))
+								m_iSelectedObjectNMesh[1] = i;
+
+							if (m_iBatchedVecIndex != 0 && ImGui::IsItemHovered())
+							{
+								m_iBatchedVecIndex = 0; m_bIsModelMove = 0;
+								m_SelectedObjectSRT = &(m_vecBatchedObject[m_iBatchedVecIndex].matSRT);
+								m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
+								m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
+								m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
+								ZeroMemory(m_iSelectedObjectNMesh, sizeof(_uint) * 2);
+								m_iSelectedObjectNMesh[0] = Prototype_StaticMapObject;
+								m_iSelectedObjectNMesh[1] = Prototype_Mesh_None;
+
+							}
+						}
+
+
+						ImGui::EndTable();
+
+
+
+						Make_VerticalSpacing(5);
+
+
+					}
+
+					Make_VerticalSpacing(1);
+
+					ImGui::EndChild();
+					Make_VerticalSpacing(1);
+				}
+
+
+				Make_VerticalSpacing(5);
+				ImGui::TreePop();
 			}
-
-			Make_VerticalSpacing(5);
 			static ImGuiTextFilter filter;
 
 			char	szCheckforSameFileName[256] = "";

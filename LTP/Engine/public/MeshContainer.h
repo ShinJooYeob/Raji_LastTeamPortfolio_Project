@@ -21,6 +21,7 @@ public:
 	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix, _float4x4* pBoneMatrices, const char* szBoneName, const vector<CHierarchyNode*>* pVecHierarchyNodes);
 	HRESULT Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix& DefultPivotMatrix, _float4x4* pBoneMatrices, const char* szBoneName, vector<_float4x4>* pUpdateMatrix,	_bool bBool);
 public:
+	_uint		Get_NumPrimitive() { return m_iNumPrimitive; }
 	_uint		Get_MaterialIndex();
 	_uint		Get_NumAffectingBones() { return m_iNumAffectingBones; };
 	aiMesh*		Get_AiMesh() { return m_pAIMesh; };

@@ -376,6 +376,7 @@ enum OBJECTPROTOTYPEID
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
+	Prototype_Object_Monster_Bullet_Plat,
 	Prototype_Object_Monster_Texture_Bullet,
 	Prototype_Object_Monster_Weapon_Universal,
 
@@ -617,10 +618,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_UI_HpUI:
 		return TEXT("Prototype_Object_UI_HpUI");
-			
+
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
-
+	case Prototype_Object_Monster_Bullet_Plat:
+		return TEXT("Prototype_Object_Monster_Bullet_Plat");
+		
 	case Prototype_Object_Monster_Texture_Bullet:
 		return TEXT("Prototype_Object_Monster_Texture_Bullet");
 
@@ -1034,7 +1037,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spear_NormalEffect,
 	Prototype_Mesh_Spear_SecondAttack,
 
+	///////JYMesh///////////////////////////////////////////////////////////////////
 	Prototype_Mesh_Aura,
+
+
 	Prototype_Mesh_Aura2,
 	Prototype_Mesh_Beacon_Shape,
 	Prototype_Mesh_Big_Sheild,
@@ -1046,7 +1052,18 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Half_Sheild,
 	Prototype_Mesh_Spark_Mesh,
 	Prototype_Mesh_Spark_Mesh2,
+	Prototype_Mesh_Plat_Wall,
+	Prototype_Mesh_BR_Needle,
+	Prototype_Mesh_Cylinder,
+	Prototype_Mesh_Thunder,
+	Prototype_Mesh_Missile,
+	Prototype_Mesh_Tornado,
+	Prototype_Mesh_Tornado2,
+
+
 	Prototype_Mesh_Wing,
+	///////JYMesh///////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
 	Prototype_Mesh_CIRCLE,
 	Prototype_Mesh_CIRCLE_DIST4,
@@ -2396,6 +2413,36 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Wing.fbx");
 		break;
 
+	case Prototype_Mesh_BR_Needle:
+		return TEXT("BR_Needle.fbx");
+		break;
+
+	case Prototype_Mesh_Cylinder:
+		return TEXT("Cylinder.fbx");
+		break;
+
+	case Prototype_Mesh_Thunder:
+		return TEXT("Thunder.fbx");
+		break;
+	case Prototype_Mesh_Missile:
+		return TEXT("Missile.fbx");
+		break;
+		
+	case Prototype_Mesh_Tornado:
+		return TEXT("Tornado.fbx");
+		break;
+
+	case Prototype_Mesh_Tornado2:
+		return TEXT("Tornado2.fbx");
+		break;
+
+
+
+
+
+	case Prototype_Mesh_Plat_Wall:
+		return TEXT("Plat_Wall.fbx");
+		break;
 
 
 		

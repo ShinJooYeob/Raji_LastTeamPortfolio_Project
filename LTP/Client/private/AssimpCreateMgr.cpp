@@ -28,6 +28,8 @@ HRESULT CAssimpCreateMgr::Load_ALL_Model(_fMatrix staticDefault, _fMatrix dynami
 	return S_OK;
 }
 
+
+
 HRESULT CAssimpCreateMgr::Load_Model_One_ByFBXName(const wchar_t * fbxName, _fMatrix DefaultMat)
 {
 	FAILED_CHECK(Load_Model_DatFile_One(fbxName,DefaultMat));

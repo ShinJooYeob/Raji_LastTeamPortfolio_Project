@@ -840,9 +840,11 @@ HRESULT CModel::Render(CShader * pShader, _uint iPassIndex,_uint iMaterialIndex,
 	return S_OK;
 }
 
+#define PrimitiveCullingNum 8000
+
 HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _uint iMaterialIndex, class CVIBuffer_Model_Instance* pInstacneBuffer,
 									vector<class CTransform*>* pvecWorldMatrixs, const char* szBoneValueName, 
-	_float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer)
+	_float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer , _bool bPrimitiveCullingOn)
 {
 	if (iMaterialIndex >= m_iNumMaterials || nullptr == m_MeshMaterialDesc.pTexture)
 		return E_FAIL;
@@ -857,10 +859,16 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
+
+			//if(bPrimitiveCullingOn && pMeshContainer->Get_NumPrimitive() > PrimitiveCullingNum) 
+			//	continue;
+
 			FAILED_CHECK(pMeshContainer->Bind_AffectingBones_OnShader(pShader, matDefualtPivot, BoneMatrices, szBoneValueName, &m_vecHierarchyNode));
 
 			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex,
 				pMeshContainer, pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer));
+
+
 			iMeshConstainerIndex++;
 		}
 	}
@@ -870,8 +878,13 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
+
+			//if (bPrimitiveCullingOn && pMeshContainer->Get_NumPrimitive() > PrimitiveCullingNum) 
+			//	continue;
+
 			FAILED_CHECK(pInstacneBuffer->Render(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer,
 				pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer));
+
 			iMeshConstainerIndex++;
 		}
 
@@ -886,7 +899,8 @@ HRESULT CModel::Render_ForInstancing(class CShader* pShader, _uint iPassIndex, _
 }
 
 HRESULT CModel::Render_ForInstancing_float4x4(CShader * pShader, _uint iPassIndex, _uint iMaterialIndex, CVIBuffer_Model_Instance * pInstacneBuffer,
-	vector<_float4x4>* pvecWorldMatrixs, const char * szBoneValueName, _float fFrustumsize, vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTiemer)
+	vector<_float4x4>* pvecWorldMatrixs, const char * szBoneValueName, _float fFrustumsize, vector<_float4>*  pvecLimLight,
+	vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTiemer ,_bool bPrimitiveCullingOn)
 {
 	if (iMaterialIndex >= m_iNumMaterials || nullptr == m_MeshMaterialDesc.pTexture)
 		return E_FAIL;
@@ -901,6 +915,9 @@ HRESULT CModel::Render_ForInstancing_float4x4(CShader * pShader, _uint iPassInde
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
+			//if (bPrimitiveCullingOn && pMeshContainer->Get_NumPrimitive() > PrimitiveCullingNum) 
+			//	continue;
+
 			FAILED_CHECK(pMeshContainer->Bind_AffectingBones_OnShader(pShader, matDefualtPivot, BoneMatrices, szBoneValueName, &m_vecHierarchyNode));
 
 			FAILED_CHECK(pInstacneBuffer->Render_float4x4(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex,
@@ -914,6 +931,10 @@ HRESULT CModel::Render_ForInstancing_float4x4(CShader * pShader, _uint iPassInde
 
 		for (auto& pMeshContainer : m_vecMeshContainerArr[iMaterialIndex])
 		{
+
+			//if (bPrimitiveCullingOn && pMeshContainer->Get_NumPrimitive() > PrimitiveCullingNum)
+			//	continue;
+
 			FAILED_CHECK(pInstacneBuffer->Render_float4x4(pShader, iPassIndex, iMaterialIndex, iMeshConstainerIndex, pMeshContainer, 
 				pvecWorldMatrixs, fFrustumsize, pvecLimLight, pvecEmissive, pvecTiemer));
 			iMeshConstainerIndex++;

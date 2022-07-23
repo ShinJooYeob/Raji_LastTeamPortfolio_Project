@@ -35,8 +35,6 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-	FAILED_CHECK(Ready_ParticleDesc());
-
 	return S_OK;
 }
 
@@ -47,10 +45,6 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 	{
-
-
-		//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
-		//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
 
 	}
 
@@ -73,7 +67,6 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 	FAILED_CHECK(Update_ParticleTransform(dDeltaTime));
-	
 	return _int();
 }
 
@@ -362,17 +355,19 @@ HRESULT CMonster_Jalsura::Ready_ParticleDesc()
 
 		//0
 		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle"));
-		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
+		m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 		//1
 		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle2"));
-		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTextureParticleTransform;
+		m_vecTextureParticleDesc[1].FollowingTarget = m_pTextureParticleTransform;
 
 		m_vecTextureParticleDesc[0].TotalParticleTime = m_vecTextureParticleDesc[1].TotalParticleTime = 2.f;
 		m_vecTextureParticleDesc[0].ParticleSize = m_vecTextureParticleDesc[1].ParticleSize = _float3(0.3f, 0.5f, 0.3f);
 		//2
 		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_Jalsura_Particle3"));
-		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pMeshParticleTransform;
-		m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+		m_vecTextureParticleDesc[2].FollowingTarget = m_pMeshParticleTransform;
+		m_vecTextureParticleDesc[2].iFollowingDir = FollowingDir_Look;
+
+		
 
 		//pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 		//pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
@@ -519,7 +514,6 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				fRimLightPassedTime = 0;
 				vOldRimLightColor = _float4(0);
 				vTargetRimLightColor = pUtil->RandomFloat3(0,1);
-
 
 
 				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);

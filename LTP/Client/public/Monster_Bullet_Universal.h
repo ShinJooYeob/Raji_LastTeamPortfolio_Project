@@ -19,6 +19,7 @@ public:
 		GADASURA_SINKHOLE,
 		MONSTER_BULLET_UNIVERSAL_END,
 	};
+
 public:
 	typedef struct tagMonster_Bullet_UniversalDesc {
 		_uint	iBulletMeshNumber;
@@ -114,6 +115,20 @@ private:
 
 private:
 	_bool				m_bOnceSwtich = false;
+
+private:
+	HRESULT	Ready_JYParticleDesc();
+	HRESULT	Update_JYParticleTransform(_double fDeltaTime);
+	_float4 vTargetRimLightColor = _float4(0);
+	_float4 vOldRimLightColor = _float4(0);
+	_float fRimLightPassedTime = _float(0);
+	_float fTransformAngle = 0;
+	CTransform*												m_pJYTextureParticleTransform = nullptr;
+	CTransform*												m_pJYMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>								m_vecJYTextureParticleDesc;
+	vector<INSTMESHDESC>									m_vecJYMeshParticleDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecJYNonMeshParticleDesc;
+	_float													m_StartY = 0;
 
 public:
 	static CMonster_Bullet_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -104,6 +104,7 @@
 #include "Monster_Texture_Bullet.h"
 #include "Monster_Weapon_Universal.h"
 #include "Gadasura_Rage_Hollogram.h"
+#include "Monster_Plat_Bullet.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -457,13 +458,87 @@ HRESULT CLoader::Load_Scene_Stage2(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
 
 #pragma region PROTOTYPE_COMPONENT
+	_Matrix			TransformMatrix;
+
+#pragma region MapPrototype
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Vishnu_Statue.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_ElevatorRailing_Vertical_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_PierNarrow_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Horizontal_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_PierWide_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_PierNarrow_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_05.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Platform_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_05.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Stairs_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_boxbush_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_C.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_E.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_Circular_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_Circular_low01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_D.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_Circular_low01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_D.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_C.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_C.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_D.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_C.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_A.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_B.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_TropicalTree_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Bush_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_C.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_D.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_boxbush_01.fbx", TransformMatrix);
+
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_ElevatorVertical_Cog_Top_01.fbx", TransformMatrix);
+
+#pragma endregion RangdaMapPrototype
+
+
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE2, TAG_CP(Prototype_Navigation),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_2.dat")))))
+		return E_FAIL;
+
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	/* 테스트 알게락 */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+
 
 
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Player), CPlayer::Create(m_pDevice, m_pDeviceContext)));
+
+
 
 #pragma endregion
 
@@ -535,16 +610,6 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_ANIM, "PlayerMesh", "Player.FBX", TransformMatrix, 2)));*/
 
 
-
-
-	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_SkyBox),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
-
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	/* 테스트 알게락 */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1082,6 +1147,7 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Bullet_Universal), CMonster_Bullet_Universal::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Texture_Bullet), CMonster_Texture_Bullet::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Weapon_Universal), CMonster_Weapon_Universal::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Bullet_Plat), CMonster_Plat_Bullet::Create(m_pDevice, m_pDeviceContext)));
 
 
 
@@ -1779,8 +1845,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 		//
-		///TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
 
 #pragma endregion
 

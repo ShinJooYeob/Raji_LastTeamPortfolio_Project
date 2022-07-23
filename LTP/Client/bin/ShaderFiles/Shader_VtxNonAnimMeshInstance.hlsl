@@ -96,6 +96,8 @@ struct VS_OUT_SHADOW
 	float4		vTimer : TEXCOORD2;
 };
 
+
+
 VS_OUT_SHADOW VS_Shadow(VS_IN In)
 {
 
@@ -185,6 +187,58 @@ VS_OUT_Noise VS_MAIN_Noise(VS_IN In)
 	return Out;
 }
 
+
+struct GS_IN
+{
+	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	float4		vWorldPos : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
+	float4		vTangent : TANGENT;
+	float4		vBinormal : BINORMAL;
+
+
+	float4		vLimLightColor : TEXCOORD3;
+	float4		vEmissive : TEXCOORD4;
+	float4		vTimer : TEXCOORD5;
+};
+
+struct GS_OUT
+{
+	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	float4		vWorldPos : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
+	float4		vTangent : TANGENT;
+	float4		vBinormal : BINORMAL;
+
+
+	float4		vLimLightColor : TEXCOORD3;
+	float4		vEmissive : TEXCOORD4;
+	float4		vTimer : TEXCOORD5;
+
+};
+
+[maxvertexcount(1)]
+void GS_MAIN_INST(in point GS_IN In[1], inout TriangleStream<GS_OUT> Point)
+{
+
+	if (In[0].vProjPos.x >= -1 && In[0].vProjPos.x <= 1 &&
+		In[0].vProjPos.y >= -1 && In[0].vProjPos.y <= 1 &&
+		In[0].vProjPos.z >= 0 && In[0].vProjPos.z <= 1)
+	{
+
+		GS_OUT			Out = (GS_OUT)0;
+
+		Out = In;
+
+		Point.Append(Out);
+
+	}
+
+}
 
 
 
@@ -962,6 +1016,7 @@ PS_OUT PS_MAIN_MapObject(PS_IN In)
 PS_OUT PS_MAIN_MapObject_Discard(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
+
 
 
 

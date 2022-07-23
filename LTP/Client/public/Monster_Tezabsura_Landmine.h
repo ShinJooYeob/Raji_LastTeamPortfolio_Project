@@ -95,7 +95,20 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
-	_uint				test = 0;
+
+private:	
+	HRESULT	Ready_ParticleDesc();
+	HRESULT	Update_ParticleTransform(_double fDeltaTime);
+	_float4 vTargetRimLightColor = _float4(0);
+	_float4 vOldRimLightColor = _float4(0);
+	_float fRimLightPassedTime = _float(0);
+	_float fTransformAngle = 0;
+	CTransform*												m_pTextureParticleTransform = nullptr;
+	CTransform*												m_pMeshParticleTransform = nullptr;
+	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecNonMeshParticleDesc;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

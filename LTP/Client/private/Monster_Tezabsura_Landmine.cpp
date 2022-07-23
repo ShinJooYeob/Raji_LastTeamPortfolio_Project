@@ -2,6 +2,8 @@
 #include "..\public\Monster_Tezabsura_Landmine.h"
 #include "Monster_Bullet_Universal.h"
 
+#define LandMindMonsterRimLightColor _float3(0.98046875f, 0.03359375f, 0.09140625f)
+
 CMonster_Tezabsura_Landmine::CMonster_Tezabsura_Landmine(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
 {
@@ -46,6 +48,24 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+	{
+
+
+
+
+
+
+
+	}
+
+
+
+
+
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -261,8 +281,11 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 {
+	
+
 	switch (m_iOncePattern)
 	{
+
 	case 0:
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
@@ -413,7 +436,7 @@ HRESULT CMonster_Tezabsura_Landmine::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 30)
+	if (m_iOncePattern > 30)//30
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -532,6 +555,82 @@ HRESULT CMonster_Tezabsura_Landmine::Jumping(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Tezabsura_Landmine::Ready_ParticleDesc()
+{	//m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//m_pMeshParticleTransform	= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	//NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	//NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	//m_pTextureParticleTransform->Set_TurnSpeed(1);
+
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+	{
+		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_3"));
+		m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Monster_LandMine_5"));
+		m_vecTextureParticleDesc[0].EachParticleLifeTime = m_vecTextureParticleDesc[1].EachParticleLifeTime = 0.4f;
+	}
+
+
+
+	{
+		m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"Monster_Tezabsura_Spring"));
+		ZeroMemory(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+		lstrcpy(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_Tornado));
+		m_vecMeshParticleDesc[0].ParticleSize = _float3(0.4f, 0.15f, 0.4f);
+		m_vecMeshParticleDesc[0].fAppearTimer = 0.15f;
+		m_vecMeshParticleDesc[0].EachParticleLifeTime = 0.4f;
+		m_vecMeshParticleDesc[0].vNoisePushingDir = _float2(0, 1.f);
+		m_vecMeshParticleDesc[0].TargetColor = _float4(LandMindMonsterRimLightColor, 1);
+		m_vecMeshParticleDesc[0].TargetColor2 = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1);
+		m_vecMeshParticleDesc[0].ParticleSize = _float3(0.6f, 0.15f, 0.6f);
+
+	}
+
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+	{
+		//0
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
+		tNIMEDesc.fAppearTime = 0.5f;
+		tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f + 0.5f;
+
+		tNIMEDesc.noisingdir = _float2(-1, 0);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 33;
+		tNIMEDesc.iDiffuseTextureIndex = 299;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.vColor = _float4(0.35f, 0.85f, 0.35f, 1);
+
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.RotationSpeedPerSec = 0;
+		tNIMEDesc.vSize = _float3(0.1125f, 0.1125f, 0.1125f);
+		tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 15.f;
+
+		tNIMEDesc.m_CheckerBuffer = Prototype_Object_Monster_Tezabsura_Landmine;
+
+		m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
+	}
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Landmine::Update_ParticleTransform(_double fDeltaTime)
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Tezabsura_Landmine::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -586,9 +685,29 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			break;
 		case 8:
 		{
+
+
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_dAcceleration = 1.6452f;
+				m_iAdjMovedIndex++;
+			}
+			else if (PlayRate > 0.2f && m_iAdjMovedIndex == 1)
+			{
+
+				m_vecTextureParticleDesc[0].vFixedPosition = m_vecMeshParticleDesc[0].vFixedPosition
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				m_vecMeshParticleDesc[0].vPowerDirection =
+					-((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+						+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *0.15f +
+						+m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) *1.f) -
+						m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+				GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+
+
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -609,15 +728,52 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
+			else if (PlayRate > 0.6f && m_iAdjMovedIndex == 1)
+			{
+
+				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
+
+
+				m_iAdjMovedIndex++;
+			}
 			break;
 		}
 		case 11:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
+		if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
+		{
+
+			m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.35f;
+			m_vecNonMeshParticleDesc[0].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_Monster_Bullet_Plat), &m_vecNonMeshParticleDesc[0]);
+			m_iAdjMovedIndex++;
+		}
+
 			if (PlayRate >= 0.472222 && PlayRate <= 0.7222)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
 			}
 			break;
 		case 12:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
 			{
 				m_bLookAtOn = false;
@@ -659,6 +815,12 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			break;
 		case 14:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
 			{
@@ -688,6 +850,12 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			break;
 		case 15:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
 			{
@@ -717,6 +885,13 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			break;
 		case 17:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+		}
+
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.214285)
 			{
@@ -787,4 +962,9 @@ void CMonster_Tezabsura_Landmine::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pMeshParticleTransform);
+
+
 }
