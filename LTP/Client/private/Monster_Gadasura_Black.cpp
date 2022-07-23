@@ -3,6 +3,8 @@
 #include "Monster_Bullet_Universal.h"
 #include "Monster_Weapon_Universal.h"
 #include "Monster_Texture_Bullet.h"
+#include "HpUI.h"
+#include "Monster_Weapon_Universal.h"
 
 CMonster_Gadasura_Black::CMonster_Gadasura_Black(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -51,7 +53,6 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 
 _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 {
-
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -64,15 +65,17 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 
 	 
 	//camera moving test!@#!@#!@$#@$!@$@!$@!$@!#$@!#$@!#$@!#$!@%#$%#@%#@%#@%#@^^$%^#$^#$^%&
-	//PlayAnim(dDeltaTime);
+	PlayAnim(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
-	////////////////Motion Test
-	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
-	///////////////////////////
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	if (m_pWeapon != nullptr)
+		m_pWeapon->Update(dDeltaTime);
 
 	Update_Collider(dDeltaTime);
 
@@ -88,9 +91,6 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
-	//////////////Motion Test
-	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
-	////////////////
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -101,6 +101,12 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(dDeltaTime);
+
+	if (m_pWeapon != nullptr)
+		m_pWeapon->LateUpdate(dDeltaTime);
 	return _int();
 }
 
@@ -152,6 +158,40 @@ void CMonster_Gadasura_Black::CollisionTriger(CCollider * pMyCollider, _uint iMy
 
 _float CMonster_Gadasura_Black::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+	m_dSpecial_CoolTime = 0;
+	m_dOnceCoolTime = 0;
+	m_dInfinity_CoolTime = 0;
+
+
+	m_bIOnceAnimSwitch = true;
+	if (bKnockback == false)
+	{
+		m_iOncePattern = 40;
+	}
+	else {
+		m_iOncePattern = 41;
+
+		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+	}
+
+	if (m_fHP < 5 && m_iBoolOnce == 0)
+	{
+		m_iOncePattern = 42;
+		m_dSpecial_CoolTime = 0;
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+
+		m_iBoolOnce += 1;
+	}
+
+	if (m_fHP <= 0)
+	{
+		Set_IsDead();
+	}
+
 	return _float();
 }
 
@@ -177,9 +217,8 @@ HRESULT CMonster_Gadasura_Black::SetUp_Weapon()
 	MonsterWeaponDesc.iMonsterWeaponMeshNumber = CMonster_Weapon_Universal::GADASURA_BLACK_WEAPON;
 	MonsterWeaponDesc.Object = this;
 	MonsterWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0, 0, 0), _float3(-2.535f, -0.075f, -3.03f));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Monster_Weapon), TAG_OP(Prototype_Object_Monster_Weapon_Universal), &MonsterWeaponDesc));
 
-
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_Monster_Weapon_Universal), &MonsterWeaponDesc);
 	return S_OK;
 }
 
@@ -288,25 +327,14 @@ HRESULT CMonster_Gadasura_Black::SetUp_Collider()
 	m_pColliderCom->Set_ParantBuffer();
 
 
+
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_arm", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.47793f, 0.16684f, -2.5459f));
-	m_vecAttachedDesc.push_back(tAttachedDesc);
-	m_pColliderCom->Set_ParantBuffer();
-
-
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
-	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_elbow", _float3(1.5f, 1.5f, 1.5f), _float3(0.f, 0.f, 0.f), _float3(-0.96232f, 0.20043f, -2.3494f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_elbow", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.96232f, 0.20043f, -2.3494f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -324,12 +352,12 @@ HRESULT CMonster_Gadasura_Black::SetUp_Collider()
 
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_elbow", _float3(1.5f, 1.5f, 1.5f), _float3(0.f, 0.f, 0.f), _float3(0.96232f, 0.20043f, -2.3494f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_elbow", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.96232f, 0.20043f, -2.3494f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -340,24 +368,6 @@ HRESULT CMonster_Gadasura_Black::SetUp_Collider()
 HRESULT CMonster_Gadasura_Black::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-
-
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6, m_pNavigationCom);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2, m_pNavigationCom);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
-			break;
-
-		}
-	}
 
 	if (m_bLookAtOn)
 	{
@@ -402,6 +412,9 @@ HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
 		_uint i = m_pModel->Get_NowAnimIndex();
 		switch (i)
 		{
+		case 6:
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.2f);
+			break;
 		case 14:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -494,10 +507,6 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 14; //Rage Run
 		m_bComboAnimSwitch = true;
 		break;
-	//case 5:
-	//	m_iOnceAnimNumber = 15; //Rage Run
-	//	m_bComboAnimSwitch = true;
-	//	break;
 	case 5:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
@@ -519,13 +528,9 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = true;
 		break;
 	case 10:
-		m_iOnceAnimNumber = 14; //Rage Run
+		m_iOnceAnimNumber = 15; //Rage Run
 		m_bComboAnimSwitch = true;
 		break;
-	//case 12:
-	//	m_iOnceAnimNumber = 15; //Rage Run
-	//	m_bComboAnimSwitch = true;
-	//	break;
 	case 11:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
@@ -545,6 +550,15 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 	case 15:
 		m_iOnceAnimNumber = 5; //Back
 		m_bComboAnimSwitch = false;
+		break;
+	case 40:
+		m_iOnceAnimNumber = 11; //right hit
+		break;
+	case 41:
+		m_iOnceAnimNumber = 12; //HeavyHit
+		break;
+	case 42:
+		m_iOnceAnimNumber = 6; //groggy
 		break;
 	case 51:
 		m_iOnceAnimNumber = 20; //stomp Attack
@@ -651,16 +665,16 @@ HRESULT CMonster_Gadasura_Black::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
-	////////////Motion Test
-	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
 
-	tMotionDesc.iNumTrailCount = 6;
-	tMotionDesc.pModel = m_pModel;
-	tMotionDesc.pShader = m_pShaderCom;
-	tMotionDesc.iPassIndex = 5;
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
-	///////////////////////////
 
 	SetUp_Collider();
 
@@ -714,13 +728,59 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			break;
 		}
+		case 6:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_iAdjMovedIndex++;
+				m_bLookAtOn = false;
+			}
+			break;
+		}
+		case 11:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
+		case 12:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_bLookAtOn = false;
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+			}
+			else if (0.f < PlayRate && PlayRate <= 0.8636)
+			{
+				m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
+
+				m_fKnockbackDir.y = 0;
+
+				m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+			}
+			break;
+		}
 		case 14:
 		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_bLookAtOn = true;
+				m_iAdjMovedIndex++;
+			}
 			m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			break;
 		}
 		case 15:
 		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_bLookAtOn = true;
+				m_iAdjMovedIndex++;
+			}
 			m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			break;
 		}
@@ -728,8 +788,16 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_bWeaponAttackSwitch = true;
 				m_bLookAtOn = false;
+				m_iAdjMovedIndex++;
+			}
+			else if (PlayRate >= 0.2155 &&PlayRate <= 0.3879)
+			{
+				m_bWeaponAttackSwitch = true;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3879)
+			{
+				m_bWeaponAttackSwitch = false;
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -738,28 +806,35 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_bWeaponAttackSwitch = true;
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
+			}
+			else if (PlayRate >= 0.1754 && PlayRate <= 0.3879)
+			{
+
+				m_bWeaponAttackSwitch = true;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3879)
+			{
+				m_bWeaponAttackSwitch = false;
 			}
 
 			break;
 		}
 		case 19:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
-			{
-				m_bWeaponAttackSwitch = true;
-				m_bLookAtOn = false;
-				m_iAdjMovedIndex++;
-			}
-
 			if (PlayRate > 0 && PlayRate <= 0.539215)
 			{
+				m_bLookAtOn = false; 
+
 				m_dAcceleration = 2.5;
+
+				//if (PlayRate >= 0.3465)
+				//	m_bWeaponAttackSwitch = true;
 			}
 			else {
 				m_dAcceleration = 1;
+				//m_bWeaponAttackSwitch = false;
 			}
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.539215)
@@ -787,11 +862,10 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_bWeaponAttackSwitch = true;
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.4205607)
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4205607)
 			{
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
@@ -818,15 +892,19 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 21:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			if (m_iAdjMovedIndex==0 && PlayRate >= 0.29411)
 			{
 				m_bWeaponAttackSwitch = true;
-				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
 			}
+
 			if (PlayRate <= 0.588235)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+			}
+			else
+			{
+				m_bWeaponAttackSwitch = false;
 			}
 			break;
 		}
@@ -834,7 +912,6 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_bWeaponAttackSwitch = true;
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
 			}
@@ -849,10 +926,14 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 25:
 		{
-			if (m_iAdjMovedIndex == 0)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.9574)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
+			}
+			else if (PlayRate >= 0.9574 && PlayRate <= 0.98) {
+				m_bLookAtOn = true;
+				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			}
 			break;
 		}
@@ -900,7 +981,6 @@ void CMonster_Gadasura_Black::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pColliderCom);
-	////////////Motion Test
-	Safe_Release(m_pMotionTrail);
-	////////////
+	Safe_Release(m_pHPUI);
+	Safe_Release(m_pWeapon);
 }

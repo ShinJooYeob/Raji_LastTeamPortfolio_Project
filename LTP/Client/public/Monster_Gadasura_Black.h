@@ -31,9 +31,10 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
-	_int	Get_OnceAnimNumber() { return m_iOnceAnimNumber; }
+	_int				Get_OnceAnimNumber() { return m_iOnceAnimNumber; }
+	_bool				Get_WeaponAttackSwitch() { return m_bWeaponAttackSwitch; }
 
-
+private:
 	HRESULT				SetUp_Info();
 	HRESULT				SetUp_Weapon();
 	HRESULT				SetUp_Collider();
@@ -50,19 +51,20 @@ private: //애니메이션
 
 	HRESULT				Special_Trigger(_double	dDeltaTime);
 
-private:
-	_bool				Get_WeaponAttackSwitch() { return m_bWeaponAttackSwitch; }
 
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CMotionTrail*		m_pMotionTrail = nullptr;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+	class CMonster_Weapon_Universal* m_pWeapon = nullptr;
 
 private:
 	CCollider*			m_pColliderCom = nullptr;
@@ -103,6 +105,10 @@ private:
 
 private:
 	_bool				m_bWeaponAttackSwitch = false;
+
+private:
+	//Knockback
+	_float3				m_fKnockbackDir;
 
 
 

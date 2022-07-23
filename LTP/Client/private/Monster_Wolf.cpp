@@ -75,11 +75,15 @@ _int CMonster_Wolf::LateUpdate(_double dDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i], m_pModelInstance[i], m_pShaderCom, m_pModel[i]));
 	}
 
-
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
 
+#ifdef _DEBUG
+	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_vecInstancedTransform[i].pCollider));
+	}
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
+#endif
 	return _int();
 }
 
@@ -120,18 +124,28 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 
-	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex - 1].bHit == false)
+	if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType)
 	{
-		m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDER_HIT;
-		m_vecInstancedTransform[iMyColliderIndex - 1].iHp += -1;
-		m_vecInstancedTransform[iMyColliderIndex - 1].dTime = 0;
-		m_vecInstancedTransform[iMyColliderIndex - 1].bHit = true;
-
-		m_vecInstancedTransform[iMyColliderIndex - 1].fRimRight.w = 1;
-
-		if (m_vecInstancedTransform[iMyColliderIndex - 1].iHp <= 0)
+		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
-			m_vecInstancedTransform[iMyColliderIndex - 1].iRenderType = RENDMER_DIE;
+
+			if (pMyCollider == m_vecInstancedTransform[i].pCollider && m_vecInstancedTransform[i].bHit == false)
+			{
+				if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex].bHit == false)
+				{
+					m_vecInstancedTransform[i].iRenderType = RENDER_HIT;
+					m_vecInstancedTransform[i].iHp += -1;
+					m_vecInstancedTransform[i].dTime = 0;
+					m_vecInstancedTransform[i].bHit = true;
+
+					m_vecInstancedTransform[i].fRimRight.w = 1;
+
+					if (m_vecInstancedTransform[i].iHp <= 0)
+					{
+						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+					}
+				}
+			}
 		}
 	}
 }
@@ -139,7 +153,7 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 _float CMonster_Wolf::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 
-	m_pColliderCom->Set_Conflicted(0.f);
+	//m_pColliderCom->Set_Conflicted(0.f);
 
 	return _float();
 }
@@ -198,13 +212,14 @@ HRESULT CMonster_Wolf::SetUp_Info()
 		///////////////
 
 		/////////////////////////////////////Collider
+		tDesc.pCollider = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
+
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(1.5f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 0.7f, 0.f, 1);
-		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-		m_pColliderCom->Set_ParantBuffer();
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(tDesc.pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		///////////////////
 
 		/////////////////////////////////////AttackCollider
@@ -361,13 +376,10 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 	return S_OK;
 }
 
-HRESULT CMonster_Wolf::Update_Collider(_double fDeltaTime)
+HRESULT CMonster_Wolf::Update_Collider(_double dDeltaTime)
 {
 	//////////////Collider
-	m_pColliderCom->Update_ConflictPassedTime(fDeltaTime);
-	m_pAttackColliderCom->Update_ConflictPassedTime(fDeltaTime);
-
-	m_pColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
+	m_pAttackColliderCom->Update_ConflictPassedTime(dDeltaTime);
 	m_pAttackColliderCom->Update_Transform(0, m_pPlayerTransformCom->Get_WorldMatrix());
 
 
@@ -376,12 +388,14 @@ HRESULT CMonster_Wolf::Update_Collider(_double fDeltaTime)
 		if (m_vecInstancedTransform[i].iAnimType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iAnimType <= ANIM_RUN_Frame2)
 			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
 
-		m_pColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
 		m_pAttackColliderCom->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
 
-	}
 
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+		m_vecInstancedTransform[i].pCollider->Update_ConflictPassedTime(dDeltaTime);
+		m_vecInstancedTransform[i].pCollider->Update_Transform(0, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_vecInstancedTransform[i].pCollider));
+
+	}
 
 	if (m_bAttackOn == true)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
@@ -498,17 +512,6 @@ HRESULT CMonster_Wolf::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
-
-	COLLIDERDESC			ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(200.f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-
-
 	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider2), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
 	m_pAttackColliderCom = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
 
@@ -545,6 +548,7 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				_uint RandomPlayerIndex = iPlayerIndex + Random;
 
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
 				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
@@ -554,6 +558,7 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 				m_vecInstancedTransform[i].bHit = false;
 				m_vecInstancedTransform[i].fDissolve.x = 0;
 				m_vecInstancedTransform[i].fDissolve.w = 1; //Live
+
 
 			}
 
@@ -653,6 +658,7 @@ void CMonster_Wolf::Free()
 	{
 		Safe_Release(pTransform.pTransform);
 		Safe_Release(pTransform.pNavigation);
+		Safe_Release(pTransform.pCollider);
 	}
 	m_vecInstancedTransform.clear();
 
@@ -663,7 +669,6 @@ void CMonster_Wolf::Free()
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pAttackColliderCom);
 
 	for (_int i = 0; i < ANIM_END; i++)

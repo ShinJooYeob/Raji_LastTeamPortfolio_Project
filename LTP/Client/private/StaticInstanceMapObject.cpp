@@ -86,6 +86,12 @@ _int CStaticInstanceMapObject::Render()
 
 	for (auto& InstancMapObject : m_mapInstancMapObjects)
 	{
+
+
+		if (InstancMapObject.second.pvecTransform.size() == 1 &&
+			!(pInstance->IsNeedToRender(InstancMapObject.second.pvecTransform[0]->Get_MatrixState_Float3(CTransform::STATE_POS), InstancMapObject.second.fFrustumRange)))
+			continue;
+
 		InstancMapObject.second.pModelInstance->Render(m_pShaderCom, InstancMapObject.second.iPassIndex,
 			&InstancMapObject.second.pvecTransform);
 	}

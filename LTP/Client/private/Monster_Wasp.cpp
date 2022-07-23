@@ -570,6 +570,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				_uint RandomPlayerIndex = iPlayerIndex + Random;
 
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
 				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;

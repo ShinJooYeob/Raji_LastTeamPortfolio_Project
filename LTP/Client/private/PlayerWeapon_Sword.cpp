@@ -704,4 +704,5 @@ void CPlayerWeapon_Sword::Free()
 	Safe_Release(m_pMeshParticleTransform);
 	Safe_Release(m_pCollider_MainAttack_Combo3);
 	Safe_Release(m_pCollider_Ultimate);
+	Safe_Release(m_pCollider_PowerAttack_Combo3);
 }

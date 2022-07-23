@@ -1,5 +1,4 @@
 #pragma once
-
 #include "MonsterWeapon.h"
 
 BEGIN(Client)
@@ -60,8 +59,6 @@ private:
 	HRESULT	Gadasura_Black_Weapon(_double dDeltaTime);
 	HRESULT	Gadasura_Rage_Weapon(_double dDeltaTime);
 
-
-
 private:
 	Monster_Weapon_UniversalDesc m_Monster_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
@@ -74,12 +71,19 @@ private:
 	CNavigation*		m_pNavigationCom = nullptr;
 
 private:
+	CGameObject*		m_pMonster_Object = nullptr;
+	CModel*				m_pMonster_Model = nullptr;
+
+private:
 	CCollider*			m_pColliderCom = nullptr;
 	vector<ATTACHEDESC> m_vecAttachedDesc;
 
 private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
+
+private:
+	_bool				m_WeaponAttackOn = false;
 
 public:
 	static CMonster_Weapon_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
