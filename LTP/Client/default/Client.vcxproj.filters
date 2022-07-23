@@ -385,6 +385,12 @@
     <Filter Include="01.GameObject\98.TriggerObject\05. DeadZone">
       <UniqueIdentifier>{b2060dd8-0c3a-4782-993a-662023ca3ca1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\06. ResurrectionTrigger">
+      <UniqueIdentifier>{f5b440a8-1055-41c9-8fdb-f8928917887b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\07. WallRunTrigger">
+      <UniqueIdentifier>{4232db5d-9fcf-4208-8a62-3a9eb11ae6f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -852,6 +858,12 @@
     <ClInclude Include="..\public\ParticleCreater.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ResurrectionTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\06. ResurrectionTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WallRunTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\07. WallRunTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1296,6 +1308,12 @@
     </ClCompile>
     <ClCompile Include="..\private\ParticleCreater.cpp">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ResurrectionTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\06. ResurrectionTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WallRunTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\07. WallRunTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

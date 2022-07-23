@@ -7,7 +7,7 @@ BEGIN(Client)
 class CTriggerObject abstract : public CGameObject
 {
 public:
-	enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_CHANGE_NAV_INDEX, PACUR_PILLAR, BLOCK_ZONE, DEAD_ZONE, TRIGGER_CHANGE_CAMERA_VIEW, PACUR_END };
+	enum EParkourTriggerType { PACUR_LEDGE, PACUR_JUMP, PACUR_CHANGE_NAV_INDEX, PACUR_PILLAR, BLOCK_ZONE, DEAD_ZONE, TRIGGER_CHANGE_CAMERA_VIEW, CHECK_POINT, PACUR_WALLRUN, PACUR_END };
 
 protected:
 	CTriggerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);

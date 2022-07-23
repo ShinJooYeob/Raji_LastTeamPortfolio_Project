@@ -154,12 +154,19 @@ public:
 
 	_bool	m_IsConfilicted = false;
 
+
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 	CTransform* Get_Transform() const { return m_pTransformCom; }
 	_bool Get_IsLedgeReachBackState();
 	_int Get_CurPlayAnimation();
+
+
+public: /* For CheckPoint/Resurrection */
+	void	SetUp_CheckPoint_CurPos();
+	void	SetUp_CheckPoint(_fVector vCurPos, _uint iNavIndex);
+	void	Resurrection();
 
 public: /* public Setter */
 	void	Set_JumpPower(_float fJumpPower);
@@ -176,9 +183,12 @@ public:
 	void	Set_State_ParkourStart(_double fDeltaTime);								// Ledge
 	void	Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime);
 	void	Set_State_LedgeClimbUpStart(_double fDeltaTime);
+	void	Set_State_WallJump();
 
 	void	Set_State_PillarStart(_double fDeltaTime);									// Pillar
 	void	Set_State_PillarGrabStart(_bool bTurnReflect, _double fDeltaTime);
+
+	void	Set_State_WallRunStart(_bool bAnimDir, _float3 fStartPos, _float3 fEndPos, _double fDeltaTime);			// WallRun
 
 public:
 	EPLAYER_STATE Get_PlayerState();
@@ -199,7 +209,6 @@ private: /* Change Start State */
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
 
 	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
-	void	Set_State_WallRunStart(_bool bRightDir, _double fDeltaTime);			// WallRun
 
 	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
 
@@ -324,6 +333,9 @@ private: /* Relate Parkour */
 	_bool										m_bBlockClimbUp = false;
 	_float										m_fPillarClimbUpBlockHeight = 0.f;
 
+	_float3										m_fWallRunStartPos = _float3(0.f);
+	_float3										m_fWallRunEndPos = _float3(0.f);
+	
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
 	EINPUT_COMBO		m_eInputCombo = COMBO_END;
@@ -410,6 +422,15 @@ private: /* Animation Control */
 
 	_bool					m_bFallingDead = false;
 
+
+private: /* For Cheat Mode*/
+	_bool					m_bPowerOverwhelming = false;
+
+private: /* Resurrect Info */
+	_float3					m_fResurrectPos = _float3(0.f, 0.f, 0.f);
+	_uint					m_iResurrectNavIndex = 0;
+	_float					m_fResurrectionDelay = 0.f;
+
 private: /* For Navi */
 	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
 
@@ -480,6 +501,7 @@ private:
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_EtcInfo();
@@ -487,10 +509,12 @@ private:
 	HRESULT SetUp_PlayerEffects();
 
 	HRESULT Adjust_AnimMovedTransform(_double fDeltatime);
+	
 
+private: /* For Particle */
 	HRESULT Ready_ParticleDesc();
-
 	HRESULT Update_Partilce_Position();
+
 
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
