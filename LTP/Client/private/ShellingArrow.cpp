@@ -37,7 +37,7 @@ _int CShellingArrow::Update(_double dDeltaTime)
 
 	for (_uint i = 0; i < 32; i++)
 	{
-		if (0.5f >= XMVectorGetY(m_vecInstancedTransform[i]->Get_MatrixState(CTransform::TransformState::STATE_POS)))
+		if (m_tShellingArrowDesc.fTargetPos.y + 0.8f >= XMVectorGetY(m_vecInstancedTransform[i]->Get_MatrixState(CTransform::TransformState::STATE_POS)))
 		{
 	
 			continue;
@@ -48,7 +48,7 @@ _int CShellingArrow::Update(_double dDeltaTime)
 	 
 	if (false == m_bOnceDamage)
 	{
-		if (m_tShellingArrowDesc.fTargetPos.y >= XMVectorGetY(m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS)) - 0.5f)
+		if (m_tShellingArrowDesc.fTargetPos.y + 0.8f >= XMVectorGetY(m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS)))
 		{
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Shelling.wav"), m_vecInstancedTransform[0]->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 

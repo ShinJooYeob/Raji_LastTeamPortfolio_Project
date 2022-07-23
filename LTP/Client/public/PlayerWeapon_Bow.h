@@ -30,12 +30,17 @@ public:
 	virtual _int		LateRender() override;
 
 public:
+	virtual void		CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 	virtual _bool		AbleToChangeWeapon() override;
 
 public:
 	virtual void		Dissolve_In(_double fTargetTime) override;
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
+public:
+	void				Set_UltimateAttackPos(_fVector fPos);
 
 public:
 	void				PlayAnim_Idle();
@@ -80,9 +85,12 @@ public:
 	void				Change_Pivot(EBowPivot ePitvot);
 
 private:
+	void				Update_Colliders_Ultimate();
+
+private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_EtcInfo();
-
+	HRESULT				SetUp_Collider();
 
 
 private:/*For Particle*/
@@ -99,6 +107,9 @@ private:
 	_uint				m_iCurAnim = 0;
 	_bool				m_bOnceAnim = false;
 	_float				m_fAnimSpeed = 1.f;
+	_float3				m_fUltimateAttackPos = _float3(0.f, 0.f, 0.f);
+	_float				m_fMaxTime_UltimateAttackDuration = 5.f;
+	_float				m_fCurTime_UltimateAttackDuration = 5.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -106,6 +117,8 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CDissolve*			m_pDissolveCom = nullptr;
+
+	CCollider*			m_pCollider_Ultimate = nullptr;
 
 public:
 	static CPlayerWeapon_Bow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

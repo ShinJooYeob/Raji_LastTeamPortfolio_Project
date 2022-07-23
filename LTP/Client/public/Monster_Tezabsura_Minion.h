@@ -32,7 +32,10 @@ public:
 private:
 	HRESULT				SetUp_Info();
 
+	HRESULT				SetUp_Collider();
+
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -51,9 +54,16 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 
-
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
 
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
@@ -94,7 +104,10 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
-
+private:
+	//Knockback
+	_bool				m_bKnockbackOn = false;
+	_float3				m_fKnockbackDir;
 
 private:
 	HRESULT	Ready_ParticleDesc();

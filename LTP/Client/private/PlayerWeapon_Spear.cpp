@@ -72,6 +72,23 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Range));
 	}
 
+	if (true == m_bActiveCollision_2)
+	{
+		Update_Colliders_2();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Sting));
+	}
+
+	if (true == m_bActiveCollision_3)
+	{
+		Update_Colliders_3();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_MainSmash));
+	}
+
+	if (true == m_bActiveCollision_4)
+	{
+		Update_Colliders_4();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Ultimate));
+	}
 
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	Update_ParticleTransform();
@@ -117,10 +134,11 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
-	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolveCom));
-	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Range));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_MainSmash));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Ultimate));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Sting));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Range));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
@@ -185,14 +203,23 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 {
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
-		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-		pConflictedCollider->Set_Conflicted(0.5f);
+		if (m_pCollider_Ultimate == pMyCollider)
+		{
+			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			pConflictedObj->Take_Damage(this, 3.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(0.1f);
+		}
+		else
+		{
+			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(0.5f);
 
-		_int iSelectSoundFileIndex = rand() % 2;
-		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
-		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+			_int iSelectSoundFileIndex = rand() % 2;
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+		}
 	}
 }
 
@@ -326,6 +353,50 @@ void CPlayerWeapon_Spear::Update_Colliders_1()
 
 	m_pCollider_Range->Update_Transform(0, mat);
 	m_pCollider_Range->Update_Transform(1, mat);
+}
+
+void CPlayerWeapon_Spear::Update_Colliders_2()
+{
+	CTransform* pPlayerTransform = static_cast<CTransform*>(m_tPlayerWeaponDesc.pOwner->Get_Component(TAG_COM(Com_Transform)));
+	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vPlayerLook = XMVector3Normalize(pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+
+	_Matrix mat = pPlayerTransform->Get_WorldMatrix();
+	_Matrix	RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(45.f));
+	mat *= RotationMatrix;
+
+	mat.r[3] = vPlayerPos + (vPlayerLook * 0.5f);
+
+	m_pCollider_Sting->Update_Transform(0, mat);
+	m_pCollider_Sting->Update_Transform(1, mat);
+}
+
+void CPlayerWeapon_Spear::Update_Colliders_3()
+{
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	mat.r[3] = XMVectorSetY(mat.r[3], XMVectorGetY(mat.r[3]) - 0.2f);
+	
+	m_pCollider_MainSmash->Update_Transform(0, mat);
+	m_pCollider_MainSmash->Update_Transform(1, mat);
+}
+
+void CPlayerWeapon_Spear::Update_Colliders_4()
+{
+	CTransform* pPlayerTransform = static_cast<CTransform*>(m_tPlayerWeaponDesc.pOwner->Get_Component(TAG_COM(Com_Transform)));
+	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+	_Matrix mat = XMMatrixIdentity();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	mat.r[3] = vPlayerPos;
+
+	m_pCollider_Ultimate->Update_Transform(0, mat);
+	m_pCollider_Ultimate->Update_Transform(1, mat);
 }
 
 void CPlayerWeapon_Spear::Update_ParticleTransform()
@@ -474,18 +545,70 @@ HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 	// Attack Range Collider
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_1), (CComponent**)&m_pCollider_Range));
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(6.f);
+	ColliderDesc.vScale = _float3(7.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Range->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vScale = _float3(6.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Range->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pCollider_Range->Set_ParantBuffer();
 	//
+
+
+	// Sting Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_2), (CComponent**)&m_pCollider_Sting));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Sting->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+	ColliderDesc.vRotation = _float4(45.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.5f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Sting->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	m_pCollider_Sting->Set_ParantBuffer();
+	//
+
+
+	// Main Attack Smash Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_3), (CComponent**)&m_pCollider_MainSmash));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_MainSmash->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_MainSmash->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider_MainSmash->Set_ParantBuffer();
+	//
+
+
+	// Ultimate Attack Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_4), (CComponent**)&m_pCollider_Ultimate));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(12.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(12.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider_Ultimate->Set_ParantBuffer();
+	//
+
 
 	return S_OK;
 }
@@ -562,8 +685,9 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pTransformCom_Skill);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pCollider_Range);
-	Safe_Release(m_pCollider_Range);
-	Safe_Release(m_pCollider_Range);
-	Safe_Release(m_pCollider_Range);
+	Safe_Release(m_pCollider_Sting);
+	Safe_Release(m_pCollider_MainSmash);
+	Safe_Release(m_pCollider_Ultimate);
+
 	Safe_Release(m_pDissolveCom);
 }

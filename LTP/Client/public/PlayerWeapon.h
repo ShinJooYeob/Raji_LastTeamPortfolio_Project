@@ -46,6 +46,12 @@ public:
 	void				Active_Collision_2();
 	void				DeActive_Collision_2();
 
+	void				Active_Collision_3();
+	void				DeActive_Collision_3();
+
+	void				Active_Collision_4();
+	void				DeActive_Collision_4();
+
 public:
 	virtual void		Active_Trail(_bool bActivate);
 	virtual _bool		AbleToChangeWeapon();
@@ -98,7 +104,8 @@ protected:
 	_bool						m_bActiveCollision = false;
 	_bool						m_bActiveCollision_1 = false;
 	_bool						m_bActiveCollision_2 = false;
-
+	_bool						m_bActiveCollision_3 = false;
+	_bool						m_bActiveCollision_4 = false;
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

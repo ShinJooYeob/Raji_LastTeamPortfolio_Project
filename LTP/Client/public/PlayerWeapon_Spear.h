@@ -60,6 +60,9 @@ private:
 	void				Update_Trail(_fMatrix* pMat, _double fDeltaTime);
 	void				Update_Colliders();
 	void				Update_Colliders_1();
+	void				Update_Colliders_2();
+	void				Update_Colliders_3();
+	void				Update_Colliders_4();
 	void				Update_ParticleTransform();
 
 private:
@@ -95,7 +98,9 @@ private:
 
 	CCollider*				m_pCollider = nullptr;
 	CCollider*				m_pCollider_Range = nullptr;
-
+	CCollider*				m_pCollider_Sting = nullptr;
+	CCollider*				m_pCollider_MainSmash = nullptr;
+	CCollider*				m_pCollider_Ultimate = nullptr;
 
 	CDissolve*				m_pDissolveCom = nullptr;
 

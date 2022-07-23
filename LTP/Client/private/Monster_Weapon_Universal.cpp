@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Weapon_Universal.h"
 #include "Monster_Gadasura_Black.h"
+#include "Monster_Gadasura_Rage.h"
 
 const _tchar* m_pMonster_Weapon_UniversalTag[CMonster_Weapon_Universal::MONSTER_WEAPON_UNIVERSAL_END]
 {
@@ -59,6 +60,9 @@ _int CMonster_Weapon_Universal::Update(_double dDeltaTime)
 
 	Update_Weapon(dDeltaTime);
 
+
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -66,8 +70,8 @@ _int CMonster_Weapon_Universal::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	/*FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));*/
 
 
 	_Matrix mat = m_fAttachedMatrix.XMatrix();
@@ -81,6 +85,8 @@ _int CMonster_Weapon_Universal::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
+	if(m_pColliderCom != nullptr)
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 	//Caculate_AttachedBone //디폴트피벗*  뼈의 디폴트 뼈 *  뼈의 오픈셋 * 컴바인드 * 부모의 트랜스폼,
 
 	return _int();
@@ -173,6 +179,10 @@ HRESULT CMonster_Weapon_Universal::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+	m_pMonster_Object = static_cast<CGameObject*>(m_Monster_Weapon_UniversalDesc.Object);
+	m_pMonster_Model = static_cast<CModel*>(m_pMonster_Object->Get_Component(TAG_COM(Com_Model)));
+
+	SetUp_Collider();
 
 	return S_OK;
 }
@@ -182,14 +192,148 @@ HRESULT CMonster_Weapon_Universal::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CMonster_Weapon_Universal::SetUp_Collider()
+{
+	switch (m_Monster_Weapon_UniversalDesc.iMonsterWeaponMeshNumber)
+	{
+	case CMonster_Weapon_Universal::GADASURA_BLACK_WEAPON:
+	{
+		CMonster_Gadasura_Black* Gadasura_Black = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		///////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(10.f, 10.f, 10.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		ATTACHEDESC tAttachedDesc;
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Black, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Black, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.55f, -1.1f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Black, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.6f, -1.8f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Black, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.7f, -2.7f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Black, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+		break;
+	}
+	case CMonster_Weapon_Universal::GADASURA_RAGE_WEAPON:
+	{
+		CMonster_Gadasura_Rage* Gadasura_Rage = static_cast<CMonster_Gadasura_Rage*>(m_Monster_Weapon_UniversalDesc.Object);
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		///////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(10.f, 10.f, 10.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		ATTACHEDESC tAttachedDesc;
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Rage, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Rage, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.55f, -1.1f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Rage, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.6f, -1.8f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Rage, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(-0.7f, -2.7f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		tAttachedDesc = ATTACHEDESC();
+		tAttachedDesc.Initialize_AttachedDesc(Gadasura_Rage, "skd_r_wrist", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-1.5748f, 0.075877f, -2.0999f));
+		m_vecAttachedDesc.push_back(tAttachedDesc);
+		m_pColliderCom->Set_ParantBuffer();
+	}
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT CMonster_Weapon_Universal::SetUp_BoneMatrix()
 {
 	return S_OK;
 }
 
-void CMonster_Weapon_Universal::Update_AttachMatrix()
+HRESULT CMonster_Weapon_Universal::Update_AttachMatrix()
 {
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_Monster_Weapon_UniversalDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+
+
 
 //	_Matrix tt = m_pTransformCom->Get_WorldMatrix()  * m_Monster_Weapon_UniversalDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 //	_Matrix t2 = m_fAttachedMatrix.TransposeXMatrix();
@@ -204,7 +348,63 @@ void CMonster_Weapon_Universal::Update_AttachMatrix()
 //
 //	m_fAttachedMatrix = tt;
 
+	return S_OK;
+}
 
+HRESULT CMonster_Weapon_Universal::Update_Collider(_double dDeltaTime)
+{
+
+	switch (m_Monster_Weapon_UniversalDesc.iMonsterWeaponMeshNumber)
+	{
+	case GADASURA_BLACK_WEAPON:
+	{
+		CMonster_Gadasura_Black* Gadasura_Black = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
+		m_WeaponAttackOn = Gadasura_Black->Get_WeaponAttackSwitch();
+
+		m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+		if (m_WeaponAttackOn == true)
+		{
+			_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+			for (_uint i = 0; i < iNumCollider; i++)
+			{
+				m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+			} 
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
+		}
+		break;
+	}
+	case GADASURA_RAGE_WEAPON:
+	{
+		CMonster_Gadasura_Rage* Gadasura_Rage = static_cast<CMonster_Gadasura_Rage*>(m_Monster_Weapon_UniversalDesc.Object);
+		m_WeaponAttackOn = Gadasura_Rage->Get_WeaponAttackSwitch();
+
+		m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+		if (m_WeaponAttackOn == true)
+		{
+			_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+			for (_uint i = 0; i < iNumCollider; i++)
+			{
+				m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+			}
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	//////이거 삭제하자 씨이이이발 ^^
+	//	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	//	for (_uint i = 0; i < iNumCollider; i++)
+	//	{
+	//		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+	//	}
+	//	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
+
+	return S_OK;
 }
 
 HRESULT CMonster_Weapon_Universal::Update_Weapon(_double dDeltaTime)
@@ -226,13 +426,10 @@ HRESULT CMonster_Weapon_Universal::Update_Weapon(_double dDeltaTime)
 
 HRESULT CMonster_Weapon_Universal::Gadasura_Black_Weapon(_double dDeltaTime)
 {
-	CMonster_Gadasura_Black* pMonsterOpject = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
 
-	CModel* pModel =static_cast<CModel*>(pMonsterOpject->Get_Component(TAG_COM(Com_Model)));
+	_double PlayRate = m_pMonster_Model->Get_PlayRate();
 
-	_double PlayRate = pModel->Get_PlayRate();
-
-	if (pModel->Get_NowAnimIndex()== 20)
+	if (m_pMonster_Model->Get_NowAnimIndex()== 20)
 	{
 		/*
 			//_Matrix mat = m_fAttachedMatrix.XMatrix();
@@ -299,13 +496,9 @@ HRESULT CMonster_Weapon_Universal::Gadasura_Black_Weapon(_double dDeltaTime)
 
 HRESULT CMonster_Weapon_Universal::Gadasura_Rage_Weapon(_double dDeltaTime)
 {
-	CMonster_Gadasura_Black* pMonsterOpject = static_cast<CMonster_Gadasura_Black*>(m_Monster_Weapon_UniversalDesc.Object);
+	_double PlayRate = m_pMonster_Model->Get_PlayRate();
 
-	CModel* pModel = static_cast<CModel*>(pMonsterOpject->Get_Component(TAG_COM(Com_Model)));
-
-	_double PlayRate = pModel->Get_PlayRate();
-
-	if (pModel->Get_NowAnimIndex() == 20)
+	if (m_pMonster_Model->Get_NowAnimIndex() == 20)
 	{
 		/*
 		//_Matrix mat = m_fAttachedMatrix.XMatrix();
@@ -398,6 +591,7 @@ void CMonster_Weapon_Universal::Free()
 
 	__super::Free();
 
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);

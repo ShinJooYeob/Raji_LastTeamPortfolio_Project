@@ -19,7 +19,7 @@ public:
 	void Update_Transform(_uint iIndex, _fMatrix& Transform);
 	void Update_ConflictPassedTime(_double fDeltaTime);
 
-	_bool Inspect_Collision( CCollider* pTargetCollider, _uint iBufferIndex = 0, _uint iTargetIndex = 0, _uint2* pOutIndex = nullptr);
+	_bool Inspect_Collision(CCollider* pTargetCollider, _uint iBufferIndex = 0, _uint iTargetIndex = 0, _uint2* pOutIndex = nullptr);
 
 	HRESULT Set_ParantBuffer(_uint iParantIndex = 0, _int iIndex = -1);
 	HRESULT Delete_ChildeBuffer(_uint iParantIndex = 0, _int iIndex = -1);
@@ -49,8 +49,8 @@ private:
 	_double						m_ConflictedPassedTime = 0;
 
 private:
-	_bool Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetCollider, _uint iTargetIndex,_uint2* pOutIndex);
-
+	_bool Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetCollider, _uint iTargetIndex, _uint2* pOutIndex);
+	
 public:
 	static CCollider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	virtual CComponent* Clone(void* pArg) override;

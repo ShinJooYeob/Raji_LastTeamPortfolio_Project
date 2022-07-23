@@ -27,6 +27,8 @@ HRESULT CPlayerWeapon_Bow::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	FAILED_CHECK(SetUp_Collider());
+
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	FAILED_CHECK(Ready_ParticleDesc());
@@ -70,7 +72,24 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 		break;
 	}
 
+
 	Set_Pivot();
+
+	// Update Colliders
+	if (true == m_bActiveCollision)
+	{
+		m_fCurTime_UltimateAttackDuration += (_float)fDeltaTime;
+		if (m_fCurTime_UltimateAttackDuration >= m_fMaxTime_UltimateAttackDuration)
+		{
+			m_bActiveCollision = false;
+		}
+		else
+		{
+			Update_Colliders_Ultimate();
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Ultimate));
+		}
+	}
+	//
 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
@@ -102,6 +121,8 @@ _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 
 
 
+	if(true == m_bActiveCollision)
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Ultimate));
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix, m_pDissolveCom));
@@ -136,6 +157,19 @@ _int CPlayerWeapon_Bow::LateRender()
 	return _int();
 }
 
+void CPlayerWeapon_Bow::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		if (m_pCollider_Ultimate == pMyCollider)
+		{
+			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(0.2f);
+		}
+	}
+}
+
 _bool CPlayerWeapon_Bow::AbleToChangeWeapon()
 {
 	return (false == m_pDissolveCom->Get_IsDissolving());
@@ -149,6 +183,12 @@ void CPlayerWeapon_Bow::Dissolve_In(_double fTargetTime)
 void CPlayerWeapon_Bow::Dissolve_Out(_double fTargetTime)
 {
 	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
+}
+
+void CPlayerWeapon_Bow::Set_UltimateAttackPos(_fVector fPos)
+{
+	m_fUltimateAttackPos = fPos;
+	m_fCurTime_UltimateAttackDuration = 0.f;
 }
 
 void CPlayerWeapon_Bow::PlayAnim_Idle()
@@ -315,6 +355,15 @@ void CPlayerWeapon_Bow::Change_Pivot(EBowPivot ePitvot)
 	}
 }
 
+void CPlayerWeapon_Bow::Update_Colliders_Ultimate()
+{
+	_Matrix mat = XMMatrixIdentity();
+	mat.r[3] = m_fUltimateAttackPos.XMVector();
+
+	m_pCollider_Ultimate->Update_Transform(0, mat);
+	m_pCollider_Ultimate->Update_Transform(1, mat);
+}
+
 HRESULT CPlayerWeapon_Bow::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -348,6 +397,31 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 HRESULT CPlayerWeapon_Bow::SetUp_EtcInfo()
 {
 	m_pModel->Change_AnimIndex(0);
+	m_fMaxTime_UltimateAttackDuration = 6.f;
+	m_fCurTime_UltimateAttackDuration = 6.f;
+
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon_Bow::SetUp_Collider()
+{
+	// Ultimate Attack Collider
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider_Ultimate));
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(12.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(12.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pCollider_Ultimate->Set_ParantBuffer();
+	//
+
 	return S_OK;
 }
 
@@ -470,5 +544,6 @@ void CPlayerWeapon_Bow::Free()
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pTextureParticleTransform_BowUp);
 	Safe_Release(m_pTextureParticleTransform_BowBack);
-	
+
+	Safe_Release(m_pCollider_Ultimate);
 }
