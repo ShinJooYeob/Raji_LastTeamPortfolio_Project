@@ -41,14 +41,15 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 
 	//////////////////testPosition
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-	//////////////////
 
 	return S_OK;
 }
 
 _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
+
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -65,7 +66,7 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	
+
 	//if (m_pModel->Get_NowAnimIndex() == 8 ||m_pModel->Get_NowAnimIndex() == 9 || m_pModel->Get_NowAnimIndex() == 10)
 	//{
 	//FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration * 1.6452f, m_bIsOnScreen));
@@ -76,9 +77,8 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	//}
 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
-	
-	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
+	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->Update(dDeltaTime);
@@ -106,9 +106,6 @@ _int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 #ifdef _DEBUG
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 #endif
-
-	if (m_bJumpingOn == false)
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
@@ -166,7 +163,7 @@ _float CMonster_Tezabsura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 
-	if(iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
+	if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
 		return _float();
 
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
@@ -334,6 +331,8 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
+
+
 	if (m_bLookAtOn)
 	{
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -451,55 +450,42 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 	switch (m_iOncePattern)
 	{
-		case 0:
-			m_iOnceAnimNumber = 8; //JumpStart
-			m_bComboAnimSwitch = true;
-			break;
-		case 1:
-			m_iOnceAnimNumber = 9; //JumpLoop
-			m_bComboAnimSwitch = true;
-			break;
-		case 2:
-			m_iOnceAnimNumber = 10; //JumpEnd
-			m_bComboAnimSwitch = false;
-			break;
-
-	//case 1:
-	//	m_iOnceAnimNumber = 12; //Attack
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 2:
-	//	m_iOnceAnimNumber = 8; //JumpStart
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 3:
-	//	m_iOnceAnimNumber = 9; //JumpLoop
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 4:
-	//	m_iOnceAnimNumber = 10; //JumpEnd
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 5:
-	//	m_iOnceAnimNumber = 12; //Attack
-	//	m_bComboAnimSwitch = false;
-	//	break;
-	//case 6:
-	//	m_iOnceAnimNumber = 8; //JumpStart
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 7:
-	//	m_iOnceAnimNumber = 9; //JumpLoop
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 8:
-	//	m_iOnceAnimNumber = 10; //JumpEnd
-	//	m_bComboAnimSwitch = true;
-	//	break;
-	//case 9:
-	//	m_iOnceAnimNumber = 12; //Attack
-	//	m_bComboAnimSwitch = false;
-	//	break;
+	case 0:
+		m_iOnceAnimNumber = 12; //Attack
+		m_bComboAnimSwitch = false;
+		break;
+	case 1:
+		m_iOnceAnimNumber = 8; //JumpStart
+		m_bComboAnimSwitch = true;
+		break;
+	case 2:
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
+		break;
+	case 3:
+		m_iOnceAnimNumber = 10; //JumpEnd
+		m_bComboAnimSwitch = true;
+		break;
+	case 4:
+		m_iOnceAnimNumber = 12; //Attack
+		m_bComboAnimSwitch = false;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 8; //JumpStart
+		m_bComboAnimSwitch = true;
+		break;
+	case 6:
+		m_iOnceAnimNumber = 9; //JumpLoop
+		m_bComboAnimSwitch = true;
+		break;
+	case 7:
+		m_iOnceAnimNumber = 10; //JumpEnd
+		m_bComboAnimSwitch = true;
+		break;
+	case 8:
+		m_iOnceAnimNumber = 12; //Attack
+		m_bComboAnimSwitch = false;
+		break;
 
 	case 30:
 		m_iOnceAnimNumber = 11;
@@ -520,7 +506,7 @@ HRESULT CMonster_Tezabsura_Minion::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 2)
+	if (m_iOncePattern > 8)
 	{
 		m_iOncePattern = 0; //OncePattern Random
 	}
@@ -563,15 +549,15 @@ HRESULT CMonster_Tezabsura_Minion::Special_Trigger(_double dDeltaTime)
 {
 
 
-	//if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
-	//{
-	//	m_dSpecial_CoolTime = 0;
-	//	m_dOnceCoolTime = 0;
-	//	m_dInfinity_CoolTime = 0;
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	{
+		m_dSpecial_CoolTime = 0;
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
 
-	//	m_bIOnceAnimSwitch = true;
-	//	m_iOncePattern = 30;
-	//}
+		m_bIOnceAnimSwitch = true;
+		m_iOncePattern = 30;
+	}
 
 
 	return S_OK;
@@ -582,7 +568,29 @@ HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
 
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
-	_float fY = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+	//if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10) 이게 맞는것
+	//{
+	//	m_bLookAtOn = false;
+
+	//	_uint TargetAnimIndex = iNowAnimIndex - 8;
+
+	//	if (PlayRate <=0 && iNowAnimIndex == 8)
+	//	{
+	//		m_fJumpTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//	}
+
+	//	_float fJumpY = 0;
+	//	if (PlayRate + TargetAnimIndex >= 0.5f && PlayRate + TargetAnimIndex <= 2.5f)
+	//	{
+	//		fJumpY  = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, PlayRate + TargetAnimIndex - 0.5f, 2.f);
+	//	}
+	//	else
+	//	{
+	//		fJumpY = 0;
+	//	}
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fJumpTempPos.XMVector() + XMVectorSet(0, fJumpY, 0, 0));
+	//}
 
 	if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
 	{
@@ -600,26 +608,15 @@ HRESULT CMonster_Tezabsura_Minion::Jumping(_double dDeltaTime)
 		{
 			fJumpY = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, (_float)PlayRate + TargetAnimIndex - 0.5f, 2.f);
 
-			m_pTransformCom->Move_Forward(dDeltaTime*0.8,m_pNavigationCom);
+			m_pTransformCom->Move_Forward(dDeltaTime*0.8);
 		}
 		else
 		{
 			fJumpY = 0;
-
 		}
 
 
 		_float3		fPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
-		if (fPosition.y >= fY)
-		{
-			m_dSpecial_CoolTime = 0;
-			m_dOnceCoolTime = 0;
-			m_dInfinity_CoolTime = 0;
-		}
-		else {
-			m_bJumpingOn = true;
-		}
 
 		fPosition.y = m_fJumpTempPos.y + fJumpY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat3(&fPosition));
@@ -656,7 +653,6 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
 	m_fMaxHP = 15.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
-
 
 	SetUp_Collider();
 
@@ -746,13 +742,13 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				}
 				else if (0.f < PlayRate && PlayRate <= 0.8636)
 				{
-					if(PlayRate >= 0.32 && PlayRate <= 0.68)
+					if (PlayRate >= 0.32 && PlayRate <= 0.68)
 						m_pTransformCom->Move_Backward(dDeltaTime* 0.8, m_pNavigationCom);
 
 					m_fKnockbackDir.y = 0;
 
 					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
-				} 
+				}
 			}
 			break;
 		}
@@ -760,7 +756,6 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_bJumpingOn = true;
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
@@ -770,7 +765,6 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_bJumpingOn = true;
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
@@ -780,7 +774,6 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_bJumpingOn = true;
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
@@ -790,8 +783,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
 			{
 				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
 			}
 			break;
 		case 12:
@@ -867,6 +859,4 @@ void CMonster_Tezabsura_Minion::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
-	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pHPUI);
 }

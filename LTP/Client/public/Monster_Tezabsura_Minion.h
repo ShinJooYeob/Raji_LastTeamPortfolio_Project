@@ -31,6 +31,7 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+
 	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
