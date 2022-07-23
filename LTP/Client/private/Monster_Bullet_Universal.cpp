@@ -531,7 +531,7 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 		m_bOnceSwtich = true;
 	}
 
-	if (m_dDeltaTime < 1)
+	if (m_dDeltaTime < 1.5f)
 	{
 		
 		if (m_dDeltaTime > 0.65f)

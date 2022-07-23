@@ -95,7 +95,7 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 
 			m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
 		}
-		//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 	}
 
 #endif // _DEBUG
@@ -121,16 +121,16 @@ _int CStaticMapObject::Render()
 
 	FAILED_CHECK(m_pDissolve->Render(m_iPassIndex));
 
-	//_uint NumMaterial = m_pModel->Get_NumMaterial();
-	//
-	//for (_uint i= 0 ; i < NumMaterial ; i ++)
-	//{
-	//
-	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-	//
-	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex,i));
-	//}
+	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	
+	for (_uint i= 0 ; i < NumMaterial ; i ++)
+	{
+	
+		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex,i));
+	}
 
 	return 0;
 }

@@ -2108,7 +2108,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr/*m_pNavigationCom*/);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 

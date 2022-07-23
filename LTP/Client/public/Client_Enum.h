@@ -102,6 +102,7 @@ static const char* Tag_InstancePass(eFollowingDirID eTag)
 		return "Look";
 		
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Flw Dir");
 		return nullptr;
 		break;
@@ -142,6 +143,7 @@ static const char* Tag_InstancePass(eInstancePassID eTag)
 
 
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Pass");
 		return nullptr;
 		break;
@@ -186,6 +188,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Pass");
 		return nullptr;
 		break;
@@ -260,6 +263,7 @@ static const char* Tag_ScenenName(SCENEID eTag)
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type SceneNumber");
 		return nullptr;
 		break;
@@ -652,6 +656,7 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Object_BaseCollision");
 
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Object Prototype");
 		return nullptr;
 		break;
@@ -978,6 +983,7 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		break;
 		
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Layer");
 		return nullptr;
 		break;
@@ -1075,6 +1081,22 @@ enum COMPONENTPROTOTYPEID
 
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
+
+#pragma region BossMesh
+
+	Prototype_Mesh_GPTerrainColumn,
+	Prototype_Mesh_GPTerrainMesh,
+	Prototype_Mesh_QRocksB,
+	Prototype_Mesh_QRocksC,
+	Prototype_Mesh_QRocksD,
+	Prototype_Mesh_QRocksE,
+	Prototype_Mesh_SnakeMapMesh,
+	Prototype_Mesh_BG_Mountain_1,
+	Prototype_Mesh_BG_Mountain_2,
+	Prototype_Mesh_BG_Mountain_3,
+	
+#pragma endregion BossMesh
+
 	////////////////////////////////////////////////////////////////////////////////
 
 #pragma region kurtzpel_ModelName
@@ -3381,6 +3403,39 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Wing:
 		return TEXT("Wing.fbx");
 		break;
+	case Prototype_Mesh_GPTerrainColumn:
+		return TEXT("GPTerrainColumn.fbx");
+		break;
+	case Prototype_Mesh_GPTerrainMesh:
+		return TEXT("GPTerrainMesh.fbx");
+		break;
+	case Prototype_Mesh_QRocksB:
+		return TEXT("QRocksB.fbx");
+		break;
+	case Prototype_Mesh_QRocksC:
+		return TEXT("QRocksC.fbx");
+		break;
+	case Prototype_Mesh_QRocksD:
+		return TEXT("QRocksD.fbx");
+		break;
+	case Prototype_Mesh_QRocksE:
+		return TEXT("QRocksE.fbx");
+		break;
+	case Prototype_Mesh_SnakeMapMesh:
+		return TEXT("SnakeMapMesh.fbx");
+		break;
+	case Prototype_Mesh_BG_Mountain_1:
+		return TEXT("BG_Mountain_1.fbx");
+		break;
+	case Prototype_Mesh_BG_Mountain_2:
+		return TEXT("BG_Mountain_2.fbx");
+		break;
+	case Prototype_Mesh_BG_Mountain_3:
+		return TEXT("BG_Mountain_3.fbx");
+		break;
+
+
+
 
 	case Prototype_Mesh_BR_Needle:
 		return TEXT("BR_Needle.fbx");
@@ -3414,6 +3469,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 	// kuzpel
+		
+	case Prototype_Mesh_KurtzpelStart:
+		return TEXT("01_R_Punch_SM_01_Mesh003.fbx");
+		break;
 	case Prototype_Mesh_01_R_Punch_SM_01_Mesh003:
 		return TEXT("01_R_Punch_SM_01_Mesh003.fbx");
 		break;
@@ -6327,7 +6386,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_SM_Wing_T_01:
 		return TEXT("SM_Wing_T_01.fbx");
 		break;
-
+	case Prototype_Mesh_KurtzpelEnd:
+		return TEXT("SM_Wing_T_01.fbx");
+		break;
+		
 
 
 	case Prototype_Mesh_ENV_BLD_Palace_02:
@@ -9669,7 +9731,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 			//////////////////////////////////////////////////////////////////////////
 		default:
-			MSGBOX("Wrong Type Layer");
+			__debugbreak();
+			MSGBOX("Wrong Type Prototype");
 			return nullptr;
 			break;
 	}
@@ -9810,6 +9873,7 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 		
 		//////////////////////////////////////////////////////////////////////////
 	default:
+		__debugbreak();
 		MSGBOX("Wrong Type Component");
 		return nullptr;
 		break;
