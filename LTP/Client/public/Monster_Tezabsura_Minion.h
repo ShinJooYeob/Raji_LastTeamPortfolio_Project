@@ -57,6 +57,14 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 
 private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+
+private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
@@ -95,7 +103,10 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
-
+private:
+	//Knockback
+	_bool				m_bKnockbackOn = false;
+	_float3				m_fKnockbackDir;
 
 private:
 	HRESULT SetUp_Components();
