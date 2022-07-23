@@ -36,6 +36,7 @@ public:
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
 
+
 private:
 	HRESULT				SetUp_Info();
 	HRESULT				SetUp_Collider();

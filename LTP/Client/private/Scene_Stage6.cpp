@@ -8,6 +8,7 @@
 #include "TestObject_PhysX.h"
 #include "physX/Collider_PhysX_Dynamic.h"
 #include "MapObject.h"
+#include "AssimpCreateMgr.h"
 
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -32,6 +33,9 @@ HRESULT CScene_Stage6::Initialize()
 	// Assimp Test
 //	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 //	GetSingle(CPhysXMgr)->CreateDemoMap();
+
+	FAILED_CHECK(Ready_LoadEffectMesh());
+
 
 	return S_OK;
 }
@@ -274,6 +278,18 @@ HRESULT CScene_Stage6::Ready_Layer_Monster_Boss(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Phycis()
 {
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_LoadEffectMesh()
+{
+
+	_Matrix TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)
+		STATIC_EFFECTLOAD((COMPONENTPROTOTYPEID)i);
+
 
 	return S_OK;
 }

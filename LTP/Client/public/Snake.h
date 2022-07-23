@@ -22,6 +22,10 @@ public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -56,6 +60,13 @@ private:
 	CGameObject*		m_pPlayerObj;
 
 	_bool				TestBool = false;
+
+	// Particle
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	CTransform*						m_pTextureParticleTransform1 = nullptr;
+	CTransform*						m_pTextureParticleTransform2 = nullptr;
+
+
 
 private:
 	HRESULT SetUp_Components();

@@ -38,6 +38,9 @@ private:
 	HRESULT Ready_Layer_Phycis();
 
 	
+	HRESULT Ready_LoadEffectMesh();
+
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 

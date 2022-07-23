@@ -455,6 +455,35 @@ HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 
 	return S_OK;
 }
+HRESULT CMonster_Gadasura_Rage::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Hand, E_FAIL);
+
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo1, E_FAIL);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo2, E_FAIL);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo3, E_FAIL);
+
+
+	return S_OK;
+}
+HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
+{
+	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
+	//	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+
+	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
+	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
+	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
+
+
+	return S_OK;
+}
 HRESULT CMonster_Gadasura_Rage::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -800,4 +829,10 @@ void CMonster_Gadasura_Rage::Free()
 	////////////Motion Test
 	Safe_Release(m_pMotionTrail);
 	////////////
+
+	Safe_Release(m_pTextureParticleTransform_Hand);
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+
 }

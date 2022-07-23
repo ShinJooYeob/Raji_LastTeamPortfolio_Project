@@ -80,6 +80,7 @@ _int CSnake::Update(_double fDeltaTime)
 	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 
+	// #DEBUG
 	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
 		m_bTestHodeing = !m_bTestHodeing;
 
@@ -105,6 +106,7 @@ _int CSnake::Update(_double fDeltaTime)
 		if (m_bHiding)
 		{
 			m_bIsAttack = true;
+			// #DEBUG
 			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
 		}
 		else
@@ -113,6 +115,8 @@ _int CSnake::Update(_double fDeltaTime)
 
 			_int iRandom =  (_int)GetSingle(CUtilityMgr)->RandomFloat(1.0f, 2.9f);
 			iRandom = 1;
+
+			// #DEBUG
 			if(iRandom == 1)
 				m_pModel->Change_AnimIndex(3);
 			else
@@ -189,6 +193,70 @@ void CSnake::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CG
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }
+
+
+HRESULT CSnake::Ready_ParticleDesc()
+{
+	// HandPos
+
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+
+	m_pTextureParticleTransform1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform1, E_FAIL);
+
+	// TailPos
+	m_pTextureParticleTransform2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform2, E_FAIL);
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999¿©µµ Á×´Â´Ù. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+
+
+	return S_OK;
+}
+
+HRESULT CSnake::Update_Particle(_double timer)
+{
+	_Matrix mat_Particle = m_pTransformCom->Get_WorldMatrix();
+	//	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+
+	mat_Particle.r[0] = XMVector3Normalize(mat_Particle.r[0]);
+	mat_Particle.r[1] = XMVector3Normalize(mat_Particle.r[1]);
+	mat_Particle.r[2] = XMVector3Normalize(mat_Particle.r[2]);
+
+	//mat_Tail.r[0] = XMVector3Normalize(mat_Tail.r[0]);
+	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
+	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
+
+
+	//mat_Hand.r[3] = m_pTextureParticleTransform2->Get_ColliderPosition(1).XMVector();
+	//m_pTextureParticleTransform2->Set_Matrix(mat_Hand);
+
+	//mat_Hand.r[3] = m_pTextureParticleTransform1->Get_ColliderPosition(2).XMVector();
+	//m_pTextureParticleTransform1->Set_Matrix(mat_Hand);
+
+
+	return S_OK;
+}
+
 
 HRESULT CSnake::SetUp_Components()
 {
@@ -434,4 +502,8 @@ void CSnake::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pCollider);
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pTextureParticleTransform1);
+	Safe_Release(m_pTextureParticleTransform2);
 }

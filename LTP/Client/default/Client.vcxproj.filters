@@ -852,9 +852,6 @@
     <ClInclude Include="..\public\ParticleCreater.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Client_Str.h">
-      <Filter>99.Define</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -994,9 +991,6 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\00. Spear</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>01.GameObject\02.Monster</Filter>
@@ -1299,6 +1293,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ParticleCreater.cpp">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

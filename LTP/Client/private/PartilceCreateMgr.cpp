@@ -28,7 +28,14 @@ Mesh Effect USE
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
+		STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
 
 
 
@@ -361,7 +368,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 	if (type == MESHEFFECT_ARROW_BOW_SHIFT_ICE)
 	{
-		MeshDesc.eMeshType = Prototype_Mesh_SM_4E_IceSpike_01;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ICE_01;
 
 		MeshDesc.fMaxTime_Duration = 1.5f;
 
@@ -724,7 +731,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 	{
 		MeshDesc.eMeshType = Prototype_Mesh_MS_ST3_Portal_00;
 
-		MeshDesc.fMaxTime_Duration = 6.0f;
+		MeshDesc.fMaxTime_Duration = 4.0f;
 
 		MeshDesc.iDiffuseTextureIndex = 236;
 		MeshDesc.iDiffuseTextureIndex = 33;
@@ -997,8 +1004,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 #pragma endregion TIMING
 
-
-#pragma region MONSTER
+#pragma region MONSTER_M
 
 	if (type == MESHEFFECT_MONSTER_CREATE1)
 	{
@@ -1047,9 +1053,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 	if (type == MESHEFFECT_MONSTER_CREATE2)
 	{
 		// ½Çµå °°À½
-		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_windSmokeDist;
+		MeshDesc.eMeshType = Prototype_Mesh_02_L_Upper_SM;
 
-		MeshDesc.fMaxTime_Duration = 0.8f;
+		MeshDesc.fMaxTime_Duration = 0.4f;
 
 		MeshDesc.iDiffuseTextureIndex = 20;
 		MeshDesc.MaskTextureIndex = 55;
@@ -1057,7 +1063,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 0, 0, 1);
-		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fAppearTime = 0.3f;
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 
 		MeshDesc.vLimLight = _float4(1, 1, 1, 1.f);
@@ -1065,11 +1071,11 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(-0.0f, 0.5f, -0.0f);
-		MeshDesc.vSize = _float3(18);
+		MeshDesc.vPosition = _float3(-0.0f, 0.0f, -0.0f);
+		MeshDesc.vSize = _float3(1.0f);
 
-		MeshDesc.RotAxis = FollowingDir_Look;
-		MeshDesc.RotationSpeedPerSec = 80;
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 0.0;
 
 		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
 		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
@@ -1091,117 +1097,134 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 	if (type == MESHEFFECT_MONSTER_MM_TAIL)
 	{
-		MeshDesc.eMeshType = Prototype_Mesh_SM_ice2;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_X;
 
-		MeshDesc.fMaxTime_Duration = 0.6f;
+		MeshDesc.fMaxTime_Duration = 0.5f;
 
-		MeshDesc.iDiffuseTextureIndex = 180;
-		MeshDesc.MaskTextureIndex = 58;
-		MeshDesc.NoiseTextureIndex = 163;
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 77;
+		MeshDesc.NoiseTextureIndex = 170;
 
-		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(-1.0f, 0.0f).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.6f;
+		MeshDesc.fAppearTime = 0.3f;
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 
 		MeshDesc.vLimLight = _float4(0.8f, 0.02f, 0.10f, 1.f);
-		MeshDesc.vEmissive = _float4(0.8f, 0.3f, 1.0f, 1.f);
+		MeshDesc.vEmissive = _float4(1.f, 1.0f, 1.f, 1.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(-0.0f, 0, 0.0f);
-		MeshDesc.vSize = _float3(2.0f);
+		MeshDesc.vPosition = _float3(-0.0f, -0.5f, 0.0f);
+		MeshDesc.vSize = _float3(1.5f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
-		MeshDesc.RotationSpeedPerSec = 30.0f;
+		MeshDesc.RotationSpeedPerSec = 35.0f;
 
 		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
 		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
 
 		MeshDesc.vLookDir = _float3(1, 0, 0);
-	
+
+
 
 
 		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
 		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 		//	MeshDesc.m_iPassIndex = 18; // DisCard
-		 MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+			 MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		AddDesc.LookRotAxis = FollowingDir_Right;
-
-		AddDesc.vAddDirectAngle = _float3(0, 0, 00);
+		AddDesc.AccRotSpeed = 0.5f;
+		AddDesc.AccScale = 0.7f;
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 1.0f;
+		AddDesc.AccScale = 0.5f;
+
+		AddDesc.vAddDirectAngle = _float3(0, 180.f, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
 
 	}
 
 
-	if (type == MESHEFFECT_MONSTER_MM_HAND)
+	if (type == MESHEFFECT_MONSTER_MM_TAIL2)
 	{
-		MeshDesc.eMeshType = Prototype_Mesh_SM_ice2;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SS_Trail_02;
+		// Prototype_Mesh_SM_Theo_Trail01
 
-		MeshDesc.fMaxTime_Duration = 0.3f;
+		MeshDesc.fMaxTime_Duration = 1.f;
 
-		MeshDesc.iDiffuseTextureIndex = 351;
-		MeshDesc.MaskTextureIndex = 10;
-		MeshDesc.NoiseTextureIndex = 374;
+		MeshDesc.iDiffuseTextureIndex = 175;
+		MeshDesc.MaskTextureIndex = 58;
+		MeshDesc.NoiseTextureIndex = 163;
 
-		MeshDesc.noisingdir = _float2(1.f, 0.0f).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.25f;
+		MeshDesc.fAppearTime = 0.2f;
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 
-		MeshDesc.vLimLight = _float4(0.95f, 0.25f, 0.44f, 1.f);
-		MeshDesc.vEmissive = _float4(0.8f, 0.1f, 0.3f, 1.f);
+		MeshDesc.vLimLight = _float4(0.75f, 0.06f, 0.03f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.3f, 1.0f, 1.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(-0.0f, 0, 0.7f);
-		MeshDesc.vSize = _float3(0.4f);
+		MeshDesc.vPosition = _float3(-0.0f, 0, 0.0f);
+		MeshDesc.vSize = _float3(0.5f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
-		MeshDesc.RotationSpeedPerSec = 0.0f;
+		MeshDesc.RotationSpeedPerSec = 50.0f;
 
 		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
 		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
 
-		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vLookDir = _float3(1, 0, 0);
 
 
-		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		//	MeshDesc.m_iPassIndex = 18; // DisCard
-			MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
-		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(0, 90, 0);
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+
+		AddDesc.vAddDirectAngle = _float3(0, 0, 00);
+		AddDesc.ScaleReFlag = false;
+		AddDesc.AccScale = 2.5f;
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
-
 	}
-	if (type == MESHEFFECT_MONSTER_ML_HAND)
+
+
+	if (type == MESHEFFECT_MONSTER_MM_HAND_L)
 	{
-		MeshDesc.eMeshType = Prototype_Mesh_SM_L_DS_Dashcombo_Y_L;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ArrowBurstTrail_01_New;
 
-		MeshDesc.fMaxTime_Duration = 0.3f;
 
-		MeshDesc.iDiffuseTextureIndex = 351;
-		MeshDesc.MaskTextureIndex = 10;
-		MeshDesc.NoiseTextureIndex = 374;
+		MeshDesc.fMaxTime_Duration = 0.2f;
 
-		MeshDesc.noisingdir = _float2(1.f, 0.0f).Get_Nomalize();
+		MeshDesc.iDiffuseTextureIndex = 292;
+		MeshDesc.MaskTextureIndex = 80;
+		MeshDesc.NoiseTextureIndex = 293;
+
+		MeshDesc.noisingdir = _float2(0.5f, 0.5f).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fAppearTime = 0.25f;
+		MeshDesc.fAppearTime = 0.2f;
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 
-		MeshDesc.vLimLight = _float4(0.95f, 0.25f, 0.44f, 1.f);
-		MeshDesc.vEmissive = _float4(0.8f, 0.1f, 0.3f, 1.f);
+		MeshDesc.vLimLight = _float4(0.06f, 0.76f, 0.18f, 0.8f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.8f, 0.8f, 1.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(-0.0f, 0, 0.7f);
-		MeshDesc.vSize = _float3(0.4f);
+		MeshDesc.vPosition = _float3(-0.0f, 0, -0.8f);
+		MeshDesc.vSize = _float3(0.8f, 0.5f, 0.8f).XMVector()*1.0f;
 
-		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotAxis = FollowingDir_Right;
 		MeshDesc.RotationSpeedPerSec = 0.0f;
 
 		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
@@ -1216,14 +1239,732 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(0, 90, 0);
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(110, 0, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(70, 0, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+
+
+	if (type == MESHEFFECT_MONSTER_ML_TAIL1)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_X;
+
+		MeshDesc.fMaxTime_Duration = 0.8f;
+
+		MeshDesc.iDiffuseTextureIndex = 180;
+		MeshDesc.MaskTextureIndex = 58;
+		MeshDesc.NoiseTextureIndex = 163;
+
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.75f, 0.06f, 0.03f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.3f, 1.0f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, -0.5f, 0.0f);
+		MeshDesc.vSize = _float3(1.5f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 35.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.AccRotSpeed = 0.5f;
+		AddDesc.AccScale = 0.7f;
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 1.0f;
+		AddDesc.AccScale = 0.5f;
+
+		AddDesc.vAddDirectAngle = _float3(0, 180.f, 0);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_TAIL1)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SS_Trail_02;
+
+		// Prototype_Mesh_SM_Theo_Trail01
+
+		MeshDesc.fMaxTime_Duration = 0.4f;
+
+		MeshDesc.iDiffuseTextureIndex = 175;
+		MeshDesc.MaskTextureIndex = 58;
+		MeshDesc.NoiseTextureIndex = 163;
+
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.75f, 0.06f, 0.03f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.3f, 1.0f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, 0.0f);
+		MeshDesc.vSize = _float3(3.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 30.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+
+			MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+
+		AddDesc.vAddDirectAngle = _float3(0, 0, 00);
+		AddDesc.ScaleReFlag = false;
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 	}
 
 
-#pragma endregion MONSTER
+
+	if (type == MESHEFFECT_MONSTER_ML_TAIL2)// 1
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SS_Trail_02;
+		// Prototype_Mesh_SM_Theo_Trail01
+
+		MeshDesc.fMaxTime_Duration = 1.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 236;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = 252;
+
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.00f, 0.00f, 0, 1.f);
+		MeshDesc.vEmissive = _float4(1, 0.3f, 1.0f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0.3f, -1.0f);
+		MeshDesc.vSize = _float3(1.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotationSpeedPerSec = 120.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+	//	AddDesc.AccRotSpeed = 300;
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_TAIL2) 
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SpinningSlash_O_R_DX;
+
+		MeshDesc.fMaxTime_Duration = 0.5f;
+
+		MeshDesc.iDiffuseTextureIndex = 180;
+		MeshDesc.MaskTextureIndex = 58;
+		MeshDesc.NoiseTextureIndex = 163;
+
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.3f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.37f, 0.03f, 0.02f, 1.f);
+		MeshDesc.vEmissive = _float4(0.3f, 0.3f, 1.0f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);dsa
+		MeshDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.8f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+
+		AddDesc.vAddDirectAngle = _float3(90, 0, 00);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_TAIL3)
+	{
+		
+		MeshDesc.eMeshType = Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting;
+
+		MeshDesc.fMaxTime_Duration = 2.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 180;
+		MeshDesc.MaskTextureIndex = 58;
+		MeshDesc.NoiseTextureIndex = 163;
+
+		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 1.0f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.0f, 0.00f, 0.00f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.3f, 1.0f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, 0.0f);
+		MeshDesc.vSize = _float3(2.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 48.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.AccRotSpeed = -30.0f;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.FixFlag = true;
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_HAND_L)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ArrowBurstTrail_01_New;
+
+		MeshDesc.fMaxTime_Duration = 0.2f;
+
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = 33;
+		MeshDesc.NoiseTextureIndex = 306;
+
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(1, 1, 1, 1);
+		MeshDesc.vEmissive = _float4(1.0f, 0.2f, 0.8f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, -0.5f);
+		MeshDesc.vSize = _float3(0.8f, 0.5f, 0.8f).XMVector()*0.9f;
+
+		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+		AddDesc.vAddDirectAngle = _float3(110, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		AddDesc.vAddDirectAngle = _float3(70, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.vSize = _float3(0.8f, 0.5f, 0.8f).XMVector()*1.3f;
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(110, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(70, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_HAND_R)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ArrowBurstTrail_01_New;
+
+		MeshDesc.fMaxTime_Duration = 0.2f;
+
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = 33;
+		MeshDesc.NoiseTextureIndex = 306;
+
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(1, 1, 1, 1);
+		MeshDesc.vEmissive = _float4(1.0f, 0.2f, 0.8f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0, -0.5f);
+		MeshDesc.vSize = _float3(0.8f, 0.5f, 0.8f).XMVector()*0.9f;
+
+		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+			MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+		AddDesc.vAddDirectAngle = _float3(110, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		AddDesc.vAddDirectAngle = _float3(70, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.vSize = _float3(0.8f, 0.5f, 0.8f).XMVector()*1.3f;
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(110, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(70, 0, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+	if (type == MESHEFFECT_MONSTER_ML_CASH1)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_D;
+		
+		MeshDesc.fMaxTime_Duration = 0.3f;
+
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = 27;
+		MeshDesc.NoiseTextureIndex = 306;
+
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.25f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(1.0057f, 0, 0, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.2f, 0.8f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.5f, -3.0f, -0.5f).XMVector()*1.f;
+		MeshDesc.vSize = _float3(1.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.FixFlag = true;
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(0, 20, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(0, -20, 0);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+
+
+	if (type == MESHEFFECT_MONSTER_ML_CASH2)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_D;
+
+		MeshDesc.fMaxTime_Duration = 0.3f;
+
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = 27;
+		MeshDesc.NoiseTextureIndex = 306;
+
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 0.25f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(1.0057f, 0, 0, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.2f, 0.8f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.5f, -3.0f, -0.5f).XMVector()*1.f;
+		MeshDesc.vSize = _float3(1.0f);
+
+		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.FixFlag = true;
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(0, 0, 110);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		AddDesc.vAddDirectAngle = _float3(0, 0, 70);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+
+
+#pragma endregion MONSTER_M
+
+#pragma region MONSTER_G
+
+	//if (type == MESHEFFECT_MONSTER_GM_Cash0)
+	//{
+	//	MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_Z;
+
+	//	MeshDesc.fMaxTime_Duration = 1.0f;
+
+	//	MeshDesc.iDiffuseTextureIndex = 372;
+	//	MeshDesc.MaskTextureIndex = 55;
+	//	MeshDesc.NoiseTextureIndex = 374;
+
+	//	MeshDesc.noisingdir = _float2(0.0f, 1.f).Get_Nomalize();
+	//	MeshDesc.vColor = _float4(1, 1, 1, 1);
+	//	MeshDesc.fAppearTime = 0.3f;
+	//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+	//	MeshDesc.vLimLight = _float4(1, 1, 1, 1.f);
+	//	MeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 1.f);
+
+
+	//	//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+	//	MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
+	//	MeshDesc.vSize = _float3(2.0f);
+
+	//	MeshDesc.RotAxis = FollowingDir_Look;
+	//	MeshDesc.RotationSpeedPerSec = 0.0f;
+
+	//	//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+	//	//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+	//	MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+	//	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+	//	AddDesc.LookRotAxis = FollowingDir_Right;
+
+	//	AddDesc.vAddDirectAngle = _float3(90, 0, 00);
+	//	GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	//}
+
+
+
+#pragma endregion MONSTER_G
+
+#pragma region BOSS_Snake
+
+	//if (type == MESHEFFECT_BOSS_SNAKE_0)
+	//{
+	//	MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_Z;
+
+	//	MeshDesc.fMaxTime_Duration = 1.0f;
+
+	//	MeshDesc.iDiffuseTextureIndex = 372;
+	//	MeshDesc.MaskTextureIndex = 55;
+	//	MeshDesc.NoiseTextureIndex = 374;
+
+	//	MeshDesc.noisingdir = _float2(0.0f, 1.f).Get_Nomalize();
+	//	MeshDesc.vColor = _float4(1, 1, 1, 1);
+	//	MeshDesc.fAppearTime = 0.3f;
+	//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+	//	MeshDesc.vLimLight = _float4(1, 1, 1, 1.f);
+	//	MeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 1.f);
+
+
+	//	//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+	//	MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
+	//	MeshDesc.vSize = _float3(2.0f);
+
+	//	MeshDesc.RotAxis = FollowingDir_Look;
+	//	MeshDesc.RotationSpeedPerSec = 0.0f;
+
+	//	//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+	//	//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+	//	MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+	//	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	////	MeshDesc.m_iPassIndex = 18; // DisCard
+	////	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+	//	AddDesc.LookRotAxis = FollowingDir_Right;
+
+	//	AddDesc.vAddDirectAngle = _float3(90, 0, 00);
+	//	GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	//}
+
+
+
+	//if (type == MESHEFFECT_BOSS_SNAKE_1)
+	//{
+	//	MeshDesc.eMeshType = Prototype_Mesh_SM_DS_Rage_Buff_L_Z;
+
+	//	MeshDesc.fMaxTime_Duration = 1.0f;
+
+	//	MeshDesc.iDiffuseTextureIndex = 372;
+	//	MeshDesc.MaskTextureIndex = 55;
+	//	MeshDesc.NoiseTextureIndex = 374;
+
+	//	MeshDesc.noisingdir = _float2(0.0f, 1.f).Get_Nomalize();
+	//	MeshDesc.vColor = _float4(1, 1, 1, 1);
+	//	MeshDesc.fAppearTime = 0.3f;
+	//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+	//	MeshDesc.vLimLight = _float4(1, 1, 1, 1.f);
+	//	MeshDesc.vEmissive = _float4(1, 0.5f, 1.f, 1.f);
+
+
+	//	//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+	//	MeshDesc.vPosition = _float3(-0.0f, 0, -0.0f);
+	//	MeshDesc.vSize = _float3(2.0f);
+
+	//	MeshDesc.RotAxis = FollowingDir_Look;
+	//	MeshDesc.RotationSpeedPerSec = 0.0f;
+
+	//	//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+	//	//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+	//	MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+	//	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	////	MeshDesc.m_iPassIndex = 18; // DisCard
+	////	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+	//	AddDesc.LookRotAxis = FollowingDir_Right;
+
+	//	AddDesc.vAddDirectAngle = _float3(90, 0, 00);
+	//	GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma endregion BOSS_Snake
+
+#pragma region BOSS_Rangda 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma endregion BOSS_Rangda 
+
+#pragma region BOSS_Chiedtian  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma endregion BOSS_Chiedtian  
+
+
+#pragma region BOSS_Mahabalasura
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma endregion BOSS_Mahabalasura
+	
+
+
 
 	return S_OK;
 }

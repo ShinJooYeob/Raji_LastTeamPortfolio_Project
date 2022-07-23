@@ -1730,6 +1730,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_SM_ice2,
 	Prototype_Mesh_SM_IceTrap_Ice,
 	Prototype_Mesh_SM_IceWall_2,
+	Prototype_Mesh_SM_ICE_01,
 	Prototype_Mesh_SM_Incomplete_Palaspel_Weapon,
 	Prototype_Mesh_SM_Karin_Weapon_01,
 	Prototype_Mesh_SM_Karin_Weapon_02,
@@ -5387,6 +5388,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_SM_IceWall_2:
 		return TEXT("SM_IceWall_2.fbx");
+		break;
+	case Prototype_Mesh_SM_ICE_01:
+		return TEXT("SM_ICE_01.fbx");
 		break;
 	case Prototype_Mesh_SM_Incomplete_Palaspel_Weapon:
 		return TEXT("SM_Incomplete_Palaspel_Weapon.fbx");

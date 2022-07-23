@@ -32,7 +32,6 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 
-
 	SetUp_Info();
 
 	SetUp_Weapon();
@@ -287,7 +286,7 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	m_iOncePattern = 16;
+	m_iOncePattern = 0;
 
 	switch (m_iOncePattern)
 	{
@@ -449,6 +448,66 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 
 	return S_OK;
 }
+
+HRESULT CMonster_Gadasura_Black::Ready_ParticleDesc()
+{
+	// HandPos
+
+	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Hand, E_FAIL);
+
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo1, E_FAIL);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo2, E_FAIL);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo3, E_FAIL);
+	
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999¿©µµ Á×´Â´Ù. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+
+
+	return S_OK;
+}
+
+HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
+{
+
+	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
+
+	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
+	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
+	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
+
+
+	//mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	//m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
+
+
+
+	return S_OK;
+}
+
 HRESULT CMonster_Gadasura_Black::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -540,12 +599,18 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 17:
 		{
-			// #TIME Attack1
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.1f)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3f)
+			{
+				// #TIME Attack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash0, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+
 
 			m_bLookAtOn = false;
 			break;
@@ -693,4 +758,11 @@ void CMonster_Gadasura_Black::Free()
 	////////////Motion Test
 	Safe_Release(m_pMotionTrail);
 	////////////
+
+	Safe_Release(m_pTextureParticleTransform_Hand);
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+	
+
 }
