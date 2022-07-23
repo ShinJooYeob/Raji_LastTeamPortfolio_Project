@@ -35,14 +35,19 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 
-	m_fJumpPower = 3.f;
+	m_fJumpPower = 4.5f;
+
+
+	//////////////////testPosition
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	//////////////////
 
 	return S_OK;
 }
 
 _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
-
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -90,6 +95,9 @@ _int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	return _int();
 }
@@ -161,27 +169,14 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CMonster_Tezabsura_Minion::SetUp_Collider()
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-
-
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime);
-			break;
-
-		}
-	}
 
 	if (m_bLookAtOn)
 	{
@@ -207,6 +202,13 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 
 	//RELEASE_INSTANCE(CGameInstance);
 
+
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Minion::Update_Collider(_double dDeltaTime)
+{
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
 	return S_OK;
 }
@@ -523,10 +525,19 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		//}
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			if (PlayRate > 0)
+			{
+				m_bLookAtOn = false;
+			}
+
+			break;
+		}
 		case 1:
 			if (PlayRate > 0)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 0.7);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.05, m_pNavigationCom);
 			}
 			break;
 		case 8:
@@ -560,7 +571,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
 			{
 				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			}
 			break;
 		case 12:

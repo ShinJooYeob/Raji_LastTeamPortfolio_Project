@@ -31,8 +31,10 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -50,8 +52,6 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
-
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
