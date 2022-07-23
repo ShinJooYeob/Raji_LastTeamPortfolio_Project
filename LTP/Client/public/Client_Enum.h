@@ -3413,7 +3413,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Plat_Wall.fbx");
 		break;
 
-	// kuzpel
+	// kuzpel		
+	case Prototype_Mesh_KurtzpelStart:
+		return TEXT("01_R_Punch_SM_01_Mesh003.fbx");
+		break;
 	case Prototype_Mesh_01_R_Punch_SM_01_Mesh003:
 		return TEXT("01_R_Punch_SM_01_Mesh003.fbx");
 		break;
@@ -6327,7 +6330,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_SM_Wing_T_01:
 		return TEXT("SM_Wing_T_01.fbx");
 		break;
-
+	case Prototype_Mesh_KurtzpelEnd:
+		return TEXT("SM_Wing_T_01.fbx");
+		break;
+		
 
 
 	case Prototype_Mesh_ENV_BLD_Palace_02:

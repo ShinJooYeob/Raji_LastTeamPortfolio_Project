@@ -1745,7 +1745,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 {
 	
-	static _float3 CreatePos = _float3(30.f, 37.460f, 60.f);
+	static _float3 CreatePos = _float3(0, 0, 0);
 	ImGui::DragFloat3("CreatePos:", (float*)&CreatePos, 0.1f, -100, 100);
 	static const wchar_t* layer_Monster = TAG_LAY(Layer_Monster);
 	static const wchar_t* layer_Boss = TAG_LAY(Layer_Boss);

@@ -314,30 +314,30 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //		}
 
 		// USE LOAD
-		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
-		STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
-		STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
-		STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
-		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
-		STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_circle);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
 
 
 
@@ -1200,10 +1200,11 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
 
-
-	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_1.dat")))))
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TAG_CP(Prototype_Navigation),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_2.dat")))))
 		return E_FAIL;
+
 
 
 	//if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TEXT("Prototype_Component_Navigation"),
@@ -1403,6 +1404,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
 
 
 
@@ -1910,9 +1912,9 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-		//
+	// MERGE //
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+//	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
 
 #pragma endregion
 
