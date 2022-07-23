@@ -37,6 +37,7 @@ HRESULT CUI::Initialize_Clone(void * pArg)
 
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH((_float)g_iWinCX, (_float)g_iWinCY, 0.f, 1.f)));
 
+	m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(m_fAngle));
 	m_pTransformCom->Scaled_All(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(m_fX - ((_float)g_iWinCX * 0.5f), -m_fY + ((_float)g_iWinCY * 0.5f), 0.f, 1.f));
 
@@ -91,7 +92,7 @@ _int CUI::Render()
 	//else
 	//	m_pVIBufferCom->Render(m_pShaderCom, 0);
 
-	m_pVIBufferCom->Render(m_pShaderCom, 0);
+	m_pVIBufferCom->Render(m_pShaderCom, 1);
 
 
 	return S_OK;
@@ -101,6 +102,13 @@ _int CUI::LateRender()
 {
 
 	return _int();
+}
+
+HRESULT CUI::Set_ChangeTextureLayer(_tchar * LayerName)
+{
+	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(LayerName));
+
+	return S_OK;
 }
 
 HRESULT CUI::SetUp_Components()
@@ -114,8 +122,10 @@ HRESULT CUI::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom));
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(m_iLevelIndex, m_pPrototypeTag, m_pComponentTag, (CComponent**)&m_pTextureCom)))
+	if (FAILED(__super::Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_UI), TAG_COM(Com_UI), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
+
+	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"UI"));
 
 	return S_OK;
 }
@@ -128,14 +138,16 @@ void CUI::SetUp_UIInfo(SETTING_UI & pStruct)
 	m_fSizeY = pStruct.m_fSizeY;
 
 	m_pUIName = pStruct.pUI_Name;
+	m_iTextureIndex = pStruct.iTextureIndex;
 
 	m_bColl = pStruct.bColl;
 	m_bMove = pStruct.bMove;
 	m_bDraw = pStruct.bDraw;
 	m_bClick = pStruct.bClick;
 	m_iLevelIndex = pStruct.iLevelIndex;
-	m_pPrototypeTag = pStruct.pPrototypeTag;
-	m_pComponentTag = pStruct.pComponentTag;
+	//m_pPrototypeTag = pStruct.pPrototypeTag;
+	//m_pComponentTag = pStruct.pComponentTag;
+	m_fAngle = pStruct.fAngle;
 }
 
 void CUI::Update_Rect()

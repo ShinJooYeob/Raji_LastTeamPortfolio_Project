@@ -163,6 +163,8 @@ PS_OUT_NOLIGHT PS_MAIN_Default(PS_IN In)
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
 
+	if (Out.vDiffuse.a == 0.f)
+		discard;
 
 
 	return Out;
@@ -365,9 +367,16 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_Effect_Noise();
 	}
+	pass Rect_NoDicard			//6
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
 
-
-
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_Default();
+	}
 
 
 
