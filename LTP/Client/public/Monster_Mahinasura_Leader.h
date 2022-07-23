@@ -31,6 +31,11 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
 private:
 	HRESULT				SetUp_Info();
 	HRESULT				SetUp_Collider();
@@ -77,6 +82,12 @@ private:
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
+	// Particle
+	CTransform*						m_pTextureParticleTransform_RHand = nullptr;
+	CTransform*						m_pTextureParticleTransform_LHand = nullptr;
+	CTransform*						m_pTextureParticleTransform_Tail = nullptr;
+
+
 private://애니메이션 동작 및 이벤트
 		//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
@@ -111,6 +122,7 @@ private:
 private:
 	///Knockback
 	_float3				m_fKnockbackDir;
+
 
 private:
 	HRESULT SetUp_Components();

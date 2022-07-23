@@ -51,9 +51,10 @@ private:
 	_float3					m_vRotAxis = _float3(0, 1, 0);
 	_float3					m_vLookAxis = _float3(0, 0, 1);
 	_float3					m_vMoveDir = _float3(0, 0, 1);
+	_bool					mIsInit = false;
+	_bool					mReScale = false;
 
 	_float3					mFIXPos = _float3(0, 0, 0);
-	
 
 	MESHADDDATA				mAddDesc;
 

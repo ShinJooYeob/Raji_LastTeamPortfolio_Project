@@ -38,7 +38,7 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->LookDir(mMeshDesc.vLookDir.XMVector());
 	m_pTransformCom->Scaled_All(mMeshDesc.vSize);
-
+	
 	
 
 	// RotAxis ROTDIR
@@ -91,7 +91,32 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		return _int();
 	}
 
-	if (m_pParentTranscom == nullptr)return -1;
+	if (m_pParentTranscom == nullptr)
+		return -1;
+
+	if (mIsInit == false)
+	{
+		// Custom Init
+		m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScale);
+
+		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+
+
+		if (mAddDesc.vAddDirectAngle.x != 0)
+			m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+		else if (mAddDesc.vAddDirectAngle.y != 0)
+			m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+		else if (mAddDesc.vAddDirectAngle.z != 0)
+			m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+
+		mIsInit = true;
+		return _int();
+
+	}
+
+
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 	mMeshDesc.RotationSpeedPerSec += _float(mAddDesc.AccRotSpeed*fDeltaTime);
@@ -110,7 +135,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 		if (mAddDesc.AccMoveSpeed != 0)
 		{
-			_float Minvalue = mAddDesc.AccMoveSpeed * m_fCurTime_Duration*m_fCurTime_Duration;
+			_float Minvalue = mAddDesc.AccMoveSpeed * m_fCurTime_Duration;
 			mMeshDesc.MoveSpeed += Minvalue;
 		}
 
@@ -210,11 +235,36 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
 	}
 
+	// Scale
+	if (mReScale == false)
+		m_pTransformCom->Scaling_All(fDeltaTime);
+	else
+	{
+		m_pTransformCom->Scaling_All(-fDeltaTime*2);
+	}
+
+
+	_Sfloat3 f = m_pTransformCom->Get_Scale();
+	if (f.x <= 0.1f || f.y <= 0.1f || f.z <= 0.1f)
+		Set_IsDead();
+
+	
+
+
 	// Timer
 	if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration)
 	{
-		Set_IsDead();
+	
+		if (mAddDesc.ScaleReFlag == false)
+			Set_IsDead();
+		else
+		{
+			mReScale = true;
+			if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration * 50)
+				Set_IsDead();
+		}
 	}
+	
 
 	return _int();
 }

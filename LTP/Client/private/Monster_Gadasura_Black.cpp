@@ -34,7 +34,6 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 
-
 	SetUp_Info();
 
 	SetUp_Weapon();
@@ -55,16 +54,6 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
-	//m_pModel->Change_AnimIndex();
-	//m_pModel->Change_AnimIndex_ReturnTo(); //어떤 애니메이션을 돌리고 특정 애니메이션으로 보냄
-	//m_pModel->Change_AnimIndex_ReturnTo_Must(); //중간에 애니메이션을 캔슬하고 다른 애니메이션을 동작시킴
-	//m_pModel->Change_AnimIndex_UntilTo(); //1~5까지 돌린다고 명령어를 입력하면 1~5까지 돌아감
-	//m_pModel->Change_AnimIndex_UntilNReturn();//1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 경우
-	//m_pModel->Change_AnimIndex_UntilNReturn_Must(); //1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 수 있지만 다른 애니메이션을 동작시킬 수 있음
-
-	 
-	//camera moving test!@#!@#!@$#@$!@$@!$@!$@!#$@!#$@!#$@!#$!@%#$%#@%#@%#@%#@^^$%^#$^#$^%&
 	PlayAnim(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -485,6 +474,9 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	m_iOncePattern = 0;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -646,6 +638,66 @@ HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 
 	return S_OK;
 }
+
+HRESULT CMonster_Gadasura_Black::Ready_ParticleDesc()
+{
+	// HandPos
+
+	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Hand, E_FAIL);
+
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo1, E_FAIL);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo2, E_FAIL);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo3, E_FAIL);
+	
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999여도 죽는다. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+
+
+	return S_OK;
+}
+
+HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
+{
+
+	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
+
+	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
+	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
+	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
+
+
+	//mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	//m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
+
+
+
+	return S_OK;
+}
+
 HRESULT CMonster_Gadasura_Black::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -790,7 +842,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
-			}
+			}	
+
+
+			
+			
 			else if (PlayRate >= 0.2155 &&PlayRate <= 0.3879)
 			{
 				m_bWeaponAttackSwitch = true;
@@ -800,6 +856,14 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bWeaponAttackSwitch = false;
 				m_iAdjMovedIndex++;
 			}
+			
+			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.4f)
+			{
+				// #TIME Attack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash0, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+			
 			break;
 		}
 		case 18:
@@ -854,6 +918,10 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_Texture_BulletDesc.dDuration = 0.7;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				// #TIME SmashAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -901,6 +969,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate <= 0.588235)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+				// #TIME Run Attack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
 			}
 			else
 			{
@@ -983,4 +1053,11 @@ void CMonster_Gadasura_Black::Free()
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pTextureParticleTransform_Hand);
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+	
+
 }

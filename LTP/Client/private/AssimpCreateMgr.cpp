@@ -65,7 +65,7 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_One(const wchar_t* fbxName, _fMatri
 	// 특정 모델 Desc에 저장 후 모델 생성
 	FAILED_CHECK(Load_ModelFBXName_CreateModel(fbxName, DefaultMat));
 	mCurrent_NameIter = mList_CreateModelName.begin();
-	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+//	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
 
 	return S_OK;
 }
@@ -80,6 +80,7 @@ HRESULT CAssimpCreateMgr::Init_ModelName_FileList()
 
 HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatrix dynamicDefault)
 {
+	// #Threading 
 	// 모든 모델 로드
 
 	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
@@ -99,6 +100,36 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatri
 	return S_OK;
 
 }
+
+
+HRESULT CAssimpCreateMgr::Load_Model_DatFile_All_Thread(_fMatrix staticDefault, _fMatrix dynamicDefault)
+{
+	// #Threading 
+	// 모든 모델 로드
+
+	//GetSingle(CThreadMgr)->PlayThread(MainCollisionThread, this, nullptr);
+	//GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
+
+	//GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
+
+	//// Load ModelDesc
+	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
+	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
+
+	//SCENEID sceneID = SCENE_STATIC;
+	//FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
+	//FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
+
+	//mCurrent_NameIter = mList_CreateModelName.begin();
+
+	//GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+
+	return S_OK;
+
+}
+
+
+
 
 HRESULT CAssimpCreateMgr::Load_ModelList(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc)
 {

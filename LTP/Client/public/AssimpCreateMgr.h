@@ -22,13 +22,14 @@ public:
 	HRESULT Initalize(ID3D11Device* d,ID3D11DeviceContext* c);
 	HRESULT	Load_ALL_Model(_fMatrix staticDefault = XMMatrixIdentity(), _fMatrix dynamicDefault = XMMatrixIdentity());
 	HRESULT	Load_Model_One_ByFBXName(const wchar_t* fbxName, _fMatrix DefaultMat = XMMatrixIdentity());
-
+	
 	const wchar_t* GetName_Iter_Plus();
 
 private:
 	HRESULT Init_ModelName_FileList();
 	HRESULT Load_Model_DatFile_One(const wchar_t* fbxName, _fMatrix DefaultMat = XMMatrixIdentity());
-	HRESULT	Load_Model_DatFile_All(_fMatrix staticDefault = XMMatrixIdentity(), _fMatrix dynamicDefault= XMMatrixIdentity());
+	HRESULT	Load_Model_DatFile_All(_fMatrix staticDefault = XMMatrixIdentity(), _fMatrix dynamicDefault = XMMatrixIdentity());
+	HRESULT	Load_Model_DatFile_All_Thread(_fMatrix staticDefault = XMMatrixIdentity(), _fMatrix dynamicDefault = XMMatrixIdentity());
 
 
 	HRESULT	Load_ModelList(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc);

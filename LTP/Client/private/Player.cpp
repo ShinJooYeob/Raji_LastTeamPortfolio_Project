@@ -70,6 +70,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(true);
 
+
+
 	CHpUI::HPDesc HpDesc;
 	HpDesc.m_HPType = CHpUI::HP_RAJI;
 	HpDesc.m_pObjcect = this;
@@ -359,57 +361,57 @@ void CPlayer::Set_FallingDead(_bool bFallingDead)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState)
-	{
-		return 0.f;
-	}
+	//if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState)
+	//{
+	//	return 0.f;
+	//}
 
-	if (true == m_bShieldMode)
-	{
-		_int iSelectSoundFileIndex = rand() % 2;
-		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
-		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-		return 0.f;
-	}
+	//if (true == m_bShieldMode)
+	//{
+	//	_int iSelectSoundFileIndex = rand() % 2;
+	//	_tchar pSoundFile[MAXLEN] = TEXT("");
+	//	swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
+	//	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	//	return 0.f;
+	//}
 
-	if (0.f < fDamageAmount)
-	{
-		fDamageAmount *= -1.f;
-	}
+	//if (0.f < fDamageAmount)
+	//{
+	//	fDamageAmount *= -1.f;
+	//}
 
-	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
+	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
 
-	_float fRemainHP = Add_NowHP(fDamageAmount);
+	//_float fRemainHP = Add_NowHP(fDamageAmount);
 
-	if (0.f >= fRemainHP)
-	{
-		if (true == bKnockback)
-		{
-			Set_State_DamageStart(fKnockbackPower, vDamageDir);
-		}
-		else
-		{
-			m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
-			Set_State_DeathStart();
-			return fRemainHP;
-		}
-	}
-	else
-	{
-		if (true == bKnockback)
-		{
-			Set_State_DamageStart(fKnockbackPower, vDamageDir);
-		}
-	}
+	//if (0.f >= fRemainHP)
+	//{
+	//	if (true == bKnockback)
+	//	{
+	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
+	//	}
+	//	else
+	//	{
+	//		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+	//		Set_State_DeathStart();
+	//		return fRemainHP;
+	//	}
+	//}
+	//else
+	//{
+	//	if (true == bKnockback)
+	//	{
+	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
+	//	}
+	//}
 
-	_int iSelectSoundFileIndex = rand() % 9;
-	_tchar pSoundFile[MAXLEN] = TEXT("");
-	swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
-	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-	//"Jino_Raji_Hit_%d.wav"
+	//_int iSelectSoundFileIndex = rand() % 9;
+	//_tchar pSoundFile[MAXLEN] = TEXT("");
+	//swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
+	//g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	////"Jino_Raji_Hit_%d.wav"
 
-	return fRemainHP;
+	//return fRemainHP;
 	return 0.f;
 }
 
@@ -4259,6 +4261,13 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			{
 				m_bOncePlaySound = true;
 				g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Arrow_Power_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
 			}
 
 			m_bOnNavigation = true;
@@ -5937,8 +5946,6 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 			instancedesc.ParticleStartRandomPosMax = _float3(5, 0, 5);;
 
 			GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
-
-
 			// Set Ultimate Attack Col
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_UltimateAttackPos(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			m_pPlayerWeapons[WEAPON_BOW - 1]->Active_Collision();

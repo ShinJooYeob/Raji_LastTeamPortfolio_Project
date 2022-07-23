@@ -36,20 +36,17 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-
-
-
-
-
-
+	// #BUG NAVIONPLEASE
 	/////////////////test
-	
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	/////////////////
 
 	m_pTransformCom->Scaled_All(_float3(1.5f,1.5f,1.5f));
+
+	// Particle
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom);
+
 	return S_OK;
 }
 
@@ -67,7 +64,7 @@ _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 	//m_pModel->Change_AnimIndex_UntilNReturn();//1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 경우
 	//m_pModel->Change_AnimIndex_UntilNReturn_Must(); //1~5까지 돌리고 난 이후 특정 애니메이션으로 Return 시킬 수 있지만 다른 애니메이션을 동작시킬 수 있음
 
-
+	
 
 	PlayAnim(dDeltaTime);
 
@@ -106,7 +103,7 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pTailAttackColliderCom));
 #endif
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 
 	if (m_pHPUI != nullptr)
@@ -201,14 +198,17 @@ _float CMonster_Mahinasura_Minion::Take_Damage(CGameObject * pTargetObject, _flo
 
 HRESULT CMonster_Mahinasura_Minion::Ready_ParticleDesc()
 {
+	// HandPos
 
-	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	m_pTextureParticleTransform_RHand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_RHand, E_FAIL);
 
-//	m_pTextureParticleTransform_One = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-//	m_pTextureParticleTransform_Tow = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	//	m_pTextureParticleTransform_BowFront= (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pTextureParticleTransform_LHand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_LHand, E_FAIL);
 
+	// TailPos
+	m_pTextureParticleTransform_Tail = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Tail, E_FAIL);
 
 
 
@@ -237,27 +237,35 @@ HRESULT CMonster_Mahinasura_Minion::Ready_ParticleDesc()
 HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 {
 
-	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+	
 
-	//	EX)
-	//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
-	//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
+	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
+//	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
 
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
-	_Vector vPos = mat.r[3];
+	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
+	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
+	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
 
-	m_pTextureParticleTransform->Set_Matrix(mat);
+	//mat_Tail.r[0] = XMVector3Normalize(mat_Tail.r[0]);
+	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
+	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
 
-	//_Vector vPos2 = vPos + (mat.r[2] * 0.5f + mat.r[0] * 0.1f);
-	//mat.r[3] = vPos2;
-	//m_pTextureParticleTransform_BowUp->Set_MatrixState(CTransform::STATE_POS, vPos2);
 
-	//_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
-	//mat.r[3] = vPos3;
+	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
 
-	// m_pTextureParticleTransform_BowBack->Set_Matrix(mat);
+	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
+	m_pTextureParticleTransform_LHand->Set_Matrix(mat_Hand);
+
+
+
+	mat_Hand.r[0] = _Sfloat3(1,0,0);
+	mat_Hand.r[1] = _Sfloat3(0,1,0); 
+	mat_Hand.r[2] = _Sfloat3(0,0,1); 
+
+	mat_Hand.r[3] = m_pTailAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
+
 	return S_OK;
 }
 
@@ -664,6 +672,9 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	// m_iOncePattern = 4;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -848,7 +859,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		//	break;
 		//}
 		
-		
+
 
 		switch (iNowAnimIndex)
 		{
@@ -878,6 +889,10 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				if (m_iAdjMovedIndex == 0)
 				{
 					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+					// #TIME JUMP 
+					// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTextureParticleTransform);
+
 
 					m_iAdjMovedIndex += 1;
 				}
@@ -959,6 +974,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Minion::HANDATTACK;
+
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate >= 0.27272 && PlayRate <= 0.444)
@@ -979,25 +995,53 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 19: {
+
+			//		MeshDesc.vLimLight = _float4(0.06f, 0.76f, 0.18f, 1.f);
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Minion::HANDATTACK;
 
+				
 				m_iAdjMovedIndex++;
 			}
 			if (PlayRate >= 0.24 && PlayRate <= 0.48)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 0.9, m_pNavigationCom);
+
 			}
 			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
 			{
+
+
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
+			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.35f)
+			{
+				// #TIME Hand 2
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
+
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.5)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_RHand);
+				m_iAdjMovedIndex++;
 			}
 			break;
 		}
 		case 20: {
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.16f, 0.93f, 0.29f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_bLookAtOn = false;
@@ -1018,6 +1062,20 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				//m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
 			}
+
+
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.1f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+
+			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.45f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL, m_pTransformCom);
+				m_iAdjMovedIndex++;
+			}
+
 			break;
 		}
 		case 21: {
@@ -1070,6 +1128,9 @@ void CMonster_Mahinasura_Minion::Free()
 	__super::Free();
 
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTextureParticleTransform_RHand);
+	Safe_Release(m_pTextureParticleTransform_LHand);
+	Safe_Release(m_pTextureParticleTransform_Tail);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
@@ -1077,4 +1138,8 @@ void CMonster_Mahinasura_Minion::Free()
 	Safe_Release(m_pHandAttackColliderCom);
 	Safe_Release(m_pTailAttackColliderCom);
 	Safe_Release(m_pHPUI);
+
+	
+		
+
 }

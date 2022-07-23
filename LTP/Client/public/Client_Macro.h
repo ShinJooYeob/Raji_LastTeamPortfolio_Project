@@ -39,5 +39,6 @@
 #define PARTILCECOUNT		10
 #define TRANSDEAD(x) if(x){x->Set_IsOwnerDead(true);}
 
+#define STATIC_EFFECTLOAD(x) GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(x), TransformMatrix)
 
 

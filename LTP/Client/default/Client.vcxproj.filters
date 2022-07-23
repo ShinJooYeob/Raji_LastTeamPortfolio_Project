@@ -998,9 +998,6 @@
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp">
       <Filter>01.GameObject\01.Player\00. Weapons\00. Spear</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>01.GameObject\02.Monster</Filter>
     </ClCompile>
@@ -1305,6 +1302,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Plat_Bullet.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Plat_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
