@@ -40,7 +40,7 @@ HRESULT CMonster_Tezabsura_Landmine::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 
-	m_fJumpPower = 3.f;
+	m_fJumpPower = 4.5f;
 
 
 	//////////////////testPosition
@@ -91,6 +91,11 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -108,6 +113,15 @@ _int CMonster_Tezabsura_Landmine::LateUpdate(_double dDeltaTime)
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(dDeltaTime);
+
 
 	return _int();
 }
@@ -135,8 +149,6 @@ _int CMonster_Tezabsura_Landmine::Render()
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
 
-
-
 	return _int();
 }
 
@@ -160,6 +172,47 @@ void CMonster_Tezabsura_Landmine::CollisionTriger(CCollider * pMyCollider, _uint
 
 _float CMonster_Tezabsura_Landmine::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+
+	if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
+		return _float();
+
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+	m_dSpecial_CoolTime = 0;
+	m_dOnceCoolTime = 0;
+	m_dInfinity_CoolTime = 0;
+
+
+	m_bIOnceAnimSwitch = true;
+	if (bKnockback == false)
+	{
+		m_bKnockbackOn = false;
+		m_iOncePattern = 40;
+	}
+	else {
+		m_bKnockbackOn = true;
+		m_iOncePattern = 40;
+
+		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+	}
+
+	if (m_fHP < 5 && m_iBoolOnce == 0)
+	{
+		m_iOncePattern = 41;
+		m_dSpecial_CoolTime = 0;
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+
+		m_iBoolOnce += 1;
+	}
+
+	if (m_fHP <= 0)
+	{
+		Set_IsDead();
+	}
+
 	return _float();
 }
 
@@ -291,23 +344,6 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Fight(_double dDeltaTime)
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime);
-			break;
-
-		}
-	}
-
 	if (m_bLookAtOn && m_iOnceAnimNumber != 13 && m_iOnceAnimNumber != 14 && m_iOnceAnimNumber != 17)
 	{
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -325,6 +361,16 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Fight(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Update_Collider(_double dDeltaTime)
 {
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+
 	return S_OK;
 }
 
@@ -541,6 +587,12 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
 		break;
+	case 40:
+		m_iOnceAnimNumber = 7;
+		break;
+	case 41:
+		m_iOnceAnimNumber = 3;
+		break;
 
 	case 70:
 		m_iOnceAnimNumber = 11;
@@ -598,7 +650,7 @@ HRESULT CMonster_Tezabsura_Landmine::Special_Trigger(_double dDeltaTime)
 {
 
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 5)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -823,6 +875,38 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				m_pTransformCom->Move_Forward(dDeltaTime * 0.9786, m_pNavigationCom);
 			}
 			break;
+		case 3:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
+			{
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+			}
+			if (m_bKnockbackOn == true)
+			{
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+				{
+					m_bLookAtOn = false;
+					m_dAcceleration = 0.7;
+					m_iAdjMovedIndex++;
+				}
+				else if (0.f < PlayRate && PlayRate <= 0.8636)
+				{
+					if (PlayRate >= 0.32 && PlayRate <= 0.68)
+						m_pTransformCom->Move_Backward(dDeltaTime* 0.8, m_pNavigationCom);
+
+					m_fKnockbackDir.y = 0;
+
+					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+				}
+			}
+			m_bLookAtOn = false;
+			break;
+		}
+		case 7:
+		{
+			break;
+		}
 		case 8:
 		{
 

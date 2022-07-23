@@ -207,6 +207,7 @@ _float CMonster_Tezabsura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 	m_bIOnceAnimSwitch = true;
 	if (bKnockback == false)
 	{
+		m_bKnockbackOn = false;
 		m_iOncePattern = 40;
 	}
 	else {
@@ -581,7 +582,7 @@ HRESULT CMonster_Tezabsura_Minion::Special_Trigger(_double dDeltaTime)
 {
 
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 5)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
