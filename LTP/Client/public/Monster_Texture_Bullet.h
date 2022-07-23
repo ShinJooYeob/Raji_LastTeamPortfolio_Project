@@ -9,6 +9,8 @@ public:
 	enum Monster_TextureType {
 		JALSURA_BULLET,
 		GADASURA_TERRAIN_BULLET,
+		NONTEXTURE_SPHERE,
+		NONTEXTURE_OBB,
 		MONSTER_TEXUTRE_BULLET_END
 	};
 public:
@@ -59,11 +61,15 @@ private:
 private:
 	HRESULT	SetUp_Info();
 	HRESULT SetUp_Fire(_double dDeltaTime);
+	HRESULT SetUp_Collider();
+	HRESULT	Update_Collider(_double dDeltaTime);
 
 
 private: //Monster Skill
 	HRESULT Jalsura_Bullet(_double dDeltaTime);
 	HRESULT	Gadasura_Terrain_Bullet(_double dDeltaTime);
+	HRESULT	Nontexture_Sphere(_double dDeltaTime);
+	HRESULT	Nontexture_Obb(_double dDeltaTime);
 
 private://Paticle
 	HRESULT Gadasura_Terrain_Particle();
@@ -78,7 +84,9 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CTexture*			m_pTextureCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
 
 	CTransform*			m_pPlayerTransform = nullptr;
 

@@ -102,6 +102,8 @@ _int CMonster_Jalsura::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 #endif
 
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
 
@@ -682,6 +684,23 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_Texture_BulletDesc.dDuration = 1;
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				//////////////////EH Collider
+
+
+				ZeroMemory(&Monster_Texture_BulletDesc, sizeof(CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC));
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_OBB;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 30;
+				Monster_Texture_BulletDesc.fScale = _float3(11.5f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 1.f, 0.f);
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 1;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+				////////////////////
 
 
 				m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +

@@ -479,7 +479,9 @@ HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+
 	//m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), dDeltaTime);
+	m_iOncePattern = 30;
 	switch (m_iOncePattern)
 	{
 
@@ -521,7 +523,7 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 		break;
 
 	case 30:
-		m_iOnceAnimNumber = 11;
+		m_iOnceAnimNumber = 11; //Kick Attack
 		break;
 	case 40:
 		m_iOnceAnimNumber = 7;
@@ -902,7 +904,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				//		 - (m_vecMeshParticleDesc[0].vFixedPosition.XMVector())));
 					
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecMeshParticleDesc[0].vFixedPosition 
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.35f;
 				m_vecMeshParticleDesc[0].vPowerDirection = 
 					-((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *0.15f +
@@ -940,7 +942,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition 
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.35f;
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
@@ -972,7 +974,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_Monster_Bullet_Plat), &m_vecNonMeshParticleDesc[0]);
 			m_iAdjMovedIndex++;
 		}
-		if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
+		if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 		{
 			m_bLookAtOn = false;
 			m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
@@ -1010,14 +1012,14 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.fScale = _float3(0.75f, 0.75f, 0.75f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
-				Monster_BulletDesc.fPositioning = _float3(0.001f, 1.f, 1.5f);
+				Monster_BulletDesc.fPositioning = _float3(0.001f, 2.f, 1.5f);
 
 
 				Monster_BulletDesc.Object = this;
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));

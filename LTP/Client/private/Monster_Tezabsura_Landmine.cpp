@@ -446,7 +446,6 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 {
-	
 
 	switch (m_iOncePattern)
 	{
@@ -920,7 +919,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			{
 
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecMeshParticleDesc[0].vFixedPosition
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.35f;
 				m_vecMeshParticleDesc[0].vPowerDirection =
 					-((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 						+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *0.15f +
@@ -956,7 +955,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			{
 
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.35f;
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[1]);
@@ -985,8 +984,9 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			m_iAdjMovedIndex++;
 		}
 
-			if (PlayRate >= 0.472222 && PlayRate <= 0.7222)
+			if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 			{
+				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			}
 			break;

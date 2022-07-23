@@ -24,7 +24,7 @@ public:
 	virtual _int LateUpdate(_double dDeltaTime)override;
 	virtual _int Render()override;
 	virtual _int LateRender()override;
-
+	 
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
