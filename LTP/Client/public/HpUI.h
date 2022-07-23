@@ -33,6 +33,7 @@ public:
 
 public:
 	_int	Get_HitCount() { return m_iHitCount; }
+	void	Set_HitCount(_int iHitCound) { m_iHitCount = iHitCound; }
 
 public:
 	void	Set_ObjectPos();

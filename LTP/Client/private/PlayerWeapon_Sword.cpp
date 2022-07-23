@@ -688,7 +688,7 @@ CGameObject * CPlayerWeapon_Sword::Clone(void * pArg)
 	}
 	return pInstance;
 }
-//m_pMeshParticleTransform
+
 void CPlayerWeapon_Sword::Free()
 {
 	__super::Free();

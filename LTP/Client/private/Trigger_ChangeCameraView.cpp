@@ -36,9 +36,6 @@ _int CTrigger_ChangeCameraView::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 	
 
-	for (_uint i = 0; i < m_pCollider_DEBUG->Get_NumColliderBuffer(); i++)
-		m_pCollider_DEBUG->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
-
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
 
 	return _int();
@@ -50,7 +47,7 @@ _int CTrigger_ChangeCameraView::LateUpdate(_double fDeltaTimer)
 
 #ifdef _DEBUG
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pColliderCom));
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pCollider_DEBUG));
+	//FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pCollider_DEBUG)); 
 #endif // _DEBUG
 
 	return _int();
@@ -103,25 +100,28 @@ _int CTrigger_ChangeCameraView::DeActive_Trigger(CGameObject* pTarget, _double f
 HRESULT CTrigger_ChangeCameraView::After_Initialize()
 {
 	m_tChangeCameraViewDesc.eChangeCameraViewType = static_cast<EChangeCameraViewType>((_int)m_fValueMat._11);
-	m_tChangeCameraViewDesc.fMain_Pos = _float3(m_fValueMat._12, m_fValueMat._13, m_fValueMat._14);
-	m_tChangeCameraViewDesc.fMain_CamPos = _float3(m_fValueMat._21, m_fValueMat._22, m_fValueMat._23);
-	m_tChangeCameraViewDesc.fMain_CamLook = _float3(m_fValueMat._24, m_fValueMat._31, m_fValueMat._32);
-	m_tChangeCameraViewDesc.fMain_CamMoveWeight = m_fValueMat._33;
-	m_tChangeCameraViewDesc.fMain_CamLookWeight = m_fValueMat._34;
-	m_tChangeCameraViewDesc.bMainLockCamLook = (m_fValueMat._41 > 0 ? true : false);
-	m_tChangeCameraViewDesc.fMainMaxTargetArmLength = m_fValueMat._42;
-	m_tChangeCameraViewDesc.fMainMinTargetArmLength = m_fValueMat._43;
+	if (EChangeCameraViewType::TYPE_TWO_INTERP == m_tChangeCameraViewDesc.eChangeCameraViewType)
+	{
+		m_tChangeCameraViewDesc.fMain_Pos = _float3(m_fValueMat._12, m_fValueMat._13, m_fValueMat._14);
+		m_tChangeCameraViewDesc.fMain_CamPos = _float3(m_fValueMat._21, m_fValueMat._22, m_fValueMat._23);
+		m_tChangeCameraViewDesc.fMain_CamLook = _float3(m_fValueMat._24, m_fValueMat._31, m_fValueMat._32);
+		m_tChangeCameraViewDesc.fMain_CamMoveWeight = m_fValueMat._33;
+		m_tChangeCameraViewDesc.fMain_CamLookWeight = m_fValueMat._34;
+		m_tChangeCameraViewDesc.bMainLockCamLook = (m_fValueMat._41 > 0 ? true : false);
+		m_tChangeCameraViewDesc.fMainMaxTargetArmLength = m_fValueMat._42;
+		m_tChangeCameraViewDesc.fMainMinTargetArmLength = m_fValueMat._43;
 
-	m_tChangeCameraViewDesc.fSub_Pos = _float3(m_fSubValueMat._11, m_fSubValueMat._12, m_fSubValueMat._13);
-	m_tChangeCameraViewDesc.fSub_CamPos = _float3(m_fSubValueMat._14, m_fSubValueMat._21, m_fSubValueMat._22);
-	m_tChangeCameraViewDesc.fSub_CamLook = _float3(m_fSubValueMat._23, m_fSubValueMat._24, m_fSubValueMat._31);
-	m_tChangeCameraViewDesc.fSub_CamMoveWeight = m_fSubValueMat._32;
-	m_tChangeCameraViewDesc.fSub_CamLookWeight = m_fSubValueMat._33;
-	m_tChangeCameraViewDesc.bSubLockCamLook = (m_fSubValueMat._34 > 0 ? true : false) ;
-	m_tChangeCameraViewDesc.fSubMaxTargetArmLength = m_fSubValueMat._41;
-	m_tChangeCameraViewDesc.fSubMinTargetArmLength = m_fSubValueMat._42;
+		m_tChangeCameraViewDesc.fSub_Pos = _float3(m_fSubValueMat._11, m_fSubValueMat._12, m_fSubValueMat._13);
+		m_tChangeCameraViewDesc.fSub_CamPos = _float3(m_fSubValueMat._14, m_fSubValueMat._21, m_fSubValueMat._22);
+		m_tChangeCameraViewDesc.fSub_CamLook = _float3(m_fSubValueMat._23, m_fSubValueMat._24, m_fSubValueMat._31);
+		m_tChangeCameraViewDesc.fSub_CamMoveWeight = m_fSubValueMat._32;
+		m_tChangeCameraViewDesc.fSub_CamLookWeight = m_fSubValueMat._33;
+		m_tChangeCameraViewDesc.bSubLockCamLook = (m_fSubValueMat._34 > 0 ? true : false);
+		m_tChangeCameraViewDesc.fSubMaxTargetArmLength = m_fSubValueMat._41;
+		m_tChangeCameraViewDesc.fSubMinTargetArmLength = m_fSubValueMat._42;
+		FAILED_CHECK(SetUp_EtcInfo());
+	}
 
-	FAILED_CHECK(SetUp_EtcInfo());
 	return S_OK;
 }
 
@@ -133,11 +133,15 @@ void CTrigger_ChangeCameraView::CollisionTriger(CCollider * pMyCollider, _uint i
 		switch (m_tChangeCameraViewDesc.eChangeCameraViewType)
 		{
 		case EChangeCameraViewType::TYPE_FIX:
+			Change_CameraView_Stop(g_fDeltaTime);
 			break;
 		case EChangeCameraViewType::TYPE_FIX_SWITCH:
 			break;
 		case EChangeCameraViewType::TYPE_TWO_INTERP:
 			Change_CameraView_TwoPoint_Interp(g_fDeltaTime);
+			break;
+		case EChangeCameraViewType::TYPE_STOP:
+			Change_CameraView_Stop(g_fDeltaTime);
 			break;
 		}
 	}
@@ -196,8 +200,8 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	_float fDist_MainToPlayer = XMVectorGetX(XMVector3Length(m_tChangeCameraViewDesc.fMain_Pos.XMVector() - vPlayerPos));
 	_float fWeight_MainToPlayer = fDist_MainToPlayer / m_fDist_MainToSub;
 
-	_float3 fResult_CamPos = g_pGameInstance->Easing_Vector(TYPE_Linear, m_tChangeCameraViewDesc.fMain_CamPos.XMVector(), m_tChangeCameraViewDesc.fSub_CamPos.XMVector(), fWeight_MainToPlayer, 1.f);
-	//_float3 fResult_CamPos = (m_tChangeCameraViewDesc.fMain_CamPos.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamPos.XMVector() * fWeight_MainToPlayer);
+	//_float3 fResult_CamPos = g_pGameInstance->Easing_Vector(TYPE_Linear, m_tChangeCameraViewDesc.fMain_CamPos.XMVector(), m_tChangeCameraViewDesc.fSub_CamPos.XMVector(), fWeight_MainToPlayer, 1.f);
+	_float3 fResult_CamPos = (m_tChangeCameraViewDesc.fMain_CamPos.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamPos.XMVector() * fWeight_MainToPlayer);
 	_float3 fResult_CamLook = (m_tChangeCameraViewDesc.fMain_CamLook.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamLook.XMVector() * fWeight_MainToPlayer);
 	_float fResult_MoveWeight = (m_tChangeCameraViewDesc.fMain_CamMoveWeight * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamMoveWeight * fWeight_MainToPlayer);
 	_float fResult_LookWeight = (m_tChangeCameraViewDesc.fMain_CamLookWeight * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamLookWeight * fWeight_MainToPlayer);
@@ -209,7 +213,8 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	{
 		if (false == m_tChangeCameraViewDesc.bMainLockCamLook && fWeight_MainToPlayer > 0.1f)
 		{
-			m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
+			if(true == m_tChangeCameraViewDesc.bSubLockCamLook)
+				m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
 		}
 		else
 		{
@@ -222,7 +227,8 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	{
 		if (false == m_tChangeCameraViewDesc.bSubLockCamLook && fWeight_MainToPlayer < 0.9f)
 		{
-			m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
+			if (true == m_tChangeCameraViewDesc.bMainLockCamLook)
+				m_pMainCamera->Lock_CamLook(true, fResult_CamLook.XMVector());
 		}
 		else
 		{
@@ -232,11 +238,18 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 		m_pMainCamera->Set_MinTargetArmLength(m_tChangeCameraViewDesc.fSubMinTargetArmLength);
 	}
 
-	m_pMainCamera->Set_CameraMoveWeight(0.9f); 
-	m_pMainCamera->Set_CameraLookWeight(0.9f);
+	m_pMainCamera->Set_CameraMoveWeight(0.91f); 
+	m_pMainCamera->Set_CameraLookWeight(0.91f);
 
 	m_pPlayer->Set_AttachCamPosOffset(fResult_CamPos);
 	
+	return _int();
+}
+
+_int CTrigger_ChangeCameraView::Change_CameraView_Stop(_double fDeltaTime)
+{
+	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+
 	return _int();
 }
 
@@ -271,32 +284,6 @@ HRESULT CTrigger_ChangeCameraView::SetUp_Components()
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform2), (CComponent**)&m_pTransformCom_Sub, &tDesc));
-
-
-
-
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pCollider_DEBUG));
-	COLLIDERDESC			ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider_DEBUG->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider_DEBUG->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	m_pCollider_DEBUG->Set_ParantBuffer();
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider_DEBUG->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	m_pCollider_DEBUG->Set_ParantBuffer();
-
 
 	return S_OK;
 }

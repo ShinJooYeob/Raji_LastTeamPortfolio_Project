@@ -255,6 +255,7 @@
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Rangda_Finger.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
+    <ClInclude Include="..\public\ResurrectionTrigger.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
@@ -291,6 +292,7 @@
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\public\PartilceCreateMgr.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
+    <ClInclude Include="..\public\WallRunTrigger.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -368,6 +370,7 @@
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Rangda_Finger.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
+    <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />
@@ -405,6 +408,7 @@
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\private\PartilceCreateMgr.cpp" />
     <ClCompile Include="..\private\UtilityMgr.cpp" />
+    <ClCompile Include="..\private\WallRunTrigger.cpp" />
     <ClCompile Include="..\public\Camera_Editor.cpp" />
     <ClCompile Include="..\public\Imgui\imgui.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_demo.cpp" />

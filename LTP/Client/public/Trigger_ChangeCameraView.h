@@ -8,7 +8,7 @@ class CCamera_Main;
 class CTrigger_ChangeCameraView final : public CTriggerObject
 {
 public:
-	enum EChangeCameraViewType { TYPE_FIX, TYPE_FIX_SWITCH, TYPE_TWO_INTERP };
+	enum EChangeCameraViewType { TYPE_FIX, TYPE_FIX_SWITCH, TYPE_TWO_INTERP, TYPE_STOP };
 
 	typedef struct tagChangeCameraViewDesc
 	{
@@ -64,6 +64,7 @@ private:
 	_int				Change_CameraView_Fix(_double fDeltaTime);
 	_int				Change_CameraView_FixSwitch(_double fDeltaTime);
 	_int				Change_CameraView_TwoPoint_Interp(_double fDeltaTime);
+	_int				Change_CameraView_Stop(_double fDeltaTime);
 
 	// DeActive Method
 	_int				ChangeBack_CameraView(_double fDeltaTime);

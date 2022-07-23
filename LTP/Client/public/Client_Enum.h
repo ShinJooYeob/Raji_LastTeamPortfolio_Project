@@ -295,9 +295,11 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_ChangeCameraView,
 	Prototype_Trigger_ChangeNavIndex,
 	Prototype_Trigger_PILLARTRIGGER,
+	Prototype_Trigger_WallRun,
 	Prototype_Trigger_BLOCKZONE,
 	Prototype_Trigger_DEADZONE,
 	Prototype_Trigger_TestLedgeTrigger,
+	Prototype_Trigger_ResurrectionTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_MonsterBatchTrigger,
 
@@ -466,7 +468,14 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Trigger_DEADZONE:
 		return TEXT("Prototype_Trigger_Deadzone");
 		break;
-		
+	case Prototype_Trigger_ResurrectionTrigger:
+		return TEXT("Prototype_Trigger_ResurrectionTrigger");
+		break;
+	case Prototype_Trigger_WallRun:
+		return TEXT("Prototype_Trigger_WallRun");
+		break;
+
+	
 	case Prototype_PlayerSkill_ShellingArrow:
 		return TEXT("Prototype_PlayerSkill_ShellingArrow");
 		break;

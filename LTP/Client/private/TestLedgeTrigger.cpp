@@ -111,12 +111,21 @@ void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 		{
 		case ELedgeTriggerState::STATE_START:
 		{
+			if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+			{
+				//if (CPlayer::STATE_IDLE == pPlayer->Get_PlayerState())
+				//{
+					pPlayer->Set_State_WallJump();
+					pPlayer->Set_CurParkurLedge(this);
+				//}
+			}
 		}
 			break;
 		case ELedgeTriggerState::STATE_LEDGE:
 		{
-			if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN == pPlayer->Get_LedgeState() && CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType &&
-				pPlayer->Get_CurParkurTriger() != this)
+			if ((CPlayer::EPARKOUR_LEDGESTATE::LEDGE_JUMP == pPlayer->Get_LedgeState() || CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_FALLINGDOWN == pPlayer->Get_LedgeState())
+				&& CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType 
+				&& pPlayer->Get_CurParkurTriger() != this)
 			{
 				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
 				pPlayer->Set_CurParkurLedge(this);
@@ -147,6 +156,13 @@ void CTestLedgeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 			else if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_HANGING_JUMPUP == pPlayer->Get_LedgeState() &&
 					 pPlayer->Get_CurParkurTriger() != this &&
 					 CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType)
+			{
+				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
+				pPlayer->Set_CurParkurLedge(this);
+			}
+			else if (CPlayer::EPARKOUR_LEDGESTATE::LEDGE_JUMP == pPlayer->Get_LedgeState() &&
+				pPlayer->Get_CurParkurTriger() != this &&
+				CollisionTypeID::CollisionType_PlayerParkur == eConflictedObjCollisionType)
 			{
 				pPlayer->Set_State_ParkourStart(g_fDeltaTime);
 				pPlayer->Set_CurParkurLedge(this);
