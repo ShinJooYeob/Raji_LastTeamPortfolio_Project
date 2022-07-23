@@ -373,6 +373,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Map_MandalaMesh,
 	Prototype_Object_Map_FemaleStatue,
 	Prototype_Object_UI_HpUI,
+	Prototype_Object_UI_UI,
+	Prototype_Object_SkillUI,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -617,7 +619,14 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_UI_HpUI:
 		return TEXT("Prototype_Object_UI_HpUI");
-			
+
+	case Prototype_Object_UI_UI:
+		return TEXT("Prototype_Object_UI_UI");
+
+	case Prototype_Object_SkillUI:
+		return TEXT("Prototype_Object_SkillUI");
+
+		
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
 
@@ -780,6 +789,7 @@ enum LAYERID
 	//JJB
 	Layer_Boss,
 	Layer_MapObject,
+	Layer_SkillUI,
 	Layer_TestEffect,
 
 };
@@ -958,6 +968,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		return TEXT("Layer_MapObject");
 		break;
 
+	case Layer_SkillUI:
+		return TEXT("Layer_SkillUI");
+		break;
+		
 	case Layer_TestEffect:
 		return TEXT("Layer_TestEffect");
 		break;
@@ -2176,6 +2190,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
 	Prototype_Texture_HPUI,
+	Prototype_Texture_UI,
 	Prototype_Texture_Util,
 	Prototype_Texture_Monster_Bullet,
 	Prototype_Texture_ShellingRange,
@@ -5784,8 +5799,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		case Prototype_Texture_HPUI:
 			return TEXT("Prototype_Texture_HPUI");
 			break;
-			
 
+		case Prototype_Texture_UI:
+			return TEXT("Prototype_Texture_UI");
+			break;
+			
+			
 				//메쉬////////////////////////////////////////////////////////////////////////
 
 
@@ -5840,6 +5859,7 @@ enum COMPONENTID
 	Com_Dissolve,
 	//JJB
 	Com_HPUI,
+	Com_UI,
 	Com_Collider_1,
 	Com_SubTransform2
 };
@@ -5926,6 +5946,10 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 
 	case Com_HPUI:
 		return TEXT("Com_HPUI");
+		break;
+
+	case Com_UI:
+		return TEXT("Com_UI");
 		break;
 		
 		

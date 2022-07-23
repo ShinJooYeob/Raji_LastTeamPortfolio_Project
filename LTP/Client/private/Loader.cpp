@@ -35,6 +35,9 @@
 #include "MandalaPuzzle.h"
 #include "MandalaMesh.h"
 
+//SkillUI
+#include "SkillUI.h"
+
 
 //Dynamic_Map
 #include "FemaleStatue.h"
@@ -624,6 +627,7 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_FemaleStatue), TransformMatrix);
 
 
+	/*
 #pragma  region Static_Mesh
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
@@ -919,7 +923,7 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
 #pragma  endregion
 
-
+*/
 
 #pragma endregion
 
@@ -954,6 +958,9 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	
 	//EffectTest
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
+
+	//SKillUI
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_SkillUI), CSkillUI::Create(m_pDevice, m_pDeviceContext)));
 	
 
 #pragma endregion

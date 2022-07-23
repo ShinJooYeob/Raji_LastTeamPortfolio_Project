@@ -19,11 +19,13 @@ public:
 	typedef struct tagSettingUI
 	{
 		_uint		iLevelIndex = 0;
-		_tchar*		pPrototypeTag = nullptr;
-		_tchar*		pComponentTag = nullptr;
+		//_tchar*		pPrototypeTag = nullptr;
+		//_tchar*		pComponentTag = nullptr;
 		_tchar*		pUI_Name = nullptr;
+		_int		iTextureIndex = 0;
 
 		_float		m_fX, m_fY, m_fSizeX, m_fSizeY;
+		_float		fAngle = 0.f;
 
 		_bool		bColl = false;
 		_bool		bMove = false;
@@ -64,6 +66,12 @@ public:
 	void			Set_IsDraw(_bool Draw) { m_bDraw = Draw; }
 	void			Set_IsPushed(_bool Pushed) { m_bPushed = m_bPushed; }
 
+	HRESULT			Set_ChangeTextureLayer(_tchar* LayerName);
+
+	void			Set_RenderSortValue(_float Valuew) {
+		m_fRenderSortValue = Valuew;
+	}
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CTexture*			m_pTextureCom = nullptr;
@@ -79,8 +87,8 @@ private:
 
 	_tchar*		m_pUIName = nullptr;		// UI 이름
 	_uint		m_iLevelIndex = 0;
-	_tchar*		m_pPrototypeTag = nullptr;
-	_tchar*		m_pComponentTag = nullptr;
+	//_tchar*		m_pPrototypeTag = nullptr;
+	//_tchar*		m_pComponentTag = nullptr;
 
 	_bool		m_bMove;					// 이동 가능 여부. 이게 켜져야 이동가능함. UI 위치 배치용.
 	_bool		m_bDraw;					// 렌더 여부
@@ -88,12 +96,13 @@ private:
 	_bool		m_bColl = false;			//마우스 충돌 체크 여부
 	_bool		m_bPushed = false;			//클릭이 되면 true로 바꾼다.
 
-	_int		m_iPassIndex = 0;
 	_int		m_iTextureIndex = 0;
+	_int		m_iPassIndex = 0;
 
 	_float		m_fAliveTime = 1.5f;			//데미지UI일때 보여지는 시간
 	_float		m_fFadeTime = 0.f;
 	_bool		m_bFadeState = false;
+	_float		m_fAngle = 0.f;
 
 private:
 	HRESULT SetUp_Components();

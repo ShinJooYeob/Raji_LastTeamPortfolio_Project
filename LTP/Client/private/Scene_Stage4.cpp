@@ -30,7 +30,8 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
-	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_SkillUI)));
+	//FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
 	
 	
 	
@@ -286,6 +287,13 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -2, 0);
 
 	pTransform->Set_Matrix(tt);*/
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage4::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_SkillUI)));
 
 	return S_OK;
 }

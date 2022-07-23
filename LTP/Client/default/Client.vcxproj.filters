@@ -370,20 +370,8 @@
     <Filter Include="01.GameObject\08.Effect\03.ParticleMgr">
       <UniqueIdentifier>{fbb0f076-d5b8-48bb-ad99-7ece43dd4c5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\98.MonsterBatchTrigger">
-      <UniqueIdentifier>{44dc964e-594a-4c95-996d-898f97148d35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger">
-      <UniqueIdentifier>{c4bdca09-b129-4d18-a5b2-89a8d067409d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\03. PillarTrigger">
-      <UniqueIdentifier>{4b813f59-1db8-4146-b17d-90e902224f04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\04. BlockZone">
-      <UniqueIdentifier>{43188a7a-2454-4e08-8eaf-abc327772899}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\05. DeadZone">
-      <UniqueIdentifier>{b2060dd8-0c3a-4782-993a-662023ca3ca1}</UniqueIdentifier>
+    <Filter Include="01.GameObject\99.UI\SkillUI">
+      <UniqueIdentifier>{cf91d001-5de7-4654-a55f-038f097ceea3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -831,26 +819,15 @@
     <ClInclude Include="..\public\PartilceCreateMgr.h">
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MonsterBatchTrigger.h">
-      <Filter>01.GameObject\98.TriggerObject\98.MonsterBatchTrigger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ChangeNavIndexTrigger.h">
-      <Filter>01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PillarTrigger.h">
-      <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
-      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\BlockZone.h">
-      <Filter>01.GameObject\98.TriggerObject\04. BlockZone</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\DeadZone.h">
-      <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ParticleCreater.h">
-      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    <ClInclude Include="..\public\BlockZone.h" />
+    <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
+    <ClInclude Include="..\public\DeadZone.h" />
+    <ClInclude Include="..\public\ParticleCreater.h" />
+    <ClInclude Include="..\public\PillarTrigger.h" />
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h" />
+    <ClInclude Include="..\public\MonsterBatchTrigger.h" />
+    <ClInclude Include="..\public\SkillUI.h">
+      <Filter>01.GameObject\99.UI\SkillUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1276,26 +1253,15 @@
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JumpTrigger.cpp" />
-    <ClCompile Include="..\private\MonsterBatchTrigger.cpp">
-      <Filter>01.GameObject\98.TriggerObject\98.MonsterBatchTrigger</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp">
-      <Filter>01.GameObject\98.TriggerObject\02. ChangeNavIndexTrigger</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PillarTrigger.cpp">
-      <Filter>01.GameObject\98.TriggerObject\03. PillarTrigger</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
-      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\BlockZone.cpp">
-      <Filter>01.GameObject\98.TriggerObject\04. BlockZone</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DeadZone.cpp">
-      <Filter>01.GameObject\98.TriggerObject\05. DeadZone</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ParticleCreater.cpp">
-      <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
+    <ClCompile Include="..\private\BlockZone.cpp" />
+    <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
+    <ClCompile Include="..\private\DeadZone.cpp" />
+    <ClCompile Include="..\private\ParticleCreater.cpp" />
+    <ClCompile Include="..\private\PillarTrigger.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp" />
+    <ClCompile Include="..\private\MonsterBatchTrigger.cpp" />
+    <ClCompile Include="..\private\SkillUI.cpp">
+      <Filter>01.GameObject\99.UI\SkillUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

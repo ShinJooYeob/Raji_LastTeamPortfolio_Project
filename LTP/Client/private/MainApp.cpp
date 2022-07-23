@@ -17,6 +17,7 @@
 #include "PhysX/Collider_PhysX_Dynamic.h"
 #include "PhysX/Collider_PhysX_Joint.h"
 #include "HpUI.h"
+#include "UI.h"
 //#include "LoadingUI.h"
 
 #ifdef _DEBUG
@@ -395,6 +396,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_HPUI),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"HPUI.txt")));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_UI),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI.txt")));
+
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
 	
@@ -474,6 +478,7 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 
 	//JJB
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_HpUI),		CHpUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_UI),		 CUI::Create(m_pDevice, m_pDeviceContext)));
 
 
 	//
