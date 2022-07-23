@@ -279,7 +279,7 @@ INSTPARTICLEDESC & CBoss::Get_VecParticle(_uint index)
 {
 	if (m_vecTextureParticleDesc.size() < index)
 	{
-		return INSTPARTICLEDESC();
+		return m_vecTextureParticleDesc[0];
 	}
 
 	return m_vecTextureParticleDesc[index];
