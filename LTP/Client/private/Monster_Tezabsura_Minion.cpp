@@ -1071,7 +1071,9 @@ void CMonster_Tezabsura_Minion::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 
-
+	Safe_Release(m_pHPUI);
+	Safe_Release(m_pColliderCom);
+	
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);

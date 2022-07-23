@@ -373,6 +373,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Map_MandalaMesh,
 	Prototype_Object_Map_FemaleStatue,
 	Prototype_Object_UI_HpUI,
+	Prototype_Object_UI_UI,
+	Prototype_Object_SkillUI,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -618,6 +620,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_UI_HpUI:
 		return TEXT("Prototype_Object_UI_HpUI");
+	case Prototype_Object_UI_UI:
+		return TEXT("Prototype_Object_UI_UI");
+
+	case Prototype_Object_SkillUI:
+		return TEXT("Prototype_Object_SkillUI");
+
 
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");
@@ -783,6 +791,7 @@ enum LAYERID
 	//JJB
 	Layer_Boss,
 	Layer_MapObject,
+	Layer_SkillUI,
 	Layer_TestEffect,
 
 };
@@ -960,7 +969,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_MapObject:
 		return TEXT("Layer_MapObject");
 		break;
-
+	case Layer_SkillUI:
+		return TEXT("Layer_SkillUI");
+		break;
+		
 	case Layer_TestEffect:
 		return TEXT("Layer_TestEffect");
 		break;
@@ -1065,6 +1077,7 @@ enum COMPONENTPROTOTYPEID
 	///////JYMesh///////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////
 
+#pragma region kurtzpel_ModelName
 	// kurtzpel_ModelName
 	Prototype_Mesh_KurtzpelStart,
 	Prototype_Mesh_01_R_Punch_SM_01_Mesh003,
@@ -2041,12 +2054,13 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_KurtzpelEnd,
 
 
+#pragma endregion kurtzpel_ModelName
 	// Other_ModelName
 
 
 
+#pragma region Raji_SMO
 
-		
 
 	Prototype_Mesh_ENV_BLD_Palace_02,
 	Prototype_Mesh_ENV_BLD_Palace_05,
@@ -3027,6 +3041,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_03,
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_04,
 	Prototype_Mesh_SM_ENV_F_MandalaCircle_05,
+#pragma endregion Raji_SMO
+
 	Prototype_Mesh_VentQStone,
 
 	Prototype_Mesh_DemonTree_Seg01,
@@ -3068,6 +3084,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Bridge,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
+
 
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
@@ -3145,6 +3162,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_TestEffect,
 	Prototype_Texture_HPUI,
 	Prototype_Texture_Util,
+	Prototype_Texture_UI,
 	Prototype_Texture_Monster_Bullet,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
@@ -9627,6 +9645,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 			return TEXT("Prototype_Texture_HPUI");
 			break;
 			
+		case Prototype_Texture_UI:
+			return TEXT("Prototype_Texture_UI");
+			break;
 
 				//메쉬////////////////////////////////////////////////////////////////////////
 
@@ -9682,6 +9703,7 @@ enum COMPONENTID
 	Com_Dissolve,
 	//JJB
 	Com_HPUI,
+	Com_UI,
 	Com_Collider_1,
 	Com_Collider_2,
 	Com_Collider_3,
@@ -9781,7 +9803,10 @@ static const _tchar* Tag_Component(COMPONENTID eTag)
 	case Com_HPUI:
 		return TEXT("Com_HPUI");
 		break;
-		
+	case Com_UI:
+		return TEXT("Com_UI");
+		break;
+
 		
 		//////////////////////////////////////////////////////////////////////////
 	default:

@@ -1107,4 +1107,6 @@ void CMonster_Tezabsura_Landmine::Free()
 	Safe_Release(m_pMeshParticleTransform);
 
 
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHPUI);
 }
