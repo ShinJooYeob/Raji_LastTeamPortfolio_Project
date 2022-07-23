@@ -784,6 +784,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 			}
 			break;
 		case 12:
