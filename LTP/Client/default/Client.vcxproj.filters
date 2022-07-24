@@ -382,6 +382,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\07. WallRunTrigger">
       <UniqueIdentifier>{4232db5d-9fcf-4208-8a62-3a9eb11ae6f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\09.Elevator">
+      <UniqueIdentifier>{57422e34-6c7a-45aa-b164-c9616c312bd0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -847,6 +850,9 @@
     <ClInclude Include="..\public\WallRunTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\07. WallRunTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Elevator.h">
+      <Filter>01.GameObject\09.Elevator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1289,6 +1295,9 @@
     </ClCompile>
     <ClCompile Include="..\private\WallRunTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\07. WallRunTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Elevator.cpp">
+      <Filter>01.GameObject\09.Elevator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

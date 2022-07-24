@@ -205,6 +205,9 @@ _int CPlayer::Update(_double fDeltaTime)
 		case EPLAYER_STATE::STATE_PETAL:
 			FAILED_CHECK(Update_State_Petal(fDeltaTime));
 			break;
+		case EPLAYER_STATE::STATE_ELEVATOR:
+			FAILED_CHECK(Update_State_Elevator(fDeltaTime));
+			break;
 		default:
 			MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
 			break;
@@ -415,6 +418,12 @@ void CPlayer::Set_FallingDead(_bool bFallingDead)
 {
 	m_bOnNavigation = false;
 	m_bFallingDead = bFallingDead;
+}
+
+void CPlayer::Set_PosY(_float fPos_y)
+{
+	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, XMVectorSetY(vPos, fPos_y));
 }
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -720,6 +729,19 @@ void CPlayer::Set_State_WallRunStart(_bool bAnimDir, _float3 fStartPos, _float3 
 	m_eCurState = STATE_WALLRUN;
 }
 
+void CPlayer::Set_State_ElevatorStart()
+{
+	m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
+	m_eCurState = STATE_ELEVATOR;
+	m_bOnNavigation = false;
+}
+
+void CPlayer::Set_State_ElevatorEnd()
+{
+	Set_State_IdleStart(g_fDeltaTime);
+	m_bOnNavigation = true;
+}
+
 void CPlayer::Set_State_PillarStart(_double fDeltaTime)
 {
 	if (STATE_PILLAR != m_eCurState)
@@ -786,6 +808,10 @@ void CPlayer::Set_State_JumpStart(_double fDeltaTime)
 	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	m_fJumpPower = 0.1f;
+}
+
+void CPlayer::Set_State_FallingStart(_double fDeltaTime)
+{
 }
 
 void CPlayer::Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir)
@@ -1684,6 +1710,11 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 	return S_OK;
 }
 
+HRESULT CPlayer::Update_State_Elevator(_double fDeltaTime)
+{
+	return S_OK;
+}
+
 HRESULT CPlayer::Update_State_Damage(_double fDeltaTime)
 {
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
@@ -1905,9 +1936,9 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 
 	if (0 != iInputDir)
 	{
-			m_pMainCamera->Lock_CamLook(false);
-			m_fAttachCamPos_Offset = _float3(-0.8f, 1.f, -0.5f);
-			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+			//m_pMainCamera->Lock_CamLook(false);
+			//m_fAttachCamPos_Ofsfset = _float3(0.f, 0.f, -0.5f);
+			//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 
 		//m_iCurCamViewIndex += iInputDir;
 		//if (0.f >= m_iCurCamViewIndex)
@@ -2196,7 +2227,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr/*m_pNavigationCom*/);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 
@@ -6353,7 +6384,7 @@ void CPlayer::Ledging(_double fDeltaTime)
 
 			if (0.36f >= fCurAnimRate)
 			{
-				m_pTransformCom->Move_Up(fDeltaTime * 1.2f);
+				m_pTransformCom->Move_Up(fDeltaTime * 1.5f);
 			}
 			else if (0.4f <= fCurAnimRate && 0.66f >= fCurAnimRate)
 			{

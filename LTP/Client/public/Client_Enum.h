@@ -388,6 +388,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Texture_Bullet,
 	Prototype_Object_Monster_Weapon_Universal,
 
+	//Interact OBJ
+	Prototype_Object_InteractObj,
+
 	Object_Prototype_End
 };
 
@@ -651,6 +654,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Weapon_Universal:
 		return TEXT("Prototype_Object_Monster_Weapon_Universal");
 
+	case Prototype_Object_InteractObj:
+		return TEXT("Prototype_Object_InteractObj");
+
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
 		return TEXT("Prototype_Object_Static_PhysX");
@@ -808,6 +814,7 @@ enum LAYERID
 	Layer_SkillUI,
 	Layer_TestEffect,
 
+	Layer_InteractObject
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -989,6 +996,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		
 	case Layer_TestEffect:
 		return TEXT("Layer_TestEffect");
+		break;
+	
+	case Layer_InteractObject:
+		return TEXT("Layer_InteractObject");
 		break;
 		
 	default:
@@ -3172,6 +3183,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_SkyBox,
 	Prototype_Mesh_TestObject_Himeko,
 	Prototype_Mesh_TestObject,
+
+	//Interact Obj
+	Prototype_Mesh_InteractObj_Elevator,
+
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
 	Prototype_Texture_Player,
@@ -9622,6 +9637,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_TestObject_Himeko:
 		return TEXT("Prototype_Mesh_TestObject_Himeko");
+		break;
+
+	case Prototype_Mesh_InteractObj_Elevator:
+		return TEXT("SM_ENV_CC_Elevator_Vertical_01.fbx");
 		break;
 
 	case Prototype_Mesh_SkyBox:
