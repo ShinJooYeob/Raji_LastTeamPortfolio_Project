@@ -375,20 +375,6 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Fight(_double dDeltaTime)
 		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
 	}
 
-	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	////평범하게 움직이기
-	//if (pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Up(dDeltaTime);
-	//}
-	//if (pGameInstance->Get_DIKeyState(DIK_H) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Down(dDeltaTime);
-	//}
-
-	//RELEASE_INSTANCE(CGameInstance);
-
-
 	return S_OK;
 }
 
@@ -481,10 +467,9 @@ HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 
 	//m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), dDeltaTime);
-	m_iOncePattern = 30;
+
 	switch (m_iOncePattern)
 	{
-
 	case 0:
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
@@ -851,6 +836,64 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate > 0)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.05, m_pNavigationCom);
+
+
+				if (m_iSoundIndex == 0 && PlayRate > 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
+				//else if (m_iSoundIndex == 2 && PlayRate >= 0.8064)
+				//{
+				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//	m_iSoundIndex++;
+				//}
+
+				//switch (m_iSoundIndex)
+				//{
+				//case 0:
+				//{
+				//	if (PlayRate > 0.1)
+				//	{
+				//		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//		m_iSoundIndex++;
+				//	}
+				//	break;
+				//}
+				//case 1:
+				//{
+				//	if ( PlayRate >= 0.3225)
+				//	{
+				//		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//		m_iSoundIndex++;
+				//	}
+				//	break;
+				//}
+				//case 2:
+				//{
+				//	if (PlayRate >= 0.5)
+				//	{
+				//		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//		m_iSoundIndex++;
+				//	}
+				//	break;
+				//}
+				//case 3:
+				//{
+				//	if (PlayRate >= 0.8064)
+				//	{
+				//		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//		m_iSoundIndex++;
+				//	}
+				//	break;
+				//}
+				//default:
+				//	break;
+				//}
 			}
 			break;
 		case 3:
@@ -887,13 +930,13 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 8:
 		{
-			if (m_iAdjMovedIndex == 0)
-			{
-				m_dAcceleration = 1.6452f;
+			//if (m_iAdjMovedIndex == 0)
+			//{
+			//	m_dAcceleration = 1.6452f;
 
-				m_iAdjMovedIndex++;
-			}
-			else if ( PlayRate > 0.2f && m_iAdjMovedIndex == 1)
+			//	m_iAdjMovedIndex++;
+			//}
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
 			{
 
 
@@ -921,26 +964,31 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.5882)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 9:
 		{
-			if (m_iAdjMovedIndex == 0)
+	/*		if (m_iAdjMovedIndex == 0)
 			{
 				m_dAcceleration = 1.6452f;
 				m_iAdjMovedIndex++;
 			}
-			break;
+			break;*/
 		}
 		case 10:
 		{
-			if (m_iAdjMovedIndex == 0)
-			{
-				m_dAcceleration = 1.6452f;
-				m_iAdjMovedIndex++;
-			}
+			//if (m_iAdjMovedIndex == 0)
+			//{
+			//	m_dAcceleration = 1.6452f;
+			//	m_iAdjMovedIndex++;
+			//}
 
-			else if (PlayRate > 0.6f && m_iAdjMovedIndex == 1)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.6f)
 			{
 
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition 
@@ -995,13 +1043,14 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 			break;
 		case 12:
-
 		{
-			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
-			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.35f, 0.9f, 0.35f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
-		}
+			{
+				_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+				Value = max(min(Value, 1.f), 0.f);
+				Set_LimLight_N_Emissive(_float4(0.35f, 0.9f, 0.35f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+			}
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
 			{
@@ -1026,13 +1075,15 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
-
-
-
-
-
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4642)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
 		default:
 			break;
 		}
