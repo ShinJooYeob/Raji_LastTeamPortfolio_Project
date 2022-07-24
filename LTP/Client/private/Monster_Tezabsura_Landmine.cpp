@@ -119,6 +119,10 @@ _int CMonster_Tezabsura_Landmine::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 #endif
 
+	if (m_bJumpingOn == false)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
 
@@ -708,7 +712,7 @@ HRESULT CMonster_Tezabsura_Landmine::Jumping(_double dDeltaTime)
 		{
 			fJumpY = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, (_float)PlayRate + TargetAnimIndex - 0.5f, 2.f);
 
-			m_pTransformCom->Move_Forward(dDeltaTime*0.8);
+			m_pTransformCom->Move_Forward(dDeltaTime*0.8, m_pNavigationCom);
 		}
 		else
 		{
@@ -847,6 +851,11 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		m_dAcceleration = 1;
 		m_bLookAtOn = true;
 
+		m_iSoundIndex = 0;
+
+		if (iNowAnimIndex < 8 || iNowAnimIndex >10)
+			m_bJumpingOn = false;
+
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -872,9 +881,25 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			if (PlayRate > 0)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 0.9786, m_pNavigationCom);
+
+				if (m_iSoundIndex == 0 && PlayRate > 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
+				else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 			break;
 		case 3:
+		{
+			m_bLookAtOn = false; 
+			break;
+		}
+		case 7:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
 			{
@@ -899,20 +924,19 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
 				}
 			}
-			m_bLookAtOn = false;
-			break;
-		}
-		case 7:
-		{
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 8:
 		{
-
-
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
 			else if (PlayRate > 0.2f && m_iAdjMovedIndex == 1)
@@ -933,13 +957,19 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.5882)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 9:
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -948,7 +978,8 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
 			else if (PlayRate > 0.6f && m_iAdjMovedIndex == 1)
@@ -967,29 +998,38 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		}
 		case 11:
 		{
-			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
-			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			{
+				_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+				Value = max(min(Value, 1.f), 0.f);
+				Set_LimLight_N_Emissive(_float4(LandMindMonsterRimLightColor, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
-		}
-		if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
-		{
+			}
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
+			{
 
-			m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
-				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.35f;
-			m_vecNonMeshParticleDesc[0].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.35f;
+				m_vecNonMeshParticleDesc[0].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 
 
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_Monster_Bullet_Plat), &m_vecNonMeshParticleDesc[0]);
-			m_iAdjMovedIndex++;
-		}
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_Monster_Bullet_Plat), &m_vecNonMeshParticleDesc[0]);
+				m_iAdjMovedIndex++;
+			}
 
 			if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 			{
 				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			}
+
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
+		}
 		case 12:
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
@@ -1031,6 +1071,11 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4642)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		case 13:
 			if (PlayRate > 0)
@@ -1071,6 +1116,8 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+
 			}
 			break;
 		case 15:
@@ -1106,6 +1153,8 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+
 			}
 			break;
 		case 17:
@@ -1139,6 +1188,8 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 
 				m_iAdjMovedIndex++;
 

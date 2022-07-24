@@ -855,6 +855,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
 					m_iSoundIndex++;
 				}
+
 				//else if (m_iSoundIndex == 2 && PlayRate >= 0.8064)
 				//{
 				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
@@ -950,8 +951,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 
 				m_iAdjMovedIndex++;
-			}
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
+			}else if (m_iAdjMovedIndex == 1 && PlayRate > 0.2f)
 			{
 
 
@@ -1005,9 +1005,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 
 				m_iAdjMovedIndex++;
-			}
-
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.6f)
+			}else if (m_iAdjMovedIndex == 1 && PlayRate > 0.6f)
 			{
 
 				m_vecTextureParticleDesc[0].vFixedPosition = m_vecTextureParticleDesc[1].vFixedPosition 
