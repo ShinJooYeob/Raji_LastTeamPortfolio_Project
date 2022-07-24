@@ -52,12 +52,14 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
 
+	Set_IsOcllusion(true);
 	return S_OK;
 }
 
 _int CSnake::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
 
 	if (!TestBool)
 	{

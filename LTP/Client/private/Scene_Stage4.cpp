@@ -6,6 +6,7 @@
 #include "MapObject.h"
 #include "StaticInstanceMapObject.h"
 #include "AssimpCreateMgr.h"
+#include "Elevator.h"
 
 CScene_Stage4::CScene_Stage4(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -28,14 +29,23 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
+	
+
 	//FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_SkillUI)));
-	FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
 	//FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
 	//FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	
 	
+	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
+	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
+	//FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_SkillUI)));
+	//FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE4, TAG_LAY(Layer_ColTrigger)));
+	
+	FAILED_CHECK(Ready_MapData(L"BossStage_Rangda.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
 	
 	return S_OK;
 }
@@ -261,7 +271,9 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(195.6f, 26.76f, 66.721f));
+	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(184.621f, 80.167f, 61.827f));
+
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(490.f, 7.100010f, 108.571f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
 
@@ -307,6 +319,19 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_Stage4::Ready_Layer_UI(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_SkillUI)));
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage4::Ready_Layer_InteractObject(const _tchar * pLayerTag)
+{
+	CElevator::ELEVATORDESC tElevatorDesc;
+	tElevatorDesc.fStartPos = _float3(170.35f, 32.265f, 52.01f);
+	tElevatorDesc.fDestPos = _float3(170.35f, 85.5f, 52.01f);
+	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
+	tElevatorDesc.fScale = _float3(1.725f, 1.725f, 1.725f);
+	tElevatorDesc.fMoveSpeed = 5.f;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_InteractObj), &tElevatorDesc));
 
 	return S_OK;
 }

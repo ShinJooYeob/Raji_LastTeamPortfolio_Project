@@ -239,7 +239,7 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	}
 
 	m_pMainCamera->Set_CameraMoveWeight(0.91f); 
-	m_pMainCamera->Set_CameraLookWeight(0.91f);
+	m_pMainCamera->Set_CameraLookWeight(0.97f);
 
 	m_pPlayer->Set_AttachCamPosOffset(fResult_CamPos);
 	
