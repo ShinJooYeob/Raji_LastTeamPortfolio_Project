@@ -99,14 +99,37 @@ _int CPlayer::Update(_double fDeltaTime)
 
 #pragma region For Debug Inputkey
 	{
+
+		static _bool ToonShadingStart = false;
+		static _double PassedTime = 0.f;
+
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
-			m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
 
-			{
-				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			}
+			m_pRendererCom->Copy_LastDeferredTexture();
+			PassedTime = 0.f;
+			ToonShadingStart = true;
+
+			//m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
+			//
+			//{
+			//	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			//}
 		}
+
+		if (ToonShadingStart)
+		{
+			PassedTime += fDeltaTime;
+
+			if (PassedTime > 2.f)
+			{
+				PassedTime = 2.f;
+				ToonShadingStart = false;
+			}
+			m_pRendererCom->Copy_LastDeferredToToonShadingTexture(_float(PassedTime) / 2.f);
+		}
+
+
 		
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
@@ -1941,9 +1964,9 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 		//	break;
 		//case 3:
 		//	// First Person Point of view
-			m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
-			m_fAttachCamPos_Offset = _float3(0.5f, 1.28f, 2.f);
-			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+		//	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
+		//	m_fAttachCamPos_Offset = _float3(0.5f, 1.28f, 2.f);
+		//	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 		//	break;
 		//}
 	}

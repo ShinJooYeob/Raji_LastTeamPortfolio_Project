@@ -82,6 +82,14 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_Defferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DeferredSceneChaging"), (_uint)Viewport.Width, (_uint)Viewport.Height,
+		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f), false));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_MtrlDiffuseSceneChaging"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM,
+		_float4(0.f, 0.f, 0.f, 0.f), false));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ToonDeferredSceneChaging"), (_uint)Viewport.Width, (_uint)Viewport.Height,
+		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f), false));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
@@ -150,6 +158,11 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceDefferred"), TEXT("Target_ReferenceDefferred")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_BluredDefferred"), TEXT("Target_BluredDefferred")));
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DeferredSceneChaging"), TEXT("Target_DeferredSceneChaging")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DeferredSceneChaging"), TEXT("Target_MtrlDiffuseSceneChaging")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ToonDeferredSceneChaging"),	TEXT("Target_ToonDeferredSceneChaging")));
+	
+	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_Defferred")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DefferredForNonLightObject"), TEXT("Target_Depth")));
@@ -231,6 +244,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_GodRay"), 1280 - 250, 150, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_LenseFlare"), 1280 - 250, 250, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_VelocityMap"), 1280 - 250, 350, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_DeferredSceneChaging"), 1280 - 250, 450, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_MtrlDiffuseSceneChaging"), 1280 - 250, 550, 100, 100));
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_ToonDeferredSceneChaging"), 1280 - 250, 650, 100, 100));
 	
 	
 	
@@ -597,6 +613,8 @@ HRESULT CRenderer::Clear_RenderGroup_forSceneChaging()
 
 	return S_OK;
 }
+
+
 
 const _tchar * CRenderer::Get_DebugRenderTargetTag(_uint iIndex)
 {
@@ -1433,6 +1451,57 @@ HRESULT CRenderer::Copy_NowWorld2OldWorld()
 
 	m_OldViewMat = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
 	m_OldProjMat = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+	return S_OK;
+}
+
+HRESULT CRenderer::Copy_LastDeferredTexture()
+{
+
+	//TEXT("Target_DeferredSceneChaging")));
+	//TEXT("Target_ToonDeferredSceneChaging")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_DeferredSceneChaging")));
+	
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DeferredSceneChaging")));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Defferred"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_DiffuseTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlDiffuse"))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 24));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DeferredSceneChaging")));
+
+
+
+	return S_OK;
+}
+HRESULT CRenderer::Copy_LastDeferredToToonShadingTexture(_float fToonShadingIntensive)
+{
+
+	_float fToonValue = max(min(fToonShadingIntensive, 1.f), 0.000001f);
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_ToonDeferredSceneChaging")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_ToonDeferredSceneChaging")));
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DeferredSceneChaging"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_DiffuseTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlDiffuseSceneChaging"))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fToonShadingValue", &fToonValue, sizeof(_float)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 23));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_ToonDeferredSceneChaging")));
+
+
+
 	return S_OK;
 }
 

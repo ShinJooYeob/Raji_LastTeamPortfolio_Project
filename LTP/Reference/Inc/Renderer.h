@@ -73,6 +73,8 @@ public:
 	HRESULT Add_DebugGroup(class CComponent* pComponent);
 	HRESULT Render_RenderGroup(_double fDeltaTime);
 	HRESULT Clear_RenderGroup_forSceneChaging();
+	HRESULT Copy_LastDeferredTexture();
+	HRESULT Copy_LastDeferredToToonShadingTexture(_float fToonShadingIntensive = 1.f);
 
 
 

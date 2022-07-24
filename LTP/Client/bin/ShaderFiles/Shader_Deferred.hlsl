@@ -94,6 +94,8 @@ cbuffer ForPostProcessing
 	float				g_fGodRayLength = 64;
 	float				g_fGodRayNumDelta = 1.f / 63.f;
 	float				g_fGodRayIntensity = 0.5f;
+
+	float				g_fToonShadingValue = 1.f;
 };
 cbuffer cbFog					
 {
@@ -1238,6 +1240,46 @@ PS_OUT PS_MotionBlur(PS_IN In)
 }
 
 
+PS_OUT PS_MAIN_ToonShading(PS_IN In)
+{
+#define ToonMaxIntensive 3.f
+
+	float ToonValue = (ToonMaxIntensive - 100.f) * g_fToonShadingValue + 100.f;
+
+	vector DiffuseDesc = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
+	vector DefferedDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f );
+
+	PS_OUT		Out = (PS_OUT)0;
+
+	DiffuseDesc = (ceil(DiffuseDesc * ToonValue) / ToonValue);
+	Out.vColor =(DefferedDesc * DiffuseDesc);
+
+	vector Hdr = max(Out.vColor - 0.004f, 0);
+	Out.vColor = (Hdr * (6.2f * Hdr + 0.5f)) / (Hdr * (6.2f * Hdr + 1.7f) + 0.06f);
+
+	//Out.vColor = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV),1.f / 2.2f);
+
+	Out.vColor.w = 1.f;
+	//Out.vColor = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV),2.2f);
+
+	//Out.vColor = vector((ceil(Out.vColor * ToonValue) / ToonValue).xyz ,1.f); //¹Ý¿Ã¸²
+	//Out.vColor = pow(Out.vColor * , 1.f / 2.2f);
+	//Out.vColor.w = 1.f;
+
+	return Out;
+}
+
+PS_OUT_AfterDeferred PS_CopyLastDeferred(PS_IN In)
+{
+	PS_OUT_AfterDeferred		Out = (PS_OUT_AfterDeferred)0;
+
+	Out.vColor = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vColor2 = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+	return Out;
+
+}
+
 
 
 
@@ -1543,4 +1585,26 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MotionBlur();
 	}
+	pass ToonShading// 23
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ToonShading();
+	}
+	pass CopyLastScene// 24
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_CopyLastDeferred();
+	}
+
+	
 }
