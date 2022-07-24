@@ -41,6 +41,11 @@ void CCell::Set_CellOption(CELL_OPTION eCellOption)
 	case Engine::CCell::CELL_BLOCKZONE:
 		m_vColor = _float4(0.75f,0.f,1.f,1.f);
 		break;
+
+	case Engine::CCell::CELL_HIDE_ON_BUSH:
+		m_vColor = _float4(0, 1.f, 0, 1.f);
+		break;
+
 	}
 }
 

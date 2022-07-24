@@ -9,7 +9,7 @@ class ENGINE_DLL CCell final : public CBase
 public:
 	enum POINTS { POINT_A, POINT_B, POINT_C, POINT_END };
 	enum LINES { LINE_AB, LINE_BC, LINE_CA, LINE_END };
-	enum CELL_OPTION {CELL_NOMAL, CELL_DROP, CELL_JUMPZONE, CELL_BLOCKZONE, CELL_END};
+	enum CELL_OPTION {CELL_NOMAL, CELL_DROP, CELL_JUMPZONE, CELL_BLOCKZONE, CELL_HIDE_ON_BUSH,CELL_END};
 private:
 	CCell(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	virtual ~CCell() = default;

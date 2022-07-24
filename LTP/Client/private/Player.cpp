@@ -1905,9 +1905,9 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 
 	if (0 != iInputDir)
 	{
-			m_pMainCamera->Lock_CamLook(false);
-			m_fAttachCamPos_Offset = _float3(-0.8f, 1.f, -0.5f);
-			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+		m_pMainCamera->Lock_CamLook(false);
+		m_fAttachCamPos_Offset = _float3(-0.8f, 1.f, -0.5f);
+		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 
 		//m_iCurCamViewIndex += iInputDir;
 		//if (0.f >= m_iCurCamViewIndex)
@@ -1934,16 +1934,16 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 		//	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 		//	break;
 		//case 2:
-		//	// Snake Boss Point of view
-		//	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
-		//	m_fAttachCamPos_Offset = _float3(0.f, 5.f, -10.f);
-		//	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+		// Snake Boss Point of view
+		//m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
+		//m_fAttachCamPos_Offset = _float3(0.f, 5.f, -10.f);
+		//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 		//	break;
 		//case 3:
 		//	// First Person Point of view
-		//	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
-		//	m_fAttachCamPos_Offset = _float3(0.5f, 1.28f, 2.f);
-		//	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+			m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 1.f));
+			m_fAttachCamPos_Offset = _float3(0.5f, 1.28f, 2.f);
+			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 		//	break;
 		//}
 	}
@@ -2196,7 +2196,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr/*m_pNavigationCom*/);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 

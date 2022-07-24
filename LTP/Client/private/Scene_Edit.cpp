@@ -7908,7 +7908,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 
 		Make_VerticalSpacing(2);
 
-		const char* items[] = { "CELL_NOMAL", "CELL_DROP","CELL_JUMPZONE","CELL_BLOCKZONE" };
+		const char* items[] = { "CELL_NOMAL", "CELL_DROP","CELL_JUMPZONE","CELL_BLOCKZONE", "CELL_HIDE_ON_BUSH" };
 		static int item_current = 0;
 		ImGui::Combo("Cell Option", &item_current, items, IM_ARRAYSIZE(items));
 		if (m_bIsCellListClick)
@@ -7930,6 +7930,8 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_JUMPZONE);
 				else if (item_current == 3)
 					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_BLOCKZONE);
+				else if (item_current == 4)
+					m_Cells[m_iCellListCount]->Set_CellOption(CCell::CELL_HIDE_ON_BUSH);
 			}
 		}
 
