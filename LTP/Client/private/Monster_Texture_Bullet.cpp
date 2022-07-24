@@ -195,6 +195,11 @@ void CMonster_Texture_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMy
 
 		switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
 		{
+		case GADASURA_TERRAIN_BULLET:
+		{
+			Set_IsDead();
+			break;
+		}
 		case NONTEXTURE_SPHERE:
 		{
 			Set_IsDead();
@@ -204,8 +209,7 @@ void CMonster_Texture_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMy
 		{
 			Set_IsDead();
 			break;
-		}
-		default:
+		}		default:
 			break;
 		}
 	}
@@ -346,6 +350,19 @@ HRESULT CMonster_Texture_Bullet::SetUp_Collider()
 
 		break;
 	}
+	case GADASURA_TERRAIN_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
 	default:
 		break;
 	}
@@ -372,6 +389,13 @@ HRESULT CMonster_Texture_Bullet::Update_Collider(_double dDeltaTime)
 		break;
 	}
 	case NONTEXTURE_OBB:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	case GADASURA_TERRAIN_BULLET:
 	{
 		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
 		for (_uint i = 0; i < iNumCollider; i++)

@@ -109,6 +109,10 @@ private:
 	_bool				m_bKnockbackOn = false;
 	_float3				m_fKnockbackDir;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+
 private:
 	HRESULT	Ready_ParticleDesc();
 	HRESULT	Update_ParticleTransform(_double fDeltaTime);

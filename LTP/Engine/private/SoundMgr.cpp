@@ -436,7 +436,7 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR * pSoundKey, _float3 Pos, CHANNELID eID, _
 			FMOD_System_PlaySound(m_pSystem, iter->second, nullptr, FALSE, &m_pChannelArr[i]);
 
 
-			Chanel = m_pChannelArr[eID];
+			Chanel = m_pChannelArr[i];
 			r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, &Dir);
 			if (r != FMOD_OK)
 				return E_FAIL;

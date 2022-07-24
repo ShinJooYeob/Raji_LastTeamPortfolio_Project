@@ -110,6 +110,11 @@ private: //Jalsura Dis
 	_float				m_fTempDis = 0;
 	_bool				m_bHitOn = false;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+
+
 public:
 	static CMonster_Texture_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

@@ -537,6 +537,9 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 
 HRESULT CMonster_Bullet_Universal::Update_Collider(_double dDeltaTime)
 {
+	if (m_pColliderCom == nullptr)
+		return S_OK;
+
 	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
 
 	//Collider

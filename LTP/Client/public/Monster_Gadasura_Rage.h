@@ -31,7 +31,7 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
-	_int	Get_OnceAnimNumber() { return m_iOnceAnimNumber; }
+	_int				Get_OnceAnimNumber() { return m_iOnceAnimNumber; }
 	_bool				Get_WeaponAttackSwitch() { return m_bWeaponAttackSwitch; }
 
 
@@ -105,18 +105,22 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
-	// Particle
-	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
-
 private:
 	_bool				m_bWeaponAttackSwitch = false;
 
 private:
 	//Knockback
 	_float3				m_fKnockbackDir;
+
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+
+	// Particle
+	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
 
 private:
 	HRESULT SetUp_Components();

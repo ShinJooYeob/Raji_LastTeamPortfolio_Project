@@ -802,6 +802,8 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_bLookAtOn = true;
 		m_dAcceleration = 1;
 
+		m_iSoundIndex = 0;
+
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;

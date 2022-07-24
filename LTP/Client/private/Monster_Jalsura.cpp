@@ -559,6 +559,8 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_bLookAtOn = true;
 		m_dAcceleration = 1;
 
+		m_iSoundIndex = 0;
+
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -594,12 +596,28 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			m_dSoundTime += dDeltaTime;
+			if (m_dSoundTime >= 1)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Secondary_Wing_Flap_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_dSoundTime = 0;
+			}
+			break;
+		}
 		case 1:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
 			{
 				m_dAcceleration = 0.7;
 				m_iAdjMovedIndex++;
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 			if (m_bKnockbackOn == true)
 			{
@@ -608,6 +626,13 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_bLookAtOn = false;
 					m_dAcceleration = 0.7;
 					m_iAdjMovedIndex++;
+
+
+					if (m_iSoundIndex == 0)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						m_iSoundIndex++;
+					}
 				}
 				else if (0.f < PlayRate && PlayRate <= 0.8)
 				{
@@ -717,6 +742,9 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonMeshParticleDesc[0]);
 
 				fRimLightPassedTime = 0;
+
+				FAILED_CHECK(g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Lazer_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f));
+
 				m_iAdjMovedIndex++;
 			}
 			else
@@ -730,6 +758,20 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Set_LimLight_N_Emissive(_float4(vRimLightColor, Rate),
 					_float4(Rate, Rate* 0.2f, Rate, 1));
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Movement.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}else if (m_iSoundIndex == 1 && PlayRate >= 0.2105)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Laser.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}else if (m_iSoundIndex == 2 && PlayRate >= 0.7368)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Steam_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
 			}
 			break;
 		}

@@ -25,6 +25,10 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+private:
+	HRESULT SetUp_Components();
+	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
+
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
@@ -123,10 +127,9 @@ private:
 	///Knockback
 	_float3				m_fKnockbackDir;
 
-
-private:
-	HRESULT SetUp_Components();
-	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
 
 public:
 	static CMonster_Mahinasura_Leader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
