@@ -17,7 +17,6 @@ HRESULT CCopyMahabalasura::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
-
 	return S_OK;
 }
 
@@ -39,9 +38,10 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 
 	m_iRandomIndex = rand() % 16;
 
-	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	CTransform* pPlayerPosition = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = pPlayerPosition->Get_MatrixState(CTransform::STATE_POS);
 	m_startPos = PlayerPos;
+
 
 	return S_OK;
 }
@@ -155,8 +155,6 @@ _int CCopyMahabalasura::Render()
 		mat.r[2] = XMVector3Normalize(mat.r[2]);
 		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
 		m_pCollider->Update_Transform(i + 1, mat);
-
-
 	}
 
 
@@ -267,21 +265,38 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
+
 		m_iAdjMovedIndex = 0;
+		m_iEffectAdjustIndex = 0;
+	}
 
 
 	if (PlayRate <= 0.98)
 	{
+
 		switch (iNowAnimIndex)
 		{
 		case 0:
 			break;
 		case 1:
+		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.233644859)
 			{
 				m_bIsAttack = true;
 				++m_iAdjMovedIndex;
 			}
+			if (m_iEffectAdjustIndex == 0 && PlayRate > 0.2f)
+			{
+				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
+				{
+					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
+						m_vecInstancedTransform[i]);
+				}
+				m_iEffectAdjustIndex++;
+			}
+
+
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.2803738)
 			{
 				m_bIsAttack = false;;
@@ -290,6 +305,13 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.392523)
 			{
 				m_bIsAttack = true;
+
+				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
+				{
+					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
+						m_vecInstancedTransform[i]);
+				}
+
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 3 && PlayRate > 0.47663551)
@@ -300,6 +322,12 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 4 && PlayRate > 0.56074766)
 			{
 				m_bIsAttack = true;
+				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
+				{
+					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
+						m_vecInstancedTransform[i]);
+				}
+
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 5 && PlayRate > 0.6074766)
@@ -309,6 +337,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			break;
 
+		}
 		case 5:
 
 		break;

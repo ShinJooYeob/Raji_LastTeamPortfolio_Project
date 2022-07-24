@@ -290,7 +290,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	//m_pNavigationCom->Render(m_pTransformCom);
+	m_pNavigationCom->Render(m_pTransformCom);
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG

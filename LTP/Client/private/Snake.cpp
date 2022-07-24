@@ -80,7 +80,7 @@ _int CSnake::Update(_double fDeltaTime)
 	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 
-	// #DEBUG
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
 		m_bTestHodeing = !m_bTestHodeing;
 
@@ -98,6 +98,14 @@ _int CSnake::Update(_double fDeltaTime)
 		m_pTransformCom->Turn_Dir(Dir, 0.90f);
 	}
 
+	if (KEYDOWN(DIK_B))
+	{
+		m_vAngle = _float3(0.99f,0.1f,0.1f).XMVector();
+		m_fAttackCoolTime = 0;
+		m_bHiding = false;
+		m_bTestHodeing = false;
+	}
+
 	if (XMVectorGetX(m_vAngle) > 0.94f && !m_bIsAttack && m_fAttackCoolTime <= 0.f)
 	{ 
 		if (m_bTestHodeing)
@@ -106,7 +114,7 @@ _int CSnake::Update(_double fDeltaTime)
 		if (m_bHiding)
 		{
 			m_bIsAttack = true;
-			// #DEBUG
+			// #TIME
 			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
 		}
 		else
@@ -116,7 +124,7 @@ _int CSnake::Update(_double fDeltaTime)
 			_int iRandom =  (_int)GetSingle(CUtilityMgr)->RandomFloat(1.0f, 2.9f);
 			iRandom = 1;
 
-			// #DEBUG
+			// #TIME
 			if(iRandom == 1)
 				m_pModel->Change_AnimIndex(3);
 			else
@@ -235,24 +243,21 @@ HRESULT CSnake::Ready_ParticleDesc()
 
 HRESULT CSnake::Update_Particle(_double timer)
 {
-	_Matrix mat_Particle = m_pTransformCom->Get_WorldMatrix();
-	//	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
-
-	mat_Particle.r[0] = XMVector3Normalize(mat_Particle.r[0]);
-	mat_Particle.r[1] = XMVector3Normalize(mat_Particle.r[1]);
-	mat_Particle.r[2] = XMVector3Normalize(mat_Particle.r[2]);
-
-	//mat_Tail.r[0] = XMVector3Normalize(mat_Tail.r[0]);
-	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
-	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
+	_Matrix mat_1 = m_AttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+	_Matrix mat_2 = m_pTransformCom->Get_WorldMatrix();
 
 
-	//mat_Hand.r[3] = m_pTextureParticleTransform2->Get_ColliderPosition(1).XMVector();
-	//m_pTextureParticleTransform2->Set_Matrix(mat_Hand);
+	m_pTextureParticleTransform->Set_Matrix(mat_1);
 
-	//mat_Hand.r[3] = m_pTextureParticleTransform1->Get_ColliderPosition(2).XMVector();
-	//m_pTextureParticleTransform1->Set_Matrix(mat_Hand);
+	
+	mat_2.r[0] = XMVector3Normalize(mat_2.r[0]);
+	mat_2.r[1] = XMVector3Normalize(mat_2.r[1]);
+	mat_2.r[2] = XMVector3Normalize(mat_2.r[2]);
+	mat_2.r[3] = m_pCollider->Get_ColliderPosition(0).XMVector();
 
+	m_pTextureParticleTransform2->Set_Matrix(mat_2);
+
+	
 
 	return S_OK;
 }
@@ -313,6 +318,11 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 1:
 		{
+
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.46f, 0.44f, 0.21f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			m_bIsAttack = false;
 			if (m_iRotationRandom == 0)
 			{
@@ -359,6 +369,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 2:
 		{
+
 			if (PlayRate > 0 && PlayRate < 0.5f)
 			{
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.499999f)
@@ -398,11 +409,35 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 3:
 		{
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.87f, 0.39f, 0.96f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
+
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
 				m_bIsBite = true;
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_0, m_pTextureParticleTransform2);
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.455f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate >= 0.555f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_2, m_pTextureParticleTransform2);
+				m_iAdjMovedIndex++;
+			}
+
+			
+			
+
 		}
 		break;
 
@@ -410,9 +445,38 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		break;
 
 		case 5:
+		{
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+			// EFFECT CODE 
+			// _float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			// Value = max(min(Value, 1.f), 0.f);
+			// Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			// 
+			// if (m_iAdjMovedIndex == 1 && PlayRate >= 0.5)
+			// {
+			// 	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_RHand);
+			// 	m_iAdjMovedIndex++;
+			// 
+			// }
+
+		}
+
 		break;
 
 		case 6:
+			break;
+		case 7:
+
+			//if (m_iAdjMovedIndex == 0 && PlayRate >= 0.5)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform);
+			//	m_iAdjMovedIndex++;
+			//}
+
+			break;
 		break;
 
 		}

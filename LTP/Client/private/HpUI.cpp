@@ -264,34 +264,35 @@ _int CHpUI::Render()
 	}
 	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
 	{
-		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
+		// #RICK MergeOff
+		//FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
 
-		ATV = .1f;
-		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vTextureFigureUVSize", &_float2(1, 1), sizeof(_float2)));
-		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &ATV, sizeof(_float)));
+		//ATV = .1f;
+		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vTextureFigureUVSize", &_float2(1, 1), sizeof(_float2)));
+		//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &ATV, sizeof(_float)));
 
-		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
+		//FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
 
-		for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
-		{
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
+		//for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+		//{
+		//	XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_RIGHT))));
+		//	XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_UP))));
+		//	XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_LOOK))));
 
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
-				((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
-			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+		//	XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+		//		((m_vecInstancedHPTransform[i]->Get_MatrixState(CTransform::STATE_POS) + m_pObjectPos.XMVector())));
+		//	((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
 
-			((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
+		//	((VTXINSTMAT*)SubResource.pData)[i].vColor = (_float4)XMVectorSet(1.f, 1.f, 1.f, 1.f);
 
-			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
+		//	((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 1.f);
 
-			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
+		//	((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(0, 0, 0, 0);
 
-		}
-		m_pVIBufferCom->UnLock();
+		//}
+		//m_pVIBufferCom->UnLock();
 
-		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 24, (_int)m_vecInstancedHPTransform.size()));
+		//FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, 24, (_int)m_vecInstancedHPTransform.size()));
 
 		m_vecInstancedEmptyHPTransform.clear();
 		m_vecInstancedHPTransform.clear();
@@ -378,8 +379,9 @@ void CHpUI::Free()
 
 	m_vPosTransforms.clear();
 
-	for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
-		Safe_Release(m_vecInstancedHPTransform[i]);
+	// #RICK MergeOff
+	//for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+	//	Safe_Release(m_vecInstancedHPTransform[i]);
 
 	m_vecInstancedHPTransform.clear();
 

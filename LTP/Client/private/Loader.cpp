@@ -1202,7 +1202,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TAG_CP(Prototype_Navigation),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_2.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/Test_JiWhan.dat")))))
 		return E_FAIL;
 
 

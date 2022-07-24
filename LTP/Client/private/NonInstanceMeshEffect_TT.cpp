@@ -99,20 +99,24 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		// Custom Init
 		m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScale);
 
-		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
-		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
-		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+		_Vector scale = m_pTransformCom->Get_Scale();
 
+		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 
-		if (mAddDesc.vAddDirectAngle.x != 0)
-			m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-		else if (mAddDesc.vAddDirectAngle.y != 0)
-			m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-		else if (mAddDesc.vAddDirectAngle.z != 0)
-			m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+		_Squternion qq = _Squternion::CreateFromYawPitchRoll(
+			mAddDesc.InitRot.y,
+			mAddDesc.InitRot.x,
+			mAddDesc.InitRot.z);
+
+		_Matrix rotmat =  _Sfloat4x4::CreateFromQuaternion(qq);
+
+		rotmat.r[0] *= scale.m128_f32[0];
+		rotmat.r[1] *= scale.m128_f32[1];
+		rotmat.r[2] *= scale.m128_f32[2];
+		rotmat.r[3] = Pos;
+		m_pTransformCom->Set_Matrix(rotmat);
 
 		mIsInit = true;
-		return _int();
 
 	}
 
@@ -237,7 +241,55 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 	// Scale
 	if (mReScale == false)
-		m_pTransformCom->Scaling_All(fDeltaTime);
+	{
+		//		m_pTransformCom->Scaling_All(fDeltaTime);
+		if (mAddDesc.bAfterApperTime)
+		{
+			if (mMeshDesc.fMaxTime_Duration - mMeshDesc.fAppearTime < m_fCurTime_Duration)
+			{
+				if (mAddDesc.bLockScale[0])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+				}
+
+				if (mAddDesc.bLockScale[1])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+				}
+
+
+				if (mAddDesc.bLockScale[2])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+
+				}
+			}
+
+		}
+		else
+		{
+
+			if (mAddDesc.bLockScale[0])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+			}
+
+			if (mAddDesc.bLockScale[1])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+			}
+
+
+			if (mAddDesc.bLockScale[2])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+
+			}
+
+		}
+
+
+	}
 	else
 	{
 		m_pTransformCom->Scaling_All(-fDeltaTime*2);

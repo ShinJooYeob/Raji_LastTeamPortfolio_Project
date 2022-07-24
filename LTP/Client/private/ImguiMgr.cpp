@@ -1827,6 +1827,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	}
 
 
+
 	// BOSS
 
 
@@ -1861,6 +1862,17 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
 		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 	}
+
+
+	if (ImGui::Button("Create_BOSS_Prototype_Object_Boss_Rngda"))
+	{
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Boss_Rangda), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
 
 
 	//if (ImGui::Button("Create_BOSS_Chiedtian"))

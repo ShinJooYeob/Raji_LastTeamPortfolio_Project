@@ -47,11 +47,12 @@ private:
 	_float3				m_startPos;
 	_bool				m_bIsLookAt = true;
 
-
-
 	CGameObject*				m_pPlayerObj;
 	class CMahabalasura*		m_pBossObj;
 	_int						m_iRandomIndex = 0;
+
+	// Effect
+	_uint				m_iEffectAdjustIndex = 0;
 
 private:
 	HRESULT SetUp_Components();

@@ -15,8 +15,11 @@ typedef struct tag_MESHADDDATA
 	_float AccScale = 0.0f;
 	_float3 vAddDirectAngle = _float3::Zero();
 	_bool FixFlag = false;
-	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
 
+	_float3 InitRot= _float3::Zero();
+	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
+	_bool bLockScale[3] = { false, };
+	_bool bAfterApperTime = false; // 생성되면 사라짐
 
 
 }MESHADDDATA;
@@ -41,6 +44,8 @@ public:
 public:
 	enum E_MESH_EFFECTJ
 	{
+#pragma region PLAYER MESH
+
 		// PLAY EFFECT
 		MESHEFFECT_ARROW_HEAD,
 		MESHEFFECT_ARROW_END,
@@ -61,10 +66,15 @@ public:
 		MESHEFFECT_ARROW_BOW_SP_ICES,
 		MESHEFFECT_ARROW_BOW_SP_BOW,
 
+#pragma endregion PLAYER MESH
+
+
+
 		// FOR EFFECT TIMING
 		MESHEFFECT_TIMEING1,
 		MESHEFFECT_TIMEING2,
 
+#pragma region MONSTER
 		// Monster EFFECT
 		MESHEFFECT_MONSTER_CREATE1,
 		MESHEFFECT_MONSTER_CREATE2,
@@ -132,6 +142,7 @@ public:
 		MESHEFFECT_MONSTER_GL_Cash7,
 		MESHEFFECT_MONSTER_GL_Cash8,
 
+#pragma endregion MONSTER
 
 
 
@@ -142,6 +153,8 @@ public:
 		// MESHEFFECT_MONSTER_NM_ATT,
 		// MESHEFFECT_MONSTER_NL_ATT,
 
+
+#pragma region BOSS
 
 		// BOSS
 
@@ -158,16 +171,20 @@ public:
 		MESHEFFECT_BOSS_SNAKE_9,
 
 
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLHAND_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_1,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
 		MESHEFFECT_BOSS_Mahabalasura_0,
 		MESHEFFECT_BOSS_Mahabalasura_1,
 		MESHEFFECT_BOSS_Mahabalasura_2,
 		MESHEFFECT_BOSS_Mahabalasura_3,
 		MESHEFFECT_BOSS_Mahabalasura_4,
-		MESHEFFECT_BOSS_Mahabalasura_5,
-		MESHEFFECT_BOSS_Mahabalasura_6,
-		MESHEFFECT_BOSS_Mahabalasura_7,
-		MESHEFFECT_BOSS_Mahabalasura_8,
-		MESHEFFECT_BOSS_Mahabalasura_9,
 
 		MESHEFFECT_BOSS_Rangda_0,
 		MESHEFFECT_BOSS_Rangda_1,
@@ -179,6 +196,11 @@ public:
 		MESHEFFECT_BOSS_Rangda_7,
 		MESHEFFECT_BOSS_Rangda_8,
 		MESHEFFECT_BOSS_Rangda_9,
+		MESHEFFECT_BOSS_Rangda_10,
+		MESHEFFECT_BOSS_Rangda_11,
+		MESHEFFECT_BOSS_Rangda_12,
+
+
 
 		MESHEFFECT_BOSS_Chiedtian_0,
 		MESHEFFECT_BOSS_Chiedtian_1,
@@ -191,6 +213,7 @@ public:
 		MESHEFFECT_BOSS_Chiedtian_8,
 		MESHEFFECT_BOSS_Chiedtian_9,
 
+#pragma endregion BOSS
 
 
 		MESHEFFECT_END,
@@ -410,7 +433,3 @@ HRESULT CPlayerWeapon_Bow::Set_PlayOff_ALL()
 }
 
 */
-
-
-
-
