@@ -35,6 +35,11 @@ public:
 
 	void		Set_Hit() { m_bIsHit = true; }
 
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -79,6 +84,13 @@ private:
 	//HPBar
 	class CHpUI*							m_pHPUI = nullptr;
 
+	// Particle
+	CTransform*						m_pTextureParticleTransform = nullptr;
+	CTransform*						m_pTextureParticleTransform1 = nullptr;
+	CTransform*						m_pTextureParticleTransform2 = nullptr;
+
+	_uint							mOnlyPattern = 0;
+	_uint							mPatternCount2 = 0;
 
 
 

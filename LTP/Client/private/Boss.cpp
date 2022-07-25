@@ -15,7 +15,6 @@ HRESULT CBoss::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
-	FAILED_CHECK(Ready_ParticleDesc());
 
 	return S_OK;
 }
@@ -34,6 +33,9 @@ HRESULT CBoss::Initialize_Clone(void * pArg)
 	////Set_LimLight_N_Emissive(_float3(0.2f, 0.5f, 1.f ));
 
 	//m_pModel->Change_AnimIndex(5);
+
+	FAILED_CHECK(Ready_ParticleDesc());
+
 
 	return S_OK;
 }

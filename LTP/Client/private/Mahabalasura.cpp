@@ -176,13 +176,24 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	//	//m_bIsLookAt = false;
 	//	m_pModel->Change_AnimIndex_ReturnTo(5, 0);
 	//}
+	
+	// #DEBUG
+	if (KEYDOWN(DIK_B))
+	{
+		mOnlyPattern++;
+		if (mOnlyPattern >= 4)
+			mOnlyPattern = 0;
+	}
+
 	//스킬공격
 	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit)
 	{
-		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
-		m_bIsAttack = true;
+			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
+			m_bIsAttack = true;
+		
+			iRandom = 3;
 
-		iRandom = 3;
+		iRandom = mOnlyPattern; // DEBUG
 
 		switch (iRandom)
 		{
@@ -197,6 +208,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_bIsTeleport = true;
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 			m_bIsArmAttack = true;
+			mPatternCount2 = 0;
 			for (auto& Arm : m_pArms)
 				Arm->Reset_AttackTime();
 			m_pModel->Change_AnimIndex(6);
@@ -337,6 +349,79 @@ _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmo
 	return _float();
 }
 
+HRESULT CMahabalasura::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+
+	// SpearPos
+	m_pTextureParticleTransform1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform1, E_FAIL);
+
+	// PlayerPos
+	m_pTextureParticleTransform2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform2, E_FAIL);
+
+
+
+	//// 0
+	//INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
+	//instanceDesc.TotalParticleTime = 99999.f;
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+
+	//// 1
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowBack;
+	////	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
+
+	//// 9999여도 죽는다. 
+	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
+	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
+
+	return S_OK;
+
+}
+
+HRESULT CMahabalasura::Update_Particle(_double timer)
+{
+	_Matrix mat_Trans = m_pTransformCom->Get_WorldMatrix();
+
+	mat_Trans.r[0] = XMVector3Normalize(mat_Trans.r[0]);
+	mat_Trans.r[1] = XMVector3Normalize(mat_Trans.r[1]);
+	mat_Trans.r[2] = XMVector3Normalize(mat_Trans.r[2]);
+
+	mat_Trans.r[3] = m_pCollider->Get_ColliderPosition(1).XMVector();
+
+	_Matrix mat_head = m_vecAttachedDesc[3].Caculate_AttachedBoneMatrix_BlenderFixed();
+	m_pTextureParticleTransform->Set_Matrix(mat_head);
+
+
+	_Matrix mat_Spear = m_pSpear->Get_Transform()->Get_WorldMatrix();
+	mat_Spear.r[0] = XMVector3Normalize(mat_Spear.r[0]);
+	mat_Spear.r[1] = XMVector3Normalize(mat_Spear.r[1]);
+	mat_Spear.r[2] = XMVector3Normalize(mat_Spear.r[2]);
+
+	m_pTextureParticleTransform1->Set_Matrix(mat_Spear);
+
+
+	if (m_pPlayerTransform)
+	{
+		_Matrix mat_Player = m_pPlayerTransform->Get_WorldMatrix();
+		mat_Player.r[0] = _float3(1,0,0).XMVector();
+		mat_Player.r[1] = _float3(0,1,0).XMVector();
+		mat_Player.r[2] = _float3(0,0,1).XMVector();
+
+		m_pTextureParticleTransform2->Set_Matrix(mat_Player);
+	}
+	
+
+
+	return S_OK;
+}
+
 HRESULT CMahabalasura::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -411,7 +496,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 		m_iAdjMovedIndex = 0;
 
-
+	
 	if (PlayRate <= 0.98)
 	{
 		switch (iNowAnimIndex)
@@ -515,12 +600,35 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 6:
 		{
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.00f, 1.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1f)
+			{
+				mPatternCount2++;
+				if(mPatternCount2 == 1)
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLHAND_0, m_pTextureParticleTransform);
+
+				m_iAdjMovedIndex++;
+			}
+
+
 		}
 		break;
 
 		case 7:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.5076923f)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0, m_pTextureParticleTransform);
+
+				++m_iAdjMovedIndex;
+			}
+
+			
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.5076923f)
 			{
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_CopyBoss"), TAG_OP(Prototype_Object_Boss_MahabalasuraCopy)));
 				CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum,TAG_LAY(Layer_Boss));
@@ -530,6 +638,8 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				++m_iAdjMovedIndex;
 			}
+
+
 		}
 		break;  
 		
@@ -550,16 +660,23 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_InstanceWeapon(1);
+
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTextureParticleTransform);
+
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.353846f)
 			{
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2, m_pTextureParticleTransform);
+
 				Spear->Set_InstanceWeapon(2);
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 3 && PlayRate > 0.7f)
 			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_1, m_pTextureParticleTransform);
+
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_IsStab();
 
@@ -571,6 +688,11 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 11:
 		{
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.00f, 1.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_bIsTeleport = true;
@@ -578,7 +700,9 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 
 				++m_iAdjMovedIndex;
+
 			}
+
 
 			if (PlayRate > 0.f && PlayRate < 0.1321839)
 			{
@@ -602,6 +726,13 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
 				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 
+				// CTransform* SpearTransform = (CTransform*)m_pSpear->Get_Component(TAG_COM(Com_Transform));
+
+
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
+
 				++m_iAdjMovedIndex;
 			}
 
@@ -617,6 +748,9 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
 				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 				++m_iAdjMovedIndex;
 			}
 
@@ -632,6 +766,9 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
 				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 				++m_iAdjMovedIndex;
 			}
 			if (PlayRate > 0.7758620 && m_iAdjMovedIndex == 4)
@@ -645,6 +782,10 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				Desc.Pos = PlayerPos;
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
 				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 
 				++m_iAdjMovedIndex;
 			}
@@ -660,8 +801,17 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
 				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 				++m_iAdjMovedIndex;
 			}
+			if (PlayRate > 0.977011 && m_iAdjMovedIndex == 6)
+			{
+
+				++m_iAdjMovedIndex;
+			}
+
 
 		}
 		break;
@@ -690,7 +840,6 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 6)
 		{
-
 		}
 		if (iNowAnimIndex == 7)
 		{

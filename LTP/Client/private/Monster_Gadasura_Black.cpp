@@ -681,15 +681,18 @@ HRESULT CMonster_Gadasura_Black::Ready_ParticleDesc()
 HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 {
 
-	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
 
-	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
-	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
-	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
+	ATTACHEDESC boneDesc = m_pWeapon->Get_WeaponDesc().eAttachedDesc;
 
+	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
+	mat_Weapon.r[3] = Vec_WeaponPos;
 
-	//mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
-	//m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
+	m_pTextureParticleTransform_Hand->Set_Matrix(mat_Weapon);
+
+//	mat_Weapon.r[3] = Pos + m_pColliderCom->Get_ColliderPosition(9).XMVector();
+	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_Weapon);
 
 
 
@@ -740,6 +743,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
+		m_EffectAdjust = 0;
 		m_dAcceleration = 1;
 
 		m_bLookAtOn = true;
@@ -873,11 +877,20 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 17:
 		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
 			}	
+
+
+			
+			
 			else if (PlayRate >= 0.2155 &&PlayRate <= 0.3879)
 			{
 				m_bWeaponAttackSwitch = true;
@@ -904,6 +917,16 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
+			}
+			
+			if (m_EffectAdjust == 0 && PlayRate >= 0.3f)
+			{
+				// #TIME Attack1
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_ATT0, m_pTextureParticleTransform_Demo1);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_ATT1, m_pTransformCom);
+
+				m_EffectAdjust++;
+
 			}
 			
 			break;
@@ -939,6 +962,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 19:
 		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
 			if (PlayRate > 0 && PlayRate <= 0.539215)
 			{
 				m_bLookAtOn = false; 
@@ -971,9 +999,6 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
-				// #TIME SmashAttack
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
-
 				m_iAdjMovedIndex++;
 			}
 
@@ -991,10 +1016,39 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.25f)
+			{
+				// #TIME SmashAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3f)
+			{
+				// #TIME SmashAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH2, m_pTextureParticleTransform_Hand);
+				m_EffectAdjust++;
+			}
+			
+			if (m_EffectAdjust ==2 && PlayRate>=0.539215f)
+			{
+				// #TIME SmashAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
+				m_EffectAdjust++;
+
+			}
+
 			break;
 		}
 		case 20:
 		{
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
 				m_bLookAtOn = false;
@@ -1035,10 +1089,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Impact_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
+			{
+				// #TIME StopBoundAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLBOUND0, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3f)
+			{
+				// #TIME StopBoundAttack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLBOUND1, m_pTransformCom);
+				m_EffectAdjust++;
+			}
 			break;
 		}
 		case 21:
 		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex==0 && PlayRate >= 0.29411)
 			{
 				m_bWeaponAttackSwitch = true;
@@ -1048,8 +1118,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate <= 0.588235)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5,m_pNavigationCom);
-				// #TIME Run Attack
+			
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+					// #TIME Run Attack
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
+				
 			}
 			else
 			{
@@ -1076,6 +1149,18 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 				m_iSoundIndex++;
+			if (m_EffectAdjust == 0 && PlayRate >= 0.05f)
+			{
+				// #TIME Run Attack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN0, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.29411)
+			{
+				// #TIME Run Attack
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN1, m_pTransformCom);
+				m_EffectAdjust++;
 			}
 			break;
 		}
@@ -1115,7 +1200,13 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 25:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate <= 0.9574)
+		
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.9574)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
@@ -1135,6 +1226,16 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_bare01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 				m_iSoundIndex++;
 			}
+			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash2, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+
+
 			break;
 		}
 		default:

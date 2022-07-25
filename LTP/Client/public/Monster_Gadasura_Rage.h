@@ -105,6 +105,14 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
+	// Particle
+	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+
+	_uint							m_EffectAdjust = 0;
+
 private:
 	_bool				m_bWeaponAttackSwitch = false;
 
@@ -116,11 +124,7 @@ private://Sound
 	_uint				m_iSoundIndex = 0;
 	_double				m_dSoundTime = 0;
 
-	// Particle
-	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+
 
 private:
 	HRESULT SetUp_Components();

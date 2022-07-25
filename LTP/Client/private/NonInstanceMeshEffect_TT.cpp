@@ -99,20 +99,81 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		// Custom Init
 		m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScale);
 
-		_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
-		_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
-		_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+		_Vector scale = m_pTransformCom->Get_Scale();
+
+		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
+
+		if (mAddDesc.InitRot.y == 0 &&
+			mAddDesc.InitRot.x == 0 &&
+			mAddDesc.InitRot.z == 0)
+		{
+			if (mAddDesc.FollowTarget)
+			{
+				me_MoveType = MOVETYPE_FOLLOW;
+			}
+
+			_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+			_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+			_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
 
 
-		if (mAddDesc.vAddDirectAngle.x != 0)
-			m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-		else if (mAddDesc.vAddDirectAngle.y != 0)
-			m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-		else if (mAddDesc.vAddDirectAngle.z != 0)
-			m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+			switch (mAddDesc.LookRotAxis)
+			{
+			case FollowingDir_Right:
+				m_vLookAxis = Right;
+				break;
+			case FollowingDir_Up:
+				m_vLookAxis = Up;
+				break;
+			case FollowingDir_Look:
+				m_vLookAxis = Look;
+				break;
+			default:
+				__debugbreak();
+				break;
+			}
+
+			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
+			if (mAddDesc.vAddDirectAngle.x != 0)
+				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+			else if (mAddDesc.vAddDirectAngle.y != 0)
+				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+			else if (mAddDesc.vAddDirectAngle.z != 0)
+				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+		}
+
+		else
+		{
+			_Squternion qq = _Squternion::CreateFromYawPitchRoll(
+				mAddDesc.InitRot.y,
+				mAddDesc.InitRot.x,
+				mAddDesc.InitRot.z);
+
+			_Matrix rotmat = _Sfloat4x4::CreateFromQuaternion(qq);
+
+			rotmat.r[0] *= scale.m128_f32[0];
+			rotmat.r[1] *= scale.m128_f32[1];
+			rotmat.r[2] *= scale.m128_f32[2];
+			rotmat.r[3] = Pos;
+			m_pTransformCom->Set_Matrix(rotmat);
+		}
+			
+		if (me_MoveType == CNonInstanceMeshEffect_TT::MOVETYPE_EASE)
+		{
+
+			_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+			_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
+			_Vector Look = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+
+			_Vector PosLocal = (Right*  mMeshDesc.vPosition.x) +
+				(Up* mMeshDesc.vPosition.y) +
+				(Look * mMeshDesc.vPosition.z);
+
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
+
+		}
 
 		mIsInit = true;
-		return _int();
 
 	}
 
@@ -152,7 +213,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		{
 			mbEasingStart = true;
 			mCurrentEasingDesc = mEasingDesc[mEasingCount];
-			mStartPoint = Pos;
+			mStartPoint = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 			if (mEasingCount != 0)
 			{
 				mStartPoint = mEndPoint;
@@ -199,45 +260,120 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 
 	}
-
-	// ROT
-			// 바라보는 방향 결정
-	if (mMeshDesc.RotationSpeedPerSec == 0)
+	else if (me_MoveType == CNonInstanceMeshEffect_TT::MOVETYPE_FOLLOW)
 	{
-
-		switch (mAddDesc.LookRotAxis)
+		if (mAddDesc.FollowTarget->Get_IsOwnerDead())
 		{
-		case FollowingDir_Right:
-			m_vLookAxis = Right;
-			break;
-		case FollowingDir_Up:
-			m_vLookAxis = Up;
-			break;
-		case FollowingDir_Look:
-			m_vLookAxis = Look;
-			break;
-		default:
-			__debugbreak();
-			break;
+			Set_IsDead();
+			return S_OK;
 		}
 
-		m_pTransformCom->LookDir(m_vLookAxis.XMVector());
-		if (mAddDesc.vAddDirectAngle.x != 0)
-			m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-		else if (mAddDesc.vAddDirectAngle.y != 0)
-			m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-		else if (mAddDesc.vAddDirectAngle.z != 0)
-			m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+		_Vector tRight = mAddDesc.FollowTarget->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
+		_Vector tUp = mAddDesc.FollowTarget->Get_MatrixState_Normalized(CTransform::STATE_UP);
+		_Vector tLook = mAddDesc.FollowTarget->Get_MatrixState_Normalized(CTransform::STATE_LOOK);
+		_Vector tPos = mAddDesc.FollowTarget->Get_MatrixState(CTransform::STATE_POS);
+
+		_Vector tPosLocal = (tRight*  mMeshDesc.vPosition.x) +
+			(tUp* mMeshDesc.vPosition.y) +
+			(tLook * mMeshDesc.vPosition.z);
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, tPos + tPosLocal);
+	}
+
+	// ROT
+
+	// #BUG 로테이션 버그 발생시 플러그 나눔
+	if (mAddDesc.FixFlag_Rot == true)
+	{
 
 	}
 	else
 	{
-		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
-	}
+		// 바라보는 방향 결정
+		if (mMeshDesc.RotationSpeedPerSec == 0)
+		{
 
+			switch (mAddDesc.LookRotAxis)
+			{
+			case FollowingDir_Right:
+				m_vLookAxis = Right;
+				break;
+			case FollowingDir_Up:
+				m_vLookAxis = Up;
+				break;
+			case FollowingDir_Look:
+				m_vLookAxis = Look;
+				break;
+			default:
+				__debugbreak();
+				break;
+			}
+
+			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
+			if (mAddDesc.vAddDirectAngle.x != 0)
+				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+			else if (mAddDesc.vAddDirectAngle.y != 0)
+				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+			else if (mAddDesc.vAddDirectAngle.z != 0)
+				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+
+		}
+		else
+		{
+			m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
+		}
+	}
 	// Scale
 	if (mReScale == false)
-		m_pTransformCom->Scaling_All(fDeltaTime);
+	{
+		//		m_pTransformCom->Scaling_All(fDeltaTime);
+		if (mAddDesc.bAfterApperTime)
+		{
+			if (mMeshDesc.fMaxTime_Duration - mMeshDesc.fAppearTime < m_fCurTime_Duration)
+			{
+				if (mAddDesc.bLockScale[0])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+				}
+
+				if (mAddDesc.bLockScale[1])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+				}
+
+
+				if (mAddDesc.bLockScale[2])
+				{
+					m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+
+				}
+			}
+
+		}
+		else
+		{
+
+			if (mAddDesc.bLockScale[0])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+			}
+
+			if (mAddDesc.bLockScale[1])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+			}
+
+
+			if (mAddDesc.bLockScale[2])
+			{
+				m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+
+			}
+
+		}
+
+
+	}
 	else
 	{
 		m_pTransformCom->Scaling_All(-fDeltaTime*2);
@@ -366,7 +502,7 @@ void CNonInstanceMeshEffect_TT::Set_ParentTransform(CTransform * parentTrans)
 			(Look * mMeshDesc.vPosition.z);
 
 
-		if (mAddDesc.FixFlag == false)
+		if (mAddDesc.FixFlag_Move == false)
 		{
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos + PosLocal);
 
@@ -453,6 +589,7 @@ CGameObject * CNonInstanceMeshEffect_TT::Clone(void * pArg)
 void CNonInstanceMeshEffect_TT::Free()
 {
 	__super::Free();
+	mAddDesc.FollowTarget = nullptr;
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

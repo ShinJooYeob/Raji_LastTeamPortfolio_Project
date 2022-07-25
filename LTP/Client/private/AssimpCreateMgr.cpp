@@ -96,7 +96,8 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatri
 	mCurrent_NameIter = mList_CreateModelName.begin();
 
 	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
-	
+
+
 	return S_OK;
 
 }
@@ -803,6 +804,7 @@ HRESULT CAssimpCreateMgr::Load_ModelFBXName_CreateModel(const wchar_t * fbxName,
 }
 
 
+
 HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type, _Matrix defaultMat)
 {
 	if (map.empty())
@@ -842,6 +844,20 @@ HRESULT CAssimpCreateMgr::Free_VertexData()
 	return S_OK;
 }
 
+HRESULT CAssimpCreateMgr::Free_VertexData_STATIC()
+{
+	// TEST
+	for (auto desc : mMap_StaticModelDesc)
+	{
+		Safe_Delete_Array(desc.second->mMeshDesc);
+		desc.second->mNumMeshes = 0;
+
+	}
+	mMap_StaticModelDesc.clear();
+
+	return S_OK;
+
+}
 //HRESULT CAssimpCreateMgr::Create_ModelCom(const list<MYFILEPATH*>& NameList, const list<MODELDESC*>& DescList,
 //	SCENEID sceneid, CModel::MODELTYPE type, _Matrix defaultMat)
 //{

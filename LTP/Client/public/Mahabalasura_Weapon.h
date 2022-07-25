@@ -37,6 +37,12 @@ public:
 	HRESULT		Set_InstanceWeapon(_int iCount = 0);
 	void		Set_IsStab() { m_bIsStab = true; }
 
+	CTransform* Get_Transform()
+	{
+		return m_pTransformCom;
+	}
+
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;

@@ -33,8 +33,9 @@ private:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_TestMapObject(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monster_Boss(const _tchar* pLayerTag);
-	
+	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
 
+	
 	HRESULT Ready_Layer_Phycis();
 
 	

@@ -27,7 +27,7 @@ public:
 
 
 
-protected:
+public:
 	//	 #Particle Func
 	virtual HRESULT		Ready_ParticleDesc();
 	virtual HRESULT		Set_Play_Particle(_uint ParticleIndex, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);

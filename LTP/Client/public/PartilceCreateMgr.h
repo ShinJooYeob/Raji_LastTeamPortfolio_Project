@@ -3,7 +3,9 @@
 #include "Base.h"
 #include "NonInstanceMeshEffect.h"
 
-
+BEGIN(Engine)
+class CTransform;
+END
 BEGIN(Client)
 
 // J_WHAN Effect Creater
@@ -14,9 +16,14 @@ typedef struct tag_MESHADDDATA
 	_float AccMoveSpeed = 0.0f;
 	_float AccScale = 0.0f;
 	_float3 vAddDirectAngle = _float3::Zero();
-	_bool FixFlag = false;
-	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
+	_bool FixFlag_Move = false;
+	_bool FixFlag_Rot = false;
 
+	_float3 InitRot= _float3::Zero();
+	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
+	_bool bLockScale[3] = { false, };
+	_bool bAfterApperTime = false; // 생성되면 사라짐
+	CTransform* FollowTarget = nullptr;
 
 
 }MESHADDDATA;
@@ -41,6 +48,8 @@ public:
 public:
 	enum E_MESH_EFFECTJ
 	{
+#pragma region PLAYER MESH
+
 		// PLAY EFFECT
 		MESHEFFECT_ARROW_HEAD,
 		MESHEFFECT_ARROW_END,
@@ -61,10 +70,15 @@ public:
 		MESHEFFECT_ARROW_BOW_SP_ICES,
 		MESHEFFECT_ARROW_BOW_SP_BOW,
 
+#pragma endregion PLAYER MESH
+
+
+
 		// FOR EFFECT TIMING
 		MESHEFFECT_TIMEING1,
 		MESHEFFECT_TIMEING2,
 
+#pragma region MONSTER
 		// Monster EFFECT
 		MESHEFFECT_MONSTER_CREATE1,
 		MESHEFFECT_MONSTER_CREATE2,
@@ -112,26 +126,49 @@ public:
 		MESHEFFECT_MONSTER_ML_CASH8,
 
 		// ========================================
-		MESHEFFECT_MONSTER_GM_Cash0,
-		MESHEFFECT_MONSTER_GM_Cash1,
+		MESHEFFECT_MONSTER_GM_ATT0,
+		MESHEFFECT_MONSTER_GM_ATT1,
+		MESHEFFECT_MONSTER_GM_SKILLSMASH0,
+		MESHEFFECT_MONSTER_GM_SKILLSMASH2,
+		MESHEFFECT_MONSTER_GM_SKILLSMASH1,
+		MESHEFFECT_MONSTER_GM_SKILLRUN1,
+		MESHEFFECT_MONSTER_GM_SKILLRUN0,
+		MESHEFFECT_MONSTER_GM_SKILLBOUND0,
+		MESHEFFECT_MONSTER_GM_SKILLBOUND1,
+
 		MESHEFFECT_MONSTER_GM_Cash2,
 		MESHEFFECT_MONSTER_GM_Cash3,
 		MESHEFFECT_MONSTER_GM_Cash4,
 		MESHEFFECT_MONSTER_GM_Cash5,
-		MESHEFFECT_MONSTER_GM_Cash6,
-		MESHEFFECT_MONSTER_GM_Cash7,
-		MESHEFFECT_MONSTER_GM_Cash8,
+		// ===========================================
 
+		MESHEFFECT_MONSTER_GL_SKILLRUN0,
+		MESHEFFECT_MONSTER_GL_SKILLBOUND0,
+		MESHEFFECT_MONSTER_GL_SKILLBOUND1,
+		
+		MESHEFFECT_MONSTER_GL_SKILLTRIPLE0,
+		MESHEFFECT_MONSTER_GL_SKILLTRIPLE1,
+		MESHEFFECT_MONSTER_GL_SKILLTRIPLE2,
+		MESHEFFECT_MONSTER_GL_SKILLTRIPLE3,
 		MESHEFFECT_MONSTER_GL_Cash0,
 		MESHEFFECT_MONSTER_GL_Cash1,
+
 		MESHEFFECT_MONSTER_GL_Cash2,
+
 		MESHEFFECT_MONSTER_GL_Cash3,
 		MESHEFFECT_MONSTER_GL_Cash4,
-		MESHEFFECT_MONSTER_GL_Cash5,
+
 		MESHEFFECT_MONSTER_GL_Cash6,
 		MESHEFFECT_MONSTER_GL_Cash7,
 		MESHEFFECT_MONSTER_GL_Cash8,
+		MESHEFFECT_MONSTER_GL_Cash9,
+		MESHEFFECT_MONSTER_GL_Cash10,
+		MESHEFFECT_MONSTER_GL_Cash11,
+		MESHEFFECT_MONSTER_GL_Cash12,
+		MESHEFFECT_MONSTER_GL_Cash13,
+		MESHEFFECT_MONSTER_GL_Cash14,
 
+#pragma endregion MONSTER
 
 
 
@@ -142,6 +179,8 @@ public:
 		// MESHEFFECT_MONSTER_NM_ATT,
 		// MESHEFFECT_MONSTER_NL_ATT,
 
+
+#pragma region BOSS
 
 		// BOSS
 
@@ -158,16 +197,20 @@ public:
 		MESHEFFECT_BOSS_SNAKE_9,
 
 
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLHAND_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_1,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0,
+		MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
 		MESHEFFECT_BOSS_Mahabalasura_0,
 		MESHEFFECT_BOSS_Mahabalasura_1,
 		MESHEFFECT_BOSS_Mahabalasura_2,
 		MESHEFFECT_BOSS_Mahabalasura_3,
 		MESHEFFECT_BOSS_Mahabalasura_4,
-		MESHEFFECT_BOSS_Mahabalasura_5,
-		MESHEFFECT_BOSS_Mahabalasura_6,
-		MESHEFFECT_BOSS_Mahabalasura_7,
-		MESHEFFECT_BOSS_Mahabalasura_8,
-		MESHEFFECT_BOSS_Mahabalasura_9,
 
 		MESHEFFECT_BOSS_Rangda_0,
 		MESHEFFECT_BOSS_Rangda_1,
@@ -179,6 +222,11 @@ public:
 		MESHEFFECT_BOSS_Rangda_7,
 		MESHEFFECT_BOSS_Rangda_8,
 		MESHEFFECT_BOSS_Rangda_9,
+		MESHEFFECT_BOSS_Rangda_10,
+		MESHEFFECT_BOSS_Rangda_11,
+		MESHEFFECT_BOSS_Rangda_12,
+
+
 
 		MESHEFFECT_BOSS_Chiedtian_0,
 		MESHEFFECT_BOSS_Chiedtian_1,
@@ -191,6 +239,7 @@ public:
 		MESHEFFECT_BOSS_Chiedtian_8,
 		MESHEFFECT_BOSS_Chiedtian_9,
 
+#pragma endregion BOSS
 
 
 		MESHEFFECT_END,
@@ -410,7 +459,3 @@ HRESULT CPlayerWeapon_Bow::Set_PlayOff_ALL()
 }
 
 */
-
-
-
-

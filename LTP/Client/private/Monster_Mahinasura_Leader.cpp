@@ -1293,9 +1293,9 @@ void CMonster_Mahinasura_Leader::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHPUI);
 	Safe_Release(m_pHandAttackColliderCom);
 	Safe_Release(m_pTailAttackColliderCom);
-	Safe_Release(m_pHPUI);
 
 	Safe_Release(m_pTextureParticleTransform_RHand);
 	Safe_Release(m_pTextureParticleTransform_LHand);
