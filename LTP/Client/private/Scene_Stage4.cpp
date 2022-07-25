@@ -30,22 +30,11 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
 	
-
-	//FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_SkillUI)));
-	//FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
-	//FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	
-	
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
-	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
-	//FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_SkillUI)));
-	//FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
-	//FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE4, TAG_LAY(Layer_ColTrigger)));
 	
-	FAILED_CHECK(Ready_MapData(L"BossStage_Rangda.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Snake2.dat", SCENE_STAGE4, TAG_LAY(Layer_ColTrigger)));
 	
 	return S_OK;
 }
@@ -163,6 +152,7 @@ HRESULT CScene_Stage4::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE4);
 	}
 	
+	m_pMainCam->Set_TargetArmLength(3.f);
 	return S_OK;
 }
 
@@ -239,7 +229,7 @@ HRESULT CScene_Stage4::Ready_Layer_Boss(const _tchar * pLayerTag)
 
 	 //FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Snake),&_float3(42.f, -110.f, 104.f)));
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Snake),&_float3(42.f, -110.f, 104.f)));
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(0.f)));
 
@@ -264,13 +254,29 @@ HRESULT CScene_Stage4::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player)));
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player), &_float3(20.95f, 3.3f, -1.16f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player), &_float3(21.607f, 2.130f, -0.730f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE4, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	m_pMainCam->Lock_CamLook(true);
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(4.f, 5.f, -10.f));
+	static_cast<CPlayer*>(pPlayer)->Update_AttachCamPos();
 
+
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+	m_pMainCam->Set_FocusTarget(pPlayer);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 7.13001299f, -15.8938332f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
+	pPlayer->Update_AttachCamPos();
+	
+
+
+	/*
 	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(195.6f, 26.76f, 66.721f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(184.621f, 80.167f, 61.827f));
 
@@ -286,21 +292,7 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(498.526f, 2.769f, 411.659f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(521.752f, 7.672f, 416.89f));
 	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(570.957f, 21.79f, 400.331f));
-
-
-	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-
-
-	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
-	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_TargetArmLength(0.f);
-
-
-
+	*/
 
 	/*FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 
@@ -331,7 +323,7 @@ HRESULT CScene_Stage4::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.725f, 1.725f, 1.725f);
 	tElevatorDesc.fMoveSpeed = 5.f;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_InteractObj), &tElevatorDesc));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 	return S_OK;
 }

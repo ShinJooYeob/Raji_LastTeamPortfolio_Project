@@ -300,6 +300,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_DEADZONE,
 	Prototype_Trigger_TestLedgeTrigger,
 	Prototype_Trigger_ResurrectionTrigger,
+	Prototype_Trigger_SceneChangeTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_MonsterBatchTrigger,
 
@@ -389,7 +390,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Weapon_Universal,
 
 	//Interact OBJ
-	Prototype_Object_InteractObj,
+	Prototype_Object_InteractObj_Elevator,
 
 	Object_Prototype_End
 };
@@ -476,6 +477,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_WallRun:
 		return TEXT("Prototype_Trigger_WallRun");
+		break;
+	case Prototype_Trigger_SceneChangeTrigger:
+		return TEXT("Prototype_Trigger_SceneChangeTrigger");
 		break;
 
 	
@@ -654,8 +658,8 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Weapon_Universal:
 		return TEXT("Prototype_Object_Monster_Weapon_Universal");
 
-	case Prototype_Object_InteractObj:
-		return TEXT("Prototype_Object_InteractObj");
+	case Prototype_Object_InteractObj_Elevator:
+		return TEXT("Prototype_Object_InteractObj_Elevator");
 
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:

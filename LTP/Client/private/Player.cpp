@@ -57,9 +57,6 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
 
-	if (m_eNowSceneNum == 7)
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(1.f, 0.f, 0.f));
-
 	FAILED_CHECK(SetUp_EtcInfo());
 
 	FAILED_CHECK(SetUp_PlayerWeapons());
@@ -81,7 +78,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
 
-	m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
+	//m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
+
 	return S_OK;
 }
 
@@ -256,7 +254,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		m_pHeadJoint->Update_BeforeSimulation();
 
 	// CameraShake Test
-	/*{
+	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
 		{
 			m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
@@ -292,7 +290,7 @@ _int CPlayer::Update(_double fDeltaTime)
 			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
 			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
 		}
-	}*/
+	}
 	//
 
 
@@ -1881,6 +1879,15 @@ _bool CPlayer::Check_InputDirIsForward()
 void CPlayer::Check_CurNaviCellOption()
 {
 	m_eCurPosNavCellOption = m_pNavigationCom->Get_CurCellOption();
+
+	if (CCell::CELL_HIDE_ON_BUSH == m_eCurPosNavCellOption)
+	{
+		m_bPlayerHide = true;
+	}
+	else
+	{
+		m_bPlayerHide = false;
+	}
 }
 
 _bool CPlayer::Check_PlayerKeyInput(_double fDeltaTime)
@@ -1959,9 +1966,13 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 
 	if (0 != iInputDir)
 	{
-			//m_pMainCamera->Lock_CamLook(false);
-			//m_fAttachCamPos_Ofsfset = _float3(0.f, 0.f, -0.5f);
+			//m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
+			//m_fAttachCamPos_Offset = _float3(0.f, 3.f, 0.f);
 			//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+
+		/*m_pMainCamera->Lock_CamLook(false);
+		m_fAttachCamPos_Ofsfset = _float3(0.f, 0.f, -0.5f);
+		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);*/
 
 		//m_iCurCamViewIndex += iInputDir;
 		//if (0.f >= m_iCurCamViewIndex)
@@ -7700,11 +7711,15 @@ HRESULT CPlayer::SetUp_EtcInfo()
 	m_pMainCamera->Lock_CamLook(false);
 	m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
 	m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
-	Update_AttachCamPos();
+	
 	m_pMainCameraTransform = m_pMainCamera->Get_CamTransformCom();
+	Update_AttachCamPos();
+
 	// Pressed Move Key Amount
 	m_fMaxTime_PressedMoveKeyDuration = 1.f;
 
+
+	// HP
 	m_fMaxHP = 9.f;
 	m_fHP = m_fMaxHP;
 

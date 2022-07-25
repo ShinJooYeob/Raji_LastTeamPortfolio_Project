@@ -257,6 +257,7 @@
     <ClInclude Include="..\public\Rangda_Finger.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
     <ClInclude Include="..\public\ResurrectionTrigger.h" />
+    <ClInclude Include="..\public\SceneChangeTrigger.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="..\private\Rangda_Finger.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
+    <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />

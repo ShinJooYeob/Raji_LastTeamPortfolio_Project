@@ -4,10 +4,8 @@
 #include "Camera_Main.h"
 #include "Player.h"
 #include "PlayerWeapon.h"
-#include "PlayerWeapon_Spear.h"
 #include "MapObject.h"
-#include "Trigger_ChangeCameraView.h"
-#include "TestLedgeTrigger.h"
+#include "StaticInstanceMapObject.h"
 #include "Transform.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -34,8 +32,11 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	FAILED_CHECK(Ready_Layer_Trigger(TAG_LAY(Layer_ColTrigger))); 
 	
+	
+	FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Snake.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+
 	return S_OK;
 }
 
@@ -158,31 +159,23 @@ HRESULT CScene_Stage5::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
-	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(30.f, 37.460f, 60.f));
-	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(20.95f, 3.3f, -1.16f));
 
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-
-
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_TargetArmLength(0.f);
 
-
-
 	return S_OK;
-
 }
 
 HRESULT CScene_Stage5::Ready_Layer_SkyBox(const _tchar * pLayerTag)
@@ -235,99 +228,157 @@ HRESULT CScene_Stage5::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Jalsura)));
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine)));
-	
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
-
-
-
 	return S_OK;
 }
 
-HRESULT CScene_Stage5::Ready_Layer_Trigger(const _tchar * pLayerTag)
+HRESULT CScene_Stage5::Ready_MapData(const _tchar * szMapDataFileName, SCENEID eSceneID, const _tchar * pLayerTag)
 {
-	//CTrigger_ChangeCameraView::CHANGECAMERAVIEWDESC ChangeCameraViewDesc;
-	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX;
-	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 2.f, -2.f);
-	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
-	//ChangeCameraViewDesc.fMain_Pos = _float3(5.f, 0.01f, 5.f);
-	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
-	//ChangeCameraViewDesc.bLockCamLook = true;
-	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.98f;
-	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.98f;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+	//../bin/Resources/Data/Map/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Map/";
+
+	lstrcat(szFullPath, szMapDataFileName);
 
 
-	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX;
-	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 1.5f, -2.f);
-	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
-	//ChangeCameraViewDesc.fMain_Pos = _float3(0.f, 0.01f, 5.f);
-	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
-	//ChangeCameraViewDesc.bLockCamLook = false;
-	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.9f;
-	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.9f;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+
+	CGameInstance* pInstance = g_pGameInstance;
+
+	pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_InstanceStaticMapObject));
+	CStaticInstanceMapObject* pInstanceMapObject = (CStaticInstanceMapObject*)pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag);
+	NULL_CHECK_RETURN(pInstanceMapObject, E_FAIL);
 
 
-	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_FIX_SWITCH;
-	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 2.f, -2.f);
-	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, 0.f, 1.f);
-	//ChangeCameraViewDesc.fMain_Pos = _float3(-5.f, 0.01f, 5.f);
-	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f);
-	//ChangeCameraViewDesc.bLockCamLook = true;
-	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.99f;
-	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.99f;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
+	//HANDLE hFile = CreateFileW(szFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 
-	//ChangeCameraViewDesc.eChangeCameraViewType = CTrigger_ChangeCameraView::EChangeCameraViewType::TYPE_TWO_INTERP;
-	//ChangeCameraViewDesc.fMain_CamPos = _float3(0.f, 6.f, -2.f);
-	//ChangeCameraViewDesc.fMain_CamLook = _float3(0.f, -1.f, 1.f);
-	//ChangeCameraViewDesc.fMain_Pos = _float3(5.f, 0.01f, 5.f);
-	//ChangeCameraViewDesc.fMain_Scale = _float3(3.f, 3.f, 3.f); 
-	// 
-	//ChangeCameraViewDesc.fSub_CamPos = _float3(-2.f, 6.f, 0.f);
-	//ChangeCameraViewDesc.fSub_CamLook = _float3(1.f, -1.f, 0.f);
-	//ChangeCameraViewDesc.fSub_Pos = _float3(-10.f, 0.01f, 5.f);
-	//ChangeCameraViewDesc.fSub_Scale = _float3(3.f, 3.f, 3.f);
-	//ChangeCameraViewDesc.bLockCamLook = true;
-	//ChangeCameraViewDesc.fMain_CamMoveWeight = 0.9f;
-	//ChangeCameraViewDesc.fMain_CamLookWeight = 0.9f;
-	//ChangeCameraViewDesc.fSub_CamMoveWeight = 0.5f;
-	//ChangeCameraViewDesc.fSub_CamLookWeight = 0.5f;
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
 
-	//CTestLedgeTrigger::LEDGETRIGGERDESC tLedgeTriggerDesc;
-	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 0.f, 13.f);
-	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_START;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger),&tLedgeTriggerDesc));
-	//
-	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 3.f, 13.f);
-	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
-	//
-	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 6.f, 13.f);
-	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LEDGE;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
-	//
-	//tLedgeTriggerDesc.fSpawnPos = _float3(8.f, 9.f, 13.f);
-	//tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));
-	
-	/*tLedgeTriggerDesc.fSpawnPos = _float3(5.f, 11.f, 13.f);
-	tLedgeTriggerDesc.eLedgeTriggerState = CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Trigger_TestLedgeTrigger), &tLedgeTriggerDesc));*/
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte = 0;
+
+
+	_uint iIDLength = 0;
+
+	// 유니코드임을 알리는 BOM
+	//DWORD wc = 0xFF;
+	//ReadFile(hFile, &wc, 3, &dwByte, NULL);
+
+	while (true)
+	{
+
+		OBJELEMENT	tData{};
+		_tchar szBuffer[MAX_PATH] = L"";
+		// key 값 로드
+		ReadFile(hFile, &(iIDLength), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, (tData.ObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		//lstrcpy(tData.ObjectID, szBuffer);
+
+		ReadFile(hFile, &(iIDLength), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, (tData.MeshID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+		//lstrcpy(tData.MeshID, szBuffer);
+
+		ReadFile(hFile, &(tData.PassIndex), sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, &(tData.FrustumRange), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(tData.bIsOcllsuion), sizeof(_bool), &dwByte, nullptr);
+
+		ReadFile(hFile, &(tData.matSRT.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
+		ReadFile(hFile, &(tData.matTransform.m[0][0]), sizeof(_float) * 16, &dwByte, nullptr);
+
+		if (0 == dwByte)
+			break;
+
+		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
+
+		FAILED_CHECK(pInstanceMapObject->Add_InstanceMapObject(tData));
+
+	}
+
+	CloseHandle(hFile);
 
 	return S_OK;
 }
 
+HRESULT CScene_Stage5::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
 
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
+
+			pObject->After_Initialize();
+
+		}
+
+		CloseHandle(hFile);
+	}
+
+
+
+
+
+
+
+
+	return S_OK;
+}
 
 CScene_Stage5 * CScene_Stage5::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {

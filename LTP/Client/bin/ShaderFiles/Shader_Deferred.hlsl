@@ -1247,7 +1247,7 @@ PS_OUT PS_MAIN_ToonShading(PS_IN In)
 	float ToonValue = (ToonMaxIntensive - 100.f) * g_fToonShadingValue + 100.f;
 
 	vector DiffuseDesc = pow(g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV), 2.2f);
-	vector DefferedDesc = pow(g_TargetTexture.Sample(DefaultSampler, In.vTexUV), 2.2f );
+	vector DefferedDesc = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
 
 	PS_OUT		Out = (PS_OUT)0;
 

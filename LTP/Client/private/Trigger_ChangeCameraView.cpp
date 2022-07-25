@@ -200,6 +200,8 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	_float fDist_MainToPlayer = XMVectorGetX(XMVector3Length(m_tChangeCameraViewDesc.fMain_Pos.XMVector() - vPlayerPos));
 	_float fWeight_MainToPlayer = fDist_MainToPlayer / m_fDist_MainToSub;
 
+	if (1.f < fWeight_MainToPlayer)
+		fWeight_MainToPlayer = 1.f;
 	//_float3 fResult_CamPos = g_pGameInstance->Easing_Vector(TYPE_Linear, m_tChangeCameraViewDesc.fMain_CamPos.XMVector(), m_tChangeCameraViewDesc.fSub_CamPos.XMVector(), fWeight_MainToPlayer, 1.f);
 	_float3 fResult_CamPos = (m_tChangeCameraViewDesc.fMain_CamPos.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamPos.XMVector() * fWeight_MainToPlayer);
 	_float3 fResult_CamLook = (m_tChangeCameraViewDesc.fMain_CamLook.XMVector() * (1.f - fWeight_MainToPlayer)) + (m_tChangeCameraViewDesc.fSub_CamLook.XMVector() * fWeight_MainToPlayer);
@@ -239,7 +241,7 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 	}
 
 	m_pMainCamera->Set_CameraMoveWeight(0.91f); 
-	m_pMainCamera->Set_CameraLookWeight(0.97f);
+	m_pMainCamera->Set_CameraLookWeight(0.95f);
 
 	m_pPlayer->Set_AttachCamPosOffset(fResult_CamPos);
 	

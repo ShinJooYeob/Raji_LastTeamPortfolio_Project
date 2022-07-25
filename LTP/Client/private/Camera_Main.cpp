@@ -65,6 +65,9 @@ HRESULT CCamera_Main::Initialize_Clone(void * pArg)
 
 	m_fMax_TargetArmLength = 10.f;
 	m_fMin_TargetArmLength = 3.f;
+	//m_fTargetArmLength = 8.f;
+
+
 	return S_OK;
 }
 
@@ -188,6 +191,19 @@ void CCamera_Main::Set_MinTargetArmLength(_float fMinTargetArmLength)
 	m_fMin_TargetArmLength = fMinTargetArmLength;
 }
 
+void CCamera_Main::Set_CameraInitState(_fVector vCamPos, _fVector vCamLook)
+{
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_LOOK, vCamLook);
+	Update_NormalMode(g_fDeltaTime);
+
+}
+
+void CCamera_Main::Set_CamLock(_bool bLock)
+{
+	m_bCamLock = bLock;
+}
+
 _float CCamera_Main::Get_TargetArmLength()
 {
 	return m_fTargetArmLength;
@@ -211,11 +227,14 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 		return;
 	}
 	 
-	CTransform* pTarget_TransformCom =  static_cast<CTransform*>(m_pFocusTarget->Get_Component(Tag_Component(Com_Transform)));
 	
+	_Vector vtestpos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
+
+	_float a = m_fTargetArmLength;
 	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + m_pFocusTarget->Get_AttachCamPos() * (1.f - m_fCur_CamMoveWeight);
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
-	//m_pTransform->MovetoTarget_ErrRange(m_pFocusTarget->Get_AttachCamPos(), fDeltaTime, 0.1f);
+	
 	if (true == m_bCamLock) 
 	{
 		m_pTransform->Turn_Dir(m_fFixLookDir.XMVector(), m_fCur_CamLookWeight, 0.999f);
@@ -738,27 +757,13 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 	if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) < 0)
 	{
 		m_fTargetArmLength += 1.f;
-		//if (m_fTargetArmLength > m_fMax_TargetArmLength)
-		//{
-		//	m_fTargetArmLength -= 1.5f;
-		//	if (m_fTargetArmLength < m_fMax_TargetArmLength)
-		//	{
-		//		m_fTargetArmLength = m_fMax_TargetArmLength;
-		//	}
-		//}
+
 		m_fTargetArmLength = (m_fTargetArmLength >= m_fMax_TargetArmLength ? m_fMax_TargetArmLength : m_fTargetArmLength);
 	}
 	else if (pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL) > 0)
 	{
 		m_fTargetArmLength -= 1.f;
-		//if (m_fTargetArmLength < m_fMin_TargetArmLength)
-		//{
-		//	m_fTargetArmLength += 1.5f;
-		//	if (m_fTargetArmLength > m_fMin_TargetArmLength)
-		//	{
-		//		m_fTargetArmLength = m_fMin_TargetArmLength;
-		//	}
-		//}
+
 		m_fTargetArmLength = (m_fTargetArmLength <= m_fMin_TargetArmLength ? m_fMin_TargetArmLength : m_fTargetArmLength);
 	}
 
