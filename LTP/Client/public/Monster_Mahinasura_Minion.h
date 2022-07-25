@@ -63,6 +63,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
 
 private:
@@ -130,6 +131,9 @@ private://speed
 private://Sound
 	_uint				m_iSoundIndex = 0;
 	_double				m_dSoundTime = 0;
+
+private://Dissolve
+	_double				m_dDissolveTime = 0;
 
 public:
 	static CMonster_Mahinasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
