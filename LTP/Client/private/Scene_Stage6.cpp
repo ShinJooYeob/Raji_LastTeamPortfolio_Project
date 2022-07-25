@@ -40,6 +40,7 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_LoadEffectMesh());
 
+	GetSingle(CAssimpCreateMgr)->Free_VertexData_STATIC();
 
 	return S_OK;
 }

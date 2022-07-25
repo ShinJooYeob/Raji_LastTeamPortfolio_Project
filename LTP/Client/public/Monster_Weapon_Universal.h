@@ -41,6 +41,13 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	tagPlayerWeaponDesc Get_WeaponDesc()
+	{
+		return m_Monster_Weapon_UniversalDesc;
+	}
+
+
 private:
 	HRESULT SetUp_Components();
 

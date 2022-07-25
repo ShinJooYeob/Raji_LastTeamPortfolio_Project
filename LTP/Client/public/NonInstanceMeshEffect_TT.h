@@ -15,6 +15,7 @@ class CNonInstanceMeshEffect_TT final : public CGameObject
 		MOVETYPE_NONE,
 		MOVETYPE_EASE,
 		MOVETYPE_FIX,
+		MOVETYPE_FOLLOW,
 		MOVETYPE_END,
 
 	};

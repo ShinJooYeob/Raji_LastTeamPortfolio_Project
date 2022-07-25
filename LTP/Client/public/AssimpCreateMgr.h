@@ -25,6 +25,8 @@ public:
 	
 	const wchar_t* GetName_Iter_Plus();
 
+	HRESULT Free_VertexData_STATIC();
+
 private:
 	HRESULT Init_ModelName_FileList();
 	HRESULT Load_Model_DatFile_One(const wchar_t* fbxName, _fMatrix DefaultMat = XMMatrixIdentity());
@@ -39,6 +41,7 @@ private:
 	HRESULT Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type,_Matrix defaultMat);
 
 	HRESULT Free_VertexData();
+	
 private:
 	list<MYFILEPATH*> mList_DataFIle_Static;
 	list<MYFILEPATH*> mList_DataFIle_Dynamic;

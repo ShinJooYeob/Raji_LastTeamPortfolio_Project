@@ -265,7 +265,7 @@ HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_
 			if (m_eCollisionThreadState != CCollisionMgr::CTS_PROCESSING) continue;
 
 			// #RICK mergeOff
-		//	FAILED_CHECK(Inspect_MainCollision());
+			FAILED_CHECK(Inspect_MainCollision());
 
 			if (m_eCollisionThreadState != CCollisionMgr::CTS_SCENECHANGING)
 			{

@@ -88,7 +88,7 @@ private:
 	CTransform*						m_pTextureParticleTransform_RHand = nullptr;
 	CTransform*						m_pTextureParticleTransform_LHand = nullptr;
 	CTransform*						m_pTextureParticleTransform_Tail = nullptr;
-
+	_uint							m_EffectAdjust = 0;
 	
 
 	//Anim Once Pattern
