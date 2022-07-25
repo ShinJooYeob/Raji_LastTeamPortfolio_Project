@@ -62,6 +62,8 @@ enum eInstancePassID
 	InstancePass_End
 };
 
+enum WeaponType { WEAPON_BOW, WEAPON_SPEAR, WEAPON_SWORDSHIELD, WEAPON_END };
+
 enum eMeshInstancePassID
 {
 	MeshPass_OriginColor,

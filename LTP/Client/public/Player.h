@@ -510,6 +510,10 @@ private:
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];
 
+	//JJB
+	_bool					m_bIsSkillUI = false;
+	class CSkillUI*			m_pSkillUI = nullptr;
+
 private:
 	CTransform*												m_pTextureParticleTransform = nullptr;
 	CTransform*												m_pMeshParticleTransform = nullptr;

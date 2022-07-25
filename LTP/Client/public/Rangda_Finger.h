@@ -24,11 +24,14 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CModel*				m_pModel = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
 
 	_uint				m_iPassIndex = 1;
 
 	ATTACHEDESC			m_AttacheDesc;
 	_float				m_fAliveTime = 4.f;
+
+	_bool				m_bIsDissolveStart = false;
 
 private:
 	HRESULT SetUp_Components();

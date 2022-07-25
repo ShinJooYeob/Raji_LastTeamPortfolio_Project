@@ -35,7 +35,7 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_pModel->Change_AnimIndex(0);
 
-	m_fAttackCoolTime = 5.f;
+	m_fAttackCoolTime = 3.f;
 	m_fSkillCoolTime = 8.f;
 	m_bIsHit = false;
 
@@ -47,12 +47,17 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 		m_vFingerPoss[i] = Get_FingerPos(i);
 	}
 
+	m_fHP = 32.f;
+	m_fMaxHP = 32.f;
+
 	return S_OK;
 }
 
 _int CRangda::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	m_pDissolve->Update_Dissolving(fDeltaTime);
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
@@ -94,7 +99,12 @@ _int CRangda::Update(_double fDeltaTime)
 	{
 		m_bIsHit = false;
 		m_bIsAttack = true;
-		m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 0);
+		if(m_fHP > 0)
+			m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 0);
+		else if (m_fHP <= 0)
+		{
+			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
+		}
 
 		if (m_iMaterialCount - 3 < 8)
 		{
@@ -104,10 +114,20 @@ _int CRangda::Update(_double fDeltaTime)
 		}
 
 		++m_iMaterialCount;
+
+		m_vecFinger.push_back((_uint)m_iMaterialCount);
 	}
 	//일반 공격
 	else if (m_fAttackCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
+		/*_int iRandom = rand() % 11;
+
+		wstring teampString;
+		teampString = L"JJB_Narration" + to_wstring(iRandom) + L".wav";
+
+		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		*/
+
 		m_bIsAttack = true;
 		if (m_bIsHalf)
 		{
@@ -121,6 +141,13 @@ _int CRangda::Update(_double fDeltaTime)
 	//스킬 공격
 	else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
+		_int iRandom = rand() % 11;
+
+		wstring teampString;
+		teampString = L"JJB_Narration" + to_wstring(iRandom) + L".wav";
+
+		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 		m_bIsAttack = true;
 
 		if (m_bIsHalf)
@@ -143,6 +170,10 @@ _int CRangda::Update(_double fDeltaTime)
 	m_pHand_R_Collider->Update_ConflictPassedTime(fDeltaTime);
 	m_pHand_R_Collider->Update_Transform(0, m_RightAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
 
+	//Scream
+	m_pScreamCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pScreamCollider->Update_Transform(0, m_ScreamAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed());
+
 	if (m_bIsNailAttack && !m_bIsHalf)
 	{
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pHand_L_Collider));
@@ -161,8 +192,11 @@ _int CRangda::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pHand_R_Collider));
 	}
 
+	if(m_bIsScreamAttack)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pScreamCollider));
 
-
+	if(m_bIsDissolveStart)
+		m_pDissolve->Set_DissolveOn(false, 9.4f);
 	return _int();
 }
 
@@ -175,6 +209,8 @@ _int CRangda::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_L_Collider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_R_Collider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pScreamCollider));
+
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
@@ -194,20 +230,22 @@ _int CRangda::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render_SkipMtrl(3, &m_vecFinger));
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		//if(i == 10)continue;
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	//if(i == 10)continue;
 
-		if(i > 3 && i <= _uint(m_iMaterialCount) )
-			continue;
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//	if(i > 3 && i <= _uint(m_iMaterialCount) )
+	//		continue;
+
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 	return _int();
 }
@@ -231,6 +269,26 @@ void CRangda::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, C
 
 _float CRangda::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_fHP -= fDamageAmount;
+
+	if (m_fHP == 28)
+		m_bIsHit = true;
+	else if(m_fHP == 24)
+		m_bIsHit = true;
+	else if (m_fHP == 20)
+		m_bIsHit = true;
+	else if (m_fHP == 16)
+		m_bIsHit = true;
+	else if (m_fHP == 12)
+		m_bIsHit = true;
+	else if (m_fHP == 8)
+		m_bIsHit = true;
+	else if (m_fHP == 4)
+		m_bIsHit = true;
+	else if (m_fHP == 0)
+		m_bIsHit = true;
+
+
 	return _float();
 }
 
@@ -304,6 +362,12 @@ HRESULT CRangda::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_Rangda), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -336,6 +400,17 @@ HRESULT CRangda::SetUp_Components()
 	tAttachedDesc = ATTACHEDESC();
 	tAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", _float3(1), _float3(0), _float3(-674.453f, 60.4957f, -66.9735f));
 	m_RightAttachedDesc = tAttachedDesc;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSubSub), (CComponent**)&m_pScreamCollider));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(100.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pScreamCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1), _float3(0), _float3(0.000036f, 47.287f, -731.925f));
+	m_ScreamAttachedDesc = tAttachedDesc;
 	
 	return S_OK;
 }
@@ -364,19 +439,52 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 1://애니메이션 인덱스마다 잡아주면 됨
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
 			{
+				m_bIsDissolveStart = true;
+
+				if (PlayRate > 0 && m_iAdjMovedIndex == 0 && m_fHP <= 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Dead.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					++m_iAdjMovedIndex;
+				}
+
+				if (PlayRate > 0.666666666666 && m_iAdjMovedIndex == 1&& m_fHP <= 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Scream_01.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					++m_iAdjMovedIndex;
+				}
 
 				m_iAdjMovedIndex++;
 			}
-			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
-			{
-
-
-				m_iAdjMovedIndex++;
-			}
-
 			break;
 		case 2:
 		{
+			if (PlayRate <= 0 && m_iAdjMovedIndex == 0 && m_fHP > 0)
+			{
+				_int iRandom = rand() % 6+1;
+
+				wstring teampString;
+				teampString = L"JJB_Rangda_Get_Hit_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0 && m_iAdjMovedIndex == 1 && m_fHP > 0)
+			{
+				_int iRandom = rand() % 6;
+
+				wstring teampString;
+				teampString = L"JJB_Hit_narration" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+
+
 			if (PlayRate <= 0.97f)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -393,6 +501,20 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsLookAt = false;
 
+			if (PlayRate > 0.465116279 && m_iAdjMovedIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Scream_02.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_bIsScreamAttack = true;
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0.8527131 && m_iAdjMovedIndex == 1)
+			{
+				m_bIsScreamAttack = false;
+				++m_iAdjMovedIndex;
+			}
+
+
 		}
 		break;
 
@@ -401,23 +523,54 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 			_float3 Pos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.262987012)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2987012)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.392857142)
+			if (m_iAdjMovedIndex == 1 && PlayRate >0.4545454)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.5259740)
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.629870129)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.717532467)
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.814935064)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 				m_iAdjMovedIndex++;
 			}
@@ -430,64 +583,131 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 			_float3 Pos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2085889)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.223926380)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.27300613)
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.3067484)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.34049079)
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.401840490)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.43865030)
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.503067484)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 4 && PlayRate > 0.54294478)
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.598159509)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 5 && PlayRate > 0.64723926)
+
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.68404907975)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 6 && PlayRate > 0.71779141)
+
+			if (m_iAdjMovedIndex == 6 && PlayRate > 0.7760736196)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
 				Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
-			if (m_iAdjMovedIndex == 7 && PlayRate > 0.81288343)
+
+			if (m_iAdjMovedIndex == 7 && PlayRate > 0.8773006134969)
 			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Wave_Rangda_handswipe_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
 				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
@@ -501,6 +721,17 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 6:
 			if (PlayRate < 0.1674876847290640)
 			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					_int iRandom = rand() % 3 + 1;
+
+					wstring teampString;
+					teampString = L"JJB_Wave_Rangda_HandMovement_0" + to_wstring(iRandom) + L".wav";
+
+					g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					++m_iAdjMovedIndex;
+				}
 				m_bIsLookAt = false;
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				_float3 HandPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 8.6f);
@@ -517,39 +748,65 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			}
 			
-			if (m_iAdjMovedIndex == 0 && PlayRate < 0.310344827586206)
+			if (m_iAdjMovedIndex == 1 && PlayRate < 0.310344827586206)
 			{
 				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate < 0.330049261083743)
+			if (m_iAdjMovedIndex == 2 && PlayRate < 0.330049261083743)
 			{
+				
 				m_fAnimmultiple = 1.f;
 				m_bIsLookAt = false;
 				++m_iAdjMovedIndex;
 
 			}
 
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.216748768)
-			{
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.216748768)
+			{		
 				m_bIsNailAttack = true;
 
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.359605911)
+
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.26600985)
+			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Rangda_Slash_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+
+			}
+
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.33004926)
+			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Rangda_Ground_Impact_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 6 && PlayRate > 0.359605911)
 			{
 				m_bIsNailAttack = false;
 
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 4 && PlayRate > 0.37931034)
+			if (m_iAdjMovedIndex == 7 && PlayRate > 0.37931034)
 			{
 				m_bIsNailHit = true;
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 5 && PlayRate > 0.842364532)
+			if (m_iAdjMovedIndex == 8 && PlayRate > 0.842364532)
 			{
 				m_bIsNailHit = false;
 				++m_iAdjMovedIndex;
@@ -569,6 +826,18 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 7:
 			if (PlayRate < 0.1674876847290640)
 			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					_int iRandom = rand() % 3 + 1;
+
+					wstring teampString;
+					teampString = L"JJB_Wave_Rangda_HandMovement_0" + to_wstring(iRandom) + L".wav";
+
+					g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					++m_iAdjMovedIndex;
+				}
+
 				m_bIsLookAt = false;
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				_float3 HandPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 8.6f);
@@ -584,14 +853,14 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 
 			}
-			if (m_iAdjMovedIndex == 0 && PlayRate < 0.310344827586206)
+			if (m_iAdjMovedIndex == 1 && PlayRate < 0.310344827586206)
 			{
 				m_fAnimmultiple = 1.8f;
 
 				m_bIsLookAt = true;
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate < 0.330049261083743)
+			if (m_iAdjMovedIndex == 2 && PlayRate < 0.330049261083743)
 			{
 				m_fAnimmultiple = 1.f;
 				m_bIsLookAt = false;
@@ -599,24 +868,50 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			}
 
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.216748768)
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.216748768)
 			{
 				m_bIsNailAttack = true;
 
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.359605911)
+
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.26600985)
+			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Rangda_Slash_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+
+			}
+
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.33004926)
+			{
+				_int iRandom = rand() % 3 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_Rangda_Ground_Impact_0" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+
+			if (m_iAdjMovedIndex == 6 && PlayRate > 0.359605911)
 			{
 				m_bIsNailAttack = false;
 
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 4 && PlayRate > 0.37931034)
+			if (m_iAdjMovedIndex == 7 && PlayRate > 0.37931034)
 			{
 				m_bIsNailHit = true;
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 5 && PlayRate > 0.842364532)
+			if (m_iAdjMovedIndex == 8 && PlayRate > 0.842364532)
 			{
 				m_bIsNailHit = false;
 				++m_iAdjMovedIndex;
@@ -637,23 +932,29 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 	}
 	else
 	{
+		if (iNowAnimIndex == 1)
+		{
+			Set_IsDead();
+		}
 		if (iNowAnimIndex == 6 || iNowAnimIndex == 7)
 		{
 			m_bIsLookAt = true;
-			m_fAttackCoolTime = 5.f - m_fTestHPIndex;
+			_int iRandom = rand() % 3+1 ;
+			m_fAttackCoolTime = (_float)iRandom - m_fTestHPIndex;
+			m_fAttackCoolTime = 2.2f - m_fTestHPIndex;
 		}
 
 		if (iNowAnimIndex == 5 || iNowAnimIndex == 4)
 		{
 			m_fSkillCoolTime = 8.f - m_fTestHPIndex;
-			m_fAttackCoolTime = 5.f - m_fTestHPIndex;
+			m_fAttackCoolTime = 3.f - m_fTestHPIndex;
 		}
 
 		if (iNowAnimIndex == 3)
 		{
 			m_bIsLookAt = true;
 			m_fSkillCoolTime = 8.f - m_fTestHPIndex;
-			m_fAttackCoolTime = 5.f - m_fTestHPIndex;
+			m_fAttackCoolTime = 2.f - m_fTestHPIndex;
 		}
 	}
 
@@ -694,7 +995,9 @@ void CRangda::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pHand_L_Collider);
 	Safe_Release(m_pHand_R_Collider);
+	Safe_Release(m_pScreamCollider);
 }

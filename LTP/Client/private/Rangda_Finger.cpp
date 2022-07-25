@@ -41,14 +41,24 @@ _int CRangda_Finger::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	//m_fAliveTime -= (_float)fDeltaTime;
+	m_pDissolveCom->Update_Dissolving(fDeltaTime);
 
-	//if (m_fAliveTime <= 0)
-	//{
-	//	Set_IsDead();
-	//	m_fAliveTime = 4.f;
-	//}
+	m_fAliveTime -= (_float)fDeltaTime;
 
+	if (m_fAliveTime <= 0 && m_bIsDissolveStart == false)
+	{
+		m_bIsDissolveStart = true;
+		//Set_IsDead();
+		m_fAliveTime = 4.f;
+	}
+
+	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
+	{
+		Set_IsDead();
+	}
+
+	if (m_bIsDissolveStart)
+		m_pDissolveCom->Set_DissolveOn(false, 5.f);
 
 	return _int();
 }
@@ -82,17 +92,18 @@ _int CRangda_Finger::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+	FAILED_CHECK(m_pDissolveCom->Render(3));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
 
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex, i));
-	}
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_iPassIndex, i));
+	//}
 
 	return 0;
 }
@@ -114,6 +125,12 @@ HRESULT CRangda_Finger::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_Rangda_Finger), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom));
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &DissolveDesc));
 	return S_OK;
 }
 
@@ -149,4 +166,5 @@ void CRangda_Finger::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolveCom);
 }

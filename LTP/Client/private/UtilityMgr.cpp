@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UtilityMgr.h"
 #include "MainApp.h"
+#include"SkillUI.h"
 
 IMPLEMENT_SINGLETON(CUtilityMgr);
 

@@ -66,6 +66,7 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
+
 		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&m_startPos));
 
 		if (i % 2 == 0)
@@ -96,23 +97,25 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
-	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pAttackCollider->Update_ConflictPassedTime(fDeltaTime);
+	m_pCollider->Update_ConflictPassedTime(1);
 
+	_Matrix mat = PlayerTransform->Get_WorldMatrix();
 
-			_Matrix mat = PlayerTransform->Get_WorldMatrix();
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
 
-			mat.r[0] = XMVector3Normalize(mat.r[0]);
-			mat.r[1] = XMVector3Normalize(mat.r[1]);
-			mat.r[2] = XMVector3Normalize(mat.r[2]);
-
-			m_pCollider->Update_Transform(0, mat);
-
+	m_pAttackCollider->Update_Transform(0, mat);
+	m_pCollider->Update_Transform(0, mat);
 	
 
 	if (m_bIsAttack)
 	{
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackCollider));
 	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
 
 	return _int();
 }
@@ -121,11 +124,73 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+
+
+	m_vecRenderInstanceTransform.clear();
+
+	sort(m_vecColliderIndexs.begin(), m_vecColliderIndexs.end());
+
+	_int ColliderIndex = 0;
+
+	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
+	{
+
+		if (m_vecColliderIndexs.size() > ColliderIndex && m_vecColliderIndexs[ColliderIndex] == i)
+		{
+			++ColliderIndex;
+			continue;
+		}
+		else
+		{
+			m_vecRenderInstanceTransform.push_back(m_vecInstancedTransform[i]);
+		}
+		//_bool bState = false;
+		//for (_int j = 0; j < m_vecColliderIndexs.size(); ++j)
+		//{
+		//	if (i == m_vecColliderIndexs[j])
+		//	{
+		//		bState = true;
+		//		break;
+		//	}
+		//}
+		//if(!bState)
+		//	m_vecRenderInstanceTransform.push_back(m_vecInstancedTransform[i]);
+	}
+
+	ColliderIndex = 0;
+
+	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
+	{
+
+		if (m_vecColliderIndexs.size() > ColliderIndex && m_vecColliderIndexs[ColliderIndex] == i)
+		{
+			++ColliderIndex;
+			continue;
+		}
+
+		m_vecInstancedTransform[i]->LookAtExceptY(XMLoadFloat3(&PlayerPos));
+
+
+		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
+		mat.r[0] = XMVector3Normalize(mat.r[0]);
+		mat.r[1] = XMVector3Normalize(mat.r[1]);
+		mat.r[2] = XMVector3Normalize(mat.r[2]);
+		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
+		m_pAttackCollider->Update_Transform(i + 1, mat);
+		m_pCollider->Update_Transform(i + 1, m_vecInstancedTransform[i]->Get_WorldMatrix());
+
+	}
+
+
 
 	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	//m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackCollider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
@@ -141,21 +206,20 @@ _int CCopyMahabalasura::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-
-	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
-	{
-		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&PlayerPos));
+//	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+//	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 
-		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
-		mat.r[0] = XMVector3Normalize(mat.r[0]);
-		mat.r[1] = XMVector3Normalize(mat.r[1]);
-		mat.r[2] = XMVector3Normalize(mat.r[2]);
-		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
-		m_pCollider->Update_Transform(i + 1, mat);
-	}
+	//{
+//		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
+//		mat.r[0] = XMVector3Normalize(mat.r[0]);
+//		mat.r[1] = XMVector3Normalize(mat.r[1]);
+//		mat.r[2] = XMVector3Normalize(mat.r[2]);
+//		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
+//		m_pCollider->Update_Transform(i + 1, mat);
+//
+//
+//	}
 
 
 	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
@@ -187,11 +251,47 @@ _int CCopyMahabalasura::LateRender()
 
 void CCopyMahabalasura::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	if (pMyCollider == m_pCollider)
+	switch (eConflictedObjCollisionType)
 	{
+	case Engine::CollisionType_Player:
 		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
+		break;
+	case Engine::CollisionType_PlayerWeapon:
+		if (m_iRandomIndex == iMyColliderIndex - 1)
+		{
+			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
+			_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
+
+			_float3 CopyPos = m_vecInstancedTransform[m_iRandomIndex]->Get_MatrixState(CTransform::STATE_POS);
+
+			BossTransform->Set_MatrixState(CTransform::STATE_POS, CopyPos);
+			m_pBossObj->Set_CopyOff(false);
+			m_pBossObj->Set_Hit();
+
+			Set_IsDead();
+		}
+		else
+		{
+			for (_int i = 0; i < m_vecColliderIndexs.size(); ++i)
+			{
+				if (m_vecColliderIndexs[i] == _uint(iMyColliderIndex - 1))
+					return;
+			}
+			m_pCollider->Delete_ChildeBuffer(0,iMyColliderIndex);
+			m_vecColliderIndexs.push_back(_uint(iMyColliderIndex - 1));
+		}
+		break;
 	}
+
+	//if (pMyCollider == m_pAttackCollider)
+	//{
+
+	//}
+	//else if (pMyCollider == m_pCollider)
+	//{
+	//
+	//}
 }
 
 _float CCopyMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -208,15 +308,23 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pAttackCollider));
 
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(100.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	FAILED_CHECK(m_pAttackCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pCollider));
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(100.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	for (_uint i = 0; i < 16; i++)
 	{
@@ -232,11 +340,19 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 		//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
 		m_vecInstancedTransform.push_back(pTransform);
 
-		//충돌체
+		//Attack충돌체
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 1.3f, 1.6f, 1);
+		FAILED_CHECK(m_pAttackCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pAttackCollider->Set_ParantBuffer();
+
+		//피격 충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 	}
@@ -394,6 +510,7 @@ void CCopyMahabalasura::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pModelInstance);
+	Safe_Release(m_pAttackCollider);
 	Safe_Release(m_pCollider);
 
 	for (auto& pTransform : m_vecInstancedTransform)

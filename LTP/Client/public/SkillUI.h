@@ -5,8 +5,9 @@ BEGIN(Client)
 
 class CSkillUI final : public CGameObject
 {
-public:
-	enum WeaponType {WEAPON_BOW, WEAPON_SPEAR, WEAPON_SWORDSHIELD, WEAPON_END};
+
+//public:
+//	enum WeaponType {WEAPON_BOW, WEAPON_SPEAR, WEAPON_SWORDSHIELD, WEAPON_END};
 private:
 	CSkillUI(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CSkillUI(const CSkillUI& rhs);
@@ -23,7 +24,7 @@ public:
 	virtual _int LateRender()override;
 
 public:
-	_int		Get_SkillPoint() { return m_iSkillPoint; }
+	_int		Get_SkillPoint() { return (*m_iSkillPoint); }
 	WeaponType	Get_WeaponType() { return m_eWeaponType; }
 
 public:
@@ -31,15 +32,27 @@ public:
 
 public:
 	void	DrawSkillPoint();
+	void	ChangeSkillPointImage();
+	void	DrawSkillName(_int iSkillNum);
+	void	DrawSkillExplanation(_int iSkillNum);
+
+	HRESULT Render_Fonts();
 
 private:
-	_int		m_iSkillPoint = 18;
+	CRenderer*		m_pRendererCom = nullptr;
+
+	_int*		m_iSkillPoint;
 
 	WeaponType	m_eWeaponType = WEAPON_BOW;
 
-	_int		m_FireSkillPoint[3]{ 0,};
-	_int		m_IceSkillPoint[3]{ 0, };
-	_int		m_LightningSkillPoint[3]{ 0, };
+	_int*		m_FireSkillPoint;
+	_int*		m_IceSkillPoint;
+	_int*		m_LightningSkillPoint;
+
+	_bool		m_bIsSkillExplanation = false;
+
+	FONTSDESC	m_SkillNameFont;
+	FONTSDESC	m_SkillExplanationFont;
 	
 
 private:
@@ -67,6 +80,7 @@ private:
 	vector<class CUI*> m_vSkillPoint_Sprouts1;
 	vector<class CUI*> m_vSkillPoint_Sprouts2;
 	vector<class CUI*> m_vSkillPoint_Sprouts3;
+	vector<class CUI*> m_vSkillExplanations;
 
 private:
 	HRESULT Ready_Layer_UI();

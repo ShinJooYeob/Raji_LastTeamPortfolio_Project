@@ -41,6 +41,7 @@ private:
 
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
+	_bool				m_bIsAtackMoveStart = false;
 
 	//Attacking
 	_bool				m_bIsAttack = false;
@@ -62,11 +63,11 @@ private:
 	_bool				TestBool = false;
 
 	// Particle
-	CTransform*						m_pTextureParticleTransform = nullptr;
-	CTransform*						m_pTextureParticleTransform1 = nullptr;
-	CTransform*						m_pTextureParticleTransform2 = nullptr;
+	CTransform*			m_pTextureParticleTransform = nullptr;
+	CTransform*			m_pTextureParticleTransform1 = nullptr;
+	CTransform*			m_pTextureParticleTransform2 = nullptr;
 
-
+	_float				m_fNarrationTime = 10.f;
 
 private:
 	HRESULT SetUp_Components();
