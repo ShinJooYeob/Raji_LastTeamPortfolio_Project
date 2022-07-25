@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base.h"
+
 BEGIN(Client)
 
 class CUtilityMgr final :public CBase
@@ -76,6 +77,20 @@ public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);
 
+public:
+	_int* Get_FireSkillPointArry() { return m_FireSkillPoint; }
+	_int* Get_IceSkillPointArry() { return m_IceSkillPoint; }
+	_int* Get_LightningSkillPointArry() { return m_LightningSkillPoint; }
+	_int*  Get_SkillPoint() { return &m_iSkillPoint; }
+	WeaponType Get_SkillWeaponType() { return m_eSkillWeaponType; }
+
+public:
+	void  Set_FireSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void  Set_IceSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void  Set_LightningSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void  Set_SKillPoint(_int PointCount) { m_iSkillPoint = PointCount; }
+	void  Set_SkillWeaponType(WeaponType Type) { m_eSkillWeaponType = Type; }
+
 private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
@@ -92,6 +107,15 @@ private:
 
 private:
 	clock_t m_StartTime[E_DEBUGTIMER::DEBUGTIMER_END];
+
+private:
+	_int		m_FireSkillPoint[3] = {0,0,0};
+	_int		m_IceSkillPoint[3] = { 0,0,0 };
+	_int		m_LightningSkillPoint[3] = { 0,0,0 };
+
+	_int		m_iSkillPoint = 18;
+
+	WeaponType  m_eSkillWeaponType = WEAPON_BOW;
 
 
 private:

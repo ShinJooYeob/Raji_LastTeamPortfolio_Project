@@ -113,6 +113,122 @@ _int CDissolve::Render(_uint iPassIndex)
 	return _int();
 }
 
+_int CDissolve::Render_SkipMtrl(_uint iPassIndex, vector<_uint>* vecSkipMtrlIndexs)
+{
+
+	_uint vectorIndex = 0;
+
+	if (vecSkipMtrlIndexs->size() == 0)
+	{
+
+		if (m_bIsDissolving)
+		{
+			FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(m_tDissolveDesc.pShader, "g_DissolveNoiseTexture", 0));
+			FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(m_tDissolveDesc.pShader, "g_BurnRampTexture", m_tDissolveDesc.RampTextureIndex));
+
+
+			_float DissolveValue = (m_bIsFadeIn) ?
+				(_float(m_TargetTime - m_PassedTime) / (_float)m_TargetTime) :
+				(_float(m_PassedTime) / (_float)m_TargetTime);
+
+			DissolveValue = max(min(DissolveValue, 1.f), 0);
+
+			FAILED_CHECK(m_tDissolveDesc.pShader->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
+
+
+			_uint NumMaterial = m_tDissolveDesc.pModel->Get_NumMaterial();
+
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+
+				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+					FAILED_CHECK(m_tDissolveDesc.pModel->Bind_OnShader(m_tDissolveDesc.pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+				FAILED_CHECK(m_tDissolveDesc.pModel->Render(m_tDissolveDesc.pShader, m_iDissolvePassedIndex, i, "g_BoneMatrices"));
+
+			}
+		}
+		else
+		{
+
+			_uint NumMaterial = m_tDissolveDesc.pModel->Get_NumMaterial();
+
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+
+				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+					FAILED_CHECK(m_tDissolveDesc.pModel->Bind_OnShader(m_tDissolveDesc.pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+				FAILED_CHECK(m_tDissolveDesc.pModel->Render(m_tDissolveDesc.pShader, iPassIndex, i, "g_BoneMatrices"));
+			}
+
+		}
+
+
+	}
+
+	else
+	{
+		if (m_bIsDissolving)
+		{
+			FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(m_tDissolveDesc.pShader, "g_DissolveNoiseTexture", 0));
+			FAILED_CHECK(m_pDissolveTexture->Bind_OnShader(m_tDissolveDesc.pShader, "g_BurnRampTexture", m_tDissolveDesc.RampTextureIndex));
+
+
+			_float DissolveValue = (m_bIsFadeIn) ?
+				(_float(m_TargetTime - m_PassedTime) / (_float)m_TargetTime) :
+				(_float(m_PassedTime) / (_float)m_TargetTime);
+
+			DissolveValue = max(min(DissolveValue, 1.f), 0);
+
+			FAILED_CHECK(m_tDissolveDesc.pShader->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
+
+
+			_uint NumMaterial = m_tDissolveDesc.pModel->Get_NumMaterial();
+
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+				if (vectorIndex < vecSkipMtrlIndexs->size() && (*vecSkipMtrlIndexs)[vectorIndex] == i)
+				{
+					vectorIndex++;
+					continue;
+				}
+
+				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+					FAILED_CHECK(m_tDissolveDesc.pModel->Bind_OnShader(m_tDissolveDesc.pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+				FAILED_CHECK(m_tDissolveDesc.pModel->Render(m_tDissolveDesc.pShader, m_iDissolvePassedIndex, i, "g_BoneMatrices"));
+
+			}
+		}
+		else
+		{
+
+			_uint NumMaterial = m_tDissolveDesc.pModel->Get_NumMaterial();
+
+			for (_uint i = 0; i < NumMaterial; i++)
+			{
+				if (vectorIndex < vecSkipMtrlIndexs->size() &&(*vecSkipMtrlIndexs)[vectorIndex] == i)
+				{
+					vectorIndex++;
+					continue;
+				}
+
+				for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+					FAILED_CHECK(m_tDissolveDesc.pModel->Bind_OnShader(m_tDissolveDesc.pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+				FAILED_CHECK(m_tDissolveDesc.pModel->Render(m_tDissolveDesc.pShader, iPassIndex, i, "g_BoneMatrices"));
+			}
+
+		}
+	}
+
+
+
+
+	return _int();
+}
+
 _int CDissolve::Render_Shadow(_uint iPassIndex)
 {
 

@@ -44,7 +44,7 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Scaled_All(_float3(3.f, 3.f, 3.f));
 
-	m_pModel->Change_AnimIndex(1);
+	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 	m_fAttackCoolTime = 5.f;
 	m_fSkillCoolTime = 8.f;
@@ -59,11 +59,11 @@ _int CSnake::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-	if (!TestBool)
-	{
-		TestBool = true;
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
-	}
+	//if (!TestBool)
+	//{
+	//	TestBool = true;
+	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
+	//}
 
 
 	if (!m_bIsAttack)
@@ -71,6 +71,20 @@ _int CSnake::Update(_double fDeltaTime)
 	
 	if (m_pModel->Get_NowAnimIndex() == 1)
 		m_fRotTime += (_float)fDeltaTime;
+
+	if (m_bIsAtackMoveStart)
+		m_fNarrationTime -= (_float)fDeltaTime;
+
+	if (m_fNarrationTime <= 0 && !m_bIsAttack)
+	{
+		m_fNarrationTime = 10.f;
+		_int iRandom = rand() % 3 + 1;
+
+		wstring teampString;
+		teampString = L"JJB_Naga_" + to_wstring(iRandom) + L".wav";
+
+		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	}
 
 	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -98,7 +112,7 @@ _int CSnake::Update(_double fDeltaTime)
 		m_pTransformCom->Turn_Dir(Dir, 0.90f);
 	}
 
-	if (XMVectorGetX(m_vAngle) > 0.94f && !m_bIsAttack && m_fAttackCoolTime <= 0.f)
+	if (XMVectorGetX(m_vAngle) > 0.94f && !m_bIsAttack && m_fAttackCoolTime <= 0.f && m_bIsAtackMoveStart)
 	{ 
 		if (m_bTestHodeing)
 			m_bHiding = true;
@@ -354,11 +368,36 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			//	else
 			//		m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.5f);
 			//}
+			if (PlayRate > 0.2425 && m_iAdjMovedIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+			}
+
+			if (PlayRate > 0.6525 && m_iAdjMovedIndex == 1)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+			}
+
+
 		}
 		break;
 
 		case 2:
 		{
+			if (PlayRate > 0.2425 && m_iAdjMovedIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+			}
+
+			if (PlayRate > 0.6525 && m_iAdjMovedIndex == 1)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+			}
+
 			if (PlayRate > 0 && PlayRate < 0.5f)
 			{
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.499999f)
@@ -403,6 +442,25 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsBite = true;
 				m_iAdjMovedIndex++;
 			}
+
+			if (PlayRate >0 && m_iAdjMovedIndex == 1)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hiss_Charge.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate > 0.4375 && m_iAdjMovedIndex == 2)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate > 0.45 && m_iAdjMovedIndex == 3)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+				m_iAdjMovedIndex++;
+			}
+
 		}
 		break;
 
@@ -410,6 +468,14 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		break;
 
 		case 5:
+		{
+			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_1.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_iAdjMovedIndex++;
+				m_fAnimmultiple = 0.2f;
+			}
+		}
 		break;
 
 		case 6:
@@ -450,9 +516,11 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		if (iNowAnimIndex == 5)
 		{
+			m_bIsAtackMoveStart = true;
 			m_fAttackCoolTime = 2.f;
 			m_fRotTime = 0.f;
 			m_iRotationRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.0f, 1.9f);
+			m_fAnimmultiple = 1.f;
 		}
 
 		if (iNowAnimIndex == 7)

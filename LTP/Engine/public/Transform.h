@@ -80,7 +80,7 @@ public:
 
 //Turn////////////////////////////////////////////////////////////////////////
 	void LookAt(_fVector vTarget);
-	void LookAtExceptY(_fVector vTargetPos, _double TimeDelta);
+	void LookAtExceptY(_fVector vTargetPos);
 	void LookDir(_fVector vTargetLook);
 	void LookDir_ver2(_fVector vTargetLook);													// Made_By Jino
 

@@ -34,10 +34,12 @@ private:
 	//CTransform*			m_pTransformCom = nullptr;
 
 	CCollider*			m_pCollider = nullptr;
+	CCollider*			m_pAttackCollider = nullptr;
 
 
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*> m_vecInstancedTransform;
+	vector<CTransform*> m_vecRenderInstanceTransform;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -52,6 +54,7 @@ private:
 	CGameObject*				m_pPlayerObj;
 	class CMahabalasura*		m_pBossObj;
 	_int						m_iRandomIndex = 0;
+	vector<_int>				m_vecColliderIndexs;
 
 private:
 	HRESULT SetUp_Components();

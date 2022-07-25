@@ -42,6 +42,7 @@ private:
 public:
 	HRESULT Update_Dissolving(_double fDeltaTimme);
 	_int Render(_uint iPassIndex);
+	_int Render_SkipMtrl(_uint iPassIndex,vector<_uint>* vecSkipMtrlIndexs);
 	_int Render_Shadow(_uint iPassIndex);
 
 public:

@@ -58,10 +58,11 @@ _int CGameObject::Render()
 	{
 		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float4)));
 		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float4)));
+
+		_float DissolveValue = 0;
+		FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
 	}
 
-	_float DissolveValue = 0;
-	FAILED_CHECK(m_pEngineShader->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
 
 	return _int();
 }

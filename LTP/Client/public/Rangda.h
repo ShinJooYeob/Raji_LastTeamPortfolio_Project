@@ -36,11 +36,19 @@ public:
 	CCollider*				m_pHand_R_Collider = nullptr;
 	ATTACHEDESC				m_RightAttachedDesc;
 
+	CCollider*				m_pScreamCollider = nullptr;
+	ATTACHEDESC				m_ScreamAttachedDesc;
+
+
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
+
+	_bool				m_bIsDissolveStart = false;
 	
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0; 
@@ -50,6 +58,7 @@ private:
 	_bool				m_bIsLookAt = true;
 	_bool				m_bIsNailAttack = false;
 	_bool				m_bIsNailHit = false;
+	_bool				m_bIsScreamAttack = false;
 
 	CGameObject*		m_pPlayerObj;
 
@@ -58,6 +67,8 @@ private:
 	_int				m_iMaterialCount = 3;
 
 	_float3				m_vFingerPoss[8];
+
+	vector<_uint>		m_vecFinger;
 
 private:
 	_float3	Get_FingerPos(_int Num);

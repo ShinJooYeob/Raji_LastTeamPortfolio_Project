@@ -16,6 +16,7 @@
 #include "TestLedgeTrigger.h"
 
 #include "HpUI.h"
+#include "SkillUI.h"
 
 
 
@@ -82,6 +83,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 
 	m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
+
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkillUI), m_eNowSceneNum, TAG_OP(Prototype_Object_SkillUI));
 	return S_OK;
 }
 
@@ -196,45 +199,51 @@ _int CPlayer::Update(_double fDeltaTime)
 	if (m_pHeadJoint)
 		m_pHeadJoint->Update_BeforeSimulation();
 
-	// CameraShake Test
-	if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
-	{
-		m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
-	{
-		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f);
-	}
+	//// CameraShake Test
+	//if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
+	//{
+	//	m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
+	//{
+	//	m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
+	//{
+	//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+	//	tCameraShakeDirDesc.fTotalTime = 1.f;
+	//	tCameraShakeDirDesc.fPower = 10.f;
+	//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+	//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
+	//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+	//{
+	//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+	//	tCameraShakeDirDesc.fTotalTime = 1.f;
+	//	tCameraShakeDirDesc.fPower = 10.f;
+	//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+	//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+	//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+	//}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
+	//{
+	//	CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+	//	tCameraShakeRotDesc.fTotalTime = 1.f;
+	//	tCameraShakeRotDesc.fPower = 1.f; 
+	//	tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+	//	tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
+	//	m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
+	//}
+	//
 	if (g_pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
 	{
-		CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
-		tCameraShakeDirDesc.fTotalTime = 1.f;
-		tCameraShakeDirDesc.fPower = 10.f;
-		tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
-		tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
-		m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+		m_bIsSkillUI = !m_bIsSkillUI;
 	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+	if (m_bIsSkillUI)
 	{
-		CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
-		tCameraShakeDirDesc.fTotalTime = 1.f;
-		tCameraShakeDirDesc.fPower = 10.f;
-		tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
-		tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
-		m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+		m_pSkillUI->Update(fDeltaTime);
 	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
-	{
-		CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
-		tCameraShakeRotDesc.fTotalTime = 1.f;
-		tCameraShakeRotDesc.fPower = 1.f; 
-		tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
-		tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
-		m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
-	}
-	//
-
-
 	// Update Targeting
 	Update_Targeting(fDeltaTime);
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
@@ -272,6 +281,10 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	}
 
 	LateUpdate_HPUI(fDeltaTimer);
+	if (m_bIsSkillUI)
+	{
+		m_pSkillUI->LateUpdate(fDeltaTimer);
+	}
 
 	return _int();
 }
@@ -2108,7 +2121,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr/*m_pNavigationCom*/);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 
@@ -8350,4 +8363,7 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
 
+
+	//JJB
+	Safe_Release(m_pSkillUI);
 }

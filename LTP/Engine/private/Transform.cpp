@@ -513,7 +513,7 @@ void CTransform::LookAt(_fVector vTarget)
 
 }
 
-void CTransform::LookAtExceptY(_fVector vTargetPos, _double TimeDelta)
+void CTransform::LookAtExceptY(_fVector vTargetPos)
 {
 	_Vector vPosition = Get_MatrixState(CTransform::STATE_POS);
 	_Vector vScale = Get_Scale();

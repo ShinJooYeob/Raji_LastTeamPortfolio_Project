@@ -24,9 +24,23 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
+	CUtilityMgr* pUyilityMgr = GetSingle(CUtilityMgr);
+
+	m_iSkillPoint = pUyilityMgr->Get_SkillPoint();
+
+	m_FireSkillPoint = pUyilityMgr->Get_FireSkillPointArry();
+	m_IceSkillPoint = pUyilityMgr->Get_IceSkillPointArry();
+	m_LightningSkillPoint = pUyilityMgr->Get_LightningSkillPointArry();
+
+	m_eWeaponType = pUyilityMgr->Get_SkillWeaponType();
+
+
+	SetUp_Components();
+
 	Ready_Layer_UI();
 
-	if (m_eWeaponType == CSkillUI::WEAPON_BOW)
+
+	if (m_eWeaponType == WEAPON_BOW)
 	{
 		m_pWeaponBowUI->Set_TextureIndex(24);
 		m_pWeaponSpearUI->Set_TextureIndex(100);
@@ -53,7 +67,7 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_2->Set_TextureIndex(52);
-			m_pSkillGrass_2->Set_TextureIndex(87);
+			m_pSkillGrass_2->Set_TextureIndex(129);
 		}
 
 		if (m_IceSkillPoint[2] <= 0)
@@ -64,10 +78,10 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_3->Set_TextureIndex(51);
-			m_pSkillGrass_3->Set_TextureIndex(87);
+			m_pSkillGrass_3->Set_TextureIndex(129);
 		}
 	}
-	else if (m_eWeaponType == CSkillUI::WEAPON_SPEAR)
+	else if (m_eWeaponType == WEAPON_SPEAR)
 	{
 		m_pWeaponBowUI->Set_TextureIndex(25);
 		m_pWeaponSpearUI->Set_TextureIndex(99);
@@ -94,7 +108,7 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_2->Set_TextureIndex(42);
-			m_pSkillGrass_2->Set_TextureIndex(87);
+			m_pSkillGrass_2->Set_TextureIndex(129);
 		}
 
 		if (m_FireSkillPoint[2] <= 0)
@@ -105,10 +119,10 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_3->Set_TextureIndex(41);
-			m_pSkillGrass_3->Set_TextureIndex(87);
+			m_pSkillGrass_3->Set_TextureIndex(129);
 		}
 	}
-	else if (m_eWeaponType == CSkillUI::WEAPON_SWORDSHIELD)
+	else if (m_eWeaponType == WEAPON_SWORDSHIELD)
 	{
 		m_pWeaponBowUI->Set_TextureIndex(25);
 		m_pWeaponSpearUI->Set_TextureIndex(100);
@@ -135,7 +149,7 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_2->Set_TextureIndex(94);
-			m_pSkillGrass_2->Set_TextureIndex(87);
+			m_pSkillGrass_2->Set_TextureIndex(129);
 		}
 
 		if (m_LightningSkillPoint[2] <= 0)
@@ -146,9 +160,24 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 		else
 		{
 			m_pSkill_3->Set_TextureIndex(93);
-			m_pSkillGrass_3->Set_TextureIndex(87);
+			m_pSkillGrass_3->Set_TextureIndex(129);
 		}
 	}
+
+	ChangeSkillPointImage();
+
+	m_SkillNameFont.fAngle = 0.f;
+	m_SkillNameFont.szString = L"";
+	m_SkillNameFont.vPosition = _float2(970.f, 145.f);
+	m_SkillNameFont.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	m_SkillNameFont.vFontScale = _float2(0.8f);
+
+	m_SkillExplanationFont.fAngle = 0.f;
+	m_SkillExplanationFont.szString = L"";
+	m_SkillExplanationFont.vPosition = _float2(965.f, 200.f);
+	m_SkillExplanationFont.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	m_SkillExplanationFont.vFontScale = _float2(0.5f);
+
 
 	return S_OK;
 }
@@ -158,6 +187,13 @@ _int CSkillUI::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CUtilityMgr* pUyilityMgr = GetSingle(CUtilityMgr);
+
+	m_bIsSkillExplanation = false;
+	m_SkillNameFont.szString = L"";
+	m_SkillExplanationFont.szString = L"";
+	m_SkillExplanationFont.vPosition = _float2(965.f, 230.f);
+	//m_SkillNameFont.vPosition = _float2(965.f, 145.f);
 
 	_float2				MousePos;
 	POINT				ptMouse;
@@ -167,19 +203,70 @@ _int CSkillUI::Update(_double fDeltaTime)
 	MousePos.x = (_float)ptMouse.x;
 	MousePos.y = (_float)ptMouse.y;
 
+	_float UIPosX;
+	_float UIPosY;
+	_float2 UISize;
+
+	//m_pSkillGrass_1
+	UIPosX = m_pSkillGrass_1->Get_PosX();
+	UIPosY = m_pSkillGrass_1->Get_PosY();
+	UISize = m_pSkillGrass_1->Get_Size();
+
+	if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+		MousePos.x < UIPosX + (UISize.x*0.5f) &&
+		MousePos.y > UIPosY - (UISize.y*0.5f) &&
+		MousePos.y < UIPosY + (UISize.y*0.5f))
+	{
+		m_bIsSkillExplanation = true;
+
+		DrawSkillName(0);
+		DrawSkillExplanation(0);
+	}
+	//m_pSkillGrass_2
+	UIPosX = m_pSkillGrass_2->Get_PosX();
+	UIPosY = m_pSkillGrass_2->Get_PosY();
+	UISize = m_pSkillGrass_2->Get_Size();
+
+	if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+		MousePos.x < UIPosX + (UISize.x*0.5f) &&
+		MousePos.y > UIPosY - (UISize.y*0.5f) &&
+		MousePos.y < UIPosY + (UISize.y*0.5f))
+	{
+		m_bIsSkillExplanation = true;
+
+		DrawSkillName(1);
+		DrawSkillExplanation(1);
+	}
+	//m_pSkillGrass_3
+	UIPosX = m_pSkillGrass_3->Get_PosX();
+	UIPosY = m_pSkillGrass_3->Get_PosY();
+	UISize = m_pSkillGrass_3->Get_Size();
+
+	if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+		MousePos.x < UIPosX + (UISize.x*0.5f) &&
+		MousePos.y > UIPosY - (UISize.y*0.5f) &&
+		MousePos.y < UIPosY + (UISize.y*0.5f))
+	{
+		m_bIsSkillExplanation = true;
+
+		DrawSkillName(2);
+		DrawSkillExplanation(2);
+	}
+
 
 	if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
 	{
 		//BowImage Click
-		_float UIPosX = m_pWeaponBowUI->Get_PosX();
-		_float UIPosY = m_pWeaponBowUI->Get_PosY();
-		_float2 UISize = m_pWeaponBowUI->Get_Size();
+		UIPosX = m_pWeaponBowUI->Get_PosX();
+		UIPosY = m_pWeaponBowUI->Get_PosY();
+		UISize = m_pWeaponBowUI->Get_Size();
 		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
 			MousePos.x < UIPosX + (UISize.x*0.5f) &&
 			MousePos.y > UIPosY - (UISize.y*0.5f) &&
 			MousePos.y < UIPosY + (UISize.y*0.5f))
 		{
-			m_eWeaponType = CSkillUI::WEAPON_BOW;
+			m_eWeaponType = WEAPON_BOW;
+			pUyilityMgr->Set_SkillWeaponType(m_eWeaponType);
 			m_pWeaponBowUI->Set_TextureIndex(24);
 			m_pWeaponSpearUI->Set_TextureIndex(100);
 			m_pSwordShield->Set_TextureIndex(91);
@@ -205,7 +292,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_2->Set_TextureIndex(52);
-				m_pSkillGrass_2->Set_TextureIndex(87);
+				m_pSkillGrass_2->Set_TextureIndex(129);
 			}
 
 			if (m_IceSkillPoint[2] <= 0)
@@ -216,7 +303,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_3->Set_TextureIndex(51);
-				m_pSkillGrass_3->Set_TextureIndex(87);
+				m_pSkillGrass_3->Set_TextureIndex(129);
 			}
 			
 		}
@@ -229,7 +316,8 @@ _int CSkillUI::Update(_double fDeltaTime)
 			MousePos.y > UIPosY - (UISize.y*0.5f) &&
 			MousePos.y < UIPosY + (UISize.y*0.5f))
 		{
-			m_eWeaponType = CSkillUI::WEAPON_SPEAR;
+			m_eWeaponType = WEAPON_SPEAR;
+			pUyilityMgr->Set_SkillWeaponType(m_eWeaponType);
 			m_pWeaponBowUI->Set_TextureIndex(25);
 			m_pWeaponSpearUI->Set_TextureIndex(99);
 			m_pSwordShield->Set_TextureIndex(91);
@@ -254,7 +342,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_2->Set_TextureIndex(42);
-				m_pSkillGrass_2->Set_TextureIndex(87);
+				m_pSkillGrass_2->Set_TextureIndex(129);
 			}
 
 			if (m_FireSkillPoint[2] <= 0)
@@ -265,7 +353,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_3->Set_TextureIndex(41);
-				m_pSkillGrass_3->Set_TextureIndex(87);
+				m_pSkillGrass_3->Set_TextureIndex(129);
 			}
 
 		}
@@ -278,12 +366,15 @@ _int CSkillUI::Update(_double fDeltaTime)
 			MousePos.y > UIPosY - (UISize.y*0.5f) &&
 			MousePos.y < UIPosY + (UISize.y*0.5f))
 		{
-			m_eWeaponType = CSkillUI::WEAPON_SWORDSHIELD;
+			m_eWeaponType = WEAPON_SWORDSHIELD;
+			pUyilityMgr->Set_SkillWeaponType(m_eWeaponType);
+
 			m_pWeaponBowUI->Set_TextureIndex(25);
 			m_pWeaponSpearUI->Set_TextureIndex(100);
 			m_pSwordShield->Set_TextureIndex(90);
 			m_pSkillColorCircle->Set_TextureIndex(37);
 			m_pSkillFace->Set_TextureIndex(38);
+
 			if (m_LightningSkillPoint[0] <= 0)
 			{
 				m_pSkill_1->Set_TextureIndex(95);
@@ -303,7 +394,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_2->Set_TextureIndex(94);
-				m_pSkillGrass_2->Set_TextureIndex(87);
+				m_pSkillGrass_2->Set_TextureIndex(129);
 			}
 
 			if (m_LightningSkillPoint[2] <= 0)
@@ -314,24 +405,366 @@ _int CSkillUI::Update(_double fDeltaTime)
 			else
 			{
 				m_pSkill_3->Set_TextureIndex(93);
-				m_pSkillGrass_3->Set_TextureIndex(87);
+				m_pSkillGrass_3->Set_TextureIndex(129);
 			}
 
 		}
 
-		/*--m_iSkillPoint;
-		if (m_iSkillPoint <= -1)
-			m_iSkillPoint = -1;
-		DrawSkillPoint();*/
+		//m_pSkillGrass_1 Click
+		UIPosX = m_pSkillGrass_1->Get_PosX();
+		UIPosY = m_pSkillGrass_1->Get_PosY();
+		UISize = m_pSkillGrass_1->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[0] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_IceSkillPoint[0];
+
+					--(*m_iSkillPoint);
+					if (*m_iSkillPoint <= -1)
+						*m_iSkillPoint = -1;
+
+					m_pSkill_1->Set_TextureIndex(53);
+					m_pSkillGrass_1->Set_TextureIndex(87);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[0] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_FireSkillPoint[0];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_1->Set_TextureIndex(40);
+					m_pSkillGrass_1->Set_TextureIndex(87);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[0] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_LightningSkillPoint[0];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_1->Set_TextureIndex(92);
+					m_pSkillGrass_1->Set_TextureIndex(87);
+				}
+			}
+		}
+
+		//m_pSkillGrass_2 Click
+		UIPosX = m_pSkillGrass_2->Get_PosX();
+		UIPosY = m_pSkillGrass_2->Get_PosY();
+		UISize = m_pSkillGrass_2->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[1] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_IceSkillPoint[1];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_2->Set_TextureIndex(52);
+					m_pSkillGrass_2->Set_TextureIndex(129);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[1] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_FireSkillPoint[1];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_2->Set_TextureIndex(42);
+					m_pSkillGrass_2->Set_TextureIndex(129);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[1] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_LightningSkillPoint[1];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_2->Set_TextureIndex(94);
+					m_pSkillGrass_2->Set_TextureIndex(129);
+				}
+			}
+		}
+
+		//m_pSkillGrass_3 Click
+		UIPosX = m_pSkillGrass_3->Get_PosX();
+		UIPosY = m_pSkillGrass_3->Get_PosY();
+		UISize = m_pSkillGrass_3->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[2] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_IceSkillPoint[2];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_3->Set_TextureIndex(51);
+					m_pSkillGrass_3->Set_TextureIndex(129);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[2] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_FireSkillPoint[2];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_3->Set_TextureIndex(41);
+					m_pSkillGrass_3->Set_TextureIndex(129);
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[2] < 3 && (*m_iSkillPoint) != 0)
+				{
+					++m_LightningSkillPoint[2];
+
+					--(*m_iSkillPoint);
+					if ((*m_iSkillPoint) <= -1)
+						(*m_iSkillPoint) = -1;
+
+					m_pSkill_3->Set_TextureIndex(93);
+					m_pSkillGrass_3->Set_TextureIndex(129);
+				}
+			}
+		}
+
+
+
+
+		ChangeSkillPointImage();
+		DrawSkillPoint();
 	}
 	else if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
 	{
-		/*++m_iSkillPoint;
+		//m_pSkillGrass_1 Click
+		_float UIPosX = m_pSkillGrass_1->Get_PosX();
+		_float UIPosY = m_pSkillGrass_1->Get_PosY();
+		_float2 UISize = m_pSkillGrass_1->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[0] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_IceSkillPoint[0];
 
-		if (m_iSkillPoint > 18)
-			m_iSkillPoint = 18;
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
 
-		DrawSkillPoint();*/
+					if (m_IceSkillPoint[0] <= 0)
+					{
+						m_pSkill_1->Set_TextureIndex(54);
+						m_pSkillGrass_1->Set_TextureIndex(88);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[0] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_FireSkillPoint[0];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_FireSkillPoint[0] <= 0)
+					{
+						m_pSkill_1->Set_TextureIndex(43);
+						m_pSkillGrass_1->Set_TextureIndex(88);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[0] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_LightningSkillPoint[0];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_LightningSkillPoint[0] <= 0)
+					{
+						m_pSkill_1->Set_TextureIndex(95);
+						m_pSkillGrass_1->Set_TextureIndex(88);
+					}
+				}
+			}
+		}
+
+		//m_pSkillGrass_2 Click
+		UIPosX = m_pSkillGrass_2->Get_PosX();
+		UIPosY = m_pSkillGrass_2->Get_PosY();
+		UISize = m_pSkillGrass_2->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[1] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_IceSkillPoint[1];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_IceSkillPoint[1] <= 0)
+					{
+						m_pSkill_2->Set_TextureIndex(56);
+						m_pSkillGrass_2->Set_TextureIndex(134);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[1] > 0  && (*m_iSkillPoint) < 18)
+				{
+					--m_FireSkillPoint[1];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_FireSkillPoint[1] <= 0)
+					{
+						m_pSkill_2->Set_TextureIndex(45);
+						m_pSkillGrass_2->Set_TextureIndex(134);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[1] > 0  && (*m_iSkillPoint)  < 18)
+				{
+					--m_LightningSkillPoint[1];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_LightningSkillPoint[1] <= 0)
+					{
+						m_pSkill_2->Set_TextureIndex(97);
+						m_pSkillGrass_2->Set_TextureIndex(134);
+					}
+				}
+			}
+		}
+
+		//m_pSkillGrass_3 Click
+		UIPosX = m_pSkillGrass_3->Get_PosX();
+		UIPosY = m_pSkillGrass_3->Get_PosY();
+		UISize = m_pSkillGrass_3->Get_Size();
+		if (MousePos.x > UIPosX - (UISize.x*0.5f) &&
+			MousePos.x < UIPosX + (UISize.x*0.5f) &&
+			MousePos.y > UIPosY - (UISize.y*0.5f) &&
+			MousePos.y < UIPosY + (UISize.y*0.5f))
+		{
+			if (m_eWeaponType == WEAPON_BOW)
+			{
+				if (m_IceSkillPoint[2] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_IceSkillPoint[2];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_IceSkillPoint[2] <= 0)
+					{
+						m_pSkill_3->Set_TextureIndex(55);
+						m_pSkillGrass_3->Set_TextureIndex(134);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SPEAR)
+			{
+				if (m_FireSkillPoint[2] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_FireSkillPoint[2];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_FireSkillPoint[2] <= 0)
+					{
+						m_pSkill_3->Set_TextureIndex(44);
+						m_pSkillGrass_3->Set_TextureIndex(134);
+					}
+				}
+			}
+			else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+			{
+				if (m_LightningSkillPoint[2] > 0 && (*m_iSkillPoint) < 18)
+				{
+					--m_LightningSkillPoint[2];
+
+					++(*m_iSkillPoint);
+					if ((*m_iSkillPoint) > 18)
+						(*m_iSkillPoint) = 18;
+
+					if (m_LightningSkillPoint[2] <= 0)
+					{
+						m_pSkill_3->Set_TextureIndex(97);
+						m_pSkillGrass_3->Set_TextureIndex(134);
+					}
+				}
+			}
+		}
+
+		ChangeSkillPointImage();
+		DrawSkillPoint();
 	}
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -375,6 +808,11 @@ _int CSkillUI::Update(_double fDeltaTime)
 	for (auto& SproutSkillPoint : m_vSkillPoint_Sprouts3)
 		SproutSkillPoint->Update(fDeltaTime);
 
+	if (m_bIsSkillExplanation)
+	{
+		for (auto& SkillExplanation : m_vSkillExplanations)
+			SkillExplanation->Update(fDeltaTime);
+	}
 	return _int();
 }
 
@@ -422,12 +860,23 @@ _int CSkillUI::LateUpdate(_double fDeltaTime)
 	for (auto& SproutSkillPoint : m_vSkillPoint_Sprouts3)
 		SproutSkillPoint->LateUpdate(fDeltaTime);
 
+	if (m_bIsSkillExplanation)
+	{
+		for (auto& SkillExplanation : m_vSkillExplanations)
+			SkillExplanation->LateUpdate(fDeltaTime);
+	}
+
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+
 	return _int();
 }
 
 _int CSkillUI::Render()
 {
 	if (__super::Render() < 0)		return -1;
+
+	if(m_bIsSkillExplanation)
+		Render_Fonts();
 
 	return _int();
 }
@@ -443,11 +892,211 @@ void CSkillUI::DrawSkillPoint()
 {
 	for (_int i = 0; i < m_vSkillPoints.size(); ++i)
 	{
-		if (i <= m_iSkillPoint - 1)
+		if (i <= (*m_iSkillPoint) - 1)
 			m_vSkillPoints[i]->Set_IsDraw(true);
 		else
 			m_vSkillPoints[i]->Set_IsDraw(false);
 	}
+}
+
+void CSkillUI::ChangeSkillPointImage()
+{
+	_int* TempArryInt = nullptr;
+
+	if (m_eWeaponType == WEAPON_BOW)
+		TempArryInt = m_IceSkillPoint;
+	else if (m_eWeaponType == WEAPON_SPEAR)
+		TempArryInt = m_FireSkillPoint;
+	else if (m_eWeaponType == WEAPON_SWORDSHIELD)
+		TempArryInt = m_LightningSkillPoint;
+
+	m_vSkill_1_Sprouts[0]->Set_TextureIndex(71);
+	m_vSkill_1_Sprouts[1]->Set_TextureIndex(73);
+	m_vSkill_1_Sprouts[2]->Set_TextureIndex(75);
+	for (_int i = 0; i < m_vSkillPoint_Sprouts1.size(); ++i)
+		m_vSkillPoint_Sprouts1[i]->Set_IsDraw(false);
+
+	for (_int i = 0; i < TempArryInt[0]; ++i)
+	{
+		if (i == 0)
+		{
+			m_vSkill_1_Sprouts[i]->Set_TextureIndex(77);
+			m_vSkillPoint_Sprouts1[i]->Set_IsDraw(true);
+		}
+		else if (i == 1)
+		{
+			m_vSkill_1_Sprouts[i]->Set_TextureIndex(78);
+			m_vSkillPoint_Sprouts1[i]->Set_IsDraw(true);
+		}
+		else if (i == 2)
+		{
+			m_vSkill_1_Sprouts[i]->Set_TextureIndex(79);
+			m_vSkillPoint_Sprouts1[i]->Set_IsDraw(true);
+		}
+	}
+
+	m_vSkill_2_Sprouts[0]->Set_TextureIndex(71);
+	m_vSkill_2_Sprouts[1]->Set_TextureIndex(73);
+	m_vSkill_2_Sprouts[2]->Set_TextureIndex(75);
+	for (_int i = 0; i < m_vSkillPoint_Sprouts2.size(); ++i)
+		m_vSkillPoint_Sprouts2[i]->Set_IsDraw(false);
+
+	for (_int i = 0; i < TempArryInt[1]; ++i)
+	{
+		if (i == 0)
+		{
+			m_vSkill_2_Sprouts[i]->Set_TextureIndex(77);
+			m_vSkillPoint_Sprouts2[i]->Set_IsDraw(true);
+		}
+		else if (i == 1)
+		{
+			m_vSkill_2_Sprouts[i]->Set_TextureIndex(78);
+			m_vSkillPoint_Sprouts2[i]->Set_IsDraw(true);
+		}
+		else if (i == 2)
+		{
+			m_vSkill_2_Sprouts[i]->Set_TextureIndex(79);
+			m_vSkillPoint_Sprouts2[i]->Set_IsDraw(true);
+		}
+	}
+
+	m_vSkill_3_Sprouts[0]->Set_TextureIndex(71);
+	m_vSkill_3_Sprouts[1]->Set_TextureIndex(73);
+	m_vSkill_3_Sprouts[2]->Set_TextureIndex(75);
+	for (_int i = 0; i < m_vSkillPoint_Sprouts3.size(); ++i)
+		m_vSkillPoint_Sprouts3[i]->Set_IsDraw(false);
+
+	for (_int i = 0; i < TempArryInt[2]; ++i)
+	{
+		if (i == 0)
+		{
+			m_vSkill_3_Sprouts[i]->Set_TextureIndex(77);
+			m_vSkillPoint_Sprouts3[i]->Set_IsDraw(true);
+		}
+		else if (i == 1)
+		{
+			m_vSkill_3_Sprouts[i]->Set_TextureIndex(78);
+			m_vSkillPoint_Sprouts3[i]->Set_IsDraw(true);
+		}
+		else if (i == 2)
+		{
+			m_vSkill_3_Sprouts[i]->Set_TextureIndex(79);
+			m_vSkillPoint_Sprouts3[i]->Set_IsDraw(true);
+		}
+	}
+
+}
+
+void CSkillUI::DrawSkillName(_int iSkillNum)
+{
+	if (m_eWeaponType == WEAPON_BOW)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillNameFont.szString = L"test";
+			break;
+		case 1:
+			m_SkillNameFont.szString = L"test1";
+			break;
+		case 2:
+			m_SkillNameFont.szString = L"test2";
+			break;
+		}
+	}
+	if (m_eWeaponType == WEAPON_SPEAR)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillNameFont.szString = L"test3";
+			break;
+		case 1:
+			m_SkillNameFont.szString = L"test4";
+			break;
+		case 2:
+			m_SkillNameFont.szString = L"test5";
+			break;
+		}
+	}
+	if (m_eWeaponType == WEAPON_SWORDSHIELD)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillNameFont.szString = L"test6";
+			break;
+		case 1:
+			m_SkillNameFont.szString = L"test7";
+			break;
+		case 2:
+			m_SkillNameFont.szString = L"test8";
+			break;
+		}
+	}
+}
+
+void CSkillUI::DrawSkillExplanation(_int iSkillNum)
+{
+	if (m_eWeaponType == WEAPON_BOW)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillExplanationFont.szString = L"Fuck YOU1";
+			break;
+		case 1:
+			m_SkillExplanationFont.szString = L"Fuck YOU2";
+			break;
+		case 2:
+			m_SkillExplanationFont.szString = L"Fuck YOU3";
+			break;
+		}
+	}
+	if (m_eWeaponType == WEAPON_SPEAR)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillExplanationFont.szString = L"Fuck YOU4";
+			break;
+		case 1:
+			m_SkillExplanationFont.szString = L"Fuck YOU5";
+			break;
+		case 2:
+			m_SkillExplanationFont.szString = L"Fuck YOU6";
+			break;
+		}
+	}
+	if (m_eWeaponType == WEAPON_SWORDSHIELD)
+	{
+		switch (iSkillNum)
+		{
+		case 0:
+			m_SkillExplanationFont.szString = L"Fuck YOU7";
+			break;
+		case 1:
+			m_SkillExplanationFont.szString = L"Fuck YOU8";
+			break;
+		case 2:
+			m_SkillExplanationFont.szString = L"Fuck YOU9";
+			break;
+		}
+	}
+}
+
+HRESULT CSkillUI::Render_Fonts()
+{
+	CGameInstance* pInstance = g_pGameInstance;
+
+	pInstance->Render_Font(L"VinerFonts", m_SkillNameFont.szString.c_str(), m_SkillNameFont.vPosition,
+		m_SkillNameFont.vColor, m_SkillNameFont.fAngle, m_SkillNameFont.vFontScale);
+
+	pInstance->Render_Font(L"VinerFonts", m_SkillExplanationFont.szString.c_str(), m_SkillExplanationFont.vPosition,
+		m_SkillExplanationFont.vColor, m_SkillExplanationFont.fAngle, m_SkillExplanationFont.vFontScale);
+	
+
+	return S_OK;
 }
 
 HRESULT CSkillUI::Ready_Layer_UI()
@@ -1562,7 +2211,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iTextureIndex = 20;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_vBasicUIs.push_back(UI);
+	m_vSkillExplanations.push_back(UI);
 
 	//Skill_Explanation2
 	SettingUI.bClick = false;
@@ -1579,7 +2228,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iTextureIndex = 133;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_vBasicUIs.push_back(UI);
+	m_vSkillExplanations.push_back(UI);
 
 	//Skill_Name
 	SettingUI.bClick = false;
@@ -1596,7 +2245,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iTextureIndex = 19;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_vBasicUIs.push_back(UI);
+	m_vSkillExplanations.push_back(UI);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -1605,6 +2254,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 
 HRESULT CSkillUI::SetUp_Components()
 {
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
+
 	return S_OK;
 }
 
@@ -1635,6 +2286,8 @@ CGameObject * CSkillUI::Clone(void * pArg)
 void CSkillUI::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pRendererCom);
 
 	Safe_Release(m_PhoenixUI);
 	Safe_Release(m_pSkillColorCircle);
@@ -1674,6 +2327,9 @@ void CSkillUI::Free()
 	for (auto& SproutSkillPoint : m_vSkillPoint_Sprouts3)
 		Safe_Release(SproutSkillPoint);
 
+	for (auto& SkillExplanation : m_vSkillExplanations)
+		Safe_Release(SkillExplanation);
+
 
 	m_vBasicUIs.clear();
 	m_vSkill_1_Sprouts.clear();
@@ -1683,4 +2339,5 @@ void CSkillUI::Free()
 	m_vSkillPoint_Sprouts1.clear();
 	m_vSkillPoint_Sprouts2.clear();
 	m_vSkillPoint_Sprouts3.clear();
+	m_vSkillExplanations.clear();
 }
