@@ -599,7 +599,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 2;
+	m_iOncePattern = 5;
 
 	// #DEBUG PatternSET
 	if (KEYPRESS(DIK_B))
@@ -1084,7 +1084,13 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_iSoundIndex++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.7f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH4, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.7f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_LHand);
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH2, m_pTextureParticleTransform_RHand);
@@ -1095,6 +1101,11 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 19: {
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.75f, 0.06f, 0.03f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
@@ -1129,13 +1140,19 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.24f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH6, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.24)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.5f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
 
@@ -1178,11 +1195,15 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 
 			}
-			£ó£ä
-			if (m_EffectAdjust == 0 && PlayRate >= )
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+			
+			if (m_EffectAdjust == 1 && PlayRate >= 0.4f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
-
 				m_EffectAdjust++;
 			}
 

@@ -319,7 +319,10 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
+		m_EffectAdjust = 0;
 		m_iAdjMovedIndex = 0;
+	}
 
 
 	if (PlayRate <= 0.98)
@@ -458,45 +461,43 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_iAdjMovedIndex++;
 			}
 
-			
-			if (PlayRate >0 && m_iAdjMovedIndex == 1)
+			if (PlayRate > 0 && m_iAdjMovedIndex == 1)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hiss_Charge.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 			}
-			
-			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.3f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_0, m_pTextureParticleTransform2);
-					m_iAdjMovedIndex++;
-				}
-				
-				if (PlayRate > 0.4375 && m_iAdjMovedIndex == 3)
+
+			if (PlayRate > 0.4375 && m_iAdjMovedIndex == 2)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 				m_iAdjMovedIndex++;
 			}
-			
-			if (m_iAdjMovedIndex == 4 && PlayRate >= 0.455f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
-					m_iAdjMovedIndex++;
-				}
-					if (PlayRate > 0.45 && m_iAdjMovedIndex == 5)
+
+			if (PlayRate > 0.45 && m_iAdjMovedIndex == 3)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 				m_iAdjMovedIndex++;
 			}
-			
-			if (m_iAdjMovedIndex == 6 && PlayRate >= 0.555f)
+
+
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.3f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_0, m_pTextureParticleTransform2);
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.455f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
+				m_iAdjMovedIndex++;
+			}
+			if (m_EffectAdjust == 2 && PlayRate >= 0.555f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_2, m_pTextureParticleTransform2);
-					m_iAdjMovedIndex++;
-				}
-				
-		
+				m_EffectAdjust++;
+			}
+
 		}
 		break;
 
@@ -507,21 +508,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));
-
-			// EFFECT CODE 
-			// _float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
-			// Value = max(min(Value, 1.f), 0.f);
-			// Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
-			// 
-			// if (m_iAdjMovedIndex == 1 && PlayRate >= 0.5)
-			// {
-			// 	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_RHand);
-			// 	m_iAdjMovedIndex++;
-			// 
-			// }
-
-		
+			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));		
 
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{

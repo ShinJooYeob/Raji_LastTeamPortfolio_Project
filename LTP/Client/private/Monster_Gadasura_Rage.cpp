@@ -1404,8 +1404,6 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iSoundIndex++;
 			}
 
-
-
 			break;
 		}
 		case 26:

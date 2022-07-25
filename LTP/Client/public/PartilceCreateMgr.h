@@ -346,6 +346,10 @@ private:
 	
 	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
+	HRESULT Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ type, CTransform* Transfom = nullptr);
+	HRESULT Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type, CTransform* Transfom = nullptr);
+
+
 private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;

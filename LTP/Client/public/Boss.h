@@ -47,6 +47,9 @@ protected:
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
 
+	_uint							m_EffectAdjust = false;
+
+
 protected:
 	_bool		m_bIsHit = false;
 	_bool		m_bIsAttack = false;
