@@ -45,8 +45,6 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Scaled_All(_float3(1.5f,1.5f,1.5f));
 
-	// Particle
-	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom);
 
 	return S_OK;
 }
@@ -673,7 +671,8 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	// m_iOncePattern = 4;
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 4;
 
 	switch (m_iOncePattern)
 	{
@@ -827,6 +826,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		m_bColliderAttackOn = false;
 
 		m_iSoundIndex = 0;
+		m_EffectAdjust = 0;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
@@ -904,9 +904,6 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				if (m_iAdjMovedIndex == 0)
 				{
 					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-
-					// #TIME JUMP 
-					// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTextureParticleTransform);
 
 					m_iAdjMovedIndex += 1;
 
@@ -1047,7 +1044,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.57f, 1.00f, 0.79f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
@@ -1078,17 +1075,26 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 			}
 
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.35f)
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.10f)
+			{
+
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.35f)
 			{
 				// #TIME Hand 2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
-
-				m_iAdjMovedIndex++;
+				
+				m_EffectAdjust++;
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.5)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_RHand);
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
 			break;
 		}
@@ -1096,7 +1102,8 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.16f, 0.93f, 0.29f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.57f, 1.00f, 0.79f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_bLookAtOn = false;
@@ -1125,16 +1132,16 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			}
 
 
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.1f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTransformCom);
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
 
-			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.45f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.25f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL, m_pTransformCom);
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
 
 			break;

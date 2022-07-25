@@ -28,6 +28,7 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc));
 
 	FAILED_CHECK(Ready_ParticleDesc());
+	m_EffectAdjust = 0;
 
 	return S_OK;
 }
