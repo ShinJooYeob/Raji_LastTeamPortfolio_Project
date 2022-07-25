@@ -27,10 +27,9 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
-	//FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	//FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
-	FAILED_CHECK(Ready_MapData(L"BossStage_Rangda.dat", SCENE_STAGE2, TAG_LAY(Layer_StaticMapObj)));
+	
+	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE2, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
 
 	return S_OK;
 }
@@ -152,6 +151,7 @@ HRESULT CScene_Stage2::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE2);
 	}
 	
+	m_pMainCam->Set_TargetArmLength(8.f);
 	return S_OK;
 }
 
@@ -173,26 +173,20 @@ HRESULT CScene_Stage2::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player)));
-
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(490.f, 7.100010f, 108.571f));
-	//static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(157.422f, 23.7f, 75.991f));
-
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
+
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-
-
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_TargetArmLength(0.f);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(490.031494f, 10.4521713f, 104.211227f, 1.f), XMVectorSet(-0.0104847737f, -0.617018461f, 0.786878705f, 0.f));
+	pPlayer->Update_AttachCamPos();
 
 
 	return S_OK;
@@ -266,6 +260,74 @@ HRESULT CScene_Stage2::Ready_MapData(const _tchar * szMapDataFileName, SCENEID e
 
 
 	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CScene_Stage2::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+	{
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
+
+			pObject->After_Initialize();
+
+		}
+
+		CloseHandle(hFile);
+	}
+
 	return S_OK;
 }
 

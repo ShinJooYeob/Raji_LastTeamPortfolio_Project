@@ -90,6 +90,8 @@ public: /* Setting State */
 	void				Set_CameraMoveWeight(_float fCamMoveWeight);
 	void				Set_MaxTargetArmLength(_float fMaxTargetArmLength);
 	void				Set_MinTargetArmLength(_float fMinTargetArmLength);
+	void				Set_CameraInitState(_fVector vCamPos, _fVector vCamLook);
+	void				Set_CamLock(_bool bLock);
 
 public: /* Getter */
 	_float				Get_TargetArmLength();

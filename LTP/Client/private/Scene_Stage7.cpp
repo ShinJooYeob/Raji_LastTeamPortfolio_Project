@@ -218,8 +218,10 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_TargetArmLength(0.f);
-
+	m_pMainCam->Set_TargetArmLength(3.f);
+	pPlayer->Update_AttachCamPos();
+	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f));
+	
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
 
 	//CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE7, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));

@@ -230,7 +230,7 @@ private: /* Change Start State */
 	void	Set_State_DeathStart();													// Death
 
 
-private:
+public:
 	virtual void Update_AttachCamPos() override;
 
 private:
@@ -480,6 +480,9 @@ private: /* Targeting */
 	ETARGETING_STATE		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
 	CGameObject*			m_pTargetingMonster = nullptr;
 	CTransform*				m_pTargetingMonster_Transform = nullptr;
+
+private: /* ETC */
+	_bool					m_bPlayerHide = false;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

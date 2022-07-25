@@ -22,8 +22,13 @@ public:
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Layer_MainCamera(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Player(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_InteractObject(const _tchar * pLayerTag);
+
+	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
+	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
