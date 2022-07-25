@@ -12,37 +12,65 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 {}
 
 /*
-Mesh Effect USE 
+//	Mesh Effect USE
 
 		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
-		STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
-		STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
-		STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
-		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
-		STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
-
-
-
-*/
-
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
+	STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
+	STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
+	STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
+	STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SG_tornado);
+	STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_X_L);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_Z_R);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Shot_Cylinder_00);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DW_Weapon);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Shot_Cylinder_00);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Baren_Weapon);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SG_tornado);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_X_L);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
+	STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_Leap_Ground_Light);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_circle_inv);
+	STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
+	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side);
+	STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_HFB_Grand_Git);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_DarkTails_01);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_rockRing);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
+	STATIC_EFFECTLOAD(Prototype_Mesh_circle_inv);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_EM_Copycat_03);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_lans_rot);
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_rockRing);
+	STATIC_EFFECTLOAD(Prototype_Mesh_doomBvert);
+	*/
 
 HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 {
@@ -2393,7 +2421,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 	if (type == MESHEFFECT_MONSTER_GM_SKILLBOUND1)
 	{
 		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_SM_Baren_Weapon;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_DW_Weapon;
 		
 		
@@ -3267,6 +3294,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 		MeshDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);
 		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
 		MeshDesc.vSize = _float3(3);
+		MeshDesc.vSize = _float3(5,3,5);
 
 		// Move
 		//MeshDesc.MoveDir = FollowingDir_Up;
@@ -3312,7 +3340,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 		MeshDesc.eMeshType = Prototype_Mesh_Mesh_Leap_Ground_Light;
 
 		// Time
-		MeshDesc.fMaxTime_Duration = 2.0f;
+		MeshDesc.fMaxTime_Duration = 0.5f;
 		MeshDesc.fAppearTime = 0.3f;
 		AddDesc.bAfterApperTime = true;
 
@@ -3326,7 +3354,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
 		MeshDesc.vLimLight = _float4(0.0f, 0.f, 1.0f, 1.f);
-		MeshDesc.vEmissive = _float4(1.f, 1.f, 1.f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.1f, 0.1f, 1.f);
 
 		// Transform_Base
 		MeshDesc.vPosition = _float3(-2.0f, 0.0f, 0.0f);
@@ -3507,7 +3535,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
-
 
 
 	if (type == MESHEFFECT_BOSS_SNAKE_1)

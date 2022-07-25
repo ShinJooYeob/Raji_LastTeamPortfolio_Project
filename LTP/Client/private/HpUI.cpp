@@ -264,7 +264,6 @@ _int CHpUI::Render()
 	}
 	else if (m_HpDesc.m_HPType == CHpUI::HP_MONSTER)
 	{
-		// #RICK MergeOff
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0));
 
 		ATV = .1f;
@@ -379,9 +378,8 @@ void CHpUI::Free()
 
 	m_vPosTransforms.clear();
 
-	// #RICK MergeOff
-	// for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
-	// 	Safe_Release(m_vecInstancedHPTransform[i]);
+	for (_int i = 0; i < m_vecInstancedHPTransform.size(); ++i)
+		Safe_Release(m_vecInstancedHPTransform[i]);
 
 	m_vecInstancedHPTransform.clear();
 
