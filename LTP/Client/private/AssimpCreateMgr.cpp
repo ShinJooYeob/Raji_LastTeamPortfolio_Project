@@ -897,8 +897,11 @@ HRESULT CAssimpCreateMgr::Free_VertexData_STATIC()
 
 void CAssimpCreateMgr::Free()
 {
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);
+
+	Free_VertexData();
 
 	Safe_Delete_List(mList_DataFIle_Static);
 	Safe_Delete_List(mList_DataFIle_Dynamic);

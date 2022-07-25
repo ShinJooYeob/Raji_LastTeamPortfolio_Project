@@ -45,6 +45,14 @@ _int CScene_Stage3::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
+
+	if (m_iSceneStartChecker == 2)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
+	}
+
+
 	return 0;
 }
 
@@ -64,7 +72,15 @@ _int CScene_Stage3::Render()
 	if (__super::Render() < 0)
 		return -1;
 
+	if (m_fSceneStartTimer < 0.5f)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+	}
+	else if (m_fSceneStartTimer < 2.5f)
+	{
 
+		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+	}
 	return 0;
 }
 

@@ -769,7 +769,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_pTransformCom->Move_Right(dDeltaTime * 1.5, m_pNavigationCom);
 
-				if (m_iSoundIndex == 0 )
+				if (m_iSoundIndex == 0)
 				{
 					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 					m_iSoundIndex++;
@@ -849,7 +849,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iAdjMovedIndex++;
 			}
 			m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
-			
+
 			m_dSoundTime += dDeltaTime;
 			if (m_dSoundTime >= 0.4)
 			{
@@ -886,11 +886,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
-			}	
+			}
 
 
-			
-			
+
+
 			else if (PlayRate >= 0.2155 &&PlayRate <= 0.3879)
 			{
 				m_bWeaponAttackSwitch = true;
@@ -900,14 +900,14 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bWeaponAttackSwitch = false;
 				m_iAdjMovedIndex++;
 			}
-			
+
 			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.4)
 			{
 				// #TIME Attack1
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash0, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash0, m_pTransformCom);
 				m_iAdjMovedIndex++;
 			}
-			
+
 			if (m_iSoundIndex == 0 && PlayRate > 0.2155)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
@@ -918,7 +918,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
-			
+
 			if (m_EffectAdjust == 0 && PlayRate >= 0.3f)
 			{
 				// #TIME Attack1
@@ -928,7 +928,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 
 			}
-			
+
 			break;
 		}
 		case 18:
@@ -969,7 +969,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (PlayRate > 0 && PlayRate <= 0.539215)
 			{
-				m_bLookAtOn = false; 
+				m_bLookAtOn = false;
 
 				m_dAcceleration = 2.5;
 
@@ -1011,7 +1011,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
-			}else if (m_iSoundIndex == 2 && PlayRate >= 0.5445)
+			}
+			else if (m_iSoundIndex == 2 && PlayRate >= 0.5445)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
@@ -1030,8 +1031,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH2, m_pTextureParticleTransform_Hand);
 				m_EffectAdjust++;
 			}
-			
-			if (m_EffectAdjust ==2 && PlayRate>=0.539215f)
+
+			if (m_EffectAdjust == 2 && PlayRate >= 0.539215f)
 			{
 				// #TIME SmashAttack
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
@@ -1109,7 +1110,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
-			if (m_iAdjMovedIndex==0 && PlayRate >= 0.29411)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.29411)
 			{
 				m_bWeaponAttackSwitch = true;
 				m_iAdjMovedIndex++;
@@ -1117,12 +1118,12 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (PlayRate <= 0.588235)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.5,m_pNavigationCom);
-			
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.5, m_pNavigationCom);
+
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
-					// #TIME Run Attack
+				// #TIME Run Attack
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
-				
+
 			}
 			else
 			{
@@ -1149,18 +1150,19 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 				m_iSoundIndex++;
-			if (m_EffectAdjust == 0 && PlayRate >= 0.05f)
-			{
-				// #TIME Run Attack
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN0, m_pTransformCom);
-				m_EffectAdjust++;
-			}
+				if (m_EffectAdjust == 0 && PlayRate >= 0.05f)
+				{
+					// #TIME Run Attack
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN0, m_pTransformCom);
+					m_EffectAdjust++;
+				}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.29411)
-			{
-				// #TIME Run Attack
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN1, m_pTransformCom);
-				m_EffectAdjust++;
+				if (m_EffectAdjust == 1 && PlayRate >= 0.29411)
+				{
+					// #TIME Run Attack
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLRUN1, m_pTransformCom);
+					m_EffectAdjust++;
+				}
 			}
 			break;
 		}
@@ -1200,10 +1202,12 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 25:
 		{
-		
-			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
-			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			{
+
+				_float Value2 = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+				Value2 = max(min(Value2, 1.f), 0.f);
+				Set_LimLight_N_Emissive(_float4(0.27f, 0.94f, 0.38f, Value2), _float4(Value2, Value2*0.7f, Value2, 0.9f));
+			}
 
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.9574)
@@ -1226,18 +1230,16 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_bare01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 				m_iSoundIndex++;
 			}
-			}
-
 			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash2, m_pTransformCom);
 				m_EffectAdjust++;
 			}
 
-
-
-			break;
 		}
+
+		break;
+		
 		default:
 			break;
 
