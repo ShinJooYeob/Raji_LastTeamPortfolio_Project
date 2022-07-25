@@ -14,6 +14,7 @@ class CMonster_Wolf final : public CMonster
 		CCollider*		pCollider = nullptr;
 		_uint			iAnimType = ANIM_END;
 		_uint			iRenderType = RENDER_IDLE;
+		_uint			iCellIndex = 0;
 
 		_float4			fRimRight = _float4(0.5f, 0.5f, 0.5f, 1.f);
 		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f); //R,G,B W==±¹¹ä°ª
@@ -25,6 +26,12 @@ class CMonster_Wolf final : public CMonster
 		_bool			bHit = false;
 		_int			iSwtichIndex = 0;
 	}TRANSFORM_STATE;
+
+	typedef struct tagInstanceInfo
+	{
+		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count
+		_float4x4 fSubValueMat;
+	}INSTANCE_INFO;
 
 private:
 	CMonster_Wolf(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -78,7 +85,8 @@ private:
 	vector<_float4>		m_vecDissolve[ANIM_END];//1Èå¸¥½Ã°£, µðÁ¹ºê ½Ã°£, ±¹¹ä°¡°Ý ,0ÀÌ¸é µðÁ¹ºê ¾ÈÇÔ 1ÀÌ¸é µðÁ¹ºê
 
 
-
+	INSTANCE_INFO		m_Instance_Info;
+	const _tchar*		m_charModellInstanceType = nullptr;
 
 
 

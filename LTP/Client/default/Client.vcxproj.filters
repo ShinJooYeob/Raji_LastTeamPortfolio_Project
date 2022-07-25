@@ -376,6 +376,9 @@
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Plat_Bullet">
       <UniqueIdentifier>{8f04d152-be8a-4344-a62b-ae23282171a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger">
+      <UniqueIdentifier>{aa860e5c-d46b-4c7a-9af1-b0d411232f0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -835,6 +838,9 @@
     <ClInclude Include="..\public\Monster_Plat_Bullet.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Bullet\Monster_Plat_Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1271,6 +1277,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

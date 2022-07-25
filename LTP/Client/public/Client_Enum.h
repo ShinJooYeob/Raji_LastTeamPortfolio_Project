@@ -294,9 +294,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_BLOCKZONE,
 	Prototype_Trigger_DEADZONE,
 	Prototype_Trigger_TestLedgeTrigger,
-	//////////////////////////////////////////////////////////////////////////
+	Prototype_Trigger_InstanceMonsterBatchTrigger,
 	Prototype_MonsterBatchTrigger,
 
+	//////////////////////////////////////////////////////////////////////////
 
 	Prototype_PlayerSkill_ShellingArrow,
 	Prototype_PlayerSkill_SpearWave,
@@ -449,6 +450,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_MonsterBatchTrigger:
 		return TEXT("Prototype_MonsterBatchTrigger");
+		break;
+	case Prototype_Trigger_InstanceMonsterBatchTrigger:
+		return TEXT("Prototype_InstanceMonsterBatchTrigger");
 		break;
 	case Prototype_Trigger_ChangeNavIndex:
 		return TEXT("Prototype_Trigger_ChangeNavIndex");
