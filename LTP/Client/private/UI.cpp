@@ -24,12 +24,10 @@ HRESULT CUI::Initialize_Clone(void * pArg)
 
 	if (nullptr != pArg)
 	{
-		SETTING_UI UI_Setting;
-		ZeroMemory(&UI_Setting, sizeof(SETTING_UI));
 
-		memcpy(&UI_Setting, pArg, sizeof(SETTING_UI));
+		memcpy(&m_SettingUIDesc, pArg, sizeof(SETTING_UI));
 
-		SetUp_UIInfo(UI_Setting);
+		SetUp_UIInfo(m_SettingUIDesc);
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -61,7 +59,10 @@ _int CUI::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
+
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
+
+
 
 	return _int();
 }
@@ -81,8 +82,26 @@ _int CUI::Render()
 	m_pShaderCom->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4));
 	m_pShaderCom->Set_RawValue("g_ProjMatrix", &m_ProjMatrix, sizeof(_float4x4));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
+	switch (m_SettingUIDesc.eUIKindsID)
+	{
+	case Client::CUI::UIID_JB:
+	{	
+		if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
 		return E_FAIL;
+
+		break;
+	}
+	case Client::CUI::UIID_JY_Lobby:
+
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime * 2.5f));
+
+		break;
+	case Client::CUI::UIID_END:
+		break;
+	default:
+		break;
+	}
+
 
 	//if (m_pUIName == TEXT("UI_Fade"))
 	//	m_pShaderCom->Set_RawValue("g_Alpha", &m_fFadeTime, sizeof(_float));
@@ -125,7 +144,19 @@ HRESULT CUI::SetUp_Components()
 	if (FAILED(__super::Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_UI), TAG_COM(Com_UI), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
-	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"UI"));
+	switch (m_SettingUIDesc.eUIKindsID)
+	{
+	case Client::CUI::UIID_JB:
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"UI"));
+		break;
+	case Client::CUI::UIID_JY_Lobby:
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"LobbyUI"));
+		break;
+	case Client::CUI::UIID_END:
+		break;
+	default:
+		break;
+	}
 
 	return S_OK;
 }

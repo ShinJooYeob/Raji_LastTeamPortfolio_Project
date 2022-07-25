@@ -36,14 +36,21 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging());
 
 	m_eNextSceneIndex = eSceneID;
 	m_pLoader = CLoader::Create(m_pDevice,m_pDeviceContext,eSceneID);
 
+	UIDESC tUIDesc;
+	tUIDesc.fCX = g_iWinCX;
+	tUIDesc.fCY = (g_iWinCY);
+	tUIDesc.fX = g_iWinCX * 0.5f;
+	tUIDesc.fY = g_iWinCY * 0.5f;
+
+
 	if (FAILED(Ready_Layer_LoadingUI(TEXT("Layer_Loading"))))
 		return E_FAIL;
 
-	m_FadePassedTime = 0;
 
 	g_pGameInstance->Stop_AllChannel();
 
@@ -54,6 +61,12 @@ _int CScene_Loading::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
+
+	if (m_fSceneStartTimer < 2.f)
+	{
+		GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(m_fSceneStartTimer / 2.f));
+
+	}
 
 
 	return 0;
@@ -66,7 +79,7 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 
 
 	//로딩이 끝낫을 경우
-	if (m_pLoader->IsLoadFinished())
+	if (m_fSceneStartTimer > 2.5f && m_pLoader->IsLoadFinished())
 	{
 
 		g_pGameInstance->Set_TargetSceneNum(m_eNextSceneIndex);
@@ -139,6 +152,12 @@ _int CScene_Loading::Render()
 		return -1;
 
 
+
+	GetSingle(CUtilityMgr)->SCD_Rendering();
+	//FAILED_CHECK(m_pLoadingSCD.Render_SCD(1));
+
+
+
 #ifdef _DEBUG
 	if (!g_bIsShowFPS)
 
@@ -154,6 +173,8 @@ _int CScene_Loading::Render()
 #endif // _DEBUG
 
 
+	ID3D11ShaderResourceView* pSRV[8] = { nullptr };
+	m_pDeviceContext->PSSetShaderResources(0, 8, pSRV);
 	return 0;
 }
 
@@ -191,6 +212,7 @@ CScene_Loading * CScene_Loading::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 void CScene_Loading::Free()
 {
 	__super::Free();
+	//m_pLoadingSCD.Free();
 	
 	Safe_Release(m_pLoader);
 }

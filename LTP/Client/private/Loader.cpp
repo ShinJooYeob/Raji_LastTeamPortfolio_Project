@@ -37,6 +37,7 @@
 
 //SkillUI
 #include "SkillUI.h"
+#include "LobbyUI.h"
 
 
 //Dynamic_Map
@@ -357,6 +358,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_StaticMapObject), CStaticMapObject::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_InstanceStaticMapObject), CStaticInstanceMapObject::Create(m_pDevice, m_pDeviceContext)));
 
+	//LobbyUI
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_LobbyUI), CLobbyUI::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
@@ -1135,6 +1138,8 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	//Interact Obj
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj), CElevator::Create(m_pDevice, m_pDeviceContext)));
 
+
+	
 #pragma endregion
 
 

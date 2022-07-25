@@ -7,6 +7,8 @@ texture2D			g_BlurTargetTexture;
 texture2D			g_DepthTexture;
 texture2D			g_NoiseTexture;
 
+texture2D			g_CurlTexture;
+
 float				g_Alpha;
 
 
@@ -29,6 +31,9 @@ cbuffer Distortion
 	float distortionBias = 0.5f;
 
 	float g_fDistortionNoisingPushPower = 0.5f;
+
+	float g_fToonMaxIntensive = 5.f;
+	float g_fPaperCurlIntensive = 0.f;
 };
 
 
@@ -300,6 +305,63 @@ PS_OUT_NOLIGHT PS_Effect_Noise(PS_IN_Noise In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_PaperCurl(PS_IN In)
+{
+
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	
+	vector PaperCurl = g_CurlTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = PaperCurl;
+
+	
+	if (PaperCurl.b > PaperCurl.r + PaperCurl.g)
+	{
+		Out.vDiffuse = g_SourTexture.Sample(DefaultSampler, In.vTexUV);
+	}
+	else if (PaperCurl.r > PaperCurl.b + PaperCurl.g)
+	{
+		float CenterRate = g_NoiseTexture.Sample(DefaultSampler, In.vTexUV).r;
+
+		vector vecSideColor = vector(0.90625f, 0.796875f, 0.609375f, 1.f) * (CenterRate)+
+			vector(0.5859375f, 0.25390625f, 0.0390625f, 1.f) * (1.f - CenterRate);
+
+		Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV) * vecSideColor;
+	}
+
+	Out.vDiffuse.a = 1;
+
+
+	return Out;
+}
+PS_OUT_NOLIGHT PS_PaperCurlOut(PS_IN In)
+{
+
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	vector BackbufferDesc = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	vector ToonDesc = g_SourTexture.Sample(DefaultSampler, In.vTexUV);
+
+	//float Value = length(vector(BackbufferDesc.xyz, 0.f));
+	//Value = (ceil(Value * g_fToonMaxIntensive) / g_fToonMaxIntensive);
+
+
+	//float CenterRate = g_NoiseTexture.Sample(DefaultSampler, In.vTexUV).r;
+
+	//vector vecSideColor = vector(0.90625f, 0.796875f, 0.609375f, 1.f) * (CenterRate)+
+	//	vector(0.5859375f, 0.25390625f, 0.0390625f, 1.f) * (1.f - CenterRate);
+
+	Out.vDiffuse = ToonDesc* (1.f - g_fPaperCurlIntensive)
+		+ BackbufferDesc * g_fPaperCurlIntensive;
+
+
+	Out.vDiffuse.a = 1;
+
+
+	return Out;
+}
+
 
 technique11		DefaultTechnique
 {
@@ -377,7 +439,27 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_Default();
 	}
+	pass PaperCurl			//7
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_PaperCurl();
+	}
+	pass PaperCurlOut			//8
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_PaperCurlOut();
+	}
 
 
-
+	
 }

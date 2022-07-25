@@ -72,6 +72,14 @@ public:
 	INSTPARTICLEDESC	Get_TextureParticleDesc(const _tchar* szFileName);
 	INSTMESHDESC		Get_MeshParticleDesc(const _tchar* szFileName);
 
+
+	/*For SCD*/
+	HRESULT Copy_LastDeferredToToonShadingTexture(_float fToonRate, _bool bIsSecond = false);
+	HRESULT SCD_Rendering();
+	HRESULT SCD_Rendering_Rolling(_float RollingStartTime, _float RollingTargetTime, const _tchar* szRenderTargetTag);
+	HRESULT SCD_Rendering_FadeOut(_float RollingStartTime, _float RollingTargetTime, const _tchar* szRenderTargetTag);
+	//HRESULT SCD_Rendering_Rolling(_float RollingStartTime, _float RollingTargetTime);
+
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);
@@ -83,6 +91,9 @@ private:
 	CRenderer*				m_pRenderer = nullptr;
 	CTexture*				m_pTexture = nullptr;
 	CTexture*				m_pDissolveTexture = nullptr;
+
+	SCDDESC				m_pLoadingSCD;
+
 
 
 	map<wstring, INSTPARTICLEDESC>				m_mapTextureParticles;

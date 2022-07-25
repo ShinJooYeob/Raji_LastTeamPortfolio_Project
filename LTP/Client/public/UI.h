@@ -15,7 +15,13 @@ BEGIN(Client)
 
 class CUI : public CGameObject
 {
+
 public:
+	enum UIID
+	{
+		UIID_JB, UIID_JY_Lobby, UIID_END
+	};
+
 	typedef struct tagSettingUI
 	{
 		_uint		iLevelIndex = 0;
@@ -31,6 +37,8 @@ public:
 		_bool		bMove = false;
 		_bool		bDraw = false;
 		_bool		bClick = false;
+		
+		_uint		eUIKindsID = UIID_JB;
 	}SETTING_UI;
 
 private:

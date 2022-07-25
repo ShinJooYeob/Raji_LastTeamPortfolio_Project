@@ -385,6 +385,9 @@
     <Filter Include="01.GameObject\09.Elevator">
       <UniqueIdentifier>{57422e34-6c7a-45aa-b164-c9616c312bd0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\LobbyUI">
+      <UniqueIdentifier>{0b20a0c5-8c05-4c05-8ed6-ea63e8f40319}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -853,6 +856,9 @@
     <ClInclude Include="..\public\Elevator.h">
       <Filter>01.GameObject\09.Elevator</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LobbyUI.h">
+      <Filter>01.GameObject\99.UI\LobbyUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1298,6 +1304,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Elevator.cpp">
       <Filter>01.GameObject\09.Elevator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LobbyUI.cpp">
+      <Filter>01.GameObject\99.UI\LobbyUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

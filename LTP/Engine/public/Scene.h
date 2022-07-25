@@ -23,7 +23,8 @@ public:
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
-
+	_float					m_fSceneStartTimer = 0;
+	_uint					m_iSceneStartChecker = 0;
 	_bool			m_bIsNeedToSceneChange = false;
 	_uint			m_eNextScene;
 public:

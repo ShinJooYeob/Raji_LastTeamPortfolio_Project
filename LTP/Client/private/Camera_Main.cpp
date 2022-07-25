@@ -467,7 +467,7 @@ HRESULT CCamera_Main::Progress_DirShaking_Thread(_bool * _IsClientQuit, CRITICAL
 	DWORD  OldTick = NowTick;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
+	CGameInstance* pInstance = g_pGameInstance;
 	_bool	bIsReturnVector = false;
 	_float3 vReturnVector = _float3(0);
 	_float  vReturnPower = 0;
@@ -512,6 +512,7 @@ HRESULT CCamera_Main::Progress_DirShaking_Thread(_bool * _IsClientQuit, CRITICAL
 
 		EnterCriticalSection(_CriSec);
 		m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, g_fDeltaTime);
+		pInstance->Set_Transform(PLM_VIEW, m_pTransform->Get_InverseWorldMatrix());
 		LeaveCriticalSection(_CriSec);
 
 		if (tDirShakingDesc.fTotalTime < ThreadPassedTime) break;
@@ -539,6 +540,7 @@ HRESULT CCamera_Main::Progress_RotShaking_Thread(_bool* _IsClientQuit, CRITICAL_
 	DWORD  OldTick = NowTick;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+	CGameInstance* pInstance = g_pGameInstance;
 
 	_bool	bIsReturnVector = false;
 	_float3 vReturnVector = _float3(0);
@@ -589,6 +591,7 @@ HRESULT CCamera_Main::Progress_RotShaking_Thread(_bool* _IsClientQuit, CRITICAL_
 		EnterCriticalSection(_CriSec);
 		//m_pTransform->MovetoDir_bySpeed(vReturnVector.XMVector(), vReturnPower, g_fDeltaTime);
 		m_pTransform->Turn_CCW(tRotShakingDesc.fShakingRotAxis.XMVector(), g_fDeltaTime * vReturnPower);
+		pInstance->Set_Transform(PLM_VIEW, m_pTransform->Get_InverseWorldMatrix());
 		LeaveCriticalSection(_CriSec);
 
 		if (tRotShakingDesc.fTotalTime < ThreadPassedTime) break;

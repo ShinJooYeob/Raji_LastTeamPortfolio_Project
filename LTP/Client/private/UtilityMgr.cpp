@@ -35,6 +35,15 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	FAILED_CHECK(Ready_Particles());
 
 
+	UIDESC tUIDesc;
+	tUIDesc.fCX = g_iWinCX;
+	tUIDesc.fCY = (g_iWinCY);
+	tUIDesc.fX = g_iWinCX * 0.5f;
+	tUIDesc.fY = g_iWinCY * 0.5f;
+
+	FAILED_CHECK(m_pLoadingSCD.Initialize_SCDDesc(tUIDesc));
+	FAILED_CHECK(m_pLoadingSCD.pRenderer->Copy_LastDeferredToToonShadingTexture(0));
+	
 
 	return S_OK;
 }
@@ -272,11 +281,51 @@ INSTMESHDESC CUtilityMgr::Get_MeshParticleDesc(const _tchar * szFileName)
 
 }
 
+HRESULT CUtilityMgr::Copy_LastDeferredToToonShadingTexture(_float fToonRate,_bool bIsSecond)
+{
+	return m_pLoadingSCD.pRenderer->Copy_LastDeferredToToonShadingTexture(fToonRate, bIsSecond);
+}
+
+HRESULT CUtilityMgr::SCD_Rendering()
+{
+
+	FAILED_CHECK(m_pLoadingSCD.Render_SCD(1));
+
+	return S_OK;
+}
+
+HRESULT CUtilityMgr::SCD_Rendering_Rolling(_float RollingStartTime, _float RollingTargetTime,const _tchar* szRenderTargetTag)
+{
+#define NumRollingTexture 10
+	_uint RollingRate = min(_uint(RollingStartTime / RollingTargetTime * _float(NumRollingTexture)) , NumRollingTexture - 1);
+
+
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433));
+	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_DiffuseTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
+	FAILED_CHECK(m_pLoadingSCD.Render_SCD_Rolling(RollingRate));
+	//PS_PaperCurlOut
+	return S_OK;
+}
+
+HRESULT CUtilityMgr::SCD_Rendering_FadeOut(_float RollingStartTime, _float RollingTargetTime, const _tchar * szRenderTargetTag)
+{
+	_float FadeIntensive = min(max(RollingStartTime / RollingTargetTime,0.f ),1.f);
+
+
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433));
+	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_SourTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
+	FAILED_CHECK(m_pLoadingSCD.Render_SCD_FadeOut( 8, FadeIntensive));
+
+	return S_OK;
+}
+
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()
 {
 	NULL_CHECK_RETURN(m_pRenderer, E_FAIL);
+
+	FAILED_CHECK(m_pRenderer->Copy_LastDeferredTexture());
+
 	g_pGameInstance->Clear_CollisionGroup();
-	FAILED_CHECK(m_pRenderer->Clear_RenderGroup_forSceneChaging());
 	return  S_OK;
 }
 
@@ -649,6 +698,8 @@ HRESULT CUtilityMgr::Ready_MeshParticles()
 
 void CUtilityMgr::Free()
 {
+	m_pLoadingSCD.Free();
+
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pDissolveTexture);

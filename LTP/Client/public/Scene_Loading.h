@@ -26,7 +26,6 @@ private:
 	SCENEID m_eNextSceneIndex = SCENEID::SCENE_END;
 	class CLoader*		m_pLoader;
 
-	_double				m_FadePassedTime = 0;
 
 
 public:

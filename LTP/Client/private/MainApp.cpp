@@ -408,6 +408,10 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Dissolve.txt")));
 
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, L"Prototype_Texture_PaperCurl",
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"PaperCurl.txt")));
+
+
 	//TestEffect.txt;
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),

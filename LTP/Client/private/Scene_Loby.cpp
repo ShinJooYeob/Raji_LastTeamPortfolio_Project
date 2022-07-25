@@ -18,10 +18,10 @@ HRESULT CScene_Loby::Initialize()
 		return E_FAIL;
 
 	FAILED_CHECK(Ready_Light());
+	FAILED_CHECK(Ready_UI(TAG_LAY(Layer_UI_SLIDE)));
+	
+	
 	FAILED_CHECK(Ready_Camera(TAG_LAY(Layer_Camera_Main)));
-	FAILED_CHECK(Ready_TestObject(TAG_LAY(Layer_TestObject)));
-	FAILED_CHECK(Ready_NonAnimObject(TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	
 
 
@@ -36,6 +36,11 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+	{
+		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing(POSTPROCESSING_CAMMOTIONBLUR);
+	}
 
 
 	if (GetKeyState(VK_F2) & 0x8000)
@@ -69,6 +74,13 @@ _int CScene_Loby::Update(_double fDeltaTime)
 
 	RELEASE_INSTANCE(CGameInstance);
 
+
+	if (m_iSceneStartChecker == 2)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
+	}
+
 	return 0;
 }
 
@@ -86,6 +98,15 @@ _int CScene_Loby::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+	if (m_fSceneStartTimer < 0.5f)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+	}
+	else if (m_fSceneStartTimer < 2.5f)
+	{
+
+		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+	}
 
 
 	return 0;
@@ -167,49 +188,56 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CScene_Loby::Ready_Layer_SkyBox(const _tchar * pLayerTag)
-{
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_LOBY, pLayerTag, TAG_OP(Prototype_SkyBox)));
+//HRESULT CScene_Loby::Ready_Layer_SkyBox(const _tchar * pLayerTag)
+//{
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_LOBY, pLayerTag, TAG_OP(Prototype_SkyBox)));
+//
+//	return S_OK;
+//}
 
+HRESULT CScene_Loby::Ready_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_Object_LobbyUI)));
 	return S_OK;
 }
 
-HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
-{
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
-
-
-	return S_OK;
-}
-
-HRESULT CScene_Loby::Ready_NonAnimObject(const _tchar * pLayerTag)
-{
-
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
-
-	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
-
-	NULL_CHECK_RETURN(pTransform, E_FAIL);
-
-
-	_Matrix tt = XMMatrixScaling(100, 1, 100) * XMMatrixTranslation(0, -2.f, 0);
-
-	pTransform->Set_Matrix(tt);
-	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag))->Set_FrustumSize(99999999.f);
-
-
-
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, L"TestNonAnimInstance"));
-
-
-
-
-
-	return S_OK;
-}
+//
+//HRESULT CScene_Loby::Ready_TestObject(const _tchar * pLayerTag)
+//{
+//
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_TestObject)));
+//
+//
+//	return S_OK;
+//}
+//
+//HRESULT CScene_Loby::Ready_NonAnimObject(const _tchar * pLayerTag)
+//{
+//
+//
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+//
+//	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+//
+//	NULL_CHECK_RETURN(pTransform, E_FAIL);
+//
+//
+//	_Matrix tt = XMMatrixScaling(100, 1, 100) * XMMatrixTranslation(0, -2.f, 0);
+//
+//	pTransform->Set_Matrix(tt);
+//	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LOBY, pLayerTag))->Set_FrustumSize(99999999.f);
+//
+//
+//
+//
+//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LOBY, pLayerTag, L"TestNonAnimInstance"));
+//
+//
+//
+//
+//
+//	return S_OK;
+//}
 
 CScene_Loby * CScene_Loby::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {

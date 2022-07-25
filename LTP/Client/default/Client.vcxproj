@@ -273,6 +273,7 @@
     <ClInclude Include="..\public\ShellingArrow.h" />
     <ClInclude Include="..\public\ShellingSkillAttackPoint.h" />
     <ClInclude Include="..\public\ShellingSkillRange.h" />
+    <ClInclude Include="..\public\LobbyUI.h" />
     <ClInclude Include="..\public\SkillUI.h" />
     <ClInclude Include="..\public\SkyBox.h" />
     <ClInclude Include="..\public\Snake.h" />
@@ -377,6 +378,7 @@
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />
     <ClCompile Include="..\private\ShellingSkillRange.cpp" />
+    <ClCompile Include="..\private\LobbyUI.cpp" />
     <ClCompile Include="..\private\SkillUI.cpp" />
     <ClCompile Include="..\private\SkyBox.cpp" />
     <ClCompile Include="..\private\Snake.cpp" />

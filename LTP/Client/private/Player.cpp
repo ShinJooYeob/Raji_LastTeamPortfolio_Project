@@ -100,15 +100,11 @@ _int CPlayer::Update(_double fDeltaTime)
 #pragma region For Debug Inputkey
 	{
 
-		static _bool ToonShadingStart = false;
-		static _double PassedTime = 0.f;
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
-			m_pRendererCom->Copy_LastDeferredTexture();
-			PassedTime = 0.f;
-			ToonShadingStart = true;
+
 
 			//m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
 			//
@@ -117,17 +113,6 @@ _int CPlayer::Update(_double fDeltaTime)
 			//}
 		}
 
-		if (ToonShadingStart)
-		{
-			PassedTime += fDeltaTime;
-
-			if (PassedTime > 2.f)
-			{
-				PassedTime = 2.f;
-				ToonShadingStart = false;
-			}
-			m_pRendererCom->Copy_LastDeferredToToonShadingTexture(_float(PassedTime) / 2.f);
-		}
 
 
 		
@@ -256,7 +241,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		m_pHeadJoint->Update_BeforeSimulation();
 
 	// CameraShake Test
-	/*{
+	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
 		{
 			m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
@@ -292,7 +277,7 @@ _int CPlayer::Update(_double fDeltaTime)
 			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
 			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
 		}
-	}*/
+	}
 	//
 
 

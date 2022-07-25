@@ -343,7 +343,96 @@ typedef struct tagUIDesc
 
 }UIDESC;
 
+typedef struct tagSceneChangeDraw
+{
 
+	HRESULT Initialize_SCDDesc( UIDESC tUI)
+	{
+
+		szRenderTarget = L"Target_ToonDeferredSceneChaging";
+		szRenderNonToonTarget = L"Target_DeferredSceneChaging";
+
+		pVIBuffer = (CVIBuffer_Rect*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect));
+		pShader = (CShader*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT));
+		pRenderer = (CRenderer*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer));
+		pPaperCurlTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, L"Prototype_Texture_PaperCurl");
+		
+
+		matTransePosedWorld = XMMatrixTranspose(XMMatrixSet(	tUI.fCX, 0, 0, 0,	0, tUI.fCY, 0, 0,	0, 0, 1, 0,
+						tUI.fX - (g_iWinCX * 0.5f), -tUI.fY + (g_iWinCY * 0.5f), 0, 1.f));
+
+		XMStoreFloat4x4(&matProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH((_float)g_iWinCX, (_float)g_iWinCY, 0.f, 1.f)));
+		return S_OK;
+	};
+
+	_int Render_SCD(_uint iPassIndex)
+	{
+
+		FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &matTransePosedWorld, sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ProjMatrix", &matProjMatrix, sizeof(_float4x4)));
+		//Target_ToonDeferredSceneChaging
+		FAILED_CHECK(pShader->Set_Texture("g_DiffuseTexture", g_pGameInstance->Get_SRV(szRenderTarget.c_str())));
+
+		FAILED_CHECK(pVIBuffer->Render(pShader, iPassIndex));
+		return 0;
+	}
+
+	_int Render_SCD_Rolling(_uint iRollingIndex, _bool bNoToonDeferred = false)
+	{
+		FAILED_CHECK(pPaperCurlTexture->Bind_OnShader(pShader, "g_CurlTexture", iRollingIndex));
+		FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &matTransePosedWorld, sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ProjMatrix", &matProjMatrix, sizeof(_float4x4)));
+		//Target_ToonDeferredSceneChaging
+		if (bNoToonDeferred)
+		{
+			FAILED_CHECK(pShader->Set_Texture("g_SourTexture", g_pGameInstance->Get_SRV(szRenderNonToonTarget.c_str())));
+		}
+		else
+		{
+			FAILED_CHECK(pShader->Set_Texture("g_SourTexture", g_pGameInstance->Get_SRV(szRenderTarget.c_str())));
+		}
+
+		FAILED_CHECK(pVIBuffer->Render(pShader, 7));
+		return 0;
+	}
+
+	_int Render_SCD_FadeOut(_uint iPassIndex,_float fFadeIntensive)
+	{
+		
+		FAILED_CHECK(pShader->Set_Texture("g_DiffuseTexture", g_pGameInstance->Get_SRV(szRenderNonToonTarget.c_str())));
+
+		FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &matTransePosedWorld, sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4)));
+		FAILED_CHECK(pShader->Set_RawValue("g_ProjMatrix", &matProjMatrix, sizeof(_float4x4)));
+
+		FAILED_CHECK(pShader->Set_RawValue("g_fPaperCurlIntensive", &fFadeIntensive, sizeof(_float)));
+
+		FAILED_CHECK(pVIBuffer->Render(pShader, iPassIndex));
+		return 0;
+	}
+	
+
+	void Free()
+	{
+		Safe_Release(pVIBuffer);
+		Safe_Release(pShader);
+		Safe_Release(pRenderer);
+		Safe_Release(pPaperCurlTexture);
+		
+	}
+
+	wstring					szRenderTarget = L"";
+	wstring					szRenderNonToonTarget = L"";
+	CVIBuffer_Rect*			pVIBuffer = nullptr;
+	CShader*				pShader = nullptr;
+	CRenderer*				pRenderer = nullptr;
+	CTexture*				pPaperCurlTexture = nullptr;
+	_float4x4				matTransePosedWorld = XMMatrixIdentity();
+	_float4x4				matProjMatrix = XMMatrixIdentity();
+
+}SCDDESC;
 
 typedef struct tagFloatRect
 {

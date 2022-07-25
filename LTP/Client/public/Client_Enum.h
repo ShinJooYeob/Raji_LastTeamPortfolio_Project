@@ -381,6 +381,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_UI_HpUI,
 	Prototype_Object_UI_UI,
 	Prototype_Object_SkillUI,
+	Prototype_Object_LobbyUI,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -642,6 +643,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_SkillUI:
 		return TEXT("Prototype_Object_SkillUI");
 
+	case Prototype_Object_LobbyUI:
+		return TEXT("Prototype_Object_LobbyUI");
+		
 
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");

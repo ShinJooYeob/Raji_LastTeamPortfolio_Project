@@ -21,10 +21,11 @@ public:
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Camera(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
+	//HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
 
-	HRESULT Ready_TestObject(const _tchar* pLayerTag);
-	HRESULT Ready_NonAnimObject(const _tchar* pLayerTag);
+
+	HRESULT Ready_UI(const _tchar* pLayerTag);
+
 
 	
 
