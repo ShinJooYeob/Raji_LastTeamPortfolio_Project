@@ -599,7 +599,8 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
 			{
-				CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+				//////////////////////Old Pos
+				/*CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 				CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
 
 				RELEASE_INSTANCE(CGameInstance);
@@ -612,7 +613,11 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 				_uint RandomPlayerIndex = iPlayerIndex + Random;
 
 				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
-				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));*/
+				///////////////////////////////
+
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(m_vecInstancedTransform[i].iCellIndex);
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(m_vecInstancedTransform[i].iCellIndex));
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
