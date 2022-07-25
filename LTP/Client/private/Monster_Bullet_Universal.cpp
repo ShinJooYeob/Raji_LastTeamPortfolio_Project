@@ -256,12 +256,17 @@ void CMonster_Bullet_Universal::Set_IsDead()
 	{
 	case TEZABSURA_MINION_BULLET:
 	{
-		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
 	case TEZABSURA_LANDMINE_DEFAULT_BULLET:
 	{
-		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		break;
+	}
+	case TEZABSURA_LANDMINE_INSTALL:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1038.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
 	default:
@@ -860,6 +865,11 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime
 {
 	if (m_dBezierTime < 1)
 	{
+		if (m_iBoolInt == 0)
+		{
+			m_fTempPlayerPos.y += 0.5;
+			m_iBoolInt += 1;
+		}
 		m_dBezierTime += dDeltaTime;
 		_Vector  CenterPos = (XMLoadFloat4(&m_fTempPos) - XMLoadFloat4(&m_fTempPlayerPos));
 		CenterPos = XMLoadFloat4(&m_fTempPos) + (CenterPos * .1f); //베지어 곡선은 스타트 지점에 가까울수록 날카로운 곡선이 아닌 둥글 둥글한 포물선이 되는듯
@@ -878,6 +888,11 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime
 	}
 	else
 	{
+		if (m_iBoolInt == 1)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1117.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+			m_iBoolInt += 1;
+		}
 		m_dBezierTime += dDeltaTime;
 		if (m_dBezierTime > 1.3f) m_dBezierTime = 1.;
 
