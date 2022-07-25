@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Monster_Bullet_Universal.h"
 #include "Monster_Vayusura_Leader.h"
+#include "Monster_Texture_Bullet.h"
 
 const _tchar* m_pMonster_Bullet_UniversalTag[CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSAL_END]
 {
@@ -194,6 +195,9 @@ _int CMonster_Bullet_Universal::Update(_double dDeltaTime)
 
 	FAILED_CHECK(Update_JYParticleTransform(dDeltaTime));
 
+
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -203,6 +207,11 @@ _int CMonster_Bullet_Universal::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
 
 	return _int();
 }
@@ -243,7 +252,21 @@ _int CMonster_Bullet_Universal::LateRender()
 
 void CMonster_Bullet_Universal::Set_IsDead()
 {
-
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case TEZABSURA_MINION_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		break;
+	}
+	case TEZABSURA_LANDMINE_DEFAULT_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		break;
+	}
+	default:
+		break;
+	}
 
 	m_bIsDead = true;
 }
@@ -255,6 +278,44 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
+
+
+		switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+		{
+		case TEZABSURA_MINION_BULLET:
+		{
+			m_vecJYTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[1]);
+			Set_IsDead();
+			break;
+		}
+		case TEZABSURA_LANDMINE_DEFAULT_BULLET:
+		{
+			m_vecJYTextureParticleDesc[6].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[6]);
+			Set_IsDead();
+			break;
+		}
+		case TEZABSURA_LANDMINE_INSTALL:
+		{
+			m_vecJYNonMeshParticleDesc[1].vPosition = m_vecJYNonMeshParticleDesc[0].vPosition
+				= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[0]);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[1]);
+
+			m_vecJYTextureParticleDesc[4].vFixedPosition = m_vecJYTextureParticleDesc[3].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[3]);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[4]);
+			Set_IsDead();
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 
@@ -281,6 +342,8 @@ HRESULT CMonster_Bullet_Universal::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+
+	SetUp_Collider();
 	return S_OK;
 }
 
@@ -293,6 +356,7 @@ HRESULT CMonster_Bullet_Universal::SetUp_BoneMatrix()
 			m_Monster_Bullet_UniversalDesc.fScale, 
 			_float3(0.f, 0.f, 0.f), m_Monster_Bullet_UniversalDesc.fPositioning);
 	}
+
 	return S_OK;
 }
 
@@ -427,6 +491,96 @@ HRESULT CMonster_Bullet_Universal::SetUp_Fire(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Bullet_Universal::SetUp_Collider()
+{
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case TEZABSURA_MINION_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	case TEZABSURA_LANDMINE_INSTALL:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(100.f, 100.f, 100.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(30.f, 30.f, 90.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+		m_pColliderCom->Set_ParantBuffer();
+		break;
+	}
+	case TEZABSURA_LANDMINE_DEFAULT_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+		break;
+	}
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Bullet_Universal::Update_Collider(_double dDeltaTime)
+{
+	if (m_pColliderCom == nullptr)
+		return S_OK;
+
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case TEZABSURA_MINION_BULLET:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	default:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
+
+	return S_OK;
+}
+
 _Vector CMonster_Bullet_Universal::Bezier(_Vector StartPoint, _Vector LastPoint, _double dDeltaTime)
 {
 	if (m_dBezierTime <= 1)
@@ -555,9 +709,30 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 	{
 		m_vecJYTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[1]);
+
+		////////////////////////////////EH
+
+		CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+		Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+		Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+		Monster_Texture_BulletDesc.fScale = _float3(5.f, 5.f, 5.f);
+
+		Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+		Monster_Texture_BulletDesc.Object = this;
+
+		Monster_Texture_BulletDesc.dDuration = 0.2;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+		///////////////////////////////////
+
 		Set_IsDead();
 	}
 	
+
 
 	return S_OK;
 }
@@ -632,7 +807,7 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Default_Bullet(_double dDe
 		m_bOnceSwtich = true;
 	}
 
-	if (m_dDeltaTime < 1)
+	if (m_dDeltaTime < 1.5f)
 	{
 
 		if (m_dDeltaTime > 0.65f)
@@ -656,6 +831,25 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Default_Bullet(_double dDe
 	{
 		m_vecJYTextureParticleDesc[6].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[6]);
+
+		////////////////////////////////EH
+
+		CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+		Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+		Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+		Monster_Texture_BulletDesc.fScale = _float3(5.f, 5.f, 5.f);
+
+		Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+		Monster_Texture_BulletDesc.Object = this;
+
+		Monster_Texture_BulletDesc.dDuration = 0.2;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+		///////////////////////////////////
 		Set_IsDead();
 	}
 
@@ -711,6 +905,27 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Install(_double dDeltaTime
 
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[3]);
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[4]);
+
+
+		////////////////////////////////EH
+
+		CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+		Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+		Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+		Monster_Texture_BulletDesc.fScale = _float3(7.f, 7.f, 7.f);
+
+		Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+		Monster_Texture_BulletDesc.Object = this;
+
+		Monster_Texture_BulletDesc.dDuration = 0.3;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+		///////////////////////////////////
+
 		Set_IsDead();
 	}
 
@@ -899,6 +1114,7 @@ void CMonster_Bullet_Universal::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pColliderCom);
 
 
 	Safe_Release(m_pJYTextureParticleTransform);

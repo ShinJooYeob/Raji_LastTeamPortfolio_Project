@@ -403,6 +403,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\05. ChangeNavIndexTrigger">
       <UniqueIdentifier>{e7982f60-c326-46ff-af3d-630f5a36c18c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger">
+      <UniqueIdentifier>{aa860e5c-d46b-4c7a-9af1-b0d411232f0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -885,6 +888,9 @@
     <ClInclude Include="..\public\SceneChangeTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\08. SceneChangeTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1346,6 +1352,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SceneChangeTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\08. SceneChangeTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

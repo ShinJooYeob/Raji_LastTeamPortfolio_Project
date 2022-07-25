@@ -85,6 +85,7 @@ HRESULT CObjectMgr::Add_GameObject_To_Layer(_uint eSceneNum, const _tchar * tagL
 	if (pInstance->Get_NameTag() == nullptr)
 		pInstance->Set_NameTag(tagLayer);
 
+
 	CObjectLayer* pLayer = Find_Layer(eSceneNum,tagLayer);
 
 	if (pLayer == nullptr)

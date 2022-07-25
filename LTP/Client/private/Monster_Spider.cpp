@@ -32,6 +32,15 @@ HRESULT CMonster_Spider::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
+	if (nullptr != pArg)
+	{
+		memcpy(&m_Instance_Info, pArg, sizeof(INSTANCE_INFO));
+	}
+	else {
+		MSGBOX("CMonster_Spider의 pArg가 nullptr입니다.");
+	}
+
+
 	FAILED_CHECK(SetUp_Components());
 
 	return S_OK;
@@ -167,13 +176,51 @@ HRESULT CMonster_Spider::SetUp_Info()
 
 	m_pPlayerTransformCom = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
 
-	CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
-
 	RELEASE_INSTANCE(CGameInstance);
 
-	_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-	for (_uint i = 0; i < 16; i++)
+	if (m_Instance_Info.fValueMat.m[0][1] <= 1)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_1);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 1 && m_Instance_Info.fValueMat.m[0][1] <= 2)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_2);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 2 && m_Instance_Info.fValueMat.m[0][1] <= 4)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_4);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 4 && m_Instance_Info.fValueMat.m[0][1] <= 8)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_8);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 8 && m_Instance_Info.fValueMat.m[0][1] <= 16)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_16);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 16 && m_Instance_Info.fValueMat.m[0][1] <= 32)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_32);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 32 && m_Instance_Info.fValueMat.m[0][1] <= 64)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_64);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 64 && m_Instance_Info.fValueMat.m[0][1] <= 128)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_128);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 128 && m_Instance_Info.fValueMat.m[0][1] <= 256)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_256);
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 256 && m_Instance_Info.fValueMat.m[0][1] <= 512)
+	{
+		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_512);
+	}
+
+	for (_uint i = 0; i < m_Instance_Info.fValueMat.m[0][1]; i++)
 	{
 		TRANSFORM_STATE tDesc;
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -186,12 +233,27 @@ HRESULT CMonster_Spider::SetUp_Info()
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
 
-		_uint Random = (rand() % 6) - 3;
+
+		for (_uint j = (_uint)m_Instance_Info.fValueMat.m[0][3]; j < (_uint)m_Instance_Info.fValueMat.m[0][2]; i++)
+		{
+			_uint X = j / 4;
+			_uint Y = j % 4;
+			if (m_Instance_Info.fSubValueMat.m[X][Y] > 0)
+			{
+				tDesc.iCellIndex = m_Instance_Info.fSubValueMat.m[X][Y];
+				m_Instance_Info.fValueMat.m[0][3]++;
+
+				if ((_uint)m_Instance_Info.fValueMat.m[0][3] + 1 >= (_uint)m_Instance_Info.fValueMat.m[0][2])
+					m_Instance_Info.fValueMat.m[0][3] = 0;
+				break;
+			}
+			else {
+				MSGBOX("CMonster_Spider의 m_Instance_Info.fSubValueMat.m[X][Y]가 0 이하입니다.");
+			}
+		}
 
 
-		_uint RandomPlayerIndex = iPlayerIndex + Random;
-
-		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+		tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(tDesc.iCellIndex));
 
 
 		/////////////////////////////////////////////PlayerPosition Create
@@ -207,7 +269,7 @@ HRESULT CMonster_Spider::SetUp_Info()
 
 		//////////Navigation
 		CNavigation::NAVIDESC		NaviDesc;
-		NaviDesc.iCurrentIndex = RandomPlayerIndex;
+		NaviDesc.iCurrentIndex = tDesc.iCellIndex;
 
 		tDesc.pNavigation = (CNavigation*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), &NaviDesc);
 
@@ -248,7 +310,7 @@ HRESULT CMonster_Spider::SetUp_Info()
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, m_charModellInstanceType , &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}

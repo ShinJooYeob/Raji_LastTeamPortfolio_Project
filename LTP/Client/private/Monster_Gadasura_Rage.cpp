@@ -484,7 +484,8 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	m_iOncePattern = 51;
+
+	m_iOncePattern = 16;
 
 	switch (m_iOncePattern)
 	{
@@ -735,6 +736,8 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_bLookAtOn = true;
 		m_bWeaponAttackSwitch = false;
 
+		m_iSoundIndex = 0;
+
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -750,13 +753,29 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 3:
 		{
 			if (PlayRate >= 0.28571 && PlayRate <= 0.571428)
+			{
 				m_pTransformCom->Move_Right(dDeltaTime * 1.5, m_pNavigationCom);
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+			}
 			break;
 		}
 		case 4:
 		{
 			if (PlayRate >= 0.22222 && PlayRate <= 0.44444)
+			{
 				m_pTransformCom->Move_Left(dDeltaTime * 1.5, m_pNavigationCom);
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+			}
 			break;
 		}
 		case 5:
@@ -765,6 +784,12 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 2.7f, 1.2f, (_float)PlayRate - 0.266666f, 0.2334f); // PlayRate - 0.266666 and 0.5 - 0.266666
 				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed, m_pNavigationCom);
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
 			}
 			break;
 		}
@@ -812,6 +837,13 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iAdjMovedIndex++;
 			}
 			m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
+
+			m_dSoundTime += dDeltaTime;
+			if (m_dSoundTime >= 0.4)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_dSoundTime = 0;
+			}
 			break;
 		}
 		case 15:
@@ -822,6 +854,13 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iAdjMovedIndex++;
 			}
 			m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
+
+			m_dSoundTime += dDeltaTime;
+			if (m_dSoundTime >= 0.4)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_dSoundTime = 0;
+			}
 			break;
 		}
 		case 17:
@@ -846,6 +885,17 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTransformCom);
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iSoundIndex == 0 && PlayRate > 0.2155)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.3017)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 18:
@@ -863,6 +913,17 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3879)
 			{
 				m_bWeaponAttackSwitch = false;
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate > 0.2192)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.2631)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
@@ -902,6 +963,22 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4455)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.4950)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 2 && PlayRate >= 0.5445)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 20:
@@ -933,6 +1010,18 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_iAdjMovedIndex++;
 			}
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_05.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.4245)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Impact_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 21:
@@ -951,6 +1040,28 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bWeaponAttackSwitch = false;
 			}
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.1176)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.29411)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 2 && PlayRate >= 0.5882)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 3 && PlayRate >= 0.8823)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 22:
@@ -959,6 +1070,17 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate > 0.2702)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate > 0.4054)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Scream_Pain_05.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
@@ -1039,25 +1161,103 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bLookAtOn = false;
 				//m_bWeaponAttackSwitch = false;
 			}
-			
+
+
+			switch (m_iSoundIndex)
+			{
+			case 0: {
+				if (PlayRate >= 0.1724)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			case 1: {
+				if (PlayRate >= 0.2)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Heavy.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			case 2: {
+				if (PlayRate >= 0.4275)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			case 3: {
+				if (PlayRate >= 0.4689655)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Heavy.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			case 4: {
+				if (PlayRate >= 0.7379)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Gada_Swing_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			case 5: {
+				if (PlayRate >= 0.751724)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Heavy.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+				break;
+			}
+			default:
+				break;
+			}
+
 			break;
 		}
 		case 24:
 		{
+			m_dSoundTime += dDeltaTime;
+
+			if (m_dSoundTime >= 0.57)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare03.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_dSoundTime = 0;
+			}
+
 			m_pTransformCom->Move_Forward(dDeltaTime * 0.6, m_pNavigationCom);
 
 			break;
 		}
 		case 25:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.9574)
+			if (m_iAdjMovedIndex == 0 && PlayRate <= 0.9574)
 			{
 				m_bLookAtOn = false;
 				m_iAdjMovedIndex++;
 			}
-			else if(PlayRate >= 0.9574 && PlayRate <= 0.98){
+			else if(PlayRate >= 0.9574 && PlayRate <= 0.98)
+			{
 				m_bLookAtOn = true;
 				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3191)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Rage_Gadasura_Scream_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.9574)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_bare01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
 			}
 
 			break;

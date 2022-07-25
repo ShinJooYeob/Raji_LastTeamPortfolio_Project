@@ -103,6 +103,15 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
+private:
+	//Knockback
+	_bool				m_bKnockbackOn = false;
+	_float3				m_fKnockbackDir;
+
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+
 private:	
 	HRESULT	Ready_ParticleDesc();
 	HRESULT	Update_ParticleTransform(_double fDeltaTime);
@@ -115,10 +124,7 @@ private:
 	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
 	vector<NONINSTNESHEFTDESC>								m_vecNonMeshParticleDesc;
-private:
-	//Knockback
-	_bool				m_bKnockbackOn = false;
-	_float3				m_fKnockbackDir;
+
 
 private:
 	HRESULT SetUp_Components();

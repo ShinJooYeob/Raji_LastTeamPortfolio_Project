@@ -34,6 +34,9 @@ private:
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
 
+	HRESULT				SetUp_Collider();
+	HRESULT				Update_Collider(_double dDeltaTime);
+
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
 	HRESULT				CoolTime_Manager(_double dDeltaTime);
@@ -48,11 +51,17 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
 
 private:
 	HRESULT	Ready_ParticleDesc();
@@ -100,8 +109,14 @@ private:
 
 	_uint				m_iBoolOnce = 0;
 
-	_bool				m_bFastRunOn = false;
+private:
+	//Knockback
+	_bool				m_bKnockbackOn = false;
+	_float3				m_fKnockbackDir;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
 
 private:
 	HRESULT SetUp_Components();

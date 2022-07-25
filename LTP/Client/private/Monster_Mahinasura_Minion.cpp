@@ -37,10 +37,11 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 	// #BUG NAVIONPLEASE
-	/////////////////test
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-	/////////////////
+
+	///////////////test
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	///////////////
 
 	m_pTransformCom->Scaled_All(_float3(1.5f,1.5f,1.5f));
 
@@ -86,14 +87,12 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
-	//////////
+
 	if (m_bIsOnScreen)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
-	//////////
 
-	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
@@ -103,7 +102,7 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pTailAttackColliderCom));
 #endif
 
-//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 
 	if (m_pHPUI != nullptr)
@@ -191,6 +190,7 @@ _float CMonster_Mahinasura_Minion::Take_Damage(CGameObject * pTargetObject, _flo
 
 	if (m_fHP <= 0)
 	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 		Set_IsDead();
 	}
 	return _float();
@@ -762,7 +762,7 @@ HRESULT CMonster_Mahinasura_Minion::Special_Trigger(_double dDeltaTime)
 	m_dSpecial_CoolTime += dDeltaTime;
 
 
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance > 8 && m_dSpecial_CoolTime > 20)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -826,6 +826,8 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 		m_bColliderAttackOn = false;
 
+		m_iSoundIndex = 0;
+
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -863,14 +865,20 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 		switch (iNowAnimIndex)
 		{
-		//case 1:
-		//{
-		//	if (PlayRate > 0)
-		//	{
-		//		m_pTransformCom->Move_Forward(dDeltaTime * 0.2);
-		//	}
-		//	break;
-		//}
+		case 1:
+		{
+			m_dSoundTime += dDeltaTime;
+
+			if (PlayRate > 0)
+			{
+				if (m_dSoundTime >= 0.7)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Mahinasura_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_dSoundTime = 0;
+				}
+			}
+			break;
+		}
 		case 2:
 		{
 			if (PlayRate >= 0.175 && PlayRate <= 0.5)
@@ -879,6 +887,13 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.5f, 1.05f, (_float)PlayRate - 0.175f, 0.325f);
 				m_pTransformCom->Move_Backward(dDeltaTime * fSpeed, m_pNavigationCom);
+
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 			break;
 		}
@@ -893,8 +908,13 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 					// #TIME JUMP 
 					// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_TIMEING1, m_pTextureParticleTransform);
 
-
 					m_iAdjMovedIndex += 1;
+
+					if (m_iSoundIndex == 0)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						m_iSoundIndex++;
+					}
 				}
 				//_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
 				//_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 10.f, 3.f, (_float)PlayRate - 0.1f, 0.38f);
@@ -917,6 +937,12 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 					m_TempLook = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
 					m_iAdjMovedIndex += 1;
+
+					if (m_iSoundIndex == 0)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						m_iSoundIndex++;
+					}
 				}
 				//_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left
 				//_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 10.f, 3.f, (_float)PlayRate - 0.1f, 0.38f);
@@ -927,6 +953,15 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				_Vector vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), XMLoadFloat3(&m_TempLook)); //Left;
 				_float fSpeed = g_pGameInstance->Easing(TYPE_QuinticOut, 4.5f, 0.75f, (_float)PlayRate - 0.1f, 0.38f);
 				m_pTransformCom->MovetoDir(-vRight, dDeltaTime * fSpeed, m_pNavigationCom);
+			}
+			break;
+		}
+		case 6:
+		{
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasure_Taunt.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
@@ -947,6 +982,11 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_dAcceleration = 0.5;
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 16:
@@ -955,6 +995,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				m_bLookAtOn = false;
 				m_dAcceleration = 1;
+
 				m_iAdjMovedIndex++;
 			}
 			else if (0.f < PlayRate && PlayRate <= 0.478f)
@@ -964,6 +1005,12 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_fKnockbackDir.y = 0;
 
 				m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
@@ -1014,13 +1061,21 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (PlayRate >= 0.24 && PlayRate <= 0.48)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 0.9, m_pNavigationCom);
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 
 			}
 			else if (PlayRate >= 0.49 && PlayRate <= 0.84)
 			{
-
-
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
+				if (m_iSoundIndex == 1)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 
 			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.35f)
@@ -1061,6 +1116,12 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed, m_pNavigationCom);
 
 				//m_pTransformCom->Move_Forward(dDeltaTime * 1.2);
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Scorpion_Tail_Slash_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 
 
@@ -1079,14 +1140,28 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			break;
 		}
 		case 21: {
+			m_dSoundTime += dDeltaTime;
+
 			if (PlayRate > 0 && PlayRate >= 0.125 && m_bFastRunOn == false)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
 				m_bFastRunOn = true;
+
+				if (m_dSoundTime >= 0.55)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Mahinasura_Run.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_dSoundTime = 0;
+				}
 			}
 			else if (m_bFastRunOn = true)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.8, m_pNavigationCom);
+
+				if (m_dSoundTime >= 0.55)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Mahinasura_Run.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_dSoundTime = 0;
+				}
 			}
 			break;
 		}

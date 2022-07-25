@@ -22,9 +22,19 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
+public:
+	virtual void		CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	virtual _float		Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 private:
 	HRESULT				SetUp_Components();
+
+private:
+	HRESULT				SetUp_Collider();
+	HRESULT				Update_Collider(_double dDeltaTime);
+
 
 private:
 	NONINSTNESHEFTDESC		m_tMeshDesc;
@@ -39,7 +49,7 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CTransform*			m_pParentTranscom = nullptr;
-
+	CCollider*			m_pColliderCom = nullptr;
 
 
 public:

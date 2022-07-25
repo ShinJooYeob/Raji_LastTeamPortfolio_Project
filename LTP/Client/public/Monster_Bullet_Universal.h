@@ -70,6 +70,8 @@ private:
 	HRESULT	SetUp_Info();
 	HRESULT	SetUp_BoneMatrix();
 	HRESULT SetUp_Fire(_double dDeltaTime);
+	HRESULT	SetUp_Collider();
+	HRESULT	Update_Collider(_double dDeltaTime);
 
 private:
 	_Vector Bezier(_Vector StartPoint,_Vector LastPoint, _double dDeltaTime);
@@ -95,7 +97,11 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
+
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+
 
 	CTransform*			m_pPlayerTransform = nullptr;
 

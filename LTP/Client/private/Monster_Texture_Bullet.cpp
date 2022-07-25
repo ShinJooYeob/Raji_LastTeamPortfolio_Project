@@ -5,8 +5,9 @@
 const _tchar* m_pMonster_Texture_BulletTag[CMonster_Texture_Bullet::MONSTER_TEXUTRE_BULLET_END]
 {
 	L"Jalsura_Bullet",
-	L"Gadasura_Terrain_Bullet"
-
+	L"Gadasura_Terrain_Bullet",
+	L"NonTexture",
+	L"NonTexture"
 };
 
 CMonster_Texture_Bullet::CMonster_Texture_Bullet(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -80,7 +81,6 @@ _int CMonster_Texture_Bullet::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	m_dDeltaTime += dDeltaTime;
-	m_fAngle = _float(dDeltaTime) * 2080.f;
 
 	if (m_Monster_Texture_BulletDesc.dDuration <= m_dDeltaTime)
 	{
@@ -88,6 +88,9 @@ _int CMonster_Texture_Bullet::Update(_double dDeltaTime)
 	}
 
 	SetUp_Fire(dDeltaTime);
+
+
+	Update_Collider(dDeltaTime);
 
 	return _int();
 }
@@ -99,6 +102,10 @@ _int CMonster_Texture_Bullet::LateUpdate(_double dDeltaTime)
 	if(m_Monster_Texture_BulletDesc.iBulletTextureNumber != GADASURA_TERRAIN_BULLET)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this));
 
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+
+#endif
 	return _int();
 }
 
@@ -185,6 +192,26 @@ void CMonster_Texture_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMy
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
+
+		switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
+		{
+		case GADASURA_TERRAIN_BULLET:
+		{
+			Set_IsDead();
+			break;
+		}
+		case NONTEXTURE_SPHERE:
+		{
+			Set_IsDead();
+			break;
+		}
+		case NONTEXTURE_OBB:
+		{
+			Set_IsDead();
+			break;
+		}		default:
+			break;
+		}
 	}
 }
 
@@ -214,6 +241,9 @@ HRESULT CMonster_Texture_Bullet::SetUp_Components()
 
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+
+	SetUp_Collider();
 
 	return S_OK;
 }
@@ -268,6 +298,12 @@ HRESULT CMonster_Texture_Bullet::SetUp_Fire(_double dDeltaTime)
 	case GADASURA_TERRAIN_BULLET:
 		Gadasura_Terrain_Bullet(dDeltaTime);
 		break;
+	case NONTEXTURE_SPHERE:
+		Nontexture_Sphere(dDeltaTime);
+		break;
+	case NONTEXTURE_OBB:
+		Nontexture_Obb(dDeltaTime);
+		break;
 	default:
 		MSGBOX("Not BulletTextureNumber");
 		break;
@@ -275,8 +311,107 @@ HRESULT CMonster_Texture_Bullet::SetUp_Fire(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Texture_Bullet::SetUp_Collider()
+{
+	switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
+	{
+	case NONTEXTURE_SPHERE:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	case NONTEXTURE_OBB:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+		m_pColliderCom->Set_ParantBuffer();
+
+		break;
+	}
+	case GADASURA_TERRAIN_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Texture_Bullet::Update_Collider(_double dDeltaTime)
+{
+	if (m_pColliderCom == nullptr)
+		return S_OK;
+
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+
+	switch (m_Monster_Texture_BulletDesc.iBulletTextureNumber)
+	{
+	case NONTEXTURE_SPHERE:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	case NONTEXTURE_OBB:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	case GADASURA_TERRAIN_BULLET:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
+	return S_OK;
+}
+
 HRESULT CMonster_Texture_Bullet::Jalsura_Bullet(_double dDeltaTime)
 {
+	m_fAngle = _float(dDeltaTime) * 2080.f;
+
 	if (false == m_bOnceSwtich)
 	{
 		_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -430,6 +565,20 @@ HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Bullet(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Texture_Bullet::Nontexture_Sphere(_double dDeltaTime)
+{
+	m_pTransformCom->Move_Forward(dDeltaTime);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Texture_Bullet::Nontexture_Obb(_double dDeltaTime)
+{
+	m_pTransformCom->Move_Forward(dDeltaTime);
+
+	return S_OK;
+}
+
 HRESULT CMonster_Texture_Bullet::Gadasura_Terrain_Particle()
 {
 	m_MeshEffectDesc.eParticleTypeID = InstanceEffect_Cone;
@@ -503,4 +652,5 @@ void CMonster_Texture_Bullet::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pColliderCom);
 }

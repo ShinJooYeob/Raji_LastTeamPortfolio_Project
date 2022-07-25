@@ -127,6 +127,8 @@ _int CMonster_Plat_Bullet::Update(_double fDeltaTime)
 	//Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
 
 
+	Update_Collider(fDeltaTime);
+
 
 	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
 	{
@@ -148,6 +150,11 @@ _int CMonster_Plat_Bullet::LateUpdate(_double fDeltaTimer)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
 	}
+
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
 
 	return _int();
 }
@@ -209,6 +216,60 @@ _int CMonster_Plat_Bullet::LateRender()
 	return _int();
 }
 
+void CMonster_Plat_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
+}
+
+_float CMonster_Plat_Bullet::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
+}
+
+HRESULT CMonster_Plat_Bullet::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+	/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(70.f, 70.f, 70.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(30.f, 80.f, 10.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
+	m_pColliderCom->Set_ParantBuffer();
+
+	return S_OK;
+}
+
+HRESULT CMonster_Plat_Bullet::Update_Collider(_double dDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+	
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
+
+	return S_OK;
+}
+
 
 HRESULT CMonster_Plat_Bullet::SetUp_Components()
 {
@@ -224,6 +285,9 @@ HRESULT CMonster_Plat_Bullet::SetUp_Components()
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+
+	SetUp_Collider();
 
 	return S_OK;
 }
@@ -262,6 +326,7 @@ void CMonster_Plat_Bullet::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pParentTranscom);
+	Safe_Release(m_pColliderCom);
 
 
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Jalsura.h"
 #include "Monster_Texture_Bullet.h"
+#include "HpUI.h"
 
 
 CMonster_Jalsura::CMonster_Jalsura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -35,6 +36,12 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+	//////////////////testPosition
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
 	return S_OK;
 }
 
@@ -66,6 +73,12 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	Update_Collider(dDeltaTime);
+
 	FAILED_CHECK(Update_ParticleTransform(dDeltaTime));
 	return _int();
 }
@@ -84,6 +97,15 @@ _int CMonster_Jalsura::LateUpdate(_double dDeltaTime)
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(dDeltaTime);
 
 	return _int();
 }
@@ -136,6 +158,43 @@ void CMonster_Jalsura::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 
 _float CMonster_Jalsura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+	m_dSpecial_CoolTime = 0;
+	m_dOnceCoolTime = 0;
+	m_dInfinity_CoolTime = 0;
+
+	m_bIOnceAnimSwitch = true;
+	if (bKnockback == false)
+	{
+		m_bKnockbackOn = false;
+		m_iOncePattern = 40;
+	}
+	else {
+		m_bKnockbackOn = true;
+		m_iOncePattern = 40;
+
+		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+	}
+
+	if (m_fHP < 5 && m_iBoolOnce == 0)
+	{
+		m_iOncePattern = 41;
+		m_dSpecial_CoolTime = 0;
+		m_dOnceCoolTime = 0;
+		m_dInfinity_CoolTime = 0;
+
+		m_iBoolOnce += 1;
+	}
+
+	if (m_fHP <= 0)
+	{
+		Set_IsDead();
+	}
+
 	return _float();
 }
 
@@ -158,24 +217,6 @@ HRESULT CMonster_Jalsura::SetUp_Info()
 HRESULT CMonster_Jalsura::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-
-
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime);
-			break;
-
-		}
-	}
 
 	if (m_bLookAtOn)
 	{
@@ -202,6 +243,40 @@ HRESULT CMonster_Jalsura::SetUp_Fight(_double dDeltaTime)
 	//RELEASE_INSTANCE(CGameInstance);
 
 
+	return S_OK;
+}
+
+HRESULT CMonster_Jalsura::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+
+	/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(3.f, 3.f, 3.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "sk_eye", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Jalsura::Update_Collider(_double dDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 	return S_OK;
 }
 
@@ -243,8 +318,6 @@ HRESULT CMonster_Jalsura::CoolTime_Manager(_double dDeltaTime)
 
 			m_bIOnceAnimSwitch = true;
 		}
-
-		m_bFastRunOn = false;
 	}
 
 	//반복적으로 동작하는 애니메이션
@@ -255,8 +328,6 @@ HRESULT CMonster_Jalsura::CoolTime_Manager(_double dDeltaTime)
 
 
 		m_dInfinity_CoolTime = 0;
-
-		m_bFastRunOn = false;
 	}
 
 	return S_OK;
@@ -275,6 +346,12 @@ HRESULT CMonster_Jalsura::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 2:
 		m_iOnceAnimNumber = 2;
+		break;
+	case 40:
+		m_iOnceAnimNumber = 1;
+		break;
+	case 41:
+		m_iOnceAnimNumber = 3;
 		break;
 	}
 
@@ -303,19 +380,19 @@ HRESULT CMonster_Jalsura::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 1:
-		m_pTransformCom->Move_Forward(dDeltaTime * 0.4);
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.6, m_pNavigationCom);
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 2:
-		m_pTransformCom->Move_Backward(dDeltaTime * 0.4);
+		m_pTransformCom->Move_Backward(dDeltaTime * 0.6, m_pNavigationCom);
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 3:
-		m_pTransformCom->Move_Left(dDeltaTime * 0.4);
+		m_pTransformCom->Move_Left(dDeltaTime * 0.6, m_pNavigationCom);
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 4:
-		m_pTransformCom->Move_Right(dDeltaTime * 0.4);
+		m_pTransformCom->Move_Right(dDeltaTime * 0.6, m_pNavigationCom);
 		m_iInfinityAnimNumber = 0;
 		break;
 	}
@@ -455,6 +532,18 @@ HRESULT CMonster_Jalsura::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
+	SetUp_Collider();
+
 	return S_OK;
 }
 
@@ -468,6 +557,9 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
+		m_dAcceleration = 1;
+
+		m_iSoundIndex = 0;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
@@ -504,6 +596,56 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			m_dSoundTime += dDeltaTime;
+			if (m_dSoundTime >= 1)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Secondary_Wing_Flap_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_dSoundTime = 0;
+			}
+			break;
+		}
+		case 1:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
+			{
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
+			}
+			if (m_bKnockbackOn == true)
+			{
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+				{
+					m_bLookAtOn = false;
+					m_dAcceleration = 0.7;
+					m_iAdjMovedIndex++;
+
+
+					if (m_iSoundIndex == 0)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						m_iSoundIndex++;
+					}
+				}
+				else if (0.f < PlayRate && PlayRate <= 0.8)
+				{
+					if (PlayRate >= 0 && PlayRate <= 0.8)
+						m_pTransformCom->Move_Backward(dDeltaTime* 0.5, m_pNavigationCom);
+
+					m_fKnockbackDir.y = 0;
+
+					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+				}
+			}
+			break;
+		}
 		case 2:
 		{
 #define JalsuraColorChangeTime 0.15f
@@ -568,6 +710,23 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
 
+				//////////////////EH Collider
+
+
+				ZeroMemory(&Monster_Texture_BulletDesc, sizeof(CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC));
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_OBB;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 30;
+				Monster_Texture_BulletDesc.fScale = _float3(11.5f, 1.f, 1.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 1.f, 0.f);
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 1;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+				////////////////////
+
 
 				m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f +
@@ -583,6 +742,9 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonMeshParticleDesc[0]);
 
 				fRimLightPassedTime = 0;
+
+				FAILED_CHECK(g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Lazer_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f));
+
 				m_iAdjMovedIndex++;
 			}
 			else
@@ -597,9 +759,27 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Set_LimLight_N_Emissive(_float4(vRimLightColor, Rate),
 					_float4(Rate, Rate* 0.2f, Rate, 1));
 			}
-		}
 
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Movement.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}else if (m_iSoundIndex == 1 && PlayRate >= 0.2105)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Laser.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}else if (m_iSoundIndex == 2 && PlayRate >= 0.7368)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Steam_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
+		}
+		case 3:
+		{
+			m_bLookAtOn = false;
+			break;
+		}
 		}
 
 		
@@ -643,8 +823,8 @@ void CMonster_Jalsura::Free()
 	Safe_Release(m_pModel);
 
 
-	//Safe_Release(m_pColliderCom);
-	//Safe_Release(m_pHPUI);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHPUI);
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
