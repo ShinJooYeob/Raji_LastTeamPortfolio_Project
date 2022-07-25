@@ -450,7 +450,6 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 {
-
 	switch (m_iOncePattern)
 	{
 

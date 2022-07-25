@@ -469,9 +469,6 @@ HRESULT CMonster_Tezabsura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
-
-	//m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), dDeltaTime);
-
 	switch (m_iOncePattern)
 	{
 	case 0:

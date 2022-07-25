@@ -252,7 +252,21 @@ _int CMonster_Bullet_Universal::LateRender()
 
 void CMonster_Bullet_Universal::Set_IsDead()
 {
-
+	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
+	{
+	case TEZABSURA_MINION_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		break;
+	}
+	case TEZABSURA_LANDMINE_DEFAULT_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+		break;
+	}
+	default:
+		break;
+	}
 
 	m_bIsDead = true;
 }
