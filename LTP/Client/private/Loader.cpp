@@ -366,9 +366,6 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_lans_rot);
 		STATIC_EFFECTLOAD(Prototype_Mesh_doomBvert);
 
-
-
-
 	}
 
 
