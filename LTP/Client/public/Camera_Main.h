@@ -74,6 +74,9 @@ public: /* Get Camera Transform State */
 	_fVector			Get_CameraState(CTransform::TransformState eState);
 	_fVector			Get_CameraState_Normalize(CTransform::TransformState eState);
 
+public: /* Set Camera Pos/Look*/
+	void				Set_CameraPos(_fVector vPos);
+	void				Set_CameraLookAt(_fVector vLookAt);
 
 public:
 	ECameraMode			Get_CameraMode() { return m_eCurCamMode; }

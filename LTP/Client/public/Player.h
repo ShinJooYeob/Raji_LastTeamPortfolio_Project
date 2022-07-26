@@ -17,7 +17,7 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -156,12 +156,12 @@ public:
 
 
 public:
-	virtual _fVector Get_BonePos(const char* pBoneName) override;
-	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
-	CTransform* Get_Transform() const { return m_pTransformCom; }
-	_bool Get_IsLedgeReachBackState();
-	_int Get_CurPlayAnimation();
-
+	virtual _fVector	Get_BonePos(const char* pBoneName) override;
+	virtual _fMatrix	Get_BoneMatrix(const char* pBoneName) override;
+	CTransform*			Get_Transform() const { return m_pTransformCom; }
+	_bool				Get_IsLedgeReachBackState();
+	_int				Get_CurPlayAnimation();
+	_bool				Is_Hiding();
 
 public: /* For CheckPoint/Resurrection */
 	void	SetUp_CheckPoint_CurPos();
@@ -200,6 +200,9 @@ public:
 	// Elevator
 	void	Set_State_ElevatorStart();																			
 	void	Set_State_ElevatorEnd();																				
+
+	void	Set_State_StopActionStart();
+	void	Set_State_StopActionEnd();
 
 public:
 	EPLAYER_STATE Get_PlayerState();
@@ -254,6 +257,8 @@ private:
 	HRESULT Update_State_Petal(_double fDeltaTime);
 
 	HRESULT Update_State_Elevator(_double fDeltaTime);
+
+	HRESULT Update_State_StopAction(_double fDeltaTime);
 
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
@@ -333,6 +338,7 @@ private:
 private: /* Getter */
 	void				LookAt_MousePos(_float fWeight = 0.85f);
 	_fVector			Get_MousePos();
+
 
 private:
 	_float4				m_fCamLookPoint;

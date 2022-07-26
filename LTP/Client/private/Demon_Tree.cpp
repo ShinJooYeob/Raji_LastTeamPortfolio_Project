@@ -58,6 +58,7 @@ HRESULT CDemon_Tree::Initialize_Clone(void * pArg)
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&TreeMesh), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_TreeMesh), &DemonTreeDesc);
 	m_pTreeMeshs.push_back(TreeMesh);
 
+	m_bIsClear = false;
 	return S_OK;
 }
 
@@ -66,6 +67,12 @@ _int CDemon_Tree::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	//JH
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 7.f;
+	m_fAttachCamPos.z += -20.f;
+	m_fAttachCamPos.x += -29.f;
+	
 	_float3 Test = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
@@ -254,6 +261,27 @@ _float CDemon_Tree::Get_NowTreeMesh_BeginningAngle()
 vector<class CTreeMesh*>* CDemon_Tree::Get_VecMeshs()
 {
 	return &m_pTreeMeshs;
+}
+
+void CDemon_Tree::Active_Puzzle(_bool bActive)
+{
+	m_bTest = bActive;
+	if (true == m_bTest)
+	{
+		m_iCompleteCount = 0;
+		for (_int i = 0; i < m_pTreeMeshs.size(); ++i)
+		{
+			if (m_pTreeMeshs[i]->Get_AngleZero())
+				m_iCompleteCount++;
+			else
+				break;
+		}
+	}
+}
+
+_bool CDemon_Tree::IsClear()
+{
+	return m_bIsClear;
 }
 
 HRESULT CDemon_Tree::SetUp_Components()

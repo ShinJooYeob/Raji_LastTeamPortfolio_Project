@@ -66,6 +66,11 @@ _int CMandalaPuzzle::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	//JH
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 20.f;
+
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
 	{
 		m_bTest = !m_bTest;
@@ -227,6 +232,16 @@ _int CMandalaPuzzle::Render()
 _int CMandalaPuzzle::LateRender()
 {
 	return _int();
+}
+
+void CMandalaPuzzle::Active_Puzzle(_bool bActive)
+{
+	m_bTest = bActive;
+}
+
+_bool CMandalaPuzzle::IsClear()
+{
+	return m_bIsClear;
 }
 
 HRESULT CMandalaPuzzle::SetUp_Components()
