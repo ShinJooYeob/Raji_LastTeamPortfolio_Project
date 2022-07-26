@@ -54,6 +54,8 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
 
 	Set_IsOcllusion(true);
+
+	m_pModel->Update_AnimationClip(g_fDeltaTime);
 	return S_OK;
 }
 
@@ -70,11 +72,11 @@ _int CSnake::Update(_double fDeltaTime)
 	// Jino
 	if (true == static_cast<CPlayer*>(m_pPlayerObj)->Is_Hiding())
 	{
-		m_bTestHodeing = true;
+		m_bHiding = true;
 	}
 	else
 	{
-		m_bTestHodeing = false;
+		m_bHiding = false;
 	}
 	//
 
@@ -135,8 +137,8 @@ _int CSnake::Update(_double fDeltaTime)
 
 	if (XMVectorGetX(m_vAngle) > 0.94f && !m_bIsAttack && m_fAttackCoolTime <= 0.f)
 	{ 
-		if (m_bTestHodeing)
-			m_bHiding = true;
+		//if (m_bTestHodeing)
+		//	m_bHiding = true;
 
 		if (m_bHiding)
 		{

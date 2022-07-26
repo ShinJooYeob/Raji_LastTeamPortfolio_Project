@@ -108,7 +108,7 @@ void CBossCreateTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 		else if (m_eBossType == CBossCreateTrigger::BOSS_SNAKE)
 		{
 			//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(19.472f, -190.f, 93.197f));5
-			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(50.f, -150.f, 93.197f));
+			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(50.f, -156.f, 93.197f));
 		}
 		else if (m_eBossType == CBossCreateTrigger::BOSS_MAHABASURA)
 		{
