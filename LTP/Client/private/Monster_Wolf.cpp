@@ -389,6 +389,8 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 			MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
 
 			MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+			m_bSoundSwitch[MeshInstance.iAnimType] = true;
 		}
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
@@ -422,6 +424,7 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
 				continue;
 			MeshInstance.iAnimType = m_iTempAnimNumber;
+			m_bSoundSwitch[m_iTempAnimNumber] = true;
 		}
 		else {
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
@@ -682,13 +685,75 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 	//	}
 	//}
 
+
+	for (_uint i = ANIM_RUN_Frame1; i < ANIM_END; i++)
+	{
+		_double PlayRate = m_pModel[i]->Get_PlayRate();
+		if (PlayRate > 0.95)
+		{
+			m_iSoundIndex[i] = 0;
+			m_bSoundSwitch[i] = false;
+		}
+		if (PlayRate <= 0.95)
+		{
+			if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex[i]++;
+				}
+			}
+			if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_iSoundIndex[i]++;
+				}
+			}
+		}
+	}
+
+
+	//»Ï...
+	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
+	//{
+	//	_double PlayRate = m_pModel[i]->Get_PlayRate();
+	//	if (PlayRate > 0.98)
+	//	{
+	//		m_iSoundIndex[i] = 0;
+	//		m_bSoundSwitch[i] = false;
+	//	}
+	//	if (PlayRate <= 0.98)
+	//	{
+	//		if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+	//		{
+	//			if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+	//			{
+	//				g_pGameInstance->Play3D_Sound(TEXT("EH_Rage_Gadasura_Scream_02.wav"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	//				m_iSoundIndex[i]++;
+	//			}
+	//		}
+	//	}
+	//}
 	//for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
 	//{
-	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	_double PlayRate = m_pModel[i]->Get_PlayRate();
+	//	if (PlayRate > 0.98)
 	//	{
-	//		if (m_pModel[i]->Get_PlayRate() > 0.4)
+	//		m_iSoundIndex[i] = 0;
+	//		m_bSoundSwitch[i] = false;
+	//	}
+	//	if (PlayRate <= 0.98)
+	//	{
+	//		if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 	//		{
-	//			pObjectTransform->Move_Forward(dDeltatime);
+	//			if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
+	//			{
+	//				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+	//				m_iSoundIndex[i]++;
+	//			}
 	//		}
 	//	}
 	//}
