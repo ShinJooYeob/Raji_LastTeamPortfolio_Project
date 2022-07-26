@@ -259,6 +259,10 @@ public:
 		TEXTURE_EFFECTJ_Bow_R_FlyFire,
 		TEXTURE_EFFECTJ_Bow_R_FlyBall,
 
+		TEXTURE_EFFECTJ_Universal_Ball,
+		TEXTURE_EFFECTJ_Universal_Suck,
+		TEXTURE_EFFECTJ_Universal_Spread,
+
 		TEXTURE_EFFECTJ_END,
 
 	};

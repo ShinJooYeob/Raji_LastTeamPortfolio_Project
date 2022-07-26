@@ -334,6 +334,11 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_doomBvert);
 		STATIC_EFFECTLOAD(Prototype_Mesh_ConeMesh);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Crack_OutLine);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BBT_Paw);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AOG_Ring);
+
+
+
 		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Cloud);
 	}
 
