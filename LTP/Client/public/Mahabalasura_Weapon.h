@@ -36,6 +36,7 @@ public:
 public:
 	HRESULT		Set_InstanceWeapon(_int iCount = 0);
 	void		Set_IsStab() { m_bIsStab = true; }
+	void		Set_IsDissolveStart() { m_bIsDissolveStart = true; }
 
 	CTransform* Get_Transform()
 	{
@@ -48,6 +49,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
 
 	CCollider*			m_pCollider = nullptr;
 	
@@ -61,6 +63,9 @@ private:
 
 	_double				m_dAliveTime = 0.0;
 	_float				m_fUpSpeed = 0.f;
+
+	//Dissolve
+	_bool				m_bIsDissolveStart = false;
 
 
 	//InstanceCom

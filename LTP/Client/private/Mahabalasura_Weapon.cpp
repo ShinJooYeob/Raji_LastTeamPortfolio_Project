@@ -53,6 +53,8 @@ HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_WeaponDesc.Pos);
 		m_bIsAttack = true;
+
+		//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 	}
 
 
@@ -67,6 +69,13 @@ HRESULT CMahabalasura_Weapon::Initialize_Clone(void * pArg)
 _int CMahabalasura_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+	m_pDissolveCom->Update_Dissolving(fDeltaTime);
+
+	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
+	{
+		Set_IsDead();
+	}
 
 
 	if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
@@ -204,6 +213,9 @@ _int CMahabalasura_Weapon::Update(_double fDeltaTime)
 		}
 	}
 
+	if (m_bIsDissolveStart)
+		m_pDissolveCom->Set_DissolveOn(false, 6.4f);
+
 	return _int();
 }
 
@@ -251,16 +263,18 @@ _int CMahabalasura_Weapon::Render()
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
 
-		_uint NumMaterial = m_pModel->Get_NumMaterial();
+		FAILED_CHECK(m_pDissolveCom->Render(8));
 
-		for (_uint i = 0; i < NumMaterial; i++)
-		{
-			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			{
-				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-			}
-			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
-		}
+		//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+		//for (_uint i = 0; i < NumMaterial; i++)
+		//{
+		//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+		//	{
+		//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+		//	}
+		//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
+		//}
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
 	{
@@ -403,6 +417,12 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_MahabalasurWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &DissolveDesc));
+
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -537,6 +557,7 @@ void CMahabalasura_Weapon::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pModelInstance);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pDissolveCom);
 	
 	for (auto& pTransform : m_vInstanceTransformComs)
 		Safe_Release(pTransform);

@@ -54,6 +54,19 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	if (m_fAttackCoolTime <= 0 && !m_bIsAttack)
 	{
+		m_fAttackCoolTime = 20.f;
+
+		if (m_bCopyAttackNarration == false)
+		{
+			_int iRandom = rand() % 3 + 1;
+
+			wstring teampString;
+			teampString = L"JJB_MrM_Shadow_attack_" + to_wstring(iRandom) + L".wav";
+
+			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		}
+		m_bCopyAttackNarration = !m_bCopyAttackNarration;
+
 		m_pModel->Change_AnimIndex_ReturnTo(1, 0);
 
 	}
@@ -206,23 +219,23 @@ _int CCopyMahabalasura::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-//	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-//	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	//CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	//_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 
 	//{
-//		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
-//		mat.r[0] = XMVector3Normalize(mat.r[0]);
-//		mat.r[1] = XMVector3Normalize(mat.r[1]);
-//		mat.r[2] = XMVector3Normalize(mat.r[2]);
-//		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
-//		m_pCollider->Update_Transform(i + 1, mat);
-//
-//
-//	}
+	//	_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
+	//	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	//	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	//	mat.r[2] = XMVector3Normalize(mat.r[2]);
+	//	mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
+	//	m_pCollider->Update_Transform(i + 1, mat);
 
 
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecInstancedTransform));
+	//}
+
+
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecRenderInstanceTransform));
 
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
@@ -397,8 +410,9 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			break;
 		case 1:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.233644859)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.203644859)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsAttack = true;
 				++m_iAdjMovedIndex;
 			}
@@ -420,6 +434,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.392523)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsAttack = true;
 
 				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
@@ -437,6 +452,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 4 && PlayRate > 0.56074766)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_03.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsAttack = true;
 				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
 				{

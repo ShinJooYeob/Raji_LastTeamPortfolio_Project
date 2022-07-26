@@ -43,8 +43,8 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	case CTreeMesh::DEMONTREE_04:
 	{
 		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight);
-		m_TotalHeight = m_fHeight;
+		Pos = XMVectorSetY(Pos.XMVector(), Pos.y + m_fHeight);
+		m_TotalHeight = Pos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(144.f));
 		m_BeginningAngle = 144.f;
@@ -54,8 +54,8 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	case CTreeMesh::DEMONTREE_03:
 	{
 		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 2.f);
-		m_TotalHeight = m_fHeight * 2.f;
+		Pos = XMVectorSetY(Pos.XMVector(), Pos.y +(m_fHeight * 2.f));
+		m_TotalHeight = Pos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(72.f));
 		m_BeginningAngle = 72.f;
@@ -65,8 +65,8 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	case CTreeMesh::DEMONTREE_02:
 	{
 		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 3.f);
-		m_TotalHeight = m_fHeight * 3.f;
+		Pos = XMVectorSetY(Pos.XMVector(), Pos.y + (m_fHeight * 3.f));
+		m_TotalHeight = Pos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(288.f));
 		m_BeginningAngle = 288.f;
@@ -76,8 +76,8 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	case CTreeMesh::DEMONTREE_01:
 	{
 		_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		Pos = XMVectorSetY(Pos.XMVector(), m_fHeight * 4.f);
-		m_TotalHeight = m_fHeight * 4.f;
+		Pos = XMVectorSetY(Pos.XMVector(), Pos.y + (m_fHeight * 4.f));
+		m_TotalHeight = Pos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 		m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(216.f));
 		m_BeginningAngle = 216.f;
@@ -88,7 +88,7 @@ HRESULT CTreeMesh::Initialize_Clone(void * pArg)
 	}
 
 	//m_pTransformCom->Scaled_All(_float3(1.3f));
-
+	m_fFrustumRadius = 20.f;
 	return S_OK;
 }
 

@@ -36,7 +36,7 @@ HRESULT CFemaleStatue::Initialize_Clone(void * pArg)
 
 
 	m_pDemonTree = (CDemon_Tree*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_MapObject), 0);
-
+	m_pTransformCom->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(-45.f));
 
 
 	return S_OK;

@@ -59,6 +59,8 @@ private:
 
 	_int				m_iCount = 0;
 
+	_int				m_iSoundCount = 0;
+
 
 private:
 	HRESULT		SetUp_Components();
