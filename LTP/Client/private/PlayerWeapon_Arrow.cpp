@@ -710,7 +710,7 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-			pConflictedCollider->Set_Conflicted(0.5f);
+			pConflictedCollider->Set_Conflicted(0.2f);
 
 			_int iSelectSoundFileIndex = rand() % 3;
 			_tchar pSoundFile[MAXLEN] = TEXT("");

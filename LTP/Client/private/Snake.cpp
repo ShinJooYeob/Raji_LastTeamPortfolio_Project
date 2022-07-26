@@ -509,6 +509,26 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_EffectAdjust == 2 && PlayRate >= 0.555f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_2, m_pTextureParticleTransform2);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTransformCom;
+				instanceDesc.TotalParticleTime = 1.f;
+				instanceDesc.EachParticleLifeTime = 1.0f;
+				instanceDesc.Particle_Power = 13;
+				instanceDesc.TargetColor = _float4(0.98f, 0.96f, 0.41f, 0.7f);
+				instanceDesc.TargetColor2 = _float4(0.98f, 0.96f, 0.41f, 0.7f);
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.1f);
+				instanceDesc.SizeChageFrequency = 6;
+				instanceDesc.ColorChageFrequency = 1;
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
+
+
 				m_EffectAdjust++;
 			}
 

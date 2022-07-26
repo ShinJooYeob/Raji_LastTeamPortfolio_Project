@@ -228,7 +228,7 @@ HRESULT CScene_Stage2::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(/*490.f, 7.100010f, 108.571f*/ 501.754f, 5.5f, 419.138f /*598.796f, 24.394f, 415.571f*/)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*501.754f, 5.5f, 419.138f *//*598.796f, 24.394f, 415.571f*/)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);	
 	

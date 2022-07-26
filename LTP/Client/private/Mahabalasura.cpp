@@ -6,6 +6,8 @@
 #include "CopyMahabalasura.h"
 #include "HpUI.h"
 
+#include "Player.h"
+
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -44,6 +46,7 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum,TEXT("Layer_Player"));
 	m_pPlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);  // JH
 
 	//ATTACHEDESC WeaponDesc;
 	CMahabalasura_Weapon::WEAPONDESC Desc;

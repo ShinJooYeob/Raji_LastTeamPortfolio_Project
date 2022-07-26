@@ -38,6 +38,8 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE4, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Snake2.dat", SCENE_STAGE4, TAG_LAY(Layer_ColTrigger)));
 
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Snake_Instance.dat", SCENE_STAGE4, TAG_LAY(Layer_ColTrigger)));
+
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	

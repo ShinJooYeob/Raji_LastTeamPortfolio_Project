@@ -895,6 +895,14 @@ void CPlayer::Update_AttachCamPos()
 	m_fAttachCamLook = XMVector3Normalize((XMVectorSetW(vBonePos.XMVector() - m_fAttachCamPos.XMVector(), 0.f))) + m_fAttachCamLook_Offset.XMVector();
 }
 
+void CPlayer::Set_Targeting(CGameObject * pTarget)
+{
+	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_TARGETING);
+	m_eCur_TargetingState = ETARGETING_STATE::TARGETING_BOSS;
+	m_pTargetingMonster = pTarget;
+	m_pTargetingMonster_Transform = static_cast<CTransform*>(m_pTargetingMonster->Get_Component(TAG_COM(Com_Transform)));
+}
+
 HRESULT CPlayer::Update_CamLookPoint(_double fDeltaTime)
 {
 	return E_NOTIMPL;
@@ -7243,6 +7251,11 @@ void CPlayer::Update_Targeting(_double fDeltaTime)
 	{
 		Targeting_Loop();
 	}
+
+	case ETARGETING_STATE::TARGETING_BOSS:
+	{
+		Targeting_Boss();
+	}
 	break;
 	}
 }
@@ -7324,6 +7337,30 @@ void CPlayer::Targeting_Loop()
 	m_pMainCamera->Set_TargetingPoint(vCenterPos);
 	m_pMainCamera->Set_TargetingLook(vLookDir);
 
+}
+
+void CPlayer::Targeting_Boss()
+{
+	_Vector vPlayerPos = Get_BonePos("skd_hip");
+	_Vector vPlayerPos2 = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vTargetPos = m_pTargetingMonster_Transform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vCenterPos = (vPlayerPos + vTargetPos) * 0.5f;
+
+	_float fDist = XMVectorGetX(XMVector3Length(vPlayerPos - vTargetPos));// *0.15f;
+	
+		m_pMainCamera->Set_CameraLookWeight(0.99f);
+		m_pMainCamera->Set_CameraMoveWeight(0.99f);
+		fDist *= 2.5f;
+		if (fDist > 35.f)
+		{
+			fDist = 35.f;
+		}
+
+	_Vector vLookDir = XMVectorSet(0.f, -0.5f, 0.3f, 0.f) * (fDist + 4.5f);
+
+	// Send to Center pos to Main Camera
+	m_pMainCamera->Set_TargetingPoint(vCenterPos);
+	m_pMainCamera->Set_TargetingLook(vLookDir);
 }
 
 void CPlayer::CheckOn_MotionTrail()
