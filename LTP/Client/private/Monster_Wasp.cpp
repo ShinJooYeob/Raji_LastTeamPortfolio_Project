@@ -401,7 +401,8 @@ HRESULT CMonster_Wasp::FollowMe(_double dDeltaTime)
 
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
-
+		if (MeshInstance.bDieOn == true)
+			continue;
 		if (MeshInstance.iAnimType >= ANIM_RUN_Frame1 && MeshInstance.iAnimType <= ANIM_RUN_Frame2)
 		{
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -474,6 +475,8 @@ HRESULT CMonster_Wasp::Update_Collider(_double dDeltaTime)
 
 	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
+		if (m_vecInstancedTransform[i].bDieOn == true)
+			continue;
 		if (m_vecInstancedTransform[i].iAnimType >= ANIM_RUN_Frame1 && m_vecInstancedTransform[i].iAnimType <= ANIM_RUN_Frame2)
 			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_vecInstancedTransform[i].pTransform, 0.5f, m_vecInstancedTransform[i].pNavigation));
 
@@ -507,6 +510,8 @@ HRESULT CMonster_Wasp::Update_VectorGroup(_double dDeltaTime)
 
 	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
+		if (m_vecInstancedTransform[i].bDieOn == true)
+			continue;
 		switch (m_vecInstancedTransform[i].iRenderType)
 		{
 		case RENDER_IDLE:
@@ -622,6 +627,8 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 {
 	for (_int i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
+		if (m_vecInstancedTransform[i].bDieOn == true)
+			continue;
 		if (m_vecInstancedTransform[i].iRenderType == RENDMER_DIE)
 		{
 			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
@@ -653,6 +660,18 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 				m_vecInstancedTransform[i].bHit = false;
 				m_vecInstancedTransform[i].fDissolve.x = 0;
 				m_vecInstancedTransform[i].fDissolve.w = 1; //Live
+
+				m_vecInstancedTransform[i].iLifeCount += 1;
+
+				if (m_vecInstancedTransform[i].iLifeCount >= 3)
+				{
+					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
+					m_vecInstancedTransform[i].bDieOn = true;
+					m_iDieCount++;
+
+					if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
+						Set_IsDead();
+				}
 
 			}
 

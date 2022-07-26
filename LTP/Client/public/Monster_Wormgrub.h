@@ -26,6 +26,9 @@ class CMonster_Wormgrub final : public CMonster
 		_double			dTime = 0;
 		_bool			bHit = false;
 		_int			iSwtichIndex = 0;
+
+		_uint			iLifeCount = 0;
+		_bool			bDieOn = false;
 	}TRANSFORM_STATE;
 
 	typedef struct tagInstanceInfo
@@ -103,6 +106,9 @@ private:
 private:
 	_uint				m_iSoundIndex[ANIM_END] = {};
 	_bool				m_bSoundSwitch[ANIM_END] = {};
+
+private:
+	_uint				m_iDieCount = 0;
 
 public:
 	static CMonster_Wormgrub* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
