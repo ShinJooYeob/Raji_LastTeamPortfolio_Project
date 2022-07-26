@@ -38,7 +38,7 @@ HRESULT CScene_Stage6::Initialize()
 //	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 //	GetSingle(CPhysXMgr)->CreateDemoMap();
 
-	FAILED_CHECK(Ready_LoadEffectMesh());
+//	FAILED_CHECK(Ready_LoadEffectMesh());
 
 //	GetSingle(CAssimpCreateMgr)->Free_VertexData_STATIC();
 
