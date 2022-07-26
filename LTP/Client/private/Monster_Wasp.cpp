@@ -251,10 +251,10 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		{
 			_uint X = j / 4;
 			_uint Y = j % 4;
-			if (m_Instance_Info.fSubValueMat.m[X][Y] > 0)
+			if ((_uint)m_Instance_Info.fSubValueMat.m[X][Y] > 0)
 			{
-				tDesc.iCellIndex = m_Instance_Info.fSubValueMat.m[X][Y];
-				m_Instance_Info.fValueMat.m[0][3]++;
+				tDesc.iCellIndex = (_uint)m_Instance_Info.fSubValueMat.m[X][Y];
+				(_uint)m_Instance_Info.fValueMat.m[0][3]++;
 				
 				if ((_uint)m_Instance_Info.fValueMat.m[0][3] + 1 >= (_uint)m_Instance_Info.fValueMat.m[0][2])
 					m_Instance_Info.fValueMat.m[0][3] = 0;
