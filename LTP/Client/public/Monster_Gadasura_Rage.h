@@ -112,7 +112,6 @@ private:
 	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
 
-	_uint							m_EffectAdjust = 0;
 
 private:
 	_bool				m_bWeaponAttackSwitch = false;

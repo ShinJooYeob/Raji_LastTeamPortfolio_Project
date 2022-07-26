@@ -36,8 +36,6 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-	// Particle
-	FAILED_CHECK(Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE2, m_pTransformCom));
 
 	// #BUG NAVIONPLEASE
 	/////////////////test
@@ -617,8 +615,12 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
+	m_iOncePattern = 5;
+
 	// #DEBUG PatternSET
-	// m_iOncePattern = 4;
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 4;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -884,6 +886,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		m_bColliderAttackOn = false;
 
 		m_iSoundIndex = 0;
+		m_EffectAdjust = 0;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
@@ -1094,13 +1097,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 			}
 
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.7f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_LHand);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH2, m_pTextureParticleTransform_RHand);
-				m_iAdjMovedIndex++;
-			}
-
 			if (m_iSoundIndex == 0 && PlayRate > 0.2857)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_08.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
@@ -1112,16 +1108,34 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_iSoundIndex++;
 			}
 
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH4, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.7f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_LHand);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH2, m_pTextureParticleTransform_RHand);
+				m_EffectAdjust++;
+			}
+
+
 			break;
 		}
 		case 19: {
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.75f, 0.06f, 0.03f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
 				m_eColliderType = CMonster_Mahinasura_Leader::HANDATTACK;
 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
 
 
 				m_iAdjMovedIndex++;
@@ -1150,12 +1164,26 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 			}
 
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.5f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH6, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.24)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
 
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
+
+
 			break;
 		}
 		case 20: {
@@ -1191,12 +1219,18 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.35f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
 			{
-				// #TIME Tailattack1
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
-				m_iAdjMovedIndex++;
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTransformCom);
+				m_EffectAdjust++;
 			}
+			
+			if (m_EffectAdjust == 1 && PlayRate >= 0.4f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
+				m_EffectAdjust++;
+			}
+
 
 			break;
 		}
@@ -1235,17 +1269,18 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_dAcceleration = 1;
 			}
 
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.55f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.55f)
 			{
-				// #TIME Tailattack2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
-				m_iAdjMovedIndex++;
+
+				m_EffectAdjust++;
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8f)
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.8f)
 			{
-				// #TIME Tailattack2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTextureParticleTransform_Tail);
-				m_iAdjMovedIndex++;
+
+				m_EffectAdjust++;
 			}
 
 			

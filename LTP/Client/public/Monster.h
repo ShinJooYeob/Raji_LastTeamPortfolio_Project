@@ -50,6 +50,7 @@ protected:
 
 	CModelInstance*					m_pModelInstance = nullptr;
 	vector<CTransform*>				m_vecInstancedTransform;
+	_uint							m_EffectAdjust = 0;
 
 
 

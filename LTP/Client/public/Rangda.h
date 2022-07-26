@@ -28,6 +28,11 @@ public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
 
+private:
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double t) override;
+
+
 	//Left
 	CCollider*				m_pHand_L_Collider = nullptr;	
 	ATTACHEDESC				m_LeftAttachedDesc;
@@ -69,6 +74,14 @@ private:
 	_float3				m_vFingerPoss[8];
 
 	vector<_uint>		m_vecFinger;
+
+private:
+	// Particle
+	CTransform*						m_pTextureParticleTransform_R = nullptr;
+	CTransform*						m_pTextureParticleTransform_L = nullptr;
+	CTransform*						m_pTextureParticleTransform_Screen = nullptr;
+	CTransform*						m_pTextureParticleTransform_Player= nullptr;
+
 
 private:
 	_float3	Get_FingerPos(_int Num);

@@ -129,7 +129,6 @@ public:
 	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
-	_uint							m_EffectAdjust = 0;
 
 private:
 	HRESULT SetUp_Components();
