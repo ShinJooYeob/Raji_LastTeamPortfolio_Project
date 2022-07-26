@@ -57,6 +57,19 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_dDissolveTime >= 2)
+		{
+			Set_IsDead();
+		}
+	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 	{
@@ -88,7 +101,10 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	if (m_fHP > 0)
+	{
+		FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	if (m_pHPUI != nullptr)
@@ -144,14 +160,16 @@ _int CMonster_Tezabsura_Landmine::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3));
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 	return _int();
 }
@@ -210,11 +228,6 @@ _float CMonster_Tezabsura_Landmine::Take_Damage(CGameObject * pTargetObject, _fl
 		m_dInfinity_CoolTime = 0;
 
 		m_iBoolOnce += 1;
-	}
-
-	if (m_fHP <= 0)
-	{
-		Set_IsDead();
 	}
 
 	return _float();
@@ -450,6 +463,7 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 {
+
 	switch (m_iOncePattern)
 	{
 
@@ -833,6 +847,15 @@ HRESULT CMonster_Tezabsura_Landmine::SetUp_Components()
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 7;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
+
 	SetUp_Collider();
 
 	return S_OK;
@@ -997,6 +1020,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		}
 		case 11:
 		{
+			m_bLookAtOn = false;
 			{
 				_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 				Value = max(min(Value, 1.f), 0.f);
@@ -1005,7 +1029,6 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2f)
 			{
-
 				m_vecNonMeshParticleDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.35f;
 				m_vecNonMeshParticleDesc[0].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
@@ -1017,7 +1040,6 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 			if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 			{
-				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
 			}
 
@@ -1025,6 +1047,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_232.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -1236,6 +1259,7 @@ void CMonster_Tezabsura_Landmine::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);

@@ -10,7 +10,7 @@ namespace Engine {
 	enum CollisionTypeID{  CollisionType_Player, CollisionType_PlayerWeapon, CollisionType_Monster, CollisionType_MonsterWeapon, 
 		CollisionType_NPC, CollisionType_DynaicObject, CollisionType_Terrain, CollisionType_Repel, CollisionType_PlayerParkur, CollisionType_END};
 
-	enum CHANNELID { CHANNEL_PLAYER, CHANNEL_MONSTER, CHANNEL_MAPOBJECT, CHANNEL_EFFECT, CHANNEL_UI, CHANNEL_BGM,CHANNEL_MAXCHANNEL };
+	enum CHANNELID { CHANNEL_PLAYER, CHANNEL_MONSTER, CHANNEL_MAPOBJECT, CHANNEL_EFFECT, CHANNEL_UI, CHANNEL_SUBEFFECT, CHANNEL_BGM,CHANNEL_MAXCHANNEL };
 
 
 	enum TRANSFORMSTATETYPE { PLM_VIEW, PLM_PROJ, PLM_LIGHTVIEW, PLM_LIGHTPROJ, PLM_END };

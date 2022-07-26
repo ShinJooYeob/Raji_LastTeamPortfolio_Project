@@ -121,6 +121,7 @@ private:
 
 private:
 	_bool				m_bOnceSwtich = false;
+	_uint				m_iBoolInt = 0;
 
 private:
 	HRESULT	Ready_JYParticleDesc();

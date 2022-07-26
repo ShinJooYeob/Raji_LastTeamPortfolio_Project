@@ -138,10 +138,9 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 	{
 		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
-
-			if (pMyCollider == m_vecInstancedTransform[i].pCollider && m_vecInstancedTransform[i].bHit == false)
+			if (pMyCollider == m_vecInstancedTransform[i].pCollider)
 			{
-				if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex].bHit == false)
+				if (m_vecInstancedTransform[i].bHit == false)
 				{
 					m_vecInstancedTransform[i].iRenderType = RENDER_HIT;
 					m_vecInstancedTransform[i].iHp += -1;
@@ -149,11 +148,15 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 					m_vecInstancedTransform[i].bHit = true;
 
 					m_vecInstancedTransform[i].fRimRight.w = 1;
-
+					m_vecInstancedTransform[i].pCollider->Set_Conflicted(0.f);
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
 					}
+					break;
+				}
+				else {
+					break;
 				}
 			}
 		}
@@ -235,10 +238,10 @@ HRESULT CMonster_Wolf::SetUp_Info()
 		{
 			_uint X = j / 4;
 			_uint Y = j % 4;
-			if (m_Instance_Info.fSubValueMat.m[X][Y] > 0)
+			if ((_uint)m_Instance_Info.fSubValueMat.m[X][Y] > 0)
 			{
-				tDesc.iCellIndex = m_Instance_Info.fSubValueMat.m[X][Y];
-				m_Instance_Info.fValueMat.m[0][3]++;
+				tDesc.iCellIndex = (_uint)m_Instance_Info.fSubValueMat.m[X][Y];
+				(_uint)m_Instance_Info.fValueMat.m[0][3]++;
 
 				if ((_uint)m_Instance_Info.fValueMat.m[0][3] + 1 >= (_uint)m_Instance_Info.fValueMat.m[0][2])
 					m_Instance_Info.fValueMat.m[0][3] = 0;
@@ -386,6 +389,8 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 			MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
 
 			MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+			m_bSoundSwitch[MeshInstance.iAnimType] = true;
 		}
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
@@ -419,6 +424,7 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
 				continue;
 			MeshInstance.iAnimType = m_iTempAnimNumber;
+			m_bSoundSwitch[m_iTempAnimNumber] = true;
 		}
 		else {
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
@@ -598,20 +604,25 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
 			{
-				CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-				CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
+				//////////////////////Old Pos
+				//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+				//CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
 
-				RELEASE_INSTANCE(CGameInstance);
+				//RELEASE_INSTANCE(CGameInstance);
 
-				_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
+				//_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-				_uint Random = (rand() % 6) - 3;
+				//_uint Random = (rand() % 6) - 3;
 
 
-				_uint RandomPlayerIndex = iPlayerIndex + Random;
+				//_uint RandomPlayerIndex = iPlayerIndex + Random;
 
-				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
-				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				//m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
+				//m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				//////////////////////////////////////////////////////
+
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(m_vecInstancedTransform[i].iCellIndex);
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(m_vecInstancedTransform[i].iCellIndex));
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
@@ -674,13 +685,75 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 	//	}
 	//}
 
+
+	for (_uint i = ANIM_RUN_Frame1; i < ANIM_END; i++)
+	{
+		_double PlayRate = m_pModel[i]->Get_PlayRate();
+		if (PlayRate > 0.95)
+		{
+			m_iSoundIndex[i] = 0;
+			m_bSoundSwitch[i] = false;
+		}
+		if (PlayRate <= 0.95)
+		{
+			if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex[i]++;
+				}
+			}
+			if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_iSoundIndex[i]++;
+				}
+			}
+		}
+	}
+
+
+	//»Ï...
+	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
+	//{
+	//	_double PlayRate = m_pModel[i]->Get_PlayRate();
+	//	if (PlayRate > 0.98)
+	//	{
+	//		m_iSoundIndex[i] = 0;
+	//		m_bSoundSwitch[i] = false;
+	//	}
+	//	if (PlayRate <= 0.98)
+	//	{
+	//		if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+	//		{
+	//			if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+	//			{
+	//				g_pGameInstance->Play3D_Sound(TEXT("EH_Rage_Gadasura_Scream_02.wav"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	//				m_iSoundIndex[i]++;
+	//			}
+	//		}
+	//	}
+	//}
 	//for (_uint i = ANIM_ATTACK_Frame1; i <= ANIM_ATTACK_Frame5; i++)
 	//{
-	//	for (auto& pObjectTransform : m_ModelTransGroup[i])
+	//	_double PlayRate = m_pModel[i]->Get_PlayRate();
+	//	if (PlayRate > 0.98)
 	//	{
-	//		if (m_pModel[i]->Get_PlayRate() > 0.4)
+	//		m_iSoundIndex[i] = 0;
+	//		m_bSoundSwitch[i] = false;
+	//	}
+	//	if (PlayRate <= 0.98)
+	//	{
+	//		if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 	//		{
-	//			pObjectTransform->Move_Forward(dDeltatime);
+	//			if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
+	//			{
+	//				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+	//				m_iSoundIndex[i]++;
+	//			}
 	//		}
 	//	}
 	//}

@@ -51,6 +51,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;
@@ -117,6 +118,9 @@ private:
 private://Sound
 	_uint				m_iSoundIndex = 0;
 	_double				m_dSoundTime = 0;
+
+private://Dissolve
+	_double				m_dDissolveTime = 0;
 
 private:
 	HRESULT SetUp_Components();

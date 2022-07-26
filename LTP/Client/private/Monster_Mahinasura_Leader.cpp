@@ -54,6 +54,21 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_dDissolveTime >= 2)
+		{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			Set_IsDead();
+		}
+	}
+
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
 	//m_pModel->Change_AnimIndex_ReturnTo(); //어떤 애니메이션을 돌리고 특정 애니메이션으로 보냄
@@ -68,7 +83,10 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	if (m_fHP > 0)
+	{
+		FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	if (m_pHPUI != nullptr)
@@ -124,14 +142,16 @@ _int CMonster_Mahinasura_Leader::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 
 
@@ -186,11 +206,7 @@ _float CMonster_Mahinasura_Leader::Take_Damage(CGameObject * pTargetObject, _flo
 
 		m_iBoolOnce += 1;
 	}
-	if (m_fHP <= 0)
-	{
-		g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
-		Set_IsDead();
-	}
+
 	return _float();
 }
 
@@ -777,6 +793,14 @@ HRESULT CMonster_Mahinasura_Leader::SetUp_Components()
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
 
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 11;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
+	
 	SetUp_Collider();
 
 	return S_OK;
@@ -1296,6 +1320,7 @@ void CMonster_Mahinasura_Leader::Free()
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pHandAttackColliderCom);
 	Safe_Release(m_pTailAttackColliderCom);
+	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pTextureParticleTransform_RHand);
 	Safe_Release(m_pTextureParticleTransform_LHand);

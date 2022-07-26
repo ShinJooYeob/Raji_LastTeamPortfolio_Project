@@ -140,10 +140,9 @@ void CMonster_Spider::CollisionTriger(CCollider * pMyCollider, _uint iMyCollider
 	{
 		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
-
-			if (pMyCollider == m_vecInstancedTransform[i].pCollider && m_vecInstancedTransform[i].bHit == false)
+			if (pMyCollider == m_vecInstancedTransform[i].pCollider)
 			{
-				if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex].bHit == false)
+				if (m_vecInstancedTransform[i].bHit == false)
 				{
 					m_vecInstancedTransform[i].iRenderType = RENDER_HIT;
 					m_vecInstancedTransform[i].iHp += -1;
@@ -151,11 +150,15 @@ void CMonster_Spider::CollisionTriger(CCollider * pMyCollider, _uint iMyCollider
 					m_vecInstancedTransform[i].bHit = true;
 
 					m_vecInstancedTransform[i].fRimRight.w = 1;
-
+					m_vecInstancedTransform[i].pCollider->Set_Conflicted(0.f);
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
 					}
+					break;
+				}
+				else {
+					break;
 				}
 			}
 		}
@@ -238,10 +241,10 @@ HRESULT CMonster_Spider::SetUp_Info()
 		{
 			_uint X = j / 4;
 			_uint Y = j % 4;
-			if (m_Instance_Info.fSubValueMat.m[X][Y] > 0)
+			if ((_uint)m_Instance_Info.fSubValueMat.m[X][Y] > 0)
 			{
-				tDesc.iCellIndex = m_Instance_Info.fSubValueMat.m[X][Y];
-				m_Instance_Info.fValueMat.m[0][3]++;
+				(_uint)tDesc.iCellIndex = (_uint)m_Instance_Info.fSubValueMat.m[X][Y];
+				(_uint)m_Instance_Info.fValueMat.m[0][3]++;
 
 				if ((_uint)m_Instance_Info.fValueMat.m[0][3] + 1 >= (_uint)m_Instance_Info.fValueMat.m[0][2])
 					m_Instance_Info.fValueMat.m[0][3] = 0;
@@ -599,7 +602,8 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_vecInstancedTransform[i].fDissolve.x > 1.5)
 			{
-				CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+				//////////////////////Old Pos
+				/*CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 				CNavigation* pPlayerNavi = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
 
 				RELEASE_INSTANCE(CGameInstance);
@@ -612,7 +616,11 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 				_uint RandomPlayerIndex = iPlayerIndex + Random;
 
 				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
-				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));*/
+				///////////////////////////////
+
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(m_vecInstancedTransform[i].iCellIndex);
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(m_vecInstancedTransform[i].iCellIndex));
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 

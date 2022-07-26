@@ -52,6 +52,19 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_dDissolveTime >= 2)
+		{
+			Set_IsDead();
+		}
+	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 	{
@@ -104,9 +117,10 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 	//{
 	//FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	//}
-
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
-
+	if (m_fHP > 0)
+	{
+		FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	if (m_pHPUI != nullptr)
@@ -122,12 +136,12 @@ _int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
-	//////////
+	///////////
 	if (m_bIsOnScreen)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
-	//////////
+	///////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
@@ -161,14 +175,16 @@ _int CMonster_Tezabsura_Minion::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 
 
@@ -229,11 +245,6 @@ _float CMonster_Tezabsura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 		m_dInfinity_CoolTime = 0;
 
 		m_iBoolOnce += 1;
-	}
-
-	if (m_fHP <= 0)
-	{
-		Set_IsDead();
 	}
 
 	return _float();
@@ -771,6 +782,16 @@ HRESULT CMonster_Tezabsura_Minion::SetUp_Components()
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
+
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 4;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
+
 	SetUp_Collider();
 
 	return S_OK;
@@ -1019,6 +1040,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 11:
 		{
+			m_bLookAtOn = false;
 			{
 				_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 				Value = max(min(Value, 1.f), 0.f);
@@ -1041,7 +1063,6 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 			{
-				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 			}
@@ -1058,6 +1079,7 @@ HRESULT CMonster_Tezabsura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1138.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -1146,6 +1168,7 @@ void CMonster_Tezabsura_Minion::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pColliderCom);
