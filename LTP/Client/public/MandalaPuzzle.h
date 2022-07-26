@@ -21,6 +21,11 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	//JH
+	void		Active_Puzzle(_bool bActive);
+	_bool		IsClear();
+
 private:
 	CTransform*						m_pTransformCom = nullptr;
 

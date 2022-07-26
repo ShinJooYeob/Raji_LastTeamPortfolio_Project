@@ -115,6 +115,16 @@ _fVector CCamera_Main::Get_CameraState_Normalize(CTransform::TransformState eSta
 	return  XMVector3Normalize(m_pTransform->Get_MatrixState(eState));
 }
 
+void CCamera_Main::Set_CameraPos(_fVector vPos)
+{
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+}
+
+void CCamera_Main::Set_CameraLookAt(_fVector vLookAt)
+{
+	m_pTransform->LookDir(vLookAt);
+}
+
 void CCamera_Main::Set_TargetArmLength(_float fTargetArmLength)
 {
 	m_fTargetArmLength = fTargetArmLength;

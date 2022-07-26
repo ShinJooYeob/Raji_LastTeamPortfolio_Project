@@ -116,7 +116,7 @@ void CMonsterBatchTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 	if (!m_bBool)
 	{
 		for (_uint i = 0; i < m_vecBatchedValue.size(); i++)
-			Spwan_Monster(i, TAG_LAY(Layer_Monster));
+			Spwan_Monster(i, TAG_LAY(/*Layer_Monster*/Layer_Unique_Monster));
 	}
 	m_bBool = true;
 	Set_IsDead();
