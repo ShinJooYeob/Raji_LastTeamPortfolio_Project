@@ -45,6 +45,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolveCom = nullptr;
 
 	//¸öÃ¼
 	CCollider*				m_pCollider = nullptr;
@@ -54,9 +55,11 @@ private:
 	_uint				m_iAdjMovedIndex = 0;
 	_uint				m_iAniNum = 0;
 
+	_bool				m_bIsDissolveStart = false;
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsWalk = true;
 	_bool				m_bIsLookAt = true;
+	_bool				m_bIsDIeAnimStart = false;
 
 	CGameObject*		m_pPlayerObj = nullptr;
 	CTransform*			m_pPlayerTransform = nullptr;
@@ -84,6 +87,10 @@ private:
 	//HPBar
 	class CHpUI*							m_pHPUI = nullptr;
 
+	//Sound
+	_bool									m_bIsTeleportSound = false;
+	_bool									m_bIsTeleportAttack = false;
+
 	// Particle
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform1 = nullptr;
@@ -92,7 +99,7 @@ private:
 	_uint							mOnlyPattern = 0;
 	_uint							mPatternCount2 = 0;
 
-
+	_float							m_fNarrationTime = 12.f;
 
 private:
 	HRESULT SetUp_Components();

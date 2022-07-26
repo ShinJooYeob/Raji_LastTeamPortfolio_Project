@@ -96,6 +96,7 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
+	_int iCount = 0;
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
 		m_vecInstancedTransform[i].fPassedTime += (_float)fDeltaTime;
@@ -114,7 +115,11 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 		{
 			if (m_vecInstancedTransform[i].fPassedTime - (_float)fDeltaTime <= 0)
 			{
-
+				if (m_iSoundCount == iCount)
+				{
+					++m_iSoundCount;
+					g_pGameInstance->Play3D_Sound(L"JJB_MrM_Teleport.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				}
 				m_DestPos[i] = m_pPlayerTrs->Get_MatrixState_Float3(CTransform::STATE_POS);
 				m_vecInstancedTransform[i].pTransform->LookAt(m_DestPos[i].XMVector());
 				m_vecInstancedTransform[i].pTransform->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(20.f));
@@ -168,6 +173,7 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 			//m_vecInstancedTransform[i].pTransform->LookAt(m_DestPos[i].XMVector());
 			//m_vecInstancedTransform[i].pTransform->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(20.f));
 		}
+		iCount++;
 	}
 
 	
@@ -227,7 +233,6 @@ _int CMahabalasura_AttackArms::LateUpdate(_double fDeltaTime)
 			iDeadCount++;
 			continue;
 		}
-
 		m_vecForRenderTransform.push_back(tDesc.pTransform);
 
 	}

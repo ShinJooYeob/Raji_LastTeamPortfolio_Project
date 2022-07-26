@@ -57,6 +57,9 @@ private:
 	// Effect
 	_uint				m_iEffectAdjustIndex = 0;
 
+	//Sound
+	_bool				m_bCopyAttackNarration = false;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);

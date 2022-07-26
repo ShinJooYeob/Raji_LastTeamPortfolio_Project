@@ -2,6 +2,7 @@
 #include "..\Public\Scene_StageSelect.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
+#include "Player.h"
 
 CScene_StageSelect::CScene_StageSelect(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -23,8 +24,8 @@ HRESULT CScene_StageSelect::Initialize()
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
-	
-	
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	
 	return S_OK;
 }
@@ -159,6 +160,35 @@ HRESULT CScene_StageSelect::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 
 	return S_OK;
+}
+
+HRESULT CScene_StageSelect::Ready_Layer_Boss(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(0.f)));
+	
+	return S_OK;
+}
+
+HRESULT CScene_StageSelect::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Player), &_float3(0)));
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGESELECT, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+	m_pMainCam->Set_FocusTarget(pPlayer);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(490.031494f, 10.4521713f, 104.211227f, 1.f), XMVectorSet(-0.0104847737f, -0.617018461f, 0.786878705f, 0.f));
+	pPlayer->Update_AttachCamPos();
+
+
+	return S_OK;
+
 }
 
 

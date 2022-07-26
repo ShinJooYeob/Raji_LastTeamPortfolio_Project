@@ -66,6 +66,8 @@ _int CDemon_Tree::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	_float3 Test = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
 	{
 		m_bTest = !m_bTest;
@@ -98,7 +100,7 @@ _int CDemon_Tree::Update(_double fDeltaTime)
 			m_pTreeMeshs[i]->ResetTotalHeight();
 		}
 		_float3 Pos = m_pTreeMeshs[m_iCompleteCount - 1]->Get_ObjPos();
-		Pos.y = 0.f;
+		Pos.y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 		m_pTreeMeshs[m_iCompleteCount]->Set_ObjPos(Pos);
 
 		if (m_iCompleteCount == m_pTreeMeshs.size()-1)
@@ -137,7 +139,7 @@ _int CDemon_Tree::Update(_double fDeltaTime)
 		{
 			for (_int i = 0; i < m_pTreeMeshs.size(); ++i)
 			{
-				if (m_pTreeMeshs[i]->Get_ObjPos().y == 0.f)
+				if (m_pTreeMeshs[i]->Get_ObjPos().y == XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)))
 					continue;
 
 				_float fLength = g_pGameInstance->Easing(TYPE_CircularIn,

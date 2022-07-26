@@ -15,6 +15,7 @@ public:
 	{
 		MandalaNumber	m_eMandalaNum;
 		_float3			m_Pos;
+		_float			m_fAngle = 0.f;
 
 	}MANDALADESC;
 

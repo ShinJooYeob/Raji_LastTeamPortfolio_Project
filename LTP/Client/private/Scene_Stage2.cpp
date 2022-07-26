@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "StaticInstanceMapObject.h"
 #include "MonsterBatchTrigger.h"
+#include "MapObject.h"
 
 CScene_Stage2::CScene_Stage2(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -31,6 +32,7 @@ HRESULT CScene_Stage2::Initialize()
 	
 	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE2, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
 	
 	//
 	//								
@@ -206,6 +208,19 @@ HRESULT CScene_Stage2::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Terrain)));
 
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage2::Ready_Layer_MapObject(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Map_Demon_Tree),&_float3(606.540f, 24.300f, 419.543f)));
+	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Map_MandalaPuzzle), &_float3(507.443f, 0.f, 423.105f)));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Map_FemaleStatue), &_float3(598.371f, 22.400f, 409.942f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Map_FemaleStatue), &_float3(593.436f, 22.400f, 417.660f)));
 
 
 	return S_OK;

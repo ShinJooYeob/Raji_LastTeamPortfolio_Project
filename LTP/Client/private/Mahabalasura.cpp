@@ -82,8 +82,8 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 		m_pArms.push_back(Arm);
 	}
 
-	m_fMaxHP = 100.f;
-	m_fHP = 100.f;
+	m_fMaxHP = 10.f;
+	m_fHP = 10.f;
 
 	CHpUI::HPDesc HpDesc;
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
@@ -93,6 +93,8 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
+
+	g_pGameInstance->Play3D_Sound(L"JJB_MrM_Intro.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 	return S_OK;
 }
 
@@ -100,11 +102,25 @@ _int CMahabalasura::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
+	m_pDissolveCom->Update_Dissolving(fDeltaTime);
+
+	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
+	{
+		Set_IsDead();
+	}
+
+	if (m_fHP <= 0 && !m_bIsHit)
+		m_bIsHit = true;
 
 	if (m_bIsStartTeleport)
 	{
 		if (m_fTeleportDelay <= 0 && m_bIsTeleport)
 		{
+			if (m_bIsTeleportAttack)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_bIsTeleportAttack = false;
+			}
 			m_fTeleportDelay = 0.5f;
 			m_bIsTeleport = false;
 		}
@@ -113,6 +129,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		{
 			if(!m_bIsCopySkill)
 				m_fTeleportDelay -= (_float)fDeltaTime;
+			if (!m_bIsTeleportSound)
+			{
+				m_bIsTeleportSound = true;
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Teleport_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			}
 			
 			return _int();
 		}
@@ -120,6 +141,22 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
+
+	m_fNarrationTime -= (_float)fDeltaTime;
+
+	if (m_fNarrationTime <= 0)
+	{
+		m_fNarrationTime = 12.f;
+
+		_int iRandom = rand() % 8;
+
+		wstring teampString;
+		teampString = L"JJB_Naration_" + to_wstring(iRandom) + L".wav";
+
+		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+	}
+
 
 	if (m_bIsArmAttack)
 	{
@@ -149,7 +186,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	}
 
 	
-	if (!m_bIsAttack && !m_bIsHit && m_bIsWalk)
+	if (!m_bIsAttack && !m_bIsHit && m_bIsWalk && !m_bIsDIeAnimStart)
 	{
 		if(m_fRange < 2 && m_fAttackCoolTime > 0)
 			m_pModel->Change_AnimIndex(0);
@@ -163,19 +200,39 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	//맞았을때
 	if (m_bIsHit)
 	{
-		m_bIsHit = false;
-		m_bIsAttack = true;
-		m_pModel->Change_AnimIndex_ReturnTo(4, 0);
-	}
-	////기본공격
-	//if (m_fRange < 4.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit)
-	//{
-	//	m_bIsAttack = true;
+		if (m_fHP <= 0 && !m_bIsDIeAnimStart)
+		{
+			m_bIsLookAt = false;
+			m_bIsDIeAnimStart = true;
+			m_pModel->Change_AnimIndex_ReturnTo(4, 1);
+		}
+		else if(m_fHP > 0)
+		{
+			_int iRandom = rand() % 2;
 
-	//	m_bIsWalk = false;
-	//	//m_bIsLookAt = false;
-	//	m_pModel->Change_AnimIndex_ReturnTo(5, 0);
-	//}
+			wstring teampString;
+			teampString = L"JJB_MrM_Hurt_" + to_wstring(iRandom) + L".wav";
+
+			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+			m_bIsHit = false;
+			m_bIsAttack = true;
+
+			--m_fHP;
+			m_pHPUI->Set_ADD_HitCount();
+
+			m_pModel->Change_AnimIndex_ReturnTo(4, 0);
+		}
+	}
+	//기본공격
+	if (m_fRange < 4.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit && m_fHP > 0)
+	{
+		m_bIsAttack = true;
+
+		m_bIsWalk = false;
+		//m_bIsLookAt = false;
+		m_pModel->Change_AnimIndex_ReturnTo(5, 0);
+	}
 	
 	// #DEBUG
 	if (KEYDOWN(DIK_B))
@@ -186,15 +243,13 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	}
 
 	//스킬공격
-	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit)
+	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit && m_fHP > 0)
 	{
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
 			m_bIsAttack = true;
-		
-			iRandom = 3;
 
 		iRandom = mOnlyPattern; // DEBUG
-
+		//iRandom = 3;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -206,6 +261,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		case SKILL_HAND:
 		{
 			m_bIsTeleport = true;
+			m_bIsTeleportSound = false;
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 			m_bIsArmAttack = true;
 			mPatternCount2 = 0;
@@ -218,6 +274,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		case SKILL_SPEAR_RAIN:
 		{
 			m_bIsTeleport = true;
+			m_bIsTeleportSound = false;
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 			m_pModel->Change_AnimIndex_ReturnTo(9, 0);
 		}
@@ -267,6 +324,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	if (m_pHPUI != nullptr)
 		m_pHPUI->Update(fDeltaTime);
 
+	if (m_bIsDissolveStart)
+		m_pDissolveCom->Set_DissolveOn(false, 6.4f);
+
 	return _int();
 }
 
@@ -285,7 +345,7 @@ _int CMahabalasura::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	m_pSpear->LateUpdate(fDeltaTime);
@@ -318,17 +378,20 @@ _int CMahabalasura::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		//if(i == 10)continue;
+	FAILED_CHECK(m_pDissolveCom->Render(3));
 
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	//if(i == 10)continue;
+
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 	return _int();
 }
@@ -342,10 +405,15 @@ _int CMahabalasura::LateRender()
 
 void CMahabalasura::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+
 }
 
 _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_fHP -= fDamageAmount;
+
+	m_pHPUI->Set_ADD_HitCount();
+
 	return _float();
 }
 
@@ -430,6 +498,12 @@ HRESULT CMahabalasura::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_Mahabalasura), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &DissolveDesc));
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -523,6 +597,14 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			break;
 		case 1:
+		{
+			if (PlayRate > 0.f && m_iAdjMovedIndex == 0)
+			{
+				m_bIsDissolveStart = true;
+				m_pSpear->Set_IsDissolveStart();
+				++m_iAdjMovedIndex;
+			}
+		}
 			break;
 
 		case 5:
@@ -535,9 +617,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				if (m_iAdjMovedIndex == 0)
 				{
-					if (Get_NowHP() <= 16.f)
+
+					if (Get_NowHP() <= m_fMaxHP/2.f)
 					{
 						m_bIsTeleport = true;
+						m_bIsTeleportSound = false;
+						m_bIsTeleportAttack = true;
 
 						_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 						_int iTemp = rand() % 2 == 0 ? -1 : 1;
@@ -545,6 +630,10 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 
+					}
+					else
+					{
+						g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					}
 					++m_iAdjMovedIndex;
 				}
@@ -555,9 +644,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				if (m_iAdjMovedIndex == 1)
 				{
-					if (Get_NowHP() <= 16.f)
+					
+					if (Get_NowHP() <= m_fMaxHP / 2.f)
 					{
 						m_bIsTeleport = true;
+						m_bIsTeleportSound = false;
+						m_bIsTeleportAttack = true;
 
 						_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 						_int iTemp = rand() % 2 == 0 ? -1 : 1;
@@ -565,7 +657,10 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 					}
-
+					else
+					{
+						g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					}
 					++m_iAdjMovedIndex;
 				}
 				m_bIsLookAt = true;
@@ -575,17 +670,24 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				if (m_iAdjMovedIndex == 2)
 				{
-					if (Get_NowHP() <= 16.f)
+
+					if (Get_NowHP() <= m_fMaxHP / 2.f)
 					{
 						m_bIsTeleport = true;
+						m_bIsTeleportSound = false;
+						m_bIsTeleportAttack = true;
 
 						_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 						_int iTemp = rand() % 2 == 0 ? -1 : 1;
 						Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
 
 						m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
-					}
 
+					}
+					else
+					{
+						g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_03.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					}
 					++m_iAdjMovedIndex;
 				}
 				m_bIsLookAt = true;
@@ -628,20 +730,34 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 7:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1f)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1)
 			{
+				_int iRandom = rand() % 2 + 1;
+
+				wstring teampString;
+				teampString = L"JJB_MrM_Make_clone_" + to_wstring(iRandom) + L".wav";
+
+				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0, m_pTextureParticleTransform);
 
 				++m_iAdjMovedIndex;
 			}
 
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.112676056)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Claw.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				++m_iAdjMovedIndex;
+			}
+
 			
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.5076923f)
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.5076923f)
 			{
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_CopyBoss"), TAG_OP(Prototype_Object_Boss_MahabalasuraCopy)));
 				CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum,TAG_LAY(Layer_Boss));
 
 				m_bIsTeleport = true;
+				m_bIsTeleportSound = false;
 				m_bIsCopySkill = true;
 
 				++m_iAdjMovedIndex;
@@ -655,6 +771,8 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1692307f)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Primary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			
 				CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
 				InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
 				InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -687,6 +805,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 				Spear->Set_IsStab();
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Lightning_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				++m_iAdjMovedIndex;
 			}
@@ -704,6 +823,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 0)
 			{
 				m_bIsTeleport = true;
+				m_bIsTeleportSound = false;
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
 
@@ -721,9 +841,15 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				CTransform* SpearTransform =  (CTransform*)m_pSpear->Get_Component(TAG_COM(Com_Transform));
 				SpearTransform->Rotation_CW(XMVectorSet(1.f, 0, 00.f, 0), XMConvertToRadians(Angle));
 			}
-
 			if (PlayRate > 0.16091954 && m_iAdjMovedIndex == 1)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.16091954 && m_iAdjMovedIndex == 2)
+			{
+
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
@@ -739,8 +865,42 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				++m_iAdjMovedIndex;
 			}
 
-			if (PlayRate > 0.36781609 && m_iAdjMovedIndex == 2)
+			if (PlayRate > 0.258620689 && m_iAdjMovedIndex == 3)
 			{
+				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.36781609 && m_iAdjMovedIndex == 4)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				CMahabalasura_Weapon::WEAPONDESC Desc;
+				Desc.m_CloneType = CMahabalasura_Weapon::CLONE_SKILL;
+				PlayerPos.y -= 5.f;
+				Desc.Pos = PlayerPos;
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
+				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.45402298 && m_iAdjMovedIndex == 5)
+			{
+				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+
+			if (PlayRate > 0.57471264 && m_iAdjMovedIndex == 6)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
@@ -754,8 +914,16 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				++m_iAdjMovedIndex;
 			}
 
-			if (PlayRate > 0.57471264 && m_iAdjMovedIndex == 3)
+			if (PlayRate > 0.655172413 && m_iAdjMovedIndex == 7)
 			{
+				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.7758620 && m_iAdjMovedIndex == 8)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
@@ -768,22 +936,17 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				++m_iAdjMovedIndex;
 			}
-			if (PlayRate > 0.7758620 && m_iAdjMovedIndex == 4)
-			{
-				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
-				CMahabalasura_Weapon::WEAPONDESC Desc;
-				Desc.m_CloneType = CMahabalasura_Weapon::CLONE_SKILL;
-				PlayerPos.y -= 5.f;
-				Desc.Pos = PlayerPos;
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc));
-				//g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+			if (PlayRate > 0.8563218390 && m_iAdjMovedIndex == 9)
+			{
+				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				++m_iAdjMovedIndex;
 			}
-			if (PlayRate > 0.977011 && m_iAdjMovedIndex == 5)
+			if (PlayRate > 0.977011 && m_iAdjMovedIndex == 10)
 			{
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
@@ -804,7 +967,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
-					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 
 				m_EffectAdjust++;
 			}
@@ -839,7 +1002,9 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_2, m_pTransformCom);
 
 				m_EffectAdjust++;
+
 			}
+	
 
 			// after Middle Test
 			//if (m_EffectAdjust == 0 && PlayRate > 0.03f)
@@ -921,6 +1086,10 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 0)
 		{
 		}
+		if (iNowAnimIndex == 1)
+		{
+			m_pModel->Change_AnimIndex(0);
+		}
 		if (iNowAnimIndex == 4)
 		{
 			m_bIsAttack = false;
@@ -992,6 +1161,7 @@ void CMahabalasura::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pDissolveCom);
 
 	Safe_Release(m_pSpear);
 

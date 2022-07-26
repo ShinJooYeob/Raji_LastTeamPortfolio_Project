@@ -82,6 +82,9 @@ _int CMandalaPuzzle::Update(_double fDeltaTime)
 		//	}
 		//}
 	}
+	//_float3  test = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//test.y = 3.f;
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, test);
 
 	if (m_bTest && !m_bIsClear)
 	{

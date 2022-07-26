@@ -30,6 +30,8 @@ HRESULT CMandalaMesh::Initialize_Clone(void * pArg)
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_MandalaDesc.m_Pos);
 	m_iPassIndex = 3;
 
+	m_fFrustumRadius = 20.f;
+
 	switch (m_MandalaDesc.m_eMandalaNum)
 	{
 	case CMandalaMesh::MANDALA_00:
@@ -111,8 +113,16 @@ _int CMandalaMesh::Render()
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 
+	_Matrix Oldmat = m_pTransformCom->Get_WorldMatrix();
+	_float OldTurnSpeed = m_pTransformCom->Get_TurnSpeed();
+	
+	m_pTransformCom->Set_TurnSpeed(1.f);
+	m_pTransformCom->Turn_CCW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(-45));
+
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
+	m_pTransformCom->Set_TurnSpeed(OldTurnSpeed);
+	m_pTransformCom->Set_Matrix(Oldmat);
 
 	FAILED_CHECK(__super::SetUp_ConstTable(m_pShaderCom));
 
