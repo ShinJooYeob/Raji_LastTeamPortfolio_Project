@@ -430,6 +430,7 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR
 #else
+#ifdef DEBUGONSHADERSETTING
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
@@ -458,9 +459,10 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 	pRenderer->Set_FogStartDist(5.f);
 	pRenderer->Set_FogGlobalDensity(0.1f);
 	pRenderer->Set_FogHeightFalloff(0.1f);
+#endif
 
 #endif // !_DEBUG
-	
+	return S_OK;
 }
 	
 HRESULT CScene_Stage1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)

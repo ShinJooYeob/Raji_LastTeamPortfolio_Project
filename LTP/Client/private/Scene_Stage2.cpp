@@ -429,6 +429,7 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 
 #else
 
+#ifdef DEBUGONSHADERSETTING
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
 	pLightDesc->vDiffuse = _float4(0.859375f, 0.9453125f, 1.f, 1.f);
@@ -457,6 +458,7 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 	pRenderer->Set_FogStartDist(0.1f);
 	pRenderer->Set_FogGlobalDensity(0.05f);
 	pRenderer->Set_FogHeightFalloff(0.3f);
+#endif
 
 #endif // !_DEBUG
 

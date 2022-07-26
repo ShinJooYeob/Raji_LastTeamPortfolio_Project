@@ -17,6 +17,7 @@ extern _bool g_bShowMouse;
 
 #define GETPARTICLE GetSingle(CPartilceCreateMgr)
 
+#define DEBUGONSHADERSETTING
 
 namespace Client {};
 using namespace Client;

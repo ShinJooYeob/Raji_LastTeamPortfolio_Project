@@ -301,7 +301,7 @@ HRESULT CUtilityMgr::SCD_Rendering_Rolling(_float RollingStartTime, _float Rolli
 	_uint RollingRate = min(_uint(RollingStartTime / RollingTargetTime * _float(NumRollingTexture)) , NumRollingTexture - 1);
 
 
-	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433));
+	m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433);
 	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_DiffuseTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
 	FAILED_CHECK(m_pLoadingSCD.Render_SCD_Rolling(RollingRate));
 	//PS_PaperCurlOut

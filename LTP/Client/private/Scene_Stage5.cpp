@@ -464,6 +464,7 @@ HRESULT CScene_Stage5::Ready_PostPorcessing()
 	//POSTPROCESSING_CAMMOTIONBLUR
 #else
 
+#ifdef DEBUGONSHADERSETTING
 	//LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	//g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
 	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
@@ -507,6 +508,7 @@ HRESULT CScene_Stage5::Ready_PostPorcessing()
 	//pRenderer->Set_FogGlobalDensity(0.01f);
 	//pRenderer->Set_FogHeightFalloff(0.2f);
 
+#endif
 #endif // !_DEBUG
 
 

@@ -429,6 +429,9 @@ HRESULT CScene_Stage3::Ready_PostPorcessing()
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR
 #else
+
+#ifdef DEBUGONSHADERSETTING
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(160.f, 180.f, -100.f, 1.f));
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
@@ -458,6 +461,7 @@ HRESULT CScene_Stage3::Ready_PostPorcessing()
 	pRenderer->Set_FogStartDist(0.001f);
 	pRenderer->Set_FogGlobalDensity(0.2f);
 	pRenderer->Set_FogHeightFalloff(0.1f);
+#endif
 
 #endif // !_DEBUG
 
