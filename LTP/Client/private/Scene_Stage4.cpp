@@ -536,10 +536,10 @@ HRESULT CScene_Stage4::Ready_PostPorcessing()
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
 	pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
 	pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
-	pLightDesc->vSpecular = _float4(0.3203125f, 0.1328125f, 0.32421875f, 1.f);
+	pLightDesc->vSpecular = _float4(0.3203125f, 0.32421875f, 0.28125f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
 
@@ -560,8 +560,8 @@ HRESULT CScene_Stage4::Ready_PostPorcessing()
 	pRenderer->Set_MaxDeltaLen(0.006f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
-
-	pRenderer->Set_LensfalreSupportSunSize(0.98f);
+	_float Value = (1 - 0.98f) * 344.f + 16.f;
+	pRenderer->Set_LensfalreSupportSunSize(Value);
 	pRenderer->Set_LensefalreNoiseTexIndex(245);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
@@ -572,7 +572,7 @@ HRESULT CScene_Stage4::Ready_PostPorcessing()
 	pRenderer->Set_DofLength(160.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));
+	pRenderer->Set_FogColor(_float3(0.5f, 0.5f, 0.5f));
 	pRenderer->Set_FogStartDist(0.001f);
 	pRenderer->Set_FogGlobalDensity(0.01f);
 	pRenderer->Set_FogHeightFalloff(0.2f);

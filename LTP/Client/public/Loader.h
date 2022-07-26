@@ -40,7 +40,10 @@ public:
 
 	HRESULT Load_Model_DatFile();
 	HRESULT Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc);
-
+	HRESULT Load_AllMonster();
+	HRESULT Load_AllBoss();
+	HRESULT Load_AllDynamicMapObject();
+	HRESULT Load_MapMesh(SCENEID eID);
 private:
 	//로딩이 끝낫음을 알려주는 변수
 	_bool m_bIsLoadingFinished = false;

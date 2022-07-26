@@ -422,7 +422,6 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 	pRenderer->Set_FogGlobalDensity(0.05f);
 	pRenderer->Set_FogHeightFalloff(0.3f);
 
-
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR
