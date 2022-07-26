@@ -615,11 +615,11 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
-	m_iOncePattern = 5;
 
 	// #DEBUG PatternSET
+//	m_iOncePattern = 0;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 4;
+		m_iOncePattern = 10;
 
 	switch (m_iOncePattern)
 	{
@@ -1111,6 +1111,21 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH4, m_pTransformCom);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
+				instanceDesc.TotalParticleTime = 1.0f;
+				instanceDesc.EachParticleLifeTime = 0.5f;
+				instanceDesc.fDistortionNoisingPushPower = 5.0f;
+				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 4;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
 				m_EffectAdjust++;
 			}
 
@@ -1118,6 +1133,8 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_LHand);
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH2, m_pTextureParticleTransform_RHand);
+
+
 				m_EffectAdjust++;
 			}
 
@@ -1173,12 +1190,39 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 1 && PlayRate >= 0.24)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
+				instanceDesc.TotalParticleTime = 0.5f;
+				instanceDesc.EachParticleLifeTime = 0.5f;
+				instanceDesc.fDistortionNoisingPushPower = 5.0f;
+				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 4;
+
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 				m_EffectAdjust++;
 			}
 
 			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_RHand;
+				instanceDesc.TotalParticleTime = 0.5f;
+				instanceDesc.EachParticleLifeTime = 0.5f;
+				instanceDesc.fDistortionNoisingPushPower = 5.0f;
+				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 4;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 			}
@@ -1222,12 +1266,29 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTransformCom);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
+				instanceDesc.TotalParticleTime = 1.0f;
+				instanceDesc.EachParticleLifeTime = 0.3f;
+				instanceDesc.TargetColor = _float4(1.0f, 0.23f, 0.02f, 0.8f);
+				instanceDesc.TargetColor2 = _float4(1);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 4;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
 				m_EffectAdjust++;
 			}
 			
 			if (m_EffectAdjust == 1 && PlayRate >= 0.4f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
+
+				
+
 				m_EffectAdjust++;
 			}
 
@@ -1269,16 +1330,50 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_dAcceleration = 1;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.55f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
+			{
+
+			auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Suck);
+			instanceDesc.FollowingTarget = m_pTransformCom;
+			instanceDesc.TotalParticleTime = 1.8f;
+			instanceDesc.EachParticleLifeTime = 0.5f;
+			instanceDesc.fDistortionNoisingPushPower = 5.0f;
+			instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
+			instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
+			instanceDesc.ParticleStartRandomPosMin= _float3(-3);
+			instanceDesc.ParticleStartRandomPosMax= _float3(3);
+			instanceDesc.ParticleSize = _float3(0.3f);
+			instanceDesc.ParticleSize2 = _float3(0.1f);
+			instanceDesc.bEmissive = true;
+			instanceDesc.vEmissive_SBB = _float3(1);
+			instanceDesc.ColorChageFrequency = 4;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+			m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.55f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
 
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.8f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.8f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTextureParticleTransform_Tail);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.vFixedPosition = m_pTextureParticleTransform_Tail->Get_MatrixState_Float3(CTransform::STATE_POS);
+				instanceDesc.TotalParticleTime = 1.0f;
+				instanceDesc.EachParticleLifeTime = 0.5f;
+				instanceDesc.TargetColor = _float4(0.0f, 0.03f, 0.02f, 0.8f);
+				instanceDesc.TargetColor2 = _float4(1);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 4;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 			}

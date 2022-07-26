@@ -1109,11 +1109,38 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				// #TIME Hand 2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
 				
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
+				instanceDesc.TotalParticleTime = 0.5f;
+				instanceDesc.EachParticleLifeTime = 0.3f;
+				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f, 1.0f);
+				instanceDesc.TargetColor2 = _float4(1);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 2;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
+
 			}
 			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_RHand);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_RHand;
+				instanceDesc.TotalParticleTime = 0.5f;
+				instanceDesc.EachParticleLifeTime = 0.3f;
+				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f, 1.0f);
+				instanceDesc.TargetColor2 = _float4(1);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				instanceDesc.ColorChageFrequency = 2;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 			}
 			break;
@@ -1155,6 +1182,19 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTransformCom);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
+				instanceDesc.TotalParticleTime = 0.5f;
+				instanceDesc.EachParticleLifeTime = 0.3f;
+				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f,1.0f);
+				instanceDesc.TargetColor2 = _float4(1);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+				//instanceDesc.ColorChageFrequency = 2;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 			}
 
