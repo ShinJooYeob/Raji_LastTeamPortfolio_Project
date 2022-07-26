@@ -882,7 +882,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
@@ -955,7 +955,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 
 			if (PlayRate > 0 && PlayRate <= 0.539215)
@@ -1039,7 +1039,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
@@ -1100,7 +1100,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.29411)
 			{
@@ -1196,7 +1196,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.9574)
 			{
