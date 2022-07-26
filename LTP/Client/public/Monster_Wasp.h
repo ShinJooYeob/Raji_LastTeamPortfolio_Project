@@ -101,6 +101,10 @@ private:
 
 	_bool				m_bAttackOn = false;
 
+private:
+	_uint				m_iSoundIndex[ANIM_END] = {};
+	_bool				m_bSoundSwitch[ANIM_END] = {};
+
 public:
 	static CMonster_Wasp* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

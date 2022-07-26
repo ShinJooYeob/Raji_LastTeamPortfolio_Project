@@ -384,14 +384,17 @@ HRESULT CMonster_Wormgrub::FollowMe(_double dDeltaTime)
 	for (auto& MeshInstance : m_vecInstancedTransform)
 	{
 
-		_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
+		if (MeshInstance.iAnimType >= ANIM_RUN_Frame1 && MeshInstance.iAnimType <= ANIM_RUN_Frame2)
+		{
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS) - MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS));
 
-		MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
+			MeshInstance.pTransform->Turn_Dir(vTarget, 0.9f);
+
+			MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+			m_bSoundSwitch[MeshInstance.iAnimType] = true;
+		}
 		_float fDistance = MeshInstance.pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
-
-
-		MeshInstance.pTransform->Set_MatrixState(CTransform::STATE_POS, MeshInstance.pNavigation->Get_NaviPosition(MeshInstance.pTransform->Get_MatrixState(CTransform::STATE_POS)));
-
 		//////////////////////RenderType
 
 		if (MeshInstance.bHit == true && MeshInstance.iHp > 0)
@@ -421,6 +424,7 @@ HRESULT CMonster_Wormgrub::FollowMe(_double dDeltaTime)
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
 				continue;
 			MeshInstance.iAnimType = m_iTempAnimNumber;
+			m_bSoundSwitch[m_iTempAnimNumber] = true;
 		}
 		else {
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
@@ -662,6 +666,37 @@ HRESULT CMonster_Wormgrub::Adjust_AnimMovedTransform(_double dDeltatime)
 		}
 		}
 	}
+
+
+	for (_uint i = ANIM_RUN_Frame1; i < ANIM_END; i++)
+	{
+		_double PlayRate = m_pModel[i]->Get_PlayRate();
+		if (PlayRate > 0.95)
+		{
+			m_iSoundIndex[i] = 0;
+			m_bSoundSwitch[i] = false;
+		}
+		if (PlayRate <= 0.95)
+		{
+			if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+				{
+					//g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_01.wav"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_iSoundIndex[i]++;
+				}
+			}
+			if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
+			{
+				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
+				{
+					//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					m_iSoundIndex[i]++;
+				}
+			}
+		}
+	}
+
 
 	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
 	//{

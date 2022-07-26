@@ -716,7 +716,6 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 	}
 
 
-	//»Ï...
 	//for (_uint i = ANIM_RUN_Frame1; i <= ANIM_RUN_Frame2; i++)
 	//{
 	//	_double PlayRate = m_pModel[i]->Get_PlayRate();
