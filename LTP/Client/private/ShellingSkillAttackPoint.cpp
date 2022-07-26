@@ -27,7 +27,7 @@ HRESULT CShellingSkillAttackPoint::Initialize_Clone(void * pArg)
 
 	if (pArg != nullptr)
 	{
-		m_pTransformCom_Parabola->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
+//		m_pTransformCom_Parabola->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 		m_pTransformCom_Point->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 	}
 
@@ -71,25 +71,25 @@ _int CShellingSkillAttackPoint::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
-	// Render Parabola
-	NULL_CHECK_RETURN(m_pModel_Parabola, E_FAIL);
+	//// Render Parabola
+	//NULL_CHECK_RETURN(m_pModel_Parabola, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
-	FAILED_CHECK(m_pShaderCom_Parabola->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
-	FAILED_CHECK(m_pShaderCom_Parabola->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	//FAILED_CHECK(m_pShaderCom_Parabola->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+	//FAILED_CHECK(m_pShaderCom_Parabola->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pTransformCom_Parabola->Bind_OnShader(m_pShaderCom_Parabola, "g_WorldMatrix"));
+	//FAILED_CHECK(m_pTransformCom_Parabola->Bind_OnShader(m_pShaderCom_Parabola, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel_Parabola->Get_NumMaterial();
+	//_uint NumMaterial = m_pModel_Parabola->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel_Parabola->Bind_OnShader(m_pShaderCom_Parabola, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel_Parabola->Render(m_pShaderCom_Parabola, 3, i));
-	}
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//	{
+	//		FAILED_CHECK(m_pModel_Parabola->Bind_OnShader(m_pShaderCom_Parabola, i, j, MODLETEXTYPE(j)));
+	//	}
+	//	FAILED_CHECK(m_pModel_Parabola->Render(m_pShaderCom_Parabola, 3, i));
+	//}
 	//
 
 
@@ -216,16 +216,16 @@ HRESULT CShellingSkillAttackPoint::SetUp_Components()
 	// Parabola
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom_Parabola));
+//	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom_Parabola));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerEffect_ShellingParabola), TAG_COM(Com_Model), (CComponent**)&m_pModel_Parabola));
+	//FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerEffect_ShellingParabola), TAG_COM(Com_Model), (CComponent**)&m_pModel_Parabola));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 5;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom_Parabola, &tDesc));
+	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom_Parabola, &tDesc));
 	//
 	
 
@@ -236,7 +236,7 @@ HRESULT CShellingSkillAttackPoint::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_ShellingPoint), TAG_COM(Com_Texture), (CComponent**)&m_pTextureCom_Point));
 	
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pTransformCom_Point, &tDesc));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom_Point, &tDesc));
 	//
 
 	return S_OK;
@@ -271,9 +271,9 @@ void CShellingSkillAttackPoint::Free()
 	__super::Free();
 
 	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pShaderCom_Parabola);
-	Safe_Release(m_pModel_Parabola);
-	Safe_Release(m_pTransformCom_Parabola);
+//	Safe_Release(m_pShaderCom_Parabola);
+	//Safe_Release(m_pModel_Parabola);
+	//Safe_Release(m_pTransformCom_Parabola);
 
 	Safe_Release(m_pShaderCom_Point);
 	Safe_Release(m_pTextureCom_Point);

@@ -60,39 +60,10 @@ _int CPlayerWeapon_Spear::Update(_double fDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime, true));
 
 
-	if (true == m_bActiveCollision)
-	{
-		Update_Colliders();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
-	}
-
-	if (true == m_bActiveCollision_1)
-	{
-		Update_Colliders_1();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Range));
-	}
-
-	if (true == m_bActiveCollision_2)
-	{
-		Update_Colliders_2();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Sting));
-	}
-
-	if (true == m_bActiveCollision_3)
-	{
-		Update_Colliders_3();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_MainSmash));
-	}
-
-	if (true == m_bActiveCollision_4)
-	{
-		Update_Colliders_4();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Ultimate));
-	}
-
+	FAILED_CHECK(Add_CollisionGroups());
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	Update_ParticleTransform();
-
+	
 	return _int();
 }
 
@@ -134,11 +105,9 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_MainSmash));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Ultimate));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Sting));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Range));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+
+
+	Add_CollisionDebugRender();
 
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 	return _int();
@@ -213,7 +182,7 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-			pConflictedCollider->Set_Conflicted(0.5f);
+			pConflictedCollider->Set_Conflicted(0.3f);
 
 			_int iSelectSoundFileIndex = rand() % 2;
 			_tchar pSoundFile[MAXLEN] = TEXT("");
@@ -462,6 +431,75 @@ void CPlayerWeapon_Spear::Throw(_double fDeltaTimer)
 
 	m_bActiveCollision = true;
 	m_pTransformCom->MovetoDir(m_bThrowDir.XMVector(), fDeltaTimer);
+}
+
+HRESULT CPlayerWeapon_Spear::Add_CollisionGroups()
+{
+	if (true == m_bActiveCollision)
+	{
+		Update_Colliders();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
+	}
+
+	if (true == m_bActiveCollision_1)
+	{
+		Update_Colliders_1();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Range));
+	}
+
+	if (true == m_bActiveCollision_2)
+	{
+		Update_Colliders_2();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Sting));
+	}
+
+	if (true == m_bActiveCollision_3)
+	{
+		Update_Colliders_3();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_MainSmash));
+	}
+
+	if (true == m_bActiveCollision_4)
+	{
+		Update_Colliders_4();
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Ultimate));
+	}
+
+	//m_pCollider_Ultimate->Update_ConflictPassedTime(g_fDeltaTime);
+	
+	return S_OK;
+}
+
+HRESULT CPlayerWeapon_Spear::Add_CollisionDebugRender()
+{
+	if (true == m_bActiveCollision)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	}
+
+	if (true == m_bActiveCollision_1)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Range));
+	}
+
+	if (true == m_bActiveCollision_2)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Sting));
+	}
+
+	if (true == m_bActiveCollision_3)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_MainSmash));
+	}
+
+	if (true == m_bActiveCollision_4)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Ultimate));
+	}
+
+
+
+	return S_OK;
 }
 
 HRESULT CPlayerWeapon_Spear::SetUp_Components()

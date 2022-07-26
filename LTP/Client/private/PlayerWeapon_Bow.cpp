@@ -397,8 +397,8 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 HRESULT CPlayerWeapon_Bow::SetUp_EtcInfo()
 {
 	m_pModel->Change_AnimIndex(0);
-	m_fMaxTime_UltimateAttackDuration = 6.f;
-	m_fCurTime_UltimateAttackDuration = 6.f;
+	m_fMaxTime_UltimateAttackDuration = 4.f;
+	m_fCurTime_UltimateAttackDuration = 4.f;
 
 	return S_OK;
 }

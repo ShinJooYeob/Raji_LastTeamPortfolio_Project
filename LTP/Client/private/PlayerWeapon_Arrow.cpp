@@ -179,8 +179,8 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_iPassNum = 8;
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-98, -80, 115), _float3(0.0, 0.0, 0.0));
 		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-1.087f, 0.36f, 0.667f));
-		m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
-		m_pSwordTrail2->Set_Color(_float4(1.f, 0.7745f, 0.9745f, 1.f));
+		m_pSwordTrail->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
+		m_pSwordTrail2->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
 		Active_Trail(true);
 		break;
 	case EArrowState::Arrow_State_NormalShot:
@@ -188,8 +188,8 @@ void CPlayerWeapon_Arrow::Set_State(EArrowState eNewState, _float fSpeed)
 		m_iPassNum = 2;
 		m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 		m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
-		m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
-		m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+		m_pSwordTrail->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
+		m_pSwordTrail2->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
 		m_fStartPos_y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		m_pTransformCom->Set_MoveSpeed(fSpeed);
 
@@ -241,8 +241,8 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint i
 	m_bFired = true;
 
 	// Setting Trail Color
-	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
-	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
 	Active_Trail(true);
 	//
 }
@@ -263,8 +263,8 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_1(_fVector vShotDir)
 	m_bFired = true;
 
 	// Setting Trail Color
-	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
-	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
 	Active_Trail(true);
 	//
 }
@@ -289,8 +289,8 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_2(_fVector vShotDir, _float 
 	m_bFired = true;
 
 	// Setting Trail Color
-	m_pSwordTrail->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
-	m_pSwordTrail2->Set_Color(_float4(1.f, 0.5745f, 0.9745f, 1.f));
+	m_pSwordTrail->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
+	m_pSwordTrail2->Set_Color(_float4(0.896f, 0.96f, 0.96f, 1.f));
 	Active_Trail(true);
 	//
 }
@@ -745,13 +745,13 @@ HRESULT CPlayerWeapon_Arrow::SetUp_Components()
 
 	CSwordTrail::TRAILDESC tSwordDesc;
 	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
+	tSwordDesc.vColor = _float4(0.896f, 0.96f, 0.96f, 1.f);
 	tSwordDesc.iTextureIndex = 1;
 	tSwordDesc.NoiseSpeed = 0;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
 	tSwordDesc.iPassIndex = 0;
-	tSwordDesc.vColor = _float4(0.587f, 0.972f, 0.941f, 1.f);
+	tSwordDesc.vColor = _float4(0.896f, 0.96f, 0.96f, 1.f);
 	tSwordDesc.iTextureIndex = 1;
 	tSwordDesc.NoiseSpeed = 0;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SubSwordTrail), (CComponent**)&m_pSwordTrail2, &tSwordDesc));

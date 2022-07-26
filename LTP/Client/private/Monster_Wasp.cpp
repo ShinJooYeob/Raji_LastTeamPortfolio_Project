@@ -138,7 +138,6 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 	{
 		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
-
 			if (pMyCollider == m_vecInstancedTransform[i].pCollider)
 			{
 				if (m_vecInstancedTransform[i].bHit == false)
@@ -181,7 +180,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 _float CMonster_Wasp::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 	//m_pColliderCom->Set_Conflicted(0.f);
-
+	
 	return _float();
 }
 
