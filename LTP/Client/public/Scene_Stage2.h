@@ -30,8 +30,14 @@ private:
 	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
 	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 
+
+
+	HRESULT Ready_PostPorcessing();
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
+	CUtilityMgr*					m_pUtilMgr = nullptr;
+	CTransform*						m_pPlayerTransform = nullptr;
 public:
 	static CScene_Stage2* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual void Free() override;

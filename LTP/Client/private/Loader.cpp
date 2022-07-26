@@ -1309,26 +1309,6 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma  endregion Snake
 
 
-//#pragma region Mahabalasura
-//	//
-//	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-//	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_DS_BrokenArch_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_StepwellStairs_Half_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform03.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_DS_BrokenArch_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_Stairs_04.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_Circular_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_FemaleStatue_02.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_GodHand_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Statue_Shiva_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_VishnuTemple_01.fbx", TransformMatrix);
-//	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"QRocksC.fbx", TransformMatrix);
-//
-//#pragma  endregion Mahabalasura
-//
 
 	/*
 #pragma  region Static_Mesh
@@ -1749,26 +1729,36 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 #pragma region PROTOTYPE_COMPONENT
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE5, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/BossNaviData_Sanke.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/BossNaviData_Mahabalasura.dat")))))
 		return E_FAIL;
 
 	_Matrix			TransformMatrix;
 	
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-#pragma region Snake
+#pragma region Mahabalasura
+	//
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SnakeMapMesh.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_BackdropTemple_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_DS_BrokenArch_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_StepwellStairs_Half_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform02_2.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_BLD_DS_BrokenArch_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_Stairs_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_Circular_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_FemaleStatue_02.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_GodHand_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Statue_Shiva_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_VishnuTemple_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"QRocksC.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"BG_Mountain_1.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"BG_Mountain_2.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_TombBase_01.fbx", TransformMatrix);
 
-#pragma  endregion Snake
+#pragma  endregion Mahabalasura
+
+
 
 #pragma endregion
 
@@ -2487,7 +2477,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	// MERGE //
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-//	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
+	GetSingle(CAssimpCreateMgr)->Load_ALL_Model(TransformMatrix, TransformMatrix);
 
 #pragma endregion
 

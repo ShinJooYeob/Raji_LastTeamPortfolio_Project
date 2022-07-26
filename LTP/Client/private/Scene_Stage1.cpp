@@ -21,6 +21,7 @@ HRESULT CScene_Stage1::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	m_pUtilMgr = GetSingle(CUtilityMgr);
 
 	FAILED_CHECK(Ready_Light());
 
@@ -33,6 +34,15 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
 
+
+
+	FAILED_CHECK(Ready_PostPorcessing());
+
+
+
+	
+	////_float Length = _float3(-64, 64, -64).Get_Distance(_float3(128.f, -128.f, -256.f).XMVector());
+
 	return S_OK;
 }
 
@@ -44,12 +54,23 @@ _int CScene_Stage1::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (m_iSceneStartChecker == 2)
+	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
+		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
+		return 0;
 	}
 
+
+	if (m_iSceneStartChecker <= 2)
+	{
+		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
+		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
+	}
+
+	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	_Vector vDir = XMVector3Normalize(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), 10) - XMVectorSet(128.f, -64.f, 256.f, 0));
+	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(128.f, -64.f, 256.f, 0) + vDir * 330.f);
 
 	return 0;
 }
@@ -71,12 +92,12 @@ _int CScene_Stage1::Render()
 		return -1;
 	if (m_fSceneStartTimer < 0.5f)
 	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
 	}
 	else if (m_fSceneStartTimer < 2.5f)
 	{
 
-		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
 	}
 
 	return 0;
@@ -93,7 +114,7 @@ _int CScene_Stage1::LateRender()
 _int CScene_Stage1::Change_to_NextScene()
 {
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
 	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, (SCENEID) m_eNextScene), SCENEID::SCENE_LOADING));
 
 
@@ -124,7 +145,12 @@ HRESULT CScene_Stage1::Ready_Light()
 	else
 	{
 		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, DefalutSunPosition.XMVector());
+
 	}
+
+
+	
+
 
 
 	return S_OK;
@@ -177,9 +203,12 @@ HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(30.f, 37.460f, 60.f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
-	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+
+	m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
+
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
@@ -354,6 +383,77 @@ HRESULT CScene_Stage1::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 
 
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage1::Ready_PostPorcessing()
+{
+#ifndef _DEBUG
+
+	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
+	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
+
+	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
+
+
+	for (_uint i = 0; i < POSTPROCESSING_END; i++)
+		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	pRenderer->Set_ShadowIntensive(0.3f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->Set_BloomOverLuminceValue(1.0f);
+	pRenderer->Set_BloomBrightnessMul(1.5f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	pRenderer->Set_DofLength(30.f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->Set_FogStartDist(5.f);
+	pRenderer->Set_FogGlobalDensity(0.1f);
+	pRenderer->Set_FogHeightFalloff(0.1f);
+
+	//POSTPROCESSING_GODRAY
+	//POSTPROCESSING_LENSEFLARE
+	//POSTPROCESSING_CAMMOTIONBLUR
+#else
+
+	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
+	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
+
+	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
+
+
+	for (_uint i = 0; i < POSTPROCESSING_END; i++)
+		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	pRenderer->Set_ShadowIntensive(0.3f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->Set_BloomOverLuminceValue(1.0f);
+	pRenderer->Set_BloomBrightnessMul(1.5f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	pRenderer->Set_DofLength(30.f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->Set_FogStartDist(5.f);
+	pRenderer->Set_FogGlobalDensity(0.1f);
+	pRenderer->Set_FogHeightFalloff(0.1f);
+
+#endif // !_DEBUG
+	
+	
 	return S_OK;
 }
 

@@ -52,8 +52,8 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
-	
-	if (m_iSceneStartChecker == 2)
+
+	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -81,6 +81,7 @@ _int CScene_Stage6::Render()
 	if (__super::Render() < 0)
 		return -1;
 
+	if (m_bIsNeedToSceneChange) return S_FALSE;
 
 	if (m_fSceneStartTimer < 0.5f)
 	{

@@ -28,6 +28,11 @@ HRESULT CScene_Loby::Initialize()
 	// #SOUND Test
 	// GetSingle(CGameInstance)->PlayBGM(L"The End.mp3", 0, 1.f);
 		
+
+
+	for (_uint i = 0; i < POSTPROCESSING_END; i++)
+		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
 	return S_OK;
 }
 
@@ -42,7 +47,11 @@ _int CScene_Loby::Update(_double fDeltaTime)
 		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing(POSTPROCESSING_CAMMOTIONBLUR);
 	}
 
-
+	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE1), SCENEID::SCENE_LOADING));
+	}
 	if (GetKeyState(VK_F2) & 0x8000)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
@@ -75,7 +84,7 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	RELEASE_INSTANCE(CGameInstance);
 
 
-	if (m_iSceneStartChecker == 2)
+	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -98,6 +107,10 @@ _int CScene_Loby::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
+
+	if (m_bIsNeedToSceneChange) return S_FALSE;
+
 	if (m_fSceneStartTimer < 0.5f)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));

@@ -206,6 +206,7 @@ public:
 	void OnOff_PostPorcessing_byParameter(POSTPROCESSINGID eID, _bool bBool);
 	_bool Get_IsOnPostPorcessing(POSTPROCESSINGID eID) { return m_PostProcessingOn[eID]; };
 
+
 	_float Get_DofLength() { return m_fDofLength; };
 	void	Set_DofLength(_float vDofValue) { m_fDofLength = vDofValue; };
 	_float Get_ShadowIntensive() { return m_fShadowIntensive; };

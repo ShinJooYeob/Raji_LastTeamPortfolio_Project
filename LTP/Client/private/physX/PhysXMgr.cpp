@@ -108,8 +108,8 @@ HRESULT CPhysXMgr::LateUpdate_PhysX(_double timedelta)
 	}
 
 
-	Call_CollisionFunc_Trigger();
-	Call_CollisionFunc_Contect();
+	// Call_CollisionFunc_Trigger();
+	// Call_CollisionFunc_Contect();
 	ReleasePhysXCom();
 
 	return S_OK;

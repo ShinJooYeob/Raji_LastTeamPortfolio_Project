@@ -50,17 +50,25 @@ _int CStaticInstanceMapObject::LateUpdate(_double fDeltaTime)
 
 
 
+	CGameInstance* pInstance = GetSingle(CGameInstance);
 
 
 
 	for (auto& InstancMapObject : m_mapInstancMapObjects)
 	{
+
+		if (InstancMapObject.second.pvecTransform.size() == 1 &&
+			!(pInstance->IsNeedToLightRender(InstancMapObject.second.pvecTransform[0]->Get_MatrixState_Float3(CTransform::STATE_POS), InstancMapObject.second.fFrustumRange)))
+			continue;
+
+		{
 			Set_IsOcllusion(InstancMapObject.second.bIsOcllusion);
 
 			m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE,
 				this, &InstancMapObject.second.pvecTransform, InstancMapObject.second.pModelInstance,
 				m_pShaderCom, InstancMapObject.second.pModel);
-		
+
+		}
 	}
 
 

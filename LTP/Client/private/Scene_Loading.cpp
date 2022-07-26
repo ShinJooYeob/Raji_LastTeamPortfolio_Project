@@ -38,6 +38,8 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging());
 
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(0)));
+
 	m_eNextSceneIndex = eSceneID;
 	m_pLoader = CLoader::Create(m_pDevice,m_pDeviceContext,eSceneID);
 

@@ -809,16 +809,102 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			}
 
 
+
+			if (ImGui::TreeNode("Sun Diffuse Color"))
+			{
+				static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+				static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+				static bool alpha_preview = true;
+				static bool alpha_half_preview = false;
+				static bool drag_and_drop = true;
+				static bool options_menu = false;
+				//static bool options_menu = true;
+				static bool hdr = false;
+				static bool ref_color = false;
+
+				_float3 ColorValue = pLightDesc->vDiffuse;
+
+				color = ImVec4(ColorValue.x, ColorValue.y, ColorValue.z, 1.f);
+
+				ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+				ImGuiColorEditFlags flags = misc_flags;
+
+				ImGui::ColorPicker4("Sun Diffuse##444", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+
+				ColorValue.x = max(min(color.x, 1.f), 0.f);
+				ColorValue.y = max(min(color.y, 1.f), 0.f);
+				ColorValue.z = max(min(color.z, 1.f), 0.f);
+
+				pLightDesc->vDiffuse = ColorValue;
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Sun vAmbient Color"))
+			{
+				static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+				static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+				static bool alpha_preview = true;
+				static bool alpha_half_preview = false;
+				static bool drag_and_drop = true;
+				static bool options_menu = false;
+				//static bool options_menu = true;
+				static bool hdr = false;
+				static bool ref_color = false;
+
+				_float3 ColorValue = pLightDesc->vAmbient;
+
+				color = ImVec4(ColorValue.x, ColorValue.y, ColorValue.z, 1.f);
+
+				ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+				ImGuiColorEditFlags flags = misc_flags;
+
+				ImGui::ColorPicker4("Sun vAmbient##444", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+
+				ColorValue.x = max(min(color.x, 1.f), 0.f);
+				ColorValue.y = max(min(color.y, 1.f), 0.f);
+				ColorValue.z = max(min(color.z, 1.f), 0.f);
+
+				pLightDesc->vAmbient = ColorValue;
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Sun Specular Color"))
+			{
+				static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+				static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+				static bool alpha_preview = true;
+				static bool alpha_half_preview = false;
+				static bool drag_and_drop = true;
+				static bool options_menu = false;
+				//static bool options_menu = true;
+				static bool hdr = false;
+				static bool ref_color = false;
+
+				_float3 ColorValue = pLightDesc->vSpecular;
+
+				color = ImVec4(ColorValue.x, ColorValue.y, ColorValue.z, 1.f);
+
+				ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+				ImGuiColorEditFlags flags = misc_flags;
+
+				ImGui::ColorPicker4("Sun Specular##444", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+
+				ColorValue.x = max(min(color.x, 1.f), 0.f);
+				ColorValue.y = max(min(color.y, 1.f), 0.f);
+				ColorValue.z = max(min(color.z, 1.f), 0.f);
+
+				pLightDesc->vSpecular = ColorValue;
+				ImGui::TreePop();
+			}
+
 			_float3 vSunPos = pLightDesc->vVector;
 			float arrSunPos[3];
 			memcpy(arrSunPos, &vSunPos, sizeof(float) * 3);
 
 
-			ImGui::DragFloat3("Sun Pos", arrSunPos, 0.134f, -64, 320.f);
+			ImGui::DragFloat3("Sun Pos", arrSunPos, 0.134f, -1024.f, 1024.f);
 
-			vSunPos.x = max(min(arrSunPos[0], 1024.f), -64.f);
-			vSunPos.y = max(min(arrSunPos[1], 128.f), 10.f);
-			vSunPos.z = max(min(arrSunPos[2], 1024.f), -64.f);
+			vSunPos.x = max(min(arrSunPos[0], 1024.f), -1024.f);
+			vSunPos.y = max(min(arrSunPos[1], 256.f), 10.f);
+			vSunPos.z = max(min(arrSunPos[2], 1024.f), -1024.f);
 
 			g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, _float4(vSunPos, 0).XMVector());
 
@@ -830,11 +916,11 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 			_float3 vSunLookAt = pUtil->Get_Renderer()->Get_SunAtPoint();
 			memcpy(arrSunPos, &vSunLookAt, sizeof(float) * 3);
 
-			ImGui::DragFloat3("Sun LookAt ", arrSunPos, 0.134f, -64, 320.f);
+			ImGui::DragFloat3("Sun LookAt ", arrSunPos, 0.134f, -1024.f, 1024.f);
 
-			vSunLookAt.x = max(min(arrSunPos[0], 320.f), -64.f);
+			vSunLookAt.x = max(min(arrSunPos[0], 1024.f), -1024.f);
 			vSunLookAt.y = max(min(arrSunPos[1], -10.f), -128.f);
-			vSunLookAt.z = max(min(arrSunPos[2], 320.f), -64.f);
+			vSunLookAt.z = max(min(arrSunPos[2], 1024.f), -1024.f);
 
 			pUtil->Get_Renderer()->Set_SunAtPoint(vSunLookAt);
 
@@ -1123,8 +1209,8 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		if (bBool)
 		{
 			_float Value = pUtil->Get_Renderer()->Get_DofLength();
-			ImGui::DragFloat("Dof Length", &Value, 0.1f, 0.001f, 100.f);
-			Value = max(min(Value, 100.f), 0.01f);
+			ImGui::DragFloat("Dof Length", &Value, 0.1f, 0.001f, 1024.f);
+			Value = max(min(Value, 1024.f), 0.01f);
 			pUtil->Get_Renderer()->Set_DofLength(Value);
 		}
 

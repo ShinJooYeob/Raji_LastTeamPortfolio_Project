@@ -29,7 +29,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 	ZeroMemory(m_PostProcessingOn, sizeof(_bool) * POSTPROCESSING_END);
 }
-#define ShadowMapQuality 1
+#define ShadowMapQuality 5
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -271,9 +271,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 
 	m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSet(0, 10, -10, 1), XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1), XMVectorSet(0, 1, 0, 0)));
-	m_LightWVPmat.ProjMatrix = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1, 0.2f, 3000));
+	m_LightWVPmat.ProjMatrix = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1, 0.2f, 600));
 
-
+	GetSingle(CPipeLineMgr)->Set_Transform(PLM_LIGHTPROJ, m_LightWVPmat.ProjMatrix);
+	
 
 	ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -1719,7 +1720,11 @@ HRESULT CRenderer::Render_ShadowMap()
 
 
 	if (pLightDesc)
+	{
+		
 		m_LightWVPmat.ViewMatrix = XMMatrixTranspose(XMMatrixLookAtLH(XMVectorSetW(pLightDesc->vVector.XMVector(), 1), XMVectorSet(m_vSunAtPoint.x, m_vSunAtPoint.y, m_vSunAtPoint.z, 1), XMVectorSet(0, 1, 0, 0)));
+		GetSingle(CPipeLineMgr)->Set_Transform(PLM_LIGHTVIEW, m_LightWVPmat.ViewMatrix);
+	}
 
 
 	FAILED_CHECK(Render_ShadowGroup());

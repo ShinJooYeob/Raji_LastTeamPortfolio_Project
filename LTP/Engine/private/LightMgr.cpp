@@ -130,6 +130,7 @@ HRESULT CLightMgr::Relocate_LightDesc(LIGHTDESC::TYPE eLightType, _uint iIndex, 
 	if (eLightType  == tagLightDesc::TYPE_DIRECTIONAL)
 	{
 		LightDesc->vVector = vRelocatePosition;
+
 	}
 	else
 	{

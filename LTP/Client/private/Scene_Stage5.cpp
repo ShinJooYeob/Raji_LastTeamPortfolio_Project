@@ -24,18 +24,23 @@ HRESULT CScene_Stage5::Initialize()
 
 
 	FAILED_CHECK(Ready_Light());
-
-	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
+	//
+	//FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
-	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
+	//FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	
-	
-	FAILED_CHECK(Ready_MapData(L"BossStage_Snake.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Snake.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+
+	//
+	FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Maha.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+
+
+
+
+	FAILED_CHECK(Ready_PostPorcessing());
 
 	return S_OK;
 }
@@ -45,10 +50,19 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (m_iSceneStartChecker == 2)
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+		return 0;
+	}
+
+	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -71,6 +85,8 @@ _int CScene_Stage5::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
+	if (m_bIsNeedToSceneChange) return S_FALSE;
 
 	if (m_fSceneStartTimer < 0.5f)
 	{
@@ -389,6 +405,109 @@ HRESULT CScene_Stage5::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 
 
 
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_PostPorcessing()
+{
+
+#ifndef _DEBUG
+
+	//LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	//g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
+	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
+	//pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+	//pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+	//pLightDesc->vSpecular = _float4(0.3203125f, 0.1328125f, 0.32421875f, 1.f);
+
+	//CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
+
+
+	//for (_uint i = 0; i < POSTPROCESSING_END; i++)
+	//	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	//pRenderer->Set_ShadowIntensive(0.35f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	//pRenderer->Set_SunSize(0.5f);
+	//pRenderer->Set_GodrayLength(64.f);
+	//pRenderer->Set_GodrayIntensity(0.04f);
+	//pRenderer->Set_StartDecay(0.25f);
+	//pRenderer->Set_DistDecay(1.6f);
+	//pRenderer->Set_MaxDeltaLen(0.006f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+
+	//pRenderer->Set_LensfalreSupportSunSize(0.98f);
+	//pRenderer->Set_LensefalreNoiseTexIndex(245);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	//pRenderer->Set_BloomOverLuminceValue(1.0f);
+	//pRenderer->Set_BloomBrightnessMul(2.5f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	//pRenderer->Set_DofLength(160.f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	//pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));
+	//pRenderer->Set_FogStartDist(0.001f);
+	//pRenderer->Set_FogGlobalDensity(0.01f);
+	//pRenderer->Set_FogHeightFalloff(0.2f);
+
+	//POSTPROCESSING_GODRAY
+	//POSTPROCESSING_LENSEFLARE
+	//POSTPROCESSING_CAMMOTIONBLUR
+#else
+
+	//LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	//g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
+	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
+	//pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+	//pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+	//pLightDesc->vSpecular = _float4(0.3203125f, 0.32421875f, 0.28125f, 1.f);
+
+	//CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
+
+
+	//for (_uint i = 0; i < POSTPROCESSING_END; i++)
+	//	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	//pRenderer->Set_ShadowIntensive(0.35f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	//pRenderer->Set_SunSize(0.5f);
+	//pRenderer->Set_GodrayLength(64.f);
+	//pRenderer->Set_GodrayIntensity(0.04f);
+	//pRenderer->Set_StartDecay(0.25f);
+	//pRenderer->Set_DistDecay(1.6f);
+	//pRenderer->Set_MaxDeltaLen(0.006f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+	//_float Value = (1 - 0.98f) * 344.f + 16.f;
+	//pRenderer->Set_LensfalreSupportSunSize(Value);
+	//pRenderer->Set_LensefalreNoiseTexIndex(245);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	//pRenderer->Set_BloomOverLuminceValue(1.0f);
+	//pRenderer->Set_BloomBrightnessMul(2.5f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	//pRenderer->Set_DofLength(160.f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	//pRenderer->Set_FogColor(_float3(0.5f, 0.5f, 0.5f));
+	//pRenderer->Set_FogStartDist(0.001f);
+	//pRenderer->Set_FogGlobalDensity(0.01f);
+	//pRenderer->Set_FogHeightFalloff(0.2f);
+
+#endif // !_DEBUG
 
 
 

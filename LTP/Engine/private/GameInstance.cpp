@@ -120,6 +120,7 @@ _int CGameInstance::Update_Engine(_double fDeltaTime)
 	}
 
 	FAILED_CHECK(SetUp_WorldFrustumPlane());
+	FAILED_CHECK(SetUp_LightFrustumPlane());
 
 
 	return 0;
@@ -610,11 +611,24 @@ HRESULT CGameInstance::SetUp_WorldFrustumPlane()
 	return m_pFrustumMgr->SetUp_WorldFrustumPlane();
 }
 
+HRESULT CGameInstance::SetUp_LightFrustumPlane()
+{
+	NULL_CHECK_BREAK(m_pFrustumMgr);
+	return m_pFrustumMgr->SetUp_LightFrustumPlane();;
+}
+
 _bool CGameInstance::IsNeedToRender(_float3 vWorldPosition, _float fLenth)
 {
 	NULL_CHECK_MSG(m_pFrustumMgr,L"Not Have FrustumMgr");
 
 	return m_pFrustumMgr->IsNeedToRender(vWorldPosition, fLenth);
+}
+
+_bool CGameInstance::IsNeedToLightRender(_float3 vWorldPosition, _float fLenth)
+{
+	NULL_CHECK_MSG(m_pFrustumMgr, L"Not Have FrustumMgr");
+
+	return m_pFrustumMgr->IsNeedToLightRender(vWorldPosition, fLenth);
 }
 
 

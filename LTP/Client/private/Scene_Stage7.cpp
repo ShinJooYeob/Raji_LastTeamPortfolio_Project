@@ -73,7 +73,7 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (m_iSceneStartChecker == 2)
+	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f,true));
