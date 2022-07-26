@@ -14,114 +14,57 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 /*
 //	Mesh Effect USE
 
-	STATIC_EFFECTLOAD(Prototype_Mesh_circle);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
-	STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
-	STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
-	STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
-	STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SG_tornado);
-	STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_X_L);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_Z_R);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Shot_Cylinder_00);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DW_Weapon);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Shot_Cylinder_00);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Baren_Weapon);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SG_tornado);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_X_L);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
-	STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_Leap_Ground_Light);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_circle_inv);
-	STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
-	STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side);
-	STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_HFB_Grand_Git);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_DarkTails_01);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_rockRing);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
-	STATIC_EFFECTLOAD(Prototype_Mesh_circle_inv);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_EM_Copycat_03);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_lans_rot);
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_rockRing);
-	STATIC_EFFECTLOAD(Prototype_Mesh_doomBvert);
-
-
-	Prototype_Mesh_SM_CoreRing_3
-
-	Prototype_Mesh_SM_circle
-
-	Prototype_Mesh_MS_ST3_Portal_00
-
-	Prototype_Mesh_SM_Bow_Em_02
-	Prototype_Mesh_MS_Tornado_Cyl_2side
-
-	Prototype_Mesh_SM_Ring_03
-	Prototype_Mesh_SM_4E_DarkTails_01
-	Prototype_Mesh_ConeMesh
-	Prototype_Mesh_SM_ArrowBurstTrail_01_New
-	Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting
-	Prototype_Mesh_SM_DS_Rage_Buff_L_X
-	Prototype_Mesh_SM_SpinningSlash_O_R_DX
-	Prototype_Mesh_SM_SS_Trail_02
-	Prototype_Mesh_SM_SS_Trail_02
-	Prototype_Mesh_SM_06_06_SM002
-	Prototype_Mesh_SM_ky_tornado3
-	Prototype_Mesh_MS_Shot_Cylinder_00
-	Prototype_Mesh_SM_DW_Weapon
-	Prototype_Mesh_SM_Meteo_Sphere3
-	Prototype_Mesh_mySphere
-	Prototype_Mesh_MS_Shot_Cylinder_00
-	Prototype_Mesh_SM_SG_tornado
-	Prototype_Mesh_SM_Meteo_Sphere3
-	Prototype_Mesh_SM_SP_End_Z_R
-	Prototype_Mesh_SM_SP_End_X_L
-
-
-	Prototype_Mesh_SM_Meteo_Sphere3
-
-	Prototype_Mesh_SM_ky_tornado3
-
-	Prototype_Mesh_SM_SG_tornado
-	Prototype_Mesh_SM_Baren_Weapon
-	Prototype_Mesh_SM_SP_End_X_L
-	Prototype_Mesh_SM_06_06_SM002
-	Prototype_Mesh_SM_Crack_OutLine
-	Prototype_Mesh_Mesh_HFB_Grand_Git
-	Prototype_Mesh_Mesh_Leap_Ground_Light
-	Prototype_Mesh_MS_Cloud
-	Prototype_Mesh_SM_rockRing
-	Prototype_Mesh_SM_EM_Copycat_03
-	Prototype_Mesh_circle_inv
-	Prototype_Mesh_SM_EM_Copycat_03
-	Prototype_Mesh_SM_ky_lans_rot
-	Prototype_Mesh_SM_ky_tornado3
-
+	// USE LOAD
+		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceSpike_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_Wing_T);
+		STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sphere_melon);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_CoreRing_3);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_ST3_Portal_00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_ice2);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ring_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_windSmokeDist);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_L_DS_Dashcombo_Y_L);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_ImpactFX_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ice2);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ICE_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Trail_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ArrowBurstTrail_01_New);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SpinningSlash_O_R_DX);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_D);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Rage_Buff_L_X);
+		STATIC_EFFECTLOAD(Prototype_Mesh_02_L_Upper_SM);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_tornado3);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_06_06_SM002);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SG_tornado);
+		STATIC_EFFECTLOAD(Prototype_Mesh_mySphere);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_X_L);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SP_End_Z_R);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Meteo_Sphere3);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Shot_Cylinder_00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DW_Weapon);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Baren_Weapon);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_Leap_Ground_Light);
+		STATIC_EFFECTLOAD(Prototype_Mesh_circle_inv);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Mesh_HFB_Grand_Git);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_DarkTails_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_rockRing);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_EM_Copycat_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_lans_rot);
+		STATIC_EFFECTLOAD(Prototype_Mesh_doomBvert);
+		STATIC_EFFECTLOAD(Prototype_Mesh_ConeMesh);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Crack_OutLine);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BBT_Paw);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AOG_Ring);
+		
+		
+		
 	*/
 
 HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
@@ -359,6 +302,14 @@ HRESULT CPartilceCreateMgr::Ready_MeshEffect()
 HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 {
 	// #TEXTUREPARTILCEINIT
+	
+	/*
+	// ÅØ½ºÃ³ ÆÄÆ¼Å¬ »ý¼º ¿¹Á¦ÄÚµå
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_R_FlyBall);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+	*/
 	mVecTextureEffectDesc.resize((int)TEXTURE_EFFECTJ_END);
 
 	auto  pUtil = GetSingle(CUtilityMgr);
@@ -376,6 +327,11 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_R_FlyBall] = pUtil->Get_TextureParticleDesc(TEXT("Bow_R_FlyBall"));
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_R_FlyFire] = pUtil->Get_TextureParticleDesc(TEXT("Bow_R_FlyFire"));
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Q_Ball] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Q_Ball"));
+
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Ball] = pUtil->Get_TextureParticleDesc(TEXT("Ball_Universal"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Suck] = pUtil->Get_TextureParticleDesc(TEXT("Suck_Universal"));
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Spread] = pUtil->Get_TextureParticleDesc(TEXT("Spread_Universal"));
+
 
 	
 	// DefaultSetting
@@ -4597,7 +4553,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 
 		// Transform_Base
 		MeshDesc.vPosition = _float3(-0.0f, 0, -3.1f);
-		MeshDesc.vSize = _float3(100);
+		MeshDesc.vSize = _float3(80.0f);
 		//		MeshDesc.vSize = _float3(30.0f);
 
 		// Move
@@ -4755,34 +4711,35 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 
 #pragma region BOSS_Rangda 
 
+
+
 	if (type == MESHEFFECT_BOSS_Rangda_0)
 	{
+	
 		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_SM_EM_Copycat_03;
-		//	Prototype_Mesh_SM_ky_windLine27midPoly
+		MeshDesc.eMeshType = Prototype_Mesh_SM_BBT_Paw;
 
-			// Time
-		MeshDesc.fMaxTime_Duration = 0.6f;
-		MeshDesc.fAppearTime = 0.3f;
+		// Time
+		MeshDesc.fMaxTime_Duration = 2.4f;
+		MeshDesc.fAppearTime = 1.2f;
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 292;
-		MeshDesc.MaskTextureIndex = 31;
-		MeshDesc.NoiseTextureIndex = 337;
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = 103;
+		MeshDesc.NoiseTextureIndex = 184;
 		// Noise
-		MeshDesc.noisingdir = _float2(-1, 0).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
-		MeshDesc.vLimLight = _float4(1.0f, 0.50f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.00f, 1.0f);
 		//	MeshDesc.vLimLight = _float4(0, 0, 0, 1.0f);
 		MeshDesc.vEmissive = _float4(1.0f, 0.7f, 1.f, 1.f);
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(-0.0f, -3, 0.0f);
-		MeshDesc.vSize = _float3(50);
-		MeshDesc.vSize = _float3(50, 30, 30).XMVector();
+		MeshDesc.vPosition = _float3(0, -1, 13);
+		MeshDesc.vSize = _float3(18);
 
 		// Move
 		//MeshDesc.MoveDir = FollowingDir_Up;
@@ -4791,14 +4748,87 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 
 		// Rot
 		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(30, 0, 0);
+		AddDesc.vAddDirectAngle = _float3(0, 30, 0);
 
 		MeshDesc.RotAxis = FollowingDir_Look;
 		MeshDesc.RotationSpeedPerSec = 0;
 		AddDesc.AccRotSpeed = 0.0f;
-		AddDesc.InitRot = _float3(0);
+		//	AddDesc.InitRot = _float3(0, 32, 0);
 
-		// Scale
+
+			// Scale
+		AddDesc.AccScale = 0;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = false;
+
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		AddDesc.vAddDirectAngle = _float3(0, 210, 0);
+		MeshDesc.vPosition = _float3(-2, -1, 10);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+	if (type == MESHEFFECT_BOSS_Rangda_1)
+	{
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_4E_ImpactFX_02;
+		
+		// Time
+		MeshDesc.fMaxTime_Duration = 2.4f;
+		MeshDesc.fAppearTime = 1.2f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 54;
+		MeshDesc.MaskTextureIndex = 101;
+		MeshDesc.NoiseTextureIndex = 211;
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.00f, 1.0f);
+		//	MeshDesc.vLimLight = _float4(0, 0, 0, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.7f, 1.f, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(0, -1, 0);
+		MeshDesc.vSize = _float3(10);
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 30;
+		AddDesc.AccRotSpeed = 0.0f;
+		//	AddDesc.InitRot = _float3(0, 32, 0);
+
+
+			// Scale
 		AddDesc.AccScale = 0.0f;
 		AddDesc.ScaleReFlag = false;
 
@@ -4807,8 +4837,10 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 		AddDesc.bLockScale[2] = false;
 
 		// Fix
-		AddDesc.FixFlag_Move = true;
-		AddDesc.FixFlag_Rot = true;
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+
+		AddDesc.FollowTarget = Transfom;
 
 		// Shader
 		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
@@ -4826,22 +4858,26 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 
 	}
 
-	if (type == MESHEFFECT_BOSS_Rangda_0)
+	if (type == MESHEFFECT_BOSS_Rangda_2)
 	{
+
 		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_MS_Cloud;
-
-			// Time
-		MeshDesc.fMaxTime_Duration = 0.5f;
-		MeshDesc.fAppearTime = 0.3f;
+		MeshDesc.eMeshType = Prototype_Mesh_MS_Tornado_Cyl_2side;
+		
+		// Time
+		MeshDesc.fMaxTime_Duration = 2.0f;
+		MeshDesc.fAppearTime = 1.0f;
 		AddDesc.bAfterApperTime = true;
-
+		MeshDesc.fMaxTime_Duration = 0.8f;
+		MeshDesc.fAppearTime = 0.4f;
+		AddDesc.bAfterApperTime = false;
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 292;
-		MeshDesc.MaskTextureIndex = 31;
-		MeshDesc.NoiseTextureIndex = 337;
+		MeshDesc.iDiffuseTextureIndex = 331;
+		MeshDesc.MaskTextureIndex = 103;
+		MeshDesc.NoiseTextureIndex = 211;
+
 		// Noise
-		MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
@@ -4850,8 +4886,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 		MeshDesc.vEmissive = _float4(1.0f, 0.7f, 1.f, 1.f);
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(-0.0f, 0, 0.0f);
-		MeshDesc.vSize = _float3(10);
+		MeshDesc.vPosition = _float3(0, -3, 12);
+		MeshDesc.vSize = _float3(5);
 
 		// Move
 		//MeshDesc.MoveDir = FollowingDir_Up;
@@ -4859,31 +4895,34 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 		//AddDesc.AccMoveSpeed = 110.0f;
 
 		// Rot
-		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(30, 0, 0);
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 
 		MeshDesc.RotAxis = FollowingDir_Look;
-		MeshDesc.RotationSpeedPerSec = 0;
+		MeshDesc.RotationSpeedPerSec = 40;
 		AddDesc.AccRotSpeed = 0.0f;
-		AddDesc.InitRot = _float3(0);
+		//	AddDesc.InitRot = _float3(0, 32, 0);
 
-		// Scale
-		AddDesc.AccScale = 0.0f;
+
+			// Scale
+		AddDesc.AccScale = 3.0f;
 		AddDesc.ScaleReFlag = false;
 
-		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[0] = true;
 		AddDesc.bLockScale[1] = false;
-		AddDesc.bLockScale[2] = false;
+		AddDesc.bLockScale[2] = true;
 
 		// Fix
 		AddDesc.FixFlag_Move = true;
-		AddDesc.FixFlag_Rot = true;
+		AddDesc.FixFlag_Rot = false;
+
+	//	AddDesc.FollowTarget = Transfom;
 
 		// Shader
-		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
 	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 
 
@@ -4897,7 +4936,144 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 
 
 
+	if (type == MESHEFFECT_BOSS_Rangda_3)
+	{
 
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_circle;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.4f;
+		MeshDesc.fAppearTime = 0.7f;
+		AddDesc.bAfterApperTime = true;
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 302;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = 211;
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.00f, 1.0f);
+		//	MeshDesc.vLimLight = _float4(0, 0, 0, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.7f, 1.f, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(0, 0, 0);
+		MeshDesc.vSize = _float3(10);
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 35;
+		AddDesc.AccRotSpeed = 0.0f;
+		//	AddDesc.InitRot = _float3(0, 32, 0);
+
+
+			// Scale
+		AddDesc.AccScale = 0.7f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = true;
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = false;
+
+		//	AddDesc.FollowTarget = Transfom;
+
+			// Shader
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+	if (type == MESHEFFECT_BOSS_Rangda_4)
+
+	{
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_AOG_Ring;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.5f;
+		MeshDesc.fAppearTime = 0.75f;
+		AddDesc.bAfterApperTime = true;
+
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 301;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.00f, 1.0f);
+		//	MeshDesc.vLimLight = _float4(0, 0, 0, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.7f, 1.f, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(0, 0, 0);
+		MeshDesc.vSize = _float3(1);
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 30;
+		AddDesc.AccRotSpeed = -50;
+		//	AddDesc.InitRot = _float3(0, 32, 0);
+
+
+			// Scale
+		AddDesc.AccScale = 0;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = true;
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = false;
+
+		//	AddDesc.FollowTarget = Transfom;
+
+			// Shader
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
 
 
 #pragma endregion BOSS_Rangda 

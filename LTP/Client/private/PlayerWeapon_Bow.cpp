@@ -497,8 +497,6 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
-
-
 	return S_OK;
 }
 
