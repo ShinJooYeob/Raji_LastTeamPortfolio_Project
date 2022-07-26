@@ -94,6 +94,22 @@ _int CRangda::Update(_double fDeltaTime)
 	if (m_iMaterialCount == 7)
 		m_bIsHalf = true;
 
+
+	// #DEBUG
+	if (KEYDOWN(DIK_B))
+	{
+	
+		m_fAttackCoolTime = 0;
+		m_fSkillCoolTime = 1;
+
+		m_bIsAttack = false;
+		m_bIsHit = false;
+
+		m_bIsHalf = true;
+		m_bIsHalf = false;
+//		m_bIsHalf = false;
+	}
+
 	//맞았을때
 	if (m_bIsHit)
 	{
@@ -129,6 +145,7 @@ _int CRangda::Update(_double fDeltaTime)
 		*/
 
 		m_bIsAttack = true;
+
 		if (m_bIsHalf)
 		{
 			m_pModel->Change_AnimIndex_ReturnTo(7, 0);
@@ -353,6 +370,52 @@ _float3 CRangda::Get_FingerPos(_int Num)
 	return _float3();
 }
 
+
+
+
+HRESULT CRangda::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform_R = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_R, E_FAIL);
+	m_pTextureParticleTransform_L = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_L, E_FAIL);
+	m_pTextureParticleTransform_Screen = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Screen, E_FAIL);
+	m_pTextureParticleTransform_Player = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pTextureParticleTransform_Player, E_FAIL);
+	
+
+	return S_OK;
+
+}
+
+HRESULT CRangda::Update_Particle(_double timer)
+{
+	_Matrix mat_Trans = m_pTransformCom->Get_WorldMatrix();
+
+	mat_Trans.r[0] = XMVector3Normalize(mat_Trans.r[0]);
+	mat_Trans.r[1] = XMVector3Normalize(mat_Trans.r[1]);
+	mat_Trans.r[2] = XMVector3Normalize(mat_Trans.r[2]);
+
+	mat_Trans.r[3] = m_pHand_R_Collider->Get_ColliderPosition(0).XMVector();
+	m_pTextureParticleTransform_R->Set_Matrix(mat_Trans);
+	mat_Trans.r[3] = m_pHand_L_Collider->Get_ColliderPosition(0).XMVector();
+	m_pTextureParticleTransform_L->Set_Matrix(mat_Trans);
+	mat_Trans.r[3] = m_pScreamCollider->Get_ColliderPosition(0).XMVector();
+	m_pTextureParticleTransform_Screen->Set_Matrix(mat_Trans);
+
+
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	m_pTextureParticleTransform_Player->Set_Matrix(PlayerTransform->Get_WorldMatrix());
+	
+
+
+
+	return S_OK;
+
+
+}
+
 HRESULT CRangda::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -421,7 +484,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
 		m_iAdjMovedIndex = 0;
+		m_EffectAdjust = 0;
+	}
 
 
 	if (PlayRate <= 0.98)
@@ -821,6 +887,44 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
+
+			// EFFECT
+			if (m_EffectAdjust == 0 && PlayRate > 0.3)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTextureParticleTransform_L);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTextureParticleTransform_R);
+
+				m_EffectAdjust++;
+
+			}
+			if (m_EffectAdjust == 1 && PlayRate > 0.3)
+			{
+				m_EffectAdjust++;
+
+			}
+			if (m_EffectAdjust == 2 && PlayRate > 0.0000)
+			{
+				m_EffectAdjust++;
+
+			}
+			if (m_EffectAdjust == 3 && PlayRate > 0.0000)
+			{
+				m_EffectAdjust++;
+
+			}
+			if (m_EffectAdjust == 4 && PlayRate > 0.0000)
+			{
+				m_EffectAdjust++;
+
+			}
+			if (m_EffectAdjust == 5 && PlayRate > 0.0000)
+			{
+				m_EffectAdjust++;
+
+			}
+
+
+
 			break;
 
 		case 7:
@@ -1000,4 +1104,9 @@ void CRangda::Free()
 	Safe_Release(m_pHand_L_Collider);
 	Safe_Release(m_pHand_R_Collider);
 	Safe_Release(m_pScreamCollider);
+	
+	Safe_Release(m_pTextureParticleTransform_R);
+	Safe_Release(m_pTextureParticleTransform_L);
+	Safe_Release(m_pTextureParticleTransform_Screen);
+	Safe_Release(m_pTextureParticleTransform_Player);
 }

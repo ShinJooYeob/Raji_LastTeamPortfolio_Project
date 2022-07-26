@@ -482,15 +482,15 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 
 
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.3f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.3f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_0, m_pTextureParticleTransform2);
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate >= 0.455f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.455f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
-				m_iAdjMovedIndex++;
+				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 2 && PlayRate >= 0.555f)
 			{
