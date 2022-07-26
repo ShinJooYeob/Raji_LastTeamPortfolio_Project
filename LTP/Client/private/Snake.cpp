@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Snake.h"
-
+#include "Player.h"
 
 CSnake::CSnake(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -65,6 +65,17 @@ _int CSnake::Update(_double fDeltaTime)
 	//	TestBool = true;
 	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
 	//}
+
+	// Jino
+	if (true == static_cast<CPlayer*>(m_pPlayerObj)->Is_Hiding())
+	{
+		m_bTestHodeing = true;
+	}
+	else
+	{
+		m_bTestHodeing = false;
+	}
+	//
 
 
 	if (!m_bIsAttack)

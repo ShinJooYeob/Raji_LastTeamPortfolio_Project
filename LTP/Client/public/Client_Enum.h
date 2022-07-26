@@ -303,6 +303,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_TestLedgeTrigger,
 	Prototype_Trigger_ResurrectionTrigger,
 	Prototype_Trigger_SceneChangeTrigger,
+	Prototype_Trigger_MandalaPuzzle,
+	Prototype_Trigger_DemonTreePuzzle,
 	Prototype_Trigger_InstanceMonsterBatchTrigger,
 	Prototype_MonsterBatchTrigger,
 
@@ -489,7 +491,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Trigger_SceneChangeTrigger:
 		return TEXT("Prototype_Trigger_SceneChangeTrigger");
 		break;
-
+	case Prototype_Trigger_MandalaPuzzle:
+		return TEXT("Prototype_Trigger_MandalaPuzzle");
+		break;
+	case Prototype_Trigger_DemonTreePuzzle:
+		return TEXT("Prototype_Trigger_DemonTreePuzzle");
+		break;
 	
 	case Prototype_PlayerSkill_ShellingArrow:
 		return TEXT("Prototype_PlayerSkill_ShellingArrow");

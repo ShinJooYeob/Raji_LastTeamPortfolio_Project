@@ -642,7 +642,7 @@ void CTransform::Turn_Dir(_fVector vTargetDir, _float fWeight, _float fRightWeig
 	vRotDir = (vMyLook * fWeight) + vRotDir  * (1.f - fWeight);
 	XMVector3Normalize(vRotDir);
 	vRotDir = XMVectorSetW(vRotDir, 0.f);
-	LookDir(vRotDir);
+	LookDir_ver2(vRotDir);
 }
 
 void CTransform::Turn_Revolution_CW(_fVector vCenterPos, _float fDistance, _double fDeltaTime)

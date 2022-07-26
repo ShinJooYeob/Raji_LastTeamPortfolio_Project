@@ -29,6 +29,11 @@ public:
 
 	vector<class CTreeMesh*>* Get_VecMeshs();
 
+public:
+	//JH
+	void		Active_Puzzle(_bool bActive);
+	_bool		IsClear();
+
 private:
 //	CShader*						m_pShaderCom = nullptr;
 //	CRenderer*						m_pRendererCom = nullptr;

@@ -73,6 +73,8 @@
 #include "ResurrectionTrigger.h"
 #include "WallRunTrigger.h"
 #include "SceneChangeTrigger.h"
+#include "MandalaPuzzleTrigger.h"
+#include "DemonTreePuzzleTrigger.h"
 //Interact Obj
 #include "Elevator.h"
 
@@ -371,6 +373,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_ResurrectionTrigger), CResurrectionTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_WallRun), CWallRunTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_SceneChangeTrigger), CSceneChangeTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_MandalaPuzzle), CMandalaPuzzleTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_DemonTreePuzzle), CDemonTreePuzzleTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_InstanceMonsterBatchTrigger), CInstanceMonsterBatchTrigger::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
@@ -1190,12 +1194,12 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 	// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
+	//FAILED_CHECK(Load_AllMonster());
+	//FAILED_CHECK(Load_AllBoss());
+	//FAILED_CHECK(Load_AllDynamicMapObject());
 
-	for (_uint i = 0; i < SCENE_END; i++)
-		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//for (_uint i = 0; i < SCENE_END; i++)
+	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

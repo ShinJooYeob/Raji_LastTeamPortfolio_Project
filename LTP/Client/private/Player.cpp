@@ -216,6 +216,9 @@ _int CPlayer::Update(_double fDeltaTime)
 		case EPLAYER_STATE::STATE_ELEVATOR:
 			FAILED_CHECK(Update_State_Elevator(fDeltaTime));
 			break;
+		case EPLAYER_STATE::STATE_STOPACTION:
+			FAILED_CHECK(Update_State_StopAction(fDeltaTime));
+			break;
 		default:
 			MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
 			break;
@@ -760,6 +763,17 @@ void CPlayer::Set_State_ElevatorEnd()
 {
 	Set_State_IdleStart(g_fDeltaTime);
 	m_bOnNavigation = true;
+}
+
+void CPlayer::Set_State_StopActionStart()
+{
+	m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
+	m_eCurState = STATE_STOPACTION;
+}
+
+void CPlayer::Set_State_StopActionEnd()
+{
+	Set_State_IdleStart(g_fDeltaTime);
 }
 
 void CPlayer::Set_State_PillarStart(_double fDeltaTime)
@@ -1732,6 +1746,12 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 
 HRESULT CPlayer::Update_State_Elevator(_double fDeltaTime)
 {
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_State_StopAction(_double fDeltaTime)
+{
+
 	return S_OK;
 }
 
@@ -7470,6 +7490,11 @@ _fVector CPlayer::Get_MousePos()
 {
 
 	return _fVector();
+}
+
+_bool CPlayer::Is_Hiding()
+{
+	return m_bPlayerHide;
 }
 
 CPlayer::EPARKOUR_LEDGESTATE CPlayer::Get_LedgeState()
