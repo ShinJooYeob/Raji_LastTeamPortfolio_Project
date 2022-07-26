@@ -501,9 +501,9 @@ HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 	// #DEBUG PatternSET
 //	m_iOncePattern = 16;S
 
-	m_iOncePattern = 51;
+
 	if(KEYPRESS(DIK_B))
-		m_iOncePattern = 6;
+		m_iOncePattern = 4;
 
 	switch (m_iOncePattern)
 	{
@@ -1116,17 +1116,13 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.Particle_Power = 13;
 				instanceDesc.TargetColor = _float4(1.0f, 0.2f, 0.02f, 0.7f);
 				instanceDesc.TargetColor = _float4(1.0f, 0.00f, 0.00f, 0.0f);
-				instanceDesc.ParticleSize = _float3(0.5f);
-				instanceDesc.ParticleSize2 = _float3(0.3f);
-				instanceDesc.SizeChageFrequency = 3;
-				instanceDesc.ColorChageFrequency=5;
-
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.1f);
+				instanceDesc.SizeChageFrequency = 6;
+				instanceDesc.ColorChageFrequency=1;
 				instanceDesc.bEmissive = true;
 				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 				m_EffectAdjust++;
@@ -1376,6 +1372,23 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 2 && PlayRate >= 0.2)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
+				instanceDesc.TotalParticleTime = 1.f;
+				instanceDesc.EachParticleLifeTime = 1.0f;
+				instanceDesc.Particle_Power = 13;
+				instanceDesc.TargetColor = _float4(0.8f, 0.2f, 0.02f, 0.7f);
+				instanceDesc.TargetColor = _float4(0.1f, 0.40f, 0.80f, 0.0f);
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.1f);
+				instanceDesc.SizeChageFrequency = 6;
+				instanceDesc.ColorChageFrequency = 1;
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 
 			}
@@ -1389,11 +1402,29 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 4 && PlayRate >= 0.375)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
+
 				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 5 && PlayRate >= 0.4689655)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
+				instanceDesc.TotalParticleTime = 1.f;
+				instanceDesc.EachParticleLifeTime = 1.0f;
+				instanceDesc.Particle_Power = 13;
+				instanceDesc.TargetColor = _float4(1.0f, 0.2f, 0.02f, 0.7f);
+				instanceDesc.TargetColor = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.1f);
+				instanceDesc.SizeChageFrequency = 6;
+				instanceDesc.ColorChageFrequency = 1;
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 
 			}
@@ -1408,11 +1439,29 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 7 && PlayRate >= 0.62)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
+
+
 				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 8 && PlayRate >= 0.751724)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
+				instanceDesc.TotalParticleTime = 1.f;
+				instanceDesc.EachParticleLifeTime = 1.0f;
+				instanceDesc.Particle_Power = 13;
+				instanceDesc.TargetColor = _float4(1.0f, 0.0f, 0.00f, 0.7f);
+				instanceDesc.TargetColor = _float4(0.0f, 0.00f, 0.00f, 0.0f);
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.1f);
+				instanceDesc.SizeChageFrequency = 6;
+				instanceDesc.ColorChageFrequency = 1;
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 
 			}
@@ -1478,6 +1527,29 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 			}
 
+			
+			if (m_EffectAdjust == 2 && PlayRate >= 0.45)
+			{
+
+				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Spread);
+				instanceDesc.FollowingTarget = m_pTransformCom;
+				instanceDesc.TotalParticleTime = 4.0f;
+				instanceDesc.EachParticleLifeTime = 1.0f;
+				instanceDesc.Particle_Power = 10.0f;
+				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.5f);
+				instanceDesc.TargetColor = _float4(1.0f, 0.5f, 0.3f, 0.3f);
+				instanceDesc.ParticleSize = _float3(0.3f);
+				instanceDesc.ParticleSize2 = _float3(0.8f);
+				instanceDesc.SizeChageFrequency = 1;
+				instanceDesc.ColorChageFrequency = 10;
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(0.2f, 0.1f, 0.1f);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+				m_EffectAdjust++;
+
+			}
 
 			break;
 		}
