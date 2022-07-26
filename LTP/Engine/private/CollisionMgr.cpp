@@ -164,6 +164,10 @@ HRESULT CCollisionMgr::Inspect_PlayerParkur_To_ParkurObj()
 	{
 		for (auto& DestElemet : m_CollisionGroupList[CollisionType_NPC])
 		{
+			if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
+
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_NPC);
@@ -465,6 +469,9 @@ HRESULT CCollisionMgr::Inspect_Player_To_MonsterWeapon()
 	{
 		for (auto& DestElemet : m_CollisionGroupList[CollisionType_MonsterWeapon])
 		{
+			if(SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_MonsterWeapon);
@@ -487,6 +494,9 @@ HRESULT CCollisionMgr::Inspect_PlayerWeapon_To_Monster()
 	{
 		for (auto& DestElemet : m_CollisionGroupList[CollisionType_Monster])
 		{
+			if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider,ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Monster);
@@ -510,6 +520,9 @@ HRESULT CCollisionMgr::Inspect_NPC_To_Player()
 	{
 		for (auto& DestElemet : m_CollisionGroupList[CollisionType_Player])
 		{
+			if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
@@ -534,6 +547,9 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
+				if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+					continue;
+
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
 				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
 			}
@@ -544,6 +560,9 @@ HRESULT CCollisionMgr::Inspect_DynamicObject_To_PlayerNPlayerWeapon()
 		{
 			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
 			{
+				if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+					continue;
+
 				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_PlayerWeapon);
 				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_DynaicObject);
 			}

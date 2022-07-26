@@ -40,9 +40,9 @@ HRESULT CScene_Stage7::Initialize()
 	//FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 
 	////////test!@#!@#@#@!#!#!@#삭제 쌉가능~
-	FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance2.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance3.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance3.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance4.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	/////////////////////////////////////////
 
