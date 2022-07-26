@@ -1993,6 +1993,11 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 
 	if (0 != iInputDir)
 	{
+		m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
+			m_pMainCamera->Lock_CamLook(false);
+			m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
+			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+
 			//m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
 			//m_fAttachCamPos_Offset = _float3(0.f, 3.f, 0.f);
 			//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
