@@ -406,6 +406,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger">
       <UniqueIdentifier>{aa860e5c-d46b-4c7a-9af1-b0d411232f0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\09.BossCreateTrigger">
+      <UniqueIdentifier>{7f86d689-258d-4a60-801c-3a68cbdfe0c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -891,6 +894,7 @@
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossCreateTrigger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1356,6 +1360,7 @@
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BossCreateTrigger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

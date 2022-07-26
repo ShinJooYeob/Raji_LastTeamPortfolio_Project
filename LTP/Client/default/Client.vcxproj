@@ -181,6 +181,7 @@
     <ClInclude Include="..\public\AssimpCreateMgr.h" />
     <ClInclude Include="..\public\BlockZone.h" />
     <ClInclude Include="..\public\Boss.h" />
+    <ClInclude Include="..\public\BossCreateTrigger.h" />
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
     <ClCompile Include="..\private\BlockZone.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
+    <ClCompile Include="..\private\BossCreateTrigger.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
     <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
     <ClCompile Include="..\private\DeadZone.cpp" />

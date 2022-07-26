@@ -29,6 +29,8 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
+	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	
 
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Rangda.dat", SCENE_STAGE3, TAG_LAY(Layer_StaticMapObj)));
@@ -218,7 +220,12 @@ HRESULT CScene_Stage3::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 
 	return S_OK;
 }
-
+
+HRESULT CScene_Stage3::Ready_Layer_Boss(const _tchar * pLayerTag)
+{
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_Boss_Rangda), &_float3(154.189f, 96.400f, 240.976f)));
+	return S_OK;
+}
 HRESULT CScene_Stage3::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));

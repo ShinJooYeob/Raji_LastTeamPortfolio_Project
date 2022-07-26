@@ -29,9 +29,11 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
+	m_vStartPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
+	m_pTransformCom->Scaled_All(_float3(5.f, 5.f, 5.f));
 
 	m_pModel->Change_AnimIndex(0);
 
@@ -49,6 +51,13 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_fHP = 32.f;
 	m_fMaxHP = 32.f;
+
+	_int iRandom = rand() % 11;
+
+	wstring teampString;
+	teampString = L"JJB_Narration" + to_wstring(iRandom) + L".wav";
+
+	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 	return S_OK;
 }
@@ -445,7 +454,7 @@ HRESULT CRangda::SetUp_Components()
 
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.5f);
+	ColliderDesc.vScale = _float3(15.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pHand_L_Collider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -456,7 +465,7 @@ HRESULT CRangda::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pHand_R_Collider));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.5f);
+	ColliderDesc.vScale = _float3(15.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pHand_R_Collider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -555,7 +564,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
+				_float3 vGoalDir = (m_vStartPos.XMVector() - MonsterPos.XMVector());
 				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(),  (_float)PlayRate, 0.97f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
@@ -882,7 +891,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
+				_float3 vGoalDir = (m_vStartPos.XMVector() - MonsterPos.XMVector());
 				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.8522167487f, 0.11779f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
@@ -1025,7 +1034,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-				_float3 vGoalDir = (_float3(0.f, 0.f, 0.f).XMVector() - MonsterPos.XMVector());
+				_float3 vGoalDir = (m_vStartPos.XMVector() - MonsterPos.XMVector());
 				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.8522167487f, 0.11779f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
