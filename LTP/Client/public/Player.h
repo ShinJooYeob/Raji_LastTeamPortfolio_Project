@@ -120,7 +120,7 @@ public:
 	//
 
 	enum ETARGETING_STATE {
-		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_END
+		TARGETING_SEARCH, TARGETING_LOOP, TARGETING_BOSS, TARGETING_END
 	};
 
 	enum EPARKOUR_LEDGESTATE {
@@ -236,6 +236,9 @@ private: /* Change Start State */
 public:
 	virtual void Update_AttachCamPos() override;
 
+public:
+	void	Set_Targeting(CGameObject* pTarget);
+
 private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
 
@@ -325,6 +328,7 @@ private:
 	void				Update_Targeting(_double fDeltaTime);
 	void				Targeting_Search();
 	void				Targeting_Loop();
+	void				Targeting_Boss();
 
 private: /* Motion Trail*/
 	void				CheckOn_MotionTrail();
