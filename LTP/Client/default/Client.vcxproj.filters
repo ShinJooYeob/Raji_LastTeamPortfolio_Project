@@ -406,15 +406,6 @@
     <Filter Include="01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger">
       <UniqueIdentifier>{aa860e5c-d46b-4c7a-9af1-b0d411232f0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\09. MandalaPuzzleTrigger">
-      <UniqueIdentifier>{160330c1-ef96-4898-bbab-b407d54f6f12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\10. DemonTreePuzzleTrigger">
-      <UniqueIdentifier>{74a4b843-e5b3-42af-ab65-f56c21ad8b60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\98.TriggerObject\09.BossCreateTrigger">
-      <UniqueIdentifier>{7f86d689-258d-4a60-801c-3a68cbdfe0c5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -900,13 +891,6 @@
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossCreateTrigger.h" />
-    <ClInclude Include="..\public\MandalaPuzzleTrigger.h">
-      <Filter>01.GameObject\98.TriggerObject\09. MandalaPuzzleTrigger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\DemonTreePuzzleTrigger.h">
-      <Filter>01.GameObject\98.TriggerObject\10. DemonTreePuzzleTrigger</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -998,6 +982,9 @@
     </ClCompile>
     <ClCompile Include="..\private\StaticMapObject.cpp">
       <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapObject.cpp">
+      <Filter>01.GameObject\06.Terrain\07.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\NaviPoint.cpp">
       <Filter>01.GameObject\96.NaviPoint</Filter>
@@ -1368,14 +1355,6 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp">
-      <Filter>01.GameObject\98.TriggerObject\09. MandalaPuzzleTrigger</Filter>
-    </ClCompile>
-      <Filter>01.GameObject\98.TriggerObject\10. DemonTreePuzzleTrigger</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MapObject.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
