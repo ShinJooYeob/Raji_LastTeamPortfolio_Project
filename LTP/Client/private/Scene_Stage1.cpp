@@ -34,6 +34,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
 
+	FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
 
 

@@ -37,6 +37,9 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
 	
 
+
+
+
 	FAILED_CHECK(Ready_PostPorcessing());
 	return S_OK;
 }

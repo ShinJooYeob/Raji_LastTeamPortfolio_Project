@@ -313,7 +313,7 @@ HRESULT CUtilityMgr::SCD_Rendering_FadeOut(_float RollingStartTime, _float Rolli
 	_float FadeIntensive = min(max(RollingStartTime / RollingTargetTime,0.f ),1.f);
 
 
-	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433));
+	m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433);
 	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_SourTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
 	FAILED_CHECK(m_pLoadingSCD.Render_SCD_FadeOut( 8, FadeIntensive));
 
