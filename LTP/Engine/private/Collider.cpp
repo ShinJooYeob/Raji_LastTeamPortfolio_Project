@@ -176,11 +176,12 @@ _bool CCollider::Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetColli
 	_bool IsFinalNode = (m_vecColliderBuffer[iBufferIndex]->Get_NumChildBuffer() + pTargetCollider->m_vecColliderBuffer[iTargetIndex]->Get_NumChildBuffer())?false:true;
 	if (m_vecColliderBuffer[iBufferIndex]->Collision_All(pTargetCollider->m_vecColliderBuffer[iTargetIndex], IsFinalNode))
 	{
-		if (m_vecColliderBuffer[iBufferIndex]->Get_NumChildBuffer())
+		list<_uint> ChildList = *(m_vecColliderBuffer[iBufferIndex]->Get_ChildIndexList());
+		
+		if (ChildList.size())
 		{
-			list<_uint>* ChildList = m_vecColliderBuffer[iBufferIndex]->Get_ChildIndexList();
 
-			for (auto iChildIndex : *ChildList)
+			for (auto iChildIndex : ChildList)
 			{
 				if (Inspect_ChildBuffer(iChildIndex, pTargetCollider, iTargetIndex, pOutIndex))
 					return true;
@@ -189,12 +190,13 @@ _bool CCollider::Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetColli
 		}
 		else
 		{
-			if (pTargetCollider->m_vecColliderBuffer[iTargetIndex]->Get_NumChildBuffer())
+			list<_uint> TargetChildList = *(pTargetCollider->m_vecColliderBuffer[iTargetIndex]->Get_ChildIndexList());
+		
+			if (TargetChildList.size())
 			{
-				list<_uint>* TargetChildList = pTargetCollider->m_vecColliderBuffer[iTargetIndex]->Get_ChildIndexList();
 
 
-				for (auto iTargetChildIndex : *TargetChildList)
+				for (auto iTargetChildIndex : TargetChildList)
 				{
 					if (Inspect_ChildBuffer(iBufferIndex, pTargetCollider, iTargetChildIndex, pOutIndex))
 						return true;

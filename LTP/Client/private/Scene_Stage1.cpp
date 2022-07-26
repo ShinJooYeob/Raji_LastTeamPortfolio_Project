@@ -5,7 +5,7 @@
 #include "TriggerObject.h"
 #include "Player.h"
 #include "StaticInstanceMapObject.h"
-
+#include "MonsterBatchTrigger.h"
 
 CScene_Stage1::CScene_Stage1(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -32,6 +32,15 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE1, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
+
+	//
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_6.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//
 
 	return S_OK;
 }
@@ -352,6 +361,71 @@ HRESULT CScene_Stage1::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 
 
 
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+
+
+	//../bin/Resources/Data/ParicleData/TextureParticle/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+	lstrcat(szFullPath, szTriggerDataName);
+
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+
+	_int iIDLength = 0;
+
+
+	_float4x4 WorldMat = XMMatrixIdentity();
+	_float4x4 ValueMat = XMMatrixIdentity();
+	_tchar	 eObjectID[MAX_PATH] = L"";
+
+	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_MonsterBatchTrigger)));
+	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+	NULL_CHECK_RETURN(pMonsterBatchTrigger, E_FAIL);
+
+	CTransform * pTrigTransform = (CTransform*)pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+	//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+
+	pTrigTransform->Set_Matrix(WorldMat);
+	pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+
+
+	while (true)
+	{
+		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+
+		if (0 == dwByte) break;
+		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
+	}
+
+
+	CloseHandle(hFile);
 
 
 	return S_OK;

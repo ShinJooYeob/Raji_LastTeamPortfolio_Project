@@ -138,10 +138,9 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 	{
 		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
-
-			if (pMyCollider == m_vecInstancedTransform[i].pCollider && m_vecInstancedTransform[i].bHit == false)
+			if (pMyCollider == m_vecInstancedTransform[i].pCollider)
 			{
-				if (CollisionTypeID::CollisionType_PlayerWeapon == eConflictedObjCollisionType && m_vecInstancedTransform[iMyColliderIndex].bHit == false)
+				if (m_vecInstancedTransform[i].bHit == false)
 				{
 					m_vecInstancedTransform[i].iRenderType = RENDER_HIT;
 					m_vecInstancedTransform[i].iHp += -1;
@@ -149,11 +148,15 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 					m_vecInstancedTransform[i].bHit = true;
 
 					m_vecInstancedTransform[i].fRimRight.w = 1;
-
+					m_vecInstancedTransform[i].pCollider->Set_Conflicted(0.f);
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
 					}
+					break;
+				}
+				else {
+					break;
 				}
 			}
 		}
@@ -177,7 +180,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 _float CMonster_Wasp::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 	//m_pColliderCom->Set_Conflicted(0.f);
-
+	
 	return _float();
 }
 

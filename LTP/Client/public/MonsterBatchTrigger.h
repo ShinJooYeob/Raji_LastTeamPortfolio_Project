@@ -42,6 +42,8 @@ protected:
 	CCollider*						m_pColliderCom		= nullptr;
 	CNavigation*					m_pNavigationCom	= nullptr;
 
+	_bool							m_bBool = false;
+
 	_float4x4						m_ValueMat = XMMatrixIdentity();
 
 private:

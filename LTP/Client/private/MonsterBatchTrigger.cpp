@@ -51,7 +51,7 @@ HRESULT CMonsterBatchTrigger::Initialize_Clone(void * pArg)
 
 	}
 
-
+	m_bBool = false;
 	return S_OK;
 }
 
@@ -113,8 +113,12 @@ HRESULT CMonsterBatchTrigger::Spwan_Monster(_uint iIndex, const _tchar * pLayerT
 
 void CMonsterBatchTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	for (_uint i = 0; i < m_vecBatchedValue.size(); i++)
-		Spwan_Monster(i, TAG_LAY(Layer_Monster));
+	if (!m_bBool)
+	{
+		for (_uint i = 0; i < m_vecBatchedValue.size(); i++)
+			Spwan_Monster(i, TAG_LAY(Layer_Monster));
+	}
+	m_bBool = true;
 	Set_IsDead();
 }
 
@@ -135,7 +139,11 @@ _int CMonsterBatchTrigger::Update(_double fDeltaTime)
 	for (_uint i = 0 ; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
 		m_pColliderCom->Update_Transform(i,m_pTransformCom->Get_WorldMatrix());
 	
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
+	if (!m_bBool)
+	{
+
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
+	}
 
 	return _int();
 }

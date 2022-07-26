@@ -48,6 +48,9 @@ public:
 	void				Throw(_double fDeltaTimer);
 
 private:
+	HRESULT				Add_CollisionGroups();
+	HRESULT				Add_CollisionDebugRender();
+private:
 	_int				Update_Structure(_double fDeltaTime);
 	_int				Update_Equip(_double fDeltaTime);
 	_int				Update_NoEquip(_double fDeltaTime);

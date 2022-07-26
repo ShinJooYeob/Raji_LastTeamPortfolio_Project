@@ -306,8 +306,8 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Parkur));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Parkur));
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
@@ -632,7 +632,8 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[6]);
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
-
+		
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Spear_Ultimate_Around.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 	}
 		break;
 	case WEAPON_BOW:
@@ -5868,6 +5869,14 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 	m_fAnimSpeed = 1.f;
 
+	// Sound
+	if (false == m_bOncePlaySound && 0.32f <= fAnimPlayRate)
+	{
+		m_bOncePlaySound = true;
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Ultimate_Ground_Hit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.8f);
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Ultimate_FireLayer.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.8f);
+	}
+
 	// Active CameraShake
 	if (true == m_bActive_ActionCameraShake && 0.45f >= fAnimPlayRate  && 0.4f <= fAnimPlayRate)
 	{
@@ -5875,7 +5884,6 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 		m_bActive_ActionCameraShake = false;
 
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Collision_4();
-
 	}
 	static _bool bEffectChecker = false;
 
@@ -5902,9 +5910,8 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 		Set_State_IdleStart(fDeltaTime);
 		m_bActive_ActionCameraShake = true;
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_4();
+		m_bOncePlaySound = false;
 	}
-
-
 }
 
 void CPlayer::Shelling(_double fDeltaTime)
@@ -6101,7 +6108,6 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 			m_pPlayerWeapons[WEAPON_BOW - 1]->Active_Collision();
 			//
 		}
-
 	}
 	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
 	{
@@ -6137,7 +6143,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
 
-
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Ultimate.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 		}
 
 	}
@@ -6216,7 +6222,21 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	m_fAnimSpeed = 1.f;
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 
+	// Sound
+	if (false == m_bOncePlaySound && 0.5f <= fAnimPlayRate)
+	{
+		m_bOncePlaySound = true;
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Ultimate.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	}
 
+
+	if (false == m_bActionSwitch && 0.25f <= fAnimPlayRate)
+	{
+		m_bActionSwitch = true;
+
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sowrd_Ultimate_Charging.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sowrd_Ultimate_Charging2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	}
 
 
 	if (false == m_bAnimChangeSwitch && 0.25f <= fAnimPlayRate)
@@ -6235,9 +6255,6 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
 				&m_vecNonInstMeshDesc[7]);
-
-
-
 		}
 
 
@@ -6267,6 +6284,7 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 			m_pMainCamera->Start_CameraShaking_Thread(2.4f, 4.f, 0.005f);
 			m_bActive_ActionCameraShake = true;
 
+
 			m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 				+ (m_pTransformCom->Get_MatrixState(CTransform::STATE_UP)) * 4.0f;
 			m_vecNonInstMeshDesc[8].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT));
@@ -6277,14 +6295,18 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 			m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 				+ (XMVectorSet(0, 1, 0, 0)) * 4.0f;
 
+
 			m_vecNonInstMeshDesc[9].vLookDir = ((m_vecNonInstMeshDesc[9].vPosition.XMVector()) - (m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
 				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f
 				));
 
+
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
 
+			static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->Active_Collision_3();
 
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Ultimate_Smash_Heavy.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 		}
 	}
 
@@ -6295,6 +6317,8 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_UltimateMode();
 		static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->DeActive_Collision_3();
 		m_bActive_ActionCameraShake = true;
+		m_bOncePlaySound = false;
+		m_bActionSwitch = false;
 		return;
 	}
 
@@ -6305,8 +6329,6 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	{
 		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
 		m_bActive_ActionCameraShake = false;
-
-		static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->Active_Collision_3();
 	}
 }
 

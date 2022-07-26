@@ -42,9 +42,9 @@ private:
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 
-	CShader*			m_pShaderCom_Parabola = nullptr;
-	CModel*				m_pModel_Parabola = nullptr;
-	CTransform*			m_pTransformCom_Parabola = nullptr;
+	//CShader*			m_pShaderCom_Parabola = nullptr;
+	//CModel*				m_pModel_Parabola = nullptr;
+	//CTransform*			m_pTransformCom_Parabola = nullptr;
 
 	CShader*			m_pShaderCom_Point = nullptr;
 	CTexture*			m_pTextureCom_Point = nullptr;

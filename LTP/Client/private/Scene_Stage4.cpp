@@ -169,7 +169,7 @@ HRESULT CScene_Stage4::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE4);
 	}
 	
-	m_pMainCam->Set_TargetArmLength(3.f);
+	m_pMainCam->Set_TargetArmLength(5.f);
 	return S_OK;
 }
 
@@ -288,7 +288,7 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 7.13001299f, -15.8938332f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 6.90001299f, -15.7938332f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	pPlayer->Update_AttachCamPos();
 	
 
