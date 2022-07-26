@@ -121,7 +121,7 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	m_pAttackCollider->Update_Transform(0, mat);
 	m_pCollider->Update_Transform(0, mat);
-	
+
 
 	if (m_bIsAttack)
 	{
@@ -291,7 +291,7 @@ void CCopyMahabalasura::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 				if (m_vecColliderIndexs[i] == _uint(iMyColliderIndex - 1))
 					return;
 			}
-			m_pCollider->Delete_ChildeBuffer(0,iMyColliderIndex);
+			m_pCollider->Delete_ChildeBuffer(0, iMyColliderIndex);
 			m_vecColliderIndexs.push_back(_uint(iMyColliderIndex - 1));
 		}
 		break;
@@ -349,7 +349,7 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 		CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
 		_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
 
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f), BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f)));
+		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f) + BossPos.x, BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 8.5f) + BossPos.z));
 		//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
 		m_vecInstancedTransform.push_back(pTransform);
 
@@ -472,7 +472,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		case 5:
 
-		break;
+			break;
 
 
 		}
