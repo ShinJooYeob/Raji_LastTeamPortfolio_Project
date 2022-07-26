@@ -788,6 +788,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				Spear->Set_InstanceWeapon(1);
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTextureParticleTransform);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTransformCom);
 
 				++m_iAdjMovedIndex;
 			}
@@ -963,7 +964,6 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			// EFFECT
 			if (m_EffectAdjust == 0 && PlayRate > 0.16091954)
 			{
-
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_0, m_pTransformCom);
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLSPEAR_1, m_pTextureParticleTransform2);
