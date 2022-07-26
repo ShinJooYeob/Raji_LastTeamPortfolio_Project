@@ -412,6 +412,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\10. DemonTreePuzzleTrigger">
       <UniqueIdentifier>{74a4b843-e5b3-42af-ab65-f56c21ad8b60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\09.BossCreateTrigger">
+      <UniqueIdentifier>{7f86d689-258d-4a60-801c-3a68cbdfe0c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -897,6 +900,7 @@
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossCreateTrigger.h" />
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\09. MandalaPuzzleTrigger</Filter>
     </ClInclude>
@@ -1368,7 +1372,6 @@
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\09. MandalaPuzzleTrigger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\10. DemonTreePuzzleTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapObject.cpp">

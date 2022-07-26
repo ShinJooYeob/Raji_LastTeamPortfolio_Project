@@ -73,6 +73,8 @@ private:
 
 	_float3				m_vFingerPoss[8];
 
+	_float3				m_vStartPos;
+
 	vector<_uint>		m_vecFinger;
 
 private:

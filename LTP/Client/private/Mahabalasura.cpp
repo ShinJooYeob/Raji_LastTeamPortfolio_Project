@@ -30,6 +30,11 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	if (pArg != nullptr)
+	{
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
+	}
+
 	//Set_LimLight_N_Emissive(_float4(), 0);
 
 	m_fAttackCoolTime = 2.f;
@@ -262,7 +267,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		{
 			m_bIsTeleport = true;
 			m_bIsTeleportSound = false;
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
+			_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+			_int iTemp = rand() % 2 == 0 ? -1 : 1;
+			Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 			m_bIsArmAttack = true;
 			mPatternCount2 = 0;
 			for (auto& Arm : m_pArms)
@@ -275,7 +284,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		{
 			m_bIsTeleport = true;
 			m_bIsTeleportSound = false;
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
+			_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+			_int iTemp = rand() % 2 == 0 ? -1 : 1;
+			Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 			m_pModel->Change_AnimIndex_ReturnTo(9, 0);
 		}
 		break;
@@ -826,7 +839,11 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsTeleport = true;
 				m_bIsTeleportSound = false;
 
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
+				_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+				_int iTemp = rand() % 2 == 0 ? -1 : 1;
+				Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 
 				++m_iAdjMovedIndex;
 

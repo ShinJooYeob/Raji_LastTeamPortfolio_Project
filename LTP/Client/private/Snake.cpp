@@ -39,12 +39,13 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
-	m_StartPos = _float3(8.f, -110.f, 53.f);
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
+	//m_StartPos = _float3(8.f, -110.f, 53.f);
 
-	m_pTransformCom->Scaled_All(_float3(3.f, 3.f, 3.f));
+	m_pTransformCom->Scaled_All(_float3(4.f, 4.f, 4.f));
 
 	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
+	m_bIsAttack = true;
 
 	m_fAttackCoolTime = 5.f;
 	m_fSkillCoolTime = 8.f;
@@ -525,7 +526,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_1.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
-				m_fAnimmultiple = 0.2f;
+				//m_fAnimmultiple = 0.2f;
 			}
 		}
 		break;
@@ -582,6 +583,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_fAttackCoolTime = 2.f;
 			m_fRotTime = 0.f;
 			m_iRotationRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.0f, 1.9f);
+			m_bIsAttack = false;
 			m_fAnimmultiple = 1.f;
 		}
 
