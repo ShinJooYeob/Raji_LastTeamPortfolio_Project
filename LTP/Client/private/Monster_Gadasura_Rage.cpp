@@ -1115,7 +1115,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.EachParticleLifeTime = 1.0f;
 				instanceDesc.Particle_Power = 13;
 				instanceDesc.TargetColor = _float4(1.0f, 0.2f, 0.02f, 0.7f);
-				instanceDesc.TargetColor = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.2f, 0.02f, 1.0f);
 				instanceDesc.ParticleSize = _float3(0.3f);
 				instanceDesc.ParticleSize2 = _float3(0.1f);
 				instanceDesc.SizeChageFrequency = 6;
@@ -1379,7 +1379,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.EachParticleLifeTime = 1.0f;
 				instanceDesc.Particle_Power = 13;
 				instanceDesc.TargetColor = _float4(0.8f, 0.2f, 0.02f, 0.7f);
-				instanceDesc.TargetColor = _float4(0.1f, 0.40f, 0.80f, 0.0f);
+				instanceDesc.TargetColor2 = _float4(0.8f, 0.2f, 0.02f, 1.0f);
 				instanceDesc.ParticleSize = _float3(0.3f);
 				instanceDesc.ParticleSize2 = _float3(0.1f);
 				instanceDesc.SizeChageFrequency = 6;
@@ -1415,7 +1415,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.EachParticleLifeTime = 1.0f;
 				instanceDesc.Particle_Power = 13;
 				instanceDesc.TargetColor = _float4(1.0f, 0.2f, 0.02f, 0.7f);
-				instanceDesc.TargetColor = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.2f, 0.02f, 1.0f);
 				instanceDesc.ParticleSize = _float3(0.3f);
 				instanceDesc.ParticleSize2 = _float3(0.1f);
 				instanceDesc.SizeChageFrequency = 6;
@@ -1452,7 +1452,7 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.EachParticleLifeTime = 1.0f;
 				instanceDesc.Particle_Power = 13;
 				instanceDesc.TargetColor = _float4(1.0f, 0.0f, 0.00f, 0.7f);
-				instanceDesc.TargetColor = _float4(0.0f, 0.00f, 0.00f, 0.0f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0.0f, 0.00f, 1.0f);
 				instanceDesc.ParticleSize = _float3(0.3f);
 				instanceDesc.ParticleSize2 = _float3(0.1f);
 				instanceDesc.SizeChageFrequency = 6;
@@ -1537,13 +1537,13 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.EachParticleLifeTime = 1.0f;
 				instanceDesc.Particle_Power = 10.0f;
 				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.5f);
-				instanceDesc.TargetColor = _float4(1.0f, 0.5f, 0.3f, 0.3f);
+				instanceDesc.TargetColor2 = _float4(1.0f, 0, 0, 1.0f);
 				instanceDesc.ParticleSize = _float3(0.3f);
 				instanceDesc.ParticleSize2 = _float3(0.8f);
 				instanceDesc.SizeChageFrequency = 1;
 				instanceDesc.ColorChageFrequency = 10;
 				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(0.2f, 0.1f, 0.1f);
+				instanceDesc.vEmissive_SBB = _float3(1);
 
 				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
