@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Monster_Wasp.h"
-
+#include "InstanceMonsterBatchTrigger.h"
 
 CMonster_Wasp::CMonster_Wasp(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -41,13 +41,23 @@ HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	m_pBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(m_Instance_Info.Object);
+
 	return S_OK;
 }
 
 _int CMonster_Wasp::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
-
+	if (m_pBatchTrigger->Get_MonsterAllDie() == true)
+	{
+		for (_uint i = 0; i < m_Instance_Info.fValueMat.m[0][1]; i++)
+		{
+			m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+			m_vecInstancedTransform[i].iHp = -10;
+			m_pBatchTrigger->Set_IsDead();
+		}
+	}
 
 	FollowMe(dDeltaTime);
 
@@ -669,6 +679,9 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
+				if (m_pBatchTrigger->Get_MonsterAllDie())
+					m_vecInstancedTransform[i].iLifeCount = 1000;
+
 				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{
 					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
@@ -676,7 +689,10 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 					m_iDieCount++;
 
 					if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
+					{
+						m_pBatchTrigger->Set_IsDead();
 						Set_IsDead();
+					}
 				}
 
 			}
@@ -698,7 +714,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 			{
 				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime*4.264782, m_vecInstancedTransform[i].pNavigation);
 
-				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.8 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.85)
+				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.4)
 				{
 					m_bAttackOn = true;
 					m_pAttackColliderCom->Set_ParantBuffer(0, i + 1);
@@ -714,6 +730,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 					m_vecInstancedTransform[i].iSwtichIndex = 0;
 				}
 			}
+			m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pNavigation->Get_NaviPosition(m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS)));
 			break;
 		}
 		}

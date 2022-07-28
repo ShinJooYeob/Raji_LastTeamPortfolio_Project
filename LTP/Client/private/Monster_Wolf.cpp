@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Monster_Wolf.h"
+#include "InstanceMonsterBatchTrigger.h"
 
 CMonster_Wolf::CMonster_Wolf(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -44,6 +45,8 @@ HRESULT CMonster_Wolf::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+	m_pBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(m_Instance_Info.Object);
+
 	return S_OK;
 }
 
@@ -51,6 +54,15 @@ _int CMonster_Wolf::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_pBatchTrigger->Get_MonsterAllDie() == true)
+	{
+		for (_uint i = 0; i < m_Instance_Info.fValueMat.m[0][1]; i++)
+		{
+			m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+			m_vecInstancedTransform[i].iHp = -10;
+			m_pBatchTrigger->Set_IsDead();
+		}
+	}
 
 	FollowMe(dDeltaTime);
 
@@ -294,7 +306,7 @@ HRESULT CMonster_Wolf::SetUp_Info()
 		/////////////////////////////////////AttackCollider
 		COLLIDERDESC			AttackColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		AttackColliderDesc.vScale = _float3(0.8f);
+		AttackColliderDesc.vScale = _float3(1.f);
 		AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		AttackColliderDesc.vPosition = _float4(0.f, 0.5f, 0.5f, 1);
 		FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
@@ -314,7 +326,7 @@ HRESULT CMonster_Wolf::SetUp_Info()
 		CModelInstance::MODELINSTDESC tModelIntDsec;
 		tModelIntDsec.m_pTargetModel = pModel;
 
-		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, TAG_CP(Prototype_ModelInstance_16), &tModelIntDsec);
+		CModelInstance* pModelInstance = (CModelInstance*)g_pGameInstance->Clone_Component(m_eNowSceneNum, m_charModellInstanceType, &tModelIntDsec);
 		NULL_CHECK_RETURN(pModelInstance, E_FAIL);
 		m_pModelInstance[i] = pModelInstance;
 	}
@@ -425,7 +437,7 @@ HRESULT CMonster_Wolf::FollowMe(_double dDeltaTime)
 		}
 
 		////////////////////////AnimType
-		if (fDistance < 2.0)
+		if (fDistance < 1.5)
 		{
 			if (MeshInstance.iAnimType >= ANIM_ATTACK_Frame1&& MeshInstance.iAnimType <= ANIM_ATTACK_Frame5)
 				continue;
@@ -629,6 +641,9 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
+				if (m_pBatchTrigger->Get_MonsterAllDie())
+					m_vecInstancedTransform[i].iLifeCount = 1000;
+
 				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{
 					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
@@ -636,7 +651,10 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 					m_iDieCount++;
 
 					if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
+					{
+						m_pBatchTrigger->Set_IsDead();
 						Set_IsDead();
+					}
 				}
 			}
 
@@ -653,6 +671,10 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 			break;
 		default:
 		{
+			if (m_vecInstancedTransform[i].iSwtichIndex == 0)
+			{
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pNavigation->Get_NaviPosition(m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS)));
+			}
 			if (m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.77)
 			{
 				m_vecInstancedTransform[i].pTransform->Move_Forward(dDeltatime*4, m_vecInstancedTransform[i].pNavigation);
@@ -661,20 +683,21 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 				
 				m_vecInstancedTransform[i].pTransform->Move_Up(dDeltatime * fY * 10);
 
-				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.5)
+				if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.5)
 				{
 					m_bAttackOn = true;
 					m_pAttackColliderCom->Set_ParantBuffer(0, i + 1);
 
 					m_vecInstancedTransform[i].iSwtichIndex++;
 				}
-				else if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.62)
+				else if (m_vecInstancedTransform[i].iSwtichIndex == 2 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.62)
 				{
 
 					m_bAttackOn = false;
 					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
 
 					m_vecInstancedTransform[i].iSwtichIndex = 0;
+					m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pNavigation->Get_NaviPosition(m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS)));
 				}
 			}
 			break;
@@ -713,7 +736,7 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 			{
 				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1569.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
 					m_iSoundIndex[i]++;
 				}
 			}
