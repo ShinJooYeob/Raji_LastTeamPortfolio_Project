@@ -18,7 +18,7 @@ HRESULT CMonster_Wasp::Initialize_Prototype(void * pArg)
 
 	for (auto& p : m_pModel)	p = nullptr;
 	for (auto& p : m_pModelInstance)	p = nullptr;
-	
+
 
 
 	return S_OK;
@@ -113,10 +113,10 @@ _int CMonster_Wasp::Render()
 		if (m_ModelTransGroup[i].size() == 0)
 			continue;
 
-		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i],0, &m_vecRimLight[i],&m_vecEmissive[i], &m_vecDissolve[i]));
+		FAILED_CHECK(m_pModelInstance[i]->Render(m_pShaderCom, 2, &m_ModelTransGroup[i], 0, &m_vecRimLight[i], &m_vecEmissive[i], &m_vecDissolve[i]));
 	}
 
-	
+
 
 	return _int();
 }
@@ -180,7 +180,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 _float CMonster_Wasp::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 	//m_pColliderCom->Set_Conflicted(0.f);
-	
+
 	return _float();
 }
 
@@ -220,10 +220,12 @@ HRESULT CMonster_Wasp::SetUp_Info()
 	else if (m_Instance_Info.fValueMat.m[0][1] > 32 && m_Instance_Info.fValueMat.m[0][1] <= 64)
 	{
 		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_64);
-	}else if (m_Instance_Info.fValueMat.m[0][1] > 64 && m_Instance_Info.fValueMat.m[0][1] <= 128)
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 64 && m_Instance_Info.fValueMat.m[0][1] <= 128)
 	{
 		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_128);
-	}else if (m_Instance_Info.fValueMat.m[0][1] > 128 && m_Instance_Info.fValueMat.m[0][1] <= 256)
+	}
+	else if (m_Instance_Info.fValueMat.m[0][1] > 128 && m_Instance_Info.fValueMat.m[0][1] <= 256)
 	{
 		m_charModellInstanceType = TAG_CP(Prototype_ModelInstance_256);
 	}
@@ -245,7 +247,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 		tDesc.pTransform->Set_MoveSpeed(fSpeed);
 
-		
+
 		for (_uint j = (_uint)m_Instance_Info.fValueMat.m[0][3]; j < (_uint)m_Instance_Info.fValueMat.m[0][2]; i++)
 		{
 			_uint X = j / 4;
@@ -254,7 +256,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 			{
 				tDesc.iCellIndex = (_uint)m_Instance_Info.fSubValueMat.m[X][Y];
 				(_uint)m_Instance_Info.fValueMat.m[0][3]++;
-				
+
 				if ((_uint)m_Instance_Info.fValueMat.m[0][3] + 1 >= (_uint)m_Instance_Info.fValueMat.m[0][2])
 					m_Instance_Info.fValueMat.m[0][3] = 0;
 				break;
@@ -290,6 +292,10 @@ HRESULT CMonster_Wasp::SetUp_Info()
 
 		//tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		///////////////
+
+		////////////////Hit
+		tDesc.iHp = m_Instance_Info.fValueMat.m[1][1];
+		///////////////////
 
 		/////////////////////////////////////Collider
 		tDesc.pCollider = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
@@ -490,7 +496,7 @@ HRESULT CMonster_Wasp::Update_Collider(_double dDeltaTime)
 	}
 
 
-	if(m_bAttackOn == true)
+	if (m_bAttackOn == true)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
 	//////////////////////////
 
@@ -655,7 +661,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
-				m_vecInstancedTransform[i].iHp = 3;
+				m_vecInstancedTransform[i].iHp = m_Instance_Info.fValueMat.m[1][1];
 				m_vecInstancedTransform[i].dTime = 0;
 				m_vecInstancedTransform[i].bHit = false;
 				m_vecInstancedTransform[i].fDissolve.x = 0;
@@ -663,7 +669,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
-				if (m_vecInstancedTransform[i].iLifeCount >= 3)
+				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{
 					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
 					m_vecInstancedTransform[i].bDieOn = true;
@@ -694,16 +700,16 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.8 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.85)
 				{
-						m_bAttackOn = true;
-						m_pAttackColliderCom->Set_ParantBuffer(0, i+1);
+					m_bAttackOn = true;
+					m_pAttackColliderCom->Set_ParantBuffer(0, i + 1);
 
-						m_vecInstancedTransform[i].iSwtichIndex++;
+					m_vecInstancedTransform[i].iSwtichIndex++;
 				}
 				else if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.93)
 				{
 
 					m_bAttackOn = false;
-					m_pAttackColliderCom->Delete_ChildeBuffer(0, i+1);
+					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
 
 					m_vecInstancedTransform[i].iSwtichIndex = 0;
 				}
