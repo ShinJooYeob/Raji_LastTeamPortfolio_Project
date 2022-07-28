@@ -63,6 +63,12 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 
 		m_dDissolveTime += dDeltaTime;
 
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Jalsura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			m_bDieSound = true;
+		}
+
 		if (m_dDissolveTime >= 2)
 		{
 			Set_IsDead();
@@ -623,7 +629,7 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_dSoundTime += dDeltaTime;
 			if (m_dSoundTime >= 1)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Secondary_Wing_Flap_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Secondary_Wing_Flap_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_dSoundTime = 0;
 			}
 			break;
@@ -637,7 +643,7 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				if (m_iSoundIndex == 0)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 					m_iSoundIndex++;
 				}
 			}
@@ -652,7 +658,7 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					if (m_iSoundIndex == 0)
 					{
-						g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Ground_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 						m_iSoundIndex++;
 					}
 				}
@@ -784,15 +790,15 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_iSoundIndex == 0 && PlayRate > 0)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Movement.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Movement.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 				m_iSoundIndex++;
 			}else if (m_iSoundIndex == 1 && PlayRate >= 0.2105)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Laser.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_JalsuraAttack_Laser.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 				m_iSoundIndex++;
 			}else if (m_iSoundIndex == 2 && PlayRate >= 0.7368)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Steam_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Jalsura_Steam_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 				m_iSoundIndex++;
 			}
 			break;
