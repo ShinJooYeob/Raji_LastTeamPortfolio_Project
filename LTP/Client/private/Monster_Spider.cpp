@@ -279,6 +279,10 @@ HRESULT CMonster_Spider::SetUp_Info()
 		//tDesc.pNavigation->FindCellIndex(tDesc.pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		///////////////
 
+		////////////////Hit
+		tDesc.iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
+		///////////////////
+
 		/////////////////////////////////////Collider
 		tDesc.pCollider = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
 
@@ -637,7 +641,7 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
-				m_vecInstancedTransform[i].iHp = 3;
+				m_vecInstancedTransform[i].iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
 				m_vecInstancedTransform[i].dTime = 0;
 				m_vecInstancedTransform[i].bHit = false;
 				m_vecInstancedTransform[i].fDissolve.x = 0;
@@ -646,13 +650,13 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
-				if (m_vecInstancedTransform[i].iLifeCount >= 3)
+				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{
 					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
 					m_vecInstancedTransform[i].bDieOn = true;
 					m_iDieCount++;
 
-					if (m_iDieCount >= m_Instance_Info.fValueMat.m[0][1])
+					if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
 						Set_IsDead();
 				}
 

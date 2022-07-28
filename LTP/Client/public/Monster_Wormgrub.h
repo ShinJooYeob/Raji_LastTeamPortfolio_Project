@@ -19,7 +19,7 @@ class CMonster_Wormgrub final : public CMonster
 
 		_float4			fRimRight = _float4(0.5f, 0.5f, 0.5f, 1.f);
 		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f); //R,G,B W==국밥값
-		_float4			fDissolve = _float4(0.5f, 0.5f, 0.5f, 0.f);//1흐른시간, 디졸브 시간, 국밥가격 ,0이면 디졸브 안함 1이면 디졸브
+		_float4			fDissolve = _float4(0.f, 1.f, 0.5f, 1.f);//1흐른시간, 디졸브 시간, 국밥가격 ,0이면 디졸브 안함 1이면 디졸브
 
 
 		_int			iHp = 3;
@@ -33,7 +33,8 @@ class CMonster_Wormgrub final : public CMonster
 
 	typedef struct tagInstanceInfo
 	{
-		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count
+		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count, m[1][0] : Life Count,
+							  //m[1][1] : Monster Hit Count
 		_float4x4 fSubValueMat;
 	}INSTANCE_INFO;
 

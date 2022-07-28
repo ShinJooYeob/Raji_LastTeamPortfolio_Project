@@ -294,7 +294,7 @@ HRESULT CMonster_Wasp::SetUp_Info()
 		///////////////
 
 		////////////////Hit
-		tDesc.iHp = m_Instance_Info.fValueMat.m[1][1];
+		tDesc.iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
 		///////////////////
 
 		/////////////////////////////////////Collider
@@ -661,7 +661,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
-				m_vecInstancedTransform[i].iHp = m_Instance_Info.fValueMat.m[1][1];
+				m_vecInstancedTransform[i].iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
 				m_vecInstancedTransform[i].dTime = 0;
 				m_vecInstancedTransform[i].bHit = false;
 				m_vecInstancedTransform[i].fDissolve.x = 0;

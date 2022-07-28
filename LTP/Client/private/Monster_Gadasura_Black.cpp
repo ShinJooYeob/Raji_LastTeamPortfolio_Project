@@ -1253,8 +1253,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.TotalParticleTime = 0.3f;
 				instanceDesc.EachParticleLifeTime = 0.3f;
 				instanceDesc.Particle_Power = 8.0f;
-				instanceDesc.TargetColor = _float4(0.82, 0.60f, 1.0f, 0.5f);
-				instanceDesc.TargetColor = _float4(0.82, 0.60f, 1.0f, 0.0f);
+				instanceDesc.TargetColor = _float4(0.82f, 0.60f, 1.0f, 0.5f);
+				instanceDesc.TargetColor2 = _float4(0.82f, 0.60f, 1.0f, 0.0f);
 				instanceDesc.ParticleSize = _float3(0.3f, 0.5f, 0.3f).XMVector()* 0.3f;
 				instanceDesc.ParticleSize2 = _float3(0.3f, 0.5f, 0.3f).XMVector()* 0.5f;
 				instanceDesc.bEmissive = true;
