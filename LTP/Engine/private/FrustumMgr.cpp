@@ -149,7 +149,7 @@ HRESULT CFrustumMgr::SetUp_LightFrustumPlane()
 
 
 	//6평면 구하기
-	ZeroMemory(tWorldFrustumPlane, sizeof(_float4) * 6);
+	ZeroMemory(tLightFrustumPlane, sizeof(_float4) * 6);
 
 	////평면 순서 좌 우 상 하 앞 뒤   => 앞에 있는 애들이 빨리 걸러지는게 좋을거 같아서 생각해보면 이순서대로가 제일 빠르게 걸러지지 않을까
 
