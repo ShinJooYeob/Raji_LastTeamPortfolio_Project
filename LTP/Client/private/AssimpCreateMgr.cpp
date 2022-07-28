@@ -23,6 +23,8 @@ HRESULT CAssimpCreateMgr::Load_ALL_Model(_fMatrix staticDefault, _fMatrix dynami
 {
 	// ¸ðµç ¸ðµ¨ ÄÄÆ÷³ÍÆ® »ý¼º
 	FAILED_CHECK(Load_Model_DatFile_All(staticDefault,dynamicDefault));
+	FAILED_CHECK(Load_Model_DatFile_All_Thread(staticDefault, dynamicDefault));
+
 //	FAILED_CHECK(Free_VertexData());
 
 	return S_OK;
@@ -108,22 +110,22 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_All_Thread(_fMatrix staticDefault, 
 	// #Threading 
 	// ¸ðµç ¸ðµ¨ ·Îµå
 
-	//GetSingle(CThreadMgr)->PlayThread(MainCollisionThread, this, nullptr);
-	//GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
+	GetSingle(CThreadMgr)->PlayThread(MainCollisionThread, this, nullptr);
+	GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
 
-	//GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
+	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 
-	//// Load ModelDesc
-	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
-	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
+	// Load ModelDesc
+	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
+	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
 
-	//SCENEID sceneID = SCENE_STATIC;
-	//FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
-	//FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
+	SCENEID sceneID = SCENE_STATIC;
+	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
+	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
 
-	//mCurrent_NameIter = mList_CreateModelName.begin();
+	mCurrent_NameIter = mList_CreateModelName.begin();
 
-	//GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
 
 	return S_OK;
 
