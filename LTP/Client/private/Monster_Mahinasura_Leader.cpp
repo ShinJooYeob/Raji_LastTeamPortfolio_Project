@@ -60,9 +60,13 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 
 		m_dDissolveTime += dDeltaTime;
 
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			m_bDieSound = true;
+		}
 		if (m_dDissolveTime >= 2)
 		{
-			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 			Set_IsDead();
 		}
 	}
@@ -107,7 +111,7 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 
@@ -933,7 +937,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				if (m_dSoundTime >= 0.7)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Mahinasura_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Mahinasura_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
 					m_dSoundTime = 0;
 				}
 			}
@@ -951,7 +955,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				if (m_iSoundIndex == 0)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.4f);
 					m_iSoundIndex++;
 				}
 			}
@@ -969,7 +973,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 					if (m_iSoundIndex == 0)
 					{
-						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.4f);
 						m_iSoundIndex++;
 					}
 				}
@@ -992,7 +996,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 					if (m_iSoundIndex == 0)
 					{
-						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_06.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.4f);
 						m_iSoundIndex++;
 					}
 				}
@@ -1102,9 +1106,10 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_08.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
 				m_iSoundIndex++;
 			}
-			else if (m_iSoundIndex == 1 && PlayRate > 0.685714)
+			else if (m_iSoundIndex == 1 && PlayRate > 0.585714)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_ClawHit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_ClawHit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_716.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
 
@@ -1165,7 +1170,8 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 				if (m_iSoundIndex == 0)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_680.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 					m_iSoundIndex++;
 				}
 			}
@@ -1176,7 +1182,8 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_pTransformCom->Move_Forward(dDeltaTime * EasingSpeed, m_pNavigationCom);
 				if (m_iSoundIndex == 1)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Sigh_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_358.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 					m_iSoundIndex++;
 				}
 			}
@@ -1259,6 +1266,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				if (m_iSoundIndex == 0)
 				{
 					g_pGameInstance->Play3D_Sound(TEXT("EH_Scorpion_Tail_Slash_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_694.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 					m_iSoundIndex++;
 				}
 
@@ -1322,7 +1330,12 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				if (m_iSoundIndex == 0 && PlayRate >= 0.7)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Scorpion_Tail_Slash_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Scorpion_Tail_Slash_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+				else if (m_iSoundIndex == 1 && PlayRate >= 0.75)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_705.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_EFFECT, 0.5f);
 					m_iSoundIndex++;
 				}
 			}

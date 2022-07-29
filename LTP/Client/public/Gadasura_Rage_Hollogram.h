@@ -74,6 +74,10 @@ private:
 private:
 	_double				m_dDeadTime = 0;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

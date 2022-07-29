@@ -1244,12 +1244,12 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 	// MERGE //
-	//FAILED_CHECK(Load_AllMonster());
-	//FAILED_CHECK(Load_AllBoss());
-	//FAILED_CHECK(Load_AllDynamicMapObject());
+	FAILED_CHECK(Load_AllMonster());
+	FAILED_CHECK(Load_AllBoss());
+	FAILED_CHECK(Load_AllDynamicMapObject());
 
-	//for (_uint i = 0; i < SCENE_END; i++)
-	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	for (_uint i = 0; i < SCENE_END; i++)
+		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

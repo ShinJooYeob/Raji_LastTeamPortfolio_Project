@@ -62,6 +62,12 @@ _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 
 		m_dDissolveTime += dDeltaTime;
 
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			m_bDieSound = true;
+		}
+
 		if (m_dDissolveTime >= 2)
 		{
 			Set_IsDead();
@@ -98,7 +104,7 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 #ifdef _DEBUG
@@ -846,6 +852,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_dAcceleration = 0.7;
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate > 0.238)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 12:
@@ -863,6 +874,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_fKnockbackDir.y = 0;
 
 				m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Rage_Gadasura_Spawn_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
@@ -988,7 +1004,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_iSoundIndex == 0 && PlayRate > 0.2192)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Charge_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
 			else if (m_iSoundIndex == 1 && PlayRate >= 0.2631)
@@ -1147,7 +1163,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			else if (m_iSoundIndex == 1 && PlayRate >= 0.4245)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Impact_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_827.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
 			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
@@ -1253,8 +1269,8 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				instanceDesc.TotalParticleTime = 0.3f;
 				instanceDesc.EachParticleLifeTime = 0.3f;
 				instanceDesc.Particle_Power = 8.0f;
-				instanceDesc.TargetColor = _float4(0.82, 0.60f, 1.0f, 0.5f);
-				instanceDesc.TargetColor = _float4(0.82, 0.60f, 1.0f, 0.0f);
+				instanceDesc.TargetColor = _float4(0.82f, 0.60f, 1.0f, 0.5f);
+				instanceDesc.TargetColor2 = _float4(0.82f, 0.60f, 1.0f, 0.0f);
 				instanceDesc.ParticleSize = _float3(0.3f, 0.5f, 0.3f).XMVector()* 0.3f;
 				instanceDesc.ParticleSize2 = _float3(0.3f, 0.5f, 0.3f).XMVector()* 0.5f;
 				instanceDesc.bEmissive = true;

@@ -5,8 +5,8 @@ BEGIN(Client)
 
 class CMonster_Wasp final : public CMonster
 {
-	enum AnimationType{ANIM_RUN_Frame1, ANIM_RUN_Frame2, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END};
-	enum RenderType{RENDER_IDLE,RENDER_HIT,RENDMER_DIE,RENDER_END};
+	enum AnimationType { ANIM_RUN_Frame1, ANIM_RUN_Frame2, ANIM_ATTACK_Frame1, ANIM_ATTACK_Frame2, ANIM_ATTACK_Frame3, ANIM_ATTACK_Frame4, ANIM_ATTACK_Frame5, ANIM_END };
+	enum RenderType { RENDER_IDLE, RENDER_HIT, RENDMER_DIE, RENDER_END };
 
 	typedef struct tagState
 	{
@@ -17,11 +17,12 @@ class CMonster_Wasp final : public CMonster
 		_uint			iRenderType = RENDER_IDLE;
 		_uint			iCellIndex = 0;
 
-		_float4			fRimRight = _float4(0.5f,0.5f,0.5f,1.f);
+		_float4			fRimRight = _float4(0.5f, 0.5f, 0.5f, 1.f);
 		_float4			fEmissive = _float4(0.5f, 0.5f, 0.5f, 0.8f); //R,G,B W==±¹¹ä°ª
-		_float4			fDissolve = _float4(0.5f,0.5f,0.5f,0.f);//1Èå¸¥½Ã°£, µðÁ¹ºê ½Ã°£, ±¹¹ä°¡°Ý ,0ÀÌ¸é µðÁ¹ºê ¾ÈÇÔ 1ÀÌ¸é µðÁ¹ºê
 
-		
+		_float4			fDissolve = _float4(0.f, 1.f, 0.5f, 1.f);//1Èå¸¥½Ã°£, µðÁ¹ºê ½Ã°£, ±¹¹ä°¡°Ý ,0ÀÌ¸é µðÁ¹ºê ¾ÈÇÔ 1ÀÌ¸é µðÁ¹ºê
+
+
 		_int			iHp = 3;
 		_double			dTime = 0;
 		_bool			bHit = false;
@@ -33,8 +34,11 @@ class CMonster_Wasp final : public CMonster
 
 	typedef struct tagInstanceInfo
 	{
-		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count
+		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count,
+							//m[1][0] : Life Count, m[1][1] : Monster Hit Count,
+							//m[2][0]~m[2][2] : X,Y,Z
 		_float4x4 fSubValueMat;
+		void*		Object = nullptr;
 	}INSTANCE_INFO;
 
 private:
@@ -78,7 +82,7 @@ private:
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 
-	CModel*				m_pModel[ANIM_END] = {nullptr};
+	CModel*				m_pModel[ANIM_END] = { nullptr };
 	CModelInstance*		m_pModelInstance[ANIM_END] = { nullptr };
 
 	vector<TRANSFORM_STATE> m_vecInstancedTransform;
@@ -91,7 +95,7 @@ private:
 
 	INSTANCE_INFO		m_Instance_Info;
 	const _tchar*		m_charModellInstanceType = nullptr;
-
+	class CInstanceMonsterBatchTrigger*	m_pBatchTrigger = nullptr;
 
 
 

@@ -401,10 +401,11 @@ HRESULT CGadasura_Rage_Hollogram::Adjust_AnimMovedTransform(_double dDeltaTime)
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
 
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.99)
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
-
+		m_iSoundIndex = 0;
+		m_dSoundTime = 0;
 		m_bLookAtOn = true;
 	}
 
@@ -414,11 +415,28 @@ HRESULT CGadasura_Rage_Hollogram::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 		case 0:
 		{
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Rage_Gadasura_Scream_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.2f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 1:
 		{
 			m_pTransformCom->Move_Forward(dDeltaTime * 2, m_pNavigationCom);
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3157)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.7894 )
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Ground_Hit_Light.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				m_iSoundIndex++;
+			}
+			
 			break;
 		}
 		default:

@@ -65,6 +65,12 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 
 		m_dDissolveTime += dDeltaTime;
 
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Tezabsura_Damage_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_bDieSound = true;
+		}
+
 		if (m_dDissolveTime >= 2)
 		{
 			Set_IsDead();
@@ -127,7 +133,7 @@ _int CMonster_Tezabsura_Landmine::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 
@@ -1046,7 +1052,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 			if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_232.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 				m_iSoundIndex++;
 			}
@@ -1095,7 +1101,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			}
 			if (m_iSoundIndex == 0 && PlayRate >= 0.4642)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -1138,7 +1144,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 
 			}
 			break;
@@ -1175,7 +1181,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 
 			}
 			break;
@@ -1211,7 +1217,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 
 				m_iAdjMovedIndex++;
 

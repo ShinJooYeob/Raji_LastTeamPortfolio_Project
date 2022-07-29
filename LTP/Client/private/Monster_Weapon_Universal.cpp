@@ -55,6 +55,12 @@ _int CMonster_Weapon_Universal::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_pMonster_Object->Get_NowHP() <= 0)
+	{
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+	}
+
 	Update_AttachMatrix();
 
 
@@ -81,7 +87,7 @@ _int CMonster_Weapon_Universal::LateUpdate(_double dDeltaTime)
 	mat.r[2] = XMVector3Normalize(mat.r[2]);
 	
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat)));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(mat), m_pDissolve));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
@@ -106,25 +112,18 @@ _int CMonster_Weapon_Universal::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-		{
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
-	}
+	FAILED_CHECK(m_pDissolve->Render(8)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
 
-	//_uint iNumMaterials = m_pModel->Get_NumMaterial();
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
 
-	//for (_uint i = 0; i < iNumMaterials; ++i)
+	//for (_uint i = 0; i < NumMaterial; i++)
 	//{
-	//	m_pModel->Bind_OnShader(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-
-	//	m_pModel->Render(m_pShaderCom, 3, i);
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//	{
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	}
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 8, i));
 	//}
 
 	return _int();
@@ -181,6 +180,15 @@ HRESULT CMonster_Weapon_Universal::SetUp_Components()
 
 	m_pMonster_Object = static_cast<CGameObject*>(m_Monster_Weapon_UniversalDesc.Object);
 	m_pMonster_Model = static_cast<CModel*>(m_pMonster_Object->Get_Component(TAG_COM(Com_Model)));
+
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM_ATTACHED;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 1;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
 
 	SetUp_Collider();
 
@@ -596,4 +604,5 @@ void CMonster_Weapon_Universal::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
 }

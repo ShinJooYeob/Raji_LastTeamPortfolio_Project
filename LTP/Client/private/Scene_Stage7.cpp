@@ -42,9 +42,10 @@ HRESULT CScene_Stage7::Initialize()
 	////////test!@#!@#@#@!#!#!@#삭제 쌉가능~
 	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance2.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance3.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance3.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance4.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	/////////////////////////////////////////
+	FAILED_CHECK(Ready_TriggerObject(L"TestInstanceStart.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
@@ -52,6 +53,7 @@ HRESULT CScene_Stage7::Initialize()
 
 	//FAILED_CHECK(teST());
 	m_fSceneStartTimer = 0.f;
+	GetSingle(CUtilityMgr)->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
 	return S_OK;
 }
 
@@ -112,6 +114,10 @@ _int CScene_Stage7::Render()
 
 		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
 	}
+
+	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	_Vector vDir = XMVector3Normalize(XMVectorSetY(g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER), 10) - XMVectorSet(128.f, -64.f, 256.f, 0));
+	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(128.f, -64.f, 256.f, 0) + vDir * 330.f);
 
 	return 0;
 }
@@ -296,7 +302,7 @@ HRESULT CScene_Stage7::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Black)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage)));
 	
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Monster_Gadasura_Rage_Hollogram)));
 

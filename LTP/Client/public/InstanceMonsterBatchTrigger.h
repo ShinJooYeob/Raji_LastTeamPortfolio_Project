@@ -12,6 +12,7 @@ class CInstanceMonsterBatchTrigger final : public CTriggerObject
 	{
 		_float4x4 fValueMat;
 		_float4x4 fSubValueMat;
+		void*	Object;
 	}INSTANCE_BATCH_INFO;
 protected:
 	CInstanceMonsterBatchTrigger(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -38,6 +39,9 @@ public:
 	virtual void					CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+public:
+	_bool							Get_MonsterAllDie() {return m_bMonsterAllDie;}
+
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_EtcInfo();
@@ -45,6 +49,11 @@ private:
 	INSTANCE_BATCH_INFO				m_Instance_Batch_InfoDesc;
 	_bool							m_bOnceSwitch = false;
 
+	CTransform*						m_pPlayerTransform = nullptr;
+	_bool							m_bMonsterAllDie = false;
+
+	_float3							m_fPoint;
+	
 public:
 	static CInstanceMonsterBatchTrigger*						Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*					Clone(void* pArg);
