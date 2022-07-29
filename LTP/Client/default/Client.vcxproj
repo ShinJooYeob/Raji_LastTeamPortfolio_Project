@@ -185,6 +185,8 @@
     <ClInclude Include="..\public\Camera_Editor.h" />
     <ClInclude Include="..\public\Camera_Main.h" />
     <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
+    <ClInclude Include="..\public\CinematicTrigger.h" />
+    <ClInclude Include="..\public\CurtainTrigger.h" />
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
@@ -315,6 +317,8 @@
     <ClCompile Include="..\private\BossCreateTrigger.cpp" />
     <ClCompile Include="..\private\Camera_Main.cpp" />
     <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
+    <ClCompile Include="..\private\CinematicTrigger.cpp" />
+    <ClCompile Include="..\private\CurtainTrigger.cpp" />
     <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />

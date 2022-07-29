@@ -415,6 +415,12 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave">
       <UniqueIdentifier>{550ab942-a198-4371-89d2-8155bffc3b93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\09. CinematicTrigger">
+      <UniqueIdentifier>{329cc572-9ab1-4497-adac-0c074c64c3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\10. CurtainTrigger">
+      <UniqueIdentifier>{d763ddbd-a2a4-4810-9b55-6d158a175646}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -912,6 +918,12 @@
     <ClInclude Include="..\public\Mahabalasura_SpearWave.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CinematicTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\09. CinematicTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CurtainTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1388,6 +1400,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura_SpearWave.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\09. CinematicTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CurtainTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

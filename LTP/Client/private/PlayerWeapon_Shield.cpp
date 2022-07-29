@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\PlayerWeapon_Shield.h"
+#include "Camera_Main.h"
 
 CPlayerWeapon_Shield::CPlayerWeapon_Shield(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -151,10 +152,14 @@ void CPlayerWeapon_Shield::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+		{
+			GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+		}
 		pConflictedCollider->Set_Conflicted(0.5f);
 
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Impact.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 	}
 }
 
@@ -230,6 +235,8 @@ void CPlayerWeapon_Shield::Start_ThrowMode(_fVector vStartPos, _float fThrowDist
 	m_bThrowMode = true;
 
 	m_bActiveCollision = true;
+
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 1.f, 0.2f, true);
 }
 
 void CPlayerWeapon_Shield::End_ThrowMode()

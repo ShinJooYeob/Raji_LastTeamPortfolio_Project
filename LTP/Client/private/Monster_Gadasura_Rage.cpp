@@ -213,6 +213,11 @@ _float CMonster_Gadasura_Rage::Take_Damage(CGameObject * pTargetObject, _float f
 		m_iBoolOnce += 1;
 	}
 
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
 	return _float();
 }
 

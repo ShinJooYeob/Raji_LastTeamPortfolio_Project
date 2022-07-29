@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\PlayerWeapon_Sword.h"
+#include "Camera_Main.h"
 
 CPlayerWeapon_Sword::CPlayerWeapon_Sword(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -245,13 +246,17 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		}
 		else
 		{
-			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+			{
+				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+			}
 			pConflictedCollider->Set_Conflicted(0.5f);
 
 			_int iSelectSoundFileIndex = rand() % 2;
 			_tchar pSoundFile[MAXLEN] = TEXT("");
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Sword_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 		}
 	}
 }
@@ -297,6 +302,10 @@ void CPlayerWeapon_Sword::EffectParticleOn(_uint iIndex, void* pArg)
 
 void CPlayerWeapon_Sword::Set_ShieldBashAttack(_bool bShieldBashAttack)
 {
+	if (false == m_bShieldBashAttack)
+	{
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 1.f, 0.2f, true);
+	}
 	m_bShieldBashAttack = bShieldBashAttack;
 }
 

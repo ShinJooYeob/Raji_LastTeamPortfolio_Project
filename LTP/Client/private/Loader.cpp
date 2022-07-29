@@ -79,6 +79,7 @@
 #include "MandalaPuzzleTrigger.h"
 #include "DemonTreePuzzleTrigger.h"
 #include "BossCreateTrigger.h"
+#include "CinematicTrigger.h"
 //Interact Obj
 #include "Elevator.h"
 
@@ -387,6 +388,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_InstanceMonsterBatchTrigger), CInstanceMonsterBatchTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_InstanceMonsterBatchTrigger), CInstanceMonsterBatchTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_BossCreateTrigger), CBossCreateTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_CinematicTrigger), CCinematicTrigger::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));

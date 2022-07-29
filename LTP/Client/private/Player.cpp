@@ -18,13 +18,8 @@
 #include "HpUI.h"
 #include "SkillUI.h"
 
-
-
-
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
-
-
 
 
 
@@ -163,6 +158,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	//Process Player State Logic
 		switch (m_eCurState)
 		{
+		case EPLAYER_STATE::STATE_SLEEP:
+			FAILED_CHECK(Update_State_Sleep(fDeltaTime));
+			break;
 		case EPLAYER_STATE::STATE_IDLE:
 			FAILED_CHECK(Update_State_Idle(fDeltaTime));
 			break;
@@ -243,22 +241,29 @@ _int CPlayer::Update(_double fDeltaTime)
 
 	//// CameraShake Test
 	{
-	//if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
-	//{
-	//	m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
-	//{
-	//	m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
+	/*if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+	{
+		m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
+	}*/
+		if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		{
+			//m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f, true);
+			
+			GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+			m_pMainCamera->Set_MaxTargetArmLength(3.f);
+		}
+		else if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Up)
+		{
+			m_pMainCamera->Set_MaxTargetArmLength(10.f);
+		}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
 	//{
 	//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
 	//	tCameraShakeDirDesc.fTotalTime = 1.f;
 	//	tCameraShakeDirDesc.fPower = 10.f;
 	//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
 	//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
-	//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+	//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
 	//}
 	//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
 	//{
@@ -269,16 +274,18 @@ _int CPlayer::Update(_double fDeltaTime)
 	//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
 	//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
 	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
+	//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
 	//{
 	//	CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
 	//	tCameraShakeRotDesc.fTotalTime = 1.f;
 	//	tCameraShakeRotDesc.fPower = 1.f; 
 	//	tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
 	//	tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
-	//	m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc);
+	//	m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, true);
 	//}
-	//
+	// 
+
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
 	{
 		m_bIsSkillUI = !m_bIsSkillUI;
@@ -288,6 +295,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		m_pSkillUI->Update(fDeltaTime);
 		}
 	}
+
 	// Update Targeting
 	Update_Targeting(fDeltaTime);
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
@@ -325,6 +333,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	}
 
 	LateUpdate_HPUI(fDeltaTimer);
+
 	if (m_bIsSkillUI)
 	{
 		m_pSkillUI->LateUpdate(fDeltaTimer);
@@ -447,6 +456,17 @@ void CPlayer::Set_PosY(_float fPos_y)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	if (STATE_STOPACTION == m_eCurState)
+	{
+		return 0.f;
+	}
+	else if (STATE_EVASION == m_eCurState)
+	{
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+		return 0.f;
+	}
+
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
 	//if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming)
 	//{
 	//	return 0.f;
@@ -504,6 +524,13 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 _float CPlayer::Apply_Damage(CGameObject * pTargetObject, _float fDamageAmount, _bool bKnockback)
 {
 	return _float();
+}
+
+void CPlayer::Set_State_FirstStart()
+{
+	m_eCurState = STATE_SLEEP;
+	m_bOnNavigation = true;
+	m_pModel->Change_AnimIndex(BASE_ANIM_SLEEP);
 }
 
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
@@ -904,6 +931,33 @@ void CPlayer::Set_Targeting(CGameObject * pTarget)
 HRESULT CPlayer::Update_CamLookPoint(_double fDeltaTime)
 {
 	return E_NOTIMPL;
+}
+
+HRESULT CPlayer::Update_State_Sleep(_double fDeltaTime)
+{
+	_float fAnimRate = (_float)m_pModel->Get_PlayRate();
+
+	switch (m_pModel->Get_NowAnimIndex())
+	{
+	case BASE_ANIM_SLEEP:
+	{
+		if (true == m_bPressedInteractKey)
+		{
+			m_pModel->Change_AnimIndex(BASE_ANIM_WAKEUP);
+		}
+	}
+		break;
+	case BASE_ANIM_WAKEUP:
+	{
+		m_fAnimSpeed = 0.2f;
+		if (fAnimRate > 0.97f)
+		{
+			Set_State_IdleStart(fDeltaTime);
+		}
+	}
+		break;
+	}
+	return S_OK;
 }
 
 HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
@@ -1765,6 +1819,7 @@ HRESULT CPlayer::Update_State_Damage(_double fDeltaTime)
 {
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 	m_fAnimSpeed = 2.f;
+	
 	if (0.f < fAnimPlayRate)
 	{
 		if (0.155f >= fAnimPlayRate)
@@ -1846,8 +1901,20 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 	if (true == m_bActiveCollider)
 	{
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pCollider));
-		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
 	}
+
+	switch (m_eCurState)
+	{
+	case STATE_ATTACK:
+	case STATE_JUMPATTACK:
+	case STATE_UTILITYSKILL:
+	case STATE_ULTIMATESKILL:
+		break;
+	default:
+		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
+		break;
+	}
+
 	m_IsConfilicted = false;
 
 
@@ -2403,7 +2470,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 	{
 	case BASE_ANIM_DODGE_ROLL:
 	{ 
-		m_bActiveCollider = false;
+		//m_bActiveCollider = false;
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
 		{
@@ -2480,7 +2547,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 		break;
 	case BASE_ANIM_DODGE_CARTWHEEL:
 	{
-		m_bActiveCollider = false;
+		//m_bActiveCollider = false;
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.f < fAnimPlayRate && 0.4f > fAnimPlayRate)
 		{
@@ -2561,7 +2628,7 @@ void CPlayer::Dodge(_double fDeltaTime)
 		break;
 	case BASE_ANIM_DODGE_FLIP:
 	{
-		m_bActiveCollider = false;
+		//m_bActiveCollider = false;
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.f < fAnimPlayRate && 0.4f > fAnimPlayRate)
 		{
@@ -2804,6 +2871,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	{
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_3();
 
+
 		// Play Sound
 		if (false == m_bOncePlaySwingSound && 0.48f < fAnimPlayRate)
 		{
@@ -2899,7 +2967,22 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.6f >= fAnimPlayRate && 0.54f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -3007,7 +3090,22 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.3f >= fAnimPlayRate && 0.28f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -3508,7 +3606,24 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.55f >= fAnimPlayRate && 0.53f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			//m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f, true);
+			//m_bActive_ActionCameraShake = false;
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 2.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -3819,7 +3934,23 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.23f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 2.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -3917,7 +4048,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 
 			else
 			{
-				m_pMainCamera->Start_CameraShaking_Thread(0.1f, 2.f - m_fChargingTime, 0.015f);
+				m_pMainCamera->Start_CameraShaking_Thread(0.1f, 2.f - m_fChargingTime, 0.015f, true);
 				m_fArrowRange = 12.f;
 			}
 			//
@@ -4017,8 +4148,6 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
-
-				
 				}
 
 				m_bOncePlaySound = true;
@@ -4914,7 +5043,23 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.45f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -5049,7 +5194,23 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.25f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 			m_bActive_ActionCameraShake = false;
 		}
 		//
@@ -5335,6 +5496,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			}
 		}
 		/////////////////////////////////////////////////////////
+
+
 	}
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1:
@@ -5351,7 +5514,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			vThrowStartPos += vPlayerLook * 1.5f;
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
 
-			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
@@ -5503,7 +5666,22 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.4f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.02f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_bActive_ActionCameraShake = false;			
 			m_pPlayerWeapons[WEAPON_SWORD - 1]->EffectParticleOn(0, &m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK));
 
@@ -5625,7 +5803,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			vThrowStartPos += vPlayerLook * 1.5f;
 			static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_ThrowMode(vThrowStartPos, 5.f);
 
-			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f);
+			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
@@ -5775,7 +5953,22 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		// Active CameraShake
 		if (true == m_bActive_ActionCameraShake && 0.15f <= fAnimPlayRate)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);			
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.4f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.02f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 1.5f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
 			m_pPlayerWeapons[WEAPON_SWORD - 1]->EffectParticleOn(0, &m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK));
 
 			m_bActive_ActionCameraShake = false;
@@ -5884,6 +6077,7 @@ void CPlayer::Throw_Spear(_double fDeltaTime)
 		}
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_End();
 		m_bThrowSpear = false;
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
 	}
 	else if (false == m_bThrowSpear && 0.14f >= m_pModel->Get_PlayRate() && 0.1f <= m_pModel->Get_PlayRate())
 	{
@@ -5891,7 +6085,8 @@ void CPlayer::Throw_Spear(_double fDeltaTime)
 		_Vector vPlayerLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Throw_Start(vPlayerLook);
 
-		m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.1f);
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, true);
+		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, true);
 	}
 }
 
@@ -5912,11 +6107,21 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 	// Active CameraShake
 	if (true == m_bActive_ActionCameraShake && 0.45f >= fAnimPlayRate  && 0.4f <= fAnimPlayRate)
 	{
-		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.5f);
+		m_fAnimSpeed = 0.6f;
+		CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+		tCameraShakeRotDesc.fTotalTime = 0.05f;
+		tCameraShakeRotDesc.fPower = 2.f;
+		tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+		tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+		m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 1.9f, true);
 		m_bActive_ActionCameraShake = false;
 
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Active_Collision_4();
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, true);
 	}
+
 	static _bool bEffectChecker = false;
 
 	if(fAnimPlayRate < 0.2f) bEffectChecker = false;
@@ -5932,17 +6137,19 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 10.f) - m_vecNonInstMeshDesc[2].vPosition.XMVector());
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.5f, 0.1f);
 	}
 
 	//
 
-	if (0.98f <= fAnimPlayRate)
+	if (0.97f <= fAnimPlayRate)
 	{
 		static_cast<CPlayerWeapon_Spear*>(m_pPlayerWeapons[WEAPON_SPEAR - 1])->Change_Pivot(CPlayerWeapon_Spear::ESpearPivot::SPEAR_PIVOT_NORMAL);
 		Set_State_IdleStart(fDeltaTime);
 		m_bActive_ActionCameraShake = true;
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_4();
 		m_bOncePlaySound = false;
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
 	}
 }
 
@@ -6032,7 +6239,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityShot);
 			pBowArrow->Set_TargetPos(m_pShellingSkillRange->Get_AttackPoint());
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.03f);
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.03f, true);
 			
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Shelling_Shoot.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		}
@@ -6079,23 +6286,22 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	if (0.98f <= m_pModel->Get_PlayRate())
 	{
 		Set_State_IdleStart(fDeltaTime);
-
+		m_bAnimChangeSwitch = false;
 	}
 	else if (0.774f <= m_pModel->Get_PlayRate())
 	{
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(3.f);
-		m_pMainCamera->Start_CameraShaking_Thread(2.5f, 5.f, 0.01f);
 	}
 	else if (true == m_bAnimChangeSwitch && 0.574f <= m_pModel->Get_PlayRate())
 	{
-		m_bAnimChangeSwitch = false;
+		m_bAnimChangeSwitch = false; 
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(1.f);
 
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Post_Shot();
-		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
+		m_pMainCamera->Start_CameraShaking_Fov(56.f, 1.f, 4.f, true);
 
 		{
 			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
@@ -6143,6 +6349,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	}
 	else if (false == m_bAnimChangeSwitch && 0.446f <= m_pModel->Get_PlayRate() && 0.574f >= m_pModel->Get_PlayRate())
 	{
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.2f);
 		m_bAnimChangeSwitch = true;
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Ready();
 		static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_AnimSpeed(2.f);
@@ -6163,7 +6370,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State_Ultimate_Pre_Shot();
-		m_pMainCamera->Start_CameraShaking_Fov(57.f, 3.f, 0.1f);
+		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, true);
 
 
 		{
@@ -6276,7 +6483,7 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 		m_bAnimChangeSwitch = true;
 		_float fTargetPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) + 4.f;
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->Start_UltimateMode(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), fTargetPos_Y);
-
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.5f, 0.1f);
 
 
 		{
@@ -6308,20 +6515,33 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 
 
 	if (0.533 <= fAnimPlayRate && 0.666 >= fAnimPlayRate)
-	{
-		m_fAnimSpeed = 0.4f;
+	{ 
+		m_fAnimSpeed = 0.2f;
 		if (false == m_bActive_ActionCameraShake)
 		{
-			m_pMainCamera->Start_CameraShaking_Fov(58.f, 1.f, 0.6f);
-			m_pMainCamera->Start_CameraShaking_Thread(2.4f, 4.f, 0.005f);
 			m_bActive_ActionCameraShake = true;
+
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.05f;
+			tCameraShakeRotDesc.fPower = 2.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.5f, 2.f, true);
+
+
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, true);
+
+
 
 
 			m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 				+ (m_pTransformCom->Get_MatrixState(CTransform::STATE_UP)) * 4.0f;
 			m_vecNonInstMeshDesc[8].vLookDir = (m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT));
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 
 
 			m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
@@ -6334,12 +6554,16 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-			TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
 
 			static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->Active_Collision_3();
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Ultimate_Smash_Heavy.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 		}
+	}
+	else if(fAnimPlayRate > 0.8f)
+	{
+		//m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
 	}
 
 	if (0.98f <= fAnimPlayRate)
@@ -6351,6 +6575,7 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 		m_bActive_ActionCameraShake = true;
 		m_bOncePlaySound = false;
 		m_bActionSwitch = false;
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
 		return;
 	}
 
@@ -6359,7 +6584,7 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	//// Active CameraShake
 	if (true == m_bActive_ActionCameraShake && 0.22f <= fAnimPlayRate && 0.5 > fAnimPlayRate)
 	{
-		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f);
+		m_pMainCamera->Start_CameraShaking_Fov(58.f, 3.f, 0.1f, true);
 		m_bActive_ActionCameraShake = false;
 	}
 }
@@ -7254,6 +7479,7 @@ void CPlayer::Update_Targeting(_double fDeltaTime)
 	{
 		Targeting_Loop();
 	}
+	break;
 
 	case ETARGETING_STATE::TARGETING_BOSS:
 	{
@@ -7315,22 +7541,26 @@ void CPlayer::Targeting_Loop()
 	_Vector vCenterPos = (vPlayerPos + vTargetPos) * 0.5f;
 
 	_float fDist = XMVectorGetX(XMVector3Length(vPlayerPos - vTargetPos));// *0.15f;
-	if (fDist > 20.f)
+	if (fDist > 25.f)
 	{
 		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
-		m_pMainCamera->Set_CameraLookWeight(0.9f);
-		m_pMainCamera->Set_CameraMoveWeight(0.9f);
+		/*m_pMainCamera->Set_CameraLookWeight(0.9f);
+		m_pMainCamera->Set_CameraMoveWeight(0.9f);*/
 		return;
-	}  
+	} 
 	else 
 	{
-		m_pMainCamera->Set_CameraLookWeight(0.98f);
-		m_pMainCamera->Set_CameraMoveWeight(0.98f);
+		/*m_pMainCamera->Set_CameraLookWeight(0.98f);
+		m_pMainCamera->Set_CameraMoveWeight(0.98f);*/
 		fDist *= 2.5f;
 		if (fDist > 25.f)
 		{
 			fDist = 25.f;
+		}
+		else if (fDist < 9)
+		{
+			fDist = 9.f;
 		}
 	}
 
@@ -7345,7 +7575,6 @@ void CPlayer::Targeting_Loop()
 void CPlayer::Targeting_Boss()
 {
 	_Vector vPlayerPos = Get_BonePos("skd_hip");
-	_Vector vPlayerPos2 = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_Vector vTargetPos = m_pTargetingMonster_Transform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_Vector vCenterPos = (vPlayerPos + vTargetPos) * 0.5f;
 
@@ -7421,6 +7650,10 @@ _bool CPlayer::Change_NextCombo()
 
 void CPlayer::LookAt_MousePos(_float fWeight)
 {
+	if (true == GetSingle(CUtilityMgr)->Get_IsSlowed())
+	{
+		return;
+	}
 	/*_Vector		vResult = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 	_float3		fRayDir;
 	_float3		fRayPos;

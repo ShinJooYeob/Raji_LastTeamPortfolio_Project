@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Public\Camera_Main.h"
-
+#include "Player.h"
 
 _uint CALLBACK CameraEffectThread(void* _Prameter)
 {
@@ -29,6 +29,11 @@ _uint CALLBACK CameraEffectThread(void* _Prameter)
 	default:
 		MSGBOX("worng Cam Eft");
 		break;
+	}
+
+	if (true == tCameraEffectDesc->bOnceShake)
+	{
+		pCamemra->Set_StartedShaking(false);
 	}
 
 	delete tCameraEffectDesc;
@@ -65,8 +70,6 @@ HRESULT CCamera_Main::Initialize_Clone(void * pArg)
 
 	m_fMax_TargetArmLength = 10.f;
 	m_fMin_TargetArmLength = 3.f;
-	//m_fTargetArmLength = 8.f;
-
 
 	return S_OK;
 }
@@ -95,7 +98,10 @@ _bool CCamera_Main::CamActionStart(CAMERAACTION Act)
 	m_iNowPosIndex = 0;
 	m_iNowLookIndex = 0;
 
+	CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+	pPlayer->Set_State_StopActionStart();
 
+	GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
 	return true;
 }
 
@@ -214,6 +220,11 @@ void CCamera_Main::Set_CamLock(_bool bLock)
 	m_bCamLock = bLock;
 }
 
+void CCamera_Main::Set_StartedShaking(_bool bValue)
+{
+	m_bIsStartedShaking = bValue;
+}
+
 _float CCamera_Main::Get_TargetArmLength()
 {
 	return m_fTargetArmLength;
@@ -261,51 +272,58 @@ _int CCamera_Main::Update(_double fDeltaTime)
 
 	Update_CamMoveWeight();
 
-	FAILED_CHECK(Update_CamAction(fDeltaTime));
-	m_pTransform->Set_MoveSpeed(8.f);
-	// State Update
-	switch (m_eCurCamMode)
+	if (true == m_bCamActionStart)
 	{
-	case ECameraMode::CAM_MODE_FREE:
-	{
-		Update_FreeMode(fDeltaTime);
+		FAILED_CHECK(Update_CamAction(fDeltaTime));
 	}
+	else
+	{
+		m_pTransform->Set_MoveSpeed(8.f);
+		// State Update
+		switch (m_eCurCamMode)
+		{
+		case ECameraMode::CAM_MODE_FREE:
+		{
+			Update_FreeMode(fDeltaTime);
+		}
 		break;
-	case ECameraMode::CAM_MODE_NOMAL:
-	{
-		Update_NormalMode(fDeltaTime);
-	}
+		case ECameraMode::CAM_MODE_NOMAL:
+		{
+			Update_NormalMode(fDeltaTime);
+		}
 		break;
-	case ECameraMode::CAM_MODE_TARGETING:
-	{
-		Update_TargetingMode(fDeltaTime);
-	}
+		case ECameraMode::CAM_MODE_TARGETING:
+		{
+			Update_TargetingMode(fDeltaTime);
+		}
 		break;
-	case ECameraMode::CAM_MODE_FIX:
-	{
-		// None Update
-	}
-	break;
-	}
-	//
+		case ECameraMode::CAM_MODE_FIX:
+		{
+			// None Update
+		}
+		break;
+		}
+		//
 
 
-	// Fov Shaking
-	if (true == m_bFovShaking)
-	{
-		m_fFovCurTime_Shaking += (_float)fDeltaTime;
-		if (m_fFovMaxTime_Shaking <= m_fFovCurTime_Shaking) 
+		// Fov Shaking
+		if (true == m_bFovShaking)
 		{
-			m_CameraDesc.fFovy = XMConvertToRadians(60.f);
-			m_fFovCurTime_Shaking = 0.f;
-			m_bFovShaking = false;
+			m_fFovCurTime_Shaking += (_float)fDeltaTime;
+			if (m_fFovMaxTime_Shaking <= m_fFovCurTime_Shaking)
+			{
+				m_CameraDesc.fFovy = XMConvertToRadians(60.f);
+				m_fFovCurTime_Shaking = 0.f;
+				m_bFovShaking = false;
+				m_bIsStartedShaking = false;
+			}
+			else
+			{
+				ShakingCamera_Damage();
+			}
 		}
-		else
-		{
-			ShakingCamera_Damage();
-		}
+		//
 	}
-	//
 
 	return _int();
 }
@@ -334,9 +352,16 @@ _int CCamera_Main::LateRender()
 }
 
 
-HRESULT CCamera_Main::Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval)
+HRESULT CCamera_Main::Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval, _bool bOnceShake)
 {
-	if (m_bIsStartedShaking) return S_FALSE;
+	if (true == bOnceShake)
+	{
+		if (true == m_bIsStartedShaking)
+			return S_FALSE;
+		else
+			m_bIsStartedShaking = true;
+	}
+
 	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE;
 	pCameraEffectDesc->pTargetCamera = this;
@@ -478,9 +503,22 @@ HRESULT CCamera_Main::Progress_Shaking_Thread(_bool * _IsClientQuit, CRITICAL_SE
 	return S_OK;
 }
 
-HRESULT CCamera_Main::Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC * tDirShakingDesc)
+HRESULT CCamera_Main::Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC * tDirShakingDesc, _bool bOnceShake)
 {
 	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
+
+	if (true == bOnceShake)
+	{
+		if (true == m_bIsStartedShaking)
+			return S_FALSE;
+		else
+		{
+			pCameraEffectDesc->bOnceShake = true;
+			m_bIsStartedShaking = true;
+		}
+	}
+
+
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_DIR;
 	pCameraEffectDesc->pTargetCamera = this;
 	pCameraEffectDesc->tDirShakingDesc = *tDirShakingDesc;
@@ -551,13 +589,24 @@ HRESULT CCamera_Main::Progress_DirShaking_Thread(_bool * _IsClientQuit, CRITICAL
 	return S_OK;
 }
 
-HRESULT CCamera_Main::Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc)
+HRESULT CCamera_Main::Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc, _bool bOnceShake)
 {
 	CAMERAEFFECTDESC* pCameraEffectDesc = NEW CAMERAEFFECTDESC();
+
+	if (true == bOnceShake)
+	{
+		if (true == m_bIsStartedShaking)
+			return S_FALSE;
+		else
+		{
+			pCameraEffectDesc->bOnceShake = true;
+			m_bIsStartedShaking = true;
+		}
+	}
+
 	pCameraEffectDesc->eCameraEffectID = CAM_EFT_SHAKE_ROT;
 	pCameraEffectDesc->pTargetCamera = this;
 	pCameraEffectDesc->tRotShakingDesc = *tRotShakingDesc;
-
 	GetSingle(CGameInstance)->PlayThread(CameraEffectThread, pCameraEffectDesc);
 
 	return S_OK;
@@ -635,8 +684,20 @@ void CCamera_Main::Set_EffectID(CameraEffectID eEffectID)
 	m_eEffectID = eEffectID;
 }
 
-void CCamera_Main::Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime)
+void CCamera_Main::Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime, _bool bOnceShake)
 {
+	if (true == bOnceShake)
+	{
+		if (true == m_bIsStartedShaking)
+		{
+			return;
+		}
+		else
+		{
+			m_bIsStartedShaking = true;
+		}
+	}
+
 	if (fTargetFov >= 60.f)
 	{
 		return;
@@ -892,6 +953,10 @@ HRESULT CCamera_Main::Update_CamAction(_double fDeltaTime)
 
 		//m_pTransform->Set_MatrixState(CTransform::STATE_POS, EasedPos);
 		//m_pTransform->LookAt(EasedLookAt.XMVector());
+
+		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+		pPlayer->Set_State_StopActionEnd();
+		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 	}
 	else
 		//마지막 프레임까지 돌지 않았다면 보간하면서 라업룩포를 구해라

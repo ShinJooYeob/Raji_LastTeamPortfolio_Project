@@ -209,6 +209,11 @@ _float CMonster_Mahinasura_Leader::Take_Damage(CGameObject * pTargetObject, _flo
 		m_iBoolOnce += 1;
 	}
 
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
 	return _float();
 }
 

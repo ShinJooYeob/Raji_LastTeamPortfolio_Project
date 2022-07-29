@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "ShellingArrow.h"
 #include "PartilceCreateMgr.h"
+#include "Camera_Main.h"
 
 CPlayerWeapon_Arrow::CPlayerWeapon_Arrow(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -709,7 +710,10 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		if (true == m_bFired)
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+			{
+				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+			}
 			pConflictedCollider->Set_Conflicted(0.2f);
 
 			_int iSelectSoundFileIndex = rand() % 3;
@@ -719,6 +723,7 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 
 			FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
 
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 		}
 	}
 }

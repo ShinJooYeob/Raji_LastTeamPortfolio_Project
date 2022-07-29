@@ -17,7 +17,7 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -114,8 +114,8 @@ public:
 		PETAL_ANIM_PLUCK = PILLAR_ANIM_END, PETAL_ANIM_THROW_INIT, PETAL_ANIM_THROW_LOOP, PETAL_ANIM_THROW_THROW, PETAL_ANIM_END
 	};
 
-	enum EPLAYERANIM_DAMAGE {
-		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, BASE_ANIM_JUMP_READY, BASE_ANIM_JUMP_CHARGING, BASE_ANIM_JUMP_JUMPING, DAMAGE_ANIM_END
+	enum EPLAYERANIM_ETC {
+		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, BASE_ANIM_JUMP_READY, BASE_ANIM_JUMP_CHARGING, BASE_ANIM_JUMP_JUMPING, BASE_ANIM_SLEEP, BASE_ANIM_WAKEUP, ETC_ANIM_END
 	};
 	//
 
@@ -181,6 +181,9 @@ public: /* Damage Logic*/
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 public:
+	// First Start
+	void	Set_State_FirstStart();
+
 	// Ledge
 	void	Set_State_ParkourStart(_double fDeltaTime);																
 	void	Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime);
@@ -242,6 +245,7 @@ public:
 private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
 
+	HRESULT Update_State_Sleep(_double fDeltaTime);
 	HRESULT Update_State_Idle(_double fDeltaTime);
 	HRESULT Update_State_Move(_double fDeltaTime);
 	HRESULT Update_State_Jump(_double fDeltaTime);
@@ -438,6 +442,7 @@ private: /* Animation Control */
 	_bool					m_bShieldMode;
 
 	_bool					m_bActiveCollider = true;
+	_bool					m_bActiveRepel = true;
 
 	_float3					m_fLookDir = _float3(0.f, 0.f, 0.f);
 

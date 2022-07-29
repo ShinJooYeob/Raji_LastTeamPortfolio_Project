@@ -47,6 +47,7 @@ public:
 	/*For SlowMotion*/
 	void SlowMotionStart(_float fTargetTime = 0.5f, _float TargetSpeed = 0.0f, _float TargetCurveRate = 0.5f);
 	_float Get_SlowMotionSpeed();
+	_bool Get_IsSlowed();
 
 
 	/*For Debug_Timer*/
@@ -80,6 +81,10 @@ public:
 	HRESULT SCD_Rendering_Rolling(_float RollingStartTime, _float RollingTargetTime, const _tchar* szRenderTargetTag);
 	HRESULT SCD_Rendering_FadeOut(_float RollingStartTime, _float RollingTargetTime, const _tchar* szRenderTargetTag);
 	//HRESULT SCD_Rendering_Rolling(_float RollingStartTime, _float RollingTargetTime);
+
+
+	/* For Get World Object */
+	class CCamera_Main* Get_MainCamera();
 
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
