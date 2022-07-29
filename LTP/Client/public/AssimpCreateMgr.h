@@ -7,7 +7,19 @@ BEGIN(Client)
 // Load And Create
 class CAssimpCreateMgr:public CBase
 {
-	
+public:
+	typedef struct tag_AssimpThreadDesc
+	{
+		map<const wchar_t*, MODELDESC*>* mapdesc = nullptr;
+		_float4x4 DefaultMat;
+
+		_uint startPos = 0;
+		_uint Count = 0;
+		_bool isOk = false;
+
+	}ASTHREADDESC;
+
+
 public:
 	DECLARE_SINGLETON(CAssimpCreateMgr)
 
@@ -38,8 +50,9 @@ private:
 	HRESULT	Load_ModelMap(const list<MYFILEPATH*>& pathlist, map<const wchar_t*, MODELDESC*>& Map_Modeldesc);
 
 	HRESULT Load_ModelFBXName_CreateModel(const wchar_t * fbxName, _fMatrix Default);
-	HRESULT Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type,_Matrix defaultMat);
-
+	HRESULT Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, CModel::MODELTYPE type, _Matrix defaultMat);
+	HRESULT Create_ModelCom_StaticThread(map<const wchar_t*, MODELDESC*>& map, SCENEID sceneid, _Matrix defaultMat, _uint start, _uint count, CRITICAL_SECTION* _CriSec);
+	
 	HRESULT Free_VertexData();
 	
 private:
@@ -52,6 +65,13 @@ private:
 	map<const wchar_t*, MODELDESC*> mMap_DynamicModelDesc;
 
 	list<const wchar_t*>::iterator mCurrent_NameIter;
+
+private: // Thread
+	CRITICAL_SECTION*	m_pCriSec = nullptr;
+public:
+	HRESULT		Processing_LoadStatic(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec, ASTHREADDESC desc);
+
+
 
 public:
 	virtual void Free()override;

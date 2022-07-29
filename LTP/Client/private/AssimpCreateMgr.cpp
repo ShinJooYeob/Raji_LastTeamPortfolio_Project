@@ -1,8 +1,26 @@
 #include "stdafx.h"
 #include "AssimpCreateMgr.h"
 
-
 IMPLEMENT_SINGLETON(CAssimpCreateMgr);
+
+static _bool				mThreadLoaderCheck = false;
+
+
+_uint CALLBACK StaticLoadThread(void* _Prameter)
+{
+	// 컴포넌트 생성을 나눠서 진행시킨다.
+	// 1. 전체의 반을 나눠서 진행
+
+	THREADARG tThreadArg{};
+	memcpy(&tThreadArg, _Prameter, sizeof(THREADARG));
+	delete _Prameter;
+	CAssimpCreateMgr* pAssimpCreateMgr = (CAssimpCreateMgr*)tThreadArg.pArg;
+	CAssimpCreateMgr::ASTHREADDESC* AssimpDesc =  (CAssimpCreateMgr::ASTHREADDESC*)tThreadArg.Desc;
+	
+	FAILED_CHECK(pAssimpCreateMgr->Processing_LoadStatic(tThreadArg.IsClientQuit, tThreadArg.CriSec, *AssimpDesc));
+
+	return 0;
+}
 
 CAssimpCreateMgr::CAssimpCreateMgr()
 {
@@ -23,6 +41,8 @@ HRESULT CAssimpCreateMgr::Load_ALL_Model(_fMatrix staticDefault, _fMatrix dynami
 {
 	// 모든 모델 컴포넌트 생성
 	FAILED_CHECK(Load_Model_DatFile_All(staticDefault,dynamicDefault));
+
+
 //	FAILED_CHECK(Free_VertexData());
 
 	return S_OK;
@@ -80,9 +100,7 @@ HRESULT CAssimpCreateMgr::Init_ModelName_FileList()
 
 HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatrix dynamicDefault)
 {
-	// #Threading 
 	// 모든 모델 로드
-
 	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
 
 	// Load ModelDesc
@@ -93,7 +111,7 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_All(_fMatrix staticDefault, _fMatri
 	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
 	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
 
-	mCurrent_NameIter = mList_CreateModelName.begin();
+//	mCurrent_NameIter = mList_CreateModelName.begin();
 
 	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
 
@@ -108,22 +126,73 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_All_Thread(_fMatrix staticDefault, 
 	// #Threading 
 	// 모든 모델 로드
 
-	//GetSingle(CThreadMgr)->PlayThread(MainCollisionThread, this, nullptr);
-	//GetSingle(CThreadMgr)->PlayThread(RepelCollisionThread, this, nullptr);
 
-	//GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
-
-	//// Load ModelDesc
-	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
-	//FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
-
-	//SCENEID sceneID = SCENE_STATIC;
-	//FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
-	//FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
-
-	//mCurrent_NameIter = mList_CreateModelName.begin();
-
-	//GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ModelLoad");
+//	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
+//
+//	// Load ModelDesc
+//	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Static, mMap_StaticModelDesc));
+//	FAILED_CHECK(Load_ModelMap(mList_DataFIle_Dynamic, mMap_DynamicModelDesc));
+//	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp FileLoad");
+//
+//	SCENEID sceneID = SCENE_STATIC;
+//	// 정점을 생성하는 부분이 오래걸린다.
+//	GetSingle(CUtilityMgr)->Start_DebugTimer(CUtilityMgr::DEBUGTIMER_1);
+//
+//	// Thread
+//	
+////	_uint count = 100;
+//
+//	//for (_uint startPos = 0; startPos < mMap_StaticModelDesc.size(); startPos += count)
+//	//{
+//	//	ASTHREADDESC asimpDesc;// = NEW ASTHREADDESC;
+//	//	asimpDesc.mapdesc = &mMap_StaticModelDesc;
+//	//	asimpDesc.DefaultMat = staticDefault;
+//	//	asimpDesc.Count = count-1;
+//
+//	//	asimpDesc.startPos = startPos;
+//	//	GetSingle(CGameInstance)->PlayThread(StaticLoadThread, this, &asimpDesc);
+//	//}
+//
+//	_uint half = mMap_StaticModelDesc.size() / 2;
+//
+//	ASTHREADDESC asimpDesc1;// = NEW ASTHREADDESC;
+//	asimpDesc1.mapdesc = &mMap_StaticModelDesc;
+//	asimpDesc1.DefaultMat = staticDefault;
+//	asimpDesc1.Count = half;
+//
+//	asimpDesc1.startPos = 0;
+//	GetSingle(CGameInstance)->PlayThread(StaticLoadThread, this, &asimpDesc1);
+//	
+//	ASTHREADDESC asimpDesc2;// = NEW ASTHREADDESC;
+//	asimpDesc2.mapdesc = &mMap_StaticModelDesc;
+//	asimpDesc2.DefaultMat = staticDefault;
+//	asimpDesc2.Count = half;
+//
+//	asimpDesc2.startPos = half;
+//	GetSingle(CGameInstance)->PlayThread(StaticLoadThread, this, &asimpDesc2);
+//
+//
+//
+//
+////	asimpDesc.startPos = 0;
+////	GetSingle(CGameInstance)->PlayThread(StaticLoadThread, this, &asimpDesc);
+////	asimpDesc.startPos = 1001;
+////	GetSingle(CGameInstance)->PlayThread(StaticLoadThread, this, &asimpDesc);
+//
+//
+//
+//	// Base
+////	FAILED_CHECK(Create_ModelCom(mMap_StaticModelDesc, sceneID, CModel::TYPE_NONANIM, staticDefault));
+//
+//	while (mThreadLoaderCheck == false)
+//	{
+//		// 로딩중
+//		if (mList_CreateModelName.size() >= mMap_StaticModelDesc.size()-1)
+//			mThreadLoaderCheck = true;
+//	}
+//	FAILED_CHECK(Create_ModelCom(mMap_DynamicModelDesc, sceneID, CModel::TYPE_ANIM, dynamicDefault));
+//	mList_CreateModelName;
+//	GetSingle(CUtilityMgr)->End_DebugTimer(CUtilityMgr::DEBUGTIMER_1, L"Assimp ComLoad");
 
 	return S_OK;
 
@@ -827,6 +896,71 @@ HRESULT CAssimpCreateMgr::Create_ModelCom(map<const wchar_t*, MODELDESC*>& map, 
 	return S_OK;
 }
 
+HRESULT CAssimpCreateMgr::Create_ModelCom_StaticThread(map<const wchar_t*, MODELDESC*>& modelMap, SCENEID sceneid,_Matrix defaultMat, _uint start, _uint count, CRITICAL_SECTION*_CriSec)
+{
+
+	if (modelMap.empty())
+		return S_FALSE;
+
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
+		return E_FAIL;
+	if (start >= modelMap.size())
+		return E_FAIL;
+	if (count == 0)
+		return S_OK;
+	
+	if((count + start)>= modelMap.size())
+	{
+		count = _uint(modelMap.size() - start);
+	}
+
+	   
+	// 시작 위치에서 count 만큼만 로드
+	int startPos = 0;
+	auto iter_Begin = modelMap.begin();
+	map<const wchar_t*, MODELDESC*>::iterator startIter = modelMap.begin();
+
+	for (; iter_Begin != modelMap.end();iter_Begin++, startPos++)
+	{
+		if (startPos == start)
+		{
+			startIter = iter_Begin;
+			break;
+		}
+	}
+
+	if (iter_Begin == modelMap.end())
+		return S_OK;
+
+
+	// 해당 개수만큼만 로드
+	for (_uint itercount = 0; startIter!=modelMap.end(); startIter++, itercount++)
+	{
+		if (itercount >= count)
+		{
+			break;
+		}
+
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_Component_Prototype(
+			sceneid,
+			startIter->first,
+			CModel::Create(m_pDevice, m_pDeviceContext, CModel::MODELTYPE::TYPE_NONANIM, startIter->second, defaultMat)));
+
+		mList_CreateModelName.push_front(startIter->first);
+	}
+
+	/*for (auto& pair : modelMap)
+	{
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_Component_Prototype(
+			sceneid,
+			pair.first,
+			CModel::Create(m_pDevice, m_pDeviceContext, CModel::MODELTYPE::TYPE_NONANIM, pair.second, defaultMat)));
+
+		mList_CreateModelName.push_front(pair.first);
+	}*/
+	return S_OK;
+}
+
 HRESULT CAssimpCreateMgr::Free_VertexData()
 {
 	for (auto desc: mMap_StaticModelDesc)
@@ -894,6 +1028,30 @@ HRESULT CAssimpCreateMgr::Free_VertexData_STATIC()
 //	}*/
 //}
 
+
+HRESULT CAssimpCreateMgr::Processing_LoadStatic(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec, ASTHREADDESC desc)
+{
+
+	// Static 객체 로드 
+	if (desc.mapdesc->empty())
+		return S_FALSE;
+
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
+		return E_FAIL;
+
+	// #CREATE ModelCom 
+
+	// 해당 개수만 로드
+	EnterCriticalSection(_CriSec);
+	FAILED_CHECK(Create_ModelCom_StaticThread(*desc.mapdesc, SCENE_STATIC, desc.DefaultMat.XMatrix(),
+		desc.startPos,desc.Count,_CriSec));
+	LeaveCriticalSection(_CriSec);
+
+
+	desc.isOk = true;
+
+	return S_OK;
+}
 
 void CAssimpCreateMgr::Free()
 {

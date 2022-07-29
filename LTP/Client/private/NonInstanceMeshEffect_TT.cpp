@@ -379,18 +379,13 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		m_pTransformCom->Scaling_All(-fDeltaTime*2);
 	}
 
-
 	_Sfloat3 f = m_pTransformCom->Get_Scale();
 	if (f.x <= 0.1f || f.y <= 0.1f || f.z <= 0.1f)
 		Set_IsDead();
 
-	
-
-
 	// Timer
 	if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration)
 	{
-	
 		if (mAddDesc.ScaleReFlag == false)
 			Set_IsDead();
 		else
