@@ -85,7 +85,10 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	}
 
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
-
+	if (m_tMeshDesc.SizeSpeed != 0)
+	{
+		m_pTransformCom->Set_ScalingSpeed(m_tMeshDesc.SizeSpeed);
+	}
 
 	return S_OK;
 }
@@ -101,7 +104,17 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 	if (m_tMeshDesc.MoveSpeed != 0)
 	{
 		m_pTransformCom->MovetoDir_bySpeed(m_vMoveDir.XMVector(), m_tMeshDesc.MoveSpeed, fDeltaTime);
-		
+	}
+	if (m_tMeshDesc.SizeSpeed != 0)
+	{
+		if (m_tMeshDesc.vSizingRUL.x != 0)
+			m_pTransformCom->Scaling(CTransform::STATE_RIGHT, m_tMeshDesc.vSizingRUL.x * fDeltaTime);
+		if (m_tMeshDesc.vSizingRUL.y != 0)
+			m_pTransformCom->Scaling(CTransform::STATE_UP, m_tMeshDesc.vSizingRUL.y * fDeltaTime);
+		if (m_tMeshDesc.vSizingRUL.z != 0)
+			m_pTransformCom->Scaling(CTransform::STATE_LOOK, m_tMeshDesc.vSizingRUL.z * fDeltaTime);
+
+
 	}
 
 	//m_tMeshDesc.NoiseTextureIndex = 381;

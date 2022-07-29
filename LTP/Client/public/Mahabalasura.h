@@ -101,6 +101,11 @@ private:
 
 	_float							m_fNarrationTime = 12.f;
 
+
+	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
+	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);

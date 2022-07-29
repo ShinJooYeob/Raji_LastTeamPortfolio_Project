@@ -4,6 +4,7 @@
 #include "Mahabalasura_Weapon.h"
 #include "Mahabalasura_Arms.h"
 #include "CopyMahabalasura.h"
+#include "Mahabalasura_SpearWave.h"
 #include "HpUI.h"
 
 #include "Player.h"
@@ -54,6 +55,7 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 	Desc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(100.f, 200.f, 150.f, 0.f), XMVectorSet(0, 0.f, 180.f, 0.f), XMVectorSet(-0.950 * 100.f, -0.160 * 200.f, -1.550 * 150.f, 1.f));
 
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSpear), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc);
+
 	//WeaponDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(100.f, 200.f, 150.f, 0.f), XMVectorSet(0, 0.f, 180.f, 0.f), XMVectorSet(-0.950 * 100.f,-0.160 * 200.f,-1.550 * 150.f,1.f));
 /*	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Weapon"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &Desc);
 	m_pSpear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Weapon"))*/;
@@ -109,6 +111,22 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 _int CMahabalasura::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+	{
+
+		{
+
+
+
+
+		}
+
+
+
+	}
+
+
 
 	m_pDissolveCom->Update_Dissolving(fDeltaTime);
 
@@ -250,7 +268,8 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			mOnlyPattern = 0;
 	}
 
-	//스킬공격
+
+	///////////스킬공격
 	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit && m_fHP > 0)
 	{
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
@@ -465,6 +484,126 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
 	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
 
+
+	//////////////////////////////////////////////////////////////////////////
+	{
+		//0
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = -5.f;
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spear_SecondAttack;
+			tNIMEDesc.fMaxTime_Duration = 0.3f;
+
+			tNIMEDesc.fAppearTime = 0.15f;
+
+			tNIMEDesc.noisingdir = _float2(-1, 0);
+
+			tNIMEDesc.NoiseTextureIndex = 249;
+			tNIMEDesc.MaskTextureIndex = 64;
+			tNIMEDesc.iDiffuseTextureIndex = 365;
+			tNIMEDesc.m_iPassIndex = 17;
+			tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+			tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = -480.f;
+			tNIMEDesc.vSize = _float3(0.02f, 0.02f, 0.075f);
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+		//1
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+			tNIMEDesc.fMaxTime_Duration = 0.35f;
+			tNIMEDesc.fAppearTime = 0.175f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1);
+
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 10;
+			tNIMEDesc.iDiffuseTextureIndex = 365;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+			tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+
+
+
+			tNIMEDesc.RotAxis = FollowingDir_Right;
+			tNIMEDesc.RotationSpeedPerSec = -180;
+			tNIMEDesc.StartRot = -0.5f;
+			tNIMEDesc.vSize = _float3(1.f, -2, 2.f);
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+		//2
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+			tNIMEDesc.fAppearTime = 0.175f;
+			tNIMEDesc.fMaxTime_Duration = 0.35f;
+			tNIMEDesc.noisingdir = _float2(0, -1);
+
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 10;
+			tNIMEDesc.iDiffuseTextureIndex = 365;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+			tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+
+			tNIMEDesc.RotAxis = FollowingDir_Right;
+			tNIMEDesc.RotationSpeedPerSec = 180;
+			tNIMEDesc.StartRot = -0.5f;
+			tNIMEDesc.vSize = _float3(1.f, 2, 2.f);
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+		//3
+		{
+				NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+				tNIMEDesc.eMeshType = Prototype_Mesh_ConeMesh;
+				tNIMEDesc.fMaxTime_Duration = 0.35f;
+				tNIMEDesc.fAppearTime = 0.175f;
+
+				tNIMEDesc.noisingdir = _float2(0, -1);
+
+				tNIMEDesc.NoiseTextureIndex = 381;
+				tNIMEDesc.MaskTextureIndex = 10;
+				tNIMEDesc.iDiffuseTextureIndex = 365;
+				tNIMEDesc.m_iPassIndex = 19;
+				tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+				tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+				tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+				tNIMEDesc.RotAxis = FollowingDir_Up;
+				tNIMEDesc.RotationSpeedPerSec = 1080.f;
+				tNIMEDesc.vSize = _float3(2.f, -0.2f, 2.f);
+
+				m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+
+	}
+
 	return S_OK;
 
 }
@@ -488,7 +627,7 @@ HRESULT CMahabalasura::Update_Particle(_double timer)
 	mat_Spear.r[1] = XMVector3Normalize(mat_Spear.r[1]);
 	mat_Spear.r[2] = XMVector3Normalize(mat_Spear.r[2]);
 
-	m_pTextureParticleTransform1->Set_Matrix(mat_Spear);
+	//m_pTextureParticleTransform1->Set_Matrix(mat_Spear);
 
 
 	if (m_pPlayerTransform)
@@ -634,6 +773,8 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				if (m_iAdjMovedIndex == 0)
 				{
 
+
+
 					if (Get_NowHP() <= m_fMaxHP/2.f)
 					{
 						m_bIsTeleport = true;
@@ -653,13 +794,64 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 					}
 					++m_iAdjMovedIndex;
 				}
+				else if (m_iAdjMovedIndex == 1)
+				{
+
+					++m_iAdjMovedIndex;
+					{
+						CGameInstance* pInstance = g_pGameInstance;
+						m_vecNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 10.2f;
+						-m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f;
+
+						m_vecNonInstMeshDesc[0].vLookDir = XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+							- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+
+						m_vecNonInstMeshDesc[0].vLookDir =
+							XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+								- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+								- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+
+						m_vecNonInstMeshDesc[0].vLookDir =
+							XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+								- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+
+
+						m_vecNonInstMeshDesc[0].vLookDir =
+							XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
+								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f
+								- m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+								- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+					}
+
+				}
+
 				m_bIsLookAt = true;
 				m_pTransformCom->Move_Forward(fDeltatime * 1.5);
 			}
 			else if (PlayRate > 0.36448598f && PlayRate < 0.45f)
 			{
-				if (m_iAdjMovedIndex == 1)
+				if (m_iAdjMovedIndex == 2)
 				{
+
 					
 					if (Get_NowHP() <= m_fMaxHP / 2.f)
 					{
@@ -679,13 +871,135 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 					}
 					++m_iAdjMovedIndex;
 				}
+				else if (m_iAdjMovedIndex == 3)
+				{
+
+					{
+
+						CGameInstance* pInstance = g_pGameInstance;
+						m_pTextureParticleTransform1->Set_Matrix(m_pTransformCom->Get_WorldMatrix());
+
+						m_vecNonInstMeshDesc[1].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 3.5f
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 4.5f;
+						m_vecNonInstMeshDesc[1].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
+
+
+						m_vecNonInstMeshDesc[2].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.f
+							+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 4.5f;
+						m_vecNonInstMeshDesc[2].vLookDir = -m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+
+
+						m_vecNonInstMeshDesc[3].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 4.f +
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+						m_vecNonInstMeshDesc[3].vLookDir = m_vecNonInstMeshDesc[3].vPosition.XMVector() - (
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) -
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 4.f +
+							m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+					}
+					++m_iAdjMovedIndex;
+				}
+				else if (PlayRate > 0.40448598f && m_iAdjMovedIndex == 4)
+				{
+
+					{
+
+						CGameInstance* pInstance = g_pGameInstance;
+
+						m_vecNonInstMeshDesc[1].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 3.5f
+							+ m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 10.5f;
+						m_vecNonInstMeshDesc[1].vLookDir = -m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK);
+
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
+
+
+						m_vecNonInstMeshDesc[2].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 1.f
+							+ m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 10.5f;
+						m_vecNonInstMeshDesc[2].vLookDir = -m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK);
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+
+
+						m_vecNonInstMeshDesc[3].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 10.f +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+						m_vecNonInstMeshDesc[3].vLookDir = m_vecNonInstMeshDesc[3].vPosition.XMVector() - (
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) -
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 10.f +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+					}
+					++m_iAdjMovedIndex;
+				}
+				else if (PlayRate > 0.44448598f && m_iAdjMovedIndex == 5)
+				{
+					{
+
+						CGameInstance* pInstance = g_pGameInstance;
+
+						m_vecNonInstMeshDesc[1].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 3.5f
+							+ m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 16.5f;
+						m_vecNonInstMeshDesc[1].vLookDir = -m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK);
+
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
+
+
+						m_vecNonInstMeshDesc[2].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 1.f
+							+ m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 16.5f;
+						m_vecNonInstMeshDesc[2].vLookDir = -m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK);
+
+						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+
+
+						m_vecNonInstMeshDesc[3].vPosition = m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 16.f +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 1.25f;
+						m_vecNonInstMeshDesc[3].vLookDir = m_vecNonInstMeshDesc[3].vPosition.XMVector() - (
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_POS) -
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_LOOK) * 16.f +
+							m_pTextureParticleTransform1->Get_MatrixState(CTransform::STATE_UP) * 100000.f);
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+					}
+			
+					++m_iAdjMovedIndex;
+				}
 				m_bIsLookAt = true;
 				m_pTransformCom->Move_Forward(fDeltatime * 1.5);
 			}
 			else if (PlayRate > 0.551401869f && PlayRate < 0.60f)
 			{
-				if (m_iAdjMovedIndex == 2)
+				if (m_iAdjMovedIndex == 6)
 				{
+
 
 					if (Get_NowHP() <= m_fMaxHP / 2.f)
 					{
@@ -705,6 +1019,32 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_03.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					}
 					++m_iAdjMovedIndex;
+				}
+				else if (m_iAdjMovedIndex == 7)
+				{
+					++m_iAdjMovedIndex;
+
+					CMahabalasura_SpearWave::SPEARWAVEDESC tSpearWaveDesc;
+					tSpearWaveDesc.fStartPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+					tSpearWaveDesc.fStartPos.y += 1.8f;
+					tSpearWaveDesc.iDir = 0;
+					tSpearWaveDesc.fLookDir = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK),0));
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+						TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc);
+
+					tSpearWaveDesc.fLookDir = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 10.f +
+						m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 5.f, 0));
+					tSpearWaveDesc.iDir = 2;
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+						TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc);
+
+					tSpearWaveDesc.fLookDir = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * 10.f -
+						m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_RIGHT) * 5.f, 0));
+					tSpearWaveDesc.iDir =1;
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+						TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc);
+
+
 				}
 				m_bIsLookAt = true;
 				m_pTransformCom->Move_Forward(fDeltatime * 1.5);

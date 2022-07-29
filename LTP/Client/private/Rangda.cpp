@@ -2,6 +2,25 @@
 #include "..\public\Rangda.h"
 #include "Rangda_MagicCircle.h"
 
+
+_uint CALLBACK MagicCircleEffectThread(void* _Prameter)
+{
+	THREADARG tThreadArg{};
+	memcpy(&tThreadArg, _Prameter, sizeof(THREADARG));
+	delete _Prameter;
+
+
+	CRangda* pRangda = (CRangda*)(tThreadArg.pArg);
+
+	FAILED_CHECK(pRangda->Make_RandaMagicCircle(tThreadArg.IsClientQuit, tThreadArg.CriSec));
+
+
+	return 0;
+}
+
+
+
+
 CRangda::CRangda(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -351,6 +370,189 @@ _fMatrix CRangda::Get_BoneMatrix(const char * pBoneName)
 	return TransformMatrix;
 }
 
+HRESULT CRangda::Make_RandaMagicCircle(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	DWORD  NowTick = GetTickCount();
+	DWORD  OldTick = NowTick;
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+	CGameInstance* pInstance = g_pGameInstance;
+
+
+	_int iDirKind = m_MagicCircleDir;
+	_double ThreadPassedTime = 0;
+	_int iCount = 0;
+	_float3 vTargetPosition = _float3(0, 0, 0);
+
+
+	switch (iDirKind)
+	{
+	case 0:
+		while (true)
+		{
+			if (*_IsClientQuit == true)
+				return S_OK;
+
+			NowTick = GetTickCount();
+			if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+				continue;
+			ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+			OldTick = NowTick;
+
+
+
+			if (ThreadPassedTime > 0.45f)
+			{
+				ThreadPassedTime = 0;
+
+				for (_uint i = 0; i < 10; i++)
+				{
+					vTargetPosition = _float3(100.f + _float(iCount)*12.5f, 96.6f, 110.f + _float(i) * 10.f);
+					FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+				}
+
+				iCount++;
+			}
+			
+
+
+			
+
+			if (iCount > 8)break;
+
+		}
+		break;
+
+	case 1:
+		while (true)
+		{
+			if (*_IsClientQuit == true)
+				return S_OK;
+
+			NowTick = GetTickCount();
+			if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+				continue;
+			ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+			OldTick = NowTick;
+
+
+
+			if (ThreadPassedTime > 0.45f)
+			{
+				ThreadPassedTime = 0;
+
+				for (_uint i = 0; i < 10; i++)
+				{
+					vTargetPosition = _float3(200.f - _float(iCount)*12.5f, 96.6f, 200.f - _float(i) * 10.f);
+					FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+				}
+
+				iCount++;
+			}
+			
+
+			if (iCount > 8)break;
+
+		}
+		break;
+
+	case 2:
+		while (true)
+		{
+			if (*_IsClientQuit == true)
+				return S_OK;
+
+			NowTick = GetTickCount();
+			if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+				continue;
+			ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+			OldTick = NowTick;
+
+			if (ThreadPassedTime > 0.3f)
+			{
+				ThreadPassedTime = 0;
+				iCount++;
+
+				if (iCount < 10)
+				{
+					for (_int i = 0; i < iCount; i++)
+					{
+						vTargetPosition = _float3(100.f + _float(iCount - 1) * 10.f - _float(i)*10.f, 96.6f, 200.f - _float(i) * 10.f);
+						FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+					}
+				}
+				else
+				{
+					for (_int i = 0 ; i < 20 - iCount; i++)
+					{
+						vTargetPosition = _float3(110.f + _float(iCount - 10) * 10.f + _float(i) * 10.f, 96.6f, 110.f + _float(i) * 10.f);
+						FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+					}
+				}
+
+
+
+				if (iCount > 20)break;
+			}
+
+
+		}
+		break;
+
+	case 3:
+		while (true)
+		{
+			if (*_IsClientQuit == true)
+				return S_OK;
+
+			NowTick = GetTickCount();
+			if ((NowTick - OldTick) <= g_fDeltaTime * 1000)
+				continue;
+			ThreadPassedTime += (NowTick - OldTick) * 0.001f;
+			OldTick = NowTick;
+
+			if (ThreadPassedTime > 0.3f)
+			{
+				ThreadPassedTime = 0;
+				iCount++;
+
+				if (iCount < 10)
+				{
+					for (_int i = 0; i < iCount; i++)
+					{
+						vTargetPosition = _float3(200.f - _float(iCount - 1) * 10.f + _float(i)*10.f, 96.6f, 200.f - _float(i) * 10.f);
+						FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+					}
+				}
+				else
+				{
+					for (_int i = 0; i < 20 - iCount; i++)
+					{
+						vTargetPosition = _float3(200.f - _float(iCount - 10) * 10.f - _float(i) * 10.f, 96.6f, 110.f + _float(i) * 10.f);
+						FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &vTargetPosition));
+					}
+				}
+
+
+
+				if (iCount > 20)break;
+			}
+
+
+		}
+		break;
+
+	default:
+		break;
+	}
+
+
+
+
+
+	return S_OK;
+}
+
 _float3 CRangda::Get_FingerPos(_int Num)
 {
 	_float3 BonePos;
@@ -408,6 +610,53 @@ HRESULT CRangda::Ready_ParticleDesc()
 	m_pTextureParticleTransform_Player = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform_Player, E_FAIL);
 	
+
+
+
+
+#pragma region JYparticle
+
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		tNIMEDesc.vLookDir = _float3(1,0,0);
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_JY_Dough_2;
+
+
+
+		tNIMEDesc.fMaxTime_Duration = 0.5f;
+		tNIMEDesc.fAppearTime = 0.25f;
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 81;
+		tNIMEDesc.iDiffuseTextureIndex = 225;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 1.f, 1.f, 1);
+
+		tNIMEDesc.vLimLight = _float4(1.f, 0.f, 1.f, 1.f);
+		tNIMEDesc.vColor = _float3(1.f, 0.f, 1.f);
+
+
+
+
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 1080.f;
+		tNIMEDesc.vSize = _float3(0.5f, 1.f, 0.5f);
+		tNIMEDesc.SizeSpeed = 2.5f;
+		tNIMEDesc.vSizingRUL = _float3(1.f, 0, 1.f);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0;
+
+		m_vecJYNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+
+#pragma endregion
 
 	return S_OK;
 
@@ -595,6 +844,14 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Scream_02.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsScreamAttack = true;
+
+				_float3 vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 13.5f, -20.f, 0);
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+					TAG_OP(Prototype_Object_Boss_Rangda_WaspBullet), &vPos));
+
+
+
 				++m_iAdjMovedIndex;
 			}
 
@@ -615,6 +872,9 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.2987012)
 			{
+				m_MagicCircleDir = rand()%2;
+				FAILED_CHECK(g_pGameInstance->PlayThread(MagicCircleEffectThread,this));
+				
 				_int iRandom = rand() % 3 + 1;
 
 				wstring teampString;
@@ -674,8 +934,8 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_EffectAdjust == 1 && PlayRate > 0.2987012)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
 				m_EffectAdjust++;
 			}
 
@@ -687,9 +947,9 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_EffectAdjust == 3 && PlayRate > 0.4545454)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
-
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
+				//
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
 				m_EffectAdjust++;
 			}
 
@@ -703,8 +963,8 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_EffectAdjust == 5 && PlayRate > 0.629870129)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
 				m_EffectAdjust++;
 
 			}
@@ -717,8 +977,8 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_EffectAdjust == 7 && PlayRate > 0.814935064)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_4, m_pTextureParticleTransform_Player);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_3, m_pTextureParticleTransform_Player);
 				m_EffectAdjust++;
 
 			}
@@ -737,6 +997,9 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.223926380)
 			{
+				m_MagicCircleDir = rand() % 4;
+				FAILED_CHECK(g_pGameInstance->PlayThread(MagicCircleEffectThread, this));
+
 				_int iRandom = rand() % 3 + 1;
 
 				wstring teampString;
@@ -745,10 +1008,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.3067484)
@@ -761,10 +1024,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.401840490)
@@ -777,14 +1040,17 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
-
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 			if (m_iAdjMovedIndex == 3 && PlayRate > 0.503067484)
 			{
+				m_MagicCircleDir = rand() % 4;
+				FAILED_CHECK(g_pGameInstance->PlayThread(MagicCircleEffectThread, this));
+
 				_int iRandom = rand() % 3 + 1;
 
 				wstring teampString;
@@ -793,14 +1059,15 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 			if (m_iAdjMovedIndex == 4 && PlayRate > 0.598159509)
 			{
+	
 				_int iRandom = rand() % 3 + 1;
 
 				wstring teampString;
@@ -809,10 +1076,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 
@@ -826,10 +1093,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 
@@ -843,10 +1110,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 
@@ -860,10 +1127,10 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_TestEffect), TAG_OP(Prototype_Object_Effect_MagicCircle), &Pos));
 
-				CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
-				Obj->ChangeScaledAndTexture();
+				//CRangda_MagicCircle* Obj = (CRangda_MagicCircle*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_TestEffect));
+				//Obj->ChangeScaledAndTexture();
 				m_iAdjMovedIndex++;
 			}
 		}
@@ -889,6 +1156,9 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsLookAt = false;
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				_float3 HandPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 8.6f);
+				m_vForEffectHandPos = HandPos.XMVector() + XMVector3Normalize(MonsterPos.XMVector() - HandPos.XMVector()) * 5.f;
+
+
 
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -947,6 +1217,18 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
+				m_vecJYNonInstMeshDesc[0].vPosition = m_vForEffectHandPos;
+
+				m_vForEffectHandPos.y += 2.2f;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+					TAG_OP(Prototype_Object_Boss_Rangda_Statue), &m_vForEffectHandPos));
+
+				
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+										TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonInstMeshDesc[0]))	;
+
+
 				++m_iAdjMovedIndex;
 			}
 			if (m_iAdjMovedIndex == 6 && PlayRate > 0.359605911)
@@ -976,22 +1258,22 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
 
-			// EFFECT
-			if (m_EffectAdjust == 0 && PlayRate > 0.1f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_1, m_pTextureParticleTransform_L);
-				m_EffectAdjust++;
-			}
+			//// EFFECT
+			//if (m_EffectAdjust == 0 && PlayRate > 0.1f)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_1, m_pTextureParticleTransform_L);
+			//	m_EffectAdjust++;
+			//}
 
-			if (m_EffectAdjust == 1 && PlayRate > 0.33004926)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTransformCom);
+			//if (m_EffectAdjust == 1 && PlayRate > 0.33004926)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTransformCom);
 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_2, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_2, m_pTransformCom);
 
-				m_EffectAdjust++;
+			//	m_EffectAdjust++;
 
-			}
+			//}
 		
 
 
@@ -1016,6 +1298,8 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsLookAt = false;
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				_float3 HandPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 8.6f);
+				m_vForEffectHandPos = HandPos.XMVector() + XMVector3Normalize(MonsterPos.XMVector() - HandPos.XMVector()) * 5.f;
+
 
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -1070,6 +1354,34 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				wstring teampString;
 				teampString = L"JJB_Rangda_Ground_Impact_0" + to_wstring(iRandom) + L".wav";
 
+
+				_Vector vRandDir = XMVector3Normalize(XMVectorSetY((GetSingle(CUtilityMgr)->RandomFloat3(-10000.f, 10000.f)).XMVector(),0));
+
+
+				_float3 EffectPos = _float3(0);
+
+				_Vector DefaultPos = m_vForEffectHandPos.XMVector() - vRandDir*50.f;
+
+				//m_vForEffectHandPos.y += 2.2f;
+
+				for (_uint i = 0; i< 10; i++)
+				{
+					EffectPos = DefaultPos + vRandDir* 10.f * _float(i);
+					m_vecJYNonInstMeshDesc[0].vPosition = EffectPos;
+					EffectPos.y += 2.0f;
+
+					FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet),
+						TAG_OP(Prototype_Object_Boss_Rangda_Statue), &EffectPos));
+
+
+					FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonInstMeshDesc[0]));
+
+				}
+
+
+
+
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				++m_iAdjMovedIndex;
@@ -1102,22 +1414,22 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 			}
 
-			// EFFECT
-			if (m_EffectAdjust == 0 && PlayRate > 0.1f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_1, m_pTextureParticleTransform_R);
-				m_EffectAdjust++;
-			}
+			//// EFFECT
+			//if (m_EffectAdjust == 0 && PlayRate > 0.1f)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_1, m_pTextureParticleTransform_R);
+			//	m_EffectAdjust++;
+			//}
 
-			if (m_EffectAdjust == 1 && PlayRate > 0.33004926)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTransformCom);
+			//if (m_EffectAdjust == 1 && PlayRate > 0.33004926)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_0, m_pTransformCom);
 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_2, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Rangda_2, m_pTransformCom);
 
-				m_EffectAdjust++;
+			//	m_EffectAdjust++;
 
-			}
+			//}
 
 
 			break;

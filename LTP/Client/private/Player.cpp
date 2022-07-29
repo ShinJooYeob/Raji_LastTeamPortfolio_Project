@@ -104,8 +104,6 @@ _int CPlayer::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
-
-
 			//m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
 			//
 			//{
@@ -118,11 +116,11 @@ _int CPlayer::Update(_double fDeltaTime)
 		
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
-
-			{
-				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			}
+			//m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
+			//
+			//{
+			//	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			//}
 		}
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)

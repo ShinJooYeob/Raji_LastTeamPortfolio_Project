@@ -31,11 +31,7 @@ public:
 	void		ChangeScaledAndTexture();
 
 private:
-	CShader*			m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CTexture*			m_pTextureCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
 
 	CCollider*			m_pCollider = nullptr;
 
@@ -44,6 +40,10 @@ private:
 
 	_bool				m_bIsVanish = false;
 	_float				m_fVanishTime = 0.5f;
+
+
+	vector<INSTPARTICLEDESC>		m_vecJYTextureParticleDesc;
+	vector<NONINSTNESHEFTDESC>		m_vecJYNonInstMeshDesc;
 
 private:
 	HRESULT SetUp_Components();

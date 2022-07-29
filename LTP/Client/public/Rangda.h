@@ -76,6 +76,7 @@ private:
 	_float3				m_vStartPos;
 
 	vector<_uint>		m_vecFinger;
+	_uint				m_MagicCircleDir = 0;
 
 private:
 	// Particle
@@ -84,6 +85,13 @@ private:
 	CTransform*						m_pTextureParticleTransform_Screen = nullptr;
 	CTransform*						m_pTextureParticleTransform_Player= nullptr;
 
+
+	vector<INSTPARTICLEDESC>		m_vecJYTextureParticleDesc;
+	vector<NONINSTNESHEFTDESC>		m_vecJYNonInstMeshDesc;
+	_float3							m_vForEffectHandPos = _float3(0);
+
+public:
+	HRESULT Make_RandaMagicCircle(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec);
 
 private:
 	_float3	Get_FingerPos(_int Num);

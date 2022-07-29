@@ -406,6 +406,15 @@
     <Filter Include="01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger">
       <UniqueIdentifier>{aa860e5c-d46b-4c7a-9af1-b0d411232f0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Rangda\Rangda_Statue">
+      <UniqueIdentifier>{7b8fe8d9-1d69-403d-a1ff-ac2ddae511cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Rangda\Randa_Wasp_Bullet">
+      <UniqueIdentifier>{338690c6-40c1-4c6e-b5dd-7d0f7c0b8f09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave">
+      <UniqueIdentifier>{550ab942-a198-4371-89d2-8155bffc3b93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -891,6 +900,18 @@
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossCreateTrigger.h" />
+    <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
+    <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
+    <ClInclude Include="..\public\Rangda_Statue.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Statue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Randa_Wasp_Bullet.h">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Randa_Wasp_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_SpearWave.h">
+      <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1355,6 +1376,18 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossCreateTrigger.cpp" />
+    <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\Rangda_Statue.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Statue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Randa_Wasp_Bullet.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Rangda\Randa_Wasp_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_SpearWave.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Boss_Bullet\Mahabalasura_SpearWave</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -372,6 +372,8 @@ enum OBJECTPROTOTYPEID
 	//JJB
 	Prototype_Object_Boss_Rangda,
 	Prototype_Object_Boss_Rangda_Finger,
+	Prototype_Object_Boss_Rangda_Statue,
+	Prototype_Object_Boss_Rangda_WaspBullet,
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Boss_ChiedtianWeapon,
 	Prototype_Object_Boss_Snake,
@@ -380,6 +382,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_MahabalasuraAttackArms,
 	Prototype_Object_Boss_MahabalasuraWeapon,
 	Prototype_Object_Boss_MahabalasuraCopy,
+	Prototype_Object_Boss_MahabalasuraSpearWave,
 	Prototype_Object_Effect_MagicCircle,
 	Prototype_Object_Map_Demon_Tree,
 	Prototype_Object_Map_TreeMesh,
@@ -606,7 +609,13 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Boss_Rangda_Finger:
 		return TEXT("Prototype_Object_Boss_Rangda_Finger");
 		break;
-
+	case Prototype_Object_Boss_Rangda_Statue:
+		return TEXT("Prototype_Object_Boss_Rangda_Statue");
+		break;
+	case Prototype_Object_Boss_Rangda_WaspBullet:
+		return TEXT("Prototype_Object_Boss_Rangda_WaspBullet");
+		break;
+		
 	case Prototype_Object_Boss_Chiedtian:
 		return TEXT("Prototype_Object_Boss_Chiedtian");
 		break;
@@ -638,7 +647,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Boss_MahabalasuraCopy:
 		return TEXT("Prototype_Object_Boss_MahabalasuraCopy");
 		break;
-
+	case Prototype_Object_Boss_MahabalasuraSpearWave:
+		return TEXT("Prototype_Object_Boss_MahabalasuraSpearWave");
+		break;
+		
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
 
@@ -1123,7 +1135,12 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Missile,
 	Prototype_Mesh_Tornado,
 	Prototype_Mesh_Tornado2,
-
+	Prototype_Mesh_Rangda_Effect_1,
+	Prototype_Mesh_JY_Dough_1,
+	Prototype_Mesh_JY_Dough_2,
+	Prototype_Mesh_Moai_Gate,
+	
+	
 
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
@@ -3505,6 +3522,21 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Tornado:
 		return TEXT("Tornado.fbx");
 		break;
+	case Prototype_Mesh_Rangda_Effect_1:
+		return TEXT("Rangda_Effect_1.fbx");
+		break;
+	case Prototype_Mesh_JY_Dough_1:
+		return TEXT("JY_Dough_1.fbx");
+		break;
+	case Prototype_Mesh_JY_Dough_2:
+		return TEXT("JY_Dough_2.fbx");
+		break;
+	case Prototype_Mesh_Moai_Gate:
+		return TEXT("Moai_Gate.fbx");
+		break;
+		
+
+
 
 	case Prototype_Mesh_Tornado2:
 		return TEXT("Tornado2.fbx");
