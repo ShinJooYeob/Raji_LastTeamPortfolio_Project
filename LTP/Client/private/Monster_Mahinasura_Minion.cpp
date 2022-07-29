@@ -185,29 +185,32 @@ _float CMonster_Mahinasura_Minion::Take_Damage(CGameObject * pTargetObject, _flo
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	m_fHP += -fDamageAmount;
 
+	m_bStopCoolTimeOn = true;
+
 	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
 
 	m_bIOnceAnimSwitch = true;
-	if (bKnockback == false)
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
-		m_iOncePattern = 40;
-	}
-	else {
-		m_iOncePattern = 41;
-		
-		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
-	}
+		if (bKnockback == false)
+		{
+			m_iOncePattern = 40;
+		}
+		else {
+			m_iOncePattern = 41;
 
-	if (m_fHP < 5 && m_iBoolOnce == 0)
-	{
-		m_iOncePattern = 42;
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
 
-		m_iBoolOnce += 1;
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 42;
+			m_dSpecial_CoolTime = 0;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
+
+			m_iBoolOnce += 1;
+		}
 	}
 
 	if (0 >= m_fHP)
@@ -659,9 +662,14 @@ HRESULT CMonster_Mahinasura_Minion::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 2 && m_fDistance < 3)
 	{
@@ -676,7 +684,6 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 7;
@@ -701,31 +708,40 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 	switch (m_iOncePattern)
 	{
 	case 0:
+		m_iOnceAnimNumber = 19; //QuickAttack
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
+		break;
+	case 1:
 		m_iOnceAnimNumber = 3; //_Dodge_Right
 		break;
-	//case 1:
-	//	m_iOnceAnimNumber = 18;
-	//	break;
-	case 1:
-		m_iOnceAnimNumber = 2; //Dodge_Back
-		break;
 	case 2:
-		m_iOnceAnimNumber = 19; //QuickAttack
+		m_iOnceAnimNumber = 20; //TailWhip
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 3:
-		m_iOnceAnimNumber = 4; //_Dodge_Left
+		m_iOnceAnimNumber = 2; //Dodge_Back
 		break;
 	case 4:
+		m_iOnceAnimNumber = 19; //QuickAttack
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
+		break;
+	case 5:
+		m_iOnceAnimNumber = 4; //_Dodge_Left
+		break;
+	case 6:
 		m_iOnceAnimNumber = 20; //TailWhip
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 30:
 		m_iOnceAnimNumber = 6; //Taunt
 		break;
 	case 40:
 		m_iOnceAnimNumber = 15; //LightHit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 41:
 		m_iOnceAnimNumber = 16; //HeavyHit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 42:
 		m_iOnceAnimNumber = 8; //groggy
@@ -737,12 +753,11 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::Pattern_Change()
 {
-
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 5)
+	if (m_iOncePattern > 6)
 	{
-		m_iOncePattern = rand() % 5; //OncePattern Random
+		m_iOncePattern = rand() % 7; //OncePattern Random
 	}
 
 
@@ -782,8 +797,6 @@ HRESULT CMonster_Mahinasura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::Special_Trigger(_double dDeltaTime)
 {
-	m_dSpecial_CoolTime += dDeltaTime;
-
 
 	if (m_fDistance > 8 && m_dSpecial_CoolTime > 20)
 	{
@@ -860,12 +873,16 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		m_iSoundIndex = 0;
 		m_EffectAdjust = 0;
 
+		m_bStopCoolTimeOn = false;
+
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 	
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -1008,6 +1025,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
+				m_bLookAtOn = false;
 				m_dAcceleration = 0.5;
 				m_iAdjMovedIndex++;
 			}

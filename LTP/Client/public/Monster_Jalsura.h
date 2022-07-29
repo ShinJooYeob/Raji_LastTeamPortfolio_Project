@@ -8,6 +8,8 @@ END
 BEGIN(Client)
 class CMonster_Jalsura final : public CMonster
 {
+public:
+	enum Anim_State { MONSTER_IDLE, MONSTER_HIT, MONSTER_ATTACK, STATE_END };
 private:
 	explicit CMonster_Jalsura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Jalsura(const CMonster_Jalsura& rhs);
@@ -43,8 +45,6 @@ private: //애니메이션
 	HRESULT				Once_AnimMotion(_double	dDeltaTime);
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
-
-	HRESULT				Special_Trigger(_double	dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -82,12 +82,18 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-		//Anim Once Pattern
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
+
+	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
+
+	//Old Pattern
+	_uint				m_iAfterPattern = 0;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;
@@ -96,9 +102,6 @@ private://애니메이션 동작 및 이벤트
 
 	//Anim Combo Pattern
 	_bool				m_bComboAnimSwitch = false;
-
-	//Anim Special Pattern
-	_double				m_dSpecial_CoolTime = 0;
 
 	_double				m_dAcceleration = 1;
 

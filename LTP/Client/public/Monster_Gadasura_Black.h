@@ -10,7 +10,7 @@ BEGIN(Client)
 class CMonster_Gadasura_Black final : public CMonster
 {
 public:
-	enum ANIM_STATE{MONSTER_IDLE,MONSTER_HIT,MONSTER_ATTACK,STATE_END};
+	enum Anim_State{MONSTER_IDLE,MONSTER_HIT,MONSTER_ATTACK,STATE_END};
 private:
 	explicit CMonster_Gadasura_Black(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Gadasura_Black(const CMonster_Gadasura_Black& rhs);
@@ -82,7 +82,7 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-	ANIM_STATE			m_eMonster_STATE = ANIM_STATE::MONSTER_IDLE;
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
 		//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;

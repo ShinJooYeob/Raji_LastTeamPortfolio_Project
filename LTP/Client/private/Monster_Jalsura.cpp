@@ -187,31 +187,32 @@ _float CMonster_Jalsura::Take_Damage(CGameObject * pTargetObject, _float fDamage
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	m_fHP += -fDamageAmount;
 
-	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
+	m_bStopCoolTimeOn = true;
 
 	m_bIOnceAnimSwitch = true;
-	if (bKnockback == false)
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
-		m_bKnockbackOn = false;
-		m_iOncePattern = 40;
-	}
-	else {
-		m_bKnockbackOn = true;
-		m_iOncePattern = 40;
+		if (bKnockback == false)
+		{
+			m_bKnockbackOn = false;
+			m_iOncePattern = 40;
+		}
+		else {
+			m_bKnockbackOn = true;
+			m_iOncePattern = 40;
 
-		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
-	}
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
 
-	if (m_fHP < 5 && m_iBoolOnce == 0)
-	{
-		m_iOncePattern = 41;
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
 
-		m_iBoolOnce += 1;
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 41;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
+
+			m_iBoolOnce += 1;
+		}
 	}
 
 	if (0 >= m_fHP)
@@ -326,9 +327,13 @@ HRESULT CMonster_Jalsura::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Jalsura::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 4)
 	{
@@ -345,10 +350,9 @@ HRESULT CMonster_Jalsura::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
-		m_iInfinityPattern = rand() % 4;
+		m_iInfinityPattern = rand() % 10;
 
 
 		m_dInfinity_CoolTime = 0;
@@ -364,15 +368,19 @@ HRESULT CMonster_Jalsura::Once_AnimMotion(_double dDeltaTime)
 	{
 	case 0:
 		m_iOnceAnimNumber = 2;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 2;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 2;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 40:
 		m_iOnceAnimNumber = 1;
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 41:
 		m_iOnceAnimNumber = 3;
@@ -387,7 +395,7 @@ HRESULT CMonster_Jalsura::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 3)
+	if (m_iOncePattern > 2)
 	{
 		m_iOncePattern = rand() % 3; //OncePattern Random
 	}
@@ -419,26 +427,27 @@ HRESULT CMonster_Jalsura::Infinity_AnimMotion(_double dDeltaTime)
 		m_pTransformCom->Move_Right(dDeltaTime * 0.6, m_pNavigationCom);
 		m_iInfinityAnimNumber = 0;
 		break;
+	case 5:
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.6, m_pNavigationCom);
+		m_iInfinityAnimNumber = 0;
+		break;
+	case 6:
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.6, m_pNavigationCom);
+		m_iInfinityAnimNumber = 0;
+		break;
+	case 7:
+		m_pTransformCom->Move_Forward(dDeltaTime * 0.6, m_pNavigationCom);
+		m_iInfinityAnimNumber = 0;
+		break;
+	case 8:
+		m_pTransformCom->Move_Right(dDeltaTime * 0.6, m_pNavigationCom);
+		m_iInfinityAnimNumber = 0;
+		break;
+	case 9:
+		m_pTransformCom->Move_Left(dDeltaTime * 0.6, m_pNavigationCom);
+		m_iInfinityAnimNumber = 0;
+		break;
 	}
-
-	return S_OK;
-}
-
-HRESULT CMonster_Jalsura::Special_Trigger(_double dDeltaTime)
-{
-	m_dSpecial_CoolTime += dDeltaTime;
-
-
-	if (m_fDistance > 8 && m_dSpecial_CoolTime > 10)
-	{
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
-
-		m_bIOnceAnimSwitch = true;
-		m_iOncePattern = 30;
-	}
-
 
 	return S_OK;
 }
@@ -594,12 +603,15 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_iSoundIndex = 0;
 
+		m_bStopCoolTimeOn = false;
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -667,9 +679,9 @@ HRESULT CMonster_Jalsura::Adjust_AnimMovedTransform(_double dDeltaTime)
 						m_iSoundIndex++;
 					}
 				}
-				else if (0.f < PlayRate && PlayRate <= 0.8)
+				else if (0.f < PlayRate && PlayRate <= 0.5)
 				{
-					if (PlayRate >= 0 && PlayRate <= 0.8)
+					if (PlayRate >= 0 && PlayRate <= 0.5)
 						m_pTransformCom->Move_Backward(dDeltaTime* 0.5, m_pNavigationCom);
 
 					m_fKnockbackDir.y = 0;

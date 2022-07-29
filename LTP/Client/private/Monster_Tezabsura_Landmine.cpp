@@ -208,32 +208,35 @@ _float CMonster_Tezabsura_Landmine::Take_Damage(CGameObject * pTargetObject, _fl
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	m_fHP += -fDamageAmount;
 
+	m_bStopCoolTimeOn = true;
+
 	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
 
 
 	m_bIOnceAnimSwitch = true;
-	if (bKnockback == false)
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
-		m_bKnockbackOn = false;
-		m_iOncePattern = 40;
-	}
-	else {
-		m_bKnockbackOn = true;
-		m_iOncePattern = 40;
+		if (bKnockback == false)
+		{
+			m_bKnockbackOn = false;
+			m_iOncePattern = 40;
+		}
+		else {
+			m_bKnockbackOn = true;
+			m_iOncePattern = 40;
 
-		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
-	}
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
 
-	if (m_fHP < 5 && m_iBoolOnce == 0)
-	{
-		m_iOncePattern = 41;
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 41;
+			m_dSpecial_CoolTime = 0;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
 
-		m_iBoolOnce += 1;
+			m_iBoolOnce += 1;
+		}
 	}
 
 	if (0 >= m_fHP)
@@ -436,20 +439,24 @@ HRESULT CMonster_Tezabsura_Landmine::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
-	m_dSpecial_CoolTime += dDeltaTime;
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 2 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
-		if (m_bComboAnimSwitch == false)
-		{
-			Special_Trigger(dDeltaTime);
-		}
+		//if (m_bComboAnimSwitch == false) 여기에 넣으면 조금만 동작함
+		//{
+		//	Special_Trigger(dDeltaTime);
+		//}
 		if (m_bIOnceAnimSwitch == false)
 		{
 			Pattern_Change();
@@ -460,7 +467,6 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 7;
@@ -468,7 +474,10 @@ HRESULT CMonster_Tezabsura_Landmine::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-
+	if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
+	{
+		Special_Trigger(dDeltaTime);
+	}
 	return S_OK;
 }
 
@@ -481,6 +490,8 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 	case 0:
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 13; //Mine Install start
@@ -488,6 +499,8 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
@@ -495,6 +508,8 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 3:
 		m_iOnceAnimNumber = 17; //Mine Install Attack
@@ -502,6 +517,8 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 4:
 		m_iOnceAnimNumber = 14; // Mine Install Attack
@@ -509,113 +526,159 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 		m_dSpecial_CoolTime = 0;
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 5:
 		m_iOnceAnimNumber = 15; //Mine Install End
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 6:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 7:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 9:
 		m_iOnceAnimNumber = 13; //Mine Install start
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 10:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 11:
 		m_iOnceAnimNumber = 17; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 12:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 13:
 		m_iOnceAnimNumber = 15; //Mine Install End
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 14:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 15:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 16:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 17:
 		m_iOnceAnimNumber = 13; //Mine Install start
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 18:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 19:
 		m_iOnceAnimNumber = 17; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 20:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 21:
 		m_iOnceAnimNumber = 15; //Mine Install End
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 22:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 23:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 24:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 25:
 		m_iOnceAnimNumber = 13; //Mine Install start
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 26:
 		m_iOnceAnimNumber = 14; //Mine Install Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 27:
 		m_iOnceAnimNumber = 17; //Mine Install ttack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 28:
 		m_iOnceAnimNumber = 14; //Mine Install ttack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 29:
 		m_iOnceAnimNumber = 15; //Mine Install Attack End
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 30:
 		m_iOnceAnimNumber = 12; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 40:
 		m_iOnceAnimNumber = 7;
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 41:
 		m_iOnceAnimNumber = 3;
@@ -623,6 +686,7 @@ HRESULT CMonster_Tezabsura_Landmine::Once_AnimMotion(_double dDeltaTime)
 
 	case 70:
 		m_iOnceAnimNumber = 11;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	}
 
@@ -634,9 +698,16 @@ HRESULT CMonster_Tezabsura_Landmine::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 30)//30
+	if (m_iOncePattern >= 31)
 	{
-		m_iOncePattern = 0; //OncePattern Random
+		if (m_iAfterPattern < 31)
+		{
+			m_iOncePattern = m_iAfterPattern;
+		}
+		else {
+			m_iOncePattern = 0; //OncePattern Random
+			m_iAfterPattern = m_iOncePattern + 1;
+		}
 	}
 
 
@@ -889,12 +960,15 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		if (iNowAnimIndex < 8 || iNowAnimIndex >10)
 			m_bJumpingOn = false;
 
+		m_bStopCoolTimeOn = false;
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 
 	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -936,6 +1010,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
 			{
+				m_bLookAtOn = false;
 				m_dAcceleration = 0.7;
 				m_iAdjMovedIndex++;
 			}
@@ -947,10 +1022,9 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 					m_dAcceleration = 0.7;
 					m_iAdjMovedIndex++;
 				}
-				else if (0.f < PlayRate && PlayRate <= 0.8636)
+				else if (0.f < PlayRate && PlayRate <= 0.38)
 				{
-					if (PlayRate >= 0.32 && PlayRate <= 0.68)
-						m_pTransformCom->Move_Backward(dDeltaTime* 0.8, m_pNavigationCom);
+					m_pTransformCom->Move_Backward(dDeltaTime* 0.8, m_pNavigationCom);
 
 					m_fKnockbackDir.y = 0;
 
@@ -1052,6 +1126,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 			if (PlayRate >= 0.415555 && PlayRate <= 0.7222)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 2.25, m_pNavigationCom);
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 			}
 
 
