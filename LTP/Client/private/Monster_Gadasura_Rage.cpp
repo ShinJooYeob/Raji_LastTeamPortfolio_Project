@@ -116,7 +116,7 @@ _int CMonster_Gadasura_Rage::LateUpdate(_double dDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 #ifdef _DEBUG

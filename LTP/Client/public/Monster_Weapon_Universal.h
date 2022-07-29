@@ -75,7 +75,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
 private:
 	CGameObject*		m_pMonster_Object = nullptr;
