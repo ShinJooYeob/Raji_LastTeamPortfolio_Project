@@ -89,7 +89,7 @@ _int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{
-		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i], m_pModelInstance[i], m_pShaderCom, m_pModel[i]));
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_ModelTransGroup[i], m_pModelInstance[i], m_pShaderCom, m_pModel[i],nullptr, &m_vecDissolve[i]));
 	}
 
 
