@@ -23,6 +23,7 @@ typedef struct tagInstanceParticleAttribute
 	_bool			_isAlive;
 	
 	_float3			_TargetParentPosition = _float3(0);
+	_uint			_iIndex = 0;
 }INSTANCEATT;
 
 
@@ -44,7 +45,7 @@ public:
 	virtual _int Render() override;
 	virtual _int LateRender() override;
 
-
+	
 
 	virtual void ResetParticle(INSTANCEATT* attribute);
 	virtual void Reset_Velocity(_float3& fAttVlocity)PURE;
@@ -56,6 +57,7 @@ public:
 	virtual void Update_Position_by_Velocity(INSTANCEATT* tParticleAtt, _double fTimeDelta)PURE;
 
 
+	HRESULT Set_AsMapParticle(vector<_float3>& vecMapParticlePosition);
 
 protected:
 	CShader*					m_pShaderCom = nullptr;
@@ -67,6 +69,8 @@ protected:
 protected:
 	INSTPARTICLEDESC			m_tInstanceDesc;
 	vector<INSTANCEATT>			m_vecParticleAttribute;
+	_bool						m_bIsMapParitcle = false;
+	vector<_float3>				m_vecMapParticlePosition;
 
 	_uint						m_iNumInstance = 0;
 	_float						m_PassedTime = 0;

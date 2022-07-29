@@ -3,6 +3,7 @@
 #include "MainApp.h"
 #include"SkillUI.h"
 #include "Camera_Main.h"
+#include "InstanceEffect.h"
 
 IMPLEMENT_SINGLETON(CUtilityMgr);
 
@@ -189,6 +190,43 @@ HRESULT CUtilityMgr::Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tP
 	}
 
 
+
+
+	return S_OK;
+}
+
+HRESULT CUtilityMgr::Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC & tParticleDesc, vector<_float3>* vPosition)
+{
+
+	tParticleDesc.FollowingTarget = nullptr;
+
+	switch (tParticleDesc.eParticleTypeID)
+	{
+	case InstanceEffect_Ball:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Ball"), &tParticleDesc));
+		break;
+	case InstanceEffect_Straight:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Straight"), &tParticleDesc));
+		break;
+	case InstanceEffect_Cone:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Cone"), &tParticleDesc));
+		break;
+	case InstanceEffect_Spread:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Spread"), &tParticleDesc));
+		break;
+	case InstanceEffect_Suck:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Suck"), &tParticleDesc));
+		break;
+	case InstanceEffect_Fountain:
+		FAILED_CHECK(GetSingle(CGameInstance)->Add_GameObject_To_Layer(eSceneID, TAG_LAY(Layer_Particle), TEXT("ProtoType_GameObjectObject_InstanceEffect_Fountain"), &tParticleDesc));
+		break;
+
+	case InstanceEffect_End:
+		break;
+	default:
+		break;
+	}
+	FAILED_CHECK(((CInstanceEffect*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, TAG_LAY(Layer_Particle))))->Set_AsMapParticle(*vPosition));
 
 
 	return S_OK;

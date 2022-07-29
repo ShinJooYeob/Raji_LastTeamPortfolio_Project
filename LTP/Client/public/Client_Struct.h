@@ -167,7 +167,7 @@ typedef struct tagNonInstanceMeshEffect
 
 	_uint				m_iPassIndex = 16;
 
-
+	_float				fAlphaTestValue = 0.1f;
 	_uint				m_CheckerBuffer = 0;
 }NONINSTNESHEFTDESC;
 

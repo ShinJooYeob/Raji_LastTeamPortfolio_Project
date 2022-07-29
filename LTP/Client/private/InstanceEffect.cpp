@@ -77,6 +77,8 @@ _int CInstanceEffect::Render()
 	D3D11_MAPPED_SUBRESOURCE SubResource;
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
+	_uint iBufferInstance = m_pVIBufferCom->Get_NumInstance();
+
 	if (m_tInstanceDesc.bBillboard)
 	{
 		_Matrix matInvView = g_pGameInstance->Get_Transform_Float4x4(PLM_VIEW).InverseXMatrix();
@@ -109,6 +111,12 @@ _int CInstanceEffect::Render()
 			}
 			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(m_vecParticleAttribute[i]._age, m_vecParticleAttribute[i]._lifeTime, (_float)g_fDeltaTime, 0);
 		}
+		for (_uint i = m_iNumInstance; i < iBufferInstance; i++)
+		{
+			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 0);
+		}
+
+
 		m_pVIBufferCom->UnLock();
 
 		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_tInstanceDesc.ePassID * 2));
@@ -148,6 +156,11 @@ _int CInstanceEffect::Render()
 			}
 			((VTXINSTMAT*)SubResource.pData)[i].vTimer = _float4(m_vecParticleAttribute[i]._age, m_vecParticleAttribute[i]._lifeTime, (_float)g_fDeltaTime, 0);
 		}
+		for (_uint i = m_iNumInstance; i < iBufferInstance; i++)
+		{
+			((VTXINSTMAT*)SubResource.pData)[i].vUV_WHSize = _float4(0, 0, 0, 0);
+		}
+
 		m_pVIBufferCom->UnLock();
 		FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom, m_tInstanceDesc.ePassID * 2 + 1));
 	}
@@ -321,11 +334,17 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 	attribute->_size = m_tInstanceDesc.ParticleSize;
 
 
-
-	if (m_tInstanceDesc.FollowingTarget)
-		attribute->_TargetParentPosition = m_tInstanceDesc.FollowingTarget->Get_MatrixState(CTransform::STATE_POS);
+	if (m_bIsMapParitcle)
+	{
+		attribute->_TargetParentPosition = m_vecMapParticlePosition[attribute->_iIndex];
+	}
 	else
-		attribute->_TargetParentPosition = m_tInstanceDesc.vFixedPosition.XMVector();
+	{
+		if (m_tInstanceDesc.FollowingTarget)
+			attribute->_TargetParentPosition = m_tInstanceDesc.FollowingTarget->Get_MatrixState(CTransform::STATE_POS);
+		else
+			attribute->_TargetParentPosition = m_tInstanceDesc.vFixedPosition.XMVector();
+	}
 
 
 
@@ -603,6 +622,43 @@ void CInstanceEffect::Update_ColorChange(INSTANCEATT * tParticleAtt, _double fTi
 
 }
 
+HRESULT CInstanceEffect::Set_AsMapParticle(vector<_float3>& vecMapParticlePosition)
+{
+
+	m_vecMapParticlePosition.swap(vecMapParticlePosition);
+
+	if (m_iNumInstance < m_vecMapParticlePosition.size())
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	m_iNumInstance = _uint(m_vecMapParticlePosition.size());
+	
+	vector<INSTANCEATT> TempVector;
+	TempVector.clear();
+	TempVector.reserve(m_iNumInstance);
+	
+	for (_uint i = 0 ; i < m_iNumInstance;i++)
+	{
+		TempVector.push_back(m_vecParticleAttribute[i]);
+	}
+
+	m_vecParticleAttribute.clear();
+	m_vecParticleAttribute.swap(TempVector);
+	m_bIsMapParitcle = true;
+
+	for (auto& pDesc : m_vecParticleAttribute)
+	{
+		ResetParticle(&pDesc);
+		pDesc._age = (_float)g_fDeltaTime;
+		pDesc._TargetParentPosition = m_vecMapParticlePosition[pDesc._iIndex];
+	}
+
+	return S_OK;
+}
+
+
+
 
 
 
@@ -692,6 +748,7 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			part._iIndex = i;
 
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -712,8 +769,9 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-
+			part._iIndex = i;
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -808,6 +866,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			part._iIndex = i;
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -824,7 +883,7 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-
+			part._iIndex = i;
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -920,9 +979,9 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 	{
 		for (_uint i = 0; i < m_iNumInstance; i++)
 		{
-
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
+			part._iIndex = i;
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -933,7 +992,7 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 		{
 
 			ResetParticle(&part);
-
+			part._iIndex = i;
 			vUp = part._velocity.Get_Nomalize();
 			vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
 			vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
@@ -1039,6 +1098,8 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 		{
 
 			part._LocalMatirx = XMMatrixIdentity();
+
+			part._iIndex = i;
 			ResetParticle(&part);
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 			m_vecParticleAttribute.push_back(part);
@@ -1051,6 +1112,7 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 
 			ResetParticle(&part);
 
+			part._iIndex = i;
 			vUp = part._velocity.Get_Nomalize();
 			vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
 			vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
@@ -1188,6 +1250,7 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 		for (_uint i = 0; i < m_iNumInstance; i++)
 		{
 
+			part._iIndex = i;
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -1199,6 +1262,7 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 		for (_uint i = 0; i < m_iNumInstance; i++)
 		{
 
+			part._iIndex = i;
 			ResetParticle(&part);
 
 			vUp = part._velocity.Get_Nomalize();
@@ -1324,6 +1388,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 		for (_uint i = 0; i < m_iNumInstance; i++)
 		{
 
+			part._iIndex = i;
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
 			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -1335,6 +1400,7 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 		for (_uint i = 0; i < m_iNumInstance; i++)
 		{
 
+			part._iIndex = i;
 			ResetParticle(&part);
 			//position.Get_Nomalize()
 			vUp = (*(_float3*)&part._LocalMatirx._41).Get_Nomalize() * -1.f;

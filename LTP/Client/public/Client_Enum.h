@@ -1142,6 +1142,9 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JY_Dough_1,
 	Prototype_Mesh_JY_Dough_2,
 	Prototype_Mesh_Moai_Gate,
+	Prototype_Mesh_Lightning_01,
+	Prototype_Mesh_Lightning_02,
+	Prototype_Mesh_Lightning_03,
 	
 	
 
@@ -3537,7 +3540,17 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Moai_Gate:
 		return TEXT("Moai_Gate.fbx");
 		break;
+	case Prototype_Mesh_Lightning_01:
+		return TEXT("Lightning_01.fbx");
+		break;
+	case Prototype_Mesh_Lightning_02:
+		return TEXT("Lightning_02.fbx");
+		break;
+	case Prototype_Mesh_Lightning_03:
+		return TEXT("Lightning_03.fbx");
+		break;
 		
+
 
 
 

@@ -25,6 +25,7 @@ cbuffer Distortion
 	float distortionBias = 0.5f;
 
 	float g_fDistortionNoisingPushPower = 0.5f;
+	float g_fAlphaTestValue = 0.1f;
 };
 
 cbuffer LightPosition
@@ -711,7 +712,7 @@ PS_OUT PS_Noise(PS_IN_Distortion In)
 	Out.vDiffuse = fireColor;
 
 
-	if (Out.vDiffuse.a < 0.1f)discard;
+	if (Out.vDiffuse.a < g_fAlphaTestValue)discard;
 
 	Out.vEmissive = g_fEmissive;
 
@@ -803,7 +804,7 @@ PS_OUT PS_Noise_AppearNDisApper(PS_IN_Distortion In)
 	fireColor.a = length(alphaColor.xyz) * g_vColor;
 	Out.vDiffuse = fireColor;
 
-	if (Out.vDiffuse.a < 0.1f)discard;
+	if (Out.vDiffuse.a < g_fAlphaTestValue)discard;
 
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);

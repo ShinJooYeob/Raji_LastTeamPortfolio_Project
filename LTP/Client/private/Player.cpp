@@ -77,6 +77,8 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	//m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
 
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkillUI), m_eNowSceneNum, TAG_OP(Prototype_Object_SkillUI));
+
+	Set_LimLight_N_Emissive(_float4(0, 0, 0, 0), _float4(0.5f, 0, 0, 0));
 	return S_OK;
 }
 
@@ -99,6 +101,46 @@ _int CPlayer::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
+			NONINSTNESHEFTDESC tNIMEDesc;
+			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
+			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+
+			tNIMEDesc.noisingdir = _float2(1, 0);
+
+			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+			tNIMEDesc.NoiseTextureIndex = 6;
+			tNIMEDesc.MaskTextureIndex = 81;
+			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = -1080.f;
+			tNIMEDesc.vSize = _float3(1.f, 1.5f, 1.f);
+			tNIMEDesc.vLimLight = _float4(_float3(1,1,0), 1);
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(10, 0, 0, 0);
+			//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+			//tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_02;
+			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(20,0,0,0);
+			//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+			//tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_03;
+			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+
+
 			//m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
 			//
 			//{
@@ -111,11 +153,34 @@ _int CPlayer::Update(_double fDeltaTime)
 		
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			//m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
-			//
-			//{
-			//	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			//}
+			NONINSTNESHEFTDESC tNIMEDesc;
+			tNIMEDesc.vPosition = _float3(60.f, 34.26f, 323.380f);
+			tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
+			tNIMEDesc.fMaxTime_Duration = 1.25f;
+
+			tNIMEDesc.fAppearTime = 0.25f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1);
+
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 109;
+			tNIMEDesc.iDiffuseTextureIndex = 271;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+			tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
+
+			tNIMEDesc.fAlphaTestValue = 0.0f;
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+
 		}
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)

@@ -61,6 +61,7 @@ public:
 
 	/*For Particle*/
 	HRESULT Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc);
+	HRESULT Create_TextureInstance(_uint eSceneID, INSTPARTICLEDESC& tParticleDesc, vector<_float3>* vPosition);
 	HRESULT Create_MeshInstance(_uint eSceneID, INSTMESHDESC& tParticleDesc);
 
 	/*For Utility Texture */
