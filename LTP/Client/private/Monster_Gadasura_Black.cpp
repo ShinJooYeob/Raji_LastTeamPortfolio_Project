@@ -172,13 +172,12 @@ void CMonster_Gadasura_Black::CollisionTriger(CCollider * pMyCollider, _uint iMy
 
 _float CMonster_Gadasura_Black::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	m_fHP += -fDamageAmount;
+	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	//m_fHP += -fDamageAmount;
+
+	m_bStopCoolTimeOn = true;
 
 	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
-
 
 	m_bIOnceAnimSwitch = true;
 	if (bKnockback == false)
@@ -463,10 +462,18 @@ HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
-	m_dSpecial_CoolTime += dDeltaTime;
+	_double Once = m_dOnceCoolTime;
+	wstring tt = L"Once Time = " + to_wstring(Once) + L"\n";
+	tt.substr(4, 10).c_str();
+	OutputDebugStringW(tt.c_str());
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 2 && m_fDistance < 4 || m_bComboAnimSwitch == true)
 	{
@@ -482,7 +489,6 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 6;
@@ -504,71 +510,95 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 51;
 
+
+	//_uint Once = m_iOncePattern;
+	//_uint Before = m_iAfterPattern;
+	//wstring tt = L"Once Pattern = " + to_wstring(Once) + L"\n" + L"Before Pattern = " + to_wstring(Before) + L"\n";
+	//tt.substr(4, 10).c_str();
+	//OutputDebugStringW(tt.c_str());
+
+
 	switch (m_iOncePattern)
 	{
 	case 0:
 		m_iOnceAnimNumber = 17; //Attack1 
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 3; //Right Move
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 3:
 		m_iOnceAnimNumber = 25; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 4:
 		m_iOnceAnimNumber = 14; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 5:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 6:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 7:
 		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 4; //Left Move
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 9:
 		m_iOnceAnimNumber = 25; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 10:
 		m_iOnceAnimNumber = 15; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 11:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 12:
 		m_iOnceAnimNumber = 22; //Taunt
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 13:
 		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 14:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 15:
 		m_iOnceAnimNumber = 5; //Back
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 40:
 		m_iOnceAnimNumber = 11; //right hit
@@ -596,7 +626,14 @@ HRESULT CMonster_Gadasura_Black::Pattern_Change()
 
 	if (m_iOncePattern >= 16)
 	{
-		m_iOncePattern = 0; //OncePattern Random
+		if (m_iAfterPattern <= 16)
+		{
+			m_iOncePattern = m_iAfterPattern;
+		}
+		else {
+			m_iOncePattern = 0; //OncePattern Random
+			m_iAfterPattern = m_iOncePattern + 1;
+		}
 	}
 
 
@@ -638,7 +675,7 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 {
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 15)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -784,6 +821,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_bLookAtOn = true;
 		m_bWeaponAttackSwitch = false;
+		m_bStopCoolTimeOn = false;
 
 		m_iSoundIndex = 0;
 
