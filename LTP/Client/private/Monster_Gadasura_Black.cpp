@@ -1276,6 +1276,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bWeaponAttackSwitch = true;
 				m_iAdjMovedIndex++;
 			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3529)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+				Monster_Texture_BulletDesc.fScale = _float3(8.f, 8.f, 8.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 3.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.2;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				m_iAdjMovedIndex++;
+			}
 
 			if (PlayRate <= 0.588235)
 			{
