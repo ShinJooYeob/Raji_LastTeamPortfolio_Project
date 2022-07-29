@@ -1095,7 +1095,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (PlayRate > 0.8522167487)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
+				    
 				_float3 vGoalDir = (m_vStartPos.XMVector() - MonsterPos.XMVector());
 				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.8522167487f, 0.11779f);
 
