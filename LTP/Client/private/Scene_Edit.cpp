@@ -92,8 +92,14 @@ HRESULT CScene_Edit::Initialize()
 	return S_OK;
 }
 
+static bool Fuckyou = false;
+
 _int CScene_Edit::Update(_double fDeltaTime)
 {
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_F2)& DIS_Down)
+		Fuckyou = !Fuckyou;
+
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
@@ -107,12 +113,23 @@ _int CScene_Edit::Update(_double fDeltaTime)
 	{
 
 	case 0://¸Ê ¹èÄ¡ÅÇ
-		for (auto& Element : m_vecBatchedObject)
+		if (Fuckyou)
 		{
-			if (Element.pObject->Update(fDeltaTime) < 0)
+			if (((m_vecBatchedObject[m_iBatchedVecIndex]).pObject)->Update(fDeltaTime) < 0)
 			{
 				__debugbreak();
 				return -1;
+			}
+		}
+		else
+		{
+			for (auto& Element : m_vecBatchedObject)
+			{
+				if (Element.pObject->Update(fDeltaTime) < 0)
+				{
+					__debugbreak();
+					return -1;
+				}
 			}
 		}
 
@@ -205,14 +222,30 @@ _int CScene_Edit::LateUpdate(_double fDeltaTime)
 	{
 
 	case 0://¸Ê ¹èÄ¡ÅÇ
-		for (auto& Element : m_vecBatchedObject)
+	{
+		if (Fuckyou)
 		{
-			if (Element.pObject->LateUpdate(fDeltaTime) < 0)
+			if (((m_vecBatchedObject[m_iBatchedVecIndex]).pObject)->LateUpdate(fDeltaTime) < 0)
 			{
 				__debugbreak();
 				return -1;
 			}
 		}
+		else
+		{
+			for (auto& Element : m_vecBatchedObject)
+			{
+				if (Element.pObject->LateUpdate(fDeltaTime) < 0)
+				{
+					__debugbreak();
+					return -1;
+				}
+			}
+		}
+
+	}
+
+
 		if (m_pCreatedTerrain != nullptr)
 			m_pCreatedTerrain->LateUpdate(fDeltaTime);
 
@@ -7806,6 +7839,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 											m_bIsCellOption = true;
 											m_OptionNumber = m_Cells[j]->Get_CellOption();
 											m_iCellListCount = j;
+											break;
 										}
 									}
 								}

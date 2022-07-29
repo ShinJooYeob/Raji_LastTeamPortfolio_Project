@@ -52,10 +52,14 @@ private:
 	_bool				m_bIsAngleOut = false;
 	_float				m_fRotTime = 0.f;
 
+	//SpecialSkill
+	_float				m_fSpecialSillTime = 9.f;
+
 	_bool				m_bTestHodeing = false;
 	_bool				m_bHiding = false;
 	_float3				m_StartPos;
 	_Vector				m_vAngle;
+	_Vector				m_vMapAngle;
 
 
 	CGameObject*		m_pPlayerObj;
@@ -68,6 +72,8 @@ private:
 	CTransform*			m_pTextureParticleTransform2 = nullptr;
 
 	_float				m_fNarrationTime = 10.f;
+	_float3				m_StartAnimPos;
+	_float3				m_AttackAnimPos;
 
 private:
 	HRESULT SetUp_Components();

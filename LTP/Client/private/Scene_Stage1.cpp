@@ -40,6 +40,10 @@ HRESULT CScene_Stage1::Initialize()
 
 	//TestMeshInstance2
 	//L"Stage1_Instance.dat"
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+
+
+
 
 
 	

@@ -45,6 +45,7 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_pTransformCom->Scaled_All(_float3(4.f, 4.f, 4.f));
 
 	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
+
 	m_bIsAttack = true;
 
 	m_fAttackCoolTime = 5.f;
@@ -54,6 +55,14 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
 
 	Set_IsOcllusion(true);
+
+	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_float PosX = XMVectorGetX(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)) + 20.f;
+	_float PosZ = XMVectorGetZ(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)) - 20.f;
+
+	Pos.x = PosX;
+	Pos.z = PosZ;
+	m_AttackAnimPos = Pos;
 
 	m_pModel->Update_AnimationClip(g_fDeltaTime);
 	return S_OK;
@@ -78,7 +87,15 @@ _int CSnake::Update(_double fDeltaTime)
 	{
 		m_bHiding = false;
 	}
-	//
+
+	if(m_fSpecialSillTime > 0.f)
+		m_fSpecialSillTime -= (_float)fDeltaTime;
+
+	if (m_fSpecialSillTime <= 0 && !m_bIsAttack)
+	{
+		m_bIsAttack = true;
+		m_pModel->Change_AnimIndex_ReturnTo(7, 8);
+	}
 
 
 	if (!m_bIsAttack)
@@ -106,6 +123,8 @@ _int CSnake::Update(_double fDeltaTime)
 
 	PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
+	//_float3	MapDir = XMVector3Normalize(XMVectorSet(1.f, 0.f, 0.f, 1.f) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_vMapAngle = XMVector3Dot(XMVectorSet(1.f, 0.f, 0.f, 1.f), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 
@@ -142,7 +161,7 @@ _int CSnake::Update(_double fDeltaTime)
 
 		if (m_bHiding)
 		{
-			m_bIsAttack = true;
+			//m_bIsAttack = true;
 			// #TIME
 			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
 		}
@@ -365,27 +384,29 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				//_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 				//m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 				
-				if (XMVectorGetX(m_vAngle) < -0.2f && !m_bIsAngleOut)
+				_float test = XMVectorGetX(m_vMapAngle);
+
+				if (XMVectorGetX(m_vMapAngle) < 0 && !m_bIsAngleOut)
 				{
 					m_bIsAngleOut = true;
 				}
 
 				if(!m_bIsAngleOut)
-					m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.2f);
+					m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.4f);
 				else
-					m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.2f);
+					m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.4f);
 			}
 			else if (m_iRotationRandom == 1)
 			{
-				if (XMVectorGetX(m_vAngle) < -0.2f && !m_bIsAngleOut)
+				if (XMVectorGetX(m_vMapAngle) < 0 && !m_bIsAngleOut)
 				{
 					m_bIsAngleOut = true;
 				}
 
 				if (!m_bIsAngleOut)
-					m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.2f);
+					m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.6f);
 				else
-					m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.2f);
+					m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * 0.60f);
 			}
 			//else if (m_iRotationRandom == 2)
 			//{
@@ -434,7 +455,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 					++m_iAdjMovedIndex;
 				}
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				_float3 FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 12.f);
+				_float3 FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
 
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -469,9 +490,29 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.87f, 0.39f, 0.96f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
 
+			if (PlayRate > 0 && PlayRate <= 0.27678571)
+			{
+				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				_float3 FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
+
+				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				PlayerPos.y = FindPos.y = MonsterPos.y;
+
+				_float3 vGoalDir = (PlayerPos.XMVector() - FindPos.XMVector());
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate, 0.27678571f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+				//_float3 EsingPos = g_pGameInstance->Easing_Vector(TYPE_SinInOut, m_StartPos.XMVector(), m_AttackAnimPos.XMVector(), (_float)PlayRate, 0.27678571f);
+
+				//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, EsingPos);
+			}
+
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
 				m_bIsBite = true;
+
 				m_iAdjMovedIndex++;
 			}
 
@@ -532,6 +573,27 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_EffectAdjust++;
 			}
 
+			if (PlayRate >= 0.4375 && PlayRate <= 0.625)
+			{
+
+				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				//CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+				//_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				//PlayerPos.y = MonsterPos.y;
+
+				_float3 vGoalDir = (m_StartPos.XMVector() - MonsterPos.XMVector());
+				_float fLength = g_pGameInstance->Easing(TYPE_SinInOut, 0, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.4375f, 0.1875f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+				/*_float3 SnakePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				_float3 EsingPos = g_pGameInstance->Easing_Vector(TYPE_SinInOut, m_AttackAnimPos.XMVector(), m_StartPos.XMVector(), (_float)PlayRate - 0.4375f, 0.1875f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, EsingPos);*/
+			}
+
 		}
 		break;
 
@@ -542,13 +604,29 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));		
+			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
+				_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				_float PosZ = XMVectorGetZ(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)) - 20.f;
+				Pos.z = PosZ;
+				m_StartAnimPos = Pos;
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_StartAnimPos);
+
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_1.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 				//m_fAnimmultiple = 0.2f;
+			}
+
+			if (PlayRate > 0.69014084 && PlayRate  < 0.8309859154)
+			{
+				_float3 SnakePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				Dir = XMVector3Normalize(SnakePos.XMVector() - XMVectorSetY(Dir, SnakePos.y));
+				m_pTransformCom->Turn_Dir(Dir, 0.90f);
 			}
 		}
 		break;
@@ -565,6 +643,18 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			break;
 		break;
+		case 8:
+		{
+			if (PlayRate > 0 && PlayRate <= 0.0670391)
+			{
+				_float3 SnakePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				_float3 EsingPos = g_pGameInstance->Easing_Vector(TYPE_SinInOut, m_StartAnimPos.XMVector(), m_StartPos.XMVector(), (_float)PlayRate - 0.69014084f, 0.1408450754f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, EsingPos);
+			}
+		}
+			break;
 
 		}
 	}
