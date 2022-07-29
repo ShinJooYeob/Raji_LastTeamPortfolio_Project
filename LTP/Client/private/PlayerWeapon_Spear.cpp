@@ -186,12 +186,8 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			if (0 > pConflictedObj->Take_Damage(this, 3.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
 				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(38.f, 0.5f, 0.25f, true); 
 			}
-			else
-			{
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.1f, true);
-			}
+			
 			pConflictedCollider->Set_Conflicted(0.3f);
 
 			_int iSelectSoundFileIndex = rand() % 2;
@@ -199,6 +195,7 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.1f, true);
 			//GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Thread(0.2f, 10.f, 0.5f, true);
 		}
 	}
