@@ -308,7 +308,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_BossCreateTrigger,
 	Prototype_Trigger_InstanceMonsterBatchTrigger,
 	Prototype_MonsterBatchTrigger,
-
+	Prototype_Trigger_CinematicTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
@@ -473,6 +473,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_InstanceMonsterBatchTrigger:
 		return TEXT("Prototype_InstanceMonsterBatchTrigger");
+		break;
+	case Prototype_Trigger_CinematicTrigger:
+		return TEXT("Prototype_Trigger_CinematicTrigger");
 		break;
 	case Prototype_Trigger_ChangeNavIndex:
 		return TEXT("Prototype_Trigger_ChangeNavIndex");

@@ -19,6 +19,7 @@ public:
 
 public:
 	void		SlowMotionStart(_float fTargetTime = 0.5f,_float TargetSpeed = 0.0f,_float TargetCurveRate = 0.5f);
+	_bool		Get_IsSlowed();
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;

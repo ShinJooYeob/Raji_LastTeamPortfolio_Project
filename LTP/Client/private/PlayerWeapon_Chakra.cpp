@@ -129,10 +129,14 @@ void CPlayerWeapon_Chakra::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		pConflictedObj->Take_Damage(this, 3.f, vDamageDir, true, 2.f);
+		if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, true, 2.f))
+		{
+			GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+		}
 		pConflictedCollider->Set_Conflicted(0.5f);
 
 		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Chakra_Impact.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_EFFECT, 0.1f);
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 	}
 }
 

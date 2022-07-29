@@ -34,10 +34,12 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
 
-	FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance2.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
+	FAILED_CHECK(Ready_TriggerObject(L"Stage1_0.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
-
+	//TestMeshInstance2
+	//L"Stage1_Instance.dat"
 
 
 	
@@ -209,9 +211,11 @@ HRESULT CScene_Stage1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(30.f, 37.460f, 60.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(31.773f, 37.5f, 64.801f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+
+	static_cast<CPlayer*>(pPlayer)->Set_State_FirstStart();
 
 	m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
@@ -224,7 +228,7 @@ HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(30.0897746f, 43.9346123f, 51.7037544f, 1.f), XMVectorSet(-0.0104734357f, -0.616789281f, 0.787058711f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636597f, 56.5242004f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 	pPlayer->Update_AttachCamPos();
 
 	return S_OK;

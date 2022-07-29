@@ -37,6 +37,7 @@ public:
 		CameraEffectID		eCameraEffectID;
 		CAMERASHAKEDIRDESC	tDirShakingDesc;
 		CAMERASHAKEROTDESC	tRotShakingDesc;
+		_bool				bOnceShake;
 	}CAMERAEFFECTDESC;
 
 private:
@@ -69,7 +70,7 @@ public:
 
 
 
-
+	
 public: /* Get Camera Transform State */
 	_fVector			Get_CameraState(CTransform::TransformState eState);
 	_fVector			Get_CameraState_Normalize(CTransform::TransformState eState);
@@ -95,6 +96,7 @@ public: /* Setting State */
 	void				Set_MinTargetArmLength(_float fMinTargetArmLength);
 	void				Set_CameraInitState(_fVector vCamPos, _fVector vCamLook);
 	void				Set_CamLock(_bool bLock);
+	void				Set_StartedShaking(_bool bValue);
 
 public: /* Getter */
 	_float				Get_TargetArmLength();
@@ -106,20 +108,19 @@ private: /* Chase Target Method */
 
 
 public: /* Camera Shake */
-	HRESULT				Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval);
+	HRESULT				Start_CameraShaking_Thread(_double TotalTime, _float Power, _float fChangeDirectioninterval, _bool bOnceShake);
 	HRESULT				Progress_Shaking_Thread(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
-	HRESULT				Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC* tDirShakingDesc);
+	HRESULT				Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC* tDirShakingDesc, _bool bOnceShake);
 	HRESULT				Progress_DirShaking_Thread(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec, CAMERASHAKEDIRDESC tDirShakingDesc);
 
-	HRESULT				Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc);
+	HRESULT				Start_CameraShaking_Rot_Thread(const CAMERASHAKEROTDESC* tRotShakingDesc, _bool bOnceShake);
 	HRESULT				Progress_RotShaking_Thread(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec, CAMERASHAKEROTDESC tRotShakingDesc);
 
 	void				Set_EffectID(CameraEffectID eEffectID);
 	CameraEffectID		Get_EffectID() { return m_eEffectID; }
 	
-	void				Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime);
-
+	void				Start_CameraShaking_Fov(_float fTargetFov, _float fSpeed, _float fDuraionTime, _bool bOnceShake);
 
 private:
 	HRESULT				SetUp_Components();

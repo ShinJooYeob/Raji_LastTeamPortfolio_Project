@@ -132,6 +132,11 @@ void CMonster_Tezabsura_Purple::CollisionTriger(CCollider * pMyCollider, _uint i
 
 _float CMonster_Tezabsura_Purple::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
 	return _float();
 }
 

@@ -157,6 +157,11 @@ _float CMonster_Vayusura_Minion::Take_Damage(CGameObject * pTargetObject, _float
 	m_fHP += -fDamageAmount;
 	m_bIOnceAnimSwitch = true;
 
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
 	return _float();
 }
 

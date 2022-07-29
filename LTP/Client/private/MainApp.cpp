@@ -188,6 +188,11 @@ void CMainApp::SlowMotionStart(_float fTargetTime , _float TargetSpeed, _float T
 
 }
 
+_bool CMainApp::Get_IsSlowed()
+{
+	return m_bIsSlowed;
+}
+
 
 
 HRESULT CMainApp::Scene_Change(SCENEID eSceneID)

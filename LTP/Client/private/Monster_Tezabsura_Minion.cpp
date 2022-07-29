@@ -247,6 +247,11 @@ _float CMonster_Tezabsura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 		m_iBoolOnce += 1;
 	}
 
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
 	return _float();
 }
 

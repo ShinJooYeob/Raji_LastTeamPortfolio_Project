@@ -82,6 +82,7 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 		if (m_fCurTime_UltimateAttackDuration >= m_fMaxTime_UltimateAttackDuration)
 		{
 			m_bActiveCollision = false;
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
 		}
 		else
 		{

@@ -2,6 +2,7 @@
 #include "..\public\UtilityMgr.h"
 #include "MainApp.h"
 #include"SkillUI.h"
+#include "Camera_Main.h"
 
 IMPLEMENT_SINGLETON(CUtilityMgr);
 
@@ -118,6 +119,11 @@ _float CUtilityMgr::Get_SlowMotionSpeed()
 {
 	NULL_CHECK_BREAK(m_pMainApp);
 	return m_pMainApp->Get_SlowMotionSpeed();
+}
+
+_bool CUtilityMgr::Get_IsSlowed()
+{
+	return m_pMainApp->Get_IsSlowed();
 }
 
 void CUtilityMgr::Start_DebugTimer(E_DEBUGTIMER type)
@@ -318,6 +324,13 @@ HRESULT CUtilityMgr::SCD_Rendering_FadeOut(_float RollingStartTime, _float Rolli
 	FAILED_CHECK(m_pLoadingSCD.Render_SCD_FadeOut( 8, FadeIntensive));
 
 	return S_OK;
+}
+
+CCamera_Main* CUtilityMgr::Get_MainCamera()
+{
+	CCamera_Main* pMainCam = nullptr;
+	pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	return pMainCam;
 }
 
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()

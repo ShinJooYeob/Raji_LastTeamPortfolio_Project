@@ -88,6 +88,7 @@ private:
 	_float3					m_bThrowDir;
 	_uint					m_iPassNum;
 	_uint					m_iCurAnim;
+	_bool					m_bUltimateAttacking = false;
 
 private:
 	CShader*				m_pShaderCom = nullptr;
