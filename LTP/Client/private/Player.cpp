@@ -103,32 +103,33 @@ _int CPlayer::Update(_double fDeltaTime)
 
 			NONINSTNESHEFTDESC tNIMEDesc;
 			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-			tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+			tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
-			tNIMEDesc.fAppearTime = 0.25f;
-			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword;
+			tNIMEDesc.fMaxTime_Duration = 0.7f;
 
-			tNIMEDesc.noisingdir = _float2(1, 0);
 
-			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
-			tNIMEDesc.NoiseTextureIndex = 6;
-			tNIMEDesc.MaskTextureIndex = 81;
-			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.fAppearTime = 0.35f;
+
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.NoiseTextureIndex = 350;
+			tNIMEDesc.MaskTextureIndex = 5;
+			tNIMEDesc.iDiffuseTextureIndex = 378;
 			tNIMEDesc.m_iPassIndex = 19;
 			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
 			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
 
-			tNIMEDesc.RotAxis = FollowingDir_Up;
-			tNIMEDesc.RotationSpeedPerSec = -1080.f;
-			tNIMEDesc.vSize = _float3(1.f, 1.5f, 1.f);
-			tNIMEDesc.vLimLight = _float4(_float3(1,1,0), 1);
+			tNIMEDesc.RotAxis = FollowingDir_Right;
+			tNIMEDesc.OnceStartRot = -90.f;
+
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.01f, 0.03f, 0.01f);
 
 			tNIMEDesc.MoveDir = FollowingDir_Look;
-			tNIMEDesc.MoveSpeed = 0.f;
-
+			tNIMEDesc.MoveSpeed = 0;
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(10, 0, 0, 0);

@@ -32,6 +32,7 @@ public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+	HRESULT ReInitialize(_float3 vPosition, _float3 vLookDir);
 private:
 	void				Update_Colliders();
 

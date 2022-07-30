@@ -242,7 +242,18 @@ HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_
 	while (true)
 	{
 		if (*_IsClientQuit == true)
+		{
+			for (_uint i = 0; i < CollisionType_END; i++)
+			{
+				for (auto& ColideElements : m_CollisionGroupList[i])
+				{
+					Safe_Release(ColideElements.pCollider);
+					Safe_Release(ColideElements.pCollisionObject);
+				}
+				m_CollisionGroupList[i].clear();
+			}
 			return S_OK;
+		}
 
 		fTimeAcc += pTimerMgr->Get_DeltaTime(L"Timer_MainTimer");
 
@@ -298,7 +309,15 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 	{
 
 		if (*_IsClientQuit == true)
+		{
+
+			for (auto& RepelElement : m_RepelObjectList)
+				Safe_Release(RepelElement.pRepelObjTransform);
+			m_RepelObjectList.clear();
+
+
 			return S_OK;
+		}
 
 		fTimeAcc += pTimerMgr->Get_DeltaTime(L"Timer_RepelTimer");
 

@@ -27,8 +27,11 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	memcpy(&m_tMeshDesc, pArg, sizeof(NONINSTNESHEFTDESC));
 
 
-	if (m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 19)
+	if (m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 20)
+	{
+		__debugbreak();
 		return E_FAIL;
+	}
 
 
 	FAILED_CHECK(SetUp_Components());
@@ -39,6 +42,7 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
 
 	m_pTransformCom->Scaled_All(m_tMeshDesc.vSize);
+
 
 	switch (m_tMeshDesc.RotAxis)
 	{
@@ -85,10 +89,14 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	}
 
 	Set_LimLight_N_Emissive( m_tMeshDesc.vLimLight ,  m_tMeshDesc.vEmissive );
+
 	if (m_tMeshDesc.SizeSpeed != 0)
 	{
 		m_pTransformCom->Set_ScalingSpeed(m_tMeshDesc.SizeSpeed);
 	}
+
+	if (m_tMeshDesc.m_bNotDead)
+		m_fCurTime_Duration = 99999999999999999999999.f;
 
 	return S_OK;
 }
@@ -96,6 +104,13 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration) 
+	{
+		if (m_tMeshDesc.m_bNotDead) return 0;
+		else Set_IsDead();
+	}
+
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 
@@ -129,10 +144,6 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 
 
 
-	if (m_fCurTime_Duration >= m_tMeshDesc.fMaxTime_Duration)
-	{
-		Set_IsDead();
-	}
 
 	return _int();
 }
@@ -140,6 +151,13 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
+
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration)
+	{
+		if (m_tMeshDesc.m_bNotDead) return 0;
+		else Set_IsDead();
+	}
+
 
 	if (m_tMeshDesc.m_iPassIndex > 17)
 	{
@@ -156,6 +174,13 @@ _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 _int CNonInstanceMeshEffect::Render()
 {
 	if (__super::Render() < 0)		return -1;
+
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration)
+	{
+		if (m_tMeshDesc.m_bNotDead) return 0;
+		else Set_IsDead();
+	}
+
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -209,6 +234,73 @@ _int CNonInstanceMeshEffect::Render()
 _int CNonInstanceMeshEffect::LateRender()
 {
 	return _int();
+}
+
+HRESULT CNonInstanceMeshEffect::ReInitialize(_float3 vPosition, _float3 vLookDir)
+{
+
+	m_tMeshDesc.vPosition = vPosition;
+	m_tMeshDesc.vLookDir = vLookDir;
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tMeshDesc.vPosition);
+	m_pTransformCom->LookDir(m_tMeshDesc.vLookDir.XMVector());
+
+	m_pTransformCom->Scaled_All(m_tMeshDesc.vSize);
+
+	switch (m_tMeshDesc.RotAxis)
+	{
+	case FollowingDir_Right:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vRotAxis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
+	if (m_tMeshDesc.OnceStartRot)
+	{
+		_float Old = m_pTransformCom->Get_TurnSpeed();
+		m_pTransformCom->Set_TurnSpeed(1);
+		m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), XMConvertToRadians(m_tMeshDesc.OnceStartRot));
+		m_pTransformCom->Set_TurnSpeed(Old);
+
+	}
+
+	m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), m_tMeshDesc.StartRot);
+
+
+	switch (m_tMeshDesc.MoveDir)
+	{
+	case FollowingDir_Right:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_RIGHT);
+		break;
+	case FollowingDir_Up:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
+		break;
+	case FollowingDir_Look:
+		m_vMoveDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+		break;
+	default:
+		__debugbreak();
+		break;
+	}
+
+	Set_LimLight_N_Emissive(m_tMeshDesc.vLimLight, m_tMeshDesc.vEmissive);
+
+	if (m_tMeshDesc.SizeSpeed != 0)
+	{
+		m_pTransformCom->Set_ScalingSpeed(m_tMeshDesc.SizeSpeed);
+	}
+
+	m_fCurTime_Duration = 0.f;
+
+	return S_OK;
 }
 
 

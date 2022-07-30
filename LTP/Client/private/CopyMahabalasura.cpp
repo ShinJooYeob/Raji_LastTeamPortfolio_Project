@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "..\public\CopyMahabalasura.h"
 #include "Mahabalasura.h"
+#include "Mahabalasura_SpearWave.h"
+
+#define InstanceCount 64
+#define LimLightColor _float3(0.3f,0.2f,0.8f)
 
 CCopyMahabalasura::CCopyMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -36,11 +40,99 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 
 	//m_pTransformCom->Scaled_All(_float3(1.5f));
 
-	m_iRandomIndex = rand() % 16;
+	m_iRandomIndex = rand() % InstanceCount;
 
 	CTransform* pPlayerPosition = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 	_float3 PlayerPos = pPlayerPosition->Get_MatrixState(CTransform::STATE_POS);
 	m_startPos = PlayerPos;
+
+
+
+
+
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+		tNIMEDesc.vPosition = _float3(100.f, 34.26f, 323.380f);
+		tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+		tNIMEDesc.fMaxTime_Duration = 9999999999999.f;
+
+		tNIMEDesc.fAppearTime = 0.25f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 109;
+		tNIMEDesc.iDiffuseTextureIndex = 271;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+		tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.45f, 0.45f, -0.45f);
+
+		tNIMEDesc.fAlphaTestValue = 0.0f;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
+		tNIMEDesc.m_iPassIndex = 20;
+		tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+		tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f);
+
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+			TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+
+		m_EffectFloor = (CNonInstanceMeshEffect*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle)));
+		NULL_CHECK_RETURN(m_EffectFloor, E_FAIL);
+
+
+
+	}
+	//05
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+		tNIMEDesc.vPosition = _float3(60.f, 34.26f, 323.380f);
+		tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
+		tNIMEDesc.fMaxTime_Duration = 9999999999999.f;
+
+		tNIMEDesc.fAppearTime = 0.25f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 388;
+		tNIMEDesc.MaskTextureIndex = 109;
+		tNIMEDesc.iDiffuseTextureIndex = 271;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+		tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
+
+		tNIMEDesc.fAlphaTestValue = 0.0f;
+
+		tNIMEDesc.vPosition = _float3(60.f, 34.27f, 323.380f);
+		tNIMEDesc.NoiseTextureIndex = 381;
+
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+			TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+
+		m_EffectWall = (CNonInstanceMeshEffect*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle)));
+		NULL_CHECK_RETURN(m_EffectWall, E_FAIL);
+
+	}
+
+
 
 
 	return S_OK;
@@ -79,17 +171,47 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
-
-		m_vecInstancedTransform[i]->LookAt(XMLoadFloat3(&m_startPos));
+		m_vecInstancedTransform[i].fPassedTime += (_float)fDeltaTime;
+		m_vecInstancedTransform[i].pTransform->LookAt(XMLoadFloat3(&m_startPos));
 
 		if (i % 2 == 0)
 		{
-			m_vecInstancedTransform[i]->Move_Left(fDeltaTime);
+			m_vecInstancedTransform[i].pTransform->Move_Left(fDeltaTime);
 		}
 		else if (i % 2 == 1)
 		{
-			m_vecInstancedTransform[i]->Move_Right(fDeltaTime);
+			m_vecInstancedTransform[i].pTransform->Move_Right(fDeltaTime);
 		}
+
+
+		if (m_vecInstancedTransform[i].bLimLightIsUp)
+		{
+			m_vecInstancedTransform[i].vLimLight.w += (_float)fDeltaTime;
+			if (m_vecInstancedTransform[i].vLimLight.w > 1)
+			{
+				m_vecInstancedTransform[i].vLimLight.w = 1.f;
+				
+				m_vecInstancedTransform[i].bLimLightIsUp = false;
+			}
+			m_vecInstancedTransform[i].vLimLight =
+				_float4(_float3(LimLightColor.XMVector() * m_vecInstancedTransform[i].vLimLight.w), 
+					m_vecInstancedTransform[i].vLimLight.w);
+
+		}
+		else
+		{
+			m_vecInstancedTransform[i].vLimLight.w -= (_float)fDeltaTime;
+			if (m_vecInstancedTransform[i].vLimLight.w < 0)
+			{
+				m_vecInstancedTransform[i].vLimLight.w = 0.f;
+				m_vecInstancedTransform[i].bLimLightIsUp = true;
+			}
+
+			m_vecInstancedTransform[i].vLimLight =
+				_float4(_float3(LimLightColor.XMVector() * m_vecInstancedTransform[i].vLimLight.w),
+					m_vecInstancedTransform[i].vLimLight.w);
+		}
+
 	}
 
 	//나중에 충돌로 해당 인덱스일때 다 사라지게 하고 보스를 그위치에서 나오게끔한다.
@@ -98,13 +220,18 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 		CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
 		_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
 
-		_float3 CopyPos = m_vecInstancedTransform[m_iRandomIndex]->Get_MatrixState(CTransform::STATE_POS);
+		_float3 CopyPos = m_vecInstancedTransform[m_iRandomIndex].pTransform->Get_MatrixState(CTransform::STATE_POS);
 
 		BossTransform->Set_MatrixState(CTransform::STATE_POS, CopyPos);
 		m_pBossObj->Set_CopyOff(false);
 		m_pBossObj->Set_Hit();
 
+
+		m_EffectWall->Set_GonnabeDie();
+		m_EffectFloor->Set_GonnabeDie();
+
 		Set_IsDead();
+		return 0;
 	}
 	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
@@ -137,11 +264,14 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
+	if (m_bIsDead)return 0;
+
 	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 
-
+	m_vecRenderInstanceLimLight.clear();
+	m_vecRenderInstanceEmissive.clear();
 	m_vecRenderInstanceTransform.clear();
 
 	sort(m_vecColliderIndexs.begin(), m_vecColliderIndexs.end());
@@ -154,11 +284,14 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 		if (m_vecColliderIndexs.size() > ColliderIndex && m_vecColliderIndexs[ColliderIndex] == i)
 		{
 			++ColliderIndex;
+			m_vecInstancedTransform[i].bIsDead = true;
 			continue;
 		}
 		else
 		{
-			m_vecRenderInstanceTransform.push_back(m_vecInstancedTransform[i]);
+			m_vecRenderInstanceTransform.push_back(m_vecInstancedTransform[i].pTransform);
+			m_vecRenderInstanceLimLight.push_back((m_vecInstancedTransform[i].vLimLight));
+			m_vecRenderInstanceEmissive.push_back(_float4(m_vecInstancedTransform[i].vLimLight.w, m_vecInstancedTransform[i].vLimLight.w * 0.5f, m_vecInstancedTransform[i].vLimLight.w,0.f));
 		}
 		//_bool bState = false;
 		//for (_int j = 0; j < m_vecColliderIndexs.size(); ++j)
@@ -184,16 +317,16 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 			continue;
 		}
 
-		m_vecInstancedTransform[i]->LookAtExceptY(XMLoadFloat3(&PlayerPos));
+		m_vecInstancedTransform[i].pTransform->LookAtExceptY(XMLoadFloat3(&PlayerPos));
 
 
-		_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
+		_Matrix mat = m_vecInstancedTransform[i].pTransform->Get_WorldMatrix();
 		mat.r[0] = XMVector3Normalize(mat.r[0]);
 		mat.r[1] = XMVector3Normalize(mat.r[1]);
 		mat.r[2] = XMVector3Normalize(mat.r[2]);
-		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
+		mat.r[3] = mat.r[3] + m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_LOOK);
 		m_pAttackCollider->Update_Transform(i + 1, mat);
-		m_pCollider->Update_Transform(i + 1, m_vecInstancedTransform[i]->Get_WorldMatrix());
+		m_pCollider->Update_Transform(i + 1, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
 
 	}
 
@@ -234,8 +367,8 @@ _int CCopyMahabalasura::Render()
 
 	//}
 
-
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecRenderInstanceTransform));
+	
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecRenderInstanceTransform,0,&m_vecRenderInstanceLimLight,&m_vecRenderInstanceEmissive));
 
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
@@ -276,11 +409,15 @@ void CCopyMahabalasura::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
 			_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
 
-			_float3 CopyPos = m_vecInstancedTransform[m_iRandomIndex]->Get_MatrixState(CTransform::STATE_POS);
+			_float3 CopyPos = m_vecInstancedTransform[m_iRandomIndex].pTransform->Get_MatrixState(CTransform::STATE_POS);
 
 			BossTransform->Set_MatrixState(CTransform::STATE_POS, CopyPos);
 			m_pBossObj->Set_CopyOff(false);
 			m_pBossObj->Set_Hit();
+
+
+			m_EffectWall->Set_GonnabeDie();
+			m_EffectFloor->Set_GonnabeDie();
 
 			Set_IsDead();
 		}
@@ -312,6 +449,106 @@ _float CCopyMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamag
 	return _float();
 }
 
+HRESULT CCopyMahabalasura::Ready_ParticleDesc()
+{
+	//0
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = -5.f;
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_SecondAttack;
+		tNIMEDesc.fMaxTime_Duration = 0.3f;
+
+		tNIMEDesc.fAppearTime = 0.15f;
+
+		tNIMEDesc.noisingdir = _float2(-1, 0);
+
+		tNIMEDesc.NoiseTextureIndex = 249;
+		tNIMEDesc.MaskTextureIndex = 64;
+		tNIMEDesc.iDiffuseTextureIndex = 365;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = -480.f;
+		tNIMEDesc.vSize = _float3(0.02f, 0.02f, 0.075f);
+		tNIMEDesc.m_bNotDead = true;
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	//1
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.175f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 10;
+		tNIMEDesc.iDiffuseTextureIndex = 365;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+
+
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.RotationSpeedPerSec = -180;
+		tNIMEDesc.StartRot = -0.5f;
+		tNIMEDesc.vSize = _float3(1.f, -2, 2.f);
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+		tNIMEDesc.m_bNotDead = true;
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+	}
+	//2
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Spear_NormalEffect;
+		tNIMEDesc.fAppearTime = 0.175f;
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 10;
+		tNIMEDesc.iDiffuseTextureIndex = 365;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
+		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
+
+
+		tNIMEDesc.RotAxis = FollowingDir_Right;
+		tNIMEDesc.RotationSpeedPerSec = 180;
+		tNIMEDesc.StartRot = -0.5f;
+		tNIMEDesc.vSize = _float3(1.f, 2, 2.f);
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0.f;
+		tNIMEDesc.m_bNotDead = true;
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CCopyMahabalasura::Update_Particle(_double timer)
+{
+	return S_OK;
+}
+
 HRESULT CCopyMahabalasura::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -339,20 +576,82 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
-	for (_uint i = 0; i < 16; i++)
+	Safe_Release(m_pGuideTransform);
+	m_pGuideTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pGuideTransform, E_FAIL);
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	CGameInstance* pInstance = g_pGameInstance;
+	CNonInstanceMeshEffect* pNonEffect = nullptr;
+
+	list<CGameObject*>* pList = pInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+	if (pList != nullptr)
 	{
-		CTransform* pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-		NULL_CHECK_RETURN(pTransform, E_FAIL);
+		for (auto& pObj : *pList)
+			pObj->Set_IsDead();
+	}
 
-		pTransform->Set_MoveSpeed(1.5f);
+	CMahabalasura_SpearWave::SPEARWAVEDESC tSpearWaveDesc;
+	tSpearWaveDesc.fStartPos = m_pGuideTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	tSpearWaveDesc.fLookDir = XMVector3Normalize(XMVectorSetY(m_pGuideTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK), 0));
+	tSpearWaveDesc.fStartPos.y += 1.8f;
+	tSpearWaveDesc.iDir = 3;
 
-		CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
-		_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
+	for (_uint i = 0; i < InstanceCount; i++)
+	{
+		{
+			ITVED tDesc;
 
-		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f) + BossPos.x, BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 8.5f) + BossPos.z));
-		//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
-		m_vecInstancedTransform.push_back(pTransform);
+			tDesc.bIsDead = false;
+			tDesc.bLimLightIsUp = (rand() % 2)?true:false;
+			tDesc.vLimLight = _float4(LimLightColor, 0);
+			tDesc.vLimLight.w = pUtil->RandomFloat(0, 1);
+			tDesc.vEmissive = _float4(1, 0.5f, 1, 0);
+			tDesc.fPassedTime = 0;
 
+			tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
+
+			tDesc.pTransform->Set_MoveSpeed(1.5f);
+
+			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
+			_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
+
+			tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f) + BossPos.x, BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 8.5f) + BossPos.z));
+			//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
+			
+			
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+			
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+			
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead),	TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc));
+			tDesc.pSpearWaveEffect = (CMahabalasura_SpearWave*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(tDesc.pSpearWaveEffect, E_FAIL);
+
+			m_vecInstancedTransform.push_back(tDesc);
+		}
 		//Attack충돌체
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
@@ -372,7 +671,7 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 
 	CModelInstance::MODELINSTDESC tModelIntDsec;
 	tModelIntDsec.m_pTargetModel = m_pModel;
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_16), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_64), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
 
 
 	//CTransform::TRANSFORMDESC tDesc = {};
@@ -410,6 +709,8 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			break;
 		case 1:
 		{
+			CGameInstance* pInstance = g_pGameInstance;
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.203644859)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
@@ -418,11 +719,46 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iEffectAdjustIndex == 0 && PlayRate > 0.2f)
 			{
+
+				_Vector PlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+
 				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
 				{
-					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
-						m_vecInstancedTransform[i]);
+					if(m_vecInstancedTransform[i].bIsDead) continue;
+
+					m_pGuideTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS));
+					m_pGuideTransform->LookAt(PlayerPos);
+
+
+
+					m_vecNonInstMeshDesc[0].vPosition = m_pGuideTransform->Get_MatrixState(CTransform::STATE_POS)
+						+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_UP) * 1.0f
+						+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK) * 10.2f;
+					-m_pGuideTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f;
+
+					m_vecNonInstMeshDesc[0].vLookDir = XMVector3Normalize((m_pGuideTransform->Get_MatrixState(CTransform::STATE_POS)
+						+m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK)
+						+m_pGuideTransform->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+						+m_pGuideTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+						- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+					m_vecInstancedTransform[i].vecEffect[0]->ReInitialize(m_vecNonInstMeshDesc[0].vPosition, m_vecNonInstMeshDesc[0].vLookDir);
+
+
+
+					m_vecNonInstMeshDesc[0].vLookDir =
+						XMVector3Normalize((m_pGuideTransform->Get_MatrixState(CTransform::STATE_POS)
+							+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK)
+							+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_UP) * 2.5f
+							- m_pGuideTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 1.25f)
+							- m_vecNonInstMeshDesc[0].vPosition.XMVector());
+
+					m_vecInstancedTransform[i].vecEffect[1]->ReInitialize(m_vecNonInstMeshDesc[0].vPosition, m_vecNonInstMeshDesc[0].vLookDir);
+
+
+
 				}
+
 				m_iEffectAdjustIndex++;
 			}
 
@@ -437,10 +773,32 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsAttack = true;
 
+				_Vector PlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+
 				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
 				{
-					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
-						m_vecInstancedTransform[i]);
+					if (m_vecInstancedTransform[i].bIsDead) continue;
+
+					m_pGuideTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS));
+					m_pGuideTransform->LookAt(PlayerPos);
+
+					m_vecNonInstMeshDesc[1].vPosition = m_pGuideTransform->Get_MatrixState(CTransform::STATE_POS) +
+						m_pGuideTransform->Get_MatrixState(CTransform::STATE_UP) * 3.5f
+						+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK) * 4.5f;
+					m_vecNonInstMeshDesc[1].vLookDir = -m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK);
+
+
+					m_vecInstancedTransform[i].vecEffect[2]->ReInitialize(m_vecNonInstMeshDesc[1].vPosition, m_vecNonInstMeshDesc[1].vLookDir);
+
+
+
+					m_vecNonInstMeshDesc[2].vPosition = m_pGuideTransform->Get_MatrixState(CTransform::STATE_POS) +
+						m_pGuideTransform->Get_MatrixState(CTransform::STATE_UP) * 1.f
+						+ m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK) * 4.5f;
+					m_vecNonInstMeshDesc[2].vLookDir = -m_pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK);
+
+					m_vecInstancedTransform[i].vecEffect[3]->ReInitialize(m_vecNonInstMeshDesc[2].vPosition, m_vecNonInstMeshDesc[2].vLookDir);
+
 				}
 
 				++m_iAdjMovedIndex;
@@ -454,10 +812,22 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Trishul_Swing_03.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsAttack = true;
+
+				_Vector PlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+
 				for (_uint i = 0; i < m_vecInstancedTransform.size(); ++i)
 				{
-					m_pBossObj->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_1,
-						m_vecInstancedTransform[i]);
+					if (m_vecInstancedTransform[i].bIsDead) continue;
+
+					m_pGuideTransform->Set_MatrixState(CTransform::STATE_POS, m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS));
+					m_pGuideTransform->LookAt(PlayerPos);
+
+
+					 
+					_float3 vPosition = m_pGuideTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+					_float3 vLookDir = XMVector3Normalize(XMVectorSetY(m_pGuideTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK), 0));
+					vPosition.y += 1.8f;
+					FAILED_CHECK(m_vecInstancedTransform[i].pSpearWaveEffect->ReInitialize(vPosition, vLookDir));
 				}
 
 				++m_iAdjMovedIndex;
@@ -521,6 +891,8 @@ void CCopyMahabalasura::Free()
 {
 	__super::Free();
 
+
+
 	//Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
@@ -528,8 +900,10 @@ void CCopyMahabalasura::Free()
 	Safe_Release(m_pModelInstance);
 	Safe_Release(m_pAttackCollider);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pGuideTransform);
+	
 
 	for (auto& pTransform : m_vecInstancedTransform)
-		Safe_Release(pTransform);
+		Safe_Release(pTransform.pTransform);
 	m_vecInstancedTransform.clear();
 }

@@ -2,34 +2,33 @@
 
 #include "MonsterWeapon.h"
 
-#define AtkArmTotalCount 8
 
 BEGIN(Client)
 
-class CMahabalasura_AttackArms final : public CMonsterWeapon
+class CMahabalasura_AttackSpear final : public CMonsterWeapon
 {
 public:
-	typedef struct tagAttackArmDesc
+	typedef struct MBSAtkSprDesc
 	{
-		_float fAtkArmLength = 5.f;
-		_float3 vRotAxis = _float3(1, 0, 0);
-	}ATADESC;
+		_float3 vPosition;
+		_float  fTotalTime;
 
+		_uint iKinds = 0;
+	}MBSASD;
 
-public:
 	typedef struct TransformNTimeNDead
 	{
 		CTransform*		pTransform = nullptr;
 		_float			fPassedTime = 0;
 		_bool			bIsDead = false;
-		_float3			vSubTarget = _float3(0);
+
 	}TTD;
 
 
 private:
-	CMahabalasura_AttackArms(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	CMahabalasura_AttackArms(const CMahabalasura_AttackArms& rhs);
-	virtual ~CMahabalasura_AttackArms() = default;
+	CMahabalasura_AttackSpear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	CMahabalasura_AttackSpear(const CMahabalasura_AttackSpear& rhs);
+	virtual ~CMahabalasura_AttackSpear() = default;
 
 
 public:
@@ -55,31 +54,21 @@ private:
 
 	CModelInstance*		m_pModelInstance = nullptr;
 	vector<CTransform*>		m_vecForRenderTransform;
-	vector<_float4>		m_vecForLimLight;
-	vector<_float4>		m_vecForEmissive;
-
 	vector<TTD>				m_vecInstancedTransform;
+	vector<_float4>			m_vecLimLight;
+	vector<_float4>			m_vecEmissive;
 
-	ATADESC				m_tDesc;
-
-	//_float				m_fProgressTime = 0;
-	_float				m_fTotalTime = 1.f;
-	_float3				m_PlayerPos;
-	_float3				m_DestPos[AtkArmTotalCount];
-	_float3				m_StartPos[AtkArmTotalCount];
-	_float4x4			m_BossMatrix;
-
-	_int				m_iCount = 0;
-
-	_int				m_iSoundCount = 0;
+	_float				m_fPassedTime = 0.f;
 
 
+
+	MBSASD				m_tDesc;
 private:
 	HRESULT		SetUp_Components();
 	HRESULT		Adjust_AnimMovedTransform(_double fDeltatime);
 
 public:
-	static CMahabalasura_AttackArms* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMahabalasura_AttackSpear* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

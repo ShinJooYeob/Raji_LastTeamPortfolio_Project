@@ -39,28 +39,38 @@ HRESULT CMahabalasura_SpearWave::Initialize_Clone(void * pArg)
 
 
 
+	if (m_tDesc.iDir != 3)
+	{
 
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-	//	0
-	m_tTextureParticleDesc = pUtil->Get_TextureParticleDesc(L"SpearWave_SmallParticle");
-	m_tTextureParticleDesc.FollowingTarget = m_pTransformCom;
-	m_tTextureParticleDesc.iFollowingDir = FollowingDir_Look;
-	m_tTextureParticleDesc.TotalParticleTime = m_fMaxTime_Duration - 0.5f;
+		//	0
+		m_tTextureParticleDesc = pUtil->Get_TextureParticleDesc(L"SpearWave_SmallParticle");
+		m_tTextureParticleDesc.FollowingTarget = m_pTransformCom;
+		m_tTextureParticleDesc.iFollowingDir = FollowingDir_Look;
+		m_tTextureParticleDesc.TotalParticleTime = m_fMaxTime_Duration - 0.5f;
 
-	pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
 
 
-	m_tTextureParticleDesc.ParticleStartRandomPosMax = _float3(2.f, 0.1f, 2.0f);
-	m_tTextureParticleDesc.ParticleStartRandomPosMin = _float3(-2.f, -0.1f, -2.0f);
-	
+		m_tTextureParticleDesc.ParticleStartRandomPosMax = _float3(2.f, 0.1f, 2.0f);
+		m_tTextureParticleDesc.ParticleStartRandomPosMin = _float3(-2.f, -0.1f, -2.0f);
 
-	pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
 
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_tTextureParticleDesc);
+
+	}
+	else
+	{
+		m_fCurTime_Duration = 999999999999999999999999999.f;
+	}
 
 	m_vRight = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), 0));
-	if(m_tDesc.iDir)
+
+	if(m_tDesc.iDir != 3 && m_tDesc.iDir)
 		m_pTransformCom->Set_MoveSpeed(m_pTransformCom->Get_MoveSpeed() * 1.1f);
+
+
 	return S_OK;
 }
 
@@ -68,13 +78,24 @@ _int CMahabalasura_SpearWave::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
+	{
+		if (m_tDesc.iDir == 3) return 0;
+		else
+		{
+			Set_IsDead();
+			return 0;
+		}
+	}
+
+
 	Update_Colliders();
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 	m_fDirTurningTime_Duration += (_float)fDeltaTime;
 
-	if (m_tDesc.iDir )
+	if (m_tDesc.iDir != 3 && m_tDesc.iDir )
 	{
 		if (m_fDirTurningTime_Duration < 0.5f)
 		{
@@ -120,16 +141,24 @@ _int CMahabalasura_SpearWave::Update(_double fDeltaTime)
 	}
 
 
-	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
-	{
-		Set_IsDead();
-	}
+
 	return _int();
 }
 
 _int CMahabalasura_SpearWave::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
+
+	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
+	{
+		if (m_tDesc.iDir == 3) return 0;
+		else
+		{
+			Set_IsDead();
+			return 0;
+		}
+	}
+
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
@@ -139,6 +168,16 @@ _int CMahabalasura_SpearWave::LateUpdate(_double fDeltaTimer)
 
 _int CMahabalasura_SpearWave::Render()
 {
+	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
+	{
+		if (m_tDesc.iDir == 3) return 0;
+		else
+		{
+			Set_IsDead();
+			return 0;
+		}
+	}
+
 	if (__super::Render() < 0)		return -1;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
@@ -218,6 +257,27 @@ void CMahabalasura_SpearWave::CollisionTriger(CCollider * pMyCollider, _uint iMy
 		pConflictedCollider->Set_Conflicted(0.5f);
 
 	}
+}
+
+HRESULT CMahabalasura_SpearWave::ReInitialize(_float3 vPosition, _float3 vLookDir)
+{
+
+	m_tDesc.fStartPos = vPosition;
+
+	m_tDesc.fLookDir = vLookDir;
+
+	m_pTransformCom->LookDir_ver2(m_tDesc.fLookDir.XMVector());
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_tDesc.fStartPos);
+
+
+	m_vRight = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), 0));
+
+
+	m_fCurTime_Duration = 0.f;
+
+
+	return S_OK;
 }
 
 void CMahabalasura_SpearWave::Update_Colliders()

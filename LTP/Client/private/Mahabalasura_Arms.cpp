@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "..\public\Mahabalasura_Arms.h"
+#include "Mahabalasura_AttackArms.h"
 
+
+_uint CMahabalasura_Arms::iCount = 0;
+_float3 CMahabalasura_Arms::vRotAxis = _float3(1,0,0);
 
 CMahabalasura_Arms::CMahabalasura_Arms(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonsterWeapon(pDevice, pDeviceContext)
@@ -168,7 +172,15 @@ HRESULT CMahabalasura_Arms::Adjust_AnimMovedTransform(_double fDeltatime)
 				XMStoreFloat3(&TempPos, m_eAttachedDesc.Get_AttachedBoneWorldPosition());
 
 				//for(_int i=0; i< 20; ++i)
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TEXT("Layer_AttackArms"), TAG_OP(Prototype_Object_Boss_MahabalasuraAttackArms), &TempPos));
+
+				CMahabalasura_AttackArms::ATADESC tDesc;
+				tDesc.fAtkArmLength = 2.427f + (_float(iCount) * 0.9708f);
+				tDesc.vRotAxis = vRotAxis;
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_AttackArms"),
+					TAG_OP(Prototype_Object_Boss_MahabalasuraAttackArms), &tDesc));
+
+				iCount++;
+				if (iCount > 7) iCount = 0;
 
 				++m_iAdjMovedIndex;
 			}

@@ -228,13 +228,13 @@ _int CMahabalasura_Weapon::LateUpdate(_double fDeltaTime)
 		Update_AttachMatrix();
 		m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
-		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	}
 	else if (m_WeaponDesc.m_CloneType == CMahabalasura_Weapon::CLONE_SKILL)
 	{
-		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+		FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	}

@@ -22,7 +22,7 @@ namespace Engine
 		XMFLOAT4			vLook;
 		XMFLOAT4			vTranslation;
 
-		XMFLOAT4			vUV_WHSize = XMFLOAT4(0,0,0,0);
+		XMFLOAT4			vUV_WHSize;
 		XMFLOAT4			vColor;
 		XMFLOAT4			vTimer;
 	}VTXINSTMAT;

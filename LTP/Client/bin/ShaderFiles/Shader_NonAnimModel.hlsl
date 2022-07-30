@@ -1062,4 +1062,15 @@ technique11      DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_Noise_AppearNDisApper();
 	}
+	pass Noise_AppearNDisApper_CW //20
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_Distortion();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Noise_AppearNDisApper();
+	}
+
 }

@@ -382,7 +382,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_MahabalasuraAttackArms,
 	Prototype_Object_Boss_MahabalasuraWeapon,
 	Prototype_Object_Boss_MahabalasuraCopy,
-	Prototype_Object_Boss_MahabalasuraSpearWave,
+		Prototype_Object_Boss_MahabalasuraSpearWave,
+		Prototype_Object_Boss_MahabalasuraATKSPR,
 	Prototype_Object_Effect_MagicCircle,
 	Prototype_Object_Map_Demon_Tree,
 	Prototype_Object_Map_TreeMesh,
@@ -653,6 +654,11 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Boss_MahabalasuraSpearWave:
 		return TEXT("Prototype_Object_Boss_MahabalasuraSpearWave");
 		break;
+	case Prototype_Object_Boss_MahabalasuraATKSPR:
+		return TEXT("Prototype_Object_Boss_MahabalasuraATKSPR");
+		break;
+
+		
 		
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
@@ -806,6 +812,8 @@ enum LAYERID
 	Layer_MonsterBullet1,
 	Layer_MonsterBullet2,
 	Layer_Particle,
+	Layer_ParticleNoDead,
+
 
 	Layer_Terrain,
 	Layer_WireTerrain,
@@ -910,6 +918,11 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_Particle:
 		return TEXT("Layer_Particle");
 		break;
+	case Layer_ParticleNoDead:
+		return TEXT("Layer_ParticleNoDead");
+		break;
+
+		
 	case Layer_ClockBomb:
 		return TEXT("Layer_ClockBomb");
 		break;

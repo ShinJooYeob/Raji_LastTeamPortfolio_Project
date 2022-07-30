@@ -26,28 +26,38 @@ HRESULT CMahabalasura_AttackArms::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
+	memcpy(&m_tDesc, pArg, sizeof(ATADESC));
+
 	FAILED_CHECK(SetUp_Components());
 
-	_float3 BossPos = ((CTransform*)g_pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss), TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::STATE_POS);
-	m_BossMatrix = ((CTransform*)g_pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss), TAG_COM(Com_Transform)))->Get_WorldFloat4x4();
+	CTransform* BossTransform = ((CTransform*)g_pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss), TAG_COM(Com_Transform)));
+	_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
+	m_BossMatrix = BossTransform->Get_WorldFloat4x4();
 	m_pPlayerTrs = (CTransform*)g_pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"), TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pPlayerTrs, E_FAIL);
 	m_PlayerPos = (m_pPlayerTrs)->Get_MatrixState(CTransform::STATE_POS);
-	m_BezierStartPos = BossPos;
 
 	CUtilityMgr* pUtil =  GetSingle(CUtilityMgr);
 	CGameInstance* pIs = g_pGameInstance;
 
+	 CTransform* pGuideTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	 pGuideTransform->Set_TurnSpeed(1);
 
 
 	for (_int i = 0; i < AtkArmTotalCount; ++i)
 	{
 		TTD tDesc;
 
-		_float Angle = (_float)i*(360.f / (_float)AtkArmTotalCount);
-		_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
-		_float3 Pos = XMLoadFloat3(&BossPos) + (Mat.r[2] * 5.f);
-		Pos.y += 5.f;
+		_float Angle = (_float)i*(180.f / ((_float)AtkArmTotalCount));
+
+		pGuideTransform->LookDir_ver2(m_tDesc.vRotAxis.XMVector());
+		pGuideTransform->Turn_CW(pGuideTransform->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(Angle));
+
+		//_Matrix Mat = XMMatrixRotationAxis(m_tDesc.vRotAxis.XMVector(), XMConvertToRadians(Angle));
+
+		_float Value = (1.f - (fabs(_float(i) - (AtkArmTotalCount * 0.5f)) / (AtkArmTotalCount * 0.5f))) * 1.618f + 1.f;
+		_float3 Pos = BossPos.XMVector() + (pGuideTransform->Get_MatrixState(CTransform::STATE_RIGHT) * m_tDesc.fAtkArmLength * Value);
+		Pos.y += 0.809f;
 
 		tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 		NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
@@ -71,9 +81,10 @@ HRESULT CMahabalasura_AttackArms::Initialize_Clone(void * pArg)
 		m_pCollider->Set_ParantBuffer();
 	}
 
-
+	Safe_Release(pGuideTransform);
 	//Set_LimLight_N_Emissive(_float4(255.f, 0.f, 20.f, 255.f), _float4(0));
 
+	m_fTotalTime = 0.61804697156f;
 	return S_OK;
 }
 
@@ -81,19 +92,10 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	
-	//m_pTransformCom->BezierCurve(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), XMLoadFloat3(&m_PlayerPos), XMLoadFloat3(&CenterPoint), m_fProgressTime, 1.0, fDeltaTime);
-
-	//m_fProgressTime += (_float)fDeltaTime;
-	//if (m_pTransformCom->MovetoBezierCurve(m_fProgressTime, XMLoadFloat3(&m_BezierStartPos), XMLoadFloat3(&m_CenterPoint), XMLoadFloat3(&m_PlayerPos)))
-	//{
-	//	//이펙트 생성 할 곳
-
-	//	Set_IsDead();
-	//}
 
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
 
 
 	_int iCount = 0;
@@ -101,14 +103,13 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 	{
 		m_vecInstancedTransform[i].fPassedTime += (_float)fDeltaTime;
 		_float Length = m_StartPos[i].Get_Distance(m_DestPos[i].XMVector());
-		_float Rate = max((1.0f - (10.0f - Length) * 0.1f)*0.5f, 0);
+		_float Rate = (1.0f - max((10.0f - Length), 0) * 0.1f) * 1.618f;
 
 
 		
 		
 		if (m_vecInstancedTransform[i].fPassedTime <= 0)
 		{
-
 			continue;
 		}
 		else
@@ -120,8 +121,16 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 					++m_iSoundCount;
 					g_pGameInstance->Play3D_Sound(L"JJB_MrM_Teleport.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				}
-				m_DestPos[i] = m_pPlayerTrs->Get_MatrixState_Float3(CTransform::STATE_POS);
-				m_vecInstancedTransform[i].pTransform->LookAt(m_DestPos[i].XMVector());
+
+				m_DestPos[i] = m_pPlayerTrs->Get_MatrixState(CTransform::STATE_POS)
+					+ XMVectorSetY(pUtil->RandomFloat3(-20.f, 20.f).XMVector(), 0);
+
+				m_vecInstancedTransform[i].pTransform->LookAt(m_pPlayerTrs->Get_MatrixState(CTransform::STATE_POS));
+
+				m_vecInstancedTransform[i].vSubTarget = XMVectorSetY(m_vecInstancedTransform[i].pTransform->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) 
+					* pUtil->RandomFloat(-Rate * 5.f, Rate * 5.f), 0);
+				m_vecInstancedTransform[i].vSubTarget.y = pUtil->RandomFloat(0, 2.427f);
+
 				m_vecInstancedTransform[i].pTransform->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(20.f));
 
 			}
@@ -143,8 +152,10 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 
 		if (m_vecInstancedTransform[i].fPassedTime < 1)
 		{
-			m_DestPos[i] = m_pPlayerTrs->Get_MatrixState_Float3(CTransform::STATE_POS);
-			m_vecInstancedTransform[i].pTransform->LookAt(m_DestPos[i].XMVector());
+			m_DestPos[i] = m_pPlayerTrs->Get_MatrixState(CTransform::STATE_POS)
+				+ XMVectorSetY(pUtil->RandomFloat3(-Rate * 3.f, Rate * 3.f).XMVector(), 0);
+
+			m_vecInstancedTransform[i].pTransform->LookAt(m_pPlayerTrs->Get_MatrixState(CTransform::STATE_POS));
 			m_vecInstancedTransform[i].pTransform->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(20.f));
 
 		}
@@ -153,33 +164,42 @@ _int CMahabalasura_AttackArms::Update(_double fDeltaTime)
 
 			m_bIsAttack = true;
 
-			Pos.x = g_pGameInstance->Easing(TYPE_Linear, m_StartPos[i].x, m_DestPos[i].x, m_vecInstancedTransform[i].fPassedTime -1 , m_fTotalTime * Rate);
 
 
 			if (m_vecInstancedTransform[i].fPassedTime - 1 < m_fTotalTime * 0.4 *Rate)
 			{
-				Pos.y = g_pGameInstance->Easing(TYPE_QuadOut, m_StartPos[i].y, m_StartPos[i].Get_Distance(m_DestPos[i].XMVector()) * 0.3875f,
-					m_vecInstancedTransform[i].fPassedTime - 1, m_fTotalTime *0.4f *Rate);
-			}
+
+				Pos = g_pGameInstance->Easing_Vector(TYPE_SinOut, m_StartPos[i],
+					_float3(m_StartPos[i].x + m_vecInstancedTransform[i].vSubTarget.x , m_StartPos[i].y + m_StartPos[i].Get_Distance(m_DestPos[i].XMVector()) * 0.101125f * m_vecInstancedTransform[i].vSubTarget.y,
+						m_StartPos[i].z + m_vecInstancedTransform[i].vSubTarget.z), m_vecInstancedTransform[i].fPassedTime - 1, m_fTotalTime *0.4f *Rate);
+
+			}	
 			else
 			{
-				Pos.y = g_pGameInstance->Easing(TYPE_SinIn, m_StartPos[i].Get_Distance(m_DestPos[i].XMVector())*0.3875f, m_DestPos[i].y,
+				Pos = g_pGameInstance->Easing_Vector(TYPE_SinIn, _float3(m_StartPos[i].x + m_vecInstancedTransform[i].vSubTarget.x, m_StartPos[i].y + m_StartPos[i].Get_Distance(m_DestPos[i].XMVector()) * 0.101125f * m_vecInstancedTransform[i].vSubTarget.y,
+						m_StartPos[i].z + m_vecInstancedTransform[i].vSubTarget.z), m_DestPos[i],
 					m_vecInstancedTransform[i].fPassedTime - 1 - (m_fTotalTime *0.4f)*Rate, m_fTotalTime *0.6f * Rate);
+
 			}
 
-			Pos.z = g_pGameInstance->Easing(TYPE_Linear, m_StartPos[i].z, m_DestPos[i].z, m_vecInstancedTransform[i].fPassedTime - 1, m_fTotalTime*Rate);
 
+			_Vector OldPos = m_vecInstancedTransform[i].pTransform->Get_MatrixState(CTransform::STATE_POS);
 			m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
+
+			
+			m_vecInstancedTransform[i].pTransform->LookDir_ver2(
+				(m_vecInstancedTransform[i].pTransform->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 0.9f + XMVector3Normalize(Pos.XMVector() - OldPos) * 0.1f));
 			//m_vecInstancedTransform[i].pTransform->LookAt(m_DestPos[i].XMVector());
 			//m_vecInstancedTransform[i].pTransform->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(20.f));
 		}
 		iCount++;
 	}
 
-	
-	//m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+
+
+
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple)));
-	//FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
+
 
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
 
@@ -219,25 +239,47 @@ _int CMahabalasura_AttackArms::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
+
 	m_vecForRenderTransform.clear();
+	m_vecForLimLight.clear();
+	m_vecForEmissive.clear();
+
 	m_vecForRenderTransform.reserve(m_vecInstancedTransform.size());
+	m_vecForLimLight.reserve(m_vecInstancedTransform.size());
+	m_vecForEmissive.reserve(m_vecInstancedTransform.size());
 
 	_uint iDeadCount = 0;
 
 	for (auto& tDesc : m_vecInstancedTransform)
 	{
-		if (tDesc.fPassedTime <= 0)continue;
 
+		if (tDesc.fPassedTime <= 0)
+		{
+			continue;
+		}
 		if (tDesc.bIsDead)
 		{
 			iDeadCount++;
 			continue;
 		}
+
 		m_vecForRenderTransform.push_back(tDesc.pTransform);
 
+
+		_float Value = (tDesc.fPassedTime - 1) / (3.f);
+
+		Value = max(min((Value), 1.f), 0);
+
+		m_vecForLimLight.push_back(_float4(0.3f *Value, 0.2f * Value, 0.8f *Value,  Value /** 0.003f*/ ));
+		m_vecForEmissive.push_back(_float4(1.f, 0.5f, 1.f, 0));
 	}
 
-	if (iDeadCount >= AtkArmTotalCount)Set_IsDead();
+	if (iDeadCount >= AtkArmTotalCount)
+	{
+		Set_IsDead();
+		return 0;
+	}
+
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_ANIMINSTANCE, this, &m_vecForRenderTransform, m_pModelInstance,m_pShaderCom,m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
@@ -257,7 +299,7 @@ _int CMahabalasura_AttackArms::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecForRenderTransform));
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecForRenderTransform,0,&m_vecForLimLight,&m_vecForEmissive));
 
 	return _int();
 }

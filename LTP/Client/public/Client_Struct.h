@@ -169,6 +169,9 @@ typedef struct tagNonInstanceMeshEffect
 
 	_float				fAlphaTestValue = 0.1f;
 	_uint				m_CheckerBuffer = 0;
+
+
+	_bool				m_bNotDead = false;
 }NONINSTNESHEFTDESC;
 
 

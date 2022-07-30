@@ -4706,6 +4706,107 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
 	
+
+
+	if (type == MESHEFFECT_BOSS_Mahabalasura_PLANE1)
+	{
+
+	}
+
+	if (type == MESHEFFECT_BOSS_Mahabalasura_PLANE2)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
+
+		MeshDesc.fMaxTime_Duration = 5.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 36;
+		MeshDesc.MaskTextureIndex = 21;
+		MeshDesc.NoiseTextureIndex = 357;
+
+		MeshDesc.noisingdir = _float2(0.0f, 1.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 1.0f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+
+		MeshDesc.vLimLight = _float4(0.02f, 0.16f, 0.90f, 1.f);
+		MeshDesc.vEmissive = _float4(0.7f, 0.9f, 0.5f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0.15f, -0.0f);
+		MeshDesc.vSize = _float3(70.0f*0.5f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 40.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FollowTarget = Transfom;
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+
+	if (type == MESHEFFECT_BOSS_Mahabalasura_PLANE3)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_MS_ST3_Portal_00;
+
+		MeshDesc.fMaxTime_Duration = 10.0f;
+
+		MeshDesc.iDiffuseTextureIndex = 236;
+		MeshDesc.iDiffuseTextureIndex = 33;
+		MeshDesc.MaskTextureIndex = 31;
+		MeshDesc.NoiseTextureIndex = 325;
+
+		MeshDesc.noisingdir = _float2(0.0f, 1.0f).Get_Nomalize();
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAppearTime = 1.f;
+		MeshDesc.fDistortionNoisingPushPower = 5.0f;
+
+		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.82f, 1.f);
+		MeshDesc.vEmissive = _float4(0.03f, 0.06f, 0.82f, 1.f);
+
+
+		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
+		MeshDesc.vPosition = _float3(-0.0f, 0.15f, -0.0f);
+		MeshDesc.vSize = _float3(10.5f*0.5f);
+
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 15.0f;
+
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
+		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
+
+		MeshDesc.vLookDir = _float3(1, 0, 0);
+
+
+		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+									//	MeshDesc.m_iPassIndex = 18; // DisCardB
+									//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.FixFlag_Move = true;
+		AddDesc.AccRotSpeed = -10.0f;
+		AddDesc.FollowTarget = Transfom;
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+
 #pragma endregion BOSS_Mahabalasura
 
 

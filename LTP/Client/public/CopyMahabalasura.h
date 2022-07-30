@@ -6,6 +6,22 @@ BEGIN(Client)
 
 class CCopyMahabalasura final : public CBoss
 {
+public:
+	typedef struct tagInstanceTransformVectorElements
+	{
+		CTransform*		pTransform = nullptr;
+		_float			fPassedTime = 0;
+		_bool			bIsDead = false;
+
+		_bool			bLimLightIsUp = false;
+
+		_float4			vLimLight = _float4(0, 0, 0, 0);
+		_float4			vEmissive = _float4(0, 0, 0, 0);
+
+		vector<CNonInstanceMeshEffect*>  vecEffect;
+		class CMahabalasura_SpearWave*		 pSpearWaveEffect;
+	}ITVED;
+
 
 private:
 	CCopyMahabalasura(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -27,6 +43,10 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -36,10 +56,14 @@ private:
 	CCollider*			m_pCollider = nullptr;
 	CCollider*			m_pAttackCollider = nullptr;
 
+	CTransform*			m_pGuideTransform = nullptr;
 
 	CModelInstance*		m_pModelInstance = nullptr;
-	vector<CTransform*> m_vecInstancedTransform;
+
+	vector<ITVED>		m_vecInstancedTransform;
 	vector<CTransform*> m_vecRenderInstanceTransform;
+	vector<_float4>		m_vecRenderInstanceLimLight;
+	vector<_float4>		m_vecRenderInstanceEmissive;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -59,6 +83,11 @@ private:
 
 	//Sound
 	_bool				m_bCopyAttackNarration = false;
+
+	class CNonInstanceMeshEffect*									m_EffectFloor = nullptr;
+	class CNonInstanceMeshEffect*									m_EffectWall = nullptr;
+
+	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
 private:
 	HRESULT SetUp_Components();

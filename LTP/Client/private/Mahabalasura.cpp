@@ -5,6 +5,7 @@
 #include "Mahabalasura_Arms.h"
 #include "CopyMahabalasura.h"
 #include "Mahabalasura_SpearWave.h"
+#include "Mahabalasura_AttackSpear.h"
 #include "HpUI.h"
 
 #include "Player.h"
@@ -287,6 +288,19 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		break;
 		case SKILL_HAND:
 		{
+
+			m_vecNonInstMeshDesc[4].fMaxTime_Duration = m_vecNonInstMeshDesc[5].fMaxTime_Duration = 12.5f;
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_PLANE2, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_PLANE3, m_pTransformCom);
+
+			}
+
 			m_bIsTeleport = true;
 			m_bIsTeleportSound = false;
 			_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -627,6 +641,16 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 			tNIMEDesc.vSize = _float3(0.45f, 0.45f, -0.45f);
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
+			tNIMEDesc.m_iPassIndex = 20;
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+			tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f);
+
+
+
+
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
 		//05
@@ -656,13 +680,17 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 			tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
+
+			tNIMEDesc.vPosition = _float3(60.f, 34.27f, 323.380f);
+			tNIMEDesc.NoiseTextureIndex = 381;
+
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
 		//6
 		{
 			NONINSTNESHEFTDESC tNIMEDesc;
 			tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_01;
-			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fMaxTime_Duration = 1.f;
 
 			tNIMEDesc.fAppearTime = 0.25f;
 
@@ -681,6 +709,85 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 			tNIMEDesc.vSize = _float3(0.1f, 0.1f, -0.2f);
 
 			tNIMEDesc.fAlphaTestValue = 1.f;
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+		//7
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Beacon_Shape;
+			tNIMEDesc.fMaxTime_Duration = 7.25f;
+
+
+			tNIMEDesc.fAppearTime = 0.75f;
+
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 275;
+			tNIMEDesc.m_iPassIndex = 17;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.03f);
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+		//8
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Spark_Mesh2;
+
+			tNIMEDesc.fMaxTime_Duration = 1.f;
+			tNIMEDesc.fAppearTime = 0.5f;
+
+
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.NoiseTextureIndex = 350;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 275;
+			tNIMEDesc.m_iPassIndex = 17;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.0070f, 0.0100f, 0.0070f);
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+
+		}
+		//9
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+			tNIMEDesc.eMeshType = Prototype_Mesh_JY_Tornado;
+			tNIMEDesc.fMaxTime_Duration = 2.9583333f;
+
+			tNIMEDesc.fAppearTime = 0.75f;
+
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.NoiseTextureIndex = 374;
+			tNIMEDesc.MaskTextureIndex = 61;
+			tNIMEDesc.iDiffuseTextureIndex = 305;
+			tNIMEDesc.m_iPassIndex = 17;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(1, 0, 0, 1);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float3(1.0, 0, 0);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 360.f;
+			tNIMEDesc.vSize = _float3(1.5f, 0.2f, 1.5f);
+
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
 
@@ -1147,9 +1254,17 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			Set_LimLight_N_Emissive(_float4(0.0f, 0.00f, 1.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1f)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0f)
 			{
-				
+
+				_Vector RotAxis = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), 0)
+					- XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), 0));
+
+				if (m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).z > m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).z)
+					RotAxis *= -1.f;
+				//RotAxis = _float3(1, 0, 0).XMVector();
+				CMahabalasura_Arms::Reset_StaticCountNRotAxis(RotAxis);
+
 				m_iAdjMovedIndex++;
 			}
 
@@ -1157,8 +1272,8 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_EffectAdjust == 0 && PlayRate > 0.1f)
 			{
 				mPatternCount2++;
-				if (mPatternCount2 == 1)
-					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLHAND_0, m_pTextureParticleTransform);
+				//if (mPatternCount2 == 1)
+				//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLHAND_0, m_pTextureParticleTransform);
 
 				m_EffectAdjust++;
 			}
@@ -1177,7 +1292,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0, m_pTextureParticleTransform);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0, m_pTextureParticleTransform);
 
 				++m_iAdjMovedIndex;
 			}
@@ -1207,43 +1322,87 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		
 		case 9:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1692307f)
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 3, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(1.f, 0.2f, 0.2f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.f)
 			{
+				m_vecNonInstMeshDesc[4].fMaxTime_Duration = m_vecNonInstMeshDesc[5].fMaxTime_Duration = 4.f;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+
+
+				m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				m_vecNonInstMeshDesc[9].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
+
+
+				m_iAdjMovedIndex++;
+			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.1692307f)
+			{
+
+
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Primary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 			
-				CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
-				InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
-				InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				InstanceDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(100.f, 200.f, 150.f, 0.f), XMVectorSet(0, 0.f, 180.f, 0.f), XMVectorSet(-0.950 * 100.f, -0.160 * 200.f, -1.550 * 150.f, 1.f));
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &InstanceDesc));
-				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
-				Spear->Set_InstanceWeapon(0);
+
+				CMahabalasura_AttackSpear::MBSASD tDesc;
+				tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				tDesc.fTotalTime = 5.f;
+				tDesc.iKinds = 0;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
+
+				//CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
+				//InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
+				//InstanceDesc.Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				//InstanceDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_metacarpal_r", XMVectorSet(100.f, 200.f, 150.f, 0.f), XMVectorSet(0, 0.f, 180.f, 0.f), XMVectorSet(-0.950 * 100.f, -0.160 * 200.f, -1.550 * 150.f, 1.f));
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraWeapon), &InstanceDesc));
+				//CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+				//Spear->Set_InstanceWeapon(0);
+
+
+
+
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.246153f)
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.246153f)
 			{
-				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
-				Spear->Set_InstanceWeapon(1);
+				//CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+				//Spear->Set_InstanceWeapon(1);
 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTextureParticleTransform);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTextureParticleTransform);
 			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_0, m_pTransformCom);
 
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.353846f)
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.353846f)
 			{
-				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2, m_pTextureParticleTransform);
+				//CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
 
-				Spear->Set_InstanceWeapon(2);
+				//Spear->Set_InstanceWeapon(2);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2, m_pTextureParticleTransform);
+
+				CMahabalasura_AttackSpear::MBSASD tDesc;
+				tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				tDesc.fTotalTime = 5.f;
+				tDesc.iKinds = 1;
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
+
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.7f)
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.7f)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_1, m_pTextureParticleTransform);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_1, m_pTextureParticleTransform);
 
-				CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
-				Spear->Set_IsStab();
+				//CMahabalasura_Weapon* Spear = (CMahabalasura_Weapon*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_Spear"));
+				//Spear->Set_IsStab();
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Lightning_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				++m_iAdjMovedIndex;
@@ -1305,16 +1464,17 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				// CTransform* SpearTransform = (CTransform*)m_pSpear->Get_Component(TAG_COM(Com_Transform));
 
-				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
-				//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
-				m_vecNonInstMeshDesc[5].NoiseTextureIndex = 381;
+				m_vecNonInstMeshDesc[4].fMaxTime_Duration = m_vecNonInstMeshDesc[5].fMaxTime_Duration = 7.25f;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
 
-				m_vecNonInstMeshDesc[6].fMaxTime_Duration = 1.f;
 
-
-
+				m_vecNonInstMeshDesc[7].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+				m_vecNonInstMeshDesc[7].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
 
 				++m_iAdjMovedIndex;
 			}
@@ -1322,6 +1482,14 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (PlayRate > 0.258620689 && m_iAdjMovedIndex == 3)
 			{
 				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.15f
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f;
+				m_vecNonInstMeshDesc[8].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
 
 				++m_iAdjMovedIndex;
 			}
@@ -1366,7 +1534,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (PlayRate > 0.45402298 && m_iAdjMovedIndex == 5)
 			{
 				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-
+				m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.15f
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f;
+				m_vecNonInstMeshDesc[8].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 				++m_iAdjMovedIndex;
 			}
 
@@ -1414,7 +1587,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (PlayRate > 0.655172413 && m_iAdjMovedIndex == 7)
 			{
 				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-
+				m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.15f
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f;
+				m_vecNonInstMeshDesc[8].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 				++m_iAdjMovedIndex;
 			}
 			if (PlayRate > 0.7758620 && m_iAdjMovedIndex == 8)
@@ -1459,8 +1637,17 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate > 0.8563218390 && m_iAdjMovedIndex == 9)
 			{
-				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
+
+
+
+				//g_pGameInstance->Play3D_Sound(L"JJB_MrM_Secondary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.15f
+					+ m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f;
+				m_vecNonInstMeshDesc[8].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 				++m_iAdjMovedIndex;
 			}
 			if (PlayRate > 0.977011 && m_iAdjMovedIndex == 10)
@@ -1699,6 +1886,8 @@ void CMahabalasura::Free()
 {
 	__super::Free();
 
+
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
@@ -1707,6 +1896,11 @@ void CMahabalasura::Free()
 	Safe_Release(m_pDissolveCom);
 
 	Safe_Release(m_pSpear);
+
+	Safe_Release(m_pTextureParticleTransform);
+	Safe_Release(m_pTextureParticleTransform1);
+	Safe_Release(m_pTextureParticleTransform2);
+
 
 	for (auto& Arm : m_pArms)
 	{

@@ -22,7 +22,10 @@ public:
 
 public:
 	void		Reset_AttackTime() {m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.f);}
-
+public:
+	static void		Reset_StaticCountNRotAxis(_float3 vAxis) {iCount = 0; vRotAxis = vAxis;};
+	static				_uint iCount;
+	static				_float3 vRotAxis;
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -41,6 +44,7 @@ private:
 
 private:
 	void				Update_AttachMatrix();
+
 
 private:
 	HRESULT		SetUp_Components();

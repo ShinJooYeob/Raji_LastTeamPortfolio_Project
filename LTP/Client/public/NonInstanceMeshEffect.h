@@ -22,7 +22,8 @@ public:
 	virtual _int		Render() override;
 	virtual _int		LateRender() override;
 
-
+	HRESULT ReInitialize(_float3 vPosition, _float3 vLookDir);
+	void	Set_GonnabeDie() { m_tMeshDesc.fMaxTime_Duration = m_fCurTime_Duration + m_tMeshDesc.fAppearTime; };
 private:
 	HRESULT				SetUp_Components();
 

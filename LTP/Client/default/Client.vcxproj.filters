@@ -271,9 +271,6 @@
     <Filter Include="01.GameObject\01.Player\00. Weapons\01. Bow\00. Arrow">
       <UniqueIdentifier>{74595be7-532f-47ad-829e-f54b21ba9d6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon">
-      <UniqueIdentifier>{c6f30583-9dfd-41d6-802d-38b12161f989}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura">
       <UniqueIdentifier>{3b8caaab-a59e-4c71-b1ba-59c805410d2c}</UniqueIdentifier>
     </Filter>
@@ -420,6 +417,12 @@
     </Filter>
     <Filter Include="01.GameObject\98.TriggerObject\10. CurtainTrigger">
       <UniqueIdentifier>{d763ddbd-a2a4-4810-9b55-6d158a175646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Weapon">
+      <UniqueIdentifier>{c6f30583-9dfd-41d6-802d-38b12161f989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear">
+      <UniqueIdentifier>{c3aed585-93f3-4c1e-8a8f-a0281905f677}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -717,7 +720,7 @@
     </ClInclude>
     <ClInclude Include="..\public\TestObject_PhysX.h" />
     <ClInclude Include="..\public\Mahabalasura_Weapon.h">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Mahabalasura.h">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -923,6 +926,9 @@
     </ClInclude>
     <ClInclude Include="..\public\CurtainTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mahabalasura_AttackSpear.h">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1181,7 +1187,7 @@
     </ClCompile>
     <ClCompile Include="..\private\TestObject_PhysX.cpp" />
     <ClCompile Include="..\private\Mahabalasura_Weapon.cpp">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Mahabalasura_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -1408,6 +1414,9 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mahabalasura_AttackSpear.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
