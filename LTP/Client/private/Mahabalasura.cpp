@@ -70,21 +70,27 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 		switch (i)
 		{
 		case 0:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-10.f, 190.f, 60.f, 0.f), XMVectorSet(0.343f, 0.088f, -2.215f, 1.f));
 			break;
 		case 1:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-10.f, 180.f, 60.f, 0.f), XMVectorSet(0.501f, 0.099f, -2.149f, 1.f));
 			break;
 		case 2:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-10.f, 160.f, 60.f, 0.f), XMVectorSet(0.659f, 0.110f, -2.083f, 1.f));
 			break;
 		case 3:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-10.f, 140.f, 30.f, 0.f), XMVectorSet(0.661f, 0.001f, -1.846f, 1.f));
 			break;
 		case 4:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-20.f, 180.f, 0.f, 0.f), XMVectorSet(0.792f, -0.191f, -1.997f, 1.f));
 			break;
 		case 5:
+			//ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", _float3(1), _float3(0), XMVectorSet(0.362445f, 0.036896f, -2.13791f, 1.f));
 			ArmsDesc.Initialize_AttachedDesc(this, "upperarm_l", XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(-20.f, 180.f, 0.f, 0.f), XMVectorSet(0.792f, -0.191f, -1.697f, 1.f));
 			break;
 		}
@@ -127,7 +133,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 	}
 
-
+	_float3 test = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
 	m_pDissolveCom->Update_Dissolving(fDeltaTime);
 
@@ -193,7 +199,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		{
 			m_bIsArmAttack = false;
 			m_fAttackCoolTime = 3.f;
-			m_fSkillCoolTime = 5.f;
+			m_fSkillCoolTime = 8.f;
 			m_fArmAttackTime = 10.f;
 			m_pModel->Change_AnimIndex(0);
 		}

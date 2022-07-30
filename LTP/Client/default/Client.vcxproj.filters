@@ -424,6 +424,9 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear">
       <UniqueIdentifier>{c3aed585-93f3-4c1e-8a8f-a0281905f677}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
+      <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -930,6 +933,9 @@
     <ClInclude Include="..\public\Mahabalasura_AttackSpear.h">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Snake_Poison_Raser.h">
+      <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1417,6 +1423,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura_AttackSpear.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\Mahabalasura_AttackSpear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Snake_Poison_Raser.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

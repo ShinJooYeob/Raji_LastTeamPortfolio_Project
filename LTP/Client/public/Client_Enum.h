@@ -377,6 +377,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Boss_ChiedtianWeapon,
 	Prototype_Object_Boss_Snake,
+	Prototype_Object_Boss_Snake_Poison_Raser,
 	Prototype_Object_Boss_Mahabalasura,
 	Prototype_Object_Boss_MahabalasuraArms,
 	Prototype_Object_Boss_MahabalasuraAttackArms,
@@ -632,6 +633,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Object_Boss_Snake");
 		break;
 
+	case Prototype_Object_Boss_Snake_Poison_Raser:
+		return TEXT("Prototype_Object_Boss_Snake_Poison_Raser");
+		break;
+		
 	case Prototype_Object_Boss_Mahabalasura:
 		return TEXT("Prototype_Object_Boss_Mahabalasura");
 		break;

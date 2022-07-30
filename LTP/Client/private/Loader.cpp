@@ -32,6 +32,8 @@
 #include "CopyMahabalasura.h"
 #include "Mahabalasura_SpearWave.h"
 #include "Mahabalasura_AttackSpear.h"
+#include "Snake_Poison_Raser.h"
+
 //Static_Map
 #include "Demon_Tree.h"
 #include "TreeMesh.h"
@@ -750,10 +752,15 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_Snake), TransformMatrix);
 
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(0.f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TransformMatrix);
+
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), CChiedtuan_Weapon::Create(m_pDevice, m_pDeviceContext)));
 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Snake_Poison_Raser), CSnake_Poison_Raser::Create(m_pDevice, m_pDeviceContext)));
 	//Interact Obj
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Elevator), CElevator::Create(m_pDevice, m_pDeviceContext)));
 

@@ -41,8 +41,7 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	m_fSkillCoolTime = 5.f;
 	m_bIsHit = false;
 
-	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum,
-		TEXT("Layer_Player"));
+	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
 
 	CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
@@ -110,8 +109,15 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
+	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+	_int iRandom = rand() % 3 + 1;
+
+	wstring teampString;
+	teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
+
+	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 	return S_OK;
 }
@@ -123,6 +129,21 @@ _int CChiedtian::Update(_double fDeltaTime)
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
 	m_fJumpTime -= (_float)fDeltaTime;
+
+	m_fNarration -= (_float)fDeltaTime;
+
+	if (m_fNarration <= 0)
+	{
+		m_fNarration = 10.f;
+
+		_int iRandom = rand() % 11;
+
+		wstring teampString;
+		teampString = L"JJB_Chieftain_Naration_" + to_wstring(iRandom) + L".wav";
+
+		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+	}
 	
 	if (m_bIsFireAttack)
 		m_fFireTime -= (_float)fDeltaTime;
@@ -290,7 +311,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 	}
 	//스킬 공격
-	else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
+	/*else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
 		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 		m_bIsAttack = true;
@@ -322,7 +343,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 		if (m_iTest > 2)
 			m_iTest = 0;
-	}
+	}*/
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -355,7 +376,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	//FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
 	if (!m_bIsMainWeaponOff)
 	{
@@ -394,7 +415,7 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 			SubWeapon->LateUpdate(fDeltaTime);
 	}
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(fDeltaTime);
@@ -424,7 +445,7 @@ _int CChiedtian::Render()
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
 #ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom);
+	//m_pNavigationCom->Render(m_pTransformCom);
 #endif // _DEBUG
 	return _int();
 }
@@ -457,6 +478,8 @@ void CChiedtian::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex
 
 _float CChiedtian::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_fHP -= fDamageAmount;
+
 	return _float();
 }
 
@@ -704,6 +727,18 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 2:
 		{
 			m_pTransformCom->Move_Forward(fDeltatime);
+			
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1612903225)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				++m_iAdjMovedIndex;
+			}
+
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.5483870967)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				++m_iAdjMovedIndex;
+			}
 		}
 			break;
 

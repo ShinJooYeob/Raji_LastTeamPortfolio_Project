@@ -94,6 +94,8 @@ private:
 	_bool									m_bIsMainWeaponOff = false;
 	vector<class CChiedtuan_Weapon*>		m_pSubWeapons;
 
+	_float				m_fNarration = 10.f;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);
