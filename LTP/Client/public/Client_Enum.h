@@ -3174,8 +3174,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_UnderseaRock_Pla,
 	Prototype_Mesh_Bridge,
 
-	Prototype_Mesh_AlgaeRock_Ledge,
+	Prototype_Mesh_Elephant_Head,
+	Prototype_Mesh_BallMesh,
 
+	Prototype_Mesh_AlgaeRock_Ledge,
 
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
@@ -9531,6 +9533,14 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Bridge:
 		return TEXT("bridge.fbx");
+
+	case Prototype_Mesh_Elephant_Head:
+		return TEXT("ElephantHead.fbx");
+		break;
+
+	case Prototype_Mesh_BallMesh:
+		return TEXT("BallMesh.fbx");
+		break;
 
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");

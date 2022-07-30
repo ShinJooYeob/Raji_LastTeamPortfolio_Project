@@ -1225,7 +1225,6 @@
     <ClCompile Include="..\private\Rangda_Finger.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
@@ -1405,6 +1404,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CurtainTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp">
+      <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>

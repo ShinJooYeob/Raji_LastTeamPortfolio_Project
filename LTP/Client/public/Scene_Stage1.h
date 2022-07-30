@@ -34,6 +34,8 @@ private:
 
 	HRESULT Ready_PostPorcessing();
 
+	HRESULT Ready_MapParticle();
+
 private:
 	class CCamera_Main*				m_pMainCam			= nullptr;
 	CUtilityMgr*					m_pUtilMgr			= nullptr;
