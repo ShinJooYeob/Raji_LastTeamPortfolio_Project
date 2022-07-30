@@ -448,7 +448,7 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 			if ((*(_float3*)&iter->_LocalMatirx._41).Get_Lenth() > m_tInstanceDesc.fMaxBoundaryRadius	|| (iter->_age > iter->_lifeTime))
 				ResetParticle(&(*iter));
 
-			if (m_tInstanceDesc.AlphaBlendON)
+			if (!m_bIsMapParitcle && m_tInstanceDesc.AlphaBlendON)
 				iter->_CamDist = XMVectorGetX(XMVector3Length(((iter->_LocalMatirx.XMatrix().r[3] + iter->_TargetParentPosition.XMVector()) - CamPos)));
 
 			if (m_tInstanceDesc.ColorChageFrequency)
@@ -477,7 +477,7 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 				Update_TextureChange(&(*iter), fDeltaTime, pInstance);
 
-				if (m_tInstanceDesc.AlphaBlendON)
+				if (!m_bIsMapParitcle && m_tInstanceDesc.AlphaBlendON)
 					iter->_CamDist = XMVectorGetX(XMVector3Length(((iter->_LocalMatirx.XMatrix().r[3] + iter->_TargetParentPosition.XMVector()) - CamPos)));
 
 				if (m_tInstanceDesc.ColorChageFrequency)
@@ -505,7 +505,7 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 	}
 
-	if (m_tInstanceDesc.AlphaBlendON)
+	if (!m_bIsMapParitcle &&  m_tInstanceDesc.AlphaBlendON)
 	{
 		sort(m_vecParticleAttribute.begin(), m_vecParticleAttribute.end(), [](INSTANCEATT tSrc, INSTANCEATT tDest) ->_bool
 		{

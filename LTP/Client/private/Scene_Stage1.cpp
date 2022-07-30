@@ -58,6 +58,9 @@ HRESULT CScene_Stage1::Initialize()
 	//
 
 	FAILED_CHECK(Ready_PostPorcessing());
+
+	FAILED_CHECK(Ready_MapParticle());
+
 	return S_OK;
 }
 
@@ -470,7 +473,54 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 	pRenderer->Set_FogHeightFalloff(0.1f);
 #endif
 
-#endif // !_DEBUG
+#endif // !_DEBUGee
+	return S_OK;
+}
+
+HRESULT CScene_Stage1::Ready_MapParticle()
+{
+	INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FireParticle_0"));
+	tDesc.FollowingTarget = nullptr;
+	tDesc.vFixedPosition = _float3(32.2f, 42.8f, 65.4f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc);
+	
+
+	INSTPARTICLEDESC tDesc2 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_WaterFallParticle_0"));
+	tDesc2.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
+	tDesc2.FollowingTarget = nullptr;
+	tDesc2.bBillboard = true;
+	tDesc2.TextureChageFrequency = 1;
+	vector<_float3> vParticlesPos;
+	vParticlesPos.push_back(_float3(95.110130f, 35.100010f, 40.533039f));
+	vParticlesPos.push_back(_float3(101.110130f, 35.100010f, 42.033039f));
+	vParticlesPos.push_back(_float3(117.710f, 36.6f, 39.433f));
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc2, &vParticlesPos);
+
+
+	INSTPARTICLEDESC tDesc3 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_WaterFallParticle_1"));
+	tDesc3.FollowingTarget = nullptr;
+	tDesc3.vFixedPosition = _float3(256.512f, 33.f, 191.703f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc3);
+
+	INSTPARTICLEDESC tDesc4 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_0"));
+	tDesc4.FollowingTarget = nullptr;
+	tDesc4.vFixedPosition = _float3(257.012054f, 24.5f, 180.302515f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc4);
+
+	INSTPARTICLEDESC tDesc5 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_1"));
+	tDesc5.FollowingTarget = nullptr;
+	tDesc5.vFixedPosition = _float3(256.811218f, 21.f, 191.899643f);
+	tDesc5.TotalParticleTime = 999999999999.f;
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc5);
+
+	INSTPARTICLEDESC tDesc6 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_Rain_0"));
+	tDesc6.FollowingTarget = nullptr;
+	tDesc6.vFixedPosition = _float3(256.811218f, 27.5f, 178.358f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, tDesc6);
+
+	//Jino_Stage1_Rain_0
+	/*vector<_float3> vParticlesPos = { _float3(42.010387f, 34.900013f, 53.302711f), _float3(46.964718f, 34.900013f, 53.425224f), _float3(51.797810f, 34.900013f, 53.236481f) };
+	*/
 	return S_OK;
 }
 	

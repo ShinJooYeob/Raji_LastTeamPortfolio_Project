@@ -49,6 +49,8 @@ HRESULT CScene_Stage2::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
+	FAILED_CHECK(Ready_MapParticle());
+	
 	return S_OK;
 }
 
@@ -228,7 +230,7 @@ HRESULT CScene_Stage2::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*501.754f, 5.5f, 419.138f *//*598.796f, 24.394f, 415.571f*/)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*397.633f, 4.4f, 226.405f*//*570.248f, 21.9f, 399.576f*/)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);	
 	
@@ -461,6 +463,50 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 
 #endif // !_DEBUG
 
+	return S_OK;
+}
+HRESULT CScene_Stage2::Ready_MapParticle()
+{
+	/*INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_0"));
+	tDesc.FollowingTarget = nullptr;
+	tDesc.vFixedPosition = _float3(395.5f, 4.500f, 227.7f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc);*/
+
+	INSTPARTICLEDESC tDesc2 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_1"));
+	tDesc2.FollowingTarget = nullptr;
+	tDesc2.vFixedPosition = _float3(395.f, 4.400f, 227.5f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc2);
+
+
+	INSTMESHDESC tDesc3 = GetSingle(CUtilityMgr)->Get_MeshParticleDesc(TEXT("Jino_Stage2_Mesh_PinkBall"));
+	tDesc3.FollowingTarget = nullptr;
+	tDesc3.vFixedPosition = _float3(473.970f, 4.900f, 414.755f);;
+	tDesc3.EachParticleLifeTime = 999999999.f;
+	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
+	tDesc3.vFixedPosition = _float3(495.42f, 4.61f, 420.7f);
+	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
+	tDesc3.vFixedPosition = _float3(485.67f, 4.91f, 420.289f);
+	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
+	tDesc3.vFixedPosition = _float3(475.605f, 4.900f, 420.541f);
+	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
+
+
+	INSTPARTICLEDESC tDesc4 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
+	tDesc4.FollowingTarget = nullptr;
+	tDesc4.vFixedPosition = _float3(568.f, 24.300f, 403.5f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc4);
+
+	INSTPARTICLEDESC tDesc5 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
+	tDesc5.FollowingTarget = nullptr;
+	tDesc5.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc5);
+
+	///**/_float3(473.970f, 4.900f, 414.755f);
+
+
+	//vParticlesPos.push_back(_float3(101.110130f, 35.100010f, 42.033039f));
+	//vParticlesPos.push_back(_float3(117.710f, 36.6f, 39.433f));
+	
 	return S_OK;
 }
 HRESULT CScene_Stage2::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)

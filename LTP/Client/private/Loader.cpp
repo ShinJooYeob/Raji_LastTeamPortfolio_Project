@@ -1535,11 +1535,11 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	// MERGE //
+	//// MERGE //
 	FAILED_CHECK(Load_AllMonster());
 	FAILED_CHECK(Load_AllBoss());
 	FAILED_CHECK(Load_AllDynamicMapObject());
-
+	
 	for (_uint i = 0; i < SCENE_END; i++)
 		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
@@ -2327,7 +2327,8 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"VentQStone.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
-
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"ElephantHead.fbx", TransformMatrix);
+		
 #pragma endregion
 
 	}
@@ -2633,6 +2634,7 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_06.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"UnderseaRock_Pile.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"BallMesh.fbx", TransformMatrix);
 #pragma  endregion
 
 

@@ -1237,7 +1237,6 @@
     <ClCompile Include="..\private\Rangda_Finger.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
@@ -1426,6 +1425,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Snake_Poison_Raser.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceEffect.cpp">
+      <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

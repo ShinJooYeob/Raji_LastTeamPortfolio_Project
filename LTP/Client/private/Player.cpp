@@ -154,34 +154,25 @@ _int CPlayer::Update(_double fDeltaTime)
 		
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			NONINSTNESHEFTDESC tNIMEDesc;
-			tNIMEDesc.vPosition = _float3(60.f, 34.26f, 323.380f);
-			tNIMEDesc.vLookDir = _float3(0, 1, 0);
+			INSTPARTICLEDESC tDesc4 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
+			tDesc4.FollowingTarget = nullptr;
+			tDesc4.EachParticleLifeTime = 1.f;
+			tDesc4.vFixedPosition = _float3(568.f, 24.300f, 403.5f);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc4);
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
-			tNIMEDesc.fMaxTime_Duration = 1.25f;
+			tDesc4.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
+			GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc4);
+			
 
-			tNIMEDesc.fAppearTime = 0.25f;
 
-			tNIMEDesc.noisingdir = _float2(0, -1);
+			//INSTMESHDESC tDesc3 = GetSingle(CUtilityMgr)->Get_MeshParticleDesc(TEXT("Jino_Stage2_Mesh_PinkBall"));
+			//tDesc3.FollowingTarget = nullptr;
+			//tDesc3.vFixedPosition = _float3(495.42f, 4.61f, 420.7f);/*_float3(485.67f, 4.91f, 420.289f);*//*_float3(475.605f, 4.900f, 420.541f);*///_float3(473.970f, 4.900f, 414.755f);
+			//tDesc3.TotalParticleTime = 0.9f;
+			//tDesc3.EachParticleLifeTime = 1.f;
+			//GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
 
-			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.MaskTextureIndex = 109;
-			tNIMEDesc.iDiffuseTextureIndex = 271;
-			tNIMEDesc.m_iPassIndex = 19;
-			tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
-			tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
-			tNIMEDesc.vColor = _float3(1.f, 0, 0);
-
-			tNIMEDesc.RotAxis = FollowingDir_Up;
-			tNIMEDesc.RotationSpeedPerSec = 0.f;
-			tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
-
-			tNIMEDesc.fAlphaTestValue = 0.0f;
-
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-				TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-
+			//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, GetSingle(CUtilityMgr)->Get_TextureParticleDesc("asdasdasd"));
 		}
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
@@ -929,10 +920,11 @@ void CPlayer::Set_State_JumpStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_JUMP;
 	//m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
-	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_READY);
+   	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_READY);
 	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	m_fJumpPower = 0.1f;
+	m_fFallingAcc = 0.f;
 }
 
 void CPlayer::Set_State_FallingStart(_double fDeltaTime)
@@ -1975,6 +1967,7 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 	case STATE_JUMPATTACK:
 	case STATE_UTILITYSKILL:
 	case STATE_ULTIMATESKILL:
+	case STATE_PILLAR:
 		break;
 	default:
 		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
