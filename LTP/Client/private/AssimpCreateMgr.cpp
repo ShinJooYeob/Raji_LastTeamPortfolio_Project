@@ -1053,6 +1053,25 @@ HRESULT CAssimpCreateMgr::Processing_LoadStatic(_bool * _IsClientQuit, CRITICAL_
 	return S_OK;
 }
 
+HRESULT CAssimpCreateMgr::DataFree_TEST()
+{
+
+	for (auto desc : mMap_StaticModelDesc)
+	{
+		Safe_Delete_Array(desc.second->mMeshDesc);
+		desc.second->mNumMeshes = 0;
+	}
+
+	mMap_StaticModelDesc.clear();
+
+	Safe_Delete_List(mList_DataFIle_Static);
+	Safe_Delete_Map(mMap_StaticModelDesc);
+
+
+	return S_OK;
+
+}
+
 void CAssimpCreateMgr::Free()
 {
 

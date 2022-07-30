@@ -2797,7 +2797,6 @@ HRESULT CScene_Edit::Widget_BatchedObjectList(_double fDeltatime)
 		}
 
 
-
 		ImGui::TreePop();
 	}
 

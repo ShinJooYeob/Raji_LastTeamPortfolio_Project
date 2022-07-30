@@ -15,6 +15,7 @@
 
 #include "Monster_Gadasura_Black.h"
 #include "Monster_Gadasura_Rage.h"
+#include "AssimpCreateMgr.h"
 
 #ifdef _DEBUG
 
@@ -1350,6 +1351,20 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 	}
 
+//	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	//{
+	//	IMGUITREE("Jihwan_TEST")
+	//	{
+
+	//		Update_DebugWnd_JHTest(fDeltaTime);
+
+	//		IMGUITREE_END
+	//	}
+
+	//}
+
+
+
 	ImGui::Separator();
 
 	End_Update_Frame();
@@ -2008,6 +2023,18 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 
 	return S_OK;
 	
+}
+
+_int CImguiMgr::Update_DebugWnd_JHTest(_double fDeltaTime)
+{
+	if (ImGui::Button("Delete_Static"))
+	{
+		//
+		GetSingle(CAssimpCreateMgr)->DataFree_TEST();
+		
+
+	}
+	return _int();
 }
 
 
