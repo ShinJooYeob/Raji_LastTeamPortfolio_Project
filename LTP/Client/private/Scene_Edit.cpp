@@ -1990,7 +1990,10 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 
 		if (pInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
 		{
-			if (m_bIsModelMove) m_bIsModelMove = 0;
+			if (m_bIsModelMove)
+			{
+				m_bIsModelMove = 0;
+			}
 			else
 			{
 
@@ -1999,7 +2002,6 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 				m_fFrustumRange = m_vecBatchedObject[m_iBatchedVecIndex].FrustumRange;
 				m_bIsOcllusion = m_vecBatchedObject[m_iBatchedVecIndex].bIsOcllsuion;
 				m_iPassIndex = m_vecBatchedObject[m_iBatchedVecIndex].PassIndex;
-
 
 				ZeroMemory(m_ArrBuffer, sizeof(_float) * 4);
 				m_ArrBuffer[3] = 0.1f;
@@ -2029,18 +2031,19 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 			_long fWheelMove = pInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL);
 			if (fWheelMove)
 			{
-				_float tempValue;
-				memcpy(&tempValue, ((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), sizeof(_float));
-
-				if (fWheelMove > 0)
-					tempValue += _float(m_ArrBuffer[3]);
-				else
-					tempValue += _float(-m_ArrBuffer[3]);
-				//tempValue += _float(fWheelMove * m_ArrBuffer[3] * fDeltaTime);
-
-
-				FAILED_CHECK(RenewElenmetTransform(&(m_vecBatchedObject[m_iBatchedVecIndex])));
-				memcpy(((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), &tempValue, sizeof(_float));
+				// #RICK mergeoff
+			//	_float tempValue;
+			//	memcpy(&tempValue, ((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), sizeof(_float));
+			//
+			//	if (fWheelMove > 0)
+			//		tempValue += _float(m_ArrBuffer[3]);
+			//	else
+			//		tempValue += _float(-m_ArrBuffer[3]);
+			//	//tempValue += _float(fWheelMove * m_ArrBuffer[3] * fDeltaTime);
+			//
+			//
+			//	FAILED_CHECK(RenewElenmetTransform(&(m_vecBatchedObject[m_iBatchedVecIndex])));
+			//	memcpy(((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), &tempValue, sizeof(_float));
 
 			}
 
@@ -2706,8 +2709,6 @@ HRESULT CScene_Edit::Widget_SRT(_double fDeltatime)
 
 HRESULT CScene_Edit::Widget_BatchedObjectList(_double fDeltatime)
 {
-
-
 	Make_VerticalSpacing(3);
 	if (ImGui::TreeNode("Batched Object List"))
 	{

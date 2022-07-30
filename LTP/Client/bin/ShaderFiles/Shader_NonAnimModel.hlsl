@@ -311,6 +311,22 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
+
+PS_OUT PS_MAIN_RED(PS_IN In)
+{
+	PS_OUT      Out = (PS_OUT)0;
+
+	vector      vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = float4(1, 0, 0, 1);
+
+	
+	return Out;
+}
+
+
 PS_OUT PS_MAIN_ZTESTALLMOST(PS_IN In)
 {
 	PS_OUT      Out = (PS_OUT)0;
@@ -1061,4 +1077,16 @@ technique11      DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_Noise_AppearNDisApper();
 	}
+
+	pass RED //20
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_DEFAULT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RED();
+	}
+
 }

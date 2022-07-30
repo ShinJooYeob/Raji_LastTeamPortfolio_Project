@@ -39,8 +39,6 @@ private:
 
 	
 	HRESULT Ready_Layer_Phycis();
-
-	
 	HRESULT Ready_LoadEffectMesh();
 
 

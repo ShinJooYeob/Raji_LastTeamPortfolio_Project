@@ -111,6 +111,8 @@ private:
 
 	_uint m_iSelectedObjectNMesh[2];
 	_float	m_fPickingedPosition[3] = {0};
+	_bool	m_bSelect_RedShader = false;
+
 #pragma endregion MapTab
 
 
