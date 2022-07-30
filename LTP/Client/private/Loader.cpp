@@ -1595,7 +1595,7 @@ HRESULT CLoader::Load_AllMonster()
 	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Tezabsura_Purple), TransformMatrix);
 
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Tezabsura_Bomber), TransformMatrix);
 
 	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));

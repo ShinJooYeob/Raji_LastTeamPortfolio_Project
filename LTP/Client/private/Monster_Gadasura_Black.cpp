@@ -175,30 +175,32 @@ _float CMonster_Gadasura_Black::Take_Damage(CGameObject * pTargetObject, _float 
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	m_fHP += -fDamageAmount;
 
-	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
+	m_bStopCoolTimeOn = true;
 
+	m_dSpecial_CoolTime = 0;
 
 	m_bIOnceAnimSwitch = true;
-	if (bKnockback == false)
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
-		m_iOncePattern = 40;
-	}
-	else {
-		m_iOncePattern = 41;
+		if (bKnockback == false)
+		{
+			m_iOncePattern = 40;
+		}
+		else {
+			m_iOncePattern = 41;
 
-		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
-	}
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
 
-	if (m_fHP < 5 && m_iBoolOnce == 0)
-	{
-		m_iOncePattern = 42;
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 42;
+			m_dSpecial_CoolTime = 0;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
 
-		m_iBoolOnce += 1;
+			m_iBoolOnce += 1;
+		}
 	}
 
 	if (0 >= m_fHP)
@@ -463,10 +465,19 @@ HRESULT CMonster_Gadasura_Black::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
-	m_dSpecial_CoolTime += dDeltaTime;
+	//_double Once = m_dOnceCoolTime;
+	//wstring tt = L"Once Time = " + to_wstring(Once) + L"\n";
+	////tt.substr(4, 10).c_str(); 
+	////OutputDebugStringW(tt.substr(4, 10).c_str());
+	//OutputDebugStringW(tt.c_str());
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 2 && m_fDistance < 4 || m_bComboAnimSwitch == true)
 	{
@@ -482,7 +493,6 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 6;
@@ -504,77 +514,115 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 51;
 
+
+	//_uint Once = m_iOncePattern;
+	//_uint Before = m_iAfterPattern;
+	//wstring tt = L"Once Pattern = " + to_wstring(Once) + L"\n" + L"Before Pattern = " + to_wstring(Before) + L"\n";
+	//tt.substr(4, 10).c_str();
+	//OutputDebugStringW(tt.c_str());
+
+
 	switch (m_iOncePattern)
 	{
 	case 0:
 		m_iOnceAnimNumber = 17; //Attack1 
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 3; //Right Move
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 3:
 		m_iOnceAnimNumber = 25; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 4:
 		m_iOnceAnimNumber = 14; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 5:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 6:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern+1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 7:
 		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 4; //Left Move
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 9:
 		m_iOnceAnimNumber = 25; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 10:
 		m_iOnceAnimNumber = 15; //Rage Run
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 11:
 		m_iOnceAnimNumber = 21; //Rage Run Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 12:
 		m_iOnceAnimNumber = 22; //Taunt
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 13:
 		m_iOnceAnimNumber = 18; //Attack2
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 14:
 		m_iOnceAnimNumber = 19; //smash Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 15:
 		m_iOnceAnimNumber = 5; //Back
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 40:
 		m_iOnceAnimNumber = 11; //right hit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 41:
 		m_iOnceAnimNumber = 12; //HeavyHit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 42:
 		m_iOnceAnimNumber = 6; //groggy
@@ -582,6 +630,7 @@ HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 	case 51:
 		m_iOnceAnimNumber = 20; //stomp Attack
 		m_bComboAnimSwitch = false;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 
 	}
@@ -593,10 +642,18 @@ HRESULT CMonster_Gadasura_Black::Pattern_Change()
 {
 
 	m_iOncePattern += 1;
+	//m_iAfterPattern = m_iOncePattern + 1;
 
 	if (m_iOncePattern >= 16)
 	{
-		m_iOncePattern = 0; //OncePattern Random
+		if (m_iAfterPattern < 16)
+		{
+			m_iOncePattern = m_iAfterPattern;
+		}
+		else {
+			m_iOncePattern = 0; //OncePattern Random
+			m_iAfterPattern = m_iOncePattern + 1;
+		}
 	}
 
 
@@ -638,7 +695,7 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Special_Trigger(_double dDeltaTime)
 {
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 15)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -784,15 +841,18 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_bLookAtOn = true;
 		m_bWeaponAttackSwitch = false;
+		m_bStopCoolTimeOn = false;
 
 		m_iSoundIndex = 0;
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -854,6 +914,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
+				m_bLookAtOn = false;
 				m_dAcceleration = 0.7;
 				m_iAdjMovedIndex++;
 			}
@@ -872,7 +933,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_dAcceleration = 0.7;
 				m_iAdjMovedIndex++;
 			}
-			else if (0.f < PlayRate && PlayRate <= 0.8636)
+			else if (0.f < PlayRate && PlayRate <= 0.4444)
 			{
 				m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
 
@@ -1217,12 +1278,30 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bWeaponAttackSwitch = true;
 				m_iAdjMovedIndex++;
 			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.3529)
+			{
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+				Monster_Texture_BulletDesc.fScale = _float3(8.f, 8.f, 8.f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 3.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.2;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				m_iAdjMovedIndex++;
+			}
 
 			if (PlayRate <= 0.588235)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5, m_pNavigationCom);
-
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
 			}
 
 			else

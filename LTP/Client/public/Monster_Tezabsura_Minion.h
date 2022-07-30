@@ -8,6 +8,8 @@ END
 BEGIN(Client)
 class CMonster_Tezabsura_Minion final : public CMonster
 {
+public:
+	enum Anim_State { MONSTER_IDLE, MONSTER_HIT, MONSTER_ATTACK, STATE_END };
 private:
 	explicit CMonster_Tezabsura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Tezabsura_Minion(const CMonster_Tezabsura_Minion& rhs);
@@ -70,12 +72,18 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-		//Anim Once Pattern
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
+
+	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
+
+	//Old Pattern
+	_uint				m_iAfterPattern = 0;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;

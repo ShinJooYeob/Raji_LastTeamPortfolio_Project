@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Tezabsura_Purple.h"
 #include "Monster_Bullet_Universal.h"
+#include "HpUI.h"
 
 CMonster_Tezabsura_Purple::CMonster_Tezabsura_Purple(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -30,14 +31,20 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 
-	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
 	SetUp_Info();
 
 
-	m_fJumpPower = 3.f;
+	m_fJumpPower = 4.5f;
+
+#ifdef _DEBUG
+	//////////////////testPosition
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+#endif
 
 	return S_OK;
 }
@@ -46,6 +53,27 @@ _int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Tezabsura_Damage_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_bDieSound = true;
+		}
+
+		if (m_dDissolveTime >= 2)
+		{
+			Set_IsDead();
+		}
+	}
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -61,8 +89,16 @@ _int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 	Jumping(dDeltaTime);
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	if (m_fHP > 0)
+	{
+		FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	}
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	Update_Collider(dDeltaTime);
 
 	return _int();
 }
@@ -79,8 +115,20 @@ _int CMonster_Tezabsura_Purple::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
+
+	if (m_bJumpingOn == false)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+
+	if (m_pHPUI != nullptr)
+		m_pHPUI->LateUpdate(dDeltaTime);
+
 
 	return _int();
 }
@@ -99,14 +147,16 @@ _int CMonster_Tezabsura_Purple::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3));
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 
 
@@ -125,13 +175,52 @@ void CMonster_Tezabsura_Purple::CollisionTriger(CCollider * pMyCollider, _uint i
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }
 
 _float CMonster_Tezabsura_Purple::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
+
+	if (iNowAnimIndex >= 8 && iNowAnimIndex <= 10)
+		return _float();
+
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+	m_bStopCoolTimeOn = true;
+
+	m_dSpecial_CoolTime = 0;
+
+
+	m_bIOnceAnimSwitch = true;
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
+	{
+		if (bKnockback == false)
+		{
+			m_bKnockbackOn = false;
+			m_iOncePattern = 40;
+		}
+		else {
+			m_bKnockbackOn = true;
+			m_iOncePattern = 40;
+
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
+
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 41;
+			m_dSpecial_CoolTime = 0;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
+
+			m_iBoolOnce += 1;
+		}
+	}
 	if (0 >= m_fHP)
 	{
 		return -1.f;
@@ -156,27 +245,117 @@ HRESULT CMonster_Tezabsura_Purple::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CMonster_Tezabsura_Purple::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+
+	/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, 0.11513f, -1.4121f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.05226f, -2.3082f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.088488f, -1.5709f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "calf_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.20107f, 0.07767f, -0.81758f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "calf_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.20107f, 0.07767f, -0.81758f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.61184f, 0.26749f, -1.9888f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_02_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.84824f, 0.23265f, -1.9768f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.61184f, 0.26749f, -1.9888f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_02_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.84824f, 0.23265f, -1.9768f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	return S_OK;
+}
+
 HRESULT CMonster_Tezabsura_Purple::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
-
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime);
-			break;
-
-		}
-	}
 
 	if (m_bLookAtOn)
 	{
@@ -189,19 +368,21 @@ HRESULT CMonster_Tezabsura_Purple::SetUp_Fight(_double dDeltaTime)
 		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
 	}
 
-	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	////평범하게 움직이기
-	//if (pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Up(dDeltaTime);
-	//}
-	//if (pGameInstance->Get_DIKeyState(DIK_H) & DIS_Press)
-	//{
-	//	m_pTransformCom->Move_Down(dDeltaTime);
-	//}
 
-	//RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
 
+HRESULT CMonster_Tezabsura_Purple::Update_Collider(_double dDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
 	return S_OK;
 }
@@ -240,20 +421,24 @@ HRESULT CMonster_Tezabsura_Purple::PlayAnim(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Purple::CoolTime_Manager(_double dDeltaTime)
 {
-	//한번만 동작하는 애니메이션
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
-	m_dOnceCoolTime += dDeltaTime;
-	m_dSpecial_CoolTime += dDeltaTime;
+	//한번만 동작하는 애니메이션
 
 	if (m_dOnceCoolTime > 2 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
 
-		if (m_bComboAnimSwitch == false)
-		{
-			Special_Trigger(dDeltaTime);
-		}
+		//if (m_bComboAnimSwitch == false)
+		//{
+		//	Special_Trigger(dDeltaTime);
+		//}
 		if (m_bIOnceAnimSwitch == false)
 		{
 			Pattern_Change();
@@ -264,7 +449,6 @@ HRESULT CMonster_Tezabsura_Purple::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 7;
@@ -272,7 +456,10 @@ HRESULT CMonster_Tezabsura_Purple::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 	}
-
+	if (m_bComboAnimSwitch == false && m_bIOnceAnimSwitch == false)
+	{
+		Special_Trigger(dDeltaTime);
+	}
 	return S_OK;
 }
 
@@ -283,62 +470,89 @@ HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 	case 1:
 		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 3:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 4:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 5:
 		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 6:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 7:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 9:
 		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 10:
 		m_iOnceAnimNumber = 8; //JumpStart
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 11:
 		m_iOnceAnimNumber = 9; //JumpLoop
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 12:
 		m_iOnceAnimNumber = 10; //JumpEnd
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 13:
 		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 14:
 		m_iOnceAnimNumber = 13; //Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 
 	case 30:
 		m_iOnceAnimNumber = 11;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
+		break;
+	case 40:
+		m_iOnceAnimNumber = 7;
+		m_eMonster_State = Anim_State::MONSTER_HIT;
+		break;
+	case 41:
+		m_iOnceAnimNumber = 3;
 		break;
 	}
 
@@ -350,9 +564,16 @@ HRESULT CMonster_Tezabsura_Purple::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern > 14)
+	if (m_iOncePattern >= 15)
 	{
-		m_iOncePattern = 0; //OncePattern Random
+		if (m_iAfterPattern >= 15)
+		{
+			m_iOncePattern = 0; //OncePattern Random
+			m_iAfterPattern = m_iOncePattern + 1;
+		}
+		else {
+			m_iOncePattern = m_iAfterPattern;
+		}
 	}
 
 
@@ -393,7 +614,7 @@ HRESULT CMonster_Tezabsura_Purple::Special_Trigger(_double dDeltaTime)
 {
 
 
-	if (m_fDistance < 2 && m_dSpecial_CoolTime > 10)
+	if (m_fDistance < 2 && m_dSpecial_CoolTime > 5)
 	{
 		m_dSpecial_CoolTime = 0;
 		m_dOnceCoolTime = 0;
@@ -452,7 +673,7 @@ HRESULT CMonster_Tezabsura_Purple::Jumping(_double dDeltaTime)
 		{
 			fJumpY = GetSingle(CGameInstance)->Easing_Return(TYPE_SinOut, TYPE_QuadInOut, 0, m_fJumpPower, (_float)PlayRate + TargetAnimIndex - 0.5f, 2.f);
 
-			m_pTransformCom->Move_Forward(dDeltaTime*0.8);
+			m_pTransformCom->Move_Forward(dDeltaTime*0.8,m_pNavigationCom);
 		}
 		else
 		{
@@ -489,6 +710,26 @@ HRESULT CMonster_Tezabsura_Purple::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 7;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
+
+	SetUp_Collider();
+
 	return S_OK;
 }
 
@@ -505,38 +746,111 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_dAcceleration = 1;
 
+		m_iSoundIndex = 0;
+
+		if (iNowAnimIndex < 8 || iNowAnimIndex >10)
+			m_bJumpingOn = false;
+
+		m_bStopCoolTimeOn = false;
+
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 
 	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			if (PlayRate > 0)
+			{
+				m_bLookAtOn = false;
+			}
+
+			break;
+		}
 		case 1:
 			if (PlayRate > 0)
 			{
-				m_pTransformCom->Move_Forward(dDeltaTime * 0.72);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.05, m_pNavigationCom);
+
+				//if (m_iSoundIndex == 0 && PlayRate > 0)
+				//{
+				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//	m_iSoundIndex++;
+				//}
+				//else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
+				//{
+				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				//	m_iSoundIndex++;
+				//}
 			}
 			break;
+		case 3:
+		{
+			m_bLookAtOn = false;
+			break;
+		}
+		case 7:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
+			{
+				m_bLookAtOn = false;
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+			}
+			if (m_bKnockbackOn == true)
+			{
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+				{
+					m_bLookAtOn = false;
+					m_dAcceleration = 0.7;
+					m_iAdjMovedIndex++;
+				}
+				else if (0.f < PlayRate && PlayRate <= 0.38)
+				{
+					m_pTransformCom->Move_Backward(dDeltaTime* 0.5, m_pNavigationCom);
+
+					m_fKnockbackDir.y = 0;
+
+					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+				}
+			}
+			//if (m_iSoundIndex == 0 && PlayRate > 0)
+			//{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+			//	m_iSoundIndex++;
+			//}
+			break;
+		}
 		case 8:
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
+			//if (m_iSoundIndex == 0 && PlayRate >= 0.5882)
+			//{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+			//	m_iSoundIndex++;
+			//}
 			break;
 		}
 		case 9:
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -545,7 +859,8 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_dAcceleration = 1.6452f;
+				//m_dAcceleration = 1.6452f;
+				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
 			break;
@@ -554,8 +869,15 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate >= 0.416666 && PlayRate <= 0.69444)
 			{
 				m_bLookAtOn = false;
-				m_pTransformCom->Move_Forward(dDeltaTime * 1.5);
+				m_pTransformCom->Move_Forward(dDeltaTime * 1.5, m_pNavigationCom);
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 			}
+			//if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
+			//{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_M1_232.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+			//	m_iSoundIndex++;
+			//}
 			break;
 		case 12:
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.57142)
@@ -576,13 +898,18 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
 				m_iAdjMovedIndex++;
 			}
+			//if (m_iSoundIndex == 0 && PlayRate >= 0.4642)
+			//{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+			//	m_iSoundIndex++;
+			//}
 			break;
 		case 13:
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.5555)
@@ -601,7 +928,7 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				//////////////Old Code@!##@!$@!$!@
@@ -695,4 +1022,8 @@ void CMonster_Tezabsura_Purple::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pDissolve);
+
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHPUI);
 }

@@ -10,6 +10,7 @@ class CMonster_Mahinasura_Leader final : public CMonster
 {
 public:
 	enum ColliderType { HANDATTACK, TAILATTACK, COLLIDER_END };
+	enum Anim_State { MONSTER_IDLE, MONSTER_HIT, MONSTER_ATTACK, STATE_END };
 private:
 	explicit CMonster_Mahinasura_Leader(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Mahinasura_Leader(const CMonster_Mahinasura_Leader& rhs);
@@ -94,12 +95,18 @@ private:
 
 
 private://애니메이션 동작 및 이벤트
-		//Anim Once Pattern
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
+
+	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
+
+	//Old Pattern
+	_uint				m_iAfterPattern = 0;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;

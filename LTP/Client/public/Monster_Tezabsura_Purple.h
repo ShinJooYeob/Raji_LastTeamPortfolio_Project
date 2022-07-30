@@ -9,6 +9,8 @@ BEGIN(Client)
 
 class CMonster_Tezabsura_Purple final : public CMonster
 {
+public:
+	enum Anim_State { MONSTER_IDLE, MONSTER_HIT, MONSTER_ATTACK, STATE_END };
 private:
 	explicit CMonster_Tezabsura_Purple(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Tezabsura_Purple(const CMonster_Tezabsura_Purple& rhs);
@@ -32,8 +34,10 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -51,22 +55,35 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 
 private:
+	class CHpUI*		m_pHPUI = nullptr;
+
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
 
 private://애니메이션 동작 및 이벤트
-		//Anim Once Pattern
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
+
+	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
 	_uint				m_iOncePattern = 0;
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
+
+	//Old Pattern
+	_uint				m_iAfterPattern = 0;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;
@@ -96,7 +113,18 @@ private:
 	_float3				m_fJumpTempPos;
 	_double				m_dJumpTime = 0;
 
+private:
+	//Knockback
+	_bool				m_bKnockbackOn = false;
+	_float3				m_fKnockbackDir;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+	_bool				m_bDieSound = false;
+
+private://Dissolve
+	_double				m_dDissolveTime = 0;
 
 private:
 	HRESULT SetUp_Components();

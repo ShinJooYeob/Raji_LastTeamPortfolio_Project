@@ -10,6 +10,7 @@ class CMonster_Mahinasura_Minion final : public CMonster
 {
 public:
 	enum ColliderType {HANDATTACK,TAILATTACK,COLLIDER_END};
+	enum Anim_State { MONSTER_IDLE, MONSTER_HIT, MONSTER_ATTACK, STATE_END };
 private:
 	explicit CMonster_Mahinasura_Minion(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMonster_Mahinasura_Minion(const CMonster_Mahinasura_Minion& rhs);
@@ -95,6 +96,8 @@ private:
 	CTransform*						m_pTextureParticleTransform_LHand = nullptr;
 	CTransform*						m_pTextureParticleTransform_Tail = nullptr;
 	
+private://애니메이션 동작 및 이벤트
+	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;
 
 	//Anim Once Pattern
 	_double				m_dOnceCoolTime = 0;
@@ -102,6 +105,7 @@ private:
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;

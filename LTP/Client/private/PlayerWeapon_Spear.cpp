@@ -183,7 +183,7 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		else  
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-			if (0 > pConflictedObj->Take_Damage(this, 3.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+			if (0 > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
 				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
 			}

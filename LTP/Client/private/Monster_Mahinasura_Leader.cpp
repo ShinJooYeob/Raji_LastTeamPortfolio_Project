@@ -183,30 +183,32 @@ _float CMonster_Mahinasura_Leader::Take_Damage(CGameObject * pTargetObject, _flo
 	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	m_fHP += -fDamageAmount;
 
+	m_bStopCoolTimeOn = true;
+
 	m_dSpecial_CoolTime = 0;
-	m_dOnceCoolTime = 0;
-	m_dInfinity_CoolTime = 0;
 
 	m_bIOnceAnimSwitch = true;
-
-	if (bKnockback == false)
+	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
-		m_iOncePattern = 40;
-	}
-	else {
-		m_iOncePattern = 41;
+		if (bKnockback == false)
+		{
+			m_iOncePattern = 40;
+		}
+		else {
+			m_iOncePattern = 41;
 
-		XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
-	}
+			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
+		}
 
-	if (m_fHP < 5 && m_iBoolOnce == 0)
-	{
-		m_iOncePattern = 42;
-		m_dSpecial_CoolTime = 0;
-		m_dOnceCoolTime = 0;
-		m_dInfinity_CoolTime = 0;
+		if (m_fHP < 5 && m_iBoolOnce == 0)
+		{
+			m_iOncePattern = 42;
+			m_dSpecial_CoolTime = 0;
+			m_dOnceCoolTime = 0;
+			m_dInfinity_CoolTime = 0;
 
-		m_iBoolOnce += 1;
+			m_iBoolOnce += 1;
+		}
 	}
 
 	if (0 >= m_fHP)
@@ -586,8 +588,12 @@ HRESULT CMonster_Mahinasura_Leader::PlayAnim(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
-
-	m_dOnceCoolTime += dDeltaTime;
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dSpecial_CoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
 	if (m_dOnceCoolTime > 4 && m_fDistance < 3 || m_bComboAnimSwitch == true)
 	{
@@ -606,7 +612,6 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 1.5)
 	{
 		m_iInfinityPattern = rand() % 6;
@@ -635,71 +640,98 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 	case 0:
 		m_iOnceAnimNumber = 21; //Scorpion_Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 1:
 		m_iOnceAnimNumber = 2; //_Dodge_Back
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 2:
 		m_iOnceAnimNumber = 20; //TailWhip
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 3:
 		m_iOnceAnimNumber = 3; //_Dodge_Right
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 4:
 		m_iOnceAnimNumber = 18; //LungeAttack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 5:
 		m_iOnceAnimNumber = 19; //QuickAttack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 6:
 		m_iOnceAnimNumber = 4; //_Dodge_Left
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 7:
 		m_iOnceAnimNumber = 18; //LungeAttack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 8:
 		m_iOnceAnimNumber = 19; //QuickAttack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 9:
 		m_iOnceAnimNumber = 21; //Scorpion_Attack
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 10:
 		m_iOnceAnimNumber = 4; //_Dodge_Left
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 11:
 		m_iOnceAnimNumber = 18; //LungeAttack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 12:
 		m_iOnceAnimNumber = 20; //TailWhip
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 13:
 		m_iOnceAnimNumber = 21; //Scorpion_Attack
 		m_bComboAnimSwitch = true;
+		m_iAfterPattern = m_iOncePattern + 1;
+		m_eMonster_State = Anim_State::MONSTER_ATTACK;
 		break;
 	case 14:
 		m_iOnceAnimNumber = 2; //_Dodge_Back
 		m_bComboAnimSwitch = false;
+		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 30:
 		m_iOnceAnimNumber = 7; //Taunt
 		break;
 	case 40:
 		m_iOnceAnimNumber = 15; //LightHit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 41:
 		m_iOnceAnimNumber = 16; //HeavyHit
+		m_eMonster_State = Anim_State::MONSTER_HIT;
 		break;
 	case 42:
 		m_iOnceAnimNumber = 8; //groggy
@@ -712,12 +744,17 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Pattern_Change()
 {
-
 	m_iOncePattern += 1;
-
-	if (m_iOncePattern > 14)
+	if (m_iOncePattern >= 15)
 	{
-		m_iOncePattern = 0;
+		if (m_iAfterPattern < 15)
+		{
+			m_iOncePattern = m_iAfterPattern;
+		}
+		else {
+			m_iOncePattern = 0; //OncePattern Random
+			m_iAfterPattern = m_iOncePattern + 1;
+		}
 	}
 
 
@@ -757,9 +794,6 @@ HRESULT CMonster_Mahinasura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Leader::Special_Trigger(_double dDeltaTime)
 {
-	m_dSpecial_CoolTime += dDeltaTime;
-
-
 	if (m_fDistance > 8 && m_dSpecial_CoolTime > 25)
 	{
 		m_dSpecial_CoolTime = 0;
@@ -897,12 +931,15 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		m_iSoundIndex = 0;
 		m_EffectAdjust = 0;
 
+		m_bStopCoolTimeOn = false;
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			if (m_eMonster_State != Anim_State::MONSTER_HIT)
+				m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
+		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
 
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -1040,6 +1077,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
+				m_bLookAtOn = false;
 				m_dAcceleration = 0.5;
 				m_iAdjMovedIndex++;
 			}
