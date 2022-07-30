@@ -70,8 +70,7 @@ private: // Thread
 	CRITICAL_SECTION*	m_pCriSec = nullptr;
 public:
 	HRESULT		Processing_LoadStatic(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec, ASTHREADDESC desc);
-
-
+	HRESULT		DataFree_TEST();
 
 public:
 	virtual void Free()override;
