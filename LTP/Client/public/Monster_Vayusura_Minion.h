@@ -48,6 +48,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
 
 private:
@@ -99,6 +100,15 @@ private:
 	_bool				m_dAttackOn = true;
 
 	_double				m_dSpeedTime = 0;
+
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+	_bool				m_bDieSound = false;
+
+private://Dissolve
+	_double				m_dDissolveTime = 0;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

@@ -456,17 +456,17 @@ void CPlayer::Set_PosY(_float fPos_y)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	if (STATE_STOPACTION == m_eCurState)
-	{
-		return 0.f;
-	}
-	else if (STATE_EVASION == m_eCurState)
-	{
-		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
-		return 0.f;
-	}
+	//if (STATE_STOPACTION == m_eCurState)
+	//{
+	//	return 0.f;
+	//}
+	//else if (STATE_EVASION == m_eCurState)
+	//{
+	//	GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+	//	return 0.f;
+	//}
 
-	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
+	//GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
 	//if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming)
 	//{
 	//	return 0.f;

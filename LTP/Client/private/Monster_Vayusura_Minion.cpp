@@ -47,8 +47,27 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 
 _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 {
-
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			m_bDieSound = true;
+		}
+
+		if (m_dDissolveTime >= 2)
+		{
+			Set_IsDead();
+		}
+	}
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -73,6 +92,10 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 
 	Update_Collider(dDeltaTime);
 
+	//////////////////////
+	//플레이어의 네비 인덱스를 가져와서 그 인덱스의 포지션을 가져오고 그 포지션의 Y값을 얻어온 뒤
+	//이 친구들의 Y가 인덱스의 Y밑으로 못가게 맞자
+	//////////////////////
 	return _int();
 }
 
@@ -86,7 +109,7 @@ _int CMonster_Vayusura_Minion::LateUpdate(_double dDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 	//////////
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel, nullptr, m_pDissolve));
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -117,14 +140,16 @@ _int CMonster_Vayusura_Minion::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 
 
@@ -589,6 +614,7 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 			m_dSpeedTime = 0;
 
 			m_TempPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+			m_TempPlayerPos.y += 0.2f;
 			_float TempDis = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat3(&m_TempPlayerPos));
 			if (TempDis > 1.f) //if (m_fDistance > 0.3f)
 			{
@@ -685,6 +711,12 @@ HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 8;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
 
 	SetUp_Collider();
 
@@ -810,4 +842,5 @@ void CMonster_Vayusura_Minion::Free()
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pAttackColliderCom);
 	Safe_Release(m_pHPUI);
+	Safe_Release(m_pDissolve);
 }

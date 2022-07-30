@@ -33,7 +33,6 @@ HRESULT CMonster_Tezabsura_Landmine::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 
-	//m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
@@ -42,11 +41,12 @@ HRESULT CMonster_Tezabsura_Landmine::Initialize_Clone(void * pArg)
 
 	m_fJumpPower = 4.5f;
 
-
+#ifdef _DEBUG
 	//////////////////testPosition
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+#endif
 
 	return S_OK;
 }
@@ -716,9 +716,9 @@ HRESULT CMonster_Tezabsura_Landmine::Pattern_Change()
 
 	m_iOncePattern += 1;
 
-	if (m_iOncePattern >= 31)
+	if (m_iOncePattern >= 34)
 	{
-		if (m_iAfterPattern < 31)
+		if (m_iAfterPattern < 34)
 		{
 			m_iOncePattern = m_iAfterPattern;
 		}
@@ -1182,7 +1182,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -1235,7 +1235,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
@@ -1272,7 +1272,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
@@ -1310,7 +1310,7 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				Monster_BulletDesc.dDuration = 15;
 
-				Monster_BulletDesc.bBornAttachOn = true;
+				Monster_BulletDesc.bBornAttachOn = false;
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
