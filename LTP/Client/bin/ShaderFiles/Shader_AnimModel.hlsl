@@ -334,16 +334,12 @@ PS_OUT PS_Test(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-	//
-
-	vDiffuse.a = pow(1.f - length(vDiffuse.xyz),2.2f);
-	vDiffuse.xyz = 0 ;
-
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
-
+	
+	if (vDiffuse.a < 0.1f)
+		discard;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
@@ -353,14 +349,25 @@ PS_OUT PS_Test(PS_IN In)
 
 
 	Out.vDiffuse = vDiffuse;
-	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vNormal = vector(0,0,0, 0.f);
-	Out.vDepth = vector(0, 0, 0, 0.f);
-	Out.vSpecular = vector(0, 0, 0, 0.f);
-	Out.vWorldPosition = vector(0, 0, 0, 0.f);
-	Out.vEmissive = vector(g_fEmissive.xyz, 1);
-	Out.vLimLight = g_vLimLight;
 
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
+	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
 	return Out;
 }
 
@@ -587,5 +594,14 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
 	}
+	pass Test2		//14
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
 
+		VertexShader = compile vs_5_0 VS_MAIN_ATTACHEDNOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Test();
+	}
 }

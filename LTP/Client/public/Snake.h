@@ -35,6 +35,9 @@ private:
 	CCollider*				m_pCollider = nullptr;
 	ATTACHEDESC				m_AttachedDesc;
 
+	CCollider*				m_pSpecialSkillCollider = nullptr;
+	ATTACHEDESC				m_SpecialSkillAttachedDesc;
+
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
 	_uint				m_iAniNum = 0;
@@ -42,6 +45,8 @@ private:
 	_bool				m_bIsHalf = false;
 	_bool				m_bIsLookAt = true;
 	_bool				m_bIsAtackMoveStart = false;
+
+	_float				m_fAngleSpeed = 1.f;
 
 	//Attacking
 	_bool				m_bIsAttack = false;
@@ -54,6 +59,9 @@ private:
 
 	//SpecialSkill
 	_float				m_fSpecialSillTime = 9.f;
+	_float3				m_vPlayerStartPos;
+	_bool				m_bIsSpecialSkill = true;
+	_bool				m_bIsSpecialSkillAttack = false;
 
 	_bool				m_bTestHodeing = false;
 	_bool				m_bHiding = false;
@@ -74,6 +82,8 @@ private:
 	_float				m_fNarrationTime = 10.f;
 	_float3				m_StartAnimPos;
 	_float3				m_AttackAnimPos;
+
+	class CSnake_Poison_Raser* m_pRaserObj = nullptr;
 
 private:
 	HRESULT SetUp_Components();

@@ -288,6 +288,7 @@
     <ClInclude Include="..\public\Snake.h" />
     <ClInclude Include="..\public\NonInstanceMeshEffect.h" />
     <ClInclude Include="..\public\Mahabalasura_SpearWave.h" />
+    <ClInclude Include="..\public\Snake_Poison_Raser.h" />
     <ClInclude Include="..\public\SpearWave.h" />
     <ClInclude Include="..\public\StaticInstanceMapObject.h" />
     <ClInclude Include="..\public\TestLedgeTrigger.h" />
@@ -403,6 +404,7 @@
     <ClCompile Include="..\private\Snake.cpp" />
     <ClCompile Include="..\private\NonInstanceMeshEffect.cpp" />
     <ClCompile Include="..\private\Mahabalasura_SpearWave.cpp" />
+    <ClCompile Include="..\private\Snake_Poison_Raser.cpp" />
     <ClCompile Include="..\private\SpearWave.cpp" />
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
     <ClCompile Include="..\private\TestLedgeTrigger.cpp" />

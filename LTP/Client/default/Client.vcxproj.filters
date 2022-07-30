@@ -421,6 +421,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\10. CurtainTrigger">
       <UniqueIdentifier>{d763ddbd-a2a4-4810-9b55-6d158a175646}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
+      <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -924,6 +927,9 @@
     <ClInclude Include="..\public\CurtainTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Snake_Poison_Raser.h">
+      <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1406,6 +1412,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CurtainTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\10. CurtainTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Snake_Poison_Raser.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,8 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 
 	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.f);
 
+	//m_pTransformCom->Scaled_All(_float3(10.f));
+
 	return S_OK;
 }
 
@@ -112,7 +114,7 @@ _int CMahabalasura_Arms::Render()
 		{
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 14, i, "g_BoneMatrices"));
 	}
 
 	return _int();
