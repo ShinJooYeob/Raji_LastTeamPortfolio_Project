@@ -500,6 +500,19 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 {
 	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
 	{
+	case VAYUSURA_LEADER_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
 	case TEZABSURA_MINION_BULLET:
 	{
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));

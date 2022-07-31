@@ -513,68 +513,68 @@ void CPlayer::Set_PosY(_float fPos_y)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	//if (STATE_STOPACTION == m_eCurState)
-	//{
-	//	return 0.f;
-	//}
-	//else if (STATE_EVASION == m_eCurState)
-	//{
-	//	GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
-	//	return 0.f;
-	//}
+	if (STATE_STOPACTION == m_eCurState)
+	{
+		return 0.f;
+	}
+	else if (STATE_EVASION == m_eCurState)
+	{
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+		return 0.f;
+	}
 
-	//GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
-	//if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming)
-	//{
-	//	return 0.f;
-	//}
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
+	if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming)
+	{
+		return 0.f;
+	}
 
-	//if (true == m_bShieldMode)
-	//{
-	//	_int iSelectSoundFileIndex = rand() % 2;
-	//	_tchar pSoundFile[MAXLEN] = TEXT("");
-	//	swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
-	//	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-	//	return 0.f;
-	//}
+	if (true == m_bShieldMode)
+	{
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		return 0.f;
+	}
 
-	//if (0.f < fDamageAmount)
-	//{
-	//	fDamageAmount *= -1.f;
-	//}
+	if (0.f < fDamageAmount)
+	{
+		fDamageAmount *= -1.f;
+	}
 
-	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
 
-	//_float fRemainHP = Add_NowHP(fDamageAmount);
+	_float fRemainHP = Add_NowHP(fDamageAmount);
 
-	//if (0.f >= fRemainHP)
-	//{
-	//	if (true == bKnockback)
-	//	{
-	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
-	//	}
-	//	else
-	//	{
-	//		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
-	//		Set_State_DeathStart();
-	//		return fRemainHP;
-	//	}
-	//}
-	//else
-	//{
-	//	if (true == bKnockback)
-	//	{
-	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
-	//	}
-	//}
+	if (0.f >= fRemainHP)
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+		else
+		{
+			m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+			Set_State_DeathStart();
+			return fRemainHP;
+		}
+	}
+	else
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+	}
 
-	//_int iSelectSoundFileIndex = rand() % 9;
-	//_tchar pSoundFile[MAXLEN] = TEXT("");
-	//swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
-	//g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-	////"Jino_Raji_Hit_%d.wav"
+	_int iSelectSoundFileIndex = rand() % 9;
+	_tchar pSoundFile[MAXLEN] = TEXT("");
+	swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
+	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	//"Jino_Raji_Hit_%d.wav"
 
-	//return fRemainHP;
+	return fRemainHP;
 	return _float();
 }
 

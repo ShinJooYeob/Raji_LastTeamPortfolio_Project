@@ -655,45 +655,45 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 
 				//RELEASE_INSTANCE(CGameInstance);
 
-//_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
+				//_uint iPlayerIndex = pPlayerNavi->Get_CurNavCellIndex();
 
-//_uint Random = (rand() % 6) - 3;
+				//_uint Random = (rand() % 6) - 3;
 
 
-//_uint RandomPlayerIndex = iPlayerIndex + Random;
+				//_uint RandomPlayerIndex = iPlayerIndex + Random;
 
-//m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
-//m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
-///////////////////////////////////////////////////////
+				//m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(RandomPlayerIndex);
+				//m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, pPlayerNavi->Get_IndexPosition(RandomPlayerIndex));
+				///////////////////////////////////////////////////////
 
-m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(m_vecInstancedTransform[i].iCellIndex);
-m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(m_vecInstancedTransform[i].iCellIndex));
+				m_vecInstancedTransform[i].pNavigation->Set_CurNavCellIndex(m_vecInstancedTransform[i].iCellIndex);
+				m_vecInstancedTransform[i].pTransform->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_IndexPosition(m_vecInstancedTransform[i].iCellIndex));
 
-m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
+				m_vecInstancedTransform[i].iRenderType = RENDER_IDLE;
 
-m_vecInstancedTransform[i].iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
-m_vecInstancedTransform[i].dTime = 0;
-m_vecInstancedTransform[i].bHit = false;
-m_vecInstancedTransform[i].fDissolve.x = 0;
-m_vecInstancedTransform[i].fDissolve.w = 1; //Live
+				m_vecInstancedTransform[i].iHp = (_int)m_Instance_Info.fValueMat.m[1][1];
+				m_vecInstancedTransform[i].dTime = 0;
+				m_vecInstancedTransform[i].bHit = false;
+				m_vecInstancedTransform[i].fDissolve.x = 0;
+				m_vecInstancedTransform[i].fDissolve.w = 1; //Live
 
-m_vecInstancedTransform[i].iLifeCount += 1;
+				m_vecInstancedTransform[i].iLifeCount += 1;
 
-if (m_pBatchTrigger->Get_MonsterAllDie())
-m_vecInstancedTransform[i].iLifeCount = 1000;
+				if (m_pBatchTrigger->Get_MonsterAllDie())
+					m_vecInstancedTransform[i].iLifeCount = 1000;
 
-if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
-{
-	m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
-	m_vecInstancedTransform[i].bDieOn = true;
-	m_iDieCount++;
+				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
+				{
+					m_pAttackColliderCom->Delete_ChildeBuffer(0, i + 1);
+					m_vecInstancedTransform[i].bDieOn = true;
+					m_iDieCount++;
 
-	if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
-	{
-		m_pBatchTrigger->Set_IsDead();
-		Set_IsDead();
-	}
-}
+					if (m_iDieCount == m_Instance_Info.fValueMat.m[0][1])
+					{
+						m_pBatchTrigger->Set_IsDead();
+						Set_IsDead();
+					}
+				}
 
 			}
 

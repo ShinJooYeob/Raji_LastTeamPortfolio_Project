@@ -43,6 +43,8 @@ private: //애니메이션
 	HRESULT				Once_AnimMotion(_double	dDeltaTime);
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
+	HRESULT				Player_Comparison(_double	dDeltaTime);
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
