@@ -86,6 +86,8 @@ _int CSnake::Update(_double fDeltaTime)
 	//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(8.f, -110.f, 53.f));
 	//}
 
+	m_pMotionTrail->Update_MotionTrail(fDeltaTime);
+
 	// Jino
 	if (true == static_cast<CPlayer*>(m_pPlayerObj)->Is_Hiding())
 	{
@@ -168,6 +170,7 @@ _int CSnake::Update(_double fDeltaTime)
 		//if (m_bTestHodeing)
 		//	m_bHiding = true;
 
+
 		if (m_bHiding)
 		{
 			m_bIsSpecialSkill = false;
@@ -223,6 +226,7 @@ _int CSnake::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
@@ -282,9 +286,11 @@ HRESULT CSnake::Ready_ParticleDesc()
 
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
+	m_pTextureParticleTransform->Set_MoveSpeed(1.f);
 
 	m_pTextureParticleTransform1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pTextureParticleTransform1, E_FAIL);
+	m_pTextureParticleTransform1->Set_MoveSpeed(1.f);
 
 	// TailPos
 	m_pTextureParticleTransform2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -309,6 +315,76 @@ HRESULT CSnake::Ready_ParticleDesc()
 	//m_pTextureParticleTransform_BowUp->Set_IsOwnerDead(true);
 	//m_pTextureParticleTransform_BowBack->Set_IsOwnerDead(true);
 
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_JY_Dough_2;
+
+
+
+		tNIMEDesc.fMaxTime_Duration = 0.5f;
+		tNIMEDesc.fAppearTime = 0.35f;
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+
+		tNIMEDesc.NoiseTextureIndex = 350;
+		tNIMEDesc.MaskTextureIndex = 81;
+		tNIMEDesc.iDiffuseTextureIndex = 232;
+		tNIMEDesc.m_iPassIndex = 17;
+		tNIMEDesc.vEmissive = _float4(1, 1.f, 1.f, 1);
+
+		tNIMEDesc.vLimLight = _float4(1.f, 0.f, 1.f, 1.f);
+		tNIMEDesc.vColor = _float3(1.f, 0.f, 1.f);
+
+
+
+
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 1080.f;
+		tNIMEDesc.vSize = _float3(1.5f, 1.5f, 1.5f);
+		tNIMEDesc.SizeSpeed = 1.f;
+		tNIMEDesc.vSizingRUL = _float3(1.f, 0, 1.f);
+
+		tNIMEDesc.MoveDir = FollowingDir_Look;
+		tNIMEDesc.MoveSpeed = 0;
+
+		m_vecJYMeshNonInst.push_back(tNIMEDesc);
+	}
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+		tNIMEDesc.vPosition = _float3(0.f, -96.5f, 96.5f);
+		tNIMEDesc.vLookDir = _float3(1, 0, 1).Get_Nomalize();
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
+
+		tNIMEDesc.fMaxTime_Duration = 4.6666666666f;
+		tNIMEDesc.fAppearTime = 0.5f;
+
+		tNIMEDesc.noisingdir = _float2(0, 1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 109;
+		tNIMEDesc.iDiffuseTextureIndex = 370;
+		//tNIMEDesc.iDiffuseTextureIndex = 366;
+		tNIMEDesc.m_iPassIndex = 20;
+		tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+		tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+
+		tNIMEDesc.fAlphaTestValue = 0.0f;
+
+
+		tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f).XMVector() * 3.8f;
+		m_vecJYMeshNonInst.push_back(tNIMEDesc);
+
+	}
 
 
 	return S_OK;
@@ -378,6 +454,17 @@ HRESULT CSnake::SetUp_Components()
 
 	tAttachedDesc.Initialize_AttachedDesc(this, "sk_jaw_01", _float3(1), _float3(0), _float3(-60.8041f, -0.000036f, -114.866f));
 	m_SpecialSkillAttachedDesc = tAttachedDesc;
+
+
+	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
+	tMotionDesc.iNumTrailCount = 25;
+	tMotionDesc.iPassIndex = 15;
+	tMotionDesc.pModel = m_pModel;
+	tMotionDesc.pShader = m_pShaderCom;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
+	
+
 
 	return S_OK;
 }
@@ -546,10 +633,14 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.87f, 0.39f, 0.96f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
 
+			static _double Timer = 0;
+			static _float3 FindPos = _float3(0);
+			static _uint	iEffectCount = 0;
+
 			if (PlayRate > 0 && PlayRate <= 0.27678571)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				_float3 FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
+				FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
 
 				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -565,9 +656,53 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, EsingPos);
 			}
 
+			if (PlayRate < 0.3303571428571428571f)
+			{
+				iEffectCount = 0;
+
+				if (PlayRate > 0.258928571428571428f)
+				{
+					Timer -= fDeltatime;
+					if (Timer < 0)
+					{
+						m_pTextureParticleTransform->Set_Matrix(m_pTransformCom->Get_WorldMatrix());
+						m_pTextureParticleTransform1->Set_Matrix(m_pTransformCom->Get_WorldMatrix());
+
+						m_pTextureParticleTransform->Move_Right(30);
+						m_pTextureParticleTransform1->Move_Right(-30);
+
+						m_pTextureParticleTransform->LookAt(FindPos.XMVector());
+						m_pTextureParticleTransform1->LookAt(FindPos.XMVector());
+
+
+
+						m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+
+						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform1->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+						Timer = 0.05;
+					}
+				}
+			}
+			else if (iEffectCount == 0)
+			{
+				m_vecJYMeshNonInst[0].vPosition = XMVectorSetY(FindPos.XMVector(),2.13f);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYMeshNonInst[0]);
+
+
+
+				iEffectCount++;
+			}
+			else
+			{
+				Timer = 0;
+
+			}
+
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
 				m_bIsBite = true;
+
 
 				m_iAdjMovedIndex++;
 			}
@@ -593,41 +728,59 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.3f)
+			if (m_EffectAdjust == 0 && PlayRate >0.f)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_0, m_pTextureParticleTransform2);
-				m_EffectAdjust++;
-			}
-			if (m_EffectAdjust == 1 && PlayRate >= 0.455f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
-				m_EffectAdjust++;
-			}
-			if (m_EffectAdjust == 2 && PlayRate >= 0.555f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_2, m_pTextureParticleTransform2);
-
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTransformCom;
-				instanceDesc.TotalParticleTime = 1.f;
-				instanceDesc.EachParticleLifeTime = 1.0f;
-				instanceDesc.Particle_Power = 13;
-				instanceDesc.TargetColor = _float4(0.98f, 0.96f, 0.41f, 0.7f);
-				instanceDesc.TargetColor2 = _float4(0.98f, 0.96f, 0.41f, 0.7f);
-				instanceDesc.ParticleSize = _float3(0.3f);
-				instanceDesc.ParticleSize2 = _float3(0.1f);
-				instanceDesc.SizeChageFrequency = 6;
-				instanceDesc.ColorChageFrequency = 1;
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
-
-
+				m_vecJYMeshNonInst[1].iDiffuseTextureIndex = 370;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYMeshNonInst[1]);
 
 
 				m_EffectAdjust++;
 			}
+			else if (m_EffectAdjust == 1 && PlayRate >0.05f)
+			{
+
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, false);
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, false);
+
+				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+				pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+				pLightDesc->vAmbient = _float4(0.2f, 0.2f, 0.2f, 1.f);
+				pLightDesc->vSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+			}
+
+			//0.
+			//if (m_EffectAdjust == 1 && PlayRate >= 0.3303571428571428571f)
+			//	//if (m_EffectAdjust == 1 && PlayRate >= 0.455f)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_1, m_pTextureParticleTransform2);
+			//	m_EffectAdjust++;
+			//}
+			//if (m_EffectAdjust == 2 && PlayRate >= 0.455f)
+			//	//if (m_EffectAdjust == 2 && PlayRate >= 0.555f)
+			//{
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_SNAKE_2, m_pTextureParticleTransform2);
+
+			//	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
+			//	instanceDesc.FollowingTarget = m_pTransformCom;
+			//	instanceDesc.TotalParticleTime = 1.f;
+			//	instanceDesc.EachParticleLifeTime = 1.0f;
+			//	instanceDesc.Particle_Power = 13;
+			//	instanceDesc.TargetColor = _float4(0.98f, 0.96f, 0.41f, 0.7f);
+			//	instanceDesc.TargetColor2 = _float4(0.98f, 0.96f, 0.41f, 0.7f);
+			//	instanceDesc.ParticleSize = _float3(0.3f);
+			//	instanceDesc.ParticleSize2 = _float3(0.1f);
+			//	instanceDesc.SizeChageFrequency = 6;
+			//	instanceDesc.ColorChageFrequency = 1;
+			//	instanceDesc.bEmissive = true;
+			//	instanceDesc.vEmissive_SBB = _float3(1);
+
+			//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
+
+
+			//	m_EffectAdjust++;
+			//}
 
 			if (PlayRate >= 0.4375 && PlayRate <= 0.625)
 			{
@@ -701,6 +854,12 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		break;
 		case 8:
 		{
+			if (PlayRate > 0.10055865921787709f  && m_iAdjMovedIndex == 0)
+			{
+				m_pRaserObj->Start_BeamEffect();
+				m_iAdjMovedIndex++;
+			}
+
 			if (PlayRate > 0 && PlayRate <= 0.1284916)
 			{
 				_float3 SnakePos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -754,6 +913,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 			break;
 
+
 		}
 	}
 	else
@@ -789,6 +949,18 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			//m_iRotationRandom = 2;
 
 			m_pModel->Change_AnimIndex(1);
+
+			{
+
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+
+				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+				pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+				pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
+				pLightDesc->vSpecular = _float4(0.3203125f, 0.32421875f, 0.28125f, 1.f);
+
+			}
 		}
 
 		if (iNowAnimIndex == 5)
@@ -861,6 +1033,8 @@ void CSnake::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pSpecialSkillCollider);
+	Safe_Release(m_pMotionTrail);
+	
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pTextureParticleTransform1);

@@ -101,37 +101,40 @@ _int CPlayer::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
-			NONINSTNESHEFTDESC tNIMEDesc;
-			tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-			tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+	
+			{
+				NONINSTNESHEFTDESC tNIMEDesc;
+				tNIMEDesc.vPosition = _float3(0.f, -96.5f, 96.5f);
+				tNIMEDesc.vLookDir = _float3(1, 0, 1).Get_Nomalize();
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword;
-			tNIMEDesc.fMaxTime_Duration = 0.7f;
+				tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
+				tNIMEDesc.fMaxTime_Duration = 7.25f;
+
+				tNIMEDesc.fAppearTime = 0.25f;
+
+				tNIMEDesc.noisingdir = _float2(0, 1);
+
+				tNIMEDesc.NoiseTextureIndex = 381;
+				tNIMEDesc.MaskTextureIndex = 109;
+				tNIMEDesc.iDiffuseTextureIndex = 366;
+				tNIMEDesc.m_iPassIndex = 20;
+				tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+				tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+				tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+				tNIMEDesc.RotAxis = FollowingDir_Up;
+				tNIMEDesc.RotationSpeedPerSec = 0.f;
+
+				tNIMEDesc.fAlphaTestValue = 0.0f;
 
 
-			tNIMEDesc.fAppearTime = 0.35f;
+				tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f).XMVector() * 3.8f;
 
-			tNIMEDesc.noisingdir = _float2(0, 1);
 
-			tNIMEDesc.NoiseTextureIndex = 350;
-			tNIMEDesc.MaskTextureIndex = 5;
-			tNIMEDesc.iDiffuseTextureIndex = 378;
-			tNIMEDesc.m_iPassIndex = 19;
-			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.93359375f, 0.19140625f, 1.f);
-			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
+		
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			}
 
-			tNIMEDesc.RotAxis = FollowingDir_Right;
-			tNIMEDesc.OnceStartRot = -90.f;
-
-			tNIMEDesc.RotationSpeedPerSec = 0.f;
-			tNIMEDesc.vSize = _float3(0.01f, 0.03f, 0.01f);
-
-			tNIMEDesc.MoveDir = FollowingDir_Look;
-			tNIMEDesc.MoveSpeed = 0;
-
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(10, 0, 0, 0);
 			//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
 			//tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_02;
@@ -413,7 +416,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom); 
+//	m_pNavigationCom->Render(m_pTransformCom); 
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -2417,7 +2420,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate /*m_pNavigationCom*/);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate ,nullptr/*m_pNavigationCom*/);
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 
@@ -7936,7 +7939,6 @@ HRESULT CPlayer::SetUp_Components()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.1f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
 	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_arm", _float3(1), _float3(0), _float3(11.6691f, -0.395438f, -114.675f));

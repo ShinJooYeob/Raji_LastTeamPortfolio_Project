@@ -1163,6 +1163,9 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Lightning_01,
 	Prototype_Mesh_Lightning_02,
 	Prototype_Mesh_Lightning_03,
+	Prototype_Mesh_Spring,
+	Prototype_Mesh_Spring2,
+	Prototype_Mesh_JYLaser,
 	
 	
 
@@ -3526,6 +3529,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_BG_Mountain_3:
 		return TEXT("BG_Mountain_3.fbx");
 		break;
+	case Prototype_Mesh_Spring:
+		return TEXT("Spring.fbx");
+		break;
+	case Prototype_Mesh_Spring2:
+		return TEXT("Spring2.fbx");
+		break;
 
 
 
@@ -3569,8 +3578,12 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Lightning_03:
 		return TEXT("Lightning_03.fbx");
 		break;
-		
+	case Prototype_Mesh_JYLaser:
+		return TEXT("JYLaser.fbx");
+		break;
 
+		
+		
 
 
 

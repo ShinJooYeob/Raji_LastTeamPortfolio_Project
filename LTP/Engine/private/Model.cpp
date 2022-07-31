@@ -32,7 +32,8 @@ CModel::CModel(const CModel & rhs)
 
 	m_DefaultPivotMatrix(rhs.m_DefaultPivotMatrix),
 
-	m_pModelDesc(rhs.m_pModelDesc)
+	m_pModelDesc(rhs.m_pModelDesc),
+	m_iNumTotalPrimitive(rhs.m_iNumTotalPrimitive)
 {
 
 	//매쉬 컨테이너 얕은 복사
@@ -202,6 +203,17 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, const char * pModelFi
 
 	}
 	
+	m_iNumTotalPrimitive = 0;
+
+	for (_uint i = 0 ; i <m_iNumMaterials;	i++ )
+	{
+		for (auto& pMeshContainer : m_vecMeshContainerArr[i])
+		{
+			m_iNumTotalPrimitive += pMeshContainer->Get_NumPrimitive();
+		}
+	}
+
+
 	return S_OK;
 }
 
@@ -250,6 +262,18 @@ HRESULT CModel::Initialize_Prototype(MODELTYPE eModelType, MODELDESC* desc, _fMa
 		FAILED_CHECK(Ready_MeshContainers(DefaultPivotMatrix));
 		FAILED_CHECK(Ready_Materials(m_pModelDesc->mFBXFullPath));
 	}
+
+
+	m_iNumTotalPrimitive = 0;
+
+	for (_uint i = 0; i < m_iNumMaterials; i++)
+	{
+		for (auto& pMeshContainer : m_vecMeshContainerArr[i])
+		{
+			m_iNumTotalPrimitive += pMeshContainer->Get_NumPrimitive();
+		}
+	}
+
 	return S_OK;
 }
 

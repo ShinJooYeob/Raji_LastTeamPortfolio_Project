@@ -31,6 +31,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CMotionTrail*		m_pMotionTrail = nullptr;
 
 	CCollider*				m_pCollider = nullptr;
 	ATTACHEDESC				m_AttachedDesc;
@@ -82,6 +83,7 @@ private:
 	_float				m_fNarrationTime = 10.f;
 	_float3				m_StartAnimPos;
 	_float3				m_AttackAnimPos;
+	vector<NONINSTNESHEFTDESC>		m_vecJYMeshNonInst;
 
 	class CSnake_Poison_Raser* m_pRaserObj = nullptr;
 

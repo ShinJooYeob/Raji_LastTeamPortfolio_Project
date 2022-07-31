@@ -59,7 +59,9 @@ HRESULT CScene_Stage1::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
+#ifndef _DEBUG
 	FAILED_CHECK(Ready_MapParticle());
+#endif // _DEBUG
 
 	return S_OK;
 }

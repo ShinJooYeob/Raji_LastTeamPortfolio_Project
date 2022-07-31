@@ -536,6 +536,7 @@ HRESULT CScene_Stage4::Ready_PostPorcessing()
 
 #ifndef _DEBUG
 
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));

@@ -76,6 +76,7 @@ public:
 
 public:
 	_uint	Get_NumMaterial() { return m_iNumMaterials; };
+	_uint	Get_NumTotalPrimitive() { return m_iNumTotalPrimitive; };
 	const aiScene*	Get_AssimpScene() const
 	{
 		return m_pScene;
@@ -135,6 +136,8 @@ private:
 	_bool		m_bIsChagingAnim = false;
 	_uint		m_KindsOfAnimChange = 0;
 	_bool		m_bIsSwapFunctionCalled= false;//블렌딩할때 꼬이지 않도록 하는 불값
+
+	_uint		m_iNumTotalPrimitive = 0;
 
 #ifdef _DEBUG
 	_float		m_fDebugAnimPlaySpeed = 1.f;

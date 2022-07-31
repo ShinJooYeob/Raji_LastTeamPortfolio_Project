@@ -69,7 +69,7 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 		// 해당 영역에 보냄
 
 		CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
-		NULL_CHECK_BREAK(pPlayer, E_FAIL);
+		NULL_CHECK_BREAK(pPlayer);
 		CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 

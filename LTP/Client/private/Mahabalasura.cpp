@@ -627,7 +627,7 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 			tNIMEDesc.vPosition = _float3(100.f, 34.26f, 323.380f);
 			tNIMEDesc.vLookDir = _float3(0, 1, 0);
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
 			tNIMEDesc.fMaxTime_Duration = 7.25f;
 
 			tNIMEDesc.fAppearTime = 0.25f;
@@ -648,7 +648,6 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
 			tNIMEDesc.m_iPassIndex = 20;
 			tNIMEDesc.vLookDir = _float3(1, 0, 0);
 

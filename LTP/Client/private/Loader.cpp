@@ -238,6 +238,10 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	///* Å×½ºÆ® ¾Ë°Ô¶ô */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+	//FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Mesh_AlgaeRock_Ledge),
+	//	CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "TestObject", "AlgaeRock_Ledge.FBX", TransformMatrix)));
+
+
 
 	// Related Player Skill
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_ShellingRange),
@@ -1535,13 +1539,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	//// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
-	
-	for (_uint i = 0; i < SCENE_END; i++)
-		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	////// MERGE //
+	//FAILED_CHECK(Load_AllMonster());
+	//FAILED_CHECK(Load_AllBoss());
+	//FAILED_CHECK(Load_AllDynamicMapObject());
+	//
+	//for (_uint i = 0; i < SCENE_END; i++)
+	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

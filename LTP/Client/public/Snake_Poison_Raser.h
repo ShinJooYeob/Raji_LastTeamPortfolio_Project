@@ -36,12 +36,28 @@ public:
 
 	void	Set_WaistgirdScal() { m_pTransformCom->Scaled_All(_float3(0.6f)); }
 	void	Set_SpinScal() { m_pTransformCom->Scaled_All(_float3(0.8f)); }
+	void	Start_BeamEffect();
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
-	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+
+	_float				m_fCurTime_Duration = 0;
+	_float				m_fMaxTime_Duration = 0;
+	_uint				m_iAdjustCount = 0;
+
+	INSTPARTICLEDESC	m_ArrDesc[2];
+	NONINSTNESHEFTDESC		m_tLazerInsideMeshDesc;
+	NONINSTNESHEFTDESC		m_tLazerOutsideMeshDesc;
+
+	CModel*				m_pLazerInsideModel = nullptr;
+	CModel*				m_pLazerOutsideModel = nullptr;
+
+	CTransform*			m_pLazerInsideTransformCom	= nullptr;
+	CTransform*			m_pLazerOutsideTransformCom = nullptr;
+	CTransform*			m_pExplosionTransformCom	= nullptr;
+
 
 	SNAKERASERDESC		m_RaserDesc;
 
@@ -52,6 +68,8 @@ private:
 private:
 	void				Update_AttachMatrix();
 	HRESULT				SetUp_Components();
+	HRESULT				Ready_MeshDesc();
+	HRESULT				Setup_MeshDesc(NONINSTNESHEFTDESC& tMeshDesc);
 
 public:
 	static CSnake_Poison_Raser* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

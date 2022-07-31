@@ -39,7 +39,8 @@ HRESULT CMotionTrailBuffer::Initialize_Clone(void * pArg)
 HRESULT CMotionTrailBuffer::Start_MotionTrail(_float4x4 WorldMatrix, _float4 vColor, _double TargetTime)
 {
 	m_vColor = vColor;
-	m_vColor.w = 1.f;
+	m_TargetStrength = m_vColor.w;
+	//m_vColor.w = 1.f;
 	m_TargetTime = TargetTime;
 	m_PassedTime = 0;
 
@@ -54,7 +55,7 @@ HRESULT CMotionTrailBuffer::Start_MotionTrail(_float4x4 WorldMatrix, _float4 vCo
 _int CMotionTrailBuffer::Update_MotionBuffer(_double fDeltaTime)
 {
 	m_PassedTime += fDeltaTime;
-	m_vColor.w = _float((m_TargetTime - m_PassedTime) / m_TargetTime);
+	m_vColor.w = min(m_TargetStrength * _float((m_TargetTime - m_PassedTime) / m_TargetTime),1);
 
 	return _int();
 }

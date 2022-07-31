@@ -47,6 +47,7 @@ private:
 	CModel*									m_pOriginalModel = nullptr;
 	_float									m_fEmisive = 0;
 	_float4									m_vColor = _float4(1, 0, 0, 1);
+	_float									m_TargetStrength = 1.f;
 
 
 private:
