@@ -41,6 +41,10 @@ private: //애니메이션
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
+private:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
 
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
@@ -52,7 +56,6 @@ private:
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
-
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -93,6 +96,16 @@ private:
 	//Attack
 	_bool				m_bAttackCancelOn = false;
 	_bool				m_bAttackFrieOn = false;
+
+private: // particle	
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
+
+	CGameObject*					m_BulletObj = nullptr;
+
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

@@ -10,6 +10,7 @@
 #include "PhysX/Collider_PhysX_Dynamic.h"
 #include "PhysX/Collider_PhysX_Joint.h"
 
+#include "Monster.h"
 #include "Monster_Mahinasura_Minion.h"
 #include "Monster_Mahinasura_Leader.h"
 
@@ -1847,85 +1848,105 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 {
 	
 	static _float3 CreatePos = _float3(0, 0, 0);
-	ImGui::DragFloat3("CreatePos:", (float*)&CreatePos, 0.1f, -100, 100);
+//	ImGui::DragFloat3("CreatePos:", (float*)&CreatePos, 0.1f, -100, 100);
 	static const wchar_t* layer_Monster = TAG_LAY(Layer_Monster);
 	static const wchar_t* layer_Boss = TAG_LAY(Layer_Boss);
 	
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "MONSTER");
 
-	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Minion"))
-	{		
-		CGameObject* monsterobj =  (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion),&CreatePos));
+	//if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Minion"))
+	//{		
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+	//	CGameObject* monsterobj =  (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion),&CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+
+	//}
+
+	//if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Leader"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader), &CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//}
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Minion"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Vayusura_Minion), &CreatePos));
 
 		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
 		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 	}
 
-	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Leader"))
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Leader"))
 	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Leader), &CreatePos));
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Vayusura_Leader), &CreatePos));
 
 		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
 		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 	}
 
-	//if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Minion"))
-	//{
-	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Vayusura_Minion), &CreatePos));
 
-	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	//}
-
-
-	//if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Leader"))
-	//{
-	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Vayusura_Leader), &CreatePos));
-
-	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	//}
-
-
-	//if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura_Minion"))
-	//{
-	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion), &CreatePos));
-
-	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	//}
-	//if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura"))
-	//{
-	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura), &CreatePos));
-
-	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	//}
-
-
-	if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Black"))
+	if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura_Minion"))
 	{
-		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Black), &CreatePos));
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
 
-		CTransform* transform = (CTransform*)static_cast<CMonster_Gadasura_Black*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+	if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
 		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 	}
 
 
-	if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Rage"))
-	{
-		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Rage), &CreatePos));
+	//if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Black"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
 
-		CTransform* transform = (CTransform*)static_cast<CMonster_Gadasura_Rage*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	}
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Black), &CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Gadasura_Black*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//}
+
+
+	//if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Rage"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Rage), &CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Gadasura_Rage*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//}
 
 
 
@@ -1945,34 +1966,42 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	Prototype_Object_Boss_MahabalasuraCopy,
 	*/
 
-	if (ImGui::Button("Create_BOSS_Snake"))
-	{
-		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Snake), &CreatePos));
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "BOSS");
 
-		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//if (ImGui::Button("Create_BOSS_Snake"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
 
-	}
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Snake), &CreatePos));
 
-	if (ImGui::Button("Create_BOSS_Prototype_Object_Boss_Mahabalasura"))
-	{
-		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Mahabalasura), &CreatePos));
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 
-		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	}
+	//}
+
+	//if (ImGui::Button("Create_BOSS_Prototype_Object_Boss_Mahabalasura"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Mahabalasura), &CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//}
 
 
-	if (ImGui::Button("Create_BOSS_Prototype_Object_Boss_Rngda"))
-	{
-		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
-		(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Rangda), &CreatePos));
+	//if (ImGui::Button("Create_BOSS_Prototype_Object_Boss_Rngda"))
+	//{
+	//	CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
 
-		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
-		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
-	}
+	//	CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+	//	(g_pGameInstance->Get_NowSceneNum(), layer_Boss, TAG_OP(Prototype_Object_Boss_Rangda), &CreatePos));
+
+	//	CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+	//	transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	//}
 
 
 
@@ -1996,6 +2025,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	//}
 
 	
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "DELETE");
 
 	if (ImGui::Button("Delete_Monster"))
 	{

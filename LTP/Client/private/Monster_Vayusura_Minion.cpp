@@ -35,10 +35,10 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+
 	///////////////////test
-
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 31.2f, 185.583f));
-
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 31.2f, 185.583f));
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 
@@ -48,6 +48,8 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 
 	if (m_fHP <= 0)
 	{
@@ -67,6 +69,8 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 		{
 			Set_IsDead();
 		}
+
+
 	}
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -110,6 +114,7 @@ _int CMonster_Vayusura_Minion::LateUpdate(_double dDeltaTime)
 	}
 	//////////
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel, nullptr, m_pDissolve));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -122,6 +127,8 @@ _int CMonster_Vayusura_Minion::LateUpdate(_double dDeltaTime)
 	if (m_pHPUI != nullptr)
 	{
 		m_pHPUI->LateUpdate(dDeltaTime);
+
+
 	}
 	return _int();
 }
@@ -536,6 +543,7 @@ HRESULT CMonster_Vayusura_Minion::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 
+
 	switch (m_iOncePattern)
 	{
 	case 40:
@@ -551,6 +559,10 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	if (KEYPRESS(DIK_B))
+		m_iInfinityPattern = 0;
+
 	switch (m_iInfinityPattern)
 	{
 	case 0:
@@ -682,6 +694,64 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Vayusura_Minion::Ready_ParticleDesc()
+{
+
+	m_pTextureParticleTransform_HEAD = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_HEAD);
+
+	m_pTextureParticleTransform_WingR = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_WingR);
+
+	m_pTextureParticleTransform_WingL = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_WingL);
+
+	m_pTextureParticleTransform_Foot = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Foot);
+	mPlaneTimer = 0;
+	return S_OK;
+}
+
+HRESULT CMonster_Vayusura_Minion::Update_Particle(_double timer)
+{
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
+	//	ATTACHEDESC boneDesc = m_vecAttachedDesc[0]->Get_WeaponDesc().eAttachedDesc;
+	//	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
+	//	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
+	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
+	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
+
+	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_HEAD->Set_Matrix(mat_World); // Head
+
+	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(6).XMVector();
+	m_pTextureParticleTransform_WingR->Set_Matrix(mat_World); // Wing_r 6  
+
+	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(8).XMVector();
+	m_pTextureParticleTransform_WingL->Set_Matrix(mat_World); // Wing_l 8 
+
+//	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(3).XMVector();
+//	m_pTextureParticleTransform_Foot->Set_Matrix(mat_World); // foot
+
+	mat_World.r[3] = XMVectorSetY(mat_World.r[3], m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y);
+
+	m_pTextureParticleTransform_Foot->Set_Matrix(mat_World); // player
+
+	if (mPlaneTimer >= 0)
+		mPlaneTimer -= timer;
+	
+
+	if (KEYDOWN(DIK_V))
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Test, m_pTextureParticleTransform_HEAD);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash1, m_pTextureParticleTransform_HEAD);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -691,6 +761,15 @@ HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Vayusura_Minion), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
+
+	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
+
+	tMotionDesc.iNumTrailCount = 5;
+	tMotionDesc.pModel = m_pModel;
+	tMotionDesc.pShader = m_pShaderCom;
+	tMotionDesc.iPassIndex = 5;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -734,6 +813,9 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_bColliderAttackOn = false;
 		m_dAcceleration = 1;
 
+		m_EffectAdjust = 0;
+
+		
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -762,6 +844,8 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bIOnceAnimSwitch = false;
 			}
+
+			
 			break;
 		}
 		case 5:
@@ -771,6 +855,31 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bColliderAttackOn = true;
 				m_iAdjMovedIndex++;
 			}
+
+			if (PlayRate>0.15f && PlayRate < 0.9f)
+			{
+				_float FootY = m_pTextureParticleTransform_HEAD->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+				_float PY = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+
+				if(mPlaneTimer <= 0)
+					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.71f, 0.8f, 0.8f, 1.f), 0.8f);
+
+				if (fabs((FootY)-(PY)) < 2.0f && mPlaneTimer <= 0)
+				{
+					mPlaneTimer = 0.07f;
+
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Plane, m_pTextureParticleTransform_Foot);
+				}
+			}
+
+			if (m_EffectAdjust == 0 && PlayRate > 0.3f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Plane, m_pTransformCom);
+
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash0, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
+			}
+
 			break;
 		}
 		default:
@@ -843,4 +952,11 @@ void CMonster_Vayusura_Minion::Free()
 	Safe_Release(m_pAttackColliderCom);
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pDissolve);
+	Safe_Release(m_pMotionTrail);
+	
+
+	Safe_Release(m_pTextureParticleTransform_HEAD);
+	Safe_Release(m_pTextureParticleTransform_WingR);
+	Safe_Release(m_pTextureParticleTransform_WingL);
+	Safe_Release(m_pTextureParticleTransform_Foot);
 }

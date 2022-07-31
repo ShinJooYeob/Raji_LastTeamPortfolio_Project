@@ -37,6 +37,7 @@ public:
 
 #ifdef _DEBUG
 public:
+
 	HRESULT Render(class CTransform* pTransform = nullptr);
 #endif // _DEBUG
 

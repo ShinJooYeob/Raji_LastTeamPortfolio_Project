@@ -2031,18 +2031,18 @@ HRESULT CScene_Edit::Input_KeyBoard(_double fDeltaTime)
 			_long fWheelMove = pInstance->Get_DIMouseMoveState(CInput_Device::MMS_WHEEL);
 			if (fWheelMove)
 			{
-				_float tempValue;
-				memcpy(&tempValue, ((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), sizeof(_float));
-
-				if (fWheelMove > 0)
-					tempValue += _float(m_ArrBuffer[3]);
-				else
-					tempValue += _float(-m_ArrBuffer[3]);
-				//tempValue += _float(fWheelMove * m_ArrBuffer[3] * fDeltaTime);
-
-
-				FAILED_CHECK(RenewElenmetTransform(&(m_vecBatchedObject[m_iBatchedVecIndex])));
-				memcpy(((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), &tempValue, sizeof(_float));
+			//	_float tempValue;
+			//	memcpy(&tempValue, ((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), sizeof(_float));
+			//
+			//	if (fWheelMove > 0)
+			//		tempValue += _float(m_ArrBuffer[3]);
+			//	else
+			//		tempValue += _float(-m_ArrBuffer[3]);
+			//	//tempValue += _float(fWheelMove * m_ArrBuffer[3] * fDeltaTime);
+			//
+			//
+			//	FAILED_CHECK(RenewElenmetTransform(&(m_vecBatchedObject[m_iBatchedVecIndex])));
+			//	memcpy(((_float*)(&(m_SelectedObjectSRT->m[2 - m_iKindsOfMoving])) + m_iSelectedXYZ), &tempValue, sizeof(_float));
 
 			}
 

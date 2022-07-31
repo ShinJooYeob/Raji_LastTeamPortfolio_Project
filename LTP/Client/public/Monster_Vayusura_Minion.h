@@ -44,12 +44,17 @@ private: //애니메이션
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
 private:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
+private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CDissolve*			m_pDissolve = nullptr;
-
+	CMotionTrail*		m_pMotionTrail = nullptr;
 
 private:
 	CCollider*			m_pColliderCom = nullptr;
@@ -108,6 +113,14 @@ private://Sound
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
+
+private: // particle	
+	CTransform*						m_pTextureParticleTransform_HEAD = nullptr;
+	CTransform*						m_pTextureParticleTransform_WingR = nullptr;
+	CTransform*						m_pTextureParticleTransform_WingL = nullptr;
+	CTransform*						m_pTextureParticleTransform_Foot = nullptr;
+	_double							mPlaneTimer = 0;
+	
 
 private:
 	HRESULT SetUp_Components();

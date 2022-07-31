@@ -39,8 +39,8 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 	// #BUG NAVIONPLEASE
 
 	///////////////test
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////
 
 	m_pTransformCom->Scaled_All(_float3(1.5f,1.5f,1.5f));

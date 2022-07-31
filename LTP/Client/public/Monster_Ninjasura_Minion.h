@@ -31,8 +31,12 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
-
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+
+private:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -94,7 +98,11 @@ private: //MotionTrail
 	_bool				m_bTurnMotion = false;
 	_bool				m_MotionTrailOn = false;
 
-
+private: // particle	
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
 
 
 private:

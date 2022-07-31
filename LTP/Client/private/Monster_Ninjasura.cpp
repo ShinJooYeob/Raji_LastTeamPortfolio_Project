@@ -196,6 +196,27 @@ HRESULT CMonster_Ninjasura::SetUp_Fight(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Ninjasura::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
+
+	m_pTextureParticleTransform_Demo4 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo4);
+	return S_OK;
+}
+
+HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
@@ -284,6 +305,11 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+//	m_iOncePattern = 0;
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 10;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -489,6 +515,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_bLookAtOn = false;
 
 		m_dAcceleration = 1;
+
+		m_EffectAdjust = 0;
 
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
@@ -782,4 +810,9 @@ void CMonster_Ninjasura::Free()
 	////////////Motion Test
 	Safe_Release(m_pMotionTrail);
 	////////////
+
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+	Safe_Release(m_pTextureParticleTransform_Demo4);
 }

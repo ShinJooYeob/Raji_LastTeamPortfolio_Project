@@ -40,10 +40,12 @@ HRESULT CScene_Stage6::Initialize()
 	// Assimp Test
 //	FAILED_CHECK(Ready_Layer_AssimpModelTest(TAG_LAY(Layer_TeethObj)));
 //	GetSingle(CPhysXMgr)->CreateDemoMap();
-
-//	FAILED_CHECK(Ready_LoadEffectMesh());
-
 //	GetSingle(CAssimpCreateMgr)->Free_VertexData_STATIC();
+
+
+	// Effect
+	FAILED_CHECK(Ready_LoadEffectMesh());
+
 
 	return S_OK;
 }
@@ -64,43 +66,43 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 
 
 #ifdef _DEBUG
-	if (KEYDOWN(DIK_B))
-	{
-		// 해당 영역에 보냄
+	//if (KEYDOWN(DIK_B))
+	//{
+	//	// 해당 영역에 보냄
 
-		CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
-		NULL_CHECK_BREAK(pPlayer, E_FAIL);
-		CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
-		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-
-
-		// pick pos
-		POINT ptMouse;
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
-
-		_Vector vCursorPos = XMVectorSet(
-			(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
-			(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
-			0, 1.f);
-
-		_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
-		_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
-
-		_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
-
-		vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+	//	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
+	//	NULL_CHECK_BREAK(pPlayer);
+	//	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	//	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
 
-		_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
-		_Vector vOldPos = vCamPos;
-		_Vector vNewPos;
-		vNewPos = vOldPos + vRayDir;
+	//	// pick pos
+	//	POINT ptMouse;
+	//	GetCursorPos(&ptMouse);
+	//	ScreenToClient(g_hWnd, &ptMouse);
 
-		static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
-		PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//	_Vector vCursorPos = XMVectorSet(
+	//		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+	//		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+	//		0, 1.f);
 
-	}
+	//	_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+	//	_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
+
+	//	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+	//	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+	//	_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+	//	_Vector vOldPos = vCamPos;
+	//	_Vector vNewPos;
+	//	vNewPos = vOldPos + vRayDir;
+
+	//	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
+	//	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	//}
 
 #endif // _DEBUG
 
@@ -283,7 +285,8 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
 	// 43 43.7 30
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(43.f, 43.7f, 30.0f));
+//	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(43.f, 43.7f, 30.0f));
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(18, 20, 10));
 	
 
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));

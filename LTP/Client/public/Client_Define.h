@@ -17,7 +17,9 @@ extern _bool g_bShowMouse;
 
 #define GETPARTICLE GetSingle(CPartilceCreateMgr)
 
-#define DEBUGONSHADERSETTING
+#define MYCOLORA(r,g,b)			_float4(0.rf,0.gf,0.bf,1.f)
+#define MYCOLOR(r,g,b,a)		_float4(r,g,b,a)
+
 
 namespace Client {};
 using namespace Client;
