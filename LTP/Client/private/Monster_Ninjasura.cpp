@@ -29,8 +29,6 @@ HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
-
-	m_pTransformCom->Scaled_All(_float3(1.5f, 1.5f, 1.5f));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
 
