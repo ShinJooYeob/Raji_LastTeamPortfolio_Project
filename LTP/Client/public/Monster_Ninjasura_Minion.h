@@ -74,6 +74,7 @@ private:
 
 private:
 	CTransform*			m_pPlayerTransform = nullptr; //플레이어 트랜스폼 정보
+	CNavigation*		m_pPlayerNavigation = nullptr; //플레이어 네비
 
 private://애니메이션 동작 및 이벤트
 	Anim_State			m_eMonster_State = Anim_State::MONSTER_IDLE;

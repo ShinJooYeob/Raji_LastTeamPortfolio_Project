@@ -229,7 +229,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Info()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_pPlayerTransform = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
-
+	m_pPlayerNavigation = static_cast<CNavigation*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Navaigation)));
 	RELEASE_INSTANCE(CGameInstance);
 
 
@@ -293,17 +293,19 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Fight(_double dDeltaTime)
 {
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
-	if (m_bLookAtOn)
+	if (m_fDistance >= 0.3)
 	{
-		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+		if (m_bLookAtOn)
+		{
+			//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 
-		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
-		m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+			//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
+			m_pTransformCom->Turn_Dir(vTarget, 0.9f);
+		}
 	}
-
 
 
 	return S_OK;
@@ -413,7 +415,7 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 		m_dInfinity_CoolTime = 0;
 
-		m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+		m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_MotionTrailOn = false; //!@#!@#@!#!@#!@#!@#!@#@$@!Test 맞을떄 모션 트레일온 false 시켜야함
 	}
 
@@ -668,7 +670,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			m_bLookAtOn = false;
 			if (m_iAdjMovedIndex == 0)
 			{
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 				m_bColliderAttackOn = true;
 				m_iAdjMovedIndex++;
@@ -703,7 +705,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (PlayRate >= 0.85)
 			{
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 
@@ -731,22 +733,44 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_MotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				m_iAdjMovedIndex++;
-			}else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
-			{
-				//플레이어 주변 랜덤 생성
-				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-
-				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
-				//랜덤방향
-				_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
-			
-				PlayerPos = PlayerPos + (vDir * 4);
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
-				m_iAdjMovedIndex++;
-			
 			}
+			else if (PlayRate >= 0.8)
+			{
+				if (m_iAdjMovedIndex == 2)
+				{
+					_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+					_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
+
+					CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+					//랜덤방향
+					_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
+
+					XMStoreFloat3(&m_fDirection, vDir);
+
+					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos -(XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					m_iAdjMovedIndex++;
+				}
+				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 50, dDeltaTime, m_pNavigationCom);
+
+			}
+			//else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			//{
+			//	//플레이어 주변 랜덤 생성
+			//	_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+			//	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+			//	//랜덤방향
+			//	_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
+			//
+			//	PlayerPos = PlayerPos + (vDir * 4);
+
+			//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+			//	m_iAdjMovedIndex++;
+			//
+			//}
 			break;
 		}
 		case 13:
@@ -760,7 +784,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (PlayRate >= 0.66)
 			{
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 			break;
@@ -788,20 +812,26 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				m_iAdjMovedIndex++;
 			}
-			else if (m_iAdjMovedIndex == 2 && PlayRate >= 0.8)
+			else if (PlayRate >= 0.8)
 			{
-				//플레이어 주변 랜덤 생성
-				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+				if (m_iAdjMovedIndex == 2)
+				{
+					_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
-				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+					CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
-				//랜덤방향
-				_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
+					//랜덤방향
+					_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
 
-				PlayerPos = PlayerPos + (vDir * 4);
+					XMStoreFloat3(&m_fDirection, vDir);
 
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
-				m_iAdjMovedIndex++;
+					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
+					_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos );
+					m_iAdjMovedIndex++;
+				}
+				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 50, dDeltaTime, m_pNavigationCom);
 
 			}
 			break;
@@ -813,17 +843,24 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_MotionTrailOn = true;
 				m_bColliderAttackOn = true;
 
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
+				//랜덤방향
 				_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
 
-				PlayerPos = PlayerPos + (vDir * 2);
+				XMStoreFloat3(&m_fDirection, vDir);
 
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+				//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
+				_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+				//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+
+				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 250, dDeltaTime, m_pNavigationCom);
+
 
 				m_iAdjMovedIndex++;
 			}
@@ -880,17 +917,28 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_MotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 
-				_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-
-				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
-				_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
-
-				PlayerPos = PlayerPos + (vDir * 4);
-
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
-
 				m_iAdjMovedIndex++;
+
+			}else if (PlayRate >= 0.8)
+			{
+				if (m_iAdjMovedIndex == 2)
+				{
+					_Vector PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+					CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+					//랜덤방향
+					_Vector vDir = XMVector3Normalize((m_pPlayerTransform->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pPlayerTransform->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
+
+					XMStoreFloat3(&m_fDirection, vDir);
+
+					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
+					_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
+					m_iAdjMovedIndex++;
+				}
+				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 25, dDeltaTime, m_pNavigationCom);
 
 			}
 			break;
