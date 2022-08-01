@@ -946,7 +946,6 @@
       <Filter>01.GameObject\10.LilyPad</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1444,7 +1443,6 @@
       <Filter>01.GameObject\10.LilyPad</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
