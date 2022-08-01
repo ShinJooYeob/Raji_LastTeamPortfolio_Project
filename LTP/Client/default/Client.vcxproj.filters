@@ -163,9 +163,6 @@
     <Filter Include="01.GameObject\02.Monster\MonsterWeapon">
       <UniqueIdentifier>{f9c89e62-1892-4c84-bdbb-379249803901}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon">
-      <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion">
       <UniqueIdentifier>{ddbd2a06-5086-4915-b052-a0cb38f50973}</UniqueIdentifier>
     </Filter>
@@ -430,6 +427,12 @@
     <Filter Include="01.GameObject\10.LilyPad">
       <UniqueIdentifier>{3df32984-3635-4d8c-9b63-a106463b62c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon">
+      <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon">
+      <UniqueIdentifier>{53608fc4-649f-44d8-8a67-d41fa6e3f185}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -619,7 +622,7 @@
       <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Chiedtuan_Weapon.h">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
@@ -942,6 +945,8 @@
     <ClInclude Include="..\public\LilyPad.h">
       <Filter>01.GameObject\10.LilyPad</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1095,7 +1100,7 @@
       <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
@@ -1437,6 +1442,8 @@
     </ClCompile>
     <ClCompile Include="..\private\LilyPad.cpp">
       <Filter>01.GameObject\10.LilyPad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

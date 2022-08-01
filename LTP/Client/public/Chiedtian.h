@@ -83,6 +83,8 @@ private:
 
 	class CHpUI*		m_pHPUI = nullptr;
 
+	_double				m_OldPlayRate = 0;
+
 
 	CGameObject*		m_pPlayerObj;
 	_Vector				m_vAngle;
@@ -94,7 +96,22 @@ private:
 	_bool									m_bIsMainWeaponOff = false;
 	vector<class CChiedtuan_Weapon*>		m_pSubWeapons;
 
-	_float				m_fNarration = 10.f;
+	_float				m_fNarration = 15.f;
+
+/*--------------------------------------------------------------------------------------------------------*/
+	//2Stage
+	_bool										m_bMiddlepointPos = false;
+	_bool										m_ActivateSecondPage = false;
+	vector<class CChiedtuan_2Page_Weapon*>		m_pSecondPageWeapons;
+
+
+private:
+	void			Activate_SecondPage(_double fDeltaTime);
+	
+
+
+
+
 
 private:
 	HRESULT SetUp_Components();

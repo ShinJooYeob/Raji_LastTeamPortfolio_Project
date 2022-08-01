@@ -377,6 +377,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_Rangda_WaspBullet,
 	Prototype_Object_Boss_Chiedtian,
 	Prototype_Object_Boss_ChiedtianWeapon,
+	Prototype_Object_Boss_ChiedtianWeapon_2Page,
 	Prototype_Object_Boss_Snake,
 	Prototype_Object_Boss_Snake_Poison_Raser,
 	Prototype_Object_Boss_Mahabalasura,
@@ -634,6 +635,10 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Object_Boss_ChiedtianWeapon");
 		break;
 
+	case Prototype_Object_Boss_ChiedtianWeapon_2Page:
+		return TEXT("Prototype_Object_Boss_ChiedtianWeapon_2Page");
+		break;
+		
 	case Prototype_Object_Boss_Snake:
 		return TEXT("Prototype_Object_Boss_Snake");
 		break;
