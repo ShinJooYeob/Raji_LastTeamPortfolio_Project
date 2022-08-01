@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\public\StaticInstanceMapObject.h"
 
-#define FrustumCutlineNum 99999999999
 
 CStaticInstanceMapObject::CStaticInstanceMapObject(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMapObject(pDevice, pDeviceContext)
@@ -52,41 +51,35 @@ _int CStaticInstanceMapObject::LateUpdate(_double fDeltaTime)
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 
 
-	m_vecForRender.clear();
-	m_vecForRender.resize(m_mapInstancMapObjects.size());
 
-	_int iForRenderVectorIndex = -1;
-	vector<CTransform*>*	pForRenderingObj = nullptr;
+	_uint iVectorIndex = 0;
+	_bool	bIsAllObjectFrustumCutted = false;
 
 	for (auto& InstancMapObject : m_mapInstancMapObjects)
 	{
-		pForRenderingObj = &InstancMapObject.second.pvecTransform;
-		iForRenderVectorIndex++;
 
-		if (InstancMapObject.second.pvecTransform.size() < FrustumCutlineNum)
+		bIsAllObjectFrustumCutted = true;
+		iVectorIndex = 0;
+
+		for (auto& pTransform : InstancMapObject.second.pvecTransform)
 		{
-			m_vecForRender[iForRenderVectorIndex].clear();
-			m_vecForRender[iForRenderVectorIndex].reserve(InstancMapObject.second.pvecTransform.size());
-			 
-			for (auto& pTransform : InstancMapObject.second.pvecTransform)
+			if (pInstance->IsNeedToLightRender(pTransform->Get_MatrixState_Float3(CTransform::STATE_POS),
+				InstancMapObject.second.pvecFrustumRange[iVectorIndex]))
 			{
-				if (pInstance->IsNeedToLightRender(pTransform->Get_MatrixState_Float3(CTransform::STATE_POS), InstancMapObject.second.fFrustumRange))
-				{
-					m_vecForRender[iForRenderVectorIndex].push_back(pTransform);
-				}
-
+				bIsAllObjectFrustumCutted = false;
+				break;
 			}
-			pForRenderingObj = &m_vecForRender[iForRenderVectorIndex];
 
+			iVectorIndex++;
 		}
 
 
-		if (pForRenderingObj->size() > 0)
+		if (!bIsAllObjectFrustumCutted)
 		{
 			Set_IsOcllusion(InstancMapObject.second.bIsOcllusion);
 
 			m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE,
-				this, pForRenderingObj, InstancMapObject.second.pModelInstance,
+				this, &InstancMapObject.second.pvecTransform, InstancMapObject.second.pModelInstance,
 				m_pShaderCom, InstancMapObject.second.pModel);
 
 		}
@@ -112,36 +105,32 @@ _int CStaticInstanceMapObject::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
 
-	m_vecForRender.clear();
-	m_vecForRender.resize(m_mapInstancMapObjects.size());
-	_int iForRenderVectorIndex = -1;
-	vector<CTransform*>*	pForRenderingObj = nullptr;
+
+
+	_uint iVectorIndex = 0;
+	_bool	bIsAllObjectFrustumCutted = false;
 
 	for (auto& InstancMapObject : m_mapInstancMapObjects)
 	{
-		pForRenderingObj = &InstancMapObject.second.pvecTransform;
-		iForRenderVectorIndex++;
+		bIsAllObjectFrustumCutted = true;
+		iVectorIndex = 0;
 
-		if (InstancMapObject.second.pvecTransform.size() < FrustumCutlineNum)
+
+		for (auto& pTransform : InstancMapObject.second.pvecTransform)
 		{
-			m_vecForRender[iForRenderVectorIndex].clear();
-			m_vecForRender[iForRenderVectorIndex].reserve(InstancMapObject.second.pvecTransform.size());
-
-			for (auto& pTransform : InstancMapObject.second.pvecTransform)
+			if (pInstance->IsNeedToRender(pTransform->Get_MatrixState_Float3(CTransform::STATE_POS),
+				InstancMapObject.second.pvecFrustumRange[iVectorIndex]))
 			{
-				if (pInstance->IsNeedToRender(pTransform->Get_MatrixState_Float3(CTransform::STATE_POS), InstancMapObject.second.fFrustumRange))
-				{
-					m_vecForRender[iForRenderVectorIndex].push_back(pTransform);
-				}
-
+				bIsAllObjectFrustumCutted = false;
+				break;
 			}
-			pForRenderingObj = &m_vecForRender[iForRenderVectorIndex];
+			iVectorIndex++;
 		}
 
-
-		if (pForRenderingObj->size() > 0)
+		if (!bIsAllObjectFrustumCutted)
 		{
-			InstancMapObject.second.pModelInstance->Render(m_pShaderCom, InstancMapObject.second.iPassIndex, pForRenderingObj);
+			InstancMapObject.second.pModelInstance->Render(m_pShaderCom, InstancMapObject.second.iPassIndex,
+				&InstancMapObject.second.pvecTransform);
 		}
 	}
 
@@ -178,7 +167,7 @@ HRESULT CStaticInstanceMapObject::Add_InstanceMapObject(OBJELEMENT& tElements)
 
 		//InstanceMapDesc.iPassIndex = tElements.PassIndex;
 		InstanceMapDesc.bIsOcllusion = tElements.bIsOcllsuion;
-		InstanceMapDesc.fFrustumRange = tElements.FrustumRange;
+		InstanceMapDesc.pvecFrustumRange.push_back(tElements.FrustumRange);
 
 		InstanceMapDesc.pModel = (CModel*)(pInstance->Clone_Component(m_eNowSceneNum, tElements.MeshID));
 		NULL_CHECK_RETURN(InstanceMapDesc.pModel, E_FAIL);
@@ -204,9 +193,7 @@ HRESULT CStaticInstanceMapObject::Add_InstanceMapObject(OBJELEMENT& tElements)
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
 		pTransform->Set_Matrix(tElements.matTransform);
 
-		if (iter->second.fFrustumRange < tElements.FrustumRange)
-			iter->second.fFrustumRange = tElements.FrustumRange;
-
+		iter->second.pvecFrustumRange.push_back(tElements.FrustumRange);
 		iter->second.pvecTransform.push_back(pTransform);
 	}
 

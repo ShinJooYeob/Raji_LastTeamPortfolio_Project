@@ -1273,7 +1273,7 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 #pragma region PROTOTYPE_COMPONENT
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE7, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_1.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/BossNaviData_Chiedtian.dat")))))
 		return E_FAIL;
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));

@@ -13,9 +13,9 @@ public:
 		CModel*						pModel = nullptr;
 		CModelInstance*				pModelInstance = nullptr;
 		vector<CTransform*>			pvecTransform;
+		vector<_float>				pvecFrustumRange;
 
 		_bool						bIsOcllusion = false;
-		_float						fFrustumRange = -1;
 		_uint						iPassIndex = 2;
 
 	}INSTMAP;
@@ -49,7 +49,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 
 	map<wstring, INSTMAP>				m_mapInstancMapObjects;
-	vector<vector<CTransform*>>			m_vecForRender;
+	//vector<vector<CTransform*>>			m_vecForRender;
 	typedef map<wstring, INSTMAP>		INSTMAPOBJECTS;
 
 

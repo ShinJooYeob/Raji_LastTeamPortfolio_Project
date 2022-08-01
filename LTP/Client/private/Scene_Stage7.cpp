@@ -40,9 +40,9 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 	//FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//
 
-
-	//FAILED_CHECK(Ready_PostPorcessing());
+	FAILED_CHECK(Ready_PostPorcessing());
 	
 
 	//FAILED_CHECK(teST());
@@ -71,16 +71,40 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
+	_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	_float PlayerZ = XMVectorGetZ(vPlayerPos);
+	static _float LightFar = 1.f;
 
 
-	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
+		_float fValue = max(min(PlayerZ, 128.f), 103.f);
+		LightFar = fValue * 2.0f / 25.f - 7.24f;
+		LightFar = max(min(LightFar, 3.f), 1.f);
 
-	//_float fPlayerZ = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).z;
-	//_float fValue = (fPlayerZ) * 0.06f / 180.f + 0.04f;
-	//fValue = max(min(fValue, 0.1f), 0.04f);
 
-	//m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(fValue);
 
+
+	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, vPlayerPos + XMVectorSet(-64.f, 64.f, 32.f, 0) * LightFar);
+
+	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
+
+
+	if (PlayerZ < 80.f)
+	{
+		_float fValue = max(min(PlayerZ, 80.f), 45.f);
+		_float fFogHeightFalloffValue = fValue * -0.08f / 35.f + 0.262857142857142f;
+		fFogHeightFalloffValue = max(min(fFogHeightFalloffValue, 0.16f), 0.08f);
+		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(fFogHeightFalloffValue);
+	}
+	if (PlayerZ < 58.f)
+	{
+		_float fValue = max(min(PlayerZ, 58.f), 45.f);
+		_float fGodRayIntensValue = fValue * -0.1f / 13.f + 0.44615384615384f;
+		fGodRayIntensValue = max(min(fGodRayIntensValue, 0.1f), 0.f);
+
+		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(fGodRayIntensValue);
+	}
 	return 0;
 }
 
@@ -213,11 +237,14 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
-	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+
+	m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
+
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
 
-	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
@@ -261,12 +288,12 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 #ifndef _DEBUG
 
 
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
-	pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
-	pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
-	pLightDesc->vSpecular = _float4(0.3203125f, 0.32421875f, 0.28125f, 1.f);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
+	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 0.83203125f, 0.68359375f, 1.f);
+	pLightDesc->vSpecular = _float4(0.40625f, 0.1875f, 0.05078125f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
 
@@ -276,12 +303,12 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.35f);
+	pRenderer->Set_ShadowIntensive(0.632f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
 	pRenderer->Set_SunSize(0.5f);
 	pRenderer->Set_GodrayLength(64.f);
-	pRenderer->Set_GodrayIntensity(0.04f);
+	pRenderer->Set_GodrayIntensity(0.1f);
 	pRenderer->Set_StartDecay(0.25f);
 	pRenderer->Set_DistDecay(1.6f);
 	pRenderer->Set_MaxDeltaLen(0.006f);
@@ -291,18 +318,19 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 	pRenderer->Set_LensfalreSupportSunSize(Value);
 	pRenderer->Set_LensefalreNoiseTexIndex(245);
 
+
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(2.5f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(160.f);
+	pRenderer->Set_DofLength(45.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3(0.5f, 0.5f, 0.5f));
-	pRenderer->Set_FogStartDist(0.001f);
-	pRenderer->Set_FogGlobalDensity(0.01f);
-	pRenderer->Set_FogHeightFalloff(0.2f);
+	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
+	pRenderer->Set_FogStartDist(0.1f);
+	pRenderer->Set_FogGlobalDensity(0.06f);
+	pRenderer->Set_FogHeightFalloff(0.16f);
 
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE
@@ -311,12 +339,14 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 #ifdef DEBUGONSHADERSETTING
 
+
+
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0, 90.f, 90.f, 1.f));
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
-	pLightDesc->vDiffuse = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
-	pLightDesc->vAmbient = _float4(0.859375f, 0.859375f, 0.75390625f, 1.f);
-	pLightDesc->vSpecular = _float4(0.3203125f, 0.32421875f, 0.28125f, 1.f);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
+	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 0.83203125f, 0.68359375f, 1.f);
+	pLightDesc->vSpecular = _float4(0.40625f, 0.1875f, 0.05078125f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
 
@@ -326,12 +356,12 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.35f);
+	pRenderer->Set_ShadowIntensive(0.350f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
 	pRenderer->Set_SunSize(0.5f);
 	pRenderer->Set_GodrayLength(64.f);
-	pRenderer->Set_GodrayIntensity(0.04f);
+	pRenderer->Set_GodrayIntensity(0.1f);
 	pRenderer->Set_StartDecay(0.25f);
 	pRenderer->Set_DistDecay(1.6f);
 	pRenderer->Set_MaxDeltaLen(0.006f);
@@ -341,18 +371,21 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 	pRenderer->Set_LensfalreSupportSunSize(Value);
 	pRenderer->Set_LensefalreNoiseTexIndex(245);
 
+
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(2.5f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(160.f);
+	pRenderer->Set_DofLength(45.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3(0.5f, 0.5f, 0.5f));
-	pRenderer->Set_FogStartDist(0.001f);
-	pRenderer->Set_FogGlobalDensity(0.01f);
-	pRenderer->Set_FogHeightFalloff(0.2f);
+	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
+	pRenderer->Set_FogStartDist(0.1f);
+	pRenderer->Set_FogGlobalDensity(0.06f);
+	pRenderer->Set_FogHeightFalloff(0.16f);
+
+
 #endif
 #endif // !_DEBUG
 

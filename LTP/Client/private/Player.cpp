@@ -21,7 +21,7 @@
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
 
-
+#define NotOnNavi
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -81,55 +81,9 @@ _int CPlayer::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
-	
-			{
-				NONINSTNESHEFTDESC tNIMEDesc;
-				tNIMEDesc.vPosition = _float3(0.f, -96.5f, 96.5f);
-				tNIMEDesc.vLookDir = _float3(1, 0, 1).Get_Nomalize();
 
-				tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
-				tNIMEDesc.fMaxTime_Duration = 7.25f;
+			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
-				tNIMEDesc.fAppearTime = 0.25f;
-
-				tNIMEDesc.noisingdir = _float2(0, 1);
-
-				tNIMEDesc.NoiseTextureIndex = 381;
-				tNIMEDesc.MaskTextureIndex = 109;
-				tNIMEDesc.iDiffuseTextureIndex = 366;
-				tNIMEDesc.m_iPassIndex = 20;
-				tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
-				tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
-				tNIMEDesc.vColor = _float3(1.f, 0, 0);
-
-				tNIMEDesc.RotAxis = FollowingDir_Up;
-				tNIMEDesc.RotationSpeedPerSec = 0.f;
-
-				tNIMEDesc.fAlphaTestValue = 0.0f;
-
-
-				tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f).XMVector() * 3.8f;
-
-
-		
-				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			}
-
-			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(10, 0, 0, 0);
-			//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
-			//tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_02;
-			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(20,0,0,0);
-			//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_UP);
-			//tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_03;
-			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-
-
-			//m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
-			//
-			//{
-			//	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			//}
 		}
 
 
@@ -376,7 +330,11 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	if (true == m_bOnNavigation)
 	{
+
+#ifndef NotOnNavi
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+#endif // NotOnNavi
+
 	}
 
 	LateUpdate_HPUI(fDeltaTimer);
@@ -2466,7 +2424,13 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
+
+#ifdef NotOnNavi
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr);
+#else
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+#endif // NotOnNavi
+
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 
