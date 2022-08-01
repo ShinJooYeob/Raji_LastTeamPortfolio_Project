@@ -322,7 +322,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			}
 			else
 			{
-				mAddRot += mAddDesc.LookRotSpeed * fDeltaTime;
+				mAddRot += mAddDesc.LookRotSpeed * (_float)fDeltaTime;
 				if (mAddDesc.vAddDirectAngle.x != 0)
 					m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x + mAddRot));
 				else if (mAddDesc.vAddDirectAngle.y != 0)

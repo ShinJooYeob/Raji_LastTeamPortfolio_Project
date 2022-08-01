@@ -309,7 +309,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, -0.008054f, -0.9948)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, -0.008054f, -0.9948f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
 	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
 	m_pAttackColliderCom->Set_ParantBuffer();
 
@@ -944,7 +944,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 					XMStoreFloat3(&m_fDirection, vDir);
 
 					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
-					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos -(XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos -(XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1f));
 					m_iAdjMovedIndex++;
 				}
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 50, dDeltaTime, m_pNavigationCom);
@@ -1028,7 +1028,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
 					_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
-					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1f));
 					//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos );
 					m_iAdjMovedIndex++;
 				}
@@ -1063,7 +1063,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
 				_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1f));
 				//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
 
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 250, dDeltaTime, m_pNavigationCom);
@@ -1152,7 +1152,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					//플레이어와 몬스터가 겹친 상태에서 LookAt을 때리면 스케일이 0이 되버리기 때문에 예외처리함
 					_Vector PlayerNaviPos = m_pPlayerNavigation->Get_IndexPosition(m_pPlayerNavigation->Get_CurNavCellIndex());
-					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1));
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos - (XMVector3Normalize(PlayerNaviPos - PlayerPos) *0.1f));
 					//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, PlayerPos);
 					m_iAdjMovedIndex++;
 				}

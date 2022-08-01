@@ -540,7 +540,11 @@ HRESULT CMonster_Vayusura_Leader::Player_Comparison(_double dDeltaTime)
 	{
 		fMonsterPos.y = fPlayerPos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
-		}
+	}
+	return S_OK;
+
+}
+
 HRESULT CMonster_Vayusura_Leader::Ready_ParticleDesc()
 {
 	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
@@ -582,17 +586,17 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 		_float PY = PP.y;
 		_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
-		if (fabs(PY-MyY) < 0.1f)
+		if (fabs(PY - MyY) < 0.1f)
 		{
 			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
 			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
 
 			m_BulletObj->Set_IsOwerDead(true);
 			m_BulletObj = nullptr;
-		
-		}
 
-	
+		}
+	}
+
 
 
 	if (KEYDOWN(DIK_V))
@@ -605,6 +609,7 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 
 	return S_OK;
+
 }
 
 HRESULT CMonster_Vayusura_Leader::SetUp_Components()

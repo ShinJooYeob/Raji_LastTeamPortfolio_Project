@@ -703,6 +703,8 @@ HRESULT CMonster_Vayusura_Minion::Player_Comparison(_double dDeltaTime)
 		fMonsterPos.y = fPlayerPos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
 	}
+	return S_OK;
+
 }
 
 HRESULT CMonster_Vayusura_Minion::Ready_ParticleDesc()

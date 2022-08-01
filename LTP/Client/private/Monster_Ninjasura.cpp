@@ -310,7 +310,7 @@ HRESULT CMonster_Ninjasura::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, -0.008054f, -0.9948)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, -0.008054f, -0.9948f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
 	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
 	m_pAttackColliderCom->Set_ParantBuffer();
 

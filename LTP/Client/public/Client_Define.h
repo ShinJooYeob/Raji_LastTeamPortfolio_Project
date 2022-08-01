@@ -10,6 +10,7 @@ extern _bool	g_bIsShowFPS;
 extern CGameInstance* g_pGameInstance;
 extern _bool g_bShowMouse;
 
+#define DEBUGONSHADERSETTING
 
 #ifdef _DEBUG
 #define GETIMGUI GetSingle(CImguiMgr)

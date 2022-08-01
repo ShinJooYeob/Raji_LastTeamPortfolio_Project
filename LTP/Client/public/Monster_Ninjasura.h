@@ -142,10 +142,6 @@ private: // particle
 	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
 
 
-private:
-	HRESULT SetUp_Components();
-	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
-
 public:
 	static CMonster_Ninjasura* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

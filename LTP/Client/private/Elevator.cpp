@@ -152,7 +152,8 @@ HRESULT CElevator::SetUp_Collider()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 	COLLIDERDESC			ColliderDesc;
 
-	_float fScale = -5.2f * (XMVectorGetX(m_pTransformCom->Get_Scale()) / 1.75f);
+
+	_float fScale = -5.2f * (XMVectorGetX(m_pTransformCom->Get_Scale()) / 1.25f);
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(3.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
