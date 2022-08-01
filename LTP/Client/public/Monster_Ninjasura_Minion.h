@@ -104,8 +104,6 @@ private:
 	_float				m_fDistance = 0;
 	_bool				m_bLookAtOn = true; //LookAt On/Off
 
-	_float3				m_TempLook;
-
 	_uint				m_iBoolOnce = 0;
 
 	_float3				m_fDirection;
@@ -113,11 +111,12 @@ private:
 private: //MotionTrail
 	_double				m_MotionTrailTime = 0;
 	_bool				m_bTurnMotion = false;
-	_bool				m_MotionTrailOn = false;
+	_bool				m_bMotionTrailOn = false;
 
 
 private:
-	///Knockback
+	//Knockback
+	_bool				m_bKnockbackOn = false;
 	_float3				m_fKnockbackDir;
 
 private://Sound

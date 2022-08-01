@@ -44,6 +44,7 @@ HRESULT CMonster_Ninjasura_Minion::Initialize_Clone(void * pArg)
 	//////////////////////////////
 #endif
 
+
 	return S_OK;
 }
 
@@ -60,9 +61,10 @@ _int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 
 		m_dDissolveTime += dDeltaTime;
 
+		m_bMotionTrailOn = false;
 		if (m_bDieSound == false && m_dDissolveTime >= 1.)
 		{
-			//g_pGameInstance->Play3D_Sound(TEXT("EH_Mahinasura_Die.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Hit_Vox_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 			m_bDieSound = true;
 		}
 		if (m_dDissolveTime >= 2)
@@ -94,7 +96,7 @@ _int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 	/////////////////////////
 
-	if (m_pHPUI != nullptr && m_MotionTrailOn == false)
+	if (m_pHPUI != nullptr && m_bMotionTrailOn == false)
 		m_pHPUI->Update(dDeltaTime);
 
 	Update_Collider(dDeltaTime);
@@ -107,7 +109,7 @@ _int CMonster_Ninjasura_Minion::LateUpdate(_double dDeltaTime)
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 	//////////
-	if (m_bIsOnScreen && false == m_MotionTrailOn)
+	if (m_bIsOnScreen && false == m_bMotionTrailOn)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
@@ -125,7 +127,7 @@ _int CMonster_Ninjasura_Minion::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
-	if (m_pHPUI != nullptr && m_MotionTrailOn == false)
+	if (m_pHPUI != nullptr && m_bMotionTrailOn == false)
 	{
 		m_pHPUI->LateUpdate(dDeltaTime);
 	}
@@ -187,20 +189,23 @@ _float CMonster_Ninjasura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 	m_fHP += -fDamageAmount;
 
 	m_bStopCoolTimeOn = true;
-	m_MotionTrailOn = false;
+	m_bMotionTrailOn = false;
 
 	m_bIOnceAnimSwitch = true;
 	if (m_eMonster_State != Anim_State::MONSTER_ATTACK)
 	{
 		if (bKnockback == false)
 		{
+			m_bKnockbackOn = false;
 			m_iOncePattern = 40;
 		}
 		else {
-			m_iOncePattern = 41;
+			m_bKnockbackOn = true;
+			m_iOncePattern = 40;
 
 			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
 		}
+
 
 		if (m_fHP < 5 && m_iBoolOnce == 0)
 		{
@@ -249,7 +254,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	ATTACHEDESC tAttachedDesc;
-	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.5f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.023774f, -1.1029f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 
 
@@ -259,7 +264,29 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, -0.8f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.01186f, -1.5361f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.008054f, -0.4974f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "thigh_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.006605f, -1.0128f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
 	//////////////////////////////////////////////
@@ -282,7 +309,51 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.34938f, -0.11046f, -0.32727f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	tAttachedDesc.Initialize_AttachedDesc(this, "pelvis", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.f, -0.008054f, -0.9948)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_01_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.50823f, -0.094688f, -1.0442f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "sword_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.82335f, -0.24675f, -0.77251f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_twist_01_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.50823f, -0.094688f, -1.0442f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
+	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
+	m_pAttackColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "sword_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.82335f, -0.24675f, -0.77251f)); //마지막 인자에 블렌더 뼈 위치 그대로 넣어줄 것 다만 z엔 -로 해줄것
 	m_vecAttackAttachedDesc.push_back(tAttachedDesc);
 	m_pAttackColliderCom->Set_ParantBuffer();
 	/////////////////////////////////////////////
@@ -333,8 +404,8 @@ HRESULT CMonster_Ninjasura_Minion::Update_Collider(_double dDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
 	}
 
-	if(m_MotionTrailOn == false)
-		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	if(m_bMotionTrailOn == false)
+		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.2f, m_pNavigationCom));
 
 
 	return S_OK;
@@ -416,7 +487,7 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 		m_dInfinity_CoolTime = 0;
 
 		m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-		m_MotionTrailOn = false; //!@#!@#@!#!@#!@#!@#!@#@$@!Test 맞을떄 모션 트레일온 false 시켜야함
+		m_bMotionTrailOn = false; //!@#!@#@!#!@#!@#!@#!@#@$@!Test 맞을떄 모션 트레일온 false 시켜야함
 	}
 
 	return S_OK;
@@ -515,6 +586,17 @@ HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 		m_bComboAnimSwitch = false;
 		m_iAfterPattern = m_iOncePattern + 1;
 		m_eMonster_State = Anim_State::MONSTER_ATTACK;
+		break;
+	case 40:
+		m_iOnceAnimNumber = 5;
+		m_eMonster_State = Anim_State::MONSTER_HIT;
+		break;
+	case 41:
+		m_iOnceAnimNumber = 5;
+		m_eMonster_State = Anim_State::MONSTER_HIT;
+		break;
+	case 42:
+		m_iOnceAnimNumber = 7;
 		break;
 	}
 
@@ -664,6 +746,13 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_bIOnceAnimSwitch = false;
 			}
+			//if (m_iSoundIndex == 0)
+			//{
+			//	g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+
+			//	m_iSoundIndex++;
+			//}
+			break;
 		}
 		case 3:
 		{
@@ -673,33 +762,91 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 				m_bColliderAttackOn = true;
+
+
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_DashSwoosh_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Blade.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+
 				m_iAdjMovedIndex++;
 			}
 
 			if (PlayRate > 0 && PlayRate <= 0.1)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 			}
 			else if (PlayRate >= 0.1 && PlayRate <= 0.8)
 			{
-				m_MotionTrailOn = false;
+				m_bMotionTrailOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 5,m_pNavigationCom);
 			}
 			else if (PlayRate >= 0.8)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+					m_iSoundIndex++;
+				}
 			}
 
+			break;
+		}
+		case 5:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0 && m_bKnockbackOn == false)
+			{
+				m_dAcceleration = 0.7;
+				m_iAdjMovedIndex++;
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Hit_Vox_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+			}
+			if (m_bKnockbackOn == true)
+			{
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+				{
+					m_bLookAtOn = false;
+					m_dAcceleration = 0.7;
+					m_iAdjMovedIndex++;
+
+
+					if (m_iSoundIndex == 0)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Grunt_Vox_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+						m_iSoundIndex++;
+					}
+				}
+				else if (0.f < PlayRate && PlayRate <= 0.6428)
+				{
+					if (PlayRate >= 0 && PlayRate <= 0.6428)
+						m_pTransformCom->Move_Backward(dDeltaTime* 0.5, m_pNavigationCom);
+
+					m_fKnockbackDir.y = 0;
+
+					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
+				}
+			}
+			break;
+		}
+		case 7:
+		{
+			m_bLookAtOn = false;
 			break;
 		}
 		case 11:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate >0)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_bColliderAttackOn = true;
+
 				m_iAdjMovedIndex++;
 			}
 
@@ -707,8 +854,8 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+			
 			}
-
 			break;
 		}
 		case 12:
@@ -720,17 +867,18 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				if (m_iAdjMovedIndex == 0)
 				{
-					m_MotionTrailOn = false;
+					m_bMotionTrailOn = false;
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 
 					m_bColliderAttackOn = true;
 					m_iAdjMovedIndex++;
 				}
 				m_pTransformCom->Move_Forward(dDeltaTime * 5, m_pNavigationCom);
+
 			}
 			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				m_iAdjMovedIndex++;
 			}
@@ -771,13 +919,19 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			//	m_iAdjMovedIndex++;
 			//
 			//}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_DashSwoosh_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Sword_Sheath_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 13:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_bColliderAttackOn = true;
 				m_iAdjMovedIndex++;
 			}
@@ -798,7 +952,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				if (m_iAdjMovedIndex == 0)
 				{
-					m_MotionTrailOn = false;
+					m_bMotionTrailOn = false;
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 
 					m_bColliderAttackOn = true;
@@ -808,7 +962,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.4)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				m_iAdjMovedIndex++;
 			}
@@ -834,13 +988,19 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 50, dDeltaTime, m_pNavigationCom);
 
 			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_DashSwoosh_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Sword_Sheath_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 15:
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_bColliderAttackOn = true;
 
 				m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
@@ -861,18 +1021,19 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 250, dDeltaTime, m_pNavigationCom);
 
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 
 				m_iAdjMovedIndex++;
 			}
 			else if (m_iAdjMovedIndex == 1 && PlayRate > 0)
 			{
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				m_iAdjMovedIndex++;
 			}
 			else if (m_iAdjMovedIndex == 2 && PlayRate > 0.1)
 			{
-				m_MotionTrailOn = false;
+				m_bMotionTrailOn = false;
 
 				m_iAdjMovedIndex++;
 			}
@@ -882,7 +1043,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			m_bColliderAttackOn = true;
 
-			m_MotionTrailOn = false;
+			m_bMotionTrailOn = false;
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
 			
@@ -892,13 +1053,18 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed, m_pNavigationCom);
 				m_dAcceleration = 0.8;
 			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 17:
 		{
 			m_bColliderAttackOn = true;
 
-			m_MotionTrailOn = false;
+			m_bMotionTrailOn = false;
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 			m_pTransformCom->Turn_Dir(vTarget, 0.7f);
 			if (PlayRate > 0 && PlayRate <= 0.95)
@@ -907,6 +1073,11 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_pTransformCom->Move_Forward(dDeltaTime * fSpeed, m_pNavigationCom);
 				m_dAcceleration = 0.8;
 			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 18:
@@ -914,7 +1085,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.75)
 			{
 
-				m_MotionTrailOn = true;
+				m_bMotionTrailOn = true;
 				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 
 				m_iAdjMovedIndex++;
@@ -940,6 +1111,17 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				}
 				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDirection), 25, dDeltaTime, m_pNavigationCom);
 
+				if (m_iSoundIndex == 1)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+
+					m_iSoundIndex++;
+				}
+			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
