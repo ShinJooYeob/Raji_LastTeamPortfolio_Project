@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Vayusura_Leader.h"
 #include "Monster_Bullet_Universal.h"
-
+#include "HpUI.h"
 
 CMonster_Vayusura_Leader::CMonster_Vayusura_Leader(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -35,13 +35,42 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+#ifdef _DEBUG
+	///////////////////test
+
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+
+	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	///////////////////
+#endif
+
 	return S_OK;
 }
 
 _int CMonster_Vayusura_Leader::Update(_double dDeltaTime)
 {
-
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (m_fHP <= 0)
+	{
+		m_bLookAtOn = false;
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+		m_pDissolve->Set_DissolveOn(false, 2.f);
+
+		m_dDissolveTime += dDeltaTime;
+
+		if (m_bDieSound == false && m_dDissolveTime >= 1.)
+		{
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			m_bDieSound = true;
+		}
+
+		if (m_dDissolveTime >= 2)
+		{
+			Set_IsDead();
+		}
+	}
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
@@ -60,7 +89,21 @@ _int CMonster_Vayusura_Leader::Update(_double dDeltaTime)
 	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
+	
+	if (m_pHPUI != nullptr)
+		m_pHPUI->Update(dDeltaTime);
+
+	Update_Collider(dDeltaTime);
+
+	//////////////////////
+	Player_Comparison(dDeltaTime);
+	//////////////////////
+
+	////Delete
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	
 	return _int();
+
 }
 
 _int CMonster_Vayusura_Leader::LateUpdate(_double dDeltaTime)
@@ -75,9 +118,17 @@ _int CMonster_Vayusura_Leader::LateUpdate(_double dDeltaTime)
 	//////////
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
+
+	if (m_pHPUI != nullptr)
+	{
+		m_pHPUI->LateUpdate(dDeltaTime);
+	}
 	return _int();
 }
 
@@ -95,14 +146,16 @@ _int CMonster_Vayusura_Leader::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 
 
 
@@ -129,6 +182,17 @@ void CMonster_Vayusura_Leader::CollisionTriger(CCollider * pMyCollider, _uint iM
 
 _float CMonster_Vayusura_Leader::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+	m_bIOnceAnimSwitch = true;
+
+	m_bStopCoolTimeOn = true;
+
+
+	m_bAttackCancelOn = true;
+	m_iOncePattern = 40;
+
+
 	if (0 >= m_fHP)
 	{
 		return -1.f;
@@ -139,16 +203,122 @@ _float CMonster_Vayusura_Leader::Take_Damage(CGameObject * pTargetObject, _float
 
 HRESULT CMonster_Vayusura_Leader::SetUp_Info()
 {
-
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
-
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_pPlayerTransform = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
 
 	RELEASE_INSTANCE(CGameInstance);
 
+
+	return S_OK;
+}
+
+HRESULT CMonster_Vayusura_Leader::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+	/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	ATTACHEDESC tAttachedDesc;
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.033178f, -0.45067f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.010466f, -0.6897f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_02", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, -0.031359f, -0.49888f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "calf_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.0445425f, -0.046337f, -0.21746f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.20648f, 0.069229f, -0.51353f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "middle_01_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.39241f, 0.083289f, -0.65896f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "index_02_r", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.6475f, 0.08306f, -0.69517f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "lowerarm_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.20648f, 0.069229f, -0.51353f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "middle_01_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.39241f, 0.083289f, -0.65896f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "index_02_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.6475f, 0.08306f, -0.69517f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
+	//////////////////////////////////////////////////////
 
 	return S_OK;
 }
@@ -169,6 +339,21 @@ HRESULT CMonster_Vayusura_Leader::SetUp_Fight(_double dDeltaTime)
 		m_pTransformCom->Turn_Dir(vTarget, 0.95f);
 	}
 
+	return S_OK;
+}
+
+HRESULT CMonster_Vayusura_Leader::Update_Collider(_double dDeltaTime)
+{
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	//Collider
+	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+	for (_uint i = 0; i < iNumCollider; i++)
+		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.f));
 	return S_OK;
 }
 
@@ -196,7 +381,11 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 {
 	//한번만 동작하는 애니메이션
 
-	m_dOnceCoolTime += dDeltaTime;
+	if (m_bStopCoolTimeOn == false)
+	{
+		m_dOnceCoolTime += dDeltaTime;
+		m_dInfinity_CoolTime += dDeltaTime;
+	}
 
 	if (m_dOnceCoolTime > 6)
 	{
@@ -213,7 +402,6 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 	}
 
 	//반복적으로 동작하는 애니메이션
-	m_dInfinity_CoolTime += dDeltaTime;
 	if (m_dInfinity_CoolTime >= 2.5)
 	{
 		m_iInfinityPattern = rand() % 4;
@@ -244,6 +432,9 @@ HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 1:
 		m_iOnceAnimNumber = 6; //Vayusura_Dive
+		break;
+	case 40:
+		m_iOnceAnimNumber = 4; //Vayusura_Hit
 		break;
 
 	}
@@ -330,6 +521,20 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Vayusura_Leader::Player_Comparison(_double dDeltaTime)
+{
+	_float3 fPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	_float3 fMonsterPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	if (fPlayerPos.y >= fMonsterPos.y)
+	{
+		fMonsterPos.y = fPlayerPos.y;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMonster_Vayusura_Leader::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -350,6 +555,24 @@ HRESULT CMonster_Vayusura_Leader::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 
+	CHpUI::HPDesc HpDesc;
+	HpDesc.m_HPType = CHpUI::HP_MONSTER;
+	HpDesc.m_pObjcect = this;
+	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	HpDesc.m_Dimensions = 1.5f;
+	m_fMaxHP = 15.f;
+	m_fHP = m_fMaxHP;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
+
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	DissolveDesc.RampTextureIndex = 8;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
+
+	SetUp_Collider();
+
 	return S_OK;
 }
 
@@ -358,21 +581,22 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
 
-	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.95)
 	{
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
 
-		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
+		m_bStopCoolTimeOn = false;
+		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			m_dOnceCoolTime = 0;
+			//m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
 	}
 
-	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
+	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
 
 
@@ -398,6 +622,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
 			{
 				m_bAttackFrieOn = false;
+				m_bAttackCancelOn = false;
 
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
@@ -463,4 +688,7 @@ void CMonster_Vayusura_Leader::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pHPUI);
+	Safe_Release(m_pDissolve);
 }

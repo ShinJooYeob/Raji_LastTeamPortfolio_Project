@@ -31,8 +31,10 @@ public:
 
 private:
 	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Collider();
 
 	HRESULT				SetUp_Fight(_double dDeltaTime);
+	HRESULT				Update_Collider(_double dDeltaTime);
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
@@ -41,6 +43,7 @@ private: //애니메이션
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
 
+	HRESULT				Player_Comparison(_double	dDeltaTime);
 
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
@@ -51,8 +54,14 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
+	CDissolve*			m_pDissolve = nullptr;
 
+private:
+	CCollider*			m_pColliderCom = nullptr;
+	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+private:
+	class CHpUI*		m_pHPUI = nullptr;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -67,6 +76,7 @@ private://애니메이션 동작 및 이벤트
 	_uint				m_iOnceAnimNumber = 0;
 
 	_bool				m_bIOnceAnimSwitch = false;
+	_bool				m_bStopCoolTimeOn = false;
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;
@@ -93,6 +103,16 @@ private:
 	//Attack
 	_bool				m_bAttackCancelOn = false;
 	_bool				m_bAttackFrieOn = false;
+
+
+private://Sound
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
+	_bool				m_bDieSound = false;
+
+private://Dissolve
+	_double				m_dDissolveTime = 0;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

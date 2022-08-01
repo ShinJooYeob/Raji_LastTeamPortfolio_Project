@@ -318,6 +318,17 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 			Set_IsDead();
 			break;
 		}
+		case VAYUSURA_LEADER_BULLET:
+		{
+			Set_IsDead();
+			break;
+		}
+		case NINJASURA_KNIFE:
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_984.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+			Set_IsDead();
+			break;
+		}
 		default:
 			break;
 		}
@@ -500,6 +511,19 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 {
 	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
 	{
+	case VAYUSURA_LEADER_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
 	case TEZABSURA_MINION_BULLET:
 	{
 		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
@@ -569,6 +593,19 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	case NINJASURA_KNIFE:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -990,6 +1027,14 @@ HRESULT CMonster_Bullet_Universal::Ninjasura_Knife(_double dDeltaTime)
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 	}
+	else {
+		if (m_iBoolInt == 0)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Moon_Plant_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
+			m_iBoolInt++;
+		}
+	}
+
 	return S_OK;
 }
 

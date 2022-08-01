@@ -35,12 +35,15 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+#ifdef _DEBUG
 	///////////////////test
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 31.2f, 185.583f));
 
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
+#endif
 
 	return S_OK;
 }
@@ -93,8 +96,7 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 	Update_Collider(dDeltaTime);
 
 	//////////////////////
-	//플레이어의 네비 인덱스를 가져와서 그 인덱스의 포지션을 가져오고 그 포지션의 Y값을 얻어온 뒤
-	//이 친구들의 Y가 인덱스의 Y밑으로 못가게 맞자
+	Player_Comparison(dDeltaTime);
 	//////////////////////
 	return _int();
 }
@@ -109,9 +111,9 @@ _int CMonster_Vayusura_Minion::LateUpdate(_double dDeltaTime)
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
 	//////////
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel, nullptr, m_pDissolve));
 
 	//FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel, nullptr, m_pDissolve));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 #ifdef _DEBUG
@@ -192,10 +194,6 @@ _float CMonster_Vayusura_Minion::Take_Damage(CGameObject * pTargetObject, _float
 
 HRESULT CMonster_Vayusura_Minion::SetUp_Info()
 {
-
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(2.f, 0.f, 2.f));
-
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_pPlayerTransform = static_cast<CTransform*>(pGameInstance->Get_Commponent_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player), TAG_COM(Com_Transform)));
@@ -464,7 +462,7 @@ HRESULT CMonster_Vayusura_Minion::Update_Collider(_double dDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
 
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f));
 	return S_OK;
 }
 
@@ -682,6 +680,20 @@ HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Vayusura_Minion::Player_Comparison(_double dDeltaTime)
+{
+	_float3 fPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	_float3 fMonsterPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	if (fPlayerPos.y >= fMonsterPos.y)
+	{
+		fMonsterPos.y = fPlayerPos.y;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -738,8 +750,7 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			m_bIOnceAnimSwitch = false;
 			m_dOnceCoolTime = 0;
-			m_dInfinity_CoolTime = 20;
-			int a = 10;
+			m_dInfinity_CoolTime = 0;
 		}
 	}
 
