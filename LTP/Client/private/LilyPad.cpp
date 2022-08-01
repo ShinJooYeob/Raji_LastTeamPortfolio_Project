@@ -1,79 +1,68 @@
 #include "stdafx.h"
-#include "..\public\Elevator.h"
-#include "Player.h"
+#include "..\public\LilyPad.h"
 
-CElevator::CElevator(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+
+CLilyPad::CLilyPad(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
 {
 }
 
-CElevator::CElevator(const CElevator & rhs)
+CLilyPad::CLilyPad(const CLilyPad & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CElevator::Initialize_Prototype(void * pArg)
+HRESULT CLilyPad::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
 	return S_OK;
 }
 
-HRESULT CElevator::Initialize_Clone(void * pArg)
+HRESULT CLilyPad::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
-	memcpy(&m_tElevatorDesc, pArg, sizeof(ELEVATORDESC));
-
 	FAILED_CHECK(SetUp_Components());
+
+	_Vector vPos = *(static_cast<_Vector*>(pArg));
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+
 	FAILED_CHECK(SetUp_Collider());
 	FAILED_CHECK(SetUp_Etc());
 
 	Set_IsOcllusion(false);
 
-	
 	return S_OK;
 }
 
-_int CElevator::Update(_double fDeltaTime)
+_int CLilyPad::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (false == m_bEndInteract)
+	m_pTransformCom->Scaling_All(fDeltaTime);
+	if (XMVectorGetX(m_pTransformCom->Get_Scale()) >= 2.5f)
 	{
-		if (true == m_bActive)
-		{
-			m_pTransformCom->MovetoTarget_ErrRange(m_tElevatorDesc.fDestPos.XMVector(), fDeltaTime, 0.1f);
-
-			if (XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS)) == m_tElevatorDesc.fDestPos.y)
-			{
-				m_pPlayer->Set_State_ElevatorEnd();
-				m_bEndInteract = true;
-				return _int();
-			}
-			else
-			{
-				m_pPlayer->Set_PosY(m_pCollider->Get_ColliderPosition(1).y);
-			}
-		}
-
-		Update_Colliders();
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider));
+		m_pTransformCom->Scaled_All(_float3(2.5f));
 	}
+
+	Update_Colliders();
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider));
 
 	return _int();
 }
 
-_int CElevator::LateUpdate(_double fDeltaTimer)
+_int CLilyPad::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+
 	return _int();
 }
 
-_int CElevator::Render()
+_int CLilyPad::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -99,43 +88,32 @@ _int CElevator::Render()
 	return _int();
 }
 
-_int CElevator::LateRender()
+_int CLilyPad::LateRender()
 {
 	return _int();
 }
 
-void CElevator::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CLilyPad::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	if (eConflictedObjCollisionType == CollisionTypeID::CollisionType_Player)
 	{
-		if (false == m_bActive)
-		{
-			CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
-			m_pPlayer = pPlayer;
-			m_pPlayer->Set_State_ElevatorStart();
-			m_bActive = true;
-		}
+		
 	}
 }
 
-void CElevator::Update_Colliders()
+void CLilyPad::Update_Colliders()
 {
-	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
-	
-	m_pCollider->Update_Transform(0, mat);
-	m_pCollider->Update_Transform(1, mat);
+	m_pCollider->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
+	m_pCollider->Update_Transform(1, m_pTransformCom->Get_WorldMatrix());
 }
 
-HRESULT CElevator::SetUp_Components()
+HRESULT CLilyPad::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_Elevator), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_LilyPad), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30.f;
@@ -147,63 +125,59 @@ HRESULT CElevator::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CElevator::SetUp_Collider()
+HRESULT CLilyPad::SetUp_Collider()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 	COLLIDERDESC			ColliderDesc;
 
-	_float fScale = -5.2f * (XMVectorGetX(m_pTransformCom->Get_Scale()) / 1.75f);
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vScale = _float3(2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, fScale, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.25f);
+	ColliderDesc.vScale = _float3(1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, fScale, 0.f, 1);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pCollider->Set_ParantBuffer();
 
 	return S_OK;
 }
 
-HRESULT CElevator::SetUp_Etc()
-{
-	m_pTransformCom->Set_MoveSpeed(m_tElevatorDesc.fMoveSpeed);
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, m_tElevatorDesc.fStartPos);
-	m_pTransformCom->Scaled_All(m_tElevatorDesc.fScale);
-	m_pTransformCom->Rotation_Multi(m_tElevatorDesc.fRotation);
-
+HRESULT CLilyPad::SetUp_Etc()
+{ 
+	m_pTransformCom->Scaled_All(_float3(0.5f));
+	m_pTransformCom->Set_ScalingSpeed(8.f);
 	return S_OK;
 }
 
-CElevator * CElevator::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CLilyPad * CLilyPad::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CElevator*	pInstance = NEW CElevator(pDevice, pDeviceContext);
+	CLilyPad*	pInstance = NEW CLilyPad(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CElevator");
+		MSGBOX("Failed to Created CLilyPad");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CElevator::Clone(void * pArg)
+CGameObject * CLilyPad::Clone(void * pArg)
 {
-	CElevator*	pInstance = NEW CElevator(*this);
+	CLilyPad*	pInstance = NEW CLilyPad(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CElevator");
+		MSGBOX("Failed to Created CLilyPad");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CElevator::Free()
+void CLilyPad::Free()
 {
 	__super::Free();
 

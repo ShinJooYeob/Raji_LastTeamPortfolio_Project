@@ -68,7 +68,6 @@ _int CShellingArrow::Update(_double dDeltaTime)
 			GetSingle(CPartilceCreateMgr)->Create_Texture_Effect_Desc(texDesc, m_eNowSceneNum);
 
 			m_bOnceDamage = true;
-			Update_Colliders();
 			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
 		}
 	}
@@ -77,6 +76,10 @@ _int CShellingArrow::Update(_double dDeltaTime)
 	if (0.f >= m_fDestroy_Count)
 	{
 		Set_IsDead();
+	}
+	else
+	{
+		Update_Colliders();
 	}
 
 
@@ -136,8 +139,12 @@ void CShellingArrow::Update_Colliders()
 	_float4 fPos = _float4(m_tShellingArrowDesc.fTargetPos, 1.f);
 	Matrix.r[3] = XMLoadFloat4(&fPos);
 
-	m_pCollider->Update_Transform(0, Matrix);
-	m_pCollider->Update_Transform(1, Matrix);
+
+	//m_pCollider->Update_Transform(0, Matrix);
+	//m_pCollider->Update_Transform(1, Matrix);
+
+	m_pCollider->Update_Transform(0, m_vecInstancedTransform[0]->Get_WorldMatrix());
+	m_pCollider->Update_Transform(1, m_vecInstancedTransform[0]->Get_WorldMatrix());
 
 }
 
@@ -167,7 +174,7 @@ HRESULT CShellingArrow::SetUp_Components()
 		m_vecInstancedTransform.push_back(pTransform);
 	}
 
-	
+	m_vecInstancedTransform[0]->Set_MatrixState(CTransform::TransformState::STATE_POS, m_tShellingArrowDesc.fStartPos);
 	CModelInstance::MODELINSTDESC tModelIntDsec;
 	tModelIntDsec.m_pTargetModel = m_pModel;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_32), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));
@@ -181,13 +188,13 @@ HRESULT CShellingArrow::SetUp_Collider()
 
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(4.f);
+	ColliderDesc.vScale = _float3(3.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vScale = _float3(2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

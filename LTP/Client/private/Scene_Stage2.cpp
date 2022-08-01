@@ -234,7 +234,7 @@ HRESULT CScene_Stage2::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*397.633f, 4.4f, 226.405f*//*570.248f, 21.9f, 399.576f*/)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*397.633f, 4.4f, 226.405f*/)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);	
 	
@@ -471,10 +471,10 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 }
 HRESULT CScene_Stage2::Ready_MapParticle()
 {
-	/*INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_0"));
+	INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_0"));
 	tDesc.FollowingTarget = nullptr;
 	tDesc.vFixedPosition = _float3(395.5f, 4.500f, 227.7f);
-	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc);*/
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc);
 
 	INSTPARTICLEDESC tDesc2 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_1"));
 	tDesc2.FollowingTarget = nullptr;
@@ -505,12 +505,13 @@ HRESULT CScene_Stage2::Ready_MapParticle()
 	tDesc5.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
 	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc5);
 
-	///**/_float3(473.970f, 4.900f, 414.755f);
 
-
-	//vParticlesPos.push_back(_float3(101.110130f, 35.100010f, 42.033039f));
-	//vParticlesPos.push_back(_float3(117.710f, 36.6f, 39.433f));
+	INSTPARTICLEDESC tDesc6 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_WaterFallParticle_0"));
+	tDesc6.FollowingTarget = nullptr;
+	tDesc6.vFixedPosition = _float3(401.758331f, 21.900f, 386.052032f);
+	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc6);
 	
+
 	return S_OK;
 }
 HRESULT CScene_Stage2::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\public\CurtainTrigger.h"
-
+#include "Player.h"
 
 CCurtainTrigger::CCurtainTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CTriggerObject(pDevice, pDeviceContext)
@@ -88,8 +88,11 @@ void CCurtainTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollider
 		{
 		case ECURTAINTYPE::TYPE_START:
 		{
-			// if player pressed 'E' then change player state to curtain start	
-			Set_IsDead();
+			if (g_pGameInstance->Get_DIKeyState(DIK_E)&DIS_Down)
+			{ 
+				static_cast<CPlayer*>(pConflictedObj)->Set_State_CurtainStart(g_fDeltaTime);
+				//Set_IsDead();
+			}
 		}
 			break;
 		case ECURTAINTYPE::TYPE_END:

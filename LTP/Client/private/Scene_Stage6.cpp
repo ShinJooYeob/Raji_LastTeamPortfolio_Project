@@ -3,6 +3,7 @@
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 #include "Player.h"
+#include "Elevator.h"
 
 #include "StaticInstanceMapObject.h"
 
@@ -12,7 +13,6 @@
 #include "physX/Collider_PhysX_Dynamic.h"
 #include "MapObject.h"
 #include "AssimpCreateMgr.h"
-
 
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -33,6 +33,9 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_MapData(L"Stage_3.dat", SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj)));
 
 //	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+
+
+	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
 
 
 //	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
@@ -280,15 +283,22 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player)));
+	// 68.525f, 35.7f, 75.726f Curtain
+	// 30.102f, 27.321f, 30.743f Init pos
+	// 79.208f, 25.1f, 67.124f End Init pos
+	//_float3(171.799f, 13.6f, 136.063f) 2nd Ledge Start
+	// _float3(171.361f, 23.76f, 150.289f)	// 1st elevator
+
+	// 171.361f, 23.76f, 150.289f			// cur test
+	// 65.279f, 2.043f, 325.343f
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
 	// 43 43.7 30
-//	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(43.f, 43.7f, 30.0f));
-	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, _float3(18, 20, 10));
 	
 
 	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
@@ -493,6 +503,117 @@ HRESULT CScene_Stage6::Ready_MapData(const _tchar * szMapDataFileName, SCENEID e
 
 	return S_OK;
 
+}
+
+HRESULT CScene_Stage6::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
+
+
+			pObject->After_Initialize();
+
+		}
+
+		CloseHandle(hFile);
+	}
+
+
+
+
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
+{
+	CElevator::ELEVATORDESC tElevatorDesc;
+	tElevatorDesc.fStartPos = _float3(169.314f, 26.6f, 157.903f);
+	tElevatorDesc.fDestPos = _float3(169.314f, 14.735f, 157.903f);
+	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
+	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
+	tElevatorDesc.fMoveSpeed = 5.f;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
+
+
+	ZeroMemory(&tElevatorDesc, sizeof(CElevator::ELEVATORDESC));
+	tElevatorDesc.fStartPos = _float3(169.530f, 15.030f, 268.125f);
+	tElevatorDesc.fDestPos = _float3(169.530f, 5.73f, 268.125f);
+	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
+	tElevatorDesc.fScale = _float3(1.05f, 1.05f, 1.05f);
+	tElevatorDesc.fMoveSpeed = 5.f;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
+
+
+	ZeroMemory(&tElevatorDesc, sizeof(CElevator::ELEVATORDESC));
+	tElevatorDesc.fStartPos = _float3(65.234f, 5.1f, 332.031f);
+	tElevatorDesc.fDestPos = _float3(65.234f, -23.070f, 332.031f);
+	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
+	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
+	tElevatorDesc.fMoveSpeed = 5.f;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
+	return S_OK;
 }
 
 
