@@ -1212,6 +1212,8 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 			NULL_CHECK_RETURN(tData.pObject, E_FAIL);
 
+			//tData.matSRT._32 -= 70;
+			//tData.matTransform._42 -= 70;
 
 			if (lstrcmp(tData.MeshID, TAG_CP(Prototype_Mesh_None)))
 			{
@@ -1239,7 +1241,7 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			//Æ®·»½ºÆû
 			CTransform* pTrans = (CTransform*)(tData.pObject->Get_Component(TAG_COM(Com_Transform)));
 			NULL_CHECK_RETURN(pTrans, E_FAIL);
-			//tData.matTransform._42 -= 20;
+
 			pTrans->Set_Matrix(tData.matTransform);
 
 

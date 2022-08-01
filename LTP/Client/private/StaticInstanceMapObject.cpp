@@ -204,6 +204,9 @@ HRESULT CStaticInstanceMapObject::Add_InstanceMapObject(OBJELEMENT& tElements)
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
 		pTransform->Set_Matrix(tElements.matTransform);
 
+		if (iter->second.fFrustumRange < tElements.FrustumRange)
+			iter->second.fFrustumRange = tElements.FrustumRange;
+
 		iter->second.pvecTransform.push_back(pTransform);
 	}
 
