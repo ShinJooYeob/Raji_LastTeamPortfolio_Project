@@ -748,6 +748,10 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 		break;
 	}
 
+	if (m_eMonster_State == Anim_State::MONSTER_HIT)
+	{
+		Set_LimLight_N_Emissive();
+	}
 	return S_OK;
 }
 

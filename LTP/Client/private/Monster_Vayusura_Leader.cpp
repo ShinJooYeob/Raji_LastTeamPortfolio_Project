@@ -252,6 +252,13 @@ HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 6; //Vayusura_Dive
 		break;
 
+	case 40:
+		Set_LimLight_N_Emissive();
+		break;
+	case 41:
+		Set_LimLight_N_Emissive();
+		break;
+
 	}
 
 	return S_OK;
@@ -384,8 +391,8 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 	if (KEYDOWN(DIK_V))
 	{
-		//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo1);
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo2);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo1);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo2);
 	}
 
 	return S_OK;
@@ -458,6 +465,11 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 2:
 			break;
 		case 6:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(1.0f, 0.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
 			{
 				m_bAttackFrieOn = false;
@@ -466,7 +478,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET;
 				Monster_BulletDesc.fSpeedPerSec = 10;
-				Monster_BulletDesc.fScale = _float3(0.1f,0.1f,0.1f);
+				Monster_BulletDesc.fScale = _float3(0.1f, 0.1f, 0.1f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
 				Monster_BulletDesc.fPositioning = _float3(-0.0016327f, 0.0032063f, 0.023993f);
@@ -480,6 +492,8 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
 				m_BulletObj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
 			}
 
@@ -492,6 +506,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_EffectAdjust++;
 			}
+		}
 			break;
 		}
 

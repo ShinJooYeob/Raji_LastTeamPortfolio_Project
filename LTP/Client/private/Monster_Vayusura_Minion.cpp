@@ -549,6 +549,7 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 	case 40:
 	{
 		m_iOnceAnimNumber = 4;
+		Set_LimLight_N_Emissive();
 		break;
 	}
 
@@ -850,18 +851,22 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 5:
 		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(1.0f, 0.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
 				m_bColliderAttackOn = true;
 				m_iAdjMovedIndex++;
 			}
 
-			if (PlayRate>0.15f && PlayRate < 0.9f)
+			if (PlayRate > 0.15f && PlayRate < 0.9f)
 			{
 				_float FootY = m_pTextureParticleTransform_HEAD->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 				_float PY = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
-				if(mPlaneTimer <= 0)
+				if (mPlaneTimer <= 0)
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.71f, 0.8f, 0.8f, 1.f), 0.8f);
 
 				if (fabs((FootY)-(PY)) < 2.0f && mPlaneTimer <= 0)
@@ -876,12 +881,11 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Plane, m_pTransformCom);
 
-			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash0, m_pTextureParticleTransform_Demo1);
+				//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash0, m_pTextureParticleTransform_Demo1);
 				m_EffectAdjust++;
 			}
-
-			break;
 		}
+		break;
 		default:
 			break;
 		}
