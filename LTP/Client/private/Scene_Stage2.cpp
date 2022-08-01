@@ -235,9 +235,11 @@ HRESULT CScene_Stage2::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple)));
 	
-	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
 	
 	
 	return S_OK;

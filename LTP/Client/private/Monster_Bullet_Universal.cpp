@@ -611,6 +611,32 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		break;
 	}
+	case TEZABSURA_PURPLE_DEFAULT_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	case TEZABSURA_PURPLE_PRIMARY_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
 	default:
 		break;
 	}
@@ -808,20 +834,27 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Default_Bullet(_double dDeltaTime)
 {
+
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
+	_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
-
 	return S_OK;
 }
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_Bullet(_double dDeltaTime)
 {
+	//_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	//vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 

@@ -41,11 +41,13 @@ HRESULT CMonster_Tezabsura_Bomber::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f));
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
+
+	m_fFrustumRadius = 3.5;
 	return S_OK;
 }
 
@@ -436,11 +438,6 @@ HRESULT CMonster_Tezabsura_Bomber::CoolTime_Manager(_double dDeltaTime)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
-
-		//if (m_bComboAnimSwitch == false)
-		//{
-		//	Special_Trigger(dDeltaTime);
-		//}
 		if (m_bIOnceAnimSwitch == false)
 		{
 			Pattern_Change();
@@ -493,7 +490,7 @@ HRESULT CMonster_Tezabsura_Bomber::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 4:
 		m_iOnceAnimNumber = 10; //JumpEnd
-		m_bComboAnimSwitch = true;
+		m_bComboAnimSwitch = false;
 		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 5:
@@ -520,7 +517,7 @@ HRESULT CMonster_Tezabsura_Bomber::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 9:
 		m_iOnceAnimNumber = 10; //JumpEnd
-		m_bComboAnimSwitch = true;
+		m_bComboAnimSwitch = false;
 		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 10:
@@ -547,7 +544,7 @@ HRESULT CMonster_Tezabsura_Bomber::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 14:
 		m_iOnceAnimNumber = 10; //JumpEnd
-		m_bComboAnimSwitch = true;
+		m_bComboAnimSwitch = false;
 		m_iAfterPattern = m_iOncePattern + 1;
 		break;
 	case 15:
@@ -776,7 +773,7 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		m_eMonster_State = Anim_State::MONSTER_IDLE;
 	}
-
+	
 	if (PlayRate <= 0.95) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
 	{
 		switch (iNowAnimIndex)
@@ -786,16 +783,16 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.05, m_pNavigationCom);
 
-				//if (m_iSoundIndex == 0 && PlayRate > 0)
-				//{
-				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
-				//	m_iSoundIndex++;
-				//}
-				//else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
-				//{
-				//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
-				//	m_iSoundIndex++;
-				//}
+				if (m_iSoundIndex == 0 && PlayRate > 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
+				else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					m_iSoundIndex++;
+				}
 			}
 			break;
 		case 3:
@@ -828,11 +825,11 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_pTransformCom->Turn_Dir(m_fKnockbackDir.XMVector(), 0.9f);
 				}
 			}
-			//if (m_iSoundIndex == 0 && PlayRate > 0)사운드
-			//{
-			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
-			//	m_iSoundIndex++;
-			//}
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_Pain_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 8:
@@ -843,11 +840,11 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
-			//if (m_iSoundIndex == 0 && PlayRate >= 0.5882) 사운드
-			//{
-			//	g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
-			//	m_iSoundIndex++;
-			//}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.5882)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 9:
@@ -873,15 +870,17 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 11:
 			if (PlayRate > 0)
 			{
-				//뛰는 스피드 조절해야함
+				//뛰는 스피드 조절해야함 뛰는 스피드 조절
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.2, m_pNavigationCom);
 			}
 			break;
 		case 12:
 		{
-			if (PlayRate >= 0.97)
+			m_bLookAtOn = false;
+			if (PlayRate >= 0.92)
 			{
-				//Set_IsDead();7
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1037.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				Set_IsDead();
 			}
 			break;
 		}
@@ -908,7 +907,7 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.pBoneName = "jaw_01";
 				
 				////////////////////////
-				m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 				_float3 fTempLook = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
 
@@ -918,14 +917,15 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 ////////////////////////////////////////////////////////////
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				
 				m_iAdjMovedIndex++;
 			}
 			break;
 		case 14:
+			m_bLookAtOn = false;
 			if(m_iAdjMovedIndex == 0 && PlayRate >= 0.541666)
 			{
-				m_bLookAtOn = false;
-
 				CMonster_Bullet_Universal::MONSTER_BULLET_UNIVERSALDESC Monster_BulletDesc;
 
 				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET;
@@ -945,6 +945,8 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.pBoneName = "jaw_01";
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Spit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
 
 				m_iAdjMovedIndex++;
 			}
