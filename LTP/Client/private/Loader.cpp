@@ -23,6 +23,7 @@
 
 //Weapons
 #include "Chiedtuan_Weapon.h"
+#include "Chiedtuan_2Page_Weapon.h"
 #include "Rangda_Finger.h"
 #include "Rangda_Statue.h"
 #include "Randa_Wasp_Bullet.h"
@@ -507,6 +508,7 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Chiedtian), CChiedtian::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_ChiedtianWeapon), CChiedtuan_Weapon::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_ChiedtianWeapon_2Page), CChiedtuan_2Page_Weapon::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Snake), CSnake::Create(m_pDevice, m_pDeviceContext)));
 

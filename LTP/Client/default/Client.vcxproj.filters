@@ -163,9 +163,6 @@
     <Filter Include="01.GameObject\02.Monster\MonsterWeapon">
       <UniqueIdentifier>{f9c89e62-1892-4c84-bdbb-379249803901}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon">
-      <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion">
       <UniqueIdentifier>{ddbd2a06-5086-4915-b052-a0cb38f50973}</UniqueIdentifier>
     </Filter>
@@ -427,6 +424,12 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
       <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon">
+      <UniqueIdentifier>{d3fee4e7-3d7f-45a2-b06a-f369399418b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon">
+      <UniqueIdentifier>{53608fc4-649f-44d8-8a67-d41fa6e3f185}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -616,7 +619,7 @@
       <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Chiedtuan_Weapon.h">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>01.GameObject\02.Monster\Monster</Filter>
@@ -936,6 +939,7 @@
     <ClInclude Include="..\public\Snake_Poison_Raser.h">
       <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1089,7 +1093,7 @@
       <Filter>01.GameObject\02.Monster\MonsterWeapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Chiedtuan_Weapon.cpp">
-      <Filter>01.GameObject\02.Monster\MonsterWeapon\Chiedtuan_Weapon</Filter>
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
@@ -1429,6 +1433,7 @@
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

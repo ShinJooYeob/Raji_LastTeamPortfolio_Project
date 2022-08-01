@@ -3,6 +3,7 @@
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 #include "Player.h"
+#include "MapObject.h"
 
 CScene_StageSelect::CScene_StageSelect(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -156,6 +157,20 @@ HRESULT CScene_StageSelect::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 HRESULT CScene_StageSelect::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Terrain)));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+
+	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGESELECT, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+
+	NULL_CHECK_RETURN(pTransform, E_FAIL);
+
+
+	_Matrix tt = XMMatrixScaling(100, 1, 100) * XMMatrixTranslation(0, -2.4f, 0);
+
+	pTransform->Set_Matrix(tt);
+	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGESELECT, pLayerTag))->Set_FrustumSize(99999999.f);
+
+
 
 
 
