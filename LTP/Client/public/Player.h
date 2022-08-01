@@ -204,8 +204,12 @@ public:
 	void	Set_State_ElevatorStart();																			
 	void	Set_State_ElevatorEnd();																				
 
+	// Stop Action
 	void	Set_State_StopActionStart();
 	void	Set_State_StopActionEnd();
+
+	// Curtain
+	void	Set_State_CurtainStart(_double fDeltaTime);
 
 public:
 	EPLAYER_STATE Get_PlayerState();
@@ -224,8 +228,6 @@ private: /* Change Start State */
 	void	Set_State_UtilitySkillStart(_double fDeltaTime);						// Utility
 	void	Set_State_UltimateSkillStart(_double fDeltaTime);						// Ultimate
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
-
-	void	Set_State_CurtainStart(_double fDeltaTime);								// Curtain
 
 	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
 

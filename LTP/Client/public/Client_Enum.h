@@ -309,6 +309,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_InstanceMonsterBatchTrigger,
 	Prototype_MonsterBatchTrigger,
 	Prototype_Trigger_CinematicTrigger,
+	Prototype_Trigger_CurtainTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
@@ -404,6 +405,7 @@ enum OBJECTPROTOTYPEID
 
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
+	Prototype_Object_InteractObj_LilyPad,
 
 	Object_Prototype_End
 };
@@ -481,6 +483,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_CinematicTrigger:
 		return TEXT("Prototype_Trigger_CinematicTrigger");
+		break;
+	case Prototype_Trigger_CurtainTrigger:
+		return TEXT("Prototype_Trigger_CurtainTrigger");
 		break;
 	case Prototype_Trigger_ChangeNavIndex:
 		return TEXT("Prototype_Trigger_ChangeNavIndex");
@@ -709,6 +714,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_InteractObj_Elevator:
 		return TEXT("Prototype_Object_InteractObj_Elevator");
 
+	case Prototype_Object_InteractObj_LilyPad:
+		return TEXT("Prototype_Object_InteractObj_LilyPad");
+		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
 		return TEXT("Prototype_Object_Static_PhysX");
@@ -3194,6 +3202,7 @@ enum COMPONENTPROTOTYPEID
 
 	Prototype_Mesh_Elephant_Head,
 	Prototype_Mesh_BallMesh,
+	Prototype_Mesh_DarkBaldTree,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 
@@ -3255,6 +3264,7 @@ enum COMPONENTPROTOTYPEID
 
 	//Interact Obj
 	Prototype_Mesh_InteractObj_Elevator,
+	Prototype_Mesh_InteractObj_LilyPad,
 
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
@@ -9560,6 +9570,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("BallMesh.fbx");
 		break;
 
+	case Prototype_Mesh_DarkBaldTree:
+		return TEXT("DarkBaldTree.fbx");
+		break;
+		
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");
 		break;
@@ -9745,6 +9759,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("SM_ENV_CC_Elevator_Vertical_01.fbx");
 		break;
 
+	case Prototype_Mesh_InteractObj_LilyPad:
+		return TEXT("SM_Lillypad_02_A.fbx");
+		break;
+		
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;

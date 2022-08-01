@@ -427,6 +427,9 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
       <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\10.LilyPad">
+      <UniqueIdentifier>{3df32984-3635-4d8c-9b63-a106463b62c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -936,6 +939,9 @@
     <ClInclude Include="..\public\Snake_Poison_Raser.h">
       <Filter>01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LilyPad.h">
+      <Filter>01.GameObject\10.LilyPad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1428,6 +1434,9 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp">
       <Filter>01.GameObject\08.Effect\02.InstanceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LilyPad.cpp">
+      <Filter>01.GameObject\10.LilyPad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
