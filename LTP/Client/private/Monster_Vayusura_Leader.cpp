@@ -381,19 +381,30 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 		// distance ºñ±³ÇØ¼­ ÃÑ¾Ë ÀÌÆåÆ® Á×ÀÌ±â
 		_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
-		_float dis = PP.Get_Distance(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector());
-		if (dis < 0.1f)
+		_float PY = PP.y;
+		_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+
+		if (fabs(PY-MyY) < 0.1f)
 		{
+			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+
 			m_BulletObj->Set_IsOwerDead(true);
 			m_BulletObj = nullptr;
+		
 		}
+
 	}
+
 
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo1);
-		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Test, m_pTextureParticleTransform_Demo2);
 	}
+	if (KEYDOWN(DIK_C))
+	{
+	}
+
+
 
 	return S_OK;
 }
