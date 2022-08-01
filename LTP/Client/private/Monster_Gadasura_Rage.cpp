@@ -40,11 +40,9 @@ HRESULT CMonster_Gadasura_Rage::Initialize_Clone(void * pArg)
 
 
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-
-	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 
 	return S_OK;
@@ -711,6 +709,11 @@ HRESULT CMonster_Gadasura_Rage::Infinity_AnimMotion(_double dDeltaTime)
 		break;
 	}
 
+	if (m_eMonster_State == Anim_State::MONSTER_HIT)
+	{
+		Set_LimLight_N_Emissive();
+	}
+
 	return S_OK;
 }
 
@@ -745,20 +748,19 @@ HRESULT CMonster_Gadasura_Rage::Special_Trigger(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Rage::Ready_ParticleDesc()
 {
 	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_Hand, E_FAIL);
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Hand);
 
 	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo1, E_FAIL);
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
 
 	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo2, E_FAIL);
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
 
 	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform_Demo3, E_FAIL);
-
-
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
 	return S_OK;
 }
+
 HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 {
 	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();

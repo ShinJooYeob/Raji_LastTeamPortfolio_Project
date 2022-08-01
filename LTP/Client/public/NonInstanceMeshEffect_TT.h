@@ -69,6 +69,7 @@ private:
 	_float					mEasingTimer = 0;
 	_bool					mbEasingStart = false;
 	_bool					mbEasingEnd = false;
+	_float					mAddRot = 0;
 
 
 private:

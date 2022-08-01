@@ -177,6 +177,8 @@ void CMonster_Vayusura_Leader::CollisionTriger(CCollider * pMyCollider, _uint iM
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
+
+		m_BulletObj = nullptr;
 	}
 }
 
@@ -424,6 +426,10 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+	//	m_iOncePattern = 0;
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 10;
 
 	switch (m_iOncePattern)
 	{
@@ -434,7 +440,11 @@ HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 		m_iOnceAnimNumber = 6; //Vayusura_Dive
 		break;
 	case 40:
+	Set_LimLight_N_Emissive();
 		m_iOnceAnimNumber = 4; //Vayusura_Hit
+		break;
+		case 41:
+		Set_LimLight_N_Emissive();
 		break;
 
 	}
@@ -530,7 +540,69 @@ HRESULT CMonster_Vayusura_Leader::Player_Comparison(_double dDeltaTime)
 	{
 		fMonsterPos.y = fPlayerPos.y;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
+		}
+HRESULT CMonster_Vayusura_Leader::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
+
+	m_pTextureParticleTransform_Demo4 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo4);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
+{
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
+	//	ATTACHEDESC boneDesc = m_vecAttachedDesc[0]->Get_WeaponDesc().eAttachedDesc;
+	//	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
+	//	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
+	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
+	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
+
+	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
+	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
+
+	if (m_BulletObj)
+	{
+		CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
+		m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
+
+		// distance 비교해서 총알 이펙트 죽이기
+		_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float PY = PP.y;
+		_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+
+		if (fabs(PY-MyY) < 0.1f)
+		{
+			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+
+			m_BulletObj->Set_IsOwerDead(true);
+			m_BulletObj = nullptr;
+		
+		}
+
+	
+
+
+	if (KEYDOWN(DIK_V))
+	{
 	}
+	if (KEYDOWN(DIK_C))
+	{
+	}
+
+
 
 	return S_OK;
 }
@@ -586,6 +658,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
+			m_EffectAdjust = 0;
 
 		m_bStopCoolTimeOn = false;
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
@@ -619,6 +692,11 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 		case 2:
 			break;
 		case 6:
+		{
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(1.0f, 0.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
 			{
 				m_bAttackFrieOn = false;
@@ -628,7 +706,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET;
 				Monster_BulletDesc.fSpeedPerSec = 10;
-				Monster_BulletDesc.fScale = _float3(0.1f,0.1f,0.1f);
+				Monster_BulletDesc.fScale = _float3(0.1f, 0.1f, 0.1f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
 				Monster_BulletDesc.fPositioning = _float3(-0.0016327f, 0.0032063f, 0.023993f);
@@ -641,15 +719,25 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				m_BulletObj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
 			}
+
 			else if (m_iAdjMovedIndex == 1 && PlayRate >= 0.792411)
 			{
 				m_bAttackFrieOn = true;
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate > 0.1f)
+			{
+				m_EffectAdjust++;
+			}
+		}
 			break;
 		}
+
 	}
 
 	m_iOldAnimIndex = iNowAnimIndex;
@@ -691,4 +779,10 @@ void CMonster_Vayusura_Leader::Free()
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pDissolve);
+
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+	Safe_Release(m_pTextureParticleTransform_Demo4);
+	
 }

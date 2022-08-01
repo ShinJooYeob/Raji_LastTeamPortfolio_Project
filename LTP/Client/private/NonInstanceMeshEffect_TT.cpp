@@ -97,7 +97,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 	if (mIsInit == false)
 	{
 		// Custom Init
-		m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScale);
+		m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScaleSpeed);
 
 		_Vector scale = m_pTransformCom->Get_Scale();
 
@@ -310,12 +310,26 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			}
 
 			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
-			if (mAddDesc.vAddDirectAngle.x != 0)
-				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-			else if (mAddDesc.vAddDirectAngle.y != 0)
-				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-			else if (mAddDesc.vAddDirectAngle.z != 0)
-				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+			if (mAddDesc.LookRotSpeed == 0)
+			{
+				if (mAddDesc.vAddDirectAngle.x != 0)
+					m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
+				else if (mAddDesc.vAddDirectAngle.y != 0)
+					m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
+				else if (mAddDesc.vAddDirectAngle.z != 0)
+					m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
+
+			}
+			else
+			{
+				mAddRot += mAddDesc.LookRotSpeed * fDeltaTime;
+				if (mAddDesc.vAddDirectAngle.x != 0)
+					m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x + mAddRot));
+				else if (mAddDesc.vAddDirectAngle.y != 0)
+					m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y + mAddRot));
+				else if (mAddDesc.vAddDirectAngle.z != 0)
+					m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z + mAddRot));
+			}
 
 		}
 		else
@@ -330,6 +344,98 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		if (mAddDesc.bAfterApperTime)
 		{
 			if (mMeshDesc.fMaxTime_Duration - mMeshDesc.fAppearTime < m_fCurTime_Duration)
+			{
+				m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScaleSpeed);
+
+				if (mAddDesc.ScaleMax != 0)
+				{
+					_float3 scale;
+					XMStoreFloat3(&scale, m_pTransformCom->Get_Scale());
+					 
+					if (mAddDesc.bLockScale[0])
+					{
+						if(mAddDesc.ScaleMax > scale.x)
+						{
+							m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+						}
+					}
+
+					if (mAddDesc.bLockScale[1])
+					{
+						if (mAddDesc.ScaleMax > scale.y)
+						{
+							m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+						}
+					}
+
+
+					if (mAddDesc.bLockScale[2])
+					{
+						if (mAddDesc.ScaleMax > scale.z)
+						{
+							m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+						}
+					}
+				}
+				else
+				{
+					if (mAddDesc.bLockScale[0])
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+					}
+
+					if (mAddDesc.bLockScale[1])
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+					}
+
+
+					if (mAddDesc.bLockScale[2])
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+
+					}
+				}
+	
+			}
+
+		}
+		else
+		{
+
+			m_pTransformCom->Set_ScalingSpeed(mAddDesc.AccScaleSpeed);
+
+			if (mAddDesc.ScaleMax != 0)
+			{
+				_float3 scale;
+				XMStoreFloat3(&scale, m_pTransformCom->Get_Scale());
+
+				if (mAddDesc.bLockScale[0])
+				{
+					if (mAddDesc.ScaleMax > scale.x)
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
+					}
+				}
+
+				if (mAddDesc.bLockScale[1])
+				{
+					if (mAddDesc.ScaleMax > scale.y)
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
+					}
+				}
+
+
+				if (mAddDesc.bLockScale[2])
+				{
+					if (mAddDesc.ScaleMax > scale.z)
+					{
+						m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
+					}
+				}
+			}
+			else
 			{
 				if (mAddDesc.bLockScale[0])
 				{
@@ -347,27 +453,6 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 					m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
 
 				}
-			}
-
-		}
-		else
-		{
-
-			if (mAddDesc.bLockScale[0])
-			{
-				m_pTransformCom->Scaling(CTransform::STATE_RIGHT, fDeltaTime);
-			}
-
-			if (mAddDesc.bLockScale[1])
-			{
-				m_pTransformCom->Scaling(CTransform::STATE_UP, fDeltaTime);
-			}
-
-
-			if (mAddDesc.bLockScale[2])
-			{
-				m_pTransformCom->Scaling(CTransform::STATE_LOOK, fDeltaTime);
-
 			}
 
 		}
@@ -420,7 +505,7 @@ _int CNonInstanceMeshEffect_TT::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
-	NULL_CHECK_RETURN(m_pModel, E_FAIL);
+	NULL_CHECK_BREAK(m_pModel);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 

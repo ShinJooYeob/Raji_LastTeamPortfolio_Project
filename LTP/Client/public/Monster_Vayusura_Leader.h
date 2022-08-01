@@ -42,8 +42,12 @@ private: //애니메이션
 	HRESULT				Once_AnimMotion(_double	dDeltaTime);
 	HRESULT				Pattern_Change();
 	HRESULT				Infinity_AnimMotion(_double	dDeltaTime);
-
 	HRESULT				Player_Comparison(_double	dDeltaTime);
+	
+private:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
 
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
@@ -112,6 +116,14 @@ private://Sound
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
+private: // particle	
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
+
+	CGameObject*					m_BulletObj = nullptr;
+
 
 private:
 	HRESULT SetUp_Components();

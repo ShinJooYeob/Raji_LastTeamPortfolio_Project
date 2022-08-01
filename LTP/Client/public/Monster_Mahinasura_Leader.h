@@ -78,6 +78,7 @@ private:
 	ColliderType		m_eColliderType;
 	_bool				m_bColliderAttackOn = false;
 
+
 private:
 	class CHpUI*		m_pHPUI = nullptr;
 

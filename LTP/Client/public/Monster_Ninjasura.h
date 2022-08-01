@@ -42,6 +42,11 @@ private:
 	HRESULT				SetUp_Fight(_double dDeltaTime);
 	HRESULT				Update_Collider(_double dDeltaTime);
 
+private:
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Update_Particle(_double timer)override;
+
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);
 	HRESULT				CoolTime_Manager(_double dDeltaTime);
@@ -129,6 +134,17 @@ private://Sound
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
+	
+private: // particle	
+	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
+
+
+private:
+	HRESULT SetUp_Components();
+	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
 public:
 	static CMonster_Ninjasura* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

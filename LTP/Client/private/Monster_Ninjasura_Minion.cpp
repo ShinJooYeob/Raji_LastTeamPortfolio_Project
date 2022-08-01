@@ -411,6 +411,46 @@ HRESULT CMonster_Ninjasura_Minion::Update_Collider(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CMonster_Ninjasura_Minion::Ready_ParticleDesc()
+{
+	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
+
+	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
+
+	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
+
+	m_pTextureParticleTransform_Demo4 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo4);
+	return S_OK;
+
+}
+
+HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
+{
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
+	//	ATTACHEDESC boneDesc = m_vecAttachedDesc[0]->Get_WeaponDesc().eAttachedDesc;
+	//	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
+	//	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
+	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
+	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
+
+	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
+	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
+
+	if (KEYDOWN(DIK_V))
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Test, m_pTextureParticleTransform_Demo1);
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash1, m_pTextureParticleTransform_HEAD);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMonster_Ninjasura_Minion::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);
@@ -495,6 +535,11 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+	// #DEBUG PatternSET
+//	m_iOncePattern = 0;
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 40;
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -726,6 +771,8 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_iSoundIndex = 0;
 		m_bStopCoolTimeOn = false;
+		m_EffectAdjust = 0;
+
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -1172,4 +1219,9 @@ void CMonster_Ninjasura_Minion::Free()
 	Safe_Release(m_pAttackColliderCom);
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pDissolve);
+
+	Safe_Release(m_pTextureParticleTransform_Demo1);
+	Safe_Release(m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_pTextureParticleTransform_Demo3);
+	Safe_Release(m_pTextureParticleTransform_Demo4);
 }
