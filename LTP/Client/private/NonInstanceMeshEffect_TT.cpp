@@ -84,15 +84,18 @@ HRESULT CNonInstanceMeshEffect_TT::Initialize_Clone(void * pArg)
 _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
-
+	if (m_pParentTranscom == nullptr)
+	{
+		Set_IsDead();
+		return _int();
+	}
 	if (m_pParentTranscom->Get_IsOwnerDead())
 	{
 		Set_IsDead();
 		return _int();
 	}
 
-	if (m_pParentTranscom == nullptr)
-		return -1;
+
 
 	if (mIsInit == false)
 	{

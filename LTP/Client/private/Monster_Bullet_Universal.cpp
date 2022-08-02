@@ -325,6 +325,7 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		}
 		case VAYUSURA_LEADER_BULLET:
 		{
+			static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet();
 			Set_IsDead();
 			break;
 		}

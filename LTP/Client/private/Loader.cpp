@@ -359,8 +359,11 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AXTrail_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DivineLaserBeam_02);
 
 		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Cloud);
+
+
 	}
 
 
@@ -1205,6 +1208,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Vertical_01.fbx", TransformMatrix);
+
 #pragma endregion STATICMESH
 
 #pragma region PROTOTYPE_COMPONENT

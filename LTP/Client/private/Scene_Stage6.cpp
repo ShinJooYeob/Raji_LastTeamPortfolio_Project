@@ -33,7 +33,7 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_MapData(L"Stage_3.dat", SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj)));
 
-//	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 
 
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
@@ -50,7 +50,7 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	// Effect
-//	FAILED_CHECK(Ready_LoadEffectMesh());
+	//FAILED_CHECK(Ready_LoadEffectMesh());
 
 
 	return S_OK;
@@ -72,7 +72,7 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 
 
 #ifdef _DEBUG
-	//if (KEYDOWN(DIK_B))
+	//if (KEYDOWN(DIK_F))
 	//{
 	//	// 해당 영역에 보냄
 
@@ -109,6 +109,8 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 	//	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	//}
+
+
 
 #endif // _DEBUG
 
@@ -319,13 +321,13 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
-	CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
-	NULL_CHECK_RETURN(pTransform, E_FAIL);
-	_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -3, 0);
-	pTransform->Set_Matrix(tt);
-	((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag))->Set_FrustumSize(99999999.f);
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, L"TestNonAnimInstance"));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_StaticMapObject)));
+	//CTransform* pTransform = (CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag)->Get_Component(TAG_COM(Com_Transform)));
+	//NULL_CHECK_RETURN(pTransform, E_FAIL);
+	//_Matrix tt = XMMatrixScaling(20, 1, 20) * XMMatrixTranslation(0, -3, 0);
+	//pTransform->Set_Matrix(tt);
+	//((CMapObject*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag))->Set_FrustumSize(99999999.f);
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, L"TestNonAnimInstance"));
 
 	return S_OK;
 }

@@ -48,7 +48,16 @@ private:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
+	void	Set_Bullet(CGameObject* b)
+	{
+		Safe_Release(m_BulletObj);
+		m_BulletObj = b;
+		Safe_AddRef(m_BulletObj);
+	}
 
+public:
+	void Set_Play_MeshEffect_Colbullet();
+	
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
 	_bool				Get_AttackAttackFrieOn() { return m_bAttackFrieOn; }

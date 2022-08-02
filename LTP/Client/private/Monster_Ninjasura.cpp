@@ -38,9 +38,9 @@ HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+//
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 #endif
 

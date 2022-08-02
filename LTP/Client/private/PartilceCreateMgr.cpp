@@ -62,9 +62,16 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Crack_OutLine);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BBT_Paw);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AOG_Ring);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Aura_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_RPG);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Trail_Twist_00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AXTrail_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DivineLaserBeam_02);
+
 		
-		
-		
+	
 	*/
 
 HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
@@ -3868,6 +3875,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
+
 	}
 
 	if (type == MESHEFFECT_MONSTER_VM_Plane)
@@ -3944,77 +3952,16 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 #pragma endregion MONSTER_VM
 
-//  BASE
-//	// Mesh
-//	MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
-//
-//	// Time
-//	MeshDesc.fMaxTime_Duration = 1.0f;
-//	MeshDesc.fAppearTime = 0.5f;
-//	AddDesc.bAfterApperTime = false;
-//
-//	// Tex
-//	MeshDesc.iDiffuseTextureIndex = 299;
-//	MeshDesc.MaskTextureIndex = NONNMASK;
-//	MeshDesc.NoiseTextureIndex = 54;
-//	// Noise
-//	MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
-//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
-//	MeshDesc.vColor = _float4(1, 1, 1, 1);
-//	// Color
-//	MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
-//	MeshDesc.vEmissive = _float4(1.0f, 1.0f, 1.0f, 1.f);
-//
-//	// Transform_Base
-//	MeshDesc.vPosition = _float3(0, 0.0f, 0);
-//	//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
-//	MeshDesc.vSize = _float3(1.f);
-//
-//
-//
-//	// Move
-//	MeshDesc.MoveDir = FollowingDir_Look;
-//	MeshDesc.MoveSpeed = 0;
-//	AddDesc.AccMoveSpeed = 0;
-//
-//	// Rot
-//	AddDesc.LookRotAxis = FollowingDir_Right;
-//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
-//
-//	MeshDesc.RotAxis = FollowingDir_Look;
-//	MeshDesc.RotationSpeedPerSec = 0;
-//	AddDesc.AccRotSpeed = 0;
-//	AddDesc.InitRot = _float3(0, 0, 0.0f);
-//
-//	// Scale
-//	AddDesc.AccScaleSpeed = 0.0f;
-//	AddDesc.ScaleMax = 0.0f;
-//
-//	AddDesc.ScaleReFlag = false;
-//
-//	AddDesc.bLockScale[0] = true;
-//	AddDesc.bLockScale[1] = true;
-//	AddDesc.bLockScale[2] = true;
-//
-//
-//	// Fix
-//	AddDesc.FixFlag_Move = true;
-//	AddDesc.FixFlag_Rot = true;
-//	AddDesc.FollowTarget = Transfom;
-//
-//	// Shader
-////	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-////	MeshDesc.m_iPassIndex = 18; // DisCard
-////	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
-//
-//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	
+
+#pragma region MONSTER_VL
 
 	if (type == MESHEFFECT_MONSTER_VL_Test)
 	{
 
 
-		
+
 
 	}
 
@@ -4118,7 +4065,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.vPosition = _float3(0, 0.0f, 0);
 		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
 		MeshDesc.vSize = _float3(2.0f);
-		MeshDesc.vSize = _float3(3.f, 5.0f,3.0f);
+		MeshDesc.vSize = _float3(3.f, 5.0f, 3.0f);
 
 
 
@@ -4233,86 +4180,306 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
 
-#pragma region MONSTER_VL
-
-
-
 #pragma endregion MONSTER_VL
 
+
+
+	//  BASE
+	//	// Mesh
+	//	MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
+	//
+	//	// Time
+	//	MeshDesc.fMaxTime_Duration = 1.0f;
+	//	MeshDesc.fAppearTime = 0.5f;
+	//	AddDesc.bAfterApperTime = false;
+	//
+	//	// Tex
+	//	MeshDesc.iDiffuseTextureIndex = 299;
+	//	MeshDesc.MaskTextureIndex = NONNMASK;
+	//	MeshDesc.NoiseTextureIndex = 54;
+	//	// Noise
+	//	MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+	//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
+	//	MeshDesc.vColor = _float4(1, 1, 1, 1);
+	//	// Color
+	//	MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
+	//	MeshDesc.vEmissive = _float4(1.0f, 1.0f, 1.0f, 1.f);
+	//
+	//	// Transform_Base
+	//	MeshDesc.vPosition = _float3(0, 0.0f, 0);
+	//	//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
+	//	MeshDesc.vSize = _float3(1.f);
+	//
+	//
+	//
+	//	// Move
+	//	MeshDesc.MoveDir = FollowingDir_Look;
+	//	MeshDesc.MoveSpeed = 0;
+	//	AddDesc.AccMoveSpeed = 0;
+	//
+	//	// Rot
+	//	AddDesc.LookRotAxis = FollowingDir_Right;
+	//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+	//
+	//	MeshDesc.RotAxis = FollowingDir_Look;
+	//	MeshDesc.RotationSpeedPerSec = 0;
+	//	AddDesc.AccRotSpeed = 0;
+	//	AddDesc.InitRot = _float3(0, 0, 0.0f);
+	//
+	//	// Scale
+	//	AddDesc.AccScaleSpeed = 0.0f;
+	//	AddDesc.ScaleMax = 0.0f;
+	//
+	//	AddDesc.ScaleReFlag = false;
+	//
+	//	AddDesc.bLockScale[0] = true;
+	//	AddDesc.bLockScale[1] = true;
+	//	AddDesc.bLockScale[2] = true;
+	//
+	//
+	//	// Fix
+	//	AddDesc.FixFlag_Move = true;
+	//	AddDesc.FixFlag_Rot = true;
+	//	AddDesc.FollowTarget = Transfom;
+	//
+	//	// Shader
+	////	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	////	MeshDesc.m_iPassIndex = 18; // DisCard
+	////	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+	//
+	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 #pragma region MONSTER_NM
 
 	if (type == MESHEFFECT_MONSTER_NM_Test)
 	{
 		// Mesh
-	//	MeshDesc.eMeshType = Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_DivineLaserBeam_02;
+		
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.3f;
+		MeshDesc.fAppearTime = 0.1f;
+		AddDesc.bAfterApperTime = true;
 
-	//	// Time
-	//	MeshDesc.fMaxTime_Duration = 0.5f;
-	//	MeshDesc.fAppearTime = 0.3f;
-	//	AddDesc.bAfterApperTime = true;
-	//	AddDesc.bAfterApperTime = false;
-
-	//	// Tex
-	//	MeshDesc.iDiffuseTextureIndex = 418;
-	//	MeshDesc.MaskTextureIndex = 107;
-	//	MeshDesc.NoiseTextureIndex = 180;
-	//	// Noise
-	//	MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
-	//	MeshDesc.fDistortionNoisingPushPower = 10.0f;
-	//	MeshDesc.vColor = _float4(1, 1, 1, 1);
-	//	// Color
-	//	MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
-	//	MeshDesc.vEmissive = _float4(1.0f, 1.0f, 1.0f, 1.f);
-	//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
-
-	//	// Transform_Base
-	//	MeshDesc.vPosition = _float3(0, 0.5f, 0);
-	//	//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
-	//	_float rand = GetSingle(CUtilityMgr)->RandomFloat(0.7f, 1.25f);
-	//	MeshDesc.vSize = _float3(rand);
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 398;
+		MeshDesc.MaskTextureIndex = 72;
+		MeshDesc.NoiseTextureIndex = 351;
+		MeshDesc.NoiseTextureIndex = 372;
 
 
+		// Noise
+		MeshDesc.noisingdir = _float2(0,1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 50.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
 
-	//	// Move
-	//	MeshDesc.MoveDir = FollowingDir_Look;
-	//	MeshDesc.MoveSpeed = 0;
-	//	AddDesc.AccMoveSpeed = 0;
+		// Color
+		MeshDesc.vLimLight = _float4(0.69f, 0.04f, 0.87f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.3f, 0.1f, 0.1f, 1.f);
 
-	//	// Rot
-	//	AddDesc.LookRotAxis = FollowingDir_Right;
-	//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, -8.0f);
+		MeshDesc.vSize = _float3(0.5f);
+		MeshDesc.vSize = _float3(0.5f, 0.5f, 3.0f);
+		MeshDesc.vSize = _float3(0.5f, 0.6f, 0.5f);
 
-	//	MeshDesc.RotAxis = FollowingDir_Look;
-	//	MeshDesc.RotationSpeedPerSec = 0;
-	//	AddDesc.AccRotSpeed = 0;
-	//	AddDesc.InitRot = _float3(0, 0, 0.0f);
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
 
-	//	// Scale
-	//	AddDesc.AccScaleSpeed = 1.25f;
-	//	AddDesc.ScaleReFlag = false;
+		// RotS
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		AddDesc.LookRotSpeed = 0;
 
-	//	AddDesc.bLockScale[0] = true;
-	//	AddDesc.bLockScale[1] = true;
-	//	AddDesc.bLockScale[2] = true;
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
 
 
-	//	// Fix
-	//	AddDesc.FixFlag_Move = true;
-	//	AddDesc.FixFlag_Rot = true;
-	//	AddDesc.FollowTarget = nullptr;
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = true;
+		AddDesc.FollowTarget = nullptr;
 
-	//	// Shader
-	////	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-	////	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-	////	MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	//	MeshDesc.vSize = _float3(1.0f, 0.2f, 1.0f);
+	//	MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.96f, 1.0f);
 	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 	}
 
+	if (type == MESHEFFECT_MONSTER_NM_Cash2)
+	{
+		
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_sphere_dist_wind;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 317;
+		MeshDesc.iDiffuseTextureIndex = 301;
+		MeshDesc.MaskTextureIndex = 51;
+		MeshDesc.MaskTextureIndex = 63;
+		MeshDesc.NoiseTextureIndex = 160;
+
+		// Noise
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 1.0f, 1.0f, 1.f);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
+
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0, 0.5f, 0);
+		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
+		MeshDesc.vSize = _float3(20.0f);
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.LookRotSpeed = 0;
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 30.0f;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = Transfom;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+	}
+
+	if (type == MESHEFFECT_MONSTER_NM_Cash3)
+	{
+		// Mesh
+//	MeshDesc.eMeshType = Prototype_Mesh_SM_Helix_Crystal;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_AXTrail_01;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.5f;
+		MeshDesc.fAppearTime = 0.2f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 106;
+		MeshDesc.MaskTextureIndex = 71;
+		MeshDesc.NoiseTextureIndex = 188;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
+		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.3f, 0.1f, 0.1f, 1.f);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
+
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0);
+		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
+		MeshDesc.vSize = _float3(0.4f, 0.2f, 0.4f);
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
+
+		// RotS
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.LookRotSpeed = 0;
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 20.0f;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = Transfom;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		MeshDesc.vSize = _float3(1.0f, 0.2f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.0f, 0.96f, 1.0f);
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+	}
+
+
+
 #pragma endregion MONSTER_NM
+
+	
+
 
 #pragma region MONSTER_NL
 

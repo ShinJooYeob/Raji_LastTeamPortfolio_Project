@@ -178,7 +178,8 @@ void CMonster_Vayusura_Leader::CollisionTriger(CCollider * pMyCollider, _uint iM
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
 
-		m_BulletObj = nullptr;
+		Safe_Release(m_BulletObj);
+
 	}
 }
 
@@ -619,6 +620,7 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 
 
+
 	if (KEYDOWN(DIK_V))
 	{
 	}
@@ -629,6 +631,14 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 
 	return S_OK;
+
+}
+
+void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet()
+{
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_BulletObj);
 
 }
 
@@ -785,6 +795,9 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
 
 				//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
 			}
 
@@ -852,5 +865,6 @@ void CMonster_Vayusura_Leader::Free()
 	Safe_Release(m_pTextureParticleTransform_Demo2);
 	Safe_Release(m_pTextureParticleTransform_Demo3);
 	Safe_Release(m_pTextureParticleTransform_Demo4);
+	Safe_Release(m_BulletObj);
 	
 }
