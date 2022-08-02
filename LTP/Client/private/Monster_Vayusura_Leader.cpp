@@ -178,7 +178,8 @@ void CMonster_Vayusura_Leader::CollisionTriger(CCollider * pMyCollider, _uint iM
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
 
-		m_BulletObj = nullptr;
+		Safe_Release(m_BulletObj);
+
 	}
 }
 
@@ -576,24 +577,24 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
 
+
 	if (m_BulletObj)
 	{
 		CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
 		m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
 
 		// distance 비교해서 총알 이펙트 죽이기
-		_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
-		_float PY = PP.y;
-		_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+		_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float3 BulletPos = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float distance =  PlayerPos.Get_Distance(BulletPos.XMVector());
 
-		if (fabs(PY - MyY) < 0.1f)
+		if (fabs(PlayerPos.y - BulletPos.y) < 0.1f && distance < 3.0f)
 		{
 			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
 			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
 
-			m_BulletObj->Set_IsOwerDead(true);
-			m_BulletObj = nullptr;
-
+			m_BulletObj->Set_IsDead();
+			Safe_Release(m_BulletObj);
 		}
 	}
 
@@ -609,6 +610,14 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 
 	return S_OK;
+
+}
+
+void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet()
+{
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+	Safe_Release(m_BulletObj);
 
 }
 
@@ -724,7 +733,9 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
-				m_BulletObj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+				CGameObject* bulletobj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+				Set_Bullet(bulletobj);
+
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
 
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
@@ -789,5 +800,6 @@ void CMonster_Vayusura_Leader::Free()
 	Safe_Release(m_pTextureParticleTransform_Demo2);
 	Safe_Release(m_pTextureParticleTransform_Demo3);
 	Safe_Release(m_pTextureParticleTransform_Demo4);
+	Safe_Release(m_BulletObj);
 	
 }

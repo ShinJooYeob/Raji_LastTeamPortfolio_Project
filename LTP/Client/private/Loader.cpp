@@ -352,10 +352,17 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Crack_OutLine);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BBT_Paw);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AOG_Ring);
-
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Aura_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_RPG);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Trail_Twist_00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AXTrail_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DivineLaserBeam_02);
 
 		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Cloud);
+
+
 	}
 
 
@@ -915,12 +922,10 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02_SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Platform_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Dome_D.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Arch_D.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Platform_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Stairs_02.fbx", TransformMatrix);
@@ -1140,8 +1145,68 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_TempleTop_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_TempleTop_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_BoatRound_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_PuzzleAssembly_Right_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Bridge_Arch.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Bridge_Arch.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Bridge_Arch.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Bridge_Arch.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Bridge_Arch.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Pillar_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_Pink.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_03.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_04.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_05.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_06.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_02.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_01.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_rock_river_06.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01_flower.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_02.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_02.fbx", TransformMatrix);
+
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Vertical_01.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lillypad_02_A.fbx", TransformMatrix);
+
 #pragma endregion STATICMESH
 
 #pragma region PROTOTYPE_COMPONENT
