@@ -269,6 +269,11 @@ void CMonster_Bullet_Universal::Set_IsDead()
 		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1038.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
+	case VAYUSURA_LEADER_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_508.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		break;
+	}
 	default:
 		break;
 	}
@@ -611,6 +616,32 @@ HRESULT CMonster_Bullet_Universal::SetUp_Collider()
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		break;
 	}
+	case TEZABSURA_PURPLE_DEFAULT_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	case TEZABSURA_PURPLE_PRIMARY_BULLET:
+	{
+		FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+		/////////////////m_pColliderCom!@!@#$@!#$@#$@$!@%#$%@#$%%^^W@!
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
 	default:
 		break;
 	}
@@ -713,7 +744,15 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		_float3 fPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 		fPlayerPos.y += 0.5f;
 
+		m_fTempPos = fPlayerPos;
 		XMStoreFloat3(&m_fTempLook, XMVector3Normalize(XMLoadFloat3(&fPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+		m_dSoundTime += dDeltaTime;
+		if (m_dSoundTime >= 0.3)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Spell_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+			m_dSoundTime = 0;
+		}
 	}
 	else {
 		m_bIsFired = true;
@@ -723,9 +762,19 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+		if (m_iSoundIndex == 0)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1290.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+
+			m_iSoundIndex++;
+		}
 	}
 
-	if(true == Monster_Object->Get_AttackCanceOn())
+	_float fDistance;
+	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat4(&m_fTempPos));
+
+	if(true == Monster_Object->Get_AttackCanceOn() || fDistance <= 0.2)
 	{
 		Set_IsDead();
 	}
@@ -808,20 +857,27 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Minion_Bullet(_double dDeltaTime)
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Default_Bullet(_double dDeltaTime)
 {
+
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
+	_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
-
 	return S_OK;
 }
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Purple_Primary_Bullet(_double dDeltaTime)
 {
+	//_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//_Vector vLook = XMLoadFloat3(&m_fTempLook);
+
+	//vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
+
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
 	_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	_Vector vLook = XMLoadFloat3(&m_fTempLook);
+	_Vector vLook = XMLoadFloat3(&m_Monster_Bullet_UniversalDesc.fLook);
 
 	vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 

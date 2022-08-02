@@ -22,7 +22,7 @@ public:
 
 public:
 	typedef struct tagMonster_Bullet_UniversalDesc {
-		_uint	iBulletMeshNumber;
+		_uint			iBulletMeshNumber;
 
 		_float			fSpeedPerSec;
 		_float3			fScale;
@@ -122,6 +122,10 @@ private:
 private:
 	_bool				m_bOnceSwtich = false;
 	_uint				m_iBoolInt = 0;
+
+private:
+	_uint				m_iSoundIndex = 0;
+	_double				m_dSoundTime = 0;
 
 private:
 	HRESULT	Ready_JYParticleDesc();

@@ -353,8 +353,12 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Crack_OutLine);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BBT_Paw);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AOG_Ring);
-
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_SS_Aura_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_RPG);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Trail_Twist_00);
+		STATIC_EFFECTLOAD(Prototype_Mesh_Sample_Mesh_WP_Cylinder_Z);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AXTrail_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
 
 		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Cloud);
 	}
