@@ -83,20 +83,20 @@ _int CStaticMapObject::LateUpdate(_double fDeltaTime)
 
 #ifdef _DEBUG
 
-	if (m_eNowSceneNum == SCENE_EDIT)
-	{
-		for (_uint i = 0; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
-		{
-			_Matrix FrustumSizeCheckMat = m_pTransformCom->Get_WorldMatrix();
+	//if (m_eNowSceneNum == SCENE_EDIT)
+	//{
+	//	for (_uint i = 0; i < m_pColliderCom->Get_NumColliderBuffer(); i++)
+	//	{
+	//		_Matrix FrustumSizeCheckMat = m_pTransformCom->Get_WorldMatrix();
 
-			FrustumSizeCheckMat.r[0] = XMVectorSet(1.f, 0.f, 0.f, 0.f) * (m_fFrustumRadius * 2.f);
-			FrustumSizeCheckMat.r[1] = XMVectorSet(0.f, 1.f, 0.f, 0.f) * (m_fFrustumRadius* 2.f);
-			FrustumSizeCheckMat.r[2] = XMVectorSet(0.f, 0.f, 1.f, 0.f) * (m_fFrustumRadius* 2.f);
+	//		FrustumSizeCheckMat.r[0] = XMVectorSet(1.f, 0.f, 0.f, 0.f) * (m_fFrustumRadius * 2.f);
+	//		FrustumSizeCheckMat.r[1] = XMVectorSet(0.f, 1.f, 0.f, 0.f) * (m_fFrustumRadius* 2.f);
+	//		FrustumSizeCheckMat.r[2] = XMVectorSet(0.f, 0.f, 1.f, 0.f) * (m_fFrustumRadius* 2.f);
 
-			m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
-		}
-		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
-	}
+	//		m_pColliderCom->Update_Transform(i, FrustumSizeCheckMat);
+	//	}
+	//	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+	//}
 
 #endif // _DEBUG
 

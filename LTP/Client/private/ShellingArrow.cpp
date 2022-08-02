@@ -161,20 +161,24 @@ HRESULT CShellingArrow::SetUp_Components()
 		NULL_CHECK_RETURN(pTransform, E_FAIL);
 		
 		_float3 fStartPos = GetSingle(CUtilityMgr)->RandomFloat3(
-			_float3(m_tShellingArrowDesc.fStartPos.x - 1.2f, m_tShellingArrowDesc.fStartPos.y - 3.f, m_tShellingArrowDesc.fStartPos.z - 1.2f),
-			_float3(m_tShellingArrowDesc.fStartPos.x + 1.2f, m_tShellingArrowDesc.fStartPos.y + 3.f, m_tShellingArrowDesc.fStartPos.z + 1.2f)
+			_float3(m_tShellingArrowDesc.fTargetPos.x - 1.2f, m_tShellingArrowDesc.fStartPos.y - 3.f, m_tShellingArrowDesc.fTargetPos.z - 1.2f),
+			_float3(m_tShellingArrowDesc.fTargetPos.x + 1.2f, m_tShellingArrowDesc.fStartPos.y + 3.f, m_tShellingArrowDesc.fTargetPos.z + 1.2f)
 		);
 
 		pTransform->Scaled_All(_float3(1.6f, 1.6f, 1.6f));
 
-		pTransform->LookDir_ver2(vLookDir);
+		pTransform->LookDir_ver2(XMVectorSet(0.f, -1.f, 0.f, 0.f));
 		pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(fStartPos.x, fStartPos.y, fStartPos.z));
 		pTransform->Set_MoveSpeed(30.f);
 
 		m_vecInstancedTransform.push_back(pTransform);
 	}
 
-	m_vecInstancedTransform[0]->Set_MatrixState(CTransform::TransformState::STATE_POS, m_tShellingArrowDesc.fStartPos);
+	_float3 fStartPos = m_tShellingArrowDesc.fStartPos;
+	fStartPos.x = m_tShellingArrowDesc.fTargetPos.x;
+	fStartPos.z = m_tShellingArrowDesc.fTargetPos.z;
+
+	m_vecInstancedTransform[0]->Set_MatrixState(CTransform::TransformState::STATE_POS, fStartPos);
 	CModelInstance::MODELINSTDESC tModelIntDsec;
 	tModelIntDsec.m_pTargetModel = m_pModel;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_ModelInstance_32), TAG_COM(Com_ModelInstance), (CComponent**)&m_pModelInstance, &tModelIntDsec));

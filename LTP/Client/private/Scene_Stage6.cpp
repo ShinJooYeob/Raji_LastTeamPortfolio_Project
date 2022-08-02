@@ -286,6 +286,7 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	// _float3(14.375f, 18.8f, 4.519f) Start Pos
 	// 68.525f, 35.7f, 75.726f Curtain
 	// 30.102f, 27.321f, 30.743f Init pos
 	// 79.208f, 25.1f, 67.124f End Init pos
@@ -515,6 +516,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
 	tElevatorDesc.fMoveSpeed = 5.f;
+	tElevatorDesc.fColliderOffset_Y = -3.2f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -524,6 +526,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.05f, 1.05f, 1.05f);
 	tElevatorDesc.fMoveSpeed = 5.f;
+	tElevatorDesc.fColliderOffset_Y = -3.2f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -533,7 +536,16 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
 	tElevatorDesc.fMoveSpeed = 5.f;
+	tElevatorDesc.fColliderOffset_Y = -3.2f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.632f, 13.8f, 60.802f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.849f, 13.5f, 86.1f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(94.85f, -28.f, 326.185f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(113.425f, -28.f, 326.2f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(133.312f, -28.3f, 411.455f)));
+
 	return S_OK;
 }
 

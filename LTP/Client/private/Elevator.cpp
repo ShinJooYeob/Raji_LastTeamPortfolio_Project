@@ -153,17 +153,17 @@ HRESULT CElevator::SetUp_Collider()
 	COLLIDERDESC			ColliderDesc;
 
 
-	_float fScale = -5.2f * (XMVectorGetX(m_pTransformCom->Get_Scale()) / 1.75f);
+	//_float fScale = -5.2f * (XMVectorGetX(m_pTransformCom->Get_Scale()) / 1.25f);
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(3.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, fScale, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, m_tElevatorDesc.fColliderOffset_Y, 0.f, 1.f);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.25f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, fScale, 0.f, 1);
+	ColliderDesc.vPosition = _float4(0.f, m_tElevatorDesc.fColliderOffset_Y, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pCollider->Set_ParantBuffer();
 

@@ -87,6 +87,7 @@
 //Interact Obj
 #include "Elevator.h"
 #include "LilyPad.h"
+#include "Lotus.h"
 
 #include "InstanceMonsterBatchTrigger.h"
 //////////////////////////////////////////////////////////////////////////////
@@ -553,6 +554,7 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	//Interact Obj
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Elevator), CElevator::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_LilyPad), CLilyPad::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Lotus), CLotus::Create(m_pDevice, m_pDeviceContext)));
 
 
 #pragma endregion
@@ -1209,6 +1211,8 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Vertical_01.fbx", TransformMatrix);
 
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lillypad_02_A.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Lotus_01.fbx", TransformMatrix);
 #pragma endregion STATICMESH
 
 #pragma region PROTOTYPE_COMPONENT
@@ -1250,6 +1254,8 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_EnvMappedWater), CEnvMappedWater::Create(m_pDevice, m_pDeviceContext)));
 	
 
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Lotus), CLotus::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(Load_AllMonster());
 	FAILED_CHECK(Load_AllBoss());
