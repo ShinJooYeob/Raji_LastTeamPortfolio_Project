@@ -3,23 +3,12 @@
 
 BEGIN(Client)
 
-class CElevator final : public CGameObject
+class CLotus final : public CGameObject
 {
-public:
-	typedef struct tagElevatorDesc
-	{
-		_float			fMoveSpeed;
-		_float3			fRotation;
-		_float3			fStartPos;
-		_float3			fScale;
-		_float3			fDestPos;
-		_float			fColliderOffset_Y;
-	}ELEVATORDESC;
-
 private:
-	explicit CElevator(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CElevator(const CElevator& rhs);
-	virtual ~CElevator() = default;
+	explicit CLotus(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CLotus(const CLotus& rhs);
+	virtual ~CLotus() = default;
 
 public:
 	virtual HRESULT		Initialize_Prototype(void* pArg) override;
@@ -43,12 +32,6 @@ private:
 	HRESULT				SetUp_Etc();
 
 private:
-	ELEVATORDESC			m_tElevatorDesc;
-	_bool					m_bActive = false;
-	_bool					m_bEndInteract = false;
-	class CPlayer*			m_pPlayer = nullptr;
-
-private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModel = nullptr;
@@ -56,7 +39,7 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 public:
-	static CElevator*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CLotus*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);
 	virtual void					Free() override;
 };

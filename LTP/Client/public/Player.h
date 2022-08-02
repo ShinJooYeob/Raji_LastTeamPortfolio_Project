@@ -175,6 +175,7 @@ public: /* public Setter */
 	void	Set_PillarBlockClimbUp(_bool bBlock, _float vBlockLimitHeight);
 	void	Set_FallingDead(_bool bFallingDead);
 	void	Set_PosY(_float fPos_y);
+	void	Set_OnLilyPad(_bool bOnLilyPad);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
@@ -211,6 +212,9 @@ public:
 	// Curtain
 	void	Set_State_CurtainStart(_double fDeltaTime);
 
+	// Petal
+	void	Set_State_PetalStart(_float3 vPetalPos, _double fDeltaTime);
+
 public:
 	EPLAYER_STATE Get_PlayerState();
 	EPARKOUR_LEDGESTATE Get_LedgeState();
@@ -228,8 +232,6 @@ private: /* Change Start State */
 	void	Set_State_UtilitySkillStart(_double fDeltaTime);						// Utility
 	void	Set_State_UltimateSkillStart(_double fDeltaTime);						// Ultimate
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
-
-	void	Set_State_PetalStart(_double fDeltaTime);								// Petal
 
 	void	Set_State_JumpStart(_double fDeltaTime);								// Jump
 	void	Set_State_FallingStart(_double fDeltaTime);								// Falling
@@ -351,6 +353,10 @@ private: /* Getter */
 
 
 private:
+	_float3				Check_MousePicking();
+
+
+private:
 	_float4				m_fCamLookPoint;
 
 private: /* Relate Parkour */
@@ -365,6 +371,9 @@ private: /* Relate Parkour */
 	_float3										m_fWallRunStartPos = _float3(0.f);
 	_float3										m_fWallRunEndPos = _float3(0.f);
 	
+	_float3										m_fPetalPos = _float3(0.f);
+
+
 private: /* Key Input State */
 	EINPUT_MOVDIR		m_eInputDir = MOVDIR_END;
 	EINPUT_COMBO		m_eInputCombo = COMBO_END;
@@ -376,9 +385,11 @@ private: /* Key Input State */
 	_bool				m_bPressedUltimateKey = false;
 	_bool				m_bPressedInteractKey = false;
 
+
 private: /* For TurnBack Timing*/
 	_float				m_fCurTime_PressedMoveKeyDuration = 0.f;
 	_float				m_fMaxTime_PressedMoveKeyDuration = 3.f;
+
 
 private: /* Enum Stats */
 	_uint					m_eCurAnim = BASE_ANIM_IDLE;
@@ -387,6 +398,7 @@ private: /* Enum Stats */
 	EUTILITYSKILL_STATE		m_eCurUtilityState = UTILITY_START; 
 	EBOWMAINATK_STATE		m_eCurBowMainAtkState = BOWMAINATK_START;
 	EPERAL_STATE			m_eCurPetalState = PETAL_END;
+
 
 private: /* Animation Control */
 	_bool					m_bPlayTurnBackAnim = false;
@@ -440,6 +452,7 @@ private: /* Animation Control */
 	_bool					m_bUpdateAnimation = true;
 
 	_bool					m_bOnNavigation = false;
+	_bool					m_bOnLilyPad = false;
 
 	_bool					m_bShieldMode;
 
@@ -456,50 +469,63 @@ private: /* Animation Control */
 private: /* For Cheat Mode*/
 	_bool					m_bPowerOverwhelming = false;
 
+
 private: /* Resurrect Info */
 	_float3					m_fResurrectPos = _float3(0.f, 0.f, 0.f);
 	_uint					m_iResurrectNavIndex = 0;
 	_float					m_fResurrectionDelay = 0.f;
 
+
 private: /* For Navi */
 	CCell::CELL_OPTION		m_eCurPosNavCellOption = CCell::CELL_OPTION::CELL_END;
+
 
 private: /* For Sound */
 	_bool					m_bOncePlaySound = false;
 	_bool					m_bOncePlaySwingSound = false;
 
+
 private: /* Camera Shake */
 	_bool					m_bActive_ActionCameraShake = true;
+
 
 private: /* Motion Trail */
 	_float					m_fInterval_MotionTrail = 0.f;
 	_bool					m_bOn_MotionTrail = false;
 
+
 private: /* Activate */
 	_bool					m_bActivateLookDir = false;
+
 
 private: /* Cam View */
 	_int					m_iMaxCamViewIndex = 0;
 	_int					m_iCurCamViewIndex = 0;
 
+
 private: /* Timer */
 	_float					m_fMaxTime_ShellingDelay = 0.f;
 	_float					m_fCurTime_ShellingDelay = 0.f;
+
 
 private: /* Damage */
 	_float					m_fKnockbackPower = 0.f;
 	_float3					m_fKnockbackDir = _float3(0.f, 0.f, 0.f);
 
+
 private:
 	CShellingSkillRange*	m_pShellingSkillRange = nullptr;
+
 
 private: /* Targeting */
 	ETARGETING_STATE		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
 	CGameObject*			m_pTargetingMonster = nullptr;
 	CTransform*				m_pTargetingMonster_Transform = nullptr;
 
+
 private: /* ETC */
 	_bool					m_bPlayerHide = false;
+
 
 private:
 	CShader*				m_pShaderCom = nullptr;
@@ -523,6 +549,7 @@ private:
 	class CHpUI*			m_pHPUI = nullptr;
 
 	_bool					m_bMehsArrow= false;
+
 
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];

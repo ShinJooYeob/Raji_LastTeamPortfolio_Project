@@ -137,9 +137,14 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, 
+				TAG_LAY(Layer_InteractObject), TAG_OP(Prototype_Object_InteractObj_Lotus), 
+				&_float3(133.312f, -28.3f, 411.455f)));
+			/*_float3 fPos = Check_MousePicking();
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &fPos);*/
 			
-			Set_State_PetalStart(fDeltaTime);
+			//Set_State_PetalStart(fDeltaTime);
+
 			//INSTPARTICLEDESC tDesc4 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
 			//tDesc4.FollowingTarget = nullptr;
 			//tDesc4.EachParticleLifeTime = 1.f;
@@ -411,7 +416,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-//	m_pNavigationCom->Render(m_pTransformCom); 
+	m_pNavigationCom->Render(m_pTransformCom); 
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -505,8 +510,20 @@ void CPlayer::Set_FallingDead(_bool bFallingDead)
 
 void CPlayer::Set_PosY(_float fPos_y)
 {
-	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS); 
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, XMVectorSetY(vPos, fPos_y));
+}
+
+void CPlayer::Set_OnLilyPad(_bool bOnLilyPad)
+{
+	if (true == bOnLilyPad)
+	{
+		m_bOnLilyPad = true;
+	}
+	else
+	{
+		m_bOnLilyPad = false;
+	}
 }
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -591,7 +608,12 @@ void CPlayer::Set_State_FirstStart()
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 {
 	Set_PlayerState(STATE_IDLE);
-	m_bOnNavigation = true;
+
+	if (false == m_bOnLilyPad)
+	{
+		m_bOnNavigation = true;
+	}
+
 	switch (m_eCurWeapon)
 	{
 	case EWEAPON_TYPE::WEAPON_NONE:
@@ -608,7 +630,14 @@ void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 void CPlayer::Set_State_MoveStart(_double fDeltaTime)
 {
 	Move(m_eInputDir, fDeltaTime);
-	m_bOnNavigation = true;
+
+
+	if (false == m_bOnLilyPad)
+	{
+		m_bOnNavigation = true;
+	}
+
+
 	Set_PlayerState(STATE_MOV);
 
 	switch (m_eCurWeapon)
@@ -907,17 +936,20 @@ void CPlayer::Set_State_PillarGrabStart(_bool bTurnReflect, _double fDeltaTime)
 	m_eCurState = STATE_PILLAR;
 }
 
-void CPlayer::Set_State_PetalStart(_double fDeltaTime)
+void CPlayer::Set_State_PetalStart(_float3 vPetalPos, _double fDeltaTime)
 {
 	m_pModel->Change_AnimIndex(PETAL_ANIM_PLUCK);
 	m_eCurState = STATE_PETAL;
 	m_eCurPetalState = PETAL_PLUCK;
+	m_fPetalPos = vPetalPos;
+	m_fPetalPos.y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	m_fPetalPos = m_fPetalPos.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 }
 
 void CPlayer::Set_State_JumpStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_JUMP;
-	//m_pModel->Change_AnimIndex(BASE_ANIM_JUMP);
    	m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_READY);
 	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
@@ -1038,7 +1070,7 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 	/** Change State By KeyInput */
 	if (true == m_bPressedDodgeKey)
 	{
-		if (CCell::CELL_JUMPZONE == m_eCurPosNavCellOption)
+		if (CCell::CELL_JUMPZONE == m_eCurPosNavCellOption || true == m_bOnLilyPad)
 		{
 			Set_State_JumpStart(fDeltaTime);
 		}
@@ -1066,7 +1098,7 @@ HRESULT CPlayer::Update_State_Idle(_double fDeltaTime)
 	//
 
 	// Falling Zone
-	if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption)
+	if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption && false == m_bOnLilyPad)
 	{
 		Set_State_FallingStart(fDeltaTime);
 	}
@@ -1111,10 +1143,6 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 		/** Change State By KeyInput */
 		if (true == m_bPressedDodgeKey)
 		{ 
-			/*if (nullptr != m_pCurParkourTrigger)
-			{
-				Set_State_ParkourStart(fDeltaTime);
-			}*/
 			if (CCell::CELL_JUMPZONE == m_eCurPosNavCellOption)
 			{
 				Set_State_JumpStart(fDeltaTime);
@@ -1143,7 +1171,7 @@ HRESULT CPlayer::Update_State_Move(_double fDeltaTime)
 		//
 
 		// Falling Zone
-		if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption)
+		if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption && false == m_bOnLilyPad)
 		{
 			Set_State_FallingStart(fDeltaTime);
 		}
@@ -1169,6 +1197,12 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_CHARGING);
 		}
+
+		// Falling Zone
+		if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption && false == m_bOnLilyPad)
+		{
+			Set_State_FallingStart(fDeltaTime);
+		}
 	}
 		break;
 	case BASE_ANIM_JUMP_CHARGING:
@@ -1184,6 +1218,12 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		else
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_JUMPING);
+		}
+
+		// Falling Zone
+		if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption && false == m_bOnLilyPad)
+		{
+			Set_State_FallingStart(fDeltaTime);
 		}
 	}
 		break;
@@ -1241,7 +1281,7 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
 	if (fPrePos_y >= fOnNavPos_Y
 		&& fPos_y <= fOnNavPos_Y
-		&& CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption()) 
+		&& (false == m_bOnLilyPad && (CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption()) || true == m_bOnLilyPad))
 	{
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y); 
 		Set_State_IdleStart(fDeltaTime);
@@ -1406,7 +1446,6 @@ HRESULT CPlayer::Update_State_Curtain(_double fDeltaTime)
 
 		if (fNavPos_y <= fPrePos_Y && fNavPos_y >= fPos_y && CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
 		{
-			m_bOnNavigation = true;
 			m_bOnNavigation = true;
 			fPos_y = fNavPos_y;
 			Set_State_IdleStart(fDeltaTime);
@@ -1832,6 +1871,8 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 	{
 	case PETAL_PLUCK:
 	{
+		m_pTransformCom->Turn_Dir(m_fPetalPos.XMVector(), 0.8f); 
+		
 		if (0.98f < fAnimPlayRate)
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
@@ -1886,6 +1927,7 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 		{
 			m_pModel->Change_AnimIndex(PETAL_ANIM_THROW_THROW);
 			m_eCurPetalState = PETAL_THROW_THROW;
+			m_fPetalPos = Check_MousePicking();
 			break;
 		}
 
@@ -1894,8 +1936,14 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 		break;
 	case PETAL_THROW_THROW:
 	{
-		if (0.98f < fAnimPlayRate)
+		if (false == m_bActionSwitch && 0.5f < fAnimPlayRate)
 		{
+			m_bActionSwitch = true;
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &m_fPetalPos);
+		}
+		else if (0.98f < fAnimPlayRate)
+		{
+			m_bActionSwitch = false;
 			Set_State_IdleStart(fDeltaTime);
 		}
 	}
@@ -2466,7 +2514,14 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 
 	if (false == m_bPlayTurnBackAnim)
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+		if (false == m_bOnLilyPad)
+		{
+			m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+		}
+		else
+		{
+			m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom, true);
+		}
 		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
 	}
 
@@ -7873,6 +7928,43 @@ _fVector CPlayer::Get_MousePos()
 	return _fVector();
 }
 
+_float3 CPlayer::Check_MousePicking()
+{
+	_float3 fPickingPos = _float3(0.f, 0.f, 0.f);
+
+	POINT ptMouse;
+	GetCursorPos(&ptMouse);
+	ScreenToClient(g_hWnd, &ptMouse);
+
+	_Vector vCursorPos = XMVectorSet(
+		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+		0, 1.f);
+
+	_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+
+	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+	_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+	CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+
+
+	_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
+
+	_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
+
+	fPickingPos.x = vTargetPos.x;
+	fPickingPos.y = fPos_Y + 0.001f;
+	fPickingPos.z = vTargetPos.z;
+
+	return fPickingPos;
+}
+
 _bool CPlayer::Is_Hiding()
 {
 	return m_bPlayerHide;
@@ -7938,7 +8030,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 	COLLIDERDESC			ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC)); 
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
@@ -7946,44 +8039,45 @@ HRESULT CPlayer::SetUp_Components()
 	ATTACHEDESC tAttachedDesc;
 	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1), _float3(0), _float3(-0.074084f, -0.861011f, -75.1948f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
-
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.2f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
-	m_vecAttachedDesc.push_back(tAttachedDesc);
-	m_pCollider->Set_ParantBuffer();
+	
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vScale = _float3(0.1f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_chest", _float3(1), _float3(0), _float3(-0.041261f, -1.80535f, -109.114f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_ball", _float3(1), _float3(0), _float3(-6.28489f, -9.6995f, -0.966615f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.1f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_arm", _float3(1), _float3(0), _float3(-11.7516f, -0.395438f, -114.675f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_ball", _float3(1), _float3(0), _float3(6.13672f, -9.69943f, -0.96666f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vScale = _float3(0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_arm", _float3(1), _float3(0), _float3(11.6691f, -0.395438f, -114.675f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_knee", _float3(1), _float3(0), _float3(-6.28494f, -5.51913f, -38.0339f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_knee", _float3(1), _float3(0), _float3(6.1366f, -5.7681f, -37.9986f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
@@ -7993,7 +8087,7 @@ HRESULT CPlayer::SetUp_Components()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine01", _float3(1), _float3(0), _float3(0.024159f, -1.80535f, -88.5722f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_leg", _float3(1), _float3(0), _float3(6.13641f, -0.74237f, -75.1206f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
@@ -8013,51 +8107,50 @@ HRESULT CPlayer::SetUp_Components()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_leg", _float3(1), _float3(0), _float3(6.13641f, -0.74237f, -75.1206f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine01", _float3(1), _float3(0), _float3(0.024159f, -1.80535f, -88.5722f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f);
+	ColliderDesc.vScale = _float3(0.1f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_knee", _float3(1), _float3(0), _float3(6.1366f, -5.7681f, -37.9986f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_arm", _float3(1), _float3(0), _float3(11.6691f, -0.395438f, -114.675f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f);
+	ColliderDesc.vScale = _float3(0.1f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_knee", _float3(1), _float3(0), _float3(-6.28494f, -5.51913f, -38.0339f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_arm", _float3(1), _float3(0), _float3(-11.7516f, -0.395438f, -114.675f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_chest", _float3(1), _float3(0), _float3(-0.041261f, -1.80535f, -109.114f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
 	
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.1f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_l_ball", _float3(1), _float3(0), _float3(6.13672f, -9.69943f, -0.96666f));
-	m_vecAttachedDesc.push_back(tAttachedDesc);
-	m_pCollider->Set_ParantBuffer();
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.1f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "skd_r_ball", _float3(1), _float3(0), _float3(-6.28489f, -9.6995f, -0.966615f));
-	m_vecAttachedDesc.push_back(tAttachedDesc);
-	m_pCollider->Set_ParantBuffer();
-
-
 	// Parkur Collider
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_1), (CComponent**)&m_pCollider_Parkur));
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));

@@ -407,6 +407,7 @@ enum OBJECTPROTOTYPEID
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
 	Prototype_Object_InteractObj_LilyPad,
+	Prototype_Object_InteractObj_Lotus,
 
 	Object_Prototype_End
 };
@@ -721,6 +722,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_InteractObj_LilyPad:
 		return TEXT("Prototype_Object_InteractObj_LilyPad");
+	
+	case Prototype_Object_InteractObj_Lotus:
+		return TEXT("Prototype_Object_InteractObj_Lotus");
 		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -3273,6 +3277,7 @@ enum COMPONENTPROTOTYPEID
 	//Interact Obj
 	Prototype_Mesh_InteractObj_Elevator,
 	Prototype_Mesh_InteractObj_LilyPad,
+	Prototype_Mesh_InteractObj_Lotus,
 
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
@@ -9779,6 +9784,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_InteractObj_LilyPad:
 		return TEXT("SM_Lillypad_02_A.fbx");
+		break;
+	
+	case Prototype_Mesh_InteractObj_Lotus:
+		return TEXT("SM_Lotus_01.fbx");
 		break;
 		
 	case Prototype_Mesh_SkyBox:

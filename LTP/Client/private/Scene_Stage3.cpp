@@ -246,6 +246,7 @@ HRESULT CScene_Stage3::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.725f, 1.725f, 1.725f);
 	tElevatorDesc.fMoveSpeed = 5.f;
+	tElevatorDesc.fColliderOffset_Y = -5.2f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 	return S_OK;

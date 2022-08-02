@@ -32,6 +32,10 @@ private:
 	HRESULT				SetUp_Etc();
 
 private:
+	_float					m_fDuaton = 10.f;
+	_bool					m_bScaling = true;
+
+private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModel = nullptr;

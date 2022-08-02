@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "..\public\LilyPad.h"
+#include "..\public\Lotus.h"
 #include "Player.h"
 
-CLilyPad::CLilyPad(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CLotus::CLotus(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
 {
 }
 
-CLilyPad::CLilyPad(const CLilyPad & rhs)
+CLotus::CLotus(const CLotus & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CLilyPad::Initialize_Prototype(void * pArg)
+HRESULT CLotus::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
 	return S_OK;
 }
 
-HRESULT CLilyPad::Initialize_Clone(void * pArg)
+HRESULT CLotus::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -36,40 +36,17 @@ HRESULT CLilyPad::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CLilyPad::Update(_double fDeltaTime)
+_int CLotus::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (true == m_bScaling)
-	{
-		m_pTransformCom->Scaling_All(fDeltaTime);
-		if (XMVectorGetX(m_pTransformCom->Get_Scale()) >= 2.5f)
-		{
-			m_pTransformCom->Scaled_All(_float3(2.5f));
-			m_bScaling = false;
-		}
-	}
-
-
-	m_fDuaton -= (_float)fDeltaTime;
-	if (m_fDuaton <= 0.f)
-	{
-		Set_IsDead();
-		return _int();
-	}
-	else if (m_fDuaton <= 3.f)
-	{
-		m_pTransformCom->Move_Down(fDeltaTime);
-	}
-
-
 	Update_Colliders();
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider));
 
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider));
 	return _int();
 }
 
-_int CLilyPad::LateUpdate(_double fDeltaTimer)
+_int CLotus::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
@@ -79,7 +56,7 @@ _int CLilyPad::LateUpdate(_double fDeltaTimer)
 	return _int();
 }
 
-_int CLilyPad::Render()
+_int CLotus::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
@@ -105,41 +82,35 @@ _int CLilyPad::Render()
 	return _int();
 }
 
-_int CLilyPad::LateRender()
+_int CLotus::LateRender()
 {
 	return _int();
 }
 
-void CLilyPad::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CLotus::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 	if (eConflictedObjCollisionType == CollisionTypeID::CollisionType_Player)
 	{
-		switch (iMyColliderIndex)
+		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
 		{
-		case 1:
-			static_cast<CPlayer*>(pConflictedObj)->Set_OnLilyPad(true);
-			break;
-		case 2:
-			static_cast<CPlayer*>(pConflictedObj)->Set_OnLilyPad(false);
-			break;
+			static_cast<CPlayer*>(pConflictedObj)->Set_State_PetalStart(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), g_fDeltaTime);
 		}
 	}
 }
 
-void CLilyPad::Update_Colliders()
+void CLotus::Update_Colliders()
 {
 	m_pCollider->Update_Transform(0, m_pTransformCom->Get_WorldMatrix());
 	m_pCollider->Update_Transform(1, m_pTransformCom->Get_WorldMatrix());
-	m_pCollider->Update_Transform(2, m_pTransformCom->Get_WorldMatrix());
 }
 
-HRESULT CLilyPad::SetUp_Components()
+HRESULT CLotus::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_LilyPad), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_Lotus), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30.f;
@@ -151,26 +122,19 @@ HRESULT CLilyPad::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CLilyPad::SetUp_Collider()
+HRESULT CLotus::SetUp_Collider()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 	COLLIDERDESC			ColliderDesc;
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(3.f);
+	ColliderDesc.vScale = _float3(3.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.5f);
-	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	m_pCollider->Set_ParantBuffer();
-
-	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(2.9f);
+	ColliderDesc.vScale = _float3(3.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -179,38 +143,37 @@ HRESULT CLilyPad::SetUp_Collider()
 	return S_OK;
 }
 
-HRESULT CLilyPad::SetUp_Etc()
-{ 
-	m_pTransformCom->Scaled_All(_float3(0.5f));
-	m_pTransformCom->Set_ScalingSpeed(8.f);
-	return S_OK;
-}
-
-CLilyPad * CLilyPad::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+HRESULT CLotus::SetUp_Etc()
 {
-	CLilyPad*	pInstance = NEW CLilyPad(pDevice, pDeviceContext);
+	m_pTransformCom->Scaled_All(_float3(0.4f));
+	return S_OK;
+}
+
+CLotus * CLotus::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+{
+	CLotus*	pInstance = NEW CLotus(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CLilyPad");
+		MSGBOX("Failed to Created CLotus");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CLilyPad::Clone(void * pArg)
+CGameObject * CLotus::Clone(void * pArg)
 {
-	CLilyPad*	pInstance = NEW CLilyPad(*this);
+	CLotus*	pInstance = NEW CLotus(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CLilyPad");
+		MSGBOX("Failed to Created CLotus");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CLilyPad::Free()
+void CLotus::Free()
 {
 	__super::Free();
 
