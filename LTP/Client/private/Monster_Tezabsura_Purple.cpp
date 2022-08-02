@@ -887,6 +887,11 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.421)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_rockjump01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 11:

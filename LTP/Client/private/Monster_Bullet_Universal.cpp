@@ -325,7 +325,7 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		}
 		case VAYUSURA_LEADER_BULLET:
 		{
-			static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet();
+			//static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet();
 			Set_IsDead();
 			break;
 		}
@@ -749,7 +749,7 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fTempLook, XMVector3Normalize(XMLoadFloat3(&fPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 		m_dSoundTime += dDeltaTime;
-		if (m_dSoundTime >= 0.3)
+		if (m_dSoundTime >= 0.5)
 		{
 			g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Spell_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 			m_dSoundTime = 0;
@@ -764,12 +764,12 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 
-		if (m_iSoundIndex == 0)
-		{
-			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1290.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		//if (m_iSoundIndex == 0)
+		//{
+		//	g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1290.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 
-			m_iSoundIndex++;
-		}
+		//	m_iSoundIndex++;
+		//}
 	}
 
 	_float fDistance;
