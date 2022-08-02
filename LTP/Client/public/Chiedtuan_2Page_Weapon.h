@@ -38,6 +38,9 @@ public:
 	}
 
 	void	Set_WeaponPosition();
+	void	Set_Attack(_double fDeltaTime);
+	void	Set_PlayerPos(_float3 PlayerPos) { m_vPlayerPos = PlayerPos; }
+
 private:
 		CRenderer*			m_pRendererCom = nullptr;
 		CShader*			m_pShaderCom = nullptr;
@@ -46,7 +49,14 @@ private:
 		CDissolve*			m_pDissolveCom = nullptr;
 		CCollider*			m_pCollider = nullptr;
 
+		CGameObject*		m_PlayerObj = nullptr;
+		_float3				m_vPlayerPos;
+
 		WEAPOPNDESC			m_WeaponDesc;
+		_float				m_WeaponMoveTime = 0;
+
+		_bool				m_bIsInitialPosDessolve = false;
+		_bool				m_DeadDessolve = false;
 
 private:
 	HRESULT SetUp_Components();

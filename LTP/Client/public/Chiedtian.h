@@ -11,6 +11,7 @@ class CChiedtian final : public CBoss
 {
 public:
 	enum AttackNumber{ATTACK_FIRE, ATTACK_SPIN, ATTACK_WHINING, ATTACK_END};
+	enum AttackSecondPage {SECONDPAGEATTACK_SPIN, SECONDPAGEATTACK_END};
 private:
 	CChiedtian(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CChiedtian(const CChiedtian& rhs);

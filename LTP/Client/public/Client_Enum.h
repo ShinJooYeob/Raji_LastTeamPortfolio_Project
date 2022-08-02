@@ -3269,6 +3269,10 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Boss_ChieftianWeapon2,
 	Prototype_Mesh_Boss_ChieftianWeapon3,
 	Prototype_Mesh_Boss_ChieftianWeapon4,
+	Prototype_Mesh_Boss_SecondPage_ChieftianWeapon,
+	Prototype_Mesh_Boss_SecondPage_ChieftianWeapon2,
+	Prototype_Mesh_Boss_SecondPage_ChieftianWeapon3,
+	Prototype_Mesh_Boss_SecondPage_ChieftianWeapon4,
 	Prototype_Mesh_Boss_Snake,
 	Prototype_Mesh_Boss_Mahabalasura,
 	Prototype_Mesh_Boss_MahabalasuraArms,
@@ -9750,6 +9754,22 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Boss_ChieftianWeapon4:
 		return TEXT("Katana_M_28.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_SecondPage_ChieftianWeapon:
+		return TEXT("Chieft_Weapon_SecondPage.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_SecondPage_ChieftianWeapon2:
+		return TEXT("Katana_M_19_SecondPage.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_SecondPage_ChieftianWeapon3:
+		return TEXT("Katana_M_26_SecondPage.fbx");
+		break;
+
+	case Prototype_Mesh_Boss_SecondPage_ChieftianWeapon4:
+		return TEXT("Katana_M_28_SecondPage.fbx");
 		break;
 
 	case Prototype_Mesh_Boss_Snake:

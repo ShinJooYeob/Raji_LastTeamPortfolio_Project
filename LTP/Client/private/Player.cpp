@@ -2484,7 +2484,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 		#ifdef NotOnNavi
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr);
 		#else
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate m_pNavigationCom);
 		#endif // NotOnNavi
 
 		
