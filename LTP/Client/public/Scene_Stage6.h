@@ -37,6 +37,7 @@ private:
 	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 	   	
 	HRESULT Ready_Layer_InteractObject(const _tchar * pLayerTag);
+	HRESULT	Ready_EnvMappedWater(const _tchar * pLayerTag);
 
 	
 	HRESULT Ready_Layer_Phycis();

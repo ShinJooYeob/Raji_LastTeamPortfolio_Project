@@ -198,6 +198,7 @@
     <ClInclude Include="..\public\InstanceEffect.h" />
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h" />
     <ClInclude Include="..\public\JumpTrigger.h" />
+    <ClInclude Include="..\public\EnvMappedWater.h" />
     <ClInclude Include="..\public\LilyPad.h" />
     <ClInclude Include="..\public\Mahabalasura_AttackSpear.h" />
     <ClInclude Include="..\public\MandalaMesh.h" />
@@ -332,6 +333,7 @@
     <ClCompile Include="..\private\HpUI.cpp" />
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\JumpTrigger.cpp" />
+    <ClCompile Include="..\private\EnvMappedWater.cpp" />
     <ClCompile Include="..\private\LilyPad.cpp" />
     <ClCompile Include="..\private\Mahabalasura_AttackSpear.cpp" />
     <ClCompile Include="..\private\MandalaMesh.cpp" />

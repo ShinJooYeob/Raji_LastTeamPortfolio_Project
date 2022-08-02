@@ -407,7 +407,8 @@ enum OBJECTPROTOTYPEID
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
 	Prototype_Object_InteractObj_LilyPad,
-
+	Prototype_Object_EnvMappedWater,
+		
 	Object_Prototype_End
 };
 
@@ -721,6 +722,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_InteractObj_LilyPad:
 		return TEXT("Prototype_Object_InteractObj_LilyPad");
+
+	case Prototype_Object_EnvMappedWater:
+		return TEXT("Prototype_Object_EnvMappedWater");
 		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -881,7 +885,8 @@ enum LAYERID
 	Layer_SkillUI,
 	Layer_TestEffect,
 
-	Layer_InteractObject
+	Layer_InteractObject,
+	Layer_EnvMappedWater,
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1069,9 +1074,12 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_TestEffect:
 		return TEXT("Layer_TestEffect");
 		break;
-	
+
 	case Layer_InteractObject:
 		return TEXT("Layer_InteractObject");
+		break;
+	case Layer_EnvMappedWater:
+		return TEXT("Layer_EnvMappedWater");
 		break;
 		
 	default:
@@ -3299,6 +3307,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_Monster_Bullet,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
+	Prototype_Texture_EnvMappedWater,
 
 };
 
@@ -9824,10 +9833,16 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Texture_ShellingRange:
 		return TEXT("Prototype_Texture_ShellingRange");
 		break;
+
+
 	case Prototype_Texture_ShellingPoint:
 		return TEXT("Prototype_Texture_ShellingPoint");
 		break;
-		
+
+	case 	Prototype_Texture_EnvMappedWater:
+		return TEXT("Prototype_Texture_EnvMappedWater");
+		break;
+
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;
@@ -9836,7 +9851,6 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_Util");
 		break;
 
-		
 
 	case 	Prototype_Texture_GamePlayScene:
 		return TEXT("Prototype_Texture_GamePlayScene");

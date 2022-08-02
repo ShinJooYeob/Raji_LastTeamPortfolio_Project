@@ -433,6 +433,9 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon">
       <UniqueIdentifier>{53608fc4-649f-44d8-8a67-d41fa6e3f185}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater">
+      <UniqueIdentifier>{dffb0478-2733-4bbe-a1bd-8bd61d398e43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -946,6 +949,9 @@
       <Filter>01.GameObject\10.LilyPad</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
+    <ClInclude Include="..\public\EnvMappedWater.h">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1443,6 +1449,9 @@
       <Filter>01.GameObject\10.LilyPad</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
+    <ClCompile Include="..\private\EnvMappedWater.cpp">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

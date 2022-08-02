@@ -45,6 +45,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	/* For.Target_Diffuse */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget( TEXT("Target_MtrlDiffuse"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceMtrlDiffuse"), (_uint)Viewport.Width,
+		(_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+
 	/* For.Target_Normal */
 	/* 노멀벡터의 경우, 정규화하기가 쉽다. */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_MtrlNormal"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 1.f)));
@@ -147,7 +151,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_WorldPosition")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_LimLight")));
 
-	
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_CopyMtrlDiffuse"), TEXT("Target_ReferenceMtrlDiffuse")));
+
 	
 	/* For.MRT_LightAcc : 빛을 그릴때 바인드 */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_LightShade")));
@@ -160,6 +166,8 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Defferred"), TEXT("Target_Defferred")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_ReferenceDefferred"), TEXT("Target_ReferenceDefferred")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_BluredDefferred"), TEXT("Target_BluredDefferred")));
+
+
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DeferredSceneChaging"), TEXT("Target_DeferredSceneChaging")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DeferredSceneChaging"), TEXT("Target_MtrlDiffuseSceneChaging")));
@@ -504,6 +512,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_MotionTrail());
 	FAILED_CHECK(Render_AfterObj());
 	FAILED_CHECK(Render_EffectObj());
+	FAILED_CHECK(Render_EnvMappedObj());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
 
 	FAILED_CHECK(Render_BlurShadow());
@@ -1461,6 +1470,46 @@ HRESULT CRenderer::Copy_NowWorld2OldWorld()
 	return S_OK;
 }
 
+HRESULT CRenderer::Copy_BluredMtrlDiffuse(_float TexelSize)
+{
+
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_CopyMtrlDiffuse")));
+
+	D3D11_VIEWPORT OldVp;
+	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
+
+	wstring TargetMrt = L"MRT_DownScaled_By" + to_wstring((_uint)(2));
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &TexelSize, sizeof(_float)));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TargetMrt.c_str()));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TargetMrt.c_str(), m_DownScaledDepthStencil[0]));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlDiffuse"))));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
+
+
+	m_pDeviceContext->RSSetViewports(1, &OldVp);
+	FAILED_CHECK(m_pRenderTargetMgr->End(TargetMrt.c_str()));
+
+
+	wstring TargetTex = L"Target_DownScaled_By" + to_wstring((_uint)(2));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_CopyMtrlDiffuse")));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TargetTex.c_str())));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_CopyMtrlDiffuse")));
+
+
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Copy_LastDeferredTexture(_float fToonMaxIntensive)
 {
 	//TEXT("Target_DeferredSceneChaging")));
@@ -1537,6 +1586,16 @@ HRESULT CRenderer::Copy_LastDeferredToToonShadingTexture(_float fToonShadingInte
 	
 
 	return S_OK;
+}
+
+HRESULT CRenderer::Begin_RenderTarget(const _tchar * szTargetName)
+{
+	return m_pRenderTargetMgr->Begin(szTargetName);
+}
+
+HRESULT CRenderer::End_RenderTarget(const _tchar * szTargetName)
+{
+	return m_pRenderTargetMgr->End(szTargetName);
 }
 
 HRESULT CRenderer::Make_VelocityMap()
@@ -2236,6 +2295,21 @@ HRESULT CRenderer::Render_EffectObj()
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Effect")));
 
 
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_EnvMappedObj()
+{
+	for (auto& RenderObject : m_RenderObjectList[RENDER_ENVMAPPED])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_ENVMAPPED].clear();
 
 	return S_OK;
 }

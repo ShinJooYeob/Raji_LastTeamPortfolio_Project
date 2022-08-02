@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Player.h"
 #include "Elevator.h"
+#include "EnvMappedWater.h"
 
 #include "StaticInstanceMapObject.h"
 
@@ -36,7 +37,7 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
-
+	FAILED_CHECK(Ready_EnvMappedWater(TAG_LAY(Layer_EnvMappedWater)))
 
 //	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
 
@@ -49,7 +50,7 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	// Effect
-	FAILED_CHECK(Ready_LoadEffectMesh());
+//	FAILED_CHECK(Ready_LoadEffectMesh());
 
 
 	return S_OK;
@@ -531,6 +532,23 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_EnvMappedWater(const _tchar * pLayerTag)
+{
+	CGameInstance* pInstance = g_pGameInstance;
+
+
+	CEnvMappedWater::EMWDESC tEmwDesc;
+	tEmwDesc.vPosition = _float3(132.f, 12.f, 85.f);
+	tEmwDesc.vRotAxis_N_Angle = _float4(1, 0, 0, 90);
+	tEmwDesc.vScale = _float4(120.f, 120.f, 120.f, 0);
+	tEmwDesc.vEmissive = _float4(0.3f, 0.5f, 0.01f, 1.f);
+	tEmwDesc.vNoisePushDir = _float2(0, 1.f);
+	tEmwDesc.fFlowRate = 0.01f;
+	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+
 	return S_OK;
 }
 

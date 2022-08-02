@@ -13,7 +13,7 @@ public:
 	enum RENDERGROUP 
 	{
 		RENDER_PRIORITY, RENDER_NONBLEND, RENDER_SUBNONBLEND, RENDER_BLEND, RENDER_SUBBLEND, 
-		RENDER_AFTERALLOBJ, RENDER_DISTORTION, RENDER_EFFECT, RENDER_NONBLEND_NOLIGHT,  RENDER_UI, RENDER_END
+		RENDER_AFTERALLOBJ, RENDER_ENVMAPPED , RENDER_DISTORTION, RENDER_EFFECT, RENDER_NONBLEND_NOLIGHT,  RENDER_UI, RENDER_END
 	};
 	enum SHADOWGROUP
 	{
@@ -73,10 +73,13 @@ public:
 	HRESULT Add_DebugGroup(class CComponent* pComponent);
 	HRESULT Render_RenderGroup(_double fDeltaTime);
 	HRESULT Clear_RenderGroup_forSceneChaging();
+
+	HRESULT Copy_BluredMtrlDiffuse(_float TexelSize = 2.f);
 	HRESULT Copy_LastDeferredTexture(_float fToonMaxIntensive = 5.f);
 	HRESULT Copy_LastDeferredToToonShadingTexture(_float fToonShadingIntensive = 1.f,_bool bIsScecond = false);
 
-
+	HRESULT Begin_RenderTarget(const _tchar* szTargetName);
+	HRESULT End_RenderTarget(const _tchar* szTargetName);
 
 private:
 	list<CGameObject*>					m_RenderObjectList[RENDER_END];
@@ -169,6 +172,7 @@ private:
 	HRESULT Render_AfterObj();
 	HRESULT Render_DistortionObject();
 	HRESULT Render_EffectObj();
+	HRESULT Render_EnvMappedObj();
 	
 	HRESULT Render_UI();
 	
