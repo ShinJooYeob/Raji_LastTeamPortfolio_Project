@@ -269,6 +269,11 @@ void CMonster_Bullet_Universal::Set_IsDead()
 		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1038.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
+	case VAYUSURA_LEADER_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_508.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		break;
+	}
 	default:
 		break;
 	}
@@ -739,7 +744,15 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		_float3 fPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 		fPlayerPos.y += 0.5f;
 
+		m_fTempPos = fPlayerPos;
 		XMStoreFloat3(&m_fTempLook, XMVector3Normalize(XMLoadFloat3(&fPlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+		m_dSoundTime += dDeltaTime;
+		if (m_dSoundTime >= 0.3)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Spell_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+			m_dSoundTime = 0;
+		}
 	}
 	else {
 		m_bIsFired = true;
@@ -749,9 +762,19 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 		vPosition += XMVector3Normalize(vLook) * m_Monster_Bullet_UniversalDesc.fSpeedPerSec * (_float)dDeltaTime;
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
+
+		if (m_iSoundIndex == 0)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1290.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+
+			m_iSoundIndex++;
+		}
 	}
 
-	if(true == Monster_Object->Get_AttackCanceOn())
+	_float fDistance;
+	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat4(&m_fTempPos));
+
+	if(true == Monster_Object->Get_AttackCanceOn() || fDistance <= 0.2)
 	{
 		Set_IsDead();
 	}

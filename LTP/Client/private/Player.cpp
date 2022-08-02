@@ -511,6 +511,11 @@ void CPlayer::Set_PosY(_float fPos_y)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	if (true == m_bShieldMode)
+	{
+		return -2.f;
+	}
+
 	//if (STATE_STOPACTION == m_eCurState)
 	//{
 	//	return 0.f;

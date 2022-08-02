@@ -110,6 +110,7 @@ private:
 
 private://Sound
 	_uint				m_iSoundIndex = 0;
+	_uint				m_iAttackStartSound = 0;
 	_double				m_dSoundTime = 0;
 	_bool				m_bDieSound = false;
 

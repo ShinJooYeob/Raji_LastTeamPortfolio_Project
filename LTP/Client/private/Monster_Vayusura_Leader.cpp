@@ -39,7 +39,7 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	///////////////////test
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f));;
 
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
@@ -62,7 +62,7 @@ _int CMonster_Vayusura_Leader::Update(_double dDeltaTime)
 
 		if (m_bDieSound == false && m_dDissolveTime >= 1.)
 		{
-			//g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_739.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 			m_bDieSound = true;
 		}
 
@@ -320,6 +320,17 @@ HRESULT CMonster_Vayusura_Leader::SetUp_Collider()
 	tAttachedDesc.Initialize_AttachedDesc(this, "index_02_l", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.6475f, 0.08306f, -0.69517f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
+
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(4.f, 4.f, 4.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.033178f, -0.45067f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pColliderCom->Set_ParantBuffer();
 	//////////////////////////////////////////////////////
 
 	return S_OK;
@@ -413,7 +424,7 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 
 		XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 1)));
 
-		if (m_fDistance > 12)
+		if (m_fDistance > 8)
 		{
 			m_iInfinityPattern = 10;
 		}
@@ -471,7 +482,8 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 4 ||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 2)
 		{
 			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(0.f, 1.f, 0.f, 0.f)), dDeltaTime * 0.5);
 
@@ -480,7 +492,8 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0; // flapping
 		break;
 	case 1:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 4)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 4 ||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 2)
 		{
 			m_pTransformCom->MovetoDir(XMLoadFloat4(&_float4(0.f, 1.f, 0.f, 0.f)), -dDeltaTime * 0.5);
 
@@ -489,8 +502,8 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 0;
 		break;
 	case 2:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
-			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 4 ||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 2)
 		{
 
 			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
@@ -498,8 +511,8 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 		m_iInfinityAnimNumber = 1;
 		break;
 	case 3:
-		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 7 ||
-			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 3)
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_fPlayerPos.y + 4||
+			m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y > m_fPlayerPos.y + 2)
 		{
 
 			m_pTransformCom->MovetoDir(XMLoadFloat4(&m_fDirection), dDeltaTime * 0.5);
@@ -536,11 +549,18 @@ HRESULT CMonster_Vayusura_Leader::Player_Comparison(_double dDeltaTime)
 	_float3 fPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 	_float3 fMonsterPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
-	if (fPlayerPos.y >= fMonsterPos.y)
+	if (fPlayerPos.y + 1 >= fMonsterPos.y)
 	{
-		fMonsterPos.y = fPlayerPos.y;
+		fMonsterPos.y = fPlayerPos.y + 1;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
 	}
+
+	if (fPlayerPos.y + 4 <= fMonsterPos.y)
+	{
+		fMonsterPos.y = fPlayerPos.y + 4;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fMonsterPos);
+	}
+
 	return S_OK;
 
 }
@@ -576,26 +596,26 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
 
-	if (m_BulletObj)
-	{
-		CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
-		m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
+	//if (m_BulletObj)
+	//{
+	//	CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
+	//	m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
 
-		// distance 비교해서 총알 이펙트 죽이기
-		_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
-		_float PY = PP.y;
-		_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+	//	// distance 비교해서 총알 이펙트 죽이기
+	//	_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//	_float PY = PP.y;
+	//	_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
-		if (fabs(PY - MyY) < 0.1f)
-		{
-			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
-			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+	//	if (fabs(PY - MyY) < 0.1f)
+	//	{
+	//		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+	//		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
 
-			m_BulletObj->Set_IsOwerDead(true);
-			m_BulletObj = nullptr;
+	//		m_BulletObj->Set_IsOwerDead(true);
+	//		m_BulletObj = nullptr;
 
-		}
-	}
+	//	}
+	//}
 
 
 
@@ -663,13 +683,14 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_iAdjMovedIndex = 0;
 
 		m_bLookAtOn = true;
-			m_EffectAdjust = 0;
+		m_EffectAdjust = 0;
 
+		m_iSoundIndex = 0;
 		m_bStopCoolTimeOn = false;
 		if (PlayRate > 0.95 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
-			//m_dOnceCoolTime = 0;
+			m_dOnceCoolTime = 0;
 			m_dInfinity_CoolTime = 0;
 		}
 	}
@@ -680,22 +701,58 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		switch (iNowAnimIndex)
 		{
-		case 1://애니메이션 인덱스마다 잡아주면 됨
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴 즉, PlayRate의 0은 >= 하지말고 >로 하셈
+		case 0:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3777)
 			{
-
-				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				m_iSoundIndex++;
 			}
-			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+			break;
+		}
+		case 1:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4166)
 			{
-
-
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		case 2:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3888)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		case 4:
+		{
+			if (m_iAdjMovedIndex == 0)
+			{
+				m_dAcceleration = 1;
 				m_iAdjMovedIndex++;
 			}
+			if (PlayRate > 0 && PlayRate <= 0.95)
+			{
+				m_bIOnceAnimSwitch = true;
+
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Screech_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
+			}
+			else if (PlayRate >= 0.95)
+			{
+				m_bIOnceAnimSwitch = false;
+			}
+
 
 			break;
-		case 2:
-			break;
+		}
 		case 6:
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
@@ -725,8 +782,9 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
 				m_BulletObj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
 
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
 			}
 
@@ -738,6 +796,11 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 0 && PlayRate > 0.1f)
 			{
 				m_EffectAdjust++;
+			}
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1215.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
 			}
 		}
 			break;

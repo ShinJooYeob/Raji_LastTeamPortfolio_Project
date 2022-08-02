@@ -39,7 +39,7 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	///////////////////test
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 31.2f, 185.583f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f));
 
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
@@ -64,7 +64,7 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 
 		if (m_bDieSound == false && m_dDissolveTime >= 1.)
 		{
-			//g_pGameInstance->Play3D_Sound(TEXT("EH_Gadasura_Hit_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+			g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Screech_04.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 			m_bDieSound = true;
 		}
 
@@ -180,7 +180,12 @@ void CMonster_Vayusura_Minion::CollisionTriger(CCollider * pMyCollider, _uint iM
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		if (-2 == pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+		{
+			m_pHPUI->Set_ADD_HitCount(1);
+			m_fHP += -1;
+			m_bIOnceAnimSwitch = true;
+		}
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }
@@ -528,9 +533,15 @@ HRESULT CMonster_Vayusura_Minion::CoolTime_Manager(_double dDeltaTime)
 		if (m_fDistance > 7)
 		{
 			m_iInfinityPattern = 10;
-			//m_TempPlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 			m_dAttackOn = true;
+
+			if (m_iAttackStartSound == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Vayusura_Attack.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+
+				m_iAttackStartSound++;
+			}
 		}
 
 	}
@@ -550,7 +561,12 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 		Set_LimLight_N_Emissive();
 		break;
 	}
-
+	default:
+	{
+		m_iOnceAnimNumber = 4;
+		Set_LimLight_N_Emissive();
+		break;
+	}
 	}
 
 	return S_OK;
@@ -828,7 +844,9 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_EffectAdjust = 0;
 
-		
+		m_iSoundIndex = 0;
+		m_iAttackStartSound = 0;
+
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
 			m_bIOnceAnimSwitch = false;
@@ -841,6 +859,33 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3777)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		case 1:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.4166)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		case 2:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.3888)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Dive_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
 		case 4:
 		{
 			if (m_iAdjMovedIndex == 0)
@@ -851,6 +896,12 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate > 0 && PlayRate <= 0.95)
 			{
 				m_bIOnceAnimSwitch = true;
+				
+				if (m_iSoundIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Vayusura_Screech_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+					m_iSoundIndex++;
+				}
 			}
 			else if (PlayRate >= 0.95)
 			{
@@ -895,8 +946,14 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash0, m_pTextureParticleTransform_Demo1);
 				m_EffectAdjust++;
 			}
+
+			if (m_iSoundIndex == 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
+			break;
 		}
-		break;
 		default:
 			break;
 		}
