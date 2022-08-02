@@ -49,6 +49,8 @@ HRESULT CChiedtuan_2Page_Weapon::Initialize_Clone(void * pArg)
 		break;
 	}
 
+	m_PlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player));
+
 	return S_OK;
 }
 
@@ -56,7 +58,21 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	//FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
+
+	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
+
+	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
+	{
+		if (m_bIsInitialPosDessolve && !m_DeadDessolve)
+		{
+			m_WeaponMoveTime = 0.f;
+			m_pDissolveCom->Set_DissolveOn(true, 1.f);
+
+			m_bIsInitialPosDessolve = false;
+			m_bIsAttack = false;
+
+		}
+	}
 
 	//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	//{
@@ -67,7 +83,11 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 	//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
 	//}
 
-	Set_WeaponPosition();
+	if (!m_bIsAttack)
+		Set_WeaponPosition();
+	else
+		Set_Attack(fDeltaTime);
+
 
 
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
@@ -161,6 +181,7 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(35.f));
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), XMConvertToRadians(-90.f));
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
@@ -171,6 +192,7 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(15.f));
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), XMConvertToRadians(-90.f));
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
@@ -181,6 +203,7 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(-15.f));
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), XMConvertToRadians(-90.f));
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
@@ -190,8 +213,40 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(-35.f));
+		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT), XMConvertToRadians(-90.f));
 
 		break;
+	}
+}
+
+void CChiedtuan_2Page_Weapon::Set_Attack(_double fDeltaTime)
+{
+	if (m_bIsInitialPosDessolve == false)
+	{
+		m_WeaponMoveTime += (_float)fDeltaTime *3.f;
+		if (m_WeaponMoveTime >= 0.95f)
+			m_WeaponMoveTime = 0.95f;
+
+		_Vector Dir = XMVector3Normalize(m_vPlayerPos.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vNewLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * ( 1.f - m_WeaponMoveTime) +
+			Dir * m_WeaponMoveTime);
+
+		m_pTransformCom->LookDir_ver2(vNewLook);
+
+		m_pTransformCom->Move_Forward(fDeltaTime * 15.f);
+
+	}
+	
+	CTransform* PlayerTransfom = (CTransform*)m_PlayerObj->Get_Component(TAG_COM(Com_Transform));
+
+	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < PlayerTransfom->Get_MatrixState_Float3(CTransform::STATE_POS).y)
+	{
+		m_vPlayerPos.y += 1.f;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
+
+
+		m_bIsInitialPosDessolve = true;
+		m_pDissolveCom->Set_DissolveOn(false, 1.f);
 	}
 }
 
@@ -203,19 +258,19 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 
 	if (m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_TR)
 	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_TL)
 	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon2), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon2), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_BR)
 	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon3), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon3), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_BL)
 	{
-		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon4), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 
 	CTransform::TRANSFORMDESC tDesc = {};

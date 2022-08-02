@@ -156,7 +156,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
 	{
-		m_ActivateSecondPage = !m_ActivateSecondPage;
+		m_ActivateSecondPage = true;
 	}
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
@@ -300,13 +300,13 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsHalf = true;
 
 
-		////맞았을때
-		//if (m_bIsHit)
-		//{
-		//	m_bIsHit = false;
-		//	m_bIsAttack = true;
-		//	//m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 1);
-		//}
+		//맞았을때
+		if (m_bIsHit)
+		{
+			m_bIsHit = false;
+			m_bIsAttack = true;
+			m_pModel->Change_AnimIndex(4);
+		}
 		//점프
 		if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
 		{
@@ -328,7 +328,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			iRandom = 2;
+			//iRandom = 2;
 
 			switch (iRandom)
 			{
@@ -361,25 +361,60 @@ _int CChiedtian::Update(_double fDeltaTime)
 	//SecondPage
 	else
 	{
+		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+		_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+		PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+
+		_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
+
+		m_fRange = XMVectorGetX(XMVector3Length(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+		//맵 중앙으로 이동
+		if (!m_bMiddlepointPos)
+		{
+			m_bIsMainWeaponOff = true;
+
+			for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+				m_pMainWeapons[i]->Set_IsAttackState(false);
+
+			for (_int i = 0; i < m_pSubWeapons.size(); ++i)
+				m_pSubWeapons[i]->Set_IsAttackState(false);
+
+			m_bMiddlepointPos = true;
+			m_pModel->Change_AnimIndex(10);
+			m_bIsLookAt = true;
+			m_fAttackCoolTime = 3.f;
+			m_fSkillCoolTime = 7.f;
+
+		}
+
+		if (m_bIsLookAt)
+		{
+			_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
+			m_pTransformCom->Turn_Dir(Dir, 0.90f);
+		}
 		
-		//_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-		//if (Pos.x > -1.f && Pos.x < 1.f  &&Pos.z > -1.f && Pos.z < 1.f)
-		//{
-		//	m_bMiddlepointPos = true;
-		//	m_bIsLookAt = true;
-		//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0));
-		//	m_pModel->Change_AnimIndex(1);
+		//일반 공격
+		if (m_fAttackCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
+		{
+			m_bIsAttack = true;
+			m_bIsBasicAttack = true;
 
-		//}
-		//else if(/*Pos.x < -1.f || Pos.x > 1.f  || Pos.z < -1.f || Pos.z > 1.f && */!m_bMiddlepointPos)
-		//{
-		//	m_bIsLookAt = false;
-		//	_float3 fDir = _float3(0.f).XMVector() - Pos.XMVector();
-		//	m_pTransformCom->Turn_Dir(fDir.XMVector(), 0.90f);
+			m_pModel->Change_AnimIndex(5);
 
-		//	m_pTransformCom->MovetoDir(fDir.XMVector(), fDeltaTime);
-		//	m_pModel->Change_AnimIndex(2);
-		//}
+		}
+		//스킬 공격
+		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
+		{
+			m_bIsAttack = true;
+			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
+			m_bIsAttack = true;
+			m_bISkill = true;
+
+		}
+
 	}
 
 	
@@ -807,25 +842,46 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 5:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1960784313)
+			if (!m_ActivateSecondPage)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-				m_iAdjMovedIndex++;
-			}
-			if (m_iAdjMovedIndex == 1 && PlayRate < 0.2926829268)
-			{
-				m_bIsLookAt = false;
-				m_iAdjMovedIndex++;
-			}
-			else if (m_iAdjMovedIndex == 2 && PlayRate > 0.529411764)
-			{
-				m_pMainWeapons[0]->Set_IsAttackState(false);
-				m_iAdjMovedIndex++;
-			}
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0.1960784313)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 1 && PlayRate < 0.2926829268)
+				{
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
+				}
+				else if (m_iAdjMovedIndex == 2 && PlayRate > 0.529411764)
+				{
+					m_pMainWeapons[0]->Set_IsAttackState(false);
+					m_iAdjMovedIndex++;
+				}
 
-			if (PlayRate > 0.215686274 && PlayRate < 0.529411764)
+				if (PlayRate > 0.215686274 && PlayRate < 0.529411764)
+				{
+					m_pMainWeapons[0]->Set_IsAttackState(true);
+				}
+			}
+			else
 			{
-				m_pMainWeapons[0]->Set_IsAttackState(true);
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0.19607843137)
+				{
+					CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+					for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+					{
+						SecondPageWeapon->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+						SecondPageWeapon->Set_IsAttackState(true);
+					}
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 1 && PlayRate < 0.2926829268)
+				{
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
+				}
 			}
 
 
@@ -951,30 +1007,20 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 10://Jump Animation
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
+			if (!m_ActivateSecondPage)
 			{
-				m_bIsLookAt = false;
-				m_iAdjMovedIndex++;
-			}
-			/*if (m_bIsBackJump)
-			{
-				if (PlayRate > 0.317073170 && PlayRate < 0.63414634146)
+				if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
 				{
-					m_bIsLookAt = true;
-
-					_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
-					_float3 GoalPos = XMLoadFloat3(&MonsterPos) + (XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)) * -2.f);
-
-					_float3 vGoalDir = (GoalPos.XMVector() - MonsterPos.XMVector());
-
-					_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
-
-					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
 				}
-			}
-			else
-			{
+
+				if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					m_iAdjMovedIndex++;
+				}
 				if (PlayRate > 0.317073170 && PlayRate < 0.63414634146)
 				{
 					m_bIsLookAt = true;
@@ -992,47 +1038,69 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
 				}
-			}*/
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
-			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
+				}
 
-				m_iAdjMovedIndex++;
+				if (m_iAdjMovedIndex == 3 && PlayRate > 0.682926)
+				{
+					m_bIsJump = true;
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 4 && PlayRate > 0.71)
+				{
+					m_bIsJump = false;
+					m_iAdjMovedIndex++;
+				}
 			}
-			if (PlayRate > 0.317073170 && PlayRate < 0.63414634146)
+			////////////////////////////
+			else
 			{
-				m_bIsLookAt = true;
+				if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
+				{
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
-				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					m_iAdjMovedIndex++;
+				}
+				if (PlayRate > 0.317073170 && PlayRate < 0.63414634146)
+				{
+					m_bIsLookAt = false;
 
-				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+					_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-				PlayerPos.y = MonsterPos.y;
+					_float3 vGoalDir = (_float3(0).XMVector() - MonsterPos.XMVector());
 
-				_float3 vGoalDir = (PlayerPos.XMVector() - MonsterPos.XMVector());
+					_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
 
-				_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+				}
+				if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					m_bIsLookAt = false;
+					m_iAdjMovedIndex++;
+				}
 
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+				if (m_iAdjMovedIndex == 3 && PlayRate > 0.682926)
+				{
+					m_bIsJump = true;
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 4 && PlayRate > 0.71)
+				{
+					m_bIsJump = false;
+					m_iAdjMovedIndex++;
+				}
 			}
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
-			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-				m_bIsLookAt = false;
-				m_iAdjMovedIndex++;
-			}
 
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.682926)
-			{
-				m_bIsJump = true;
-				m_iAdjMovedIndex++;
-			}
-			if (m_iAdjMovedIndex == 4 && PlayRate > 0.71)
-			{
-				m_bIsJump = false;
-				m_iAdjMovedIndex++;
-			}
 		}
 		break;
 
@@ -1150,6 +1218,57 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		}
 		break;
+		case 15:
+		{
+
+		}
+		break;
+
+		//SecondPage_Jump
+		case 20:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
+			{
+				m_bIsLookAt = false;
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				m_iAdjMovedIndex++;
+			}
+			if (PlayRate > 0.317073170 && PlayRate < 0.63414634146)
+			{
+				m_bIsLookAt = true;
+
+				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				_float3 vGoalDir = (_float3(0).XMVector() - MonsterPos.XMVector());
+
+				_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
+
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, (MonsterPos.XMVector() + vGoalDir.Get_Nomalize() * fLength));
+			}
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_bIsLookAt = false;
+				m_iAdjMovedIndex++;
+			}
+
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.682926)
+			{
+				m_bIsJump = true;
+				m_iAdjMovedIndex++;
+			}
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.71)
+			{
+				m_bIsJump = false;
+				m_iAdjMovedIndex++;
+			}
+		}
+		break;
 
 		}
 	}
@@ -1172,22 +1291,33 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 1)
 		{
-			if (m_fRange > 12.f && !m_bIsAttack && !m_bIsWalk)
+			if (m_ActivateSecondPage == false)
 			{
-				m_bIsWalk = true;
-				m_bIsAttack = true;
-				m_bIsLookAt = false;
+				if (m_fRange > 12.f && !m_bIsAttack && !m_bIsWalk)
+				{
+					m_bIsWalk = true;
+					m_bIsAttack = true;
+					m_bIsLookAt = false;
 
-				_Vector LookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK))
-					+ XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * GetSingle(CUtilityMgr)->RandomFloat(-0.7f, 0.7f));
+					_Vector LookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK))
+						+ XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * GetSingle(CUtilityMgr)->RandomFloat(-0.7f, 0.7f));
 
-				m_pTransformCom->LookDir(LookDir);
-				m_pModel->Change_AnimIndex(2);
+					m_pTransformCom->LookDir(LookDir);
+					m_pModel->Change_AnimIndex(2);
+				}
+			}
+			else
+			{
+				m_bIsLookAt = true;
 			}
 		}
 		if (iNowAnimIndex == 3)
 		{
 			Set_IsDead();
+		}
+		if (iNowAnimIndex == 4)
+		{
+			m_ActivateSecondPage = true;
 		}
 		if (iNowAnimIndex == 5)
 		{
@@ -1229,8 +1359,12 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 10)
 		{
+			if (m_ActivateSecondPage)
+			{
+				m_bIsLookAt = true;
+				m_pModel->Change_AnimIndex(1);
 
-			//m_bIsLookAt = true;
+			}
 			m_fJumpTime = 3.f;
 
 		}
@@ -1247,6 +1381,20 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_fAttackCoolTime = 0.5f;
 			m_fSkillCoolTime = 6.f;
 			m_fAnimmultiple = 1.f;
+		}
+		if (iNowAnimIndex == 15)
+		{
+			m_bIsBasicAttack = false;
+			m_fAttackCoolTime = 3.f;
+			m_fSkillCoolTime = 1.f;
+
+			m_pModel->Change_AnimIndex(1);
+		}
+		if (iNowAnimIndex == 20)
+		{
+			m_bIsLookAt = true;
+			m_fJumpTime = 3.f;
+			m_pModel->Change_AnimIndex(1);
 		}
 	}
 
