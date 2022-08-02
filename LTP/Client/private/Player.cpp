@@ -21,7 +21,7 @@
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
 
-#define NotOnNavi
+//#define NotOnNavi
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -2484,7 +2484,7 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 		#ifdef NotOnNavi
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr);
 		#else
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate m_pNavigationCom);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
 		#endif // NotOnNavi
 
 		
