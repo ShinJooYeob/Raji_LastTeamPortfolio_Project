@@ -33,12 +33,16 @@ HRESULT CLilyPad::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(false);
 
+	Set_LimLight_N_Emissive(_float4(0.f, 0.0625f, 0.06640625f, 0.55859375f), _float4(0.2f, 0.5f, 1.f, 0.f));
+
 	return S_OK;
 }
 
 _int CLilyPad::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+
 
 	if (true == m_bScaling)
 	{

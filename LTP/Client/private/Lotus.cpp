@@ -33,6 +33,8 @@ HRESULT CLotus::Initialize_Clone(void * pArg)
 
 	Set_IsOcllusion(false);
 
+	Set_LimLight_N_Emissive(_float4(1.f, 0, 0.5f, 0.5f), _float4(1.f, 0.5f, 1.f, 0.f));
+
 	return S_OK;
 }
 
@@ -41,7 +43,6 @@ _int CLotus::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	Update_Colliders();
-
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider));
 	return _int();
 }

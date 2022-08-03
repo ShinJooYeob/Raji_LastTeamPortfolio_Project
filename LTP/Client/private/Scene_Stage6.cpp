@@ -99,9 +99,18 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 	}
 	if (vPlayerPos.x > 57.9f && vPlayerPos.x < 72.f && vPlayerPos.z > 309.f && vPlayerPos.z < 327.f)
 	{
-		_float fFogDensity = vPlayerPos.z * -0.15f / 18.f + 2.775f;
-		fFogDensity = max(min(fFogDensity, 0.2f), 0.05f);
-		m_pUtilMgr->Get_Renderer()->Set_FogGlobalDensity(fFogDensity);
+		_float3 Targetvector = g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(0.2f, 164.f, 36.314f), _float3(0.05f, 90.f, 350.f),
+			vPlayerPos.z - 309.f, 18.f);
+
+		Targetvector.x = max(min(Targetvector.x, 0.2f), 0.05f);
+		Targetvector.y = max(min(Targetvector.y, 164.f), 90.f);
+		Targetvector.z = max(min(Targetvector.z, 350.f), 36.314f);
+
+		m_pUtilMgr->Get_Renderer()->Set_FogGlobalDensity(Targetvector.x);
+
+		LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+		g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0.f, Targetvector.y, Targetvector.z, 1.f));
+
 	}
 
 	//if (PlayerZ < 58.f)
@@ -668,8 +677,8 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 #ifdef DEBUGONSHADERSETTING
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(160.f, 180.f, -100.f, 1.f));
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
+	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0.f, 164.f, 36.314f, 1.f));
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
 	pLightDesc->vDiffuse = _float4(0.0859375f, 0.20703125f, 0.8203125f, 1.f);
 	pLightDesc->vAmbient = _float4(0.15625f, 0.35546875f, 0.47265625f, 1.f);
 	pLightDesc->vSpecular = _float4(0.15625f, 0.234375f, 0.12109375f, 1.f);
