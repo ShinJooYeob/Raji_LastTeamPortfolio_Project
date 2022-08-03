@@ -76,9 +76,9 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	static _float LightFar = 1.f;
 
 
-		_float fValue = max(min(PlayerZ, 128.f), 103.f);
-		LightFar = fValue * 2.0f / 25.f - 7.24f;
-		LightFar = max(min(LightFar, 3.f), 1.f);
+	_float fValue = max(min(PlayerZ, 128.f), 103.f);
+	LightFar = fValue * 2.0f / 25.f - 7.24f;
+	LightFar = max(min(LightFar, 3.f), 1.f);
 
 
 

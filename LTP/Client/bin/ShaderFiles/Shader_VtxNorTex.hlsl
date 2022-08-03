@@ -1,6 +1,7 @@
 
 #include "Shader_Define.hpp" 
 
+
 texture2D			g_SourTexture;
 texture2D			g_BackBufferTexture;
 texture2D			g_BlurTargetTexture;
@@ -554,7 +555,11 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 		rayPlane.w = dot(rayPlane.xyz, vsPos);
 
 		// Iterate over the HDR texture searching for intersection
-		[unroll(128)]
+
+
+		//EMWUNROLL
+		[unroll(1)]
+			 
 		for (int nCurStep = 0; nCurStep < nNumSteps; nCurStep += 10)
 		{
 			// Sample from depth buffer
@@ -576,7 +581,8 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 				ssSampPos = csFinalPos.xy * float2(0.5, -0.5) + 0.5;
 
 				// Get the HDR value at the current screen space location
-					
+				float OverScreen = 0.f;
+
 				if (g_DepthTexture.Sample(PointClampSampler, ssSampPos).x == 1.f)
 				{
 					reflectColor = pow(g_BackBufferTexture.Sample(ClampSampler, PosToUv) + pow(vector(g_vFogColor, 0), 2.2f), 1.f / 1.0751f);
@@ -584,6 +590,7 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 				else
 				{
 					reflectColor.xyz = g_BackBufferTexture.Sample(PointClampSampler, ssSampPos).xyz + pow(vector(g_vFogColor,0),2.2f).xyz;
+					OverScreen = length(saturate(ssSampPos) - ssSampPos) * 100.f;
 				}
 			
 				//reflectColor.xyz = HDRTex.SampleLevel(PointSampler, ssSampPos, 0.0).xyz;
@@ -595,7 +602,7 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 				reflectColor.w = min(viewAngleFade, 1.0 - edgeFade * edgeFade);
 
 				// Apply the reflection sacle
-				reflectColor.w *= ReflectionScale;
+				reflectColor.w *= ReflectionScale / (OverScreen + 1.f) ;
 
 				// Advance past the final iteration to break the loop
 				nCurStep = nNumSteps;

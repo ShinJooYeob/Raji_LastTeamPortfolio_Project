@@ -21,7 +21,7 @@
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
 
-//#define NotOnNavi
+#define NotOnNavi
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
