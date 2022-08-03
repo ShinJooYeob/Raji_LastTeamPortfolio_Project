@@ -106,14 +106,16 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 		_Vector Pos = m_pParentTranscom->Get_MatrixState(CTransform::STATE_POS);
 
+		if (mAddDesc.FollowTarget)
+		{
+			me_MoveType = MOVETYPE_FOLLOW;
+		}
+
 		if (mAddDesc.InitRot.y == 0 &&
 			mAddDesc.InitRot.x == 0 &&
 			mAddDesc.InitRot.z == 0)
 		{
-			if (mAddDesc.FollowTarget)
-			{
-				me_MoveType = MOVETYPE_FOLLOW;
-			}
+		
 
 			_Vector Right = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT);
 			_Vector Up = m_pParentTranscom->Get_MatrixState_Normalized(CTransform::STATE_UP);
@@ -139,9 +141,9 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
 			if (mAddDesc.vAddDirectAngle.x != 0)
 				m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-			else if (mAddDesc.vAddDirectAngle.y != 0)
+			if (mAddDesc.vAddDirectAngle.y != 0)
 				m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-			else if (mAddDesc.vAddDirectAngle.z != 0)
+			if (mAddDesc.vAddDirectAngle.z != 0)
 				m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
 		}
 
@@ -317,9 +319,9 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 			{
 				if (mAddDesc.vAddDirectAngle.x != 0)
 					m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x));
-				else if (mAddDesc.vAddDirectAngle.y != 0)
+				if (mAddDesc.vAddDirectAngle.y != 0)
 					m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y));
-				else if (mAddDesc.vAddDirectAngle.z != 0)
+				if (mAddDesc.vAddDirectAngle.z != 0)
 					m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
 
 			}
@@ -328,9 +330,9 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 				mAddRot += mAddDesc.LookRotSpeed * (_float)fDeltaTime;
 				if (mAddDesc.vAddDirectAngle.x != 0)
 					m_pTransformCom->Turn_Direct(Right, XMConvertToRadians(mAddDesc.vAddDirectAngle.x + mAddRot));
-				else if (mAddDesc.vAddDirectAngle.y != 0)
+				if (mAddDesc.vAddDirectAngle.y != 0)
 					m_pTransformCom->Turn_Direct(Up, XMConvertToRadians(mAddDesc.vAddDirectAngle.y + mAddRot));
-				else if (mAddDesc.vAddDirectAngle.z != 0)
+				if (mAddDesc.vAddDirectAngle.z != 0)
 					m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z + mAddRot));
 			}
 

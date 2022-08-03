@@ -75,10 +75,7 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_TS_Double_Slash_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GT_SphereHarf);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GN_Wind01);
-		
-	
-	
-	
+		Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword
 
 	*/
 
@@ -1280,7 +1277,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.eMeshType = Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword;
 		
 		// Time
-		MeshDesc.fMaxTime_Duration = 1.2f;
+		MeshDesc.fMaxTime_Duration = 2.0f;
 		MeshDesc.fAppearTime = 0.5f;
 		AddDesc.bAfterApperTime = true;
 
@@ -1293,18 +1290,16 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Noise
 		MeshDesc.noisingdir = _float2(1,0).Get_Nomalize();
-		MeshDesc.fDistortionNoisingPushPower = 50.0f;
+		MeshDesc.fDistortionNoisingPushPower = 20.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
-		MeshDesc.vLimLight = _float4(1,1,1, 1.f);
+		MeshDesc.vLimLight = _float4(1,0,0, 1.f);
 		MeshDesc.vEmissive = _float4(0.5f, 0.5f, 0.5f, 1.f);
-		MeshDesc.vEmissive = _float4(1.f);
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(0, -0.0f, 0);
-		MeshDesc.vSize = _float3(0.25f);
-		MeshDesc.vSize = _float3(1.0f);
-	//	MeshDesc.vSize = _float3(0.3f,0.15f, 0.3f);
+		MeshDesc.vPosition = _float3(0);
+		MeshDesc.vSize = _float3(0.5f);
+		MeshDesc.vSize = _float3(0.5f,1.0f, 0.5f);
 
 
 		// Move
@@ -1312,20 +1307,20 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//MeshDesc.MoveSpeed = 10.0f;
 		//AddDesc.AccMoveSpeed = 110.0f;
 
-		// Rot
+		// Rotwww
 		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(0, 180, 0);
+		AddDesc.vAddDirectAngle = _float3(90,0,90);
 		MeshDesc.RotAxis = FollowingDir_Look;
 		MeshDesc.RotationSpeedPerSec = 0;
 		AddDesc.AccRotSpeed = 0;
-		AddDesc.InitRot = _float3(0, -0, -0);
+		AddDesc.InitRot = _float3(0);
 
 		// Scale
 		AddDesc.AccScaleSpeed = 0.0f;
 		AddDesc.ScaleReFlag = false;
 
 		AddDesc.bLockScale[0] = false;
-		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[1] = false;
 		AddDesc.bLockScale[2] = false;
 
 

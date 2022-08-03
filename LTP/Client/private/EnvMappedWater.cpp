@@ -159,7 +159,7 @@ HRESULT CEnvMappedWater::SetUp_Components()
 	//m_pTransformCom->Scaled_All(m_tEmwDesc.vScale);
 
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(COMPONENTPROTOTYPEID(Prototype_VIBuffer_Terrain + _uint(m_tEmwDesc.vScale.z))),
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(COMPONENTPROTOTYPEID(Prototype_VIBuffer_Terrain_0 + _uint(m_tEmwDesc.vScale.z))),
 		TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 
 	_float2 XYSize = ((CVIBuffer_Terrain*)(m_pVIBufferCom))->Get_NumVerticesXY();

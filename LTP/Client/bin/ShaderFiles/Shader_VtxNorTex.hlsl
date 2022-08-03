@@ -554,7 +554,7 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 		rayPlane.w = dot(rayPlane.xyz, vsPos);
 
 		// Iterate over the HDR texture searching for intersection
-		[unroll(128)]
+		[unroll(1)]
 		for (int nCurStep = 0; nCurStep < nNumSteps; nCurStep += 10)
 		{
 			// Sample from depth buffer
