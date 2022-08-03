@@ -442,6 +442,9 @@
     <Filter Include="01.GameObject\09.InteractObjects\02.Lotus">
       <UniqueIdentifier>{d6aebe68-16a7-4a8d-b357-125406cc837a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle">
+      <UniqueIdentifier>{6c814f66-38fb-4438-9697-e42cc683c147}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -961,6 +964,12 @@
     <ClInclude Include="..\public\Lotus.h">
       <Filter>01.GameObject\09.InteractObjects\02.Lotus</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Gear_Puzzle.h">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gear.h">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1463,6 +1472,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Lotus.cpp">
       <Filter>01.GameObject\09.InteractObjects\02.Lotus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gear_Puzzle.cpp">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gear.cpp">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

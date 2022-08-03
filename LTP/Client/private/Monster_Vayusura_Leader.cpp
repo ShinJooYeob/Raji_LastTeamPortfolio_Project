@@ -791,7 +791,7 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
-				m_BulletObj = g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+				g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
 				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
 
 				//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
@@ -813,6 +813,11 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_iSoundIndex == 0)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1215.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.6987)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1290.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 				m_iSoundIndex++;
 			}
 		}

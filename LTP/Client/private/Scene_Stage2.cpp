@@ -243,6 +243,7 @@ HRESULT CScene_Stage2::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
 	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
 	
 	return S_OK;
 }

@@ -865,13 +865,28 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.421)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_fleshjump04.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 11:
 			if (PlayRate > 0)
 			{
-				//뛰는 스피드 조절해야함 뛰는 스피드 조절
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.2, m_pNavigationCom);
+			}
+
+			if (m_iSoundIndex == 0 && PlayRate >= 0.2666)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_flesh01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.6666)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_flesh01.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
 			}
 			break;
 		case 12:

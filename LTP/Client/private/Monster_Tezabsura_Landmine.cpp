@@ -1119,6 +1119,11 @@ HRESULT CMonster_Tezabsura_Landmine::Adjust_AnimMovedTransform(_double dDeltaTim
 
 				m_iAdjMovedIndex++;
 			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.421)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_rockjump02.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+				m_iSoundIndex++;
+			}
 			break;
 		}
 		case 11:

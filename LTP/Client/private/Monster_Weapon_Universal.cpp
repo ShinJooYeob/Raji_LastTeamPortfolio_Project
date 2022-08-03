@@ -378,7 +378,7 @@ HRESULT CMonster_Weapon_Universal::Update_Collider(_double dDeltaTime)
 			{
 				m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 			} 
-			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
 		}
 		break;
 	}
@@ -396,21 +396,13 @@ HRESULT CMonster_Weapon_Universal::Update_Collider(_double dDeltaTime)
 			{
 				m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 			}
-			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
+			FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
 		}
 		break;
 	}
 	default:
 		break;
 	}
-
-	//////이거 삭제하자 씨이이이발 ^^
-	//	_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
-	//	for (_uint i = 0; i < iNumCollider; i++)
-	//	{
-	//		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
-	//	}
-	//	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom))
 
 	return S_OK;
 }
