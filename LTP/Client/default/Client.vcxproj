@@ -194,6 +194,8 @@
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
+    <ClInclude Include="..\public\Gear.h" />
+    <ClInclude Include="..\public\Gear_Puzzle.h" />
     <ClInclude Include="..\public\HpUI.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h" />
@@ -331,6 +333,8 @@
     <ClCompile Include="..\private\Demon_Tree.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
+    <ClCompile Include="..\private\Gear.cpp" />
+    <ClCompile Include="..\private\Gear_Puzzle.cpp" />
     <ClCompile Include="..\private\HpUI.cpp" />
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\JumpTrigger.cpp" />

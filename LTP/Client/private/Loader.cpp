@@ -40,6 +40,7 @@
 #include "TreeMesh.h"
 #include "MandalaPuzzle.h"
 #include "MandalaMesh.h"
+#include "Gear_Puzzle.h"
 
 //SkillUI
 #include "SkillUI.h"
@@ -1163,7 +1164,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_PuzzleAssembly_Right_01.fbx", TransformMatrix);
+	//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_PuzzleAssembly_Right_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
@@ -1270,6 +1271,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Lotus), CLotus::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(Load_AllMonster());
+	FAILED_CHECK(Load_AllDynamicMapObject());
 	FAILED_CHECK(Load_AllBoss());
 
 
@@ -2061,6 +2063,8 @@ HRESULT CLoader::Load_AllDynamicMapObject()
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_DemonTree_Seg04), TransformMatrix);
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_DemonTree_Seg05), TransformMatrix);
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_SM_ENV_CC_PuzzleAssembly_Right_01), TransformMatrix);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_MandalaCircle_0), TransformMatrix);
@@ -2084,6 +2088,8 @@ HRESULT CLoader::Load_AllDynamicMapObject()
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Map_TreeMesh), CTreeMesh::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Map_MandalaPuzzle), CMandalaPuzzle::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Map_MandalaMesh), CMandalaMesh::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Map_Gear_Puzzle), CGear_Puzzle::Create(m_pDevice, m_pDeviceContext)));
+
 
 	//Dynamic_Map
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Map_FemaleStatue), CFemaleStatue::Create(m_pDevice, m_pDeviceContext)));

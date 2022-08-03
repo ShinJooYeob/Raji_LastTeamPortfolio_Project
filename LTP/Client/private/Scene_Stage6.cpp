@@ -37,7 +37,9 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
-	FAILED_CHECK(Ready_EnvMappedWater(TAG_LAY(Layer_EnvMappedWater)))
+	FAILED_CHECK(Ready_EnvMappedWater(TAG_LAY(Layer_EnvMappedWater)));
+
+	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
 
 //	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
 
@@ -296,7 +298,10 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 171.361f, 23.76f, 150.289f			// cur test
 	// 65.279f, 2.043f, 325.343f
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
+	//151.975f, -22.4f, 377.3486f
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
@@ -358,6 +363,12 @@ HRESULT CScene_Stage6::Ready_Layer_Monster_Boss(const _tchar * pLayerTag)
 	// º¸½ºµé
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_Layer_MapObject(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_Map_Gear_Puzzle), &_float3(215.694f, 28.f, 366.964f)));
 	return S_OK;
 }
 
