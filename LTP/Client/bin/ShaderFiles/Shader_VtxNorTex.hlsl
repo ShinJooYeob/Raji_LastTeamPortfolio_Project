@@ -68,9 +68,9 @@ cbuffer SSReflectionVSConstants
 
 
 
-	float g_WaveHeight = 3.f;; //< 파도의 높낮이
-	float g_Speed = 10.f; //< 시간흘러가는 속도 조절 변수 : 울렁거리는 속도
-	float g_WaveFrequency = 10.f; //< 파도가 치는 느낌을 더 빠르게 조절하는 변수
+	float g_WaveHeight = 0.3f;; //< 파도의 높낮이
+	float g_Speed = 1.f; //< 시간흘러가는 속도 조절 변수 : 울렁거리는 속도
+	float g_WaveFrequency = -50.f; //< 파도가 치는 느낌을 더 빠르게 조절하는 변수
 }
 
 

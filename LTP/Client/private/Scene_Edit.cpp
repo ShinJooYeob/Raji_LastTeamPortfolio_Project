@@ -1212,8 +1212,8 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 
 			NULL_CHECK_RETURN(tData.pObject, E_FAIL);
 
-			//tData.matSRT._32 -= 70;
-			//tData.matTransform._42 -= 70;
+			//tData.matSRT._32 += 30;
+			//tData.matTransform._42 += 30;
 
 			if (lstrcmp(tData.MeshID, TAG_CP(Prototype_Mesh_None)))
 			{
@@ -1646,6 +1646,9 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
 
 			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			//WorldMat._42 += 30.f;
+
+
 			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
 			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
 			if (0 == dwByte) break;
@@ -1714,6 +1717,10 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 		while (true)
 		{
 			ReadFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+			// vPoints[0].y += 30;
+			// vPoints[1].y += 30;
+			// vPoints[2].y += 30;
+
 
 			CCell::CELL_OPTION CellOption = CCell::CELL_END;
 			ReadFile(hFile, &CellOption, sizeof(CCell::CELL_OPTION), &dwByte, nullptr);

@@ -34,10 +34,10 @@ HRESULT CScene_Stage6::Initialize()
 	//FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_MapData(L"Stage_3.dat", SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj)));
 
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 
 
-	//FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
+	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
 	FAILED_CHECK(Ready_EnvMappedWater(TAG_LAY(Layer_EnvMappedWater)))
 
 //	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
@@ -72,8 +72,6 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE3), SCENEID::SCENE_LOADING));
 		return 0;
 	}
-
-
 	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
@@ -81,54 +79,42 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 	}
 
 
-#ifdef _DEBUG
-	//if (KEYDOWN(DIK_F))
+
+	_float3 vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+
+	//const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	//g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, vPlayerPos + XMVectorSet(-64.f, 64.f, 32.f, 0) * LightFar);
+
+	//m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
+
+
+	if (vPlayerPos.z < 80.f && vPlayerPos.x > 70.f && vPlayerPos.x < 80.f)
+	{
+		_float fValue = max(min(vPlayerPos.y, 67.460f), 45.f);
+		_float fFogHeightFalloffValue = fValue * -0.02f / 22.46f + 0.090071237756010685663401f;
+		fFogHeightFalloffValue = max(min(fFogHeightFalloffValue, 0.05f), 0.03f);
+		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(fFogHeightFalloffValue);
+	}
+	if (vPlayerPos.x > 57.9f && vPlayerPos.x < 72.f && vPlayerPos.z > 309.f && vPlayerPos.z < 327.f)
+	{
+		_float fFogDensity = vPlayerPos.z * -0.15f / 18.f + 2.775f;
+		fFogDensity = max(min(fFogDensity, 0.2f), 0.05f);
+		m_pUtilMgr->Get_Renderer()->Set_FogGlobalDensity(fFogDensity);
+	}
+
+	//if (PlayerZ < 58.f)
 	//{
-	//	// 해당 영역에 보냄
+	//	_float fValue = max(min(PlayerZ, 58.f), 45.f);
+	//	_float fGodRayIntensValue = fValue * -0.1f / 13.f + 0.44615384615384f;
+	//	fGodRayIntensValue = max(min(fGodRayIntensValue, 0.1f), 0.f);
 
-	//	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
-	//	NULL_CHECK_BREAK(pPlayer);
-	//	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
-	//	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-
-
-	//	// pick pos
-	//	POINT ptMouse;
-	//	GetCursorPos(&ptMouse);
-	//	ScreenToClient(g_hWnd, &ptMouse);
-
-	//	_Vector vCursorPos = XMVectorSet(
-	//		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
-	//		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
-	//		0, 1.f);
-
-	//	_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
-	//	_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
-
-	//	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
-
-	//	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
-
-
-	//	_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
-	//	_Vector vOldPos = vCamPos;
-	//	_Vector vNewPos;
-	//	vNewPos = vOldPos + vRayDir;
-
-	//	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
-	//	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-
+	//	m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(fGodRayIntensValue);
 	//}
-
-
-
-#endif // _DEBUG
-
 
 	return 0;
 }
-static float Z1 = 0;
-static float yy = 0;
 
 _int CScene_Stage6::LateUpdate(_double fDeltaTime)
 {
@@ -306,7 +292,7 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 171.361f, 23.76f, 150.289f			// cur test
 	// 65.279f, 2.043f, 325.343f
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 48.8f, 4.519f)));
 
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
@@ -526,8 +512,8 @@ HRESULT CScene_Stage6::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 {
 	CElevator::ELEVATORDESC tElevatorDesc;
-	tElevatorDesc.fStartPos = _float3(169.314f, 26.6f, 157.903f);
-	tElevatorDesc.fDestPos = _float3(169.314f, 14.735f, 157.903f);
+	tElevatorDesc.fStartPos = _float3(169.314f, 56.6f, 157.903f);
+	tElevatorDesc.fDestPos = _float3(169.314f, 44.735f, 157.903f);
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
 	tElevatorDesc.fMoveSpeed = 5.f;
@@ -536,8 +522,8 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 
 
 	ZeroMemory(&tElevatorDesc, sizeof(CElevator::ELEVATORDESC));
-	tElevatorDesc.fStartPos = _float3(169.530f, 15.030f, 268.125f);
-	tElevatorDesc.fDestPos = _float3(169.530f, 5.73f, 268.125f);
+	tElevatorDesc.fStartPos = _float3(169.530f, 45.030f, 268.125f);
+	tElevatorDesc.fDestPos = _float3(169.530f, 35.73f, 268.125f);
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.05f, 1.05f, 1.05f);
 	tElevatorDesc.fMoveSpeed = 5.f;
@@ -546,8 +532,8 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 
 
 	ZeroMemory(&tElevatorDesc, sizeof(CElevator::ELEVATORDESC));
-	tElevatorDesc.fStartPos = _float3(65.234f, 5.1f, 332.031f);
-	tElevatorDesc.fDestPos = _float3(65.234f, -23.070f, 332.031f);
+	tElevatorDesc.fStartPos = _float3(65.234f, 35.1f, 332.031f);
+	tElevatorDesc.fDestPos = _float3(65.234f, 6.93f, 332.031f);
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(-90.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
 	tElevatorDesc.fMoveSpeed = 5.f;
@@ -555,11 +541,11 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.632f, 13.8f, 60.802f)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.849f, 13.5f, 86.1f)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(94.85f, -28.f, 326.185f)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(113.425f, -28.f, 326.2f)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(133.312f, -28.3f, 411.455f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.632f, 43.8f, 60.802f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(169.849f, 43.5f, 86.1f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(94.85f, 2.f, 326.185f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(113.425f, 2.f, 326.2f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Lotus), &_float3(133.312f, 1.7f, 411.455f)));
 
 	return S_OK;
 }
@@ -570,7 +556,7 @@ HRESULT CScene_Stage6::Ready_EnvMappedWater(const _tchar * pLayerTag)
 
 
 	CEnvMappedWater::EMWDESC tEmwDesc;
-	tEmwDesc.vPosition = _float3(70.f, 11.5f, 22.f);
+	tEmwDesc.vPosition = _float3(70.f, 41.5f, 22.f);
 	tEmwDesc.vRotAxis_N_Angle = _float4(1, 0, 0, 90);
 	tEmwDesc.vScale = _float3(120.f, 120.f, 0);
 	tEmwDesc.vEmissive = _float4(0.3f, 0.5f, 0.01f, 1.f);
@@ -579,30 +565,30 @@ HRESULT CScene_Stage6::Ready_EnvMappedWater(const _tchar * pLayerTag)
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
 	//66,60	2
-	tEmwDesc.vPosition = _float3(-6, 18.1f, 0.f);
+	tEmwDesc.vPosition = _float3(-6, 48.1f, 0.f);
 	tEmwDesc.vScale = _float3(66, 60, 1);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
 	//58, 56 3
-	tEmwDesc.vPosition = _float3(0, 37.460f, 29.430f);
+	tEmwDesc.vPosition = _float3(0, 67.460f, 29.430f);
 	tEmwDesc.vScale = _float3(58, 56, 2);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 	//141 146 4
-	tEmwDesc.vPosition = _float3(60, -5.5f, 150.f);
+	tEmwDesc.vPosition = _float3(60, 24.5f, 150.f);
 	tEmwDesc.vScale = _float3(141, 146, 3);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
 	//264 ,240 5
-	tEmwDesc.vPosition = _float3(-41.900f, -29.2f, 295.8f);
+	tEmwDesc.vPosition = _float3(-41.900f, 0.8f, 295.8f);
 	tEmwDesc.vScale = _float3(264, 240, 4);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 	//264 ,240 5
-	tEmwDesc.vPosition = _float3(221.0f, -29.2f, 295.8f);
+	tEmwDesc.vPosition = _float3(221.0f, 0.8f, 295.8f);
 	tEmwDesc.vScale = _float3(264, 240, 4);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
 
-	tEmwDesc.vPosition = _float3(199.f, -6.4f, 150.f);
+	tEmwDesc.vPosition = _float3(199.f, 23.6f, 150.f);
 	tEmwDesc.vScale = _float3(128, 161, 5);
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
@@ -676,8 +662,8 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(160.f, 180.f, -100.f, 1.f));
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
-	pLightDesc->vDiffuse = _float4(0.18359375f, 0.2109375f, 0.328125f, 1.f);
-	pLightDesc->vAmbient = _float4(0.15234375f, 0.171875f, 0.265625f, 1.f);
+	pLightDesc->vDiffuse = _float4(0.0859375f, 0.20703125f, 0.8203125f, 1.f);
+	pLightDesc->vAmbient = _float4(0.15625f, 0.35546875f, 0.47265625f, 1.f);
 	pLightDesc->vSpecular = _float4(0.15625f, 0.234375f, 0.12109375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -688,20 +674,20 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.35f);
+	pRenderer->Set_ShadowIntensive(0.15f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5F);
+	pRenderer->Set_BloomBrightnessMul(2.0F);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(160.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));
-	pRenderer->Set_FogStartDist(0.001f);
+	pRenderer->Set_FogColor(_float3(0.f, 0.0859375f, 0.2578125f));
+	pRenderer->Set_FogStartDist(40.f);
 	pRenderer->Set_FogGlobalDensity(0.2f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
+	pRenderer->Set_FogHeightFalloff(0.03f);
 #endif
 
 #endif // !_DEBUG

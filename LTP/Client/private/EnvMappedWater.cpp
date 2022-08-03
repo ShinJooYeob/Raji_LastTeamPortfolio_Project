@@ -34,6 +34,8 @@ HRESULT CEnvMappedWater::Initialize_Clone(void * pArg)
 	Set_LimLight_N_Emissive(_float4(0), m_tEmwDesc.vEmissive);
 	Set_IsOcllusion(false);
 	m_fPassedTime = 0;
+
+
 	return S_OK;
 }
 
@@ -98,7 +100,9 @@ _int CEnvMappedWater::Render()
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tEmwDesc.vNoisePushDir, sizeof(_float2)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vFogColor", &m_pRendererCom->Get_FogColor(), sizeof(_float3)));
-	
+
+	_float g_Speed = 1.f / m_tEmwDesc.fFlowRate; 
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_Speed", &g_Speed, sizeof(_float)));
 
 	_float4x4 pProj = pInstance->Get_Transform_Float4x4(PLM_PROJ);
 	_float4 vPerspectiveValues = _float4
@@ -118,13 +122,6 @@ _int CEnvMappedWater::Render()
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLightPosition", &vLightPosition, sizeof(_float4)));
 
-	float g_WaveHeight = 0.3f; //< 파도의 높낮이
-	float g_Speed = 1.f / m_tEmwDesc.fFlowRate; //< 시간흘러가는 속도 조절 변수 : 울렁거리는 속도
-	float g_WaveFrequency = -50.f; //< 파도가 치는 느낌을 더 빠르게 조절하는 변수
-
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_WaveHeight", &g_WaveHeight, sizeof(_float)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_Speed", &g_Speed, sizeof(_float)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_WaveFrequency", &g_WaveFrequency, sizeof(_float)));
 	
 	FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 2));
 
@@ -133,7 +130,8 @@ _int CEnvMappedWater::Render()
 	FAILED_CHECK(m_pVIBufferCom->Render(m_pShaderCom,3));
 	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_EnvMap")));
 
-	FAILED_CHECK(m_pRendererCom->Make_BluredRenderTarget(TEXT("Target_EnvMappedMask"), 3.f));
+	FAILED_CHECK(m_pRendererCom->Make_BluredRenderTarget(TEXT("Target_EnvMappedMask"), 0.7f));
+
 	FAILED_CHECK(m_pRendererCom->Copy_OrignNBlured_To_Defferd(TEXT("Target_EnvMappedMask"), TEXT("Target_BlurNCoppyed")));
 	//FAILED_CHECK(m_pRendererCom->Copy_OrignNBlured_To_Defferd(TEXT("Target_EnvMappedMask"), TEXT("Target_BlurNCoppyed")));
 
