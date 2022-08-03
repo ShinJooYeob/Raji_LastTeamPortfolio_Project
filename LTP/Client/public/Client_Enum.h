@@ -1140,6 +1140,11 @@ enum COMPONENTPROTOTYPEID
 	Prototype_VIBuffer_Rect,
 	Prototype_VIBuffer_Cube,
 	Prototype_VIBuffer_Terrain,
+	Prototype_VIBuffer_Terrain_1,
+	Prototype_VIBuffer_Terrain_2,
+	Prototype_VIBuffer_Terrain_3,
+	Prototype_VIBuffer_Terrain_4,
+	Prototype_VIBuffer_Terrain_5,
 	Prototype_VIBuffer_Terrain_Edit,
 	Prototype_VIBuffer_Point_Instance_1,
 	Prototype_VIBuffer_Point_Instance_2,
@@ -3435,10 +3440,25 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_VIBuffer_Rect");
 		break;
 
-	case Prototype_VIBuffer_Cube:
-		return TEXT("Prototype_Component_VIBuffer_Cube");
+	case Prototype_VIBuffer_Terrain:
+		return TEXT("Prototype_Component_VIBuffer_Terrain");
 		break;
-
+	case Prototype_VIBuffer_Terrain_1:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_1");
+		break;
+	case Prototype_VIBuffer_Terrain_2:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_2");
+		break;
+	case Prototype_VIBuffer_Terrain_3:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_3");
+		break;
+	case Prototype_VIBuffer_Terrain_4:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_4");
+		break;
+	case Prototype_VIBuffer_Terrain_5:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_5");
+		break;
+		
 	case Prototype_VIBuffer_Point_Instance_1:
 		return TEXT("Prototype_VIBuffer_Point_Instance_1");
 		break;
@@ -9929,9 +9949,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 
 
-				break;
-		case 	Prototype_VIBuffer_Terrain:
-			return TEXT("Prototype_Component_VIBuffer_Terrain");
+			
+		case 	Prototype_VIBuffer_Cube:
+			return TEXT("Prototype_Component_VIBuffer_Cube");
 			break;
 		case 	Prototype_VIBuffer_Terrain_Edit:
 			return TEXT("Prototype_Component_VIBuffer_Terrain_Edit");

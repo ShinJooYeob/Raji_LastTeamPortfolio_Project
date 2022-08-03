@@ -86,6 +86,18 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		}
 
+		if (g_pGameInstance->Get_DIKeyState(DIK_COMMA)&DIS_Down)
+		{
+			m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
+		{
+			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
+		{
+			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DOF);
+		}
 
 
 
@@ -374,7 +386,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom); 
+	//m_pNavigationCom->Render(m_pTransformCom); 
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG

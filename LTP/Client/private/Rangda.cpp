@@ -107,7 +107,7 @@ _int CRangda::Update(_double fDeltaTime)
 	/*if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
 		m_bIsHit = true;*/
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
+	if (g_pGameInstance->Get_DIKeyState(DIK_B)& DIS_Down)
 		m_bIsHit = true;
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)

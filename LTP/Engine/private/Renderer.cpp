@@ -46,9 +46,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	/* For.Target_Diffuse */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget( TEXT("Target_MtrlDiffuse"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	
-	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceMtrlDiffuse"), (_uint)Viewport.Width,
-		(_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
-
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_ReferenceMtrlDiffuse"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_EnvMappedMask"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
+	
 	/* For.Target_Normal */
 	/* 노멀벡터의 경우, 정규화하기가 쉽다. */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_MtrlNormal"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 1.f)));
@@ -98,6 +98,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f), false));
 
 
+
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BluredDefferred"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_DownScaledEmissiveMask"), (_uint)(Viewport.Width * 0.5f), (_uint)(Viewport.Height * 0.5f), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
@@ -128,6 +129,7 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By4"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By5"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 	//FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_UpScaled_By6"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_BlurNCoppyed"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f)));
 
 
 
@@ -152,8 +154,17 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_LimLight")));
 
 
-	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_CopyMtrlDiffuse"), TEXT("Target_ReferenceMtrlDiffuse")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_EnvMappedMask")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_MtrlNormal")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_MtrlSpecular")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_MtrlEmissive")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_WorldPosition")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_EnvMap"), TEXT("Target_LimLight")));
 
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_CopyMtrlDiffuse"), TEXT("Target_ReferenceMtrlDiffuse")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_BlurNCoppyed"), TEXT("Target_BlurNCoppyed")));
+	
 	
 	/* For.MRT_LightAcc : 빛을 그릴때 바인드 */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_LightShade")));
@@ -512,7 +523,6 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_MotionTrail());
 	FAILED_CHECK(Render_AfterObj());
 	FAILED_CHECK(Render_EffectObj());
-	FAILED_CHECK(Render_EnvMappedObj());
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
 
 	FAILED_CHECK(Render_BlurShadow());
@@ -526,6 +536,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 	//////////MRT_DefferredForNonLightObject//////////////
 	FAILED_CHECK(Render_NonBlend_NoLight());
+	FAILED_CHECK(Render_EnvMappedObj());
 	FAILED_CHECK(Render_SwordTrail());
 	FAILED_CHECK(Render_DistortionObject());
 
@@ -1064,6 +1075,63 @@ HRESULT CRenderer::Make_BluredDeffered(_float TexelSize)
 	return S_OK;
 }
 
+HRESULT CRenderer::Make_BluredRenderTarget(const _tchar * szTag, _float TexelSize)
+{
+	
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_BlurNCoppyed")));
+
+	D3D11_VIEWPORT OldVp;
+	FAILED_CHECK(Ready_DepthStencilBuffer(0, &OldVp));
+
+	wstring TargetMrt = L"MRT_DownScaled_By" + to_wstring((_uint)(2));
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &TexelSize, sizeof(_float)));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TargetMrt.c_str()));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TargetMrt.c_str(), m_DownScaledDepthStencil[0]));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(szTag)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
+
+
+	m_pDeviceContext->RSSetViewports(1, &OldVp);
+	FAILED_CHECK(m_pRenderTargetMgr->End(TargetMrt.c_str()));
+
+
+	wstring TargetTex = L"Target_DownScaled_By" + to_wstring((_uint)(2));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_BlurNCoppyed")));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TargetTex.c_str())));
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 7));
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_BlurNCoppyed")));
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Copy_OrignNBlured_To_Defferd(const _tchar * szOriginTag, const _tchar * szBluredTag)
+{
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Defferred")));
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_MaskTexture", m_pRenderTargetMgr->Get_SRV(szOriginTag)));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(szBluredTag)));
+
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 25));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Defferred")));
+	FAILED_CHECK(Copy_DeferredToReference());
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_DDFog()
 {
 
@@ -1486,7 +1554,7 @@ HRESULT CRenderer::Copy_BluredMtrlDiffuse(_float TexelSize)
 	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TargetMrt.c_str()));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TargetMrt.c_str(), m_DownScaledDepthStencil[0]));
-	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlDiffuse"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_ReferenceDefferred"))));
 
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 6));
 

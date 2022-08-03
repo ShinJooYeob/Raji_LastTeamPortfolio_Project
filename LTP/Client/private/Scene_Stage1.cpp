@@ -34,7 +34,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
 
-	FAILED_CHECK(Ready_TriggerObject(L"TestMeshInstance2.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1_0.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
@@ -59,7 +59,7 @@ HRESULT CScene_Stage1::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
-	//FAILED_CHECK(Ready_MapParticle());
+	FAILED_CHECK(Ready_MapParticle());
 
 	return S_OK;
 }
@@ -75,7 +75,7 @@ _int CScene_Stage1::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 

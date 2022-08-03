@@ -1310,6 +1310,19 @@ PS_OUT_AfterDeferred PS_CopyLastDeferred(PS_IN In)
 
 }
 
+PS_OUT Copy_OrignNBlured_To_Defferd(PS_IN In)
+{
+
+	PS_OUT		Out = (PS_OUT)0;
+
+	if (g_MaskTexture.Sample(DefaultSampler, In.vTexUV).a <= 0) discard;
+
+	Out.vColor = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+
+	return Out;
+
+}
+
 
 
 
@@ -1636,5 +1649,15 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_CopyLastDeferred();
 	}
 
+	pass Copy_OrignNBlured_To_Defferd// 25
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 Copy_OrignNBlured_To_Defferd();
+	}
 	
 }

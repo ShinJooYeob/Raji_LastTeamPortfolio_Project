@@ -14,7 +14,7 @@ public:
 		_float4 vEmissive = _float4(1.f, 0.2f, 1.f, 0);
 		_float2 vNoisePushDir = _float2(0.f, 1.f);
 
-		_float4 vMixColor = _float4(1, 1, 1, 1);
+		_float4 vMixColor = _float4(1, 1, 1, 0.6472f);
 		_float	fFlowRate = 0.1f;
 	}EMWDESC;
 
@@ -36,13 +36,15 @@ public:
 private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
-	CVIBuffer_Rect*			m_pVIBufferCom = nullptr;
+	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CTransform*				m_pTransformCom = nullptr;
 
 private:
 	EMWDESC					m_tEmwDesc;
 	_float					m_fPassedTime = 0;
+	_float					m_fFrustumRange = 10;
+	_float2					m_vFrustumPivot = _float2(0,0);
 
 private:
 	HRESULT				SetUp_Components();

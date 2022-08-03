@@ -93,6 +93,14 @@ sampler ClampSampler = sampler_state
 AddressU = clamp;
 AddressV = clamp;
 };
+sampler PointClampSampler = sampler_state
+{
+	// D3D11_SAMPLER_DESC
+	filter = min_mag_mip_point;
+AddressU = clamp;
+AddressV = clamp;
+};
+
 
 BlendState	AlphaBlending
 {

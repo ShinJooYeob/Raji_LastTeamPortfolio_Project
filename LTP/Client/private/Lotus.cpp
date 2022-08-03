@@ -25,7 +25,7 @@ HRESULT CLotus::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
-	_Vector vPos = *(static_cast<_Vector*>(pArg));
+	_float3 vPos = *(static_cast<_float3*>(pArg));
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
 
 	FAILED_CHECK(SetUp_Collider());

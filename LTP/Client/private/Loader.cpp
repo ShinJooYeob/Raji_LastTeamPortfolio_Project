@@ -1264,6 +1264,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Elevator), CElevator::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_LilyPad), CLilyPad::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_EnvMappedWater), CEnvMappedWater::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
 	
 
 
@@ -1284,9 +1285,20 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Texture_EnvMappedWater),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"EnvMappedWater.txt")));
 	//EffectTest
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
 
 
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 128, 128)));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_1),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 66, 60)));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_2),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 58, 56)));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_3),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 141, 146)));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_4),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 264, 240)));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_5),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 128, 161)));
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1502,12 +1514,12 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 	////// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
+	//FAILED_CHECK(Load_AllMonster());
+	//FAILED_CHECK(Load_AllBoss());
+	//FAILED_CHECK(Load_AllDynamicMapObject());
 
-	for (_uint i = 0; i < SCENE_END; i++)
-		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//for (_uint i = 0; i < SCENE_END; i++)
+	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

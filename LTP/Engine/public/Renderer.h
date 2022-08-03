@@ -75,6 +75,11 @@ public:
 	HRESULT Clear_RenderGroup_forSceneChaging();
 
 	HRESULT Copy_BluredMtrlDiffuse(_float TexelSize = 2.f);
+	HRESULT Make_BluredDeffered(_float TexelSize = 2.f);
+	HRESULT Make_BluredRenderTarget(const _tchar* szCopyTag, _float TexelSize = 2.f);
+	HRESULT Copy_OrignNBlured_To_Defferd(const _tchar* szOriginTag, const _tchar* szBluredTag);
+
+	HRESULT Copy_DeferredToReference();
 	HRESULT Copy_LastDeferredTexture(_float fToonMaxIntensive = 5.f);
 	HRESULT Copy_LastDeferredToToonShadingTexture(_float fToonShadingIntensive = 1.f,_bool bIsScecond = false);
 
@@ -178,13 +183,11 @@ private:
 	
 private:
 	HRESULT Render_DeferredTexture();
-	HRESULT Copy_DeferredToReference();
 	HRESULT Copy_DeferredToBackBuffer();
 	HRESULT Ready_DepthStencilBuffer(_uint iDSVIndex, D3D11_VIEWPORT* pOutOldViewPort);
 	HRESULT Render_BlurShadow();
 	HRESULT Caculate_AvgLuminence();
 	HRESULT Render_Bloom();
-	HRESULT Make_BluredDeffered(_float TexelSize = 2.f);
 	HRESULT Render_DDFog();
 	HRESULT Render_GodRay();
 	HRESULT Render_LesnFlare();
