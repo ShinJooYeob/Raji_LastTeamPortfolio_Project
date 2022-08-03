@@ -261,9 +261,6 @@ HRESULT CMonster_Mahinasura_Minion::Ready_ParticleDesc()
 
 HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 {
-
-	
-
 	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
 //	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
 
@@ -276,20 +273,35 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
 
 
-	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	mat_Hand.r[3] = m_pColliderCom->Get_ColliderPosition(1).XMVector();
 	m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
 
-	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
+	mat_Hand.r[3] = m_pColliderCom->Get_ColliderPosition(2).XMVector();
 	m_pTextureParticleTransform_LHand->Set_Matrix(mat_Hand);
 
 
 
-	mat_Hand.r[0] = _Sfloat3(1,0,0);
-	mat_Hand.r[1] = _Sfloat3(0,1,0); 
-	mat_Hand.r[2] = _Sfloat3(0,0,1); 
+	//mat_Hand.r[0] = _Sfloat3(1,0,0);
+	//mat_Hand.r[1] = _Sfloat3(0,1,0); 
+	//mat_Hand.r[2] = _Sfloat3(0,0,1); 
 
-	mat_Hand.r[3] = m_pTailAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	mat_Hand = m_vecTailAttackAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+	// m_pTailAttackColliderCom->Get_ColliderPosition(5).XMVector();
 	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
+
+
+#ifdef _DEBUG
+	if (KEYDOWN(DIK_V))
+	{
+
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_Cash0, m_pTextureParticleTransform_Tail);
+
+	}
+#endif // _DEBUG
 
 	return S_OK;
 }
@@ -702,6 +714,8 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
+	m_iOncePattern = 4;
+
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 4;
 
@@ -1136,6 +1150,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom);
+
 				m_EffectAdjust++;
 			}
 
@@ -1215,10 +1230,13 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 			}
 
-
-			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
+			if (m_EffectAdjust == 0)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTextureParticleTransform_Tail);
+				m_EffectAdjust++;
+			}
+			if (m_EffectAdjust == 1 && PlayRate >= 0.1f)
+			{
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
@@ -1235,7 +1253,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.25f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.25f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL, m_pTransformCom);
 				m_EffectAdjust++;

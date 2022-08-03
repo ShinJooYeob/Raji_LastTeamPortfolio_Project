@@ -362,8 +362,12 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_AXTrail_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_sphere_dist_wind);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DivineLaserBeam_02);
-
-		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Cloud);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_LB_Invisibility_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Helix_Crystal);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_TS_Double_Slash_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GT_SphereHarf);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GN_Wind01);
 
 
 	}

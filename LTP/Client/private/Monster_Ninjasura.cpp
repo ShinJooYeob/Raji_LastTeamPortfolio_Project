@@ -431,6 +431,33 @@ HRESULT CMonster_Ninjasura::Ready_ParticleDesc()
 
 HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 {
+	//	_Matrix mat_World = m_vecAttachedDesc[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
+	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
+	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
+	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
+
+
+
+	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(2).XMVector();
+	m_pTextureParticleTransform_Demo2->Set_Matrix(mat_World); // Leg
+
+
+	_Matrix mat_spine_01 = m_vecAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_spine_01); // 
+
+	
+
+
+	if (KEYDOWN(DIK_V))
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+	}
+
 	return S_OK;
 }
 
@@ -520,9 +547,9 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-//	m_iOncePattern = 0;
+//	m_iOncePattern = 8;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 10;
+		m_iOncePattern = 6;
 
 	switch (m_iOncePattern)
 	{
@@ -1025,10 +1052,16 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Sword_Sheath_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
 			}
+		
 			break;
 		}
 		case 16:
 		{
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(1.0f, 0.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			m_bColliderAttackOn = true;
 			//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
@@ -1044,11 +1077,21 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
+			}
+			if (m_EffectAdjust == 0)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
 			}
 			break;
 		}
 		case 17:
 		{
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 1.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			m_bColliderAttackOn = true;
 			//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
@@ -1065,10 +1108,21 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
+			}
 			break;
 		}
 		case 18:
 		{
+
+			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			Set_LimLight_N_Emissive(_float4(0.0f, 1.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
 			if (m_iSoundIndex == 0)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Spin_Attack_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
@@ -1135,6 +1189,19 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.3157)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash1, m_pTextureParticleTransform_Demo2);
+				m_EffectAdjust++;
+			}
+
+			if (m_EffectAdjust == 1 && PlayRate >= 0.35)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
+			}
+
 			break;
 		}
 		case 20:
