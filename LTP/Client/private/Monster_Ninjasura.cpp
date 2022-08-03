@@ -452,7 +452,6 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_V))
 	{
 		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
-
 	}
 
 	if (KEYDOWN(DIK_C))
@@ -548,10 +547,9 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	m_iOncePattern = 8;
-	//	m_iOncePattern = 0;
+//	m_iOncePattern = 8;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 12;
+		m_iOncePattern = 6;
 
 	switch (m_iOncePattern)
 	{
@@ -1198,6 +1196,11 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 			}
 
+			if (m_EffectAdjust == 1 && PlayRate >= 0.35)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
+			}
 
 			break;
 		}

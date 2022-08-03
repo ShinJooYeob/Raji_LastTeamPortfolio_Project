@@ -544,7 +544,7 @@ HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 	// #DEBUG PatternSET
 //	m_iOncePattern = 0;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 2;
+		m_iOncePattern = 0;
 
 	switch (m_iOncePattern)
 	{
@@ -1096,6 +1096,13 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.5f)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
+				m_EffectAdjust++;
+			}
+
 			break;
 		}
 		case 15:

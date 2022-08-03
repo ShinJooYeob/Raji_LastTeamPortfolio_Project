@@ -50,7 +50,7 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	// Effect
-	FAILED_CHECK(Ready_LoadEffectMesh());
+//	FAILED_CHECK(Ready_LoadEffectMesh());
 
 
 	return S_OK;
