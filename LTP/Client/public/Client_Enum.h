@@ -1144,11 +1144,6 @@ enum COMPONENTPROTOTYPEID
 	Prototype_VIBuffer_Rect,
 	Prototype_VIBuffer_Cube,
 	Prototype_VIBuffer_Terrain,
-	Prototype_VIBuffer_Terrain_1,
-	Prototype_VIBuffer_Terrain_2,
-	Prototype_VIBuffer_Terrain_3,
-	Prototype_VIBuffer_Terrain_4,
-	Prototype_VIBuffer_Terrain_5,
 	Prototype_VIBuffer_Terrain_Edit,
 	Prototype_VIBuffer_Point_Instance_1,
 	Prototype_VIBuffer_Point_Instance_2,
@@ -3328,6 +3323,13 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
 
+
+		Prototype_VIBuffer_Terrain_0,
+		Prototype_VIBuffer_Terrain_1,
+		Prototype_VIBuffer_Terrain_2,
+		Prototype_VIBuffer_Terrain_3,
+		Prototype_VIBuffer_Terrain_4,
+		Prototype_VIBuffer_Terrain_5,
 };
 
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
@@ -3446,6 +3448,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_VIBuffer_Terrain:
 		return TEXT("Prototype_Component_VIBuffer_Terrain");
+		break;
+	case Prototype_VIBuffer_Terrain_0:
+		return TEXT("Prototype_Component_VIBuffer_Terrain_0");
 		break;
 	case Prototype_VIBuffer_Terrain_1:
 		return TEXT("Prototype_Component_VIBuffer_Terrain_1");

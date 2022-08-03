@@ -1293,7 +1293,7 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	//EffectTest
 
 
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain),
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_0),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 128, 128)));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_VIBuffer_Terrain_1),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pDeviceContext, 66, 60)));

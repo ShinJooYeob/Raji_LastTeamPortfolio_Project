@@ -1299,7 +1299,7 @@ CInstanceEffect_Fountain * CInstanceEffect_Fountain::Create(ID3D11Device * pDevi
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSGBOX("Fail to Create CInstanceEffect_Fountain");
+		MSGBOX("Fail to Create CInstanceEffect_FoIOuntain");
 		Safe_Release(pInstance);
 	}
 
