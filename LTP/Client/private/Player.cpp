@@ -87,17 +87,20 @@ _int CPlayer::Update(_double fDeltaTime)
 
 			_uint iNum = 0;
 
-			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_1"));
+			//tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4"));
+			//tDescs[iNum].FollowingTarget = m_pTransformCom;
+			//iNum++;
+			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_3"));
 			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			tDescs[iNum].ParticleSize2 = _float3(6.f);
 			iNum++;
 			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_2"));
 			tDescs[iNum].FollowingTarget = m_pTransformCom;
+
 			iNum++;
-			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_3"));
-			tDescs[iNum].FollowingTarget = m_pTransformCom;
-			iNum++;
-			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4"));
-			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			//tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_1"));
+			//tDescs[iNum].FollowingTarget = m_pTransformCom;
+			//tDescs[iNum].eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
 			iNum++;
 
 			for (_uint i = 0 ; i < 4 ; i ++)

@@ -1103,7 +1103,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_INST();
@@ -1123,7 +1123,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_INST();
@@ -1146,7 +1146,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1166,7 +1166,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1186,7 +1186,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1206,7 +1206,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1228,7 +1228,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1249,7 +1249,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1270,7 +1270,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1291,7 +1291,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1313,7 +1313,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();
@@ -1335,7 +1335,7 @@ technique11		DefaultTechnique
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_cw);
+		SetRasterizerState(CullMode_None);
 
 		VertexShader = compile vs_5_0 VS_MAIN_INST();
 		GeometryShader = compile gs_5_0 GS_MAIN_Noise();

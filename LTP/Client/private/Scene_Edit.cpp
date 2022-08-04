@@ -5609,7 +5609,39 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 	Make_VerticalSpacing(1);
 
+
+	{
+		ImGui::DragFloat("RotationSpeed", &m_tParticleDesc.TempBuffer_0.z,1.618f); 
+		if (m_tParticleDesc.TempBuffer_0.z != 0)
+		{
+			if (ImGui::Button("-               ", ImVec2(20, 18)))
+			{
+
+				m_tParticleDesc.TempBuffer_0.w = (m_tParticleDesc.TempBuffer_0.w - 1);
+				if (m_tParticleDesc.TempBuffer_0.w < FollowingDir_Right) m_tParticleDesc.TempBuffer_0.w = FollowingDir_Right;
+
+			}ImGui::SameLine(0, 10);
+			if (ImGui::Button("+                ", ImVec2(20, 18)))
+			{
+				m_tParticleDesc.TempBuffer_0.w = (m_tParticleDesc.TempBuffer_0.w + 1);
+				if (m_tParticleDesc.TempBuffer_0.w >= FollowingDir_End) m_tParticleDesc.TempBuffer_0.w = (FollowingDir_End - 1);
+			}
+			string Temp = "Rot Dir : " + string(Tag_InstancePass(eFollowingDirID(_uint(m_tParticleDesc.TempBuffer_0.w))));
+			ImGui::SameLine(0, 10);		ImGui::Text(Temp.c_str());
+		}
+	}
+
+
+
+	Make_VerticalSpacing(1);
+
 	ImGui::Checkbox("Billboard", &m_tParticleDesc.bBillboard); ImGui::SameLine();
+	if (m_tParticleDesc.bBillboard)
+	{
+		_bool bBool = (m_tParticleDesc.TempBuffer_0.y > 0) ? true: false;
+		ImGui::Checkbox("ExecptYBillborad", &bBool); ImGui::SameLine();
+		m_tParticleDesc.TempBuffer_0.y = (bBool) ? 1.f: 0;
+	}
 	ImGui::Checkbox("AlphaBlendON", &m_tParticleDesc.AlphaBlendON); ImGui::SameLine();
 	ImGui::Checkbox("Emissive", &m_tParticleDesc.bEmissive);
 

@@ -44,6 +44,8 @@ _int CInstanceEffect::Update(_double TimeDelta)
 {
 	if (0 > __super::Update(TimeDelta))
 		return -1;
+
+
 	Update_ParticleAttribute(TimeDelta);
 
 
@@ -86,9 +88,47 @@ _int CInstanceEffect::Render()
 		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
+			if (m_tInstanceDesc.TempBuffer_0.z != 0)
+			{
+				_Vector RotDir = XMVectorSet(1,0,0,0);
+
+				switch (_uint(m_tInstanceDesc.TempBuffer_0.w))
+				{
+				case FollowingDir_Right:
+					RotDir = matInvView.r[0];
+					break;
+				case FollowingDir_Up:
+					if (m_tInstanceDesc.TempBuffer_0.y > 0)
+					{
+						RotDir = XMVectorSet(0, 1, 0, 0);
+					}
+					else
+					{
+						RotDir = matInvView.r[1];
+					}
+					break;
+				case FollowingDir_Look:
+					RotDir = matInvView.r[2];
+					break;
+				}
+
+				matInvView = matInvView * XMMatrixRotationAxis(RotDir, XMConvertToRadians(m_tInstanceDesc.TempBuffer_0.z *m_vecParticleAttribute[i]._age));
+			}
+
+
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), matInvView.r[0] * m_vecParticleAttribute[i]._size.x);
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), matInvView.r[1]  * m_vecParticleAttribute[i]._size.y);
+			if (m_tInstanceDesc.TempBuffer_0.y > 0)
+			{
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), XMVectorSet(0, 1, 0, 0) * m_vecParticleAttribute[i]._size.y);
+			}
+			else
+			{
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), matInvView.r[1] * m_vecParticleAttribute[i]._size.y);
+
+			}
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), matInvView.r[2] * m_vecParticleAttribute[i]._size.z);
+
+
 
 
 			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
@@ -126,9 +166,32 @@ _int CInstanceEffect::Render()
 		FAILED_CHECK(m_pVIBufferCom->Lock(&SubResource));
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), ((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[0]))->XMVector() * m_vecParticleAttribute[i]._size.x);
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), ((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[1]))->XMVector()* m_vecParticleAttribute[i]._size.y);
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), ((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[2]))->XMVector()* m_vecParticleAttribute[i]._size.z);
+
+			_Matrix matLocal = m_vecParticleAttribute[i]._LocalMatirx.XMatrix();
+
+			if (m_tInstanceDesc.TempBuffer_0.z != 0)
+			{
+				_Vector RotDir = XMVectorSet(1, 0, 0, 0);
+
+				switch (_uint(m_tInstanceDesc.TempBuffer_0.w))
+				{
+				case FollowingDir_Right:
+					RotDir = matLocal.r[0];
+					break;
+				case FollowingDir_Up:
+					RotDir = matLocal.r[1];
+					break;
+				case FollowingDir_Look:
+					RotDir = matLocal.r[2];
+					break;
+				}
+				matLocal = matLocal * XMMatrixRotationAxis(RotDir, XMConvertToRadians(m_tInstanceDesc.TempBuffer_0.z * m_vecParticleAttribute[i]._age));
+			}
+
+
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), matLocal.r[0] * m_vecParticleAttribute[i]._size.x);
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), matLocal.r[1] * m_vecParticleAttribute[i]._size.y);
+			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vLook), matLocal.r[2] * m_vecParticleAttribute[i]._size.z);
 
 			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vRight), XMVectorSet(1,0,0,0));
 			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vUp), XMVectorSet(0, 1, 0, 0));
