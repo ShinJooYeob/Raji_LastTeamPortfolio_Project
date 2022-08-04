@@ -190,6 +190,19 @@ HRESULT CCollisionMgr::Inspect_PlayerParkur_To_ParkurObj()
 		}
 	}
 
+	for (auto& SrcElement : m_CollisionGroupList[CollisionType_Player2])
+	{
+		for (auto& DestElemet : m_CollisionGroupList[CollisionType_NPC])
+		{
+			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
+			{
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_NPC);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_Player2);
+			}
+
+		}
+	}
+
 	return S_OK;
 }
 

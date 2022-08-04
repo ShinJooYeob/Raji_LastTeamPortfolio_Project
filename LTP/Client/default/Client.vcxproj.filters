@@ -445,6 +445,15 @@
     <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle">
       <UniqueIdentifier>{6c814f66-38fb-4438-9697-e42cc683c147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\DynamicPlatform">
+      <UniqueIdentifier>{b65683cd-5cc8-4a4c-b7f0-83c5e96be572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\98. Scene_Laboratory">
+      <UniqueIdentifier>{ef995be2-b5e3-49a8-b6bb-57826f4c7b74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\10.Golu">
+      <UniqueIdentifier>{c3a998d9-665e-4ec5-9bc4-14b42837d0c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -970,6 +979,15 @@
     <ClInclude Include="..\public\Gear.h">
       <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DynamicPlatform.h">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\DynamicPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Laboratory_Jino.h">
+      <Filter>02.Scene\98. Scene_Laboratory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Golu.h">
+      <Filter>01.GameObject\10.Golu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1478,6 +1496,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Gear.cpp">
       <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DynamicPlatform.cpp">
+      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\DynamicPlatform</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Laboratory_Jino.cpp">
+      <Filter>02.Scene\98. Scene_Laboratory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Golu.cpp">
+      <Filter>01.GameObject\10.Golu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -193,6 +193,9 @@
     <Filter Include="01.Utillity\01.ComponentMgr\01.Components\10.Dissolve">
       <UniqueIdentifier>{af0684f7-f68e-4a1b-ac5a-8ad71860fe0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\06.Plat">
+      <UniqueIdentifier>{87d7abbd-4ef6-44e5-89b6-3b3191ef1563}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -381,6 +384,9 @@
     <ClInclude Include="..\public\Dissolve.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\10.Dissolve</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Plat.h">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\06.Plat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -550,6 +556,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Dissolve.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\10.Dissolve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Plat.cpp">
+      <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\06.Plat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

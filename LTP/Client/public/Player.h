@@ -17,7 +17,8 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, 
+		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -115,7 +116,9 @@ public:
 	};
 
 	enum EPLAYERANIM_ETC {
-		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, BASE_ANIM_JUMP_READY, BASE_ANIM_JUMP_CHARGING, BASE_ANIM_JUMP_JUMPING, BASE_ANIM_SLEEP, BASE_ANIM_WAKEUP, ETC_ANIM_END
+		DAMAGE_ANIM_DAMAGE = PETAL_ANIM_END, DAMAGE_ANIM_DEATH, BASE_ANIM_JUMP_READY, BASE_ANIM_JUMP_CHARGING, BASE_ANIM_JUMP_JUMPING, BASE_ANIM_SLEEP, BASE_ANIM_WAKEUP, 
+		BASE_ANIM_DYNAMICPLATFORM_IDLE, BASE_ANIM_DYNAMICPLATFORM_WALK, 
+		ETC_ANIM_END
 	};
 	//
 
@@ -215,6 +218,12 @@ public:
 	// Petal
 	void	Set_State_PetalStart(_float3 vPetalPos, _double fDeltaTime);
 
+	// Dynamic Platform
+	void	Set_State_OnDynamicPlatformStart();
+
+	// Falling
+	void	Set_State_FallingStart(_double fDeltaTime);
+
 public:
 	EPLAYER_STATE Get_PlayerState();
 	EPARKOUR_LEDGESTATE Get_LedgeState();
@@ -234,7 +243,6 @@ private: /* Change Start State */
 	void	Set_State_TurnBackStart(_double fDeltaTime);							// TurnBack
 
 	void	Set_State_JumpStart(_double fDeltaTime);								// Jump
-	void	Set_State_FallingStart(_double fDeltaTime);								// Falling
 
 	void	Set_State_DamageStart(_float fKnockbackPower, _fVector vDamageDir);		// TakeDamage
 	void	Set_State_DeathStart();													// Death
@@ -254,6 +262,9 @@ private:
 	HRESULT Update_State_Move(_double fDeltaTime);
 	HRESULT Update_State_Jump(_double fDeltaTime);
 	HRESULT Update_State_Fall(_double fDeltaTime);
+
+	HRESULT Update_State_DynamicPlatform_Idle(_double fDeltaTime);
+	HRESULT Update_State_DynamicPlatform_Move(_double fDeltaTime);
 
 	HRESULT Update_State_Attack(_double fDeltaTime);
 	HRESULT Update_State_UtilitySkill(_double fDeltaTime);

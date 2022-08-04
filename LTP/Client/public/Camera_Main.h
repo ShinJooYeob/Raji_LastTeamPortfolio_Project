@@ -137,6 +137,8 @@ private:
 	_int				Update_NormalMode(_double fDeltaTime);
 	_int				Update_TargetingMode(_double fDeltaTime);
 
+	_int				Update_RajiGolu_MiniGameMode(_double fDeltaTime);
+
 	void				Update_CamMoveWeight();
 
 private:

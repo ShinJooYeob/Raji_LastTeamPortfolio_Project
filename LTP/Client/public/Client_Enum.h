@@ -205,7 +205,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 enum ECameraMode
 {
-	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX
+	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX, CAM_MODE_RAJIGOLU_MINIGAME
 };
 
 enum UPGRADEID
@@ -228,6 +228,8 @@ enum SCENEID
 	SCENE_STAGE7,
 	SCENE_BOSS,
 	SCENE_ENDING,
+
+	SCENE_LABORATORY_JINO,
 
 	SCENE_EDIT,
 	SCENE_END
@@ -262,6 +264,8 @@ static const char* Tag_ScenenName(SCENEID eTag)
 		return "SCENE_BOSS";
 	case SCENE_ENDING:
 		return "SCENE_ENDING";
+	case SCENE_LABORATORY_JINO:
+		return "SCENE_LABORATORY_JINO";
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
@@ -291,7 +295,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerWeapon_Arrow,
 	Prototype_PlayerEffect_ShellingRange,
 	Prototype_PlayerEffect_ShellingPoint,
-
+	Prototype_NPC_Golu,
 
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_Trigger_ChangeCameraView,
@@ -413,6 +417,8 @@ enum OBJECTPROTOTYPEID
 		
 	Prototype_Object_InteractObj_Lotus,
 
+	Prototype_Object_DynamicPlatform,
+
 	Object_Prototype_End
 };
 
@@ -446,6 +452,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Player:
 		return TEXT("Prototype_Player");
+		break;
+	case Prototype_NPC_Golu:
+		return TEXT("Prototype_NPC_Golu");
 		break;
 	case Prototype_PlayerWeapon_Spear:
 		return TEXT("Prototype_PlayerWeapon_Spear");
@@ -734,6 +743,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	
 	case Prototype_Object_InteractObj_Lotus:
 		return TEXT("Prototype_Object_InteractObj_Lotus");
+
+	case Prototype_Object_DynamicPlatform:
+		return TEXT("Prototype_Object_DynamicPlatform");
 		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -3228,6 +3240,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Elephant_Head,
 	Prototype_Mesh_BallMesh,
 	Prototype_Mesh_DarkBaldTree,
+	Prototype_Mesh_Elevator,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 
@@ -3240,6 +3253,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Chakra,
 	Prototype_Mesh_PlayerWeapon_Arrow,
 	Prototype_Mesh_PlayerEffect_ShellingParabola,
+	Prototype_Mesh_Golu,
 
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
@@ -3324,6 +3338,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_EnvMappedWater,
 
 
+	Prototype_VIBuffer_Plat,
 		Prototype_VIBuffer_Terrain_0,
 		Prototype_VIBuffer_Terrain_1,
 		Prototype_VIBuffer_Terrain_2,
@@ -3446,6 +3461,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Component_VIBuffer_Rect");
 		break;
 
+	case Prototype_VIBuffer_Plat:
+		return TEXT("Prototype_Component_VIBuffer_Plat");
+		break;
+		
 	case Prototype_VIBuffer_Terrain:
 		return TEXT("Prototype_Component_VIBuffer_Terrain");
 		break;
@@ -9534,6 +9553,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("SpearWave.fbx");
 		break;
 
+	case Prototype_Mesh_Golu:
+		return TEXT("Golu.fbx");
+		break;
+
 	case Prototype_Mesh_DemonTree_Seg01:
 		return TEXT("DemonTree_Seg01.fbx");
 
@@ -9639,7 +9662,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_DarkBaldTree:
 		return TEXT("DarkBaldTree.fbx");
 		break;
-		
+	
+	case Prototype_Mesh_Elevator:
+		return TEXT("Elevator.fbx");
+		break;
+
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");
 		break;

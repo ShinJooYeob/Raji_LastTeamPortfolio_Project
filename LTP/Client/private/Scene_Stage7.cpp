@@ -10,6 +10,7 @@
 #include "TestLedgeTrigger.h"
 #include "MonsterBatchTrigger.h"
 #include "Trigger_ChangeCameraView.h"
+#include "Elevator.h"
 
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -35,7 +36,8 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	
+	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
+
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
@@ -195,7 +197,7 @@ HRESULT CScene_Stage7::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 10.f, -5.f);
+	CameraDesc.vEye = _float3(0, 14.0000162f, -18.2519970f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -227,15 +229,19 @@ HRESULT CScene_Stage7::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE7);
 	}
-	
+	m_pMainCam->Set_MaxTargetArmLength(10.f);
+	m_pMainCam->Set_MinTargetArmLength(4.f);
+	m_pMainCam->Set_TargetArmLength(10.f);
 	return S_OK;
 }
 
 HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// _float3(0.f, 10, 0.f) Start Pos
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, 0.f)));
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 14.0000162f, -18.2519970f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
+	// _float3(0.f, 10, 0.f) Start Pos
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -243,18 +249,19 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
 
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-
-
 	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	m_pMainCam->Lock_CamLook(true);
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(0.f, 4.f, -2.f));
+	static_cast<CPlayer*>(pPlayer)->Update_AttachCamPos();
+
 	
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	//m_pMainCam->Set_TargetArmLength(3.f);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 14.0000162f, -18.2519970f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	pPlayer->Update_AttachCamPos();
-	//m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f));
-	
+
 
 
 	return S_OK;
@@ -562,6 +569,22 @@ HRESULT CScene_Stage7::Ready_Layer_CameraTrigger(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Trigger_ChangeCameraView), &ChangeCameraViewDesc));
 
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_Layer_InteractObject(const _tchar * pLayerTag)
+{
+	CElevator::ELEVATORDESC tElevatorDesc;
+	tElevatorDesc.fStartPos = _float3(-0.032f, 58.1f, 145.368f);
+	tElevatorDesc.fDestPos = _float3(-0.032f, 30.1f, 145.368f);
+	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(90.f), 0.f);
+	tElevatorDesc.fScale = _float3(0.05f);
+	tElevatorDesc.fMoveSpeed = 5.f;
+	tElevatorDesc.fColliderOffset_Y = 0.f;
+	tElevatorDesc.iMeshType = 1;
+	tElevatorDesc.fColliderScale = 2.f;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 	return S_OK;
 }

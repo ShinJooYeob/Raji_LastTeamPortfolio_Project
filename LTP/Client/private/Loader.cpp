@@ -57,6 +57,7 @@
 ////Jino_Jino//////////////////////////////////////////////////////////////////
 // Player
 #include "Player.h"
+#include "Golu.h"
 // Player_Weapon
 #include "PlayerWeapon_Spear.h"
 #include "PlayerWeapon_Bow.h"
@@ -86,6 +87,7 @@
 #include "CinematicTrigger.h"
 #include "CurtainTrigger.h"
 //Interact Obj
+#include "DynamicPlatform.h"
 #include "Elevator.h"
 #include "LilyPad.h"
 #include "Lotus.h"
@@ -189,7 +191,11 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 	case SCENEID::SCENE_ENDING:
 		pLoader->Load_Scene_Ending(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
-		
+	
+	case SCENEID::SCENE_LABORATORY_JINO:
+		pLoader->Load_Scene_Laboratory_Jino(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
 	case SCENEID::SCENE_EDIT:
 
 		pLoader->Load_Scene_Edit(tThreadArg.IsClientQuit, tThreadArg.CriSec);
@@ -1376,6 +1382,7 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_06.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_PierFenceEnd_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"BG_Mountain_3.fbx", TransformMatrix);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Elevator.fbx", TransformMatrix);
 
 #pragma endregion
 
@@ -1395,7 +1402,7 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
-
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Elevator), CElevator::Create(m_pDevice, m_pDeviceContext)));
 	// Monster
 	//FAILED_CHECK(Load_AllMonster());
 
@@ -1559,6 +1566,53 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	EnterCriticalSection(_CriSec);
 	m_bIsLoadingFinished = true;
 	LeaveCriticalSection(_CriSec);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Load_Scene_Laboratory_Jino(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+#pragma  region Static_Mesh
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DS_Platform_28.fbx", TransformMatrix);
+	
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
+
+#pragma endregion
+
+#pragma region PROTOTYPE_COMPONENT
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_LABORATORY_JINO, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/BossStage_Rangda.dat")))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DynamicPlatform), CDynamicPlatform::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NPC_Golu), CGolu::Create(m_pDevice, m_pDeviceContext)));
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_COMPONENT
+
+
+#pragma endregion
+
+	RELEASE_INSTANCE(CGameInstance);
+	EnterCriticalSection(_CriSec);
+	m_iLoadingMaxCount = 1;
+	m_iLoadingProgressCount = 0;
+	LeaveCriticalSection(_CriSec);
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+
 
 	return S_OK;
 }

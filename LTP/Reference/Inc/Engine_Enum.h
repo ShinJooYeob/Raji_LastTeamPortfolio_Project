@@ -8,7 +8,7 @@ namespace Engine {
 		POSTPROCESSING_DDFOG, POSTPROCESSING_GODRAY, POSTPROCESSING_LENSEFLARE, POSTPROCESSING_CAMMOTIONBLUR, POSTPROCESSING_END
 	};
 	enum CollisionTypeID{  CollisionType_Player, CollisionType_PlayerWeapon, CollisionType_Monster, CollisionType_MonsterWeapon, 
-		CollisionType_NPC, CollisionType_DynaicObject, CollisionType_Terrain, CollisionType_Repel, CollisionType_PlayerParkur, CollisionType_END};
+		CollisionType_NPC, CollisionType_DynaicObject, CollisionType_Terrain, CollisionType_Repel, CollisionType_PlayerParkur, CollisionType_Player2, CollisionType_END};
 
 	enum CHANNELID { CHANNEL_PLAYER, CHANNEL_MONSTER, CHANNEL_MAPOBJECT, CHANNEL_EFFECT, CHANNEL_UI, CHANNEL_SUBEFFECT, CHANNEL_BGM,CHANNEL_MAXCHANNEL };
 

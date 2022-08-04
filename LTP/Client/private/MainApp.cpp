@@ -318,6 +318,9 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect),
 		CVIBuffer_Rect::Create(m_pDevice, m_pDeviceContext)));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Plat),
+		CVIBuffer_Plat::Create(m_pDevice, m_pDeviceContext)));
+
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Cube),
 		CVIBuffer_Cube::Create(m_pDevice, m_pDeviceContext)));
 

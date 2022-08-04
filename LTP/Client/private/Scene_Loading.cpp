@@ -12,6 +12,7 @@
 #include "Scene_Stage6.h"
 #include "Scene_Stage7.h"
 #include "Scene_Boss.h"
+#include "Scene_Laboratory_Jino.h"
 //#include "Scene_Ending.h"
 
 
@@ -123,7 +124,9 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Boss::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
 
-
+		case SCENEID::SCENE_LABORATORY_JINO:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Laboratory_Jino::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
 
 //		case SCENEID::SCENE_ENDING:
 //			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Ending::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));

@@ -14,6 +14,8 @@ public:
 		_float3			fScale;
 		_float3			fDestPos;
 		_float			fColliderOffset_Y;
+		_float			fColliderScale = 0.25f;
+		_uint			iMeshType = 0;
 	}ELEVATORDESC;
 
 private:
