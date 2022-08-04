@@ -2023,16 +2023,17 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Time
 		MeshDesc.fMaxTime_Duration = 2.0f;
-		MeshDesc.fAppearTime = 0.15f;
+		MeshDesc.fAppearTime = 1.0f;
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 180;
-		MeshDesc.MaskTextureIndex = 58;
-		MeshDesc.NoiseTextureIndex = 163;
+		MeshDesc.MaskTextureIndex = 120;
+		MeshDesc.NoiseTextureIndex = 370;
+		MeshDesc.NoiseTextureIndex = 285;
 
 		// Noise
-		MeshDesc.noisingdir = _float2(1.0f, 0.0f).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(-1, 0).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 30.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 
