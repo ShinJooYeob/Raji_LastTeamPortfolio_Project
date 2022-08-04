@@ -1192,16 +1192,14 @@ enum COMPONENTPROTOTYPEID
 
 	//////StaticMesh//////////None하고 알게락 레지 사이에다가만 넣을 것//////////////////////////////////////////////////////////
 	Prototype_Mesh_None,
+	///////JYMesh///////////////////////////////////////////////////////////////////
+
 	Prototype_Mesh_ConeMesh,
 	Prototype_Mesh_JY_Tornado,
 	Prototype_Mesh_Spear_UltiEffect,
 	Prototype_Mesh_Spear_NormalEffect,
 	Prototype_Mesh_Spear_SecondAttack,
-
-	///////JYMesh///////////////////////////////////////////////////////////////////
 	Prototype_Mesh_Aura,
-
-
 	Prototype_Mesh_Aura2,
 	Prototype_Mesh_Beacon_Shape,
 	Prototype_Mesh_Big_Sheild,
@@ -1231,8 +1229,6 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spring2,
 	Prototype_Mesh_JYLaser,
 	
-	
-
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 

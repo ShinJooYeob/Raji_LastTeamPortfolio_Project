@@ -21,7 +21,8 @@
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
 
-#define NotOnNavi
+//#define NotOnNavi
+
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -374,7 +375,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 
 #ifndef NotOnNavi
-		//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 #endif // NotOnNavi
 
 	}

@@ -346,9 +346,9 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 65.279f, 2.043f, 325.343f
 	//_float3(151.975f, -22.4f, 377.3486f)	//Gear_Puzzle
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -684,10 +684,10 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(160.f, 180.f, -100.f, 1.f));
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(160.f, -128.f, 250.f));
-	pLightDesc->vDiffuse = _float4(0.18359375f, 0.2109375f, 0.328125f, 1.f);
-	pLightDesc->vAmbient = _float4(0.15234375f, 0.171875f, 0.265625f, 1.f);
+	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0.f, 164.f, 36.314f, 1.f));
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
+	pLightDesc->vDiffuse = _float4(0.0859375f, 0.20703125f, 0.8203125f, 1.f);
+	pLightDesc->vAmbient = _float4(0.15625f, 0.35546875f, 0.47265625f, 1.f);
 	pLightDesc->vSpecular = _float4(0.15625f, 0.234375f, 0.12109375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -698,20 +698,20 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.35f);
+	pRenderer->Set_ShadowIntensive(0.15f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5F);
+	pRenderer->Set_BloomBrightnessMul(2.0F);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(160.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));
-	pRenderer->Set_FogStartDist(0.001f);
+	pRenderer->Set_FogColor(_float3(0.f, 0.0859375f, 0.2578125f));
+	pRenderer->Set_FogStartDist(40.f);
 	pRenderer->Set_FogGlobalDensity(0.2f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
+	pRenderer->Set_FogHeightFalloff(0.03f);
 
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE

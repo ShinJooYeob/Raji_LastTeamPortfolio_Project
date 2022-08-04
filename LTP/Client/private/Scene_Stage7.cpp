@@ -311,7 +311,7 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.632f);
+	pRenderer->Set_ShadowIntensive(0.35f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
 	pRenderer->Set_SunSize(0.5f);
@@ -364,7 +364,7 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.350f);
+	pRenderer->Set_ShadowIntensive(0.35f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
 	pRenderer->Set_SunSize(0.5f);

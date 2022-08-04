@@ -1000,7 +1000,6 @@
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClInclude>
     <ClInclude Include="CflameTerrain.h" />
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1525,7 +1524,6 @@
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClCompile>
     <ClCompile Include="CflameTerrain.cpp" />
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
