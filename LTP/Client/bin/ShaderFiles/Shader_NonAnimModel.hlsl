@@ -602,7 +602,7 @@ PS_OUT_NODEFERRED PS_Distortion_All_DiffuseMix(PS_IN_Distortion In)
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
 
 	//fireColor *= alphaColor;
-	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	fireColor.a = length(alphaColor.xyz) * g_vColor;
 	Out.vDiffuse = fireColor;
 
 
@@ -675,7 +675,7 @@ PS_OUT_NODEFERRED PS_Distortion_All_DiffuseMix_AppearNDisApper(PS_IN_Distortion 
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
 
 	//fireColor *= alphaColor;
-	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	fireColor.a = length(alphaColor.xyz) * g_vColor;
 	Out.vDiffuse = fireColor;
 
 
@@ -724,7 +724,7 @@ PS_OUT PS_Noise(PS_IN_Distortion In)
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
 
 	//fireColor *= alphaColor;
-	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	fireColor.a = length(alphaColor.xyz) * g_vColor;
 	Out.vDiffuse = fireColor;
 
 
@@ -817,7 +817,7 @@ PS_OUT PS_Noise_AppearNDisApper(PS_IN_Distortion In)
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
 
 	//fireColor *= alphaColor;
-	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	fireColor.a = length(alphaColor.xyz) * g_vColor;
 	Out.vDiffuse = fireColor;
 
 	if (Out.vDiffuse.a < g_fAlphaTestValue)discard;
