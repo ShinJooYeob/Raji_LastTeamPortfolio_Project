@@ -1431,17 +1431,19 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.55f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.55)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
 
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 2 && PlayRate >= 0.8f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.8)
 			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTextureParticleTransform_Tail);
-
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH5, m_pTextureParticleTransform_Tail);
+				
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.vFixedPosition = m_pTextureParticleTransform_Tail->Get_MatrixState_Float3(CTransform::STATE_POS);
 				instanceDesc.TotalParticleTime = 1.0f;

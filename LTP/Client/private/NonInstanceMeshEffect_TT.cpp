@@ -95,6 +95,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		return _int();
 	}
 
+	
 
 
 	if (mIsInit == false)
@@ -182,7 +183,16 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 	}
 
-
+	if (mIsDealy)
+	{
+		mDealyTime -= fDeltaTime;
+		if (mDealyTime >= 0)
+		{
+			mDealyTime -= fDeltaTime;
+			return 0;
+		}
+		mIsDealy = false;
+	}
 
 	m_fCurTime_Duration += (_float)fDeltaTime;
 	mMeshDesc.RotationSpeedPerSec += _float(mAddDesc.AccRotSpeed*fDeltaTime);
@@ -508,7 +518,11 @@ _int CNonInstanceMeshEffect_TT::LateUpdate(_double fDeltaTimer)
 
 _int CNonInstanceMeshEffect_TT::Render()
 {
-	if (__super::Render() < 0)		return -1;
+	if (__super::Render() < 0)		
+		return -1;
+
+	if (mIsDealy)
+		return 0;
 
 	NULL_CHECK_BREAK(m_pModel);
 

@@ -21,6 +21,8 @@ typedef struct tag_MESHADDDATA
 	_bool FixFlag_Move = false;
 	_bool FixFlag_Rot = false;
 
+	_double DealyTime = 0;
+
 	_float3 InitRot= _float3::Zero();
 	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
 	_bool bLockScale[3] = { false, };
@@ -103,8 +105,10 @@ public:
 
 		// ========================================
 		MESHEFFECT_MONSTER_ML_TAIL1,
+
 		MESHEFFECT_MONSTER_ML_TAIL2,
 		MESHEFFECT_MONSTER_ML_TAIL3,
+		MESHEFFECT_MONSTER_ML_CASH5,
 
 		MESHEFFECT_MONSTER_ML_HAND_L,
 		MESHEFFECT_MONSTER_ML_HAND_R,
@@ -115,7 +119,6 @@ public:
 		MESHEFFECT_MONSTER_ML_CASH4,
 
 
-		MESHEFFECT_MONSTER_ML_CASH5,
 		MESHEFFECT_MONSTER_ML_CASH6,
 		MESHEFFECT_MONSTER_ML_CASH7,
 		MESHEFFECT_MONSTER_ML_CASH8,
