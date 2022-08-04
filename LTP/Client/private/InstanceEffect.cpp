@@ -354,15 +354,15 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 
 	if (!m_tInstanceDesc.bBillboard)
 	{
-		_Vector vRight, vUp, vLook;
+	_Vector vRight, vUp, vLook;
 
-		vUp = attribute->_velocity.Get_Nomalize();
-		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
-		vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
+	vUp = attribute->_velocity.Get_Nomalize();
+	vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vUp));
+	vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
 
-		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[0])), vRight);
-		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[1])), vUp);
-		XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[2])), vLook);
+	XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[0])), vRight);
+	XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[1])), vUp);
+	XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[2])), vLook);
 
 	}
 
@@ -415,15 +415,15 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 			if (m_vUp.y == 1 || m_vUp.y == -1) m_vUp = _float3(0.000001f, 1, 0).Get_Nomalize();
 
 
-				m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
-				m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
-			
+			m_vRight = XMVector3Normalize(_float3(0, 1, 0).Get_Cross(m_vUp.XMVector()));
+			m_vLook = XMVector3Normalize(m_vRight.Get_Cross(m_vUp.XMVector()));
+
 
 		}
 	}
 
 
-	_Vector CamPos = XMVectorSet(0,0,0,0);
+	_Vector CamPos = XMVectorSet(0, 0, 0, 0);
 	if (m_tInstanceDesc.AlphaBlendON)
 		CamPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA);
 
@@ -432,21 +432,28 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 	if (m_PassedTime < m_tInstanceDesc.TotalParticleTime)
 	{
-		for (; iter != m_vecParticleAttribute.end();iter++)
+		for (; iter != m_vecParticleAttribute.end(); iter++)
 		{
 			iter->_age += (_float)fDeltaTime;
 
 			if (iter->_age < 0) continue;
 
-			if(iter->_age - fDeltaTime < 0)
-				ResetParticle(&(*iter));
-
+			if (m_tInstanceDesc.eParticleTypeID != InstanceEffect_Suck)
+			{
+				if (iter->_age - fDeltaTime < 0)
+					ResetParticle(&(*iter));
+			}
 			Update_Position_by_Velocity(&(*iter), fDeltaTime);
 
 			Update_TextureChange(&(*iter), fDeltaTime, pInstance);
-			
-			if ((*(_float3*)&iter->_LocalMatirx._41).Get_Lenth() > m_tInstanceDesc.fMaxBoundaryRadius	|| (iter->_age > iter->_lifeTime))
-				ResetParticle(&(*iter));
+
+			if (m_tInstanceDesc.eParticleTypeID != InstanceEffect_Suck)
+			{
+				if ((*(_float3*)&iter->_LocalMatirx._41).Get_Lenth() > m_tInstanceDesc.fMaxBoundaryRadius || (iter->_age > iter->_lifeTime))
+					ResetParticle(&(*iter));
+			}
+
+	
 
 			if (!m_bIsMapParitcle && m_tInstanceDesc.AlphaBlendON)
 				iter->_CamDist = XMVectorGetX(XMVector3Length(((iter->_LocalMatirx.XMatrix().r[3] + iter->_TargetParentPosition.XMVector()) - CamPos)));
@@ -1341,6 +1348,8 @@ void CInstanceEffect_Suck::Reset_Velocity(_float3 & fAttVlocity)
 
 void CInstanceEffect_Suck::Update_Position_by_Velocity(INSTANCEATT * tParticleAtt, _double fTimeDelta)
 {
+
+
 	_float3 position = *(_float3*)(&tParticleAtt->_LocalMatirx._41);
 	_float3 Oldposition = position;
 	position = position.XMVector() + position.Get_Nomalize() * -tParticleAtt->_force * _float(fTimeDelta);

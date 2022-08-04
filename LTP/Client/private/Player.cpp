@@ -80,7 +80,27 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
+			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
+			INSTPARTICLEDESC tDescs[5];
+
+			_uint iNum = 0;
+
+			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_1"));
+			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			iNum++;
+			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_2"));
+			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			iNum++;
+			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_3"));
+			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			iNum++;
+			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4"));
+			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			iNum++;
+
+			for (_uint i = 0 ; i < 4 ; i ++)
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDescs[i]);
 
 			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 

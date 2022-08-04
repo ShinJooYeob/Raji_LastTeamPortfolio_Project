@@ -5379,6 +5379,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		memcpy(&tt, fArr, sizeof(float) * 2);
 		m_tParticleDesc.vNoisePushingDir = tt.Get_Nomalize();
 
+		ImGui::DragFloat("Push Power", &m_tParticleDesc.fDistortionNoisingPushPower, 0.001f, -100, 100);
 			
 		int tempint = m_tParticleDesc.iNoiseTextureIndex;
 
@@ -5388,6 +5389,10 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		tempint = m_tParticleDesc.iMaskingTextureIndex;
 		ImGui::InputInt("MaskingTex Index", &tempint);
 		m_tParticleDesc.iMaskingTextureIndex = tempint;
+
+		ImGui::DragFloat("AppearTimer", &m_tParticleDesc.fAppearTimer,0.016f,0, m_tParticleDesc.EachParticleLifeTime * 0.5f);
+		
+
 
 	}
 	else if (m_tParticleDesc.ePassID >= InstancePass_AllDistortion && m_tParticleDesc.ePassID <= InstancePass_Distortion_ColorMix_Bright)
