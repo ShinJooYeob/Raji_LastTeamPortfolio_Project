@@ -334,30 +334,6 @@
     <Filter Include="01.GameObject\08.Effect\00.NonInstanceMeshEffect">
       <UniqueIdentifier>{fde42bc4-6ac8-4175-8951-b07a89c71625}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject">
-      <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject">
-      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue">
-      <UniqueIdentifier>{92aafd35-26ea-4779-ae53-ff36b4735169}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject">
-      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree">
-      <UniqueIdentifier>{c0676edd-9c61-4af6-b132-7e2bbd16463a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh">
-      <UniqueIdentifier>{f9508001-e183-403f-bfe5-bc11ef094b16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle">
-      <UniqueIdentifier>{d3924e29-680f-4f68-8708-8feed799548a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
-      <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\98.TriggerObject\01. JumpTrigger">
       <UniqueIdentifier>{77149153-f4dd-4279-b594-ff6a0f4514b5}</UniqueIdentifier>
     </Filter>
@@ -427,9 +403,6 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon">
       <UniqueIdentifier>{53608fc4-649f-44d8-8a67-d41fa6e3f185}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater">
-      <UniqueIdentifier>{dffb0478-2733-4bbe-a1bd-8bd61d398e43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\09.InteractObjects">
       <UniqueIdentifier>{c4826abb-dda2-4e59-aafd-97c7e2a2a64f}</UniqueIdentifier>
     </Filter>
@@ -441,6 +414,39 @@
     </Filter>
     <Filter Include="01.GameObject\09.InteractObjects\02.Lotus">
       <UniqueIdentifier>{d6aebe68-16a7-4a8d-b357-125406cc837a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject">
+      <UniqueIdentifier>{880cf650-b3bf-4e55-8d1f-9533bbe6ff9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject">
+      <UniqueIdentifier>{418f0e98-95f6-4574-8a22-0da5a987d033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue">
+      <UniqueIdentifier>{92aafd35-26ea-4779-ae53-ff36b4735169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject\EnvMappedWater">
+      <UniqueIdentifier>{dffb0478-2733-4bbe-a1bd-8bd61d398e43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject">
+      <UniqueIdentifier>{f24c4f66-f015-40ae-b5e0-ecaeb5f8f93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Demon_Tree">
+      <UniqueIdentifier>{c0676edd-9c61-4af6-b132-7e2bbd16463a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh">
+      <UniqueIdentifier>{f9508001-e183-403f-bfe5-bc11ef094b16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle">
+      <UniqueIdentifier>{d3924e29-680f-4f68-8708-8feed799548a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh">
+      <UniqueIdentifier>{9cffd377-5d17-4cda-bd32-73e8ec3314d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano">
+      <UniqueIdentifier>{fe4dcd32-8d48-4011-81d9-1db248a2570a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Monster\Boss\Chiedtian\Chiedtian_FlameTerrain">
+      <UniqueIdentifier>{eebf4bff-9736-42b9-a2aa-e3846452e1d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -556,10 +562,10 @@
       <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapObject.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject</Filter>
+      <Filter>01.GameObject\07.MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticMapObject.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\NaviPoint.h">
       <Filter>01.GameObject\96.NaviPoint</Filter>
@@ -774,10 +780,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TreeMesh.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Demon_Tree.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Rangda_Finger.h">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
@@ -819,7 +825,7 @@
       <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\FemaleStatue.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Mahabalasura.h">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -837,10 +843,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MandalaMesh.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MandalaPuzzle.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster_Wasp.h">
       <Filter>01.GameObject\02.Monster\Monster\Instance_Monster\Monster_Wasp</Filter>
@@ -954,13 +960,19 @@
     <ClInclude Include="..\public\LilyPad.h">
       <Filter>01.GameObject\09.InteractObjects\01.LilyPad</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
     <ClInclude Include="..\public\EnvMappedWater.h">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Lotus.h">
       <Filter>01.GameObject\09.InteractObjects\02.Lotus</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Volcano.h">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
+    </ClInclude>
+    <ClInclude Include="CflameTerrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1051,10 +1063,10 @@
       <Filter>01.GameObject\97.TestObject\00.For_EditorScene</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMapObject.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapObject.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject</Filter>
+      <Filter>01.GameObject\07.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\NaviPoint.cpp">
       <Filter>01.GameObject\96.NaviPoint</Filter>
@@ -1254,10 +1266,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TreeMesh.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree\TreeMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Demon_Tree.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\Demon_Tree</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Demon_Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rangda_Finger.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Finger</Filter>
@@ -1308,7 +1320,7 @@
       <Filter>01.GameObject\98.TriggerObject\99. TestLedgeTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FemaleStatue.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\FemaleStatue</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Mahabalasura.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura</Filter>
@@ -1326,10 +1338,10 @@
       <Filter>01.GameObject\02.Monster\Boss\Mahabalasura\MahalasuraAttackArms</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MandalaMesh.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle\MandalaMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MandalaPuzzle.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MandalaPuzzle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceEffect.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
@@ -1457,13 +1469,19 @@
     <ClCompile Include="..\private\LilyPad.cpp">
       <Filter>01.GameObject\09.InteractObjects\01.LilyPad</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
     <ClCompile Include="..\private\EnvMappedWater.cpp">
-      <Filter>01.GameObject\06.Terrain\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\EnvMappedWater</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Lotus.cpp">
       <Filter>01.GameObject\09.InteractObjects\02.Lotus</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_2Page_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Volcano.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
+    </ClCompile>
+    <ClCompile Include="CflameTerrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

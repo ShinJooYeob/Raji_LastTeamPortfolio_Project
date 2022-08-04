@@ -37,10 +37,23 @@ public:
 		m_WeaponDesc = WeaponDesc;
 	}
 
+	void	Set_InitializSpinAttackDistance();
+	void	Set_SecondPageWeaponStart();
 	void	Set_WeaponPosition();
 	void	Set_Attack(_double fDeltaTime);
+	void	Set_AttackfinishOff(_bool State) { m_bIsAttackfinish = State; }
 	void	Set_PlayerPos(_float3 PlayerPos) { m_vPlayerPos = PlayerPos; }
+	void	Set_SpinAttack(_bool State) { m_bIsSpinAttack = State; }
+	void	Set_VolcanoAttack(_bool State) { m_bIsVolcanoAttack = State; }
+	void	Set_Dissolve(_bool FadeIn, _double Time = 1.f);
+	void	Set_InitialPosDessolve(_bool State) { m_bIsInitialPosDessolve = State; }
 
+public:
+	void	WeaponSpinAttack(_double fDeltaTime);
+	void	SpinAttackOff();
+	void	VolcanoAttackOff();
+	void	BeginningPos();
+	void	VolcanoAttack(_double fDeltaTime);
 private:
 		CRenderer*			m_pRendererCom = nullptr;
 		CShader*			m_pShaderCom = nullptr;
@@ -55,9 +68,22 @@ private:
 		WEAPOPNDESC			m_WeaponDesc;
 		_float				m_WeaponMoveTime = 0;
 
+		//Attack
+		_bool				m_bIsAttackfinish = false;
+
+		//SpinAttack
+		_bool				m_bIsBeginningPos = true;
+		_bool				m_bIsSpinAttack = false;
+		_bool				m_bIsDistance = false;
+		_float				m_fDistance = 20.f;
+
+		//VolcanoAttack
+		_bool				m_bIsVolcanoAttack = false;
+
 		_bool				m_bIsInitialPosDessolve = false;
 		_bool				m_DeadDessolve = false;
 
+		_float				m_fAngle = 0.f;
 private:
 	HRESULT SetUp_Components();
 

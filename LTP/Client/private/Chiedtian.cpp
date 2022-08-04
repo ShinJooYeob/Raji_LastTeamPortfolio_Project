@@ -154,11 +154,6 @@ _int CChiedtian::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
-	{
-		m_ActivateSecondPage = true;
-	}
-
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
 	m_fJumpTime -= (_float)fDeltaTime;
@@ -185,6 +180,12 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 	if (!m_ActivateSecondPage)
 	{
+		if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
+		{
+			if(m_bIsAtaackAimEnd)
+				m_bIsHit = true;
+		}
+
 		if (m_bIsFireAttack)
 			m_fFireTime -= (_float)fDeltaTime;
 
@@ -385,7 +386,19 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_pModel->Change_AnimIndex(10);
 			m_bIsLookAt = true;
 			m_fAttackCoolTime = 3.f;
-			m_fSkillCoolTime = 7.f;
+			m_fSkillCoolTime = 8.f;
+
+			m_bIsSpinAttack = false;
+			m_bIsFireAttack = false;
+			m_bIsBasicAttack = false;
+			m_bIsJump = false;
+
+			m_fAnimmultiple = 1.f;
+
+			for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			{
+				SecondPageWeapon->Set_AttackfinishOff(true);
+			}
 
 		}
 
@@ -395,6 +408,87 @@ _int CChiedtian::Update(_double fDeltaTime)
 			Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
 			m_pTransformCom->Turn_Dir(Dir, 0.90f);
 		}
+
+		if (m_bIsSpinAttack)
+		{
+			m_fSpinTime -= (_float)fDeltaTime;
+
+			if (m_fSpinTime > 4.f)
+			{
+				if (m_fSpinSpeed > 10.f)
+				{
+					m_fSpinSpeed = 10.f;
+					m_fAnimmultiple = 1.4f;
+				}
+				else
+				{
+					m_fSpinSpeed += (_float)fDeltaTime* 5.f;
+					m_fAnimmultiple = (m_fSpinSpeed *0.1f) + 0.4f;
+				}
+			}
+			else if (m_fSpinTime < 4.f)
+			{
+				if (m_fSpinSpeed <= 0.f)
+				{
+					m_fSpinSpeed = 0.1f;
+					m_fAnimmultiple = 0.2f;
+
+					for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+					{
+						SecondPageWeapon->Set_Dissolve(false);
+					}
+				}
+				else
+				{
+					m_fSpinSpeed -= (_float)fDeltaTime*3.f;
+					m_fAnimmultiple = (m_fSpinSpeed *0.1f) + 0.1f;
+				}
+
+			}
+		}
+
+		if (m_fSpinTime <= 0 && m_bIsSpinAttack)
+		{
+			m_fSpinTime = 14.f;
+			m_bIsSpinAttack = false;
+
+			m_fAttackCoolTime = 3.f;
+			m_fSkillCoolTime = 12.f;
+			m_bISVolcanoAttackStart = true;
+
+			m_fAnimmultiple = 1.f;
+			m_pModel->Change_AnimIndex(1, 0.8f);
+
+		/*	g_pGameInstance->Stop_ChannelSound(CHANNEL_MONSTER);
+			g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind_End.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);*/
+			for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			{
+				SecondPageWeapon->SpinAttackOff();
+			}
+		}
+
+		if (m_bIsVolcanoAttack)
+		{
+			m_fVolcanoTime -= (_float)fDeltaTime;
+		}
+
+		if (m_fVolcanoTime <= 0 && m_bIsVolcanoAttack)
+		{
+			m_bIsVolcanoAttack = false;
+			m_fVolcanoTime = 10.f;
+
+			m_fAttackCoolTime = 3.f;
+			m_fSkillCoolTime = 12.f;
+
+			m_fAnimmultiple = 1.f;
+			m_pModel->Change_AnimIndex(1, 0.8f);
+
+
+			for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			{
+				SecondPageWeapon->VolcanoAttackOff();
+			}
+		}
 		
 		//일반 공격
 		if (m_fAttackCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
@@ -403,16 +497,37 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsBasicAttack = true;
 
 			m_pModel->Change_AnimIndex(5);
+			for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			{
+				SecondPageWeapon->Set_InitialPosDessolve(false);
+			}
 
 		}
 		//스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
 			m_bIsAttack = true;
-			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
+			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 1.9f);
 			m_bIsAttack = true;
 			m_bISkill = true;
+			iRandom = 0;
 
+			switch (iRandom)
+			{
+			case SECONDPAGEATTACK_SPIN:
+			{
+				m_pModel->Change_AnimIndex_ReturnTo(7, 8);
+			}
+			break;
+
+			case SECONDPAGEATTACK_VOLCANO:
+			{
+				m_pModel->Change_AnimIndex_ReturnTo(10, 0);
+				m_bISVolcanoAttackStart = true;
+			}
+			break;
+
+			}
 		}
 
 	}
@@ -450,17 +565,22 @@ _int CChiedtian::Update(_double fDeltaTime)
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
 	//FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
-	if (!m_bIsMainWeaponOff)
+	if (!m_ActivateSecondPage)
 	{
-		for (auto& Weapon : m_pMainWeapons)
-			Weapon->Update(fDeltaTime);
+		if (!m_bIsMainWeaponOff)
+		{
+			for (auto& Weapon : m_pMainWeapons)
+				Weapon->Update(fDeltaTime);
+		}
+
+		for (auto& SubWeapon : m_pSubWeapons)
+			SubWeapon->Update(fDeltaTime);
 	}
-
-	for (auto& SubWeapon : m_pSubWeapons)
-		SubWeapon->Update(fDeltaTime);
-
-	for (auto& SecondPageWeapon : m_pSecondPageWeapons)
-		SecondPageWeapon->Update(fDeltaTime);
+	else
+	{
+		for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			SecondPageWeapon->Update(fDeltaTime);
+	}
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->Update(fDeltaTime);
@@ -481,17 +601,23 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
-	if (!m_bIsMainWeaponOff) 
+	if (!m_ActivateSecondPage)
 	{
-		for (auto& Weapon : m_pMainWeapons)
-			Weapon->LateUpdate(fDeltaTime);
+		if (!m_bIsMainWeaponOff)
+		{
+			for (auto& Weapon : m_pMainWeapons)
+				Weapon->LateUpdate(fDeltaTime);
 
-		for (auto& SubWeapon : m_pSubWeapons)
-			SubWeapon->LateUpdate(fDeltaTime);
+			for (auto& SubWeapon : m_pSubWeapons)
+				SubWeapon->LateUpdate(fDeltaTime);
+		}
+	}
+	else
+	{
+		for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			SecondPageWeapon->LateUpdate(fDeltaTime);
 	}
 
-	for (auto& SecondPageWeapon : m_pSecondPageWeapons)
-		SecondPageWeapon->LateUpdate(fDeltaTime);
 
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
@@ -792,28 +918,68 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		switch (iNowAnimIndex)
 		{
 		case 0:
-			//Idle
-			if (PlayRate > 0.f)
+		{
+			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
-				m_bIsAttack = false;
-				m_bISkill = false;
-				//m_bIsLookAt = true;
-				//m_bIsBackJump = false;
-
+				m_bIsVolcanoAttack = true;
+				++m_iAdjMovedIndex;
 			}
-			break;
+			if (PlayRate > 0.14893617 && m_iAdjMovedIndex == 1)
+			{
+				m_pSecondPageWeapons[0]->Set_WeaponPosition();
+				m_pSecondPageWeapons[0]->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pSecondPageWeapons[0]->Set_InitialPosDessolve(false);
+				m_pSecondPageWeapons[0]->Set_VolcanoAttack(true);
+				m_pSecondPageWeapons[0]->Set_IsAttackState(true);
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.2978723404 && m_iAdjMovedIndex == 2)
+			{
+				m_pSecondPageWeapons[1]->Set_WeaponPosition();
+				m_pSecondPageWeapons[1]->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pSecondPageWeapons[1]->Set_InitialPosDessolve(false);
+				m_pSecondPageWeapons[1]->Set_VolcanoAttack(true);
+				m_pSecondPageWeapons[1]->Set_IsAttackState(true);
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.595744680 && m_iAdjMovedIndex == 3)
+			{
+				m_pSecondPageWeapons[2]->Set_WeaponPosition();
+				m_pSecondPageWeapons[2]->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pSecondPageWeapons[2]->Set_InitialPosDessolve(false);
+				m_pSecondPageWeapons[2]->Set_VolcanoAttack(true);
+				m_pSecondPageWeapons[2]->Set_IsAttackState(true);
+				++m_iAdjMovedIndex;
+			}
+			if (PlayRate > 0.85106382 && m_iAdjMovedIndex == 4)
+			{
+				m_pSecondPageWeapons[3]->Set_WeaponPosition();
+				m_pSecondPageWeapons[3]->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+				m_pSecondPageWeapons[3]->Set_InitialPosDessolve(false);
+				m_pSecondPageWeapons[3]->Set_VolcanoAttack(true);
+				m_pSecondPageWeapons[3]->Set_IsAttackState(true);
+				++m_iAdjMovedIndex;
+			}
+		}
+		break;
+
 		case 1://애니메이션 인덱스마다 잡아주면 됨
+		{
+			m_bIsAtaackAimEnd = true;
 			if (PlayRate > 0.f)
 			{
 				m_bIsAttack = false;
 				m_bISkill = false;
-				//m_bIsLookAt = true;
+				m_bIsLookAt = true;
 				//m_bIsBackJump = false;
 
 			}
-			break;
+		}
+		break;
 		case 2:
 		{
+			m_bIsAtaackAimEnd = false;
 			m_pTransformCom->Move_Forward(fDeltatime);
 			
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1612903225)
@@ -831,6 +997,9 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			break;
 
 		case 3:
+		{
+
+		}
 			break;
 
 		case 4:
@@ -842,6 +1011,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 5:
 		{
+			m_bIsAtaackAimEnd = false;
+
 			if (!m_ActivateSecondPage)
 			{
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.1960784313)
@@ -874,6 +1045,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					{
 						SecondPageWeapon->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 						SecondPageWeapon->Set_IsAttackState(true);
+						SecondPageWeapon->Set_AttackfinishOff(false);
+						SecondPageWeapon->Set_WeaponPosition();
 					}
 					m_iAdjMovedIndex++;
 				}
@@ -896,6 +1069,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 6:
 		{
+			m_bIsAtaackAimEnd = false;
+
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.16)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
@@ -951,55 +1126,93 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsLookAt = false;
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
+			if (!m_ActivateSecondPage)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SwordSound.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				m_bIsAtaackAimEnd = false;
 
-				CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SwordSound.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
-				//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
-				CChiedtuan_Weapon* Weapon = m_pSubWeapons[0];
-				WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_r_02", XMVectorSet(9.f, 9.f, 9.f, 0.f), XMVectorSet(90.f, 65.f, 90.f, 0.f), XMVectorSet(-2.580f * 9.f, -1.870f * 9.f, -3.470f * 9.f, 1.f));
-				WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
-				Weapon->Set_WeaponDesc(WeaponDesc);
-				Weapon->Set_SpinScal();
+					CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
-				//Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
-				Weapon = m_pSubWeapons[1];
-				WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_l_02", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(50.f, 90.f, 0.f, 0.f), XMVectorSet(2.230f * 10.f, -1.990f* 10.f, -3.500f* 10.f, 1.f));
-				WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
-				Weapon->Set_WeaponDesc(WeaponDesc);
-				Weapon->Set_SpinScal();
+					//CChiedtuan_Weapon* Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 2);
+					CChiedtuan_Weapon* Weapon = m_pSubWeapons[0];
+					WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_r_02", XMVectorSet(9.f, 9.f, 9.f, 0.f), XMVectorSet(90.f, 65.f, 90.f, 0.f), XMVectorSet(-2.580f * 9.f, -1.870f * 9.f, -3.470f * 9.f, 1.f));
+					WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BR;
+					Weapon->Set_WeaponDesc(WeaponDesc);
+					Weapon->Set_SpinScal();
+
+					//Weapon = (CChiedtuan_Weapon*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Weapon"), 3);
+					Weapon = m_pSubWeapons[1];
+					WeaponDesc.m_eAttachedDesc.Initialize_AttachedDesc(this, "middle_02_l_02", XMVectorSet(10.f, 10.f, 10.f, 0.f), XMVectorSet(50.f, 90.f, 0.f, 0.f), XMVectorSet(2.230f * 10.f, -1.990f* 10.f, -3.500f* 10.f, 1.f));
+					WeaponDesc.m_KatanaPOS = CChiedtuan_Weapon::KATANA_BL;
+					Weapon->Set_WeaponDesc(WeaponDesc);
+					Weapon->Set_SpinScal();
 
 
-				++m_iAdjMovedIndex;
+					++m_iAdjMovedIndex;
+				}
 			}
+			else
+			{
 
+			}
 		}
 
 		break;
 
+		case 8:
+		{
+			m_bIsAtaackAimEnd = false;
+
+			if (m_ActivateSecondPage)
+			{
+				if (m_iAdjMovedIndex == 0)
+				{
+					for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+					{
+						SecondPageWeapon->Set_Dissolve(false);
+						//SecondPageWeapon->BeginningPos();
+						
+					}
+					++m_iAdjMovedIndex;
+				}
+			}
+		}
+		break;
+
 		case 9://SpinAttackAnim
 		{
-			_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+			m_bIsAtaackAimEnd = false;
 
-			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-			_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-
-			PlayerPos.y = MonsterPos.y;
-
-			_float3 vGoalDir = (PlayerPos.XMVector() - MonsterPos.XMVector());
-			m_pTransformCom->Turn_CW(XMVectorSet(0.f,1.f,0.f,0.f), fDeltatime * m_fSpinSpeed +0.01f);
-
-			if(m_fSpinSpeed > 0.1f)
-				m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3/*, m_pNavigationCom*/);
-
-			m_fAnimmultiple = (m_fSpinSpeed *0.1f);
-
-			if (m_iAdjMovedIndex == 0)
+			if (!m_ActivateSecondPage)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-				m_iAdjMovedIndex++;
+				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+				PlayerPos.y = MonsterPos.y;
+
+				_float3 vGoalDir = (PlayerPos.XMVector() - MonsterPos.XMVector());
+				m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * m_fSpinSpeed + 0.01f);
+
+				if (m_fSpinSpeed > 0.1f)
+					m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3/*, m_pNavigationCom*/);
+
+				m_fAnimmultiple = (m_fSpinSpeed *0.1f);
+
+				if (m_iAdjMovedIndex == 0)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					m_iAdjMovedIndex++;
+				}
+			}
+			else
+			{
+				m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * m_fSpinSpeed + 0.01f);
+				m_fAnimmultiple = (m_fSpinSpeed *0.1f);
 			}
 		}
 
@@ -1007,6 +1220,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 10://Jump Animation
 		{
+			m_bIsAtaackAimEnd = false;
+
 			if (!m_ActivateSecondPage)
 			{
 				if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
@@ -1106,6 +1321,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 12: //FireAttackStartAnim
 		{
+			m_bIsAtaackAimEnd = false;
+
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
 
@@ -1145,6 +1362,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 13: //FireAttack
 		{
+			m_bIsAtaackAimEnd = false;
+
 			m_bIsLookAt = true;
 			m_pTransformCom->Move_Forward(fDeltatime * 0.7f/*, m_pNavigationCom*/);
 		
@@ -1171,6 +1390,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 14: //FireAttackEnd
 		{
+			m_bIsAtaackAimEnd = false;
+
 			m_bIsLookAt = false;
 			m_fAnimmultiple = 1.3f;
 
@@ -1276,18 +1497,18 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 	{
 		if (iNowAnimIndex == 0)
 		{
-			if (m_fRange > 12.f && !m_bIsAttack && !m_bIsWalk)
-			{
-				m_bIsWalk = true;
-				m_bIsAttack = true;
-				m_bIsLookAt = false;
+			//if (m_fRange > 12.f && !m_bIsAttack && !m_bIsWalk)
+			//{
+			//	m_bIsWalk = true;
+			//	m_bIsAttack = true;
+			//	m_bIsLookAt = false;
 
-				_Vector LookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK))
-					+ XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * GetSingle(CUtilityMgr)->RandomFloat(-0.7f, 0.7f));
+			//	_Vector LookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK))
+			//		+ XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * GetSingle(CUtilityMgr)->RandomFloat(-0.7f, 0.7f));
 
-				m_pTransformCom->LookDir(LookDir);
-				m_pModel->Change_AnimIndex(2);
-			}
+			//	m_pTransformCom->LookDir(LookDir);
+			//	m_pModel->Change_AnimIndex(2);
+			//}
 		}
 		if (iNowAnimIndex == 1)
 		{
@@ -1308,6 +1529,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			else
 			{
+				m_bIsAttack = true;
 				m_bIsLookAt = true;
 			}
 		}
@@ -1318,13 +1540,27 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 4)
 		{
 			m_ActivateSecondPage = true;
+
+			for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+			{
+				SecondPageWeapon->Set_Dissolve(true,2.f);
+			}
 		}
 		if (iNowAnimIndex == 5)
 		{
 			//m_bIsLookAt = true;
 			m_bIsBasicAttack = false;
 			m_fAttackCoolTime = 3.f;
-			m_fSkillCoolTime = 1.f;
+			if(m_fSkillCoolTime <= 1.f)
+				m_fSkillCoolTime = 1.f;
+
+			if (m_ActivateSecondPage)
+			{
+				for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+				{
+					SecondPageWeapon->Set_IsAttackState(false);
+				}
+			}
 
 			m_pModel->Change_AnimIndex(1);
 		}
@@ -1342,24 +1578,48 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 8)
 		{
-			m_bIsSpinAttack = true;
+			if (!m_ActivateSecondPage)
+			{
+				m_bIsSpinAttack = true;
 
-			for (_int i = 0; i < m_pMainWeapons.size(); ++i)
-				m_pMainWeapons[i]->Set_IsAttackState(true);
+				for (_int i = 0; i < m_pMainWeapons.size(); ++i)
+					m_pMainWeapons[i]->Set_IsAttackState(true);
 
-			for (_int i = 0; i < m_pSubWeapons.size(); ++i)
-				m_pSubWeapons[i]->Set_IsAttackState(true);
+				for (_int i = 0; i < m_pSubWeapons.size(); ++i)
+					m_pSubWeapons[i]->Set_IsAttackState(true);
+			}
+			else
+			{
+				m_bIsSpinAttack = true;
+
+				for (auto& SecondPageWeapon : m_pSecondPageWeapons)
+				{
+					SecondPageWeapon->Set_IsAttackState(true);
+					SecondPageWeapon->Set_SpinAttack(true);
+					SecondPageWeapon->Set_InitializSpinAttackDistance();
+					//SecondPageWeapon->Set_InitialPosDessolve(false);
+				}
+				m_pModel->Change_AnimIndex(9);
+			}
 
 			m_fSpinTime = 14.f;
 		}
 		if (iNowAnimIndex == 9)
 		{
-			if (!m_bIsSpinAttack)
-				m_bIsSpinAttack = true;
+			if (!m_ActivateSecondPage)
+			{
+				if (!m_bIsSpinAttack)
+					m_bIsSpinAttack = true;
+			}
+			else
+			{
+				if (!m_bIsSpinAttack)
+					m_bIsSpinAttack = true;
+			}
 		}
 		if (iNowAnimIndex == 10)
 		{
-			if (m_ActivateSecondPage)
+			if (m_ActivateSecondPage && !m_bISVolcanoAttackStart)
 			{
 				m_bIsLookAt = true;
 				m_pModel->Change_AnimIndex(1);

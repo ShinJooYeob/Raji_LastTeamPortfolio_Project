@@ -337,7 +337,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 
 #ifndef NotOnNavi
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 #endif // NotOnNavi
 
 	}
@@ -2581,7 +2581,7 @@ void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 	}
 	}
 
-	m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+	m_pTransformCom->MovetoDir(vMovDir, fMoveRate /*m_pNavigationCom*/);
 
 	m_fMovDir = XMVector3Normalize(vMovDir);
 }

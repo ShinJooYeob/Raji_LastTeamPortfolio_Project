@@ -11,7 +11,7 @@ class CChiedtian final : public CBoss
 {
 public:
 	enum AttackNumber{ATTACK_FIRE, ATTACK_SPIN, ATTACK_WHINING, ATTACK_END};
-	enum AttackSecondPage {SECONDPAGEATTACK_SPIN, SECONDPAGEATTACK_END};
+	enum AttackSecondPage {SECONDPAGEATTACK_SPIN, SECONDPAGEATTACK_VOLCANO, SECONDPAGEATTACK_END};
 private:
 	CChiedtian(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CChiedtian(const CChiedtian& rhs);
@@ -99,11 +99,18 @@ private:
 
 	_float				m_fNarration = 15.f;
 
+	_bool				m_bIsAtaackAimEnd = false;
+
 /*--------------------------------------------------------------------------------------------------------*/
 	//2Stage
 	_bool										m_bMiddlepointPos = false;
 	_bool										m_ActivateSecondPage = false;
 	vector<class CChiedtuan_2Page_Weapon*>		m_pSecondPageWeapons;
+
+	//Volcano Ataack
+	_bool				m_bIsVolcanoAttack = false;
+	_bool				m_bISVolcanoAttackStart = false; //점프 애니메이션에서 사용(체인지애님막을라고)
+	_float				m_fVolcanoTime = 10.f;
 
 
 private:

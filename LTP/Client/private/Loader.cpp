@@ -34,6 +34,8 @@
 #include "Mahabalasura_SpearWave.h"
 #include "Mahabalasura_AttackSpear.h"
 #include "Snake_Poison_Raser.h"
+#include "Volcano.h"
+#include "CflameTerrain.h"
 
 //Static_Map
 #include "Demon_Tree.h"
@@ -519,6 +521,10 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TransformMatrix);
 
+	//Volcano
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Volcano), TransformMatrix);
+
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PlayerWeapon_Spear), TransformMatrix);
@@ -568,7 +574,10 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_LilyPad), CLilyPad::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Lotus), CLotus::Create(m_pDevice, m_pDeviceContext)));
 
-
+	//Volcano
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Volcano), CVolcano::Create(m_pDevice, m_pDeviceContext)));
+	//FlameTerrain
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_FlameTeraain), CflameTerrain::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 	RELEASE_INSTANCE(CGameInstance);

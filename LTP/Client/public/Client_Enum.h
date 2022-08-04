@@ -385,8 +385,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_MahabalasuraAttackArms,
 	Prototype_Object_Boss_MahabalasuraWeapon,
 	Prototype_Object_Boss_MahabalasuraCopy,
-		Prototype_Object_Boss_MahabalasuraSpearWave,
-		Prototype_Object_Boss_MahabalasuraATKSPR,
+	Prototype_Object_Boss_MahabalasuraSpearWave,
+	Prototype_Object_Boss_MahabalasuraATKSPR,
+	Prototype_Object_Boss_Volcano,
+	Prototype_Object_Boss_FlameTeraain,
 	Prototype_Object_Effect_MagicCircle,
 	Prototype_Object_Map_Demon_Tree,
 	Prototype_Object_Map_TreeMesh,
@@ -676,8 +678,14 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		return TEXT("Prototype_Object_Boss_MahabalasuraATKSPR");
 		break;
 
-		
-		
+	case Prototype_Object_Boss_Volcano:
+		return TEXT("Prototype_Object_Boss_Volcano");
+		break;
+
+	case Prototype_Object_Boss_FlameTeraain:
+		return TEXT("Prototype_Object_Boss_FlameTeraain");
+		break;		
+				
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
 
@@ -889,6 +897,8 @@ enum LAYERID
 	Layer_MapObject,
 	Layer_SkillUI,
 	Layer_TestEffect,
+	Layer_Volcano,
+	Layer_FlameTerrain,
 
 	Layer_InteractObject,
 	Layer_EnvMappedWater,
@@ -1069,6 +1079,14 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		return TEXT("Layer_Boss");
 		break;
 
+	case Layer_Volcano:
+		return TEXT("Layer_Volcano");
+		break;
+
+	case Layer_FlameTerrain:
+		return TEXT("Layer_FlameTerrain");
+		break;
+		
 	case Layer_MapObject:
 		return TEXT("Layer_MapObject");
 		break;
@@ -3226,6 +3244,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_DarkBaldTree,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
+
+	Prototype_Mesh_Volcano,
 
 	//////다이나믹Mesh///////////////플레이어하고 테스트 오브젝트 사이에다가만 넣을 것/////////////////////////////////////////////////////
 	Prototype_Mesh_Player,
@@ -9613,6 +9633,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		
 	case Prototype_Mesh_AlgaeRock_Ledge:
 		return TEXT("Prototype_Mesh_AlgaeRock_Ledge");
+		break;
+
+	case Prototype_Mesh_Volcano:
+		return TEXT("volcano.fbx");
 		break;
 		//////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////
