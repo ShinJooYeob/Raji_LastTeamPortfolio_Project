@@ -51,6 +51,8 @@ HRESULT CChiedtuan_2Page_Weapon::Initialize_Clone(void * pArg)
 
 	m_PlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player));
 
+	m_fDistance = 20.f;
+
 	return S_OK;
 }
 
@@ -65,29 +67,45 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 	{
 		if (m_bIsInitialPosDessolve && !m_DeadDessolve)
 		{
+			m_bIsInitialPosDessolve = false;
 			m_WeaponMoveTime = 0.f;
 			m_pDissolveCom->Set_DissolveOn(true, 1.f);
 
-			m_bIsInitialPosDessolve = false;
-			m_bIsAttack = false;
-
 		}
 	}
-
-	//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	//if (m_pDissolveCom->Get_IsFadeIn() == true && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
 	//{
-	//	m_pDissolveCom->Set_DissolveOn(false, 5.5f);
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	//{
-	//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
+	//	if (m_bIsInitialPosDessolve && !m_DeadDessolve)
+	//	{
+	//		m_WeaponMoveTime = 0.f;
+
+	//		m_bIsInitialPosDessolve = false;
+	//	}
 	//}
 
-	if (!m_bIsAttack)
+	if (!m_bIsAttack && !m_bIsSpinAttack && !m_bIsVolcanoAttack)
 		Set_WeaponPosition();
-	else
+	else if (m_bIsAttack && !m_bIsSpinAttack && !m_bIsVolcanoAttack)
 		Set_Attack(fDeltaTime);
+	else if (m_bIsAttack && m_bIsSpinAttack && !m_bIsVolcanoAttack)
+	{
+		//if (m_bIsBeginningPos)
+		//{
+		//	m_bIsInitialPosDessolve = true;
+		//	m_pDissolveCom->Set_DissolveOn(false, 1.f);
+		//}
 
+		WeaponSpinAttack(fDeltaTime);
+	}
+	else if (m_bIsAttack && !m_bIsSpinAttack && m_bIsVolcanoAttack)
+	{
+		VolcanoAttack(fDeltaTime);
+	}
+
+	if (!m_bIsAttack && !m_bIsAttackfinish)
+	{
+		Set_Attack(fDeltaTime);
+	}
 
 
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
@@ -120,7 +138,7 @@ _int CChiedtuan_2Page_Weapon::LateUpdate(_double fDeltaTime)
 
 	//if(m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_TL)
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
-
+		
 	return _int();
 }
 
@@ -156,6 +174,42 @@ void CChiedtuan_2Page_Weapon::CollisionTriger(CCollider * pMyCollider, _uint iMy
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
+}
+
+void CChiedtuan_2Page_Weapon::Set_InitializSpinAttackDistance()
+{
+	switch (m_WeaponDesc.KatanaPOSType)
+	{
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TR:
+	{
+		m_bIsDistance = false;
+		m_fDistance = 10.f;
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
+	{
+		m_bIsDistance = false;
+		m_fDistance = 10.f;
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
+	{
+		m_bIsDistance = true;
+		m_fDistance = 10.f;
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
+	{
+		m_bIsDistance = true;
+		m_fDistance = 10.f;
+	}
+	break;
+	}
+}
+
+void CChiedtuan_2Page_Weapon::Set_SecondPageWeaponStart()
+{
+
 }
 
 void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
@@ -235,8 +289,211 @@ void CChiedtuan_2Page_Weapon::Set_Attack(_double fDeltaTime)
 
 		m_pTransformCom->Move_Forward(fDeltaTime * 15.f);
 
+
+
+		CTransform* PlayerTransfom = (CTransform*)m_PlayerObj->Get_Component(TAG_COM(Com_Transform));
+
+		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < PlayerTransfom->Get_MatrixState_Float3(CTransform::STATE_POS).y)
+		{
+			m_vPlayerPos.y += 1.f;
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
+
+
+			m_bIsInitialPosDessolve = true;
+			m_pDissolveCom->Set_DissolveOn(false, 1.f);
+			m_WeaponMoveTime = 0.f;
+			m_bIsAttackfinish = true;
+		}
+
 	}
-	
+
+}
+
+void CChiedtuan_2Page_Weapon::Set_Dissolve(_bool FadeIn, _double Time)
+{
+	m_bIsInitialPosDessolve = true;
+	m_pDissolveCom->Set_DissolveOn(FadeIn, Time);
+}
+
+void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
+{
+	CTransform* BossTransform = (CTransform*)m_WeaponDesc.BossObj->Get_Component(TAG_COM(Com_Transform));
+
+	m_fAngle += 20.f;//(_float)fDeltaTime;
+	if (m_fAngle >= 360.f)
+		m_fAngle = 0.f;
+
+	if (m_bIsDistance == false)
+	{
+		m_fDistance -= (_float)fDeltaTime * 10.f;
+		if (m_fDistance <= 6.5f)
+			m_bIsDistance = true;
+	}
+	else
+	{
+		m_fDistance += (_float)fDeltaTime * 10.f;
+		if (m_fDistance >= 20.f)
+			m_bIsDistance = false;
+	}
+
+
+	switch (m_WeaponDesc.KatanaPOSType)
+	{
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TR:
+	{
+		if (m_bIsBeginningPos)
+		{
+			m_bIsBeginningPos = false;
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 10.f);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		}
+
+		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
+		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+
+		m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
+	{
+		if (m_bIsBeginningPos)
+		{
+			m_bIsBeginningPos = false;
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -10.f);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		}
+		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
+		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+
+		m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
+	{
+		if (m_bIsBeginningPos)
+		{
+			m_bIsBeginningPos = false;
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * 10.f);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		}
+		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
+		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+
+		m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
+	{
+		if (m_bIsBeginningPos)
+		{
+			m_bIsBeginningPos = false;
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * -10.f);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		}
+
+		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
+		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+
+		m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
+	}
+	break;
+	}
+}
+
+void CChiedtuan_2Page_Weapon::SpinAttackOff()
+{
+	m_fDistance = 4.f;
+	m_bIsDistance = false;
+	m_bIsSpinAttack = false;
+	m_bIsBeginningPos = true;
+	m_bIsAttack = false;
+	//m_bIsInitialPosDessolve = false;
+	m_fAngle = 0.f;
+	Set_WeaponPosition();
+	m_pDissolveCom->Set_DissolveOn(true, 1.f);
+}
+
+void CChiedtuan_2Page_Weapon::VolcanoAttackOff()
+{
+	m_bIsInitialPosDessolve = false;
+	m_bIsAttack = false;
+	m_bIsVolcanoAttack = false;
+	m_WeaponMoveTime = 0.f;
+	Set_WeaponPosition();
+	m_pDissolveCom->Set_DissolveOn(true, 0.5f);
+}
+
+void CChiedtuan_2Page_Weapon::BeginningPos()
+{
+	CTransform* BossTransform = (CTransform*)m_WeaponDesc.BossObj->Get_Component(TAG_COM(Com_Transform));
+
+	switch (m_WeaponDesc.KatanaPOSType)
+	{
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TR:
+	{
+		m_bIsBeginningPos = false;
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 10.f);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
+	{
+		m_bIsBeginningPos = false;
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -10.f);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
+	{
+		m_bIsBeginningPos = false;
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * 10.f);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+	}
+	break;
+	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
+	{
+		m_bIsBeginningPos = false;
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * -10.f);
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
+		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+	}
+	break;
+	}
+}
+
+void CChiedtuan_2Page_Weapon::VolcanoAttack(_double fDeltaTime)
+{
+	if (m_bIsInitialPosDessolve == false)
+	{
+		m_WeaponMoveTime += (_float)fDeltaTime *3.f;
+		if (m_WeaponMoveTime >= 0.95f)
+			m_WeaponMoveTime = 0.95f;
+
+		_Vector Dir = XMVector3Normalize(m_vPlayerPos.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		_Vector vNewLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * (1.f - m_WeaponMoveTime) +
+			Dir * m_WeaponMoveTime);
+
+		m_pTransformCom->LookDir_ver2(vNewLook);
+
+		m_pTransformCom->Move_Forward(fDeltaTime * 15.f);
+
+	}
+
 	CTransform* PlayerTransfom = (CTransform*)m_PlayerObj->Get_Component(TAG_COM(Com_Transform));
 
 	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < PlayerTransfom->Get_MatrixState_Float3(CTransform::STATE_POS).y)
@@ -244,9 +501,13 @@ void CChiedtuan_2Page_Weapon::Set_Attack(_double fDeltaTime)
 		m_vPlayerPos.y += 1.f;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
 
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Volcano), TAG_OP(Prototype_Object_Boss_Volcano), &m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+		Set_WeaponPosition();
 
 		m_bIsInitialPosDessolve = true;
-		m_pDissolveCom->Set_DissolveOn(false, 1.f);
+		m_pDissolveCom->Set_DissolveOn(true, 1.f);
+		m_WeaponMoveTime = 0.f;
 	}
 }
 

@@ -80,7 +80,7 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 	//mat.r[2] = XMVector3Normalize(mat.r[2]);
 
 
-	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
+	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
