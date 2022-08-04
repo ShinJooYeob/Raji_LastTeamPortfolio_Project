@@ -1274,32 +1274,32 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 
-		MeshDesc.eMeshType = Prototype_Mesh_SM_TS_Basic_combo_EX2_Sword;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_AB_Trail_02;
 		
 		// Time
-		MeshDesc.fMaxTime_Duration = 2.0f;
-		MeshDesc.fAppearTime = 0.5f;
+		MeshDesc.fMaxTime_Duration = 0.5f;
+		MeshDesc.fAppearTime = 0.3f;
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 317;
-		MeshDesc.iDiffuseTextureIndex = 232;
-		MeshDesc.MaskTextureIndex = 72;
-		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.NoiseTextureIndex = 182;
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 68;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
 
 		// Noise
-		MeshDesc.noisingdir = _float2(1,0).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(0,-1).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 20.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
 		MeshDesc.vLimLight = _float4(1,0,0, 1.f);
 		MeshDesc.vEmissive = _float4(0.5f, 0.5f, 0.5f, 1.f);
+		MeshDesc.vEmissive = _float4(1, 0.8f, 1.f, 1.f);
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(0);
-		MeshDesc.vSize = _float3(0.5f);
-		MeshDesc.vSize = _float3(0.5f,1.0f, 0.5f);
+		MeshDesc.vPosition = _float3(-1,0.-0.5f,1.5f);
+		MeshDesc.vSize = _float3(0.8f);
+		MeshDesc.vSize = _float3(0.3f, 0.8f, 0.3f).XMVector()*2.0f;
 
 
 		// Move
@@ -1308,8 +1308,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//AddDesc.AccMoveSpeed = 110.0f;
 
 		// Rotwww
-		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(90,0,90);
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 45);
+		AddDesc.vAddDirectAngle = _float3(0, 0, -45);
 		MeshDesc.RotAxis = FollowingDir_Look;
 		MeshDesc.RotationSpeedPerSec = 0;
 		AddDesc.AccRotSpeed = 0;
@@ -1325,9 +1326,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 
 		// Fix
-		AddDesc.FixFlag_Move = false;
-		AddDesc.FixFlag_Rot = false;
-		AddDesc.FollowTarget = Transfom;
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = true;
+		AddDesc.FollowTarget = nullptr;
 
 		// Shader
 	//	MeshDesc.m_iPassIndex = 16; // ø÷∞Ó
@@ -1337,11 +1338,90 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
+		MeshDesc.vPosition = _float3(-1, -1.0f, 1.5f);
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		MeshDesc.vPosition = _float3(-1, -1.5f, 1.5f);
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
 	}
 
 	if (type == MESHEFFECT_MONSTER_MM_HAND_Cash0)
 	{
 		
+
+		MeshDesc.eMeshType = Prototype_Mesh_SM_AB_Trail_02;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 317;
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 68;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 20.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(1, 0, 0, 1.f);
+		MeshDesc.vEmissive = _float4(0.5f, 0.5f, 0.5f, 1.f);
+		MeshDesc.vEmissive = _float4(1, 0.8f, 1.f, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(1, 0, 1.5f);
+		MeshDesc.vSize = _float3(0.8f);
+		MeshDesc.vSize = _float3(0.3f, 0.8f, 0.3f);
+
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rotwww
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 45);
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = true;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ø÷∞Ó
+	//	MeshDesc.m_iPassIndex = 17; // ø÷∞Ó µÓ¿Â
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ≥Î¿Ã¡Ó µÓ¿Â
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		MeshDesc.vPosition = _float3(1, 0.5f, 1.5f);
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		MeshDesc.vPosition = _float3(1, -0.5f, 1.5f);
+
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
 	}
 
 
