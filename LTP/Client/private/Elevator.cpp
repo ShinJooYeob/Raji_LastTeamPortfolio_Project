@@ -134,8 +134,16 @@ HRESULT CElevator::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
-
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_Elevator), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	
+	switch (m_tElevatorDesc.iMeshType)
+	{
+	case 0:
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_InteractObj_Elevator), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		break;
+	case 1:
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Elevator), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		break;
+	}
 
 	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30.f;
@@ -161,7 +169,7 @@ HRESULT CElevator::SetUp_Collider()
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.25f);
+	ColliderDesc.vScale = _float3(m_tElevatorDesc.fColliderScale);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, m_tElevatorDesc.fColliderOffset_Y, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

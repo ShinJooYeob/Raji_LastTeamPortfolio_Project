@@ -191,9 +191,11 @@
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
+    <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
+    <ClInclude Include="..\public\Golu.h" />
     <ClInclude Include="..\public\HpUI.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h" />
@@ -313,6 +315,7 @@
     <ClInclude Include="..\public\WallRunTrigger.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Scene_Laboratory_Jino.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -329,8 +332,10 @@
     <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />
+    <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
+    <ClCompile Include="..\private\Golu.cpp" />
     <ClCompile Include="..\private\HpUI.cpp" />
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\JumpTrigger.cpp" />
@@ -454,6 +459,7 @@
     <ClCompile Include="..\public\Imgui\imgui_tables.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Scene_Laboratory_Jino.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

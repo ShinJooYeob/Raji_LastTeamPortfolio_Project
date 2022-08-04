@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Camera_Main.h"
 #include "Player.h"
+#include "Golu.h"
 
 _uint CALLBACK CameraEffectThread(void* _Prameter)
 {
@@ -167,6 +168,11 @@ void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
 		m_eCurCamMode = eCameraMode;
 	}
 		break;
+	case ECameraMode::CAM_MODE_RAJIGOLU_MINIGAME:
+	{
+		m_eCurCamMode = eCameraMode;
+	}
+		break;
 	}
 }
 
@@ -253,10 +259,17 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 	_Vector vLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
 
 	_float a = m_fTargetArmLength;
-	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + m_pFocusTarget->Get_AttachCamPos() * (1.f - m_fCur_CamMoveWeight);
-	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+
+	_float3 fMyPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_float3 fTargetPos = m_pFocusTarget->Get_AttachCamPos();
+	if (fMyPos != fTargetPos)
+	{
+		_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + m_pFocusTarget->Get_AttachCamPos() * (1.f - m_fCur_CamMoveWeight);
+		m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+	}
+
 	
-	if (true == m_bCamLock) 
+	if (true == m_bCamLock)  
 	{
 		m_pTransform->Turn_Dir(m_fFixLookDir.XMVector(), m_fCur_CamLookWeight, 0.999f);
 	}
@@ -300,6 +313,11 @@ _int CCamera_Main::Update(_double fDeltaTime)
 		case ECameraMode::CAM_MODE_FIX:
 		{
 			// None Update
+		}
+		break;
+		case ECameraMode::CAM_MODE_RAJIGOLU_MINIGAME:
+		{
+			Update_RajiGolu_MiniGameMode(fDeltaTime);
 		}
 		break;
 		}
@@ -874,6 +892,33 @@ _int CCamera_Main::Update_TargetingMode(_double fDeltaTime)
 
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
 	
+	return _int();
+}
+
+_int CCamera_Main::Update_RajiGolu_MiniGameMode(_double fDeltaTime)
+{
+	// Get Player Info
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_LABORATORY_JINO, TAG_LAY(Layer_Player)));
+	CTransform* pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+	// Get Golu Info
+	CGameObject* pGolu = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_LABORATORY_JINO, TAG_LAY(Layer_NPC)));
+	CTransform* pGoluTransform = (CTransform*)pGolu->Get_Component(TAG_COM(Com_Transform));
+	_Vector vGoluPos = pGoluTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+	// Get (Raji to Golu) Dist
+	_Vector vDistPos = (vGoluPos + vPlayerPos) * 0.5f;
+
+	// Cal Cam Pos
+	_Vector vCamPos = vDistPos + (XMVectorSet(0.f, 0.f, -1.f, 0.f) * m_fTargetArmLength);
+	vCamPos = XMVectorSetY(vCamPos, XMVectorGetY(vCamPos) + 10.f);
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+	
+	// Cal Cam Look
+	_Vector vLookDir = XMVector3Normalize(vDistPos - vCamPos);
+	m_pTransform->LookDir_ver2(vLookDir);
+
 	return _int();
 }
 

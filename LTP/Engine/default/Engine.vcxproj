@@ -253,6 +253,7 @@
     <ClInclude Include="..\public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_EditorTerrain.h" />
     <ClInclude Include="..\public\VIBuffer_Model_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Plat.h" />
     <ClInclude Include="..\public\VIBuffer_Point_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Terrain.h" />
@@ -310,6 +311,7 @@
     <ClCompile Include="..\private\VIBuffer.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_EditorTerrain.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Plat.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Model_Instance.cpp" />

@@ -6,6 +6,7 @@
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Triangle.h"
+#include "VIBuffer_Plat.h"
 #include "Model.h"
 
 #include "Transform.h"

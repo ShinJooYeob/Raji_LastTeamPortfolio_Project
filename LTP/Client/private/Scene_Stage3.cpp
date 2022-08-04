@@ -197,6 +197,10 @@ HRESULT CScene_Stage3::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
+
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Player), &_float3(195.6f, 26.76f, 66.721f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE3, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
@@ -206,10 +210,8 @@ HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	pPlayer->Update_AttachCamPos();
 
-
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
@@ -223,7 +225,8 @@ HRESULT CScene_Stage3::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 
 	return S_OK;
 }
-
+
+
 HRESULT CScene_Stage3::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_Boss_Rangda), &_float3(154.189f, 96.400f, 240.976f)));

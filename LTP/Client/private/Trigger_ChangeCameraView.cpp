@@ -122,6 +122,7 @@ HRESULT CTrigger_ChangeCameraView::After_Initialize()
 		FAILED_CHECK(SetUp_EtcInfo());
 	}
 
+
 	return S_OK;
 }
 

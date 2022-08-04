@@ -91,9 +91,8 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, 
-				TAG_LAY(Layer_InteractObject), TAG_OP(Prototype_Object_InteractObj_Lotus), 
-				&_float3(133.312f, -28.3f, 411.455f)));
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, TAG_LAY(Layer_MapObject), TAG_OP(Prototype_Object_DynamicPlatform), &_float3(0.f)));
+
 			/*_float3 fPos = Check_MousePicking();
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &fPos);*/
 			
@@ -173,6 +172,12 @@ _int CPlayer::Update(_double fDeltaTime)
 		break;
 	case EPLAYER_STATE::STATE_MOV:
 		FAILED_CHECK(Update_State_Move(fDeltaTime));
+		break;
+	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_IDLE:
+		FAILED_CHECK(Update_State_DynamicPlatform_Idle(fDeltaTime));
+		break;
+	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_MOVE:
+		FAILED_CHECK(Update_State_DynamicPlatform_Move(fDeltaTime));
 		break;
 	case EPLAYER_STATE::STATE_EVASION:
 		FAILED_CHECK(Update_State_Evasion(fDeltaTime));
@@ -374,7 +379,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pDissolveCom->Render(13));
 
 #ifdef _DEBUG
-	m_pNavigationCom->Render(m_pTransformCom); 
+	//m_pNavigationCom->Render(m_pTransformCom); 
 //	if (m_pHeadJoint)
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -566,6 +571,7 @@ void CPlayer::Set_State_FirstStart()
 	m_eCurState = STATE_SLEEP;
 	m_bOnNavigation = true;
 	m_pModel->Change_AnimIndex(BASE_ANIM_SLEEP);
+	Update(g_fDeltaTime);
 }
 
 void CPlayer::Set_State_IdleStart(_double fDeltaTime)
@@ -908,6 +914,13 @@ void CPlayer::Set_State_PetalStart(_float3 vPetalPos, _double fDeltaTime)
 	m_fPetalPos.y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 	m_fPetalPos = m_fPetalPos.XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+}
+
+void CPlayer::Set_State_OnDynamicPlatformStart()
+{
+	m_eCurState = STATE_DYNAMICPLATFORM_IDLE;
+	m_pModel->Change_AnimIndex(BASE_ANIM_DYNAMICPLATFORM_IDLE);
+	m_pTransformCom->Set_MoveSpeed(1.5f);
 }
 
 void CPlayer::Set_State_JumpStart(_double fDeltaTime)
@@ -1257,6 +1270,45 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 		vMyPos = XMVectorSetY(vMyPos, fPos_y);
 	}
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_State_DynamicPlatform_Idle(_double fDeltaTime)
+{
+	m_fAnimSpeed = 0.5f;
+
+	if (MOVDIR_END != m_eInputDir)
+	{
+		m_eCurState = STATE_DYNAMICPLATFORM_MOVE;
+		Move(m_eInputDir, fDeltaTime);
+		m_pModel->Change_AnimIndex(BASE_ANIM_DYNAMICPLATFORM_WALK);
+	}
+	
+	
+	//// Falling Zone
+	//if (CCell::CELL_OPTION::CELL_BLOCKZONE == m_eCurPosNavCellOption && false == m_bOnLilyPad)
+	//{
+	//	Set_State_FallingStart(fDeltaTime);
+	//}
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_State_DynamicPlatform_Move(_double fDeltaTime)
+{
+	m_fAnimSpeed = 0.5f;
+
+	if (MOVDIR_END != m_eInputDir)
+	{
+		Move(m_eInputDir, fDeltaTime);
+		m_pModel->Change_AnimIndex(BASE_ANIM_DYNAMICPLATFORM_WALK);
+	}
+	else
+	{
+		Set_State_OnDynamicPlatformStart();
+	}
+
 
 	return S_OK;
 }
@@ -2168,12 +2220,12 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 		iInputDir -= 1;
 	}
 
-	if (0 != iInputDir)
+	if (0 != iInputDir) 
 	{
 		m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
 			m_pMainCamera->Lock_CamLook(false);
-			m_fAttachCamPos_Offset = _float3(0.f, 1.5f, -2.f);
-			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+			m_fAttachCamPos_Offset = _float3(0.f, 13.f, -15.f);  
+		//	m_fAttachCamLook_Offset = _float3(0.f, 0.1f, 1.f);
 
 			//m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
 			//m_fAttachCamPos_Offset = _float3(0.f, 3.f, 0.f);
@@ -2475,19 +2527,20 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 	}
 	}
 
-	if (false == m_bPlayTurnBackAnim)
+	if(STATE_DYNAMICPLATFORM_MOVE == m_eCurState)
 	{
-
-
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr);
+		m_pTransformCom->Turn_Dir(vMovDir, fTurnRate);
+	}
+	else if (false == m_bPlayTurnBackAnim)
+	{
 		if (false == m_bOnLilyPad)
 		{
 		#ifdef NotOnNavi
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, nullptr);
 		#else
 		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
-		#endif // NotOnNavi
-
-		
+		#endif // NotOnNavi	
 		}
 		else
 		{
