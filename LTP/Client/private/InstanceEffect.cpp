@@ -510,11 +510,10 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 			Update_TextureChange(&(*iter), fDeltaTime, pInstance);
 
-			if (m_tInstanceDesc.eParticleTypeID != InstanceEffect_Suck)
-			{
+
 				if ((*(_float3*)&iter->_LocalMatirx._41).Get_Lenth() > m_tInstanceDesc.fMaxBoundaryRadius || (iter->_age > iter->_lifeTime))
 					ResetParticle(&(*iter));
-			}
+
 
 	
 
