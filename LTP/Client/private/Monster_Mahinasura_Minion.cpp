@@ -294,12 +294,13 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
+
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
-
+		
 	}
 #endif // _DEBUG
 
@@ -713,11 +714,13 @@ HRESULT CMonster_Mahinasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-	m_iOncePattern = 4;
+	// m_iOncePattern = 4;
 
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 4;
+#endif // _DEBUG
 
 	switch (m_iOncePattern)
 	{
@@ -1114,7 +1117,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.57f, 1.00f, 0.79f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.10)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
 			{
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
@@ -1149,20 +1152,17 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 0 && PlayRate >= 0.10)
 			{
 
-			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_CREATE1, m_pTransformCom);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_RHand);
-
+			
 
 				m_EffectAdjust++;
 			}
 
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.35f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
 				// #TIME Hand 2
-			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
-				
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
+
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
@@ -1179,9 +1179,9 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_EffectAdjust++;
 
 			}
-			if (m_EffectAdjust == 2 && PlayRate >= 0.5)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.45)
 			{
-			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_RHand);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_R, m_pTextureParticleTransform_RHand);
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_RHand;

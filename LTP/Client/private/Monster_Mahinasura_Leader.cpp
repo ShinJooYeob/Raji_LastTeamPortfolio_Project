@@ -629,10 +629,13 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
 
+#ifdef _DEBUG
+
 	// #DEBUG PatternSET
-//	m_iOncePattern = 0;
+	m_iOncePattern = 5;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 10;
+#endif // _DEBUG
 
 	switch (m_iOncePattern)
 	{
@@ -906,14 +909,33 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
 	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
 
-	mat_Hand.r[3] = m_pTailAttackColliderCom->Get_ColliderPosition(1).XMVector();
-	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
 
 	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
 	m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
 
 	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
 	m_pTextureParticleTransform_LHand->Set_Matrix(mat_Hand);
+
+
+
+
+	mat_Hand = m_vecTailAttackAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
+
+
+
+#ifdef _DEBUG
+	if (KEYDOWN(DIK_V))
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+
+	}
+#endif // _DEBUG
+
 	return S_OK;
 }
 
@@ -1236,7 +1258,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH6, m_pTransformCom);
 				m_EffectAdjust++;
 			}
 
@@ -1317,9 +1338,11 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				}
 
 			}
-			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
+
+			if (m_EffectAdjust == 0 )
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTextureParticleTransform_Tail);
+
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
@@ -1340,8 +1363,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 1 && PlayRate >= 0.4f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
-
-				
 
 				m_EffectAdjust++;
 			}
