@@ -632,7 +632,7 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 #ifdef _DEBUG
 
 	// #DEBUG PatternSET
-	m_iOncePattern = 5;
+	m_iOncePattern = 0;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 10;
 #endif // _DEBUG
@@ -927,7 +927,8 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
 	}
 
 	if (KEYDOWN(DIK_C))
@@ -1183,7 +1184,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH4, m_pTransformCom);
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
@@ -1204,10 +1204,9 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			if (m_EffectAdjust == 1 && PlayRate >= 0.7f)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_LHand);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH2, m_pTextureParticleTransform_RHand);
 
-
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_RHand);
+				
 				m_EffectAdjust++;
 			}
 
@@ -1220,7 +1219,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.75f, 0.06f, 0.03f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
-			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.24)
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.1)
 			{
 				m_bLookAtOn = false;
 				m_bColliderAttackOn = true;
