@@ -792,7 +792,7 @@ HRESULT CMonster_Ninjasura::SetUp_Components()
 	DissolveDesc.pModel = m_pModel;
 	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
 	DissolveDesc.pShader = m_pShaderCom;
-	DissolveDesc.RampTextureIndex = 11;
+	DissolveDesc.RampTextureIndex = 14;
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
 
 

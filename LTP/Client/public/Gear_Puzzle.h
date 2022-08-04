@@ -1,5 +1,6 @@
 #pragma once
 #include "MapObject.h"
+#include "Gear.h"
 
 
 BEGIN(Client)
@@ -24,10 +25,15 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT	SetUp_Collider();
+	HRESULT	SetUp_ColliderPos();
 	
+	HRESULT	SetUp_Gear();
 
 private:
 	HRESULT Update_Collider(_double dDeltaTime);
+
+private:
+	HRESULT KeyboardInput(_double dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -36,6 +42,18 @@ private:
 	CModel*				m_pModel = nullptr;
 
 	CCollider*			m_pColliderCom = nullptr;
+
+	CGear*				m_pGear[CGear::GEAR_END];
+
+	vector<_float3>		m_vecColliderPos;
+
+
+	_bool				m_bOnceSwitch = false;
+
+
+	_uint				m_GearNumber = 1;
+
+	_bool				m_bTriggerOn = true;
 
 public:
 	static CGear_Puzzle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
