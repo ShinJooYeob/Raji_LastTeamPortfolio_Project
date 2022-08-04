@@ -399,6 +399,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_LobbyUI,
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
+	Prototype_Object_Map_Gear,
 
 	//Monster_Bullet
 	Prototype_Object_Monster_Bullet_Universal,
@@ -711,6 +712,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
+
+	case Prototype_Object_Map_Gear:
+		return TEXT("Prototype_Object_Map_Gear");
 
 	case Prototype_Object_Monster_Bullet_Universal:
 		return TEXT("Prototype_Object_Monster_Bullet_Universal");

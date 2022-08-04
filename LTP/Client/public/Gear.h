@@ -13,6 +13,8 @@ public:
 	{
 		_uint	iGearTypeNumber;
 		_float3	fPos;
+		_float3	fScale;
+		_uint	iTurnDirection = 0;
 	}GEAR_STATEDESC;
 private:
 	CGear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -32,12 +34,21 @@ public:
 private:
 	HRESULT SetUp_Components();
 
+public:
+	CTransform*			Get_Transform() { return m_pTransformCom; }
+	void				Set_TurnOn(_bool bTurnOn) { m_bTurnOn = bTurnOn; }
+
+private:
 	GEAR_STATEDESC		m_GearStateDesc;
 
 	CTransform*			m_pTransformCom = nullptr;
 	CModel*				m_pModel = nullptr;
-	CShader*			m_pRendererCom = nullptr;
+	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
+
+	_bool				m_bTurnOn = false;
+
+	_float4				m_fRumRight = _float4(0.5f, 0.5f, 0.5f, 1.f);
 
 public:
 	static CGear* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
