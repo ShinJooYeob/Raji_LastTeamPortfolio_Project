@@ -42,18 +42,15 @@ private:
 	CModel*				m_pModel = nullptr;
 
 	CCollider*			m_pColliderCom = nullptr;
-
+	vector<_float3>		m_vecColliderPos;
 	CGear*				m_pGear[CGear::GEAR_END];
 
-	vector<_float3>		m_vecColliderPos;
-
-
-	_bool				m_bOnceSwitch = false;
-
-
-	_uint				m_GearNumber = 1;
 
 	_bool				m_bTriggerOn = true;
+	_uint				m_GearNumber = 1;
+
+	_bool				m_bDifferentDirectiOn[CGear::GEAR_END] = {false};
+
 
 public:
 	static CGear_Puzzle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
