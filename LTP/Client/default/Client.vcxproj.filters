@@ -457,6 +457,12 @@
     <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle">
       <UniqueIdentifier>{5c51f360-2ae3-47e9-baeb-19b963eb6404}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\09.InteractObjects\03. DynamicPlatform">
+      <UniqueIdentifier>{2f65446b-612a-439f-98fa-899b20264c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\09.InteractObjects\04. RepelWall">
+      <UniqueIdentifier>{a616e0bd-6e1f-4cec-8df1-c7d99e0960fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -995,6 +1001,14 @@
     <ClInclude Include="..\public\Gear.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Gear.h" />
+    <ClInclude Include="..\public\Gear_Puzzle.h" />
+    <ClInclude Include="..\public\DynamicPlatform.h">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RepelWall.h">
+      <Filter>01.GameObject\09.InteractObjects\04. RepelWall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1516,6 +1530,14 @@
     </ClCompile>
     <ClCompile Include="..\private\Gear_Puzzle.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gear.cpp" />
+    <ClCompile Include="..\private\Gear_Puzzle.cpp" />
+    <ClCompile Include="..\private\DynamicPlatform.cpp">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RepelWall.cpp">
+      <Filter>01.GameObject\09.InteractObjects\04. RepelWall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -128,3 +128,5 @@ LTP/Client/assimpPack_Final/assimp-vc140-mtd.dll
 *.tmp
 LTP/Engine/bin/Engine.iobj
 LTP/Engine/bin/Engine.ipdb
+LTP/Client/bin/Client.iobj
+LTP/Client/bin/Client.ipdb

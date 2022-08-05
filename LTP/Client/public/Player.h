@@ -18,7 +18,7 @@ class CPlayer final : public CGameObject
 public:
 	enum EPLAYER_STATE {
 		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, 
-		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_END
+		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_DYNAMICPLATFORM_DEAD, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -185,6 +185,9 @@ public: /* Damage Logic*/
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 public:
+	void	Move_OppositeDir();
+
+public:
 	// First Start
 	void	Set_State_FirstStart();
 
@@ -220,6 +223,7 @@ public:
 
 	// Dynamic Platform
 	void	Set_State_OnDynamicPlatformStart();
+	void	Set_State_OnDynamicPlatformDead();
 
 	// Falling
 	void	Set_State_FallingStart(_double fDeltaTime);
@@ -265,6 +269,7 @@ private:
 
 	HRESULT Update_State_DynamicPlatform_Idle(_double fDeltaTime);
 	HRESULT Update_State_DynamicPlatform_Move(_double fDeltaTime);
+	HRESULT Update_State_DynamicPlatform_Dead(_double fDeltaTime);
 
 	HRESULT Update_State_Attack(_double fDeltaTime);
 	HRESULT Update_State_UtilitySkill(_double fDeltaTime);
@@ -475,6 +480,9 @@ private: /* Animation Control */
 	_bool					m_bLedge_ReachBackState = false;
 
 	_bool					m_bFallingDead = false;
+
+private: /* Control */
+	_float					m_fDelayTime = 0.f;
 
 
 private: /* For Cheat Mode*/
