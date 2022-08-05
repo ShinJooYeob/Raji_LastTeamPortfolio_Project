@@ -68,6 +68,11 @@ private:
 		WEAPOPNDESC			m_WeaponDesc;
 		_float				m_WeaponMoveTime = 0;
 
+		//WeaponPositionY
+		_float				m_DelaTime = 0.f;
+		_bool				m_bYDirection = false;
+		_float				m_fWeaponPosY = 2.2f;
+
 		//Attack
 		_bool				m_bIsAttackfinish = false;
 
@@ -84,6 +89,9 @@ private:
 		_bool				m_DeadDessolve = false;
 
 		_float				m_fAngle = 0.f;
+		
+private:
+	void	ShakeWeaponY();
 private:
 	HRESULT SetUp_Components();
 

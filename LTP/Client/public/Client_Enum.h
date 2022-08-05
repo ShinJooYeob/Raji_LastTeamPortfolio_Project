@@ -402,6 +402,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_UI_HpUI,
 	Prototype_Object_UI_UI,
 	Prototype_Object_SkillUI,
+	Prototype_Object_PauseUI,
 	Prototype_Object_LobbyUI,
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
@@ -725,6 +726,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_SkillUI:
 		return TEXT("Prototype_Object_SkillUI");
 
+	case Prototype_Object_PauseUI:
+		return TEXT("Prototype_Object_PauseUI");
+		
 	case Prototype_Object_LobbyUI:
 		return TEXT("Prototype_Object_LobbyUI");
 
@@ -914,6 +918,7 @@ enum LAYERID
 	Layer_UI_BTN,
 	Layer_UI_SLIDE,
 	Layer_UI_INPUT,
+	Layer_UI,
 
 	Layer_TestObject,
 	//JJB
@@ -923,6 +928,7 @@ enum LAYERID
 	Layer_TestEffect,
 	Layer_Volcano,
 	Layer_FlameTerrain,
+
 
 	Layer_InteractObject,
 	Layer_EnvMappedWater,
@@ -1093,6 +1099,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		return TEXT("Layer_UI_INPUT");
 		break;
 
+	case Layer_UI:
+		return TEXT("Layer_UI");
+		break;
+		
 		//////////////////////////////////////////////////////////////////////////
 
 	case Layer_TestObject:

@@ -36,28 +36,30 @@ HRESULT CChiedtuan_2Page_Weapon::Initialize_Clone(void * pArg)
 	switch (m_WeaponDesc.KatanaPOSType)
 	{
 	case Client::CChiedtuan_2Page_Weapon::KATANA_TR:
-		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-90.f));
+		m_bYDirection = true;
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
-		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-45.f));
+		m_bYDirection = false;
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
-		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(45.f));
+		m_bYDirection = false;
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
-		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(90.f));
+		m_bYDirection = true;
 		break;
 	}
 
 	m_PlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player));
 
 	m_fDistance = 20.f;
+	m_fWeaponPosY = 2.5f;
 
 	return S_OK;
 }
 
 _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 {
+	m_DelaTime = (_float)fDeltaTime;
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 
@@ -73,15 +75,6 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 
 		}
 	}
-	//if (m_pDissolveCom->Get_IsFadeIn() == true && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
-	//{
-	//	if (m_bIsInitialPosDessolve && !m_DeadDessolve)
-	//	{
-	//		m_WeaponMoveTime = 0.f;
-
-	//		m_bIsInitialPosDessolve = false;
-	//	}
-	//}
 
 	if (!m_bIsAttack && !m_bIsSpinAttack && !m_bIsVolcanoAttack)
 		Set_WeaponPosition();
@@ -89,12 +82,6 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 		Set_Attack(fDeltaTime);
 	else if (m_bIsAttack && m_bIsSpinAttack && !m_bIsVolcanoAttack)
 	{
-		//if (m_bIsBeginningPos)
-		//{
-		//	m_bIsInitialPosDessolve = true;
-		//	m_pDissolveCom->Set_DissolveOn(false, 1.f);
-		//}
-
 		WeaponSpinAttack(fDeltaTime);
 	}
 	else if (m_bIsAttack && !m_bIsSpinAttack && m_bIsVolcanoAttack)
@@ -226,12 +213,11 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 	switch (m_WeaponDesc.KatanaPOSType)
 	{
 	case Client::CChiedtuan_2Page_Weapon::KATANA_TR:
-		//m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-90.f));
-
+		ShakeWeaponY();
 		vMyNewPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) +
 			(XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -3.f) +
 			(vRight.XMVector() * -3.f);
-		vMyNewPos.y += 2.f;
+		vMyNewPos.y += m_fWeaponPosY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(35.f));
@@ -239,10 +225,9 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_TL:
-		//m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-45.f));
-		
+		ShakeWeaponY();
 		vMyNewPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -3.f) + (vRight.XMVector() * -1.5f);
-		vMyNewPos.y += 2.f;
+		vMyNewPos.y += m_fWeaponPosY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(15.f));
@@ -250,10 +235,9 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BR:
-		//m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(45.f));
-
+		ShakeWeaponY();
 		vMyNewPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -3.f) + (vRight.XMVector() * 1.5f);
-		vMyNewPos.y += 2.f;
+		vMyNewPos.y += m_fWeaponPosY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(-15.f));
@@ -261,9 +245,10 @@ void CChiedtuan_2Page_Weapon::Set_WeaponPosition()
 
 		break;
 	case Client::CChiedtuan_2Page_Weapon::KATANA_BL:
-		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(90.f));
+
+		ShakeWeaponY();
 		vMyNewPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -3.f) + (vRight.XMVector() * 3.f);
-		vMyNewPos.y += 2.f;
+		vMyNewPos.y += m_fWeaponPosY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vMyNewPos);
 		m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(-35.f));
@@ -296,6 +281,7 @@ void CChiedtuan_2Page_Weapon::Set_Attack(_double fDeltaTime)
 		if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < PlayerTransfom->Get_MatrixState_Float3(CTransform::STATE_POS).y)
 		{
 			m_vPlayerPos.y += 1.f;
+
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
 
 
@@ -319,7 +305,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 {
 	CTransform* BossTransform = (CTransform*)m_WeaponDesc.BossObj->Get_Component(TAG_COM(Com_Transform));
 
-	m_fAngle += 20.f;//(_float)fDeltaTime;
+	m_fAngle += 13.f;//(_float)fDeltaTime;
 	if (m_fAngle >= 360.f)
 		m_fAngle = 0.f;
 
@@ -351,7 +337,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 		}
 
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
-		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
 
 		m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
 	}
@@ -367,7 +353,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		}
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
-		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
 
 		m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
 	}
@@ -383,7 +369,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
 		}
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
-		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
 
 		m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
 	}
@@ -400,7 +386,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 		}
 
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
-		m_pTransformCom->Turn_Revolution_CCW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
+		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
 
 		m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fAngle));
 	}
@@ -511,6 +497,24 @@ void CChiedtuan_2Page_Weapon::VolcanoAttack(_double fDeltaTime)
 	}
 }
 
+void CChiedtuan_2Page_Weapon::ShakeWeaponY()
+{
+	if (m_bYDirection)
+	{
+		m_fWeaponPosY += (_float)m_DelaTime;
+
+		if (m_fWeaponPosY >= 3.f)
+			m_bYDirection = false;
+	}
+	else
+	{
+		m_fWeaponPosY -= (_float)m_DelaTime;
+
+		if (m_fWeaponPosY <=  2.f)
+			m_bYDirection = true;
+	}
+}
+
 HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -561,28 +565,28 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(11.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 1.5f, 0.f, 1);
-		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-		m_pCollider->Set_ParantBuffer();
-
-		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 1.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 6.f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(4.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 6.0f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 	}
@@ -591,28 +595,28 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(11.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 1.5f, 0.f, 1);
-		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-		m_pCollider->Set_ParantBuffer();
-
-		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 1.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 6.f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(4.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 6.0f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 
@@ -621,29 +625,29 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 	{
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(13.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vScale = _float3(11.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 1.5f, 0.f, 1);
-		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-		m_pCollider->Set_ParantBuffer();
-
-		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 1.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 6.f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(4.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 6.0f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 	}
@@ -651,29 +655,29 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 	{
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(13.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vScale = _float3(11.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 1.5f,0.f, 1);
-		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-		m_pCollider->Set_ParantBuffer();
-
-		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 3.5f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 1.5f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 		ColliderDesc.vScale = _float3(4.f);
-		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		ColliderDesc.vPosition = _float4(0.f, 6.f, 0.f, 1);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 3.5f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(4.f);
+		ColliderDesc.vRotation = _float4(0, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0, 6.0f, 1);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 		m_pCollider->Set_ParantBuffer();
 	}

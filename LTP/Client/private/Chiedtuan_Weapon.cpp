@@ -137,6 +137,11 @@ void CChiedtuan_Weapon::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 	}
 }
 
+void CChiedtuan_Weapon::Set_Dissolve(_bool FadeIn, _double Time)
+{
+	m_pDissolveCom->Set_DissolveOn(FadeIn, Time);
+}
+
 void CChiedtuan_Weapon::Update_AttachMatrix()
 {
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();

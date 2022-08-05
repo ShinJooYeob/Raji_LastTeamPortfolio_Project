@@ -27,7 +27,7 @@ HRESULT CScene_StageSelect::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss))); 
-	//FAILED_CHECK(Ready_Layer_Test(TAG_LAY(Layer_Volcano)));
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	return S_OK;
 }
 
@@ -210,9 +210,9 @@ HRESULT CScene_StageSelect::Ready_Layer_Player(const _tchar * pLayerTag)
 
 }
 
-HRESULT CScene_StageSelect::Ready_Layer_Test(const _tchar * pLayerTag)
+HRESULT CScene_StageSelect::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_Boss_Volcano), &_float3(0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

@@ -138,7 +138,7 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
-	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 	_int iRandom = rand() % 3 + 1;
 
@@ -308,28 +308,28 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_pModel->Change_AnimIndex(4);
 		}
-		//점프
-		if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
-		{
-			m_bIsAttack = true;
-			m_pModel->Change_AnimIndex_ReturnTo(10, 1);
-		}
-		//일반 공격
-		else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
-		{
-			m_bIsAttack = true;
-			m_bIsBasicAttack = true;
+		////점프
+		//if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
+		//{
+		//	m_bIsAttack = true;
+		//	m_pModel->Change_AnimIndex_ReturnTo(10, 1);
+		//}
+		////일반 공격
+		//else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
+		//{
+		//	m_bIsAttack = true;
+		//	m_bIsBasicAttack = true;
 
-			m_pModel->Change_AnimIndex_ReturnTo(5, 1);
+		//	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
-		}
+		//}
 		//스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			//iRandom = 2;
+			iRandom = 2;
 
 			switch (iRandom)
 			{
@@ -563,7 +563,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
-	//FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
 	if (!m_ActivateSecondPage)
 	{
@@ -619,7 +619,7 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 	}
 
 
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(fDeltaTime);
@@ -1041,9 +1041,17 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.19607843137)
 				{
 					CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+					_float3 m_vPlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
 					for (auto& SecondPageWeapon : m_pSecondPageWeapons)
 					{
-						SecondPageWeapon->Set_PlayerPos(PlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+						_float RandomPosX = GetSingle(CUtilityMgr)->RandomFloat(-2.3f, 2.3f);
+						_float RandomPosZ = GetSingle(CUtilityMgr)->RandomFloat(-1.3f, 1.3f);
+
+						m_vPlayerPos.x += RandomPosX;
+						m_vPlayerPos.z += RandomPosZ;
+
+						SecondPageWeapon->Set_PlayerPos(m_vPlayerPos);
 						SecondPageWeapon->Set_IsAttackState(true);
 						SecondPageWeapon->Set_AttackfinishOff(false);
 						SecondPageWeapon->Set_WeaponPosition();
@@ -1111,13 +1119,13 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				++m_iAdjMovedIndex;
 			}
 
-			if (PlayRate > 0.22666666 && PlayRate < 0.53333333)
+			if (PlayRate > 0.266666666 && PlayRate <= 0.34666666)
 			{
-				m_pTransformCom->Move_Forward(fDeltatime/*, m_pNavigationCom*/);
+				m_pTransformCom->Move_Forward(fDeltatime, m_pNavigationCom);
 			}
-			else if (PlayRate > 0.8 && PlayRate < 0.92)
+			else if (PlayRate > 0.68 && PlayRate < 0.826666666)
 			{
-				m_pTransformCom->Move_Forward(fDeltatime/*, m_pNavigationCom*/);
+				m_pTransformCom->Move_Forward(fDeltatime, m_pNavigationCom);
 			}
 		}
 			break;
@@ -1196,12 +1204,12 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				PlayerPos.y = MonsterPos.y;
 
 				_float3 vGoalDir = (PlayerPos.XMVector() - MonsterPos.XMVector());
-				m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * m_fSpinSpeed + 0.01f);
+				//m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * m_fSpinSpeed + 0.01f);
 
 				if (m_fSpinSpeed > 0.1f)
-					m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3/*, m_pNavigationCom*/);
+					m_pTransformCom->MovetoDir(XMLoadFloat3(&vGoalDir), fDeltatime * 0.3, m_pNavigationCom);
 
-				m_fAnimmultiple = (m_fSpinSpeed *0.1f);
+				//m_fAnimmultiple = (m_fSpinSpeed *0.1f);
 
 				if (m_iAdjMovedIndex == 0)
 				{
@@ -1211,8 +1219,27 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			else
 			{
-				m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * m_fSpinSpeed + 0.01f);
-				m_fAnimmultiple = (m_fSpinSpeed *0.1f);
+				//if (PlayRate > 0 && PlayRate < 0.3)
+				//{
+				//	_float tt = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, m_fSpinSpeed*0.25f, PlayRate, 0.3f);
+				//	_float t2 = g_pGameInstance->Easing(TYPE_SinInOut, -0.5f, 0.5f, PlayRate, 0.3f);
+
+				//	m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * tt + 0.01f);
+				//	m_pTransformCom->Move_Forward(fDeltatime * t2);
+				//}
+				//else if (PlayRate > 0.433333333 && PlayRate < 0.53333333)
+				//{
+				//	_float tt = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, m_fSpinSpeed *0.25f ,
+				//		PlayRate - 0.433333333f, 0.1f);
+
+				//	_float t2 = g_pGameInstance->Easing(TYPE_SinInOut, -0.5f, 0.5f,
+				//		PlayRate - 0.433333333f, 0.1f);
+
+				//	m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * tt + 0.01f);
+				//	m_pTransformCom->Move_Forward(fDeltatime * t2);
+				//}
+				////m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltatime * (m_fSpinSpeed*0.6f) + 0.01f);
+				//////m_fAnimmultiple = (m_fSpinSpeed *0.1f);
 			}
 		}
 
@@ -1365,7 +1392,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			m_bIsAtaackAimEnd = false;
 
 			m_bIsLookAt = true;
-			m_pTransformCom->Move_Forward(fDeltatime * 0.7f/*, m_pNavigationCom*/);
+			m_pTransformCom->Move_Forward(fDeltatime , m_pNavigationCom);
 		
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.14285714)
 			{
@@ -1424,16 +1451,25 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Ignite.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
+
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.841772151)
+			{
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				++m_iAdjMovedIndex;
+			}
+
 			//무기생성
-			if (PlayRate > 0.8227848 && m_iAdjMovedIndex == 5)
+			if (PlayRate > 0.962025316 && m_iAdjMovedIndex == 6)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_bIsMainWeaponOff = false;
-				++m_iAdjMovedIndex;
-			}
-			if (m_iAdjMovedIndex == 6 && PlayRate > 0.841772151)
-			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				for (auto& Weapon : m_pMainWeapons)
+					Weapon->Set_Dissolve(true);
+
+				for (auto& SubWeapon : m_pSubWeapons)
+					SubWeapon->Set_Dissolve(true);
+				
 				++m_iAdjMovedIndex;
 			}
 

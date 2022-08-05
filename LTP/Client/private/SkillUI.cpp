@@ -1043,13 +1043,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Fuck YOU1";
+			m_SkillExplanationFont.szString = L"Test YOU1";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Fuck YOU2";
+			m_SkillExplanationFont.szString = L"Test YOU2";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Fuck YOU3";
+			m_SkillExplanationFont.szString = L"Test YOU3";
 			break;
 		}
 	}
@@ -1058,13 +1058,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Fuck YOU4";
+			m_SkillExplanationFont.szString = L"Test YOU4";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Fuck YOU5";
+			m_SkillExplanationFont.szString = L"Test YOU5";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Fuck YOU6";
+			m_SkillExplanationFont.szString = L"Test YOU6";
 			break;
 		}
 	}
@@ -1073,13 +1073,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Fuck YOU7";
+			m_SkillExplanationFont.szString = L"Test YOU7";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Fuck YOU8";
+			m_SkillExplanationFont.szString = L"Test YOU8";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Fuck YOU9";
+			m_SkillExplanationFont.szString = L"Test YOU9";
 			break;
 		}
 	}

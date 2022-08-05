@@ -463,6 +463,9 @@
     <Filter Include="01.GameObject\09.InteractObjects\04. RepelWall">
       <UniqueIdentifier>{a616e0bd-6e1f-4cec-8df1-c7d99e0960fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\PauseUI">
+      <UniqueIdentifier>{02a01420-b9f9-4f6d-aa0a-e09750e674f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1009,6 +1012,9 @@
     <ClInclude Include="..\public\RepelWall.h">
       <Filter>01.GameObject\09.InteractObjects\04. RepelWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PauseUI.h">
+      <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1538,6 +1544,9 @@
     </ClCompile>
     <ClCompile Include="..\private\RepelWall.cpp">
       <Filter>01.GameObject\09.InteractObjects\04. RepelWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PauseUI.cpp">
+      <Filter>01.GameObject\99.UI\PauseUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

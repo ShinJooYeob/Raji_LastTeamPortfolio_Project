@@ -7,7 +7,7 @@ BEGIN(Client)
 class CBossCreateTrigger final : public CTriggerObject
 {
 public:
-	enum BossType { BOSS_RANGDA, BOSS_SNAKE, BOSS_MAHABASURA, BOSS_END };
+	enum BossType { BOSS_RANGDA, BOSS_SNAKE, BOSS_MAHABASURA, BOSS_CHIEDTIAN, BOSS_END };
 
 protected:
 	CBossCreateTrigger(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);

@@ -45,10 +45,10 @@
 #include "Gear_Puzzle.h"
 #include "Gear.h"
 
-//SkillUI
+//UI
 #include "SkillUI.h"
 #include "LobbyUI.h"
-
+#include "PauseUI.h"
 
 //Dynamic_Map
 #include "FemaleStatue.h"
@@ -394,6 +394,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//LobbyUI
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_LobbyUI), CLobbyUI::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_SkillUI), CSkillUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PauseUI), CPauseUI::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
