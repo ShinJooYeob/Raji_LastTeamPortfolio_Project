@@ -29,9 +29,13 @@ HRESULT CflameTerrain::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 	}
 
+	m_pTransformCom->Rotation_CW(XMVectorSet(1, 0, 0, 0), XMConvertToRadians(90));
+
 	//Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
 
 	m_pTransformCom->Scaled_All(_float3(5.f));
+
+	m_fAliveTime = 7.f;
 
 	return S_OK;
 }
@@ -86,7 +90,7 @@ _int CflameTerrain::Render()
 	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
 
-	m_pVIBufferCom->Render(m_pShaderCom, 2);
+	m_pVIBufferCom->Render(m_pShaderCom, 0);
 
 	return _int();
 }

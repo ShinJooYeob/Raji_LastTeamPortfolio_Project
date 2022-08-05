@@ -26,7 +26,7 @@ private:
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Boss(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Player(const _tchar * pLayerTag);
-	HRESULT Ready_Layer_Test(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;

@@ -44,6 +44,10 @@ HRESULT CBossCreateTrigger::After_Initialize()
 	{
 		m_eBossType = CBossCreateTrigger::BOSS_MAHABASURA;
 	}
+	else if (m_fValueMat._14 >= 1.f)
+	{
+		m_eBossType = CBossCreateTrigger::BOSS_CHIEDTIAN;
+	}
 
 	return S_OK;
 }
@@ -113,6 +117,10 @@ void CBossCreateTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 		else if (m_eBossType == CBossCreateTrigger::BOSS_MAHABASURA)
 		{
 			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.3f, 322.283f));
+		}
+		else if (m_eBossType == CBossCreateTrigger::BOSS_CHIEDTIAN)
+		{
+			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(0.967f, 35.900f, 310.637f));
 		}
 	}
 	m_bBool = true;

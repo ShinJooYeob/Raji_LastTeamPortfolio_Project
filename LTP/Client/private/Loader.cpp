@@ -45,10 +45,10 @@
 #include "Gear_Puzzle.h"
 #include "Gear.h"
 
-//SkillUI
+//UI
 #include "SkillUI.h"
 #include "LobbyUI.h"
-
+#include "PauseUI.h"
 
 //Dynamic_Map
 #include "FemaleStatue.h"
@@ -393,6 +393,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//LobbyUI
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_LobbyUI), CLobbyUI::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_SkillUI), CSkillUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PauseUI), CPauseUI::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 
@@ -1535,13 +1536,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	////// MERGE //
-	//FAILED_CHECK(Load_AllMonster());
-	//FAILED_CHECK(Load_AllBoss());
-	//FAILED_CHECK(Load_AllDynamicMapObject());
+	//// MERGE //
+	FAILED_CHECK(Load_AllMonster());
+	FAILED_CHECK(Load_AllBoss());
+	FAILED_CHECK(Load_AllDynamicMapObject());
 
-	// for (_uint i = 0; i < SCENE_END; i++)
-	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	 for (_uint i = 0; i < SCENE_END; i++)
+	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

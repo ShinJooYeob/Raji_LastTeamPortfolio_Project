@@ -38,7 +38,7 @@ private:
 	CCollider*			m_pCollider = nullptr;
 
 private:
-	_float				m_fAliveTime = 3.f;
+	_float				m_fAliveTime = 7.f;
 
 private:
 	HRESULT		SetUp_Components();

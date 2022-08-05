@@ -39,6 +39,7 @@ public:
 
 	void	Set_WaistgirdScal() { m_pTransformCom->Scaled_All(_float3(0.6f)); }
 	void	Set_SpinScal() { m_pTransformCom->Scaled_All(_float3(0.8f)); }
+	void	Set_Dissolve(_bool FadeIn, _double Time = 1.f);
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;

@@ -27,7 +27,9 @@ HRESULT CVolcano::Initialize_Clone(void * pArg)
 
 	if (pArg != nullptr)
 	{
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
+		_float3 Pos =  *((_float3*)pArg);
+		Pos.y -= 0.2f;
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 	}
 
 	//Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
