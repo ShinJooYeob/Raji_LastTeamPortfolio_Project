@@ -70,7 +70,8 @@ _int CGear::Update(_double dDeltaTime)
 	}
 
 
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 2.5f));
+	//FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 2.5f));
+
 	return _int();
 }
 

@@ -31,6 +31,7 @@ private:
 
 private:
 	HRESULT Update_Collider(_double dDeltaTime);
+	HRESULT	Mini_Collision(_double dDeltaTime);
 
 private:
 	HRESULT KeyboardInput(_double dDeltaTime);
@@ -50,6 +51,9 @@ private:
 	_uint				m_GearNumber = 1;
 
 	_bool				m_bDifferentDirectiOn[CGear::GEAR_END] = {false};
+
+
+	_float3				PushDir;
 
 
 public:
