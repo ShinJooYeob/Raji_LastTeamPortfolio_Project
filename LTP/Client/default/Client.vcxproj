@@ -273,6 +273,7 @@
     <ClInclude Include="..\public\Rangda_Statue.h" />
     <ClInclude Include="..\public\Rangda_Finger.h" />
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
+    <ClInclude Include="..\public\RepelWall.h" />
     <ClInclude Include="..\public\ResurrectionTrigger.h" />
     <ClInclude Include="..\public\SceneChangeTrigger.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
@@ -413,6 +414,7 @@
     <ClCompile Include="..\private\Rangda_Statue.cpp" />
     <ClCompile Include="..\private\Rangda_Finger.cpp" />
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
+    <ClCompile Include="..\private\RepelWall.cpp" />
     <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />

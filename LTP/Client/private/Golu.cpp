@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\Golu.h"
 #include "Camera_Main.h"
+#include "Scene_Loading.h"
+#include "Scene_Laboratory_Jino.h"
 
 CGolu::CGolu(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -89,6 +91,7 @@ _int CGolu::LateUpdate(_double fDeltaTimer)
 
 #ifdef _DEBUG
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_GameClear));
 #endif // _DEBUG
 	return _int();
 }
@@ -116,6 +119,10 @@ _int CGolu::LateRender()
 
 void CGolu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	if (pMyCollider == m_pCollider_GameClear && eConflictedObjCollisionType == CollisionType_Player && (STATE_IDLE == m_eCurState || STATE_MOV == m_eCurState))
+	{
+		static_cast<CScene_Laboratory_Jino*>(g_pGameInstance->Get_NowScene())->Set_GameClear();
+	}
 }
 
 _float CGolu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -137,6 +144,11 @@ void CGolu::Set_State_IdleStart(_double fDeltaTime)
 
 void CGolu::Set_State_MoveStart(_double fDeltaTime)
 {
+	if (true == m_bGameOver)
+	{
+		return;
+	}
+
 	Move(m_eInputDir, fDeltaTime);
 	m_eCurState = STATE_MOV;
 	m_pModel->Change_AnimIndex(BASE_ANIM_WALK);
@@ -154,6 +166,11 @@ void CGolu::Set_State_LandingStart(_double fDeltaTime)
 {
 	m_eCurState = STATE_LANDING;
 	m_pModel->Change_AnimIndex(BASE_ANIM_LANDING);
+}
+
+void CGolu::Set_GameOver()
+{
+	m_bGameOver = true;
 }
 
 HRESULT CGolu::Update_State_Idle(_double fDeltaTime)
@@ -191,7 +208,7 @@ HRESULT CGolu::Update_State_Fall(_double fDeltaTime)
 	m_fAnimSpeed = 1.f;
 	m_fFallingAcc += 0.03f;
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_float fPos_y = m_fJumpStart_Y + (5 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	_float fPos_y = m_fJumpStart_Y + (0 * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 
 	m_pTransformCom->Move_Forward(fDeltaTime * (m_fJumpPower * 0.8f), nullptr);
 	vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -221,8 +238,14 @@ HRESULT CGolu::Update_Collider(_double fDeltaTime)
 	m_pCollider->Update_Transform(0, WorldMat);
 	m_pCollider->Update_Transform(1, WorldMat);
 	m_pCollider->Update_Transform(2, WorldMat);
-
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player2, this, m_pCollider));
+
+	//***************************************************************//
+
+	m_pCollider_GameClear->Update_Transform(0, WorldMat);
+	m_pCollider_GameClear->Update_Transform(1, WorldMat);
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pCollider_GameClear));
+
 	return S_OK;
 }
 
@@ -442,9 +465,8 @@ HRESULT CGolu::SetUp_Colliders()
 	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Hips", _float3(1), _float3(0), _float3(-0.074084f, -0.861011f, -75.1948f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 
-
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vScale = _float3(0.3f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -454,7 +476,7 @@ HRESULT CGolu::SetUp_Colliders()
 	m_pCollider->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.1f);
+	ColliderDesc.vScale = _float3(0.3f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -462,6 +484,30 @@ HRESULT CGolu::SetUp_Colliders()
 	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Ball_L", _float3(1), _float3(0), _float3(0.068955f, 0.00615f, -0.007523f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pCollider->Set_ParantBuffer();
+
+
+	//******************************************************************************//
+
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_1), (CComponent**)&m_pCollider_GameClear));
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_GameClear->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Hips", _float3(1), _float3(0), _float3(-0.074084f, -0.861011f, -75.1948f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(1.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.0f, 0.f, 1);
+	FAILED_CHECK(m_pCollider_GameClear->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Hips", _float3(1), _float3(0), _float3(0.f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider_GameClear->Set_ParantBuffer();
 
 	return S_OK;
 }
@@ -512,4 +558,5 @@ void CGolu::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pDissolveCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pCollider_GameClear);
 }

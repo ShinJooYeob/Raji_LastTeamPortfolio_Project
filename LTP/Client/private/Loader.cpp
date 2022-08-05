@@ -94,6 +94,7 @@
 #include "Elevator.h"
 #include "LilyPad.h"
 #include "Lotus.h"
+#include "RepelWall.h"
 
 #include "InstanceMonsterBatchTrigger.h"
 //////////////////////////////////////////////////////////////////////////////
@@ -1588,7 +1589,8 @@ HRESULT CLoader::Load_Scene_Laboratory_Jino(_bool * _IsClientQuit, CRITICAL_SECT
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DS_Platform_28.fbx", TransformMatrix);
-	
+	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_01.fbx", TransformMatrix);
+		
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
 
@@ -1602,6 +1604,7 @@ HRESULT CLoader::Load_Scene_Laboratory_Jino(_bool * _IsClientQuit, CRITICAL_SECT
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_RepelWall), CRepelWall::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DynamicPlatform), CDynamicPlatform::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NPC_Golu), CGolu::Create(m_pDevice, m_pDeviceContext)));
 

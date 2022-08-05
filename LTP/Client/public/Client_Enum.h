@@ -421,6 +421,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_InteractObj_Lotus,
 
 	Prototype_Object_DynamicPlatform,
+	Prototype_Object_RepelWall,
 
 	Object_Prototype_End
 };
@@ -758,6 +759,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_DynamicPlatform:
 		return TEXT("Prototype_Object_DynamicPlatform");
+	
+	case Prototype_Object_RepelWall:
+		return TEXT("Prototype_Object_RepelWall");
 		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:

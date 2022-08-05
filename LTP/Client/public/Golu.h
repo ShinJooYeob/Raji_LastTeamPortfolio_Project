@@ -67,6 +67,9 @@ public:
 	// Falling
 	void						Set_State_LandingStart(_double fDeltaTime);
 
+public:
+	void						Set_GameOver();
+
 private:
 	HRESULT						Update_State_Idle(_double fDeltaTime);
 	HRESULT						Update_State_Move(_double fDeltaTime);
@@ -105,6 +108,8 @@ private: /* Animation Control */
 	_float					m_fFallingAcc = 0.f;
 	_float					m_fJumpPower = 0.f;
 
+	_bool					m_bGameOver = false;
+
 private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -114,6 +119,9 @@ private:
 
 	CCollider*				m_pCollider = nullptr;
 	vector<ATTACHEDESC>		m_vecAttachedDesc;
+
+
+	CCollider*				m_pCollider_GameClear = nullptr;
 
 public:
 	static CGolu*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

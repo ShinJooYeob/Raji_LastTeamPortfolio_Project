@@ -897,13 +897,38 @@ _int CCamera_Main::Update_TargetingMode(_double fDeltaTime)
 
 _int CCamera_Main::Update_RajiGolu_MiniGameMode(_double fDeltaTime)
 {
+	if (m_fTargetArmLength > m_fMax_TargetArmLength)
+	{
+		m_fTargetArmLength -= 0.1f;
+		if (m_fTargetArmLength < m_fMax_TargetArmLength)
+		{
+			m_fTargetArmLength = m_fMax_TargetArmLength;
+		}
+	}
+	else if (m_fTargetArmLength < m_fMin_TargetArmLength)
+	{
+		m_fTargetArmLength += 0.1f;
+		if (m_fTargetArmLength > m_fMin_TargetArmLength)
+		{
+			m_fTargetArmLength = m_fMin_TargetArmLength;
+		}
+	}
+
 	// Get Player Info
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_LABORATORY_JINO, TAG_LAY(Layer_Player)));
+	if(nullptr == pPlayer)
+	{
+		return 0;
+	}
 	CTransform* pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 
 	// Get Golu Info
 	CGameObject* pGolu = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_LABORATORY_JINO, TAG_LAY(Layer_NPC)));
+	if (nullptr == pGolu)
+	{
+		return 0;
+	}
 	CTransform* pGoluTransform = (CTransform*)pGolu->Get_Component(TAG_COM(Com_Transform));
 	_Vector vGoluPos = pGoluTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 

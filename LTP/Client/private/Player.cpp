@@ -212,6 +212,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_MOVE:
 		FAILED_CHECK(Update_State_DynamicPlatform_Move(fDeltaTime));
 		break;
+	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_DEAD:
+		FAILED_CHECK(Update_State_DynamicPlatform_Dead(fDeltaTime));
+		break;
 	case EPLAYER_STATE::STATE_EVASION:
 		FAILED_CHECK(Update_State_Evasion(fDeltaTime));
 		break;
@@ -529,74 +532,79 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 		return -2.f;
 	}
 
-	//if (STATE_STOPACTION == m_eCurState)
-	//{
-	//	return 0.f;
-	//}
-	//else if (STATE_EVASION == m_eCurState)
-	//{
-	//	GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
-	//	return 0.f;
-	//}
+	if (STATE_STOPACTION == m_eCurState)
+	{
+		return 0.f;
+	}
+	else if (STATE_EVASION == m_eCurState)
+	{
+		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+		return 0.f;
+	}
 
-	//GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.8f, 0.2f, true);
-	//if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming)
-	//{
-	//	return 0.f;
-	//}
+	if (STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming || 0 >= m_fHP)
+	{
+		return 0.f;
+	}
 
-	//if (true == m_bShieldMode)
-	//{
-	//	_int iSelectSoundFileIndex = rand() % 2;
-	//	_tchar pSoundFile[MAXLEN] = TEXT("");
-	//	swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
-	//	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-	//	return 0.f;
-	//}
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, true);
 
-	//if (0.f < fDamageAmount)
-	//{
-	//	fDamageAmount *= -1.f;
-	//}
+	if (true == m_bShieldMode)
+	{
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		return 0.f;
+	}
 
-	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
+	if (0.f < fDamageAmount)
+	{
+		fDamageAmount *= -1.f;
+	}
 
-	//_float fRemainHP = Add_NowHP(fDamageAmount);
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
 
-	//if (0.f >= fRemainHP)
-	//{
-	//	if (true == bKnockback)
-	//	{
-	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
-	//	}
-	//	else
-	//	{
-	//		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
-	//		Set_State_DeathStart();
-	//		return fRemainHP;
-	//	}
-	//}
-	//else
-	//{
-	//	if (true == bKnockback)
-	//	{
-	//		Set_State_DamageStart(fKnockbackPower, vDamageDir);
-	//	}
-	//}
+	_float fRemainHP = Add_NowHP(fDamageAmount);
 
-	//_int iSelectSoundFileIndex = rand() % 9;
-	//_tchar pSoundFile[MAXLEN] = TEXT("");
-	//swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
-	//g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-	////"Jino_Raji_Hit_%d.wav"
+	if (0.f >= fRemainHP)
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+		else
+		{
+			m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+			Set_State_DeathStart();
+			return fRemainHP;
+		}
+	}
+	else
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+	}
 
-	//return fRemainHP;
-	return _float();
+	_int iSelectSoundFileIndex = rand() % 9;
+	_tchar pSoundFile[MAXLEN] = TEXT("");
+	swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
+	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	//"Jino_Raji_Hit_%d.wav"
+
+	return fRemainHP;
 }
 
 _float CPlayer::Apply_Damage(CGameObject * pTargetObject, _float fDamageAmount, _bool bKnockback)
 {
 	return _float();
+}
+
+void CPlayer::Move_OppositeDir()
+{
+
 }
 
 void CPlayer::Set_State_FirstStart()
@@ -783,24 +791,6 @@ void CPlayer::Set_State_ParkourStart(_double fDeltaTime)
 
 	m_eCurLedgeState = LEDGE_HANGING_IDLE;
 	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_IDLE);
-
-	//m_eCurParkourState = m_pCurParkourTrigger->Get_ParkourTriggerType();
-
-	//switch (m_eCurParkourState)
-	//{
-	//case CTriggerObject::EParkourTriggerType::PACUR_LEDGE:
-		//if (CTestLedgeTrigger::ELedgeTriggerState::STATE_LAST_LEDGE == static_cast<CTestLedgeTrigger*>(m_pCurParkourTrigger)->Get_LedgeType())
-		//{
-//			m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
-			//m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
-		//}
-		//else 
-		//{
-//			m_eCurLedgeState = LEDGE_JUMP;
-			//m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
-		//}
-//		break;
-//	}
 }
 
 void CPlayer::Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime)
@@ -951,9 +941,27 @@ void CPlayer::Set_State_PetalStart(_float3 vPetalPos, _double fDeltaTime)
 
 void CPlayer::Set_State_OnDynamicPlatformStart()
 {
+	if (STATE_DYNAMICPLATFORM_DEAD == m_eCurState)
+	{
+		return;
+	}
+
 	m_eCurState = STATE_DYNAMICPLATFORM_IDLE;
 	m_pModel->Change_AnimIndex(BASE_ANIM_DYNAMICPLATFORM_IDLE);
 	m_pTransformCom->Set_MoveSpeed(1.5f);
+}
+
+void CPlayer::Set_State_OnDynamicPlatformDead()
+{
+	if (false == m_bActionSwitch)
+	{
+		m_pModel->Change_AnimIndex(BASE_ANIM_DYNAMICPLATFORM_IDLE);
+		m_eCurState = STATE_DYNAMICPLATFORM_DEAD;
+		m_bActionSwitch = true;
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Death.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.5f);
+		m_fDelayTime = 7.f;
+	}
 }
 
 void CPlayer::Set_State_JumpStart(_double fDeltaTime)
@@ -968,6 +976,11 @@ void CPlayer::Set_State_JumpStart(_double fDeltaTime)
 
 void CPlayer::Set_State_FallingStart(_double fDeltaTime)
 {
+	if (STATE_FALL == m_eCurState || (STATE_DYNAMICPLATFORM_DEAD == m_eCurState && true == m_bFallingDead))
+	{
+		return;
+	}
+
 	m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING, 0.5f);
 	m_eCurState = STATE_FALL;
 
@@ -1343,6 +1356,31 @@ HRESULT CPlayer::Update_State_DynamicPlatform_Move(_double fDeltaTime)
 	}
 
 
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_State_DynamicPlatform_Dead(_double fDeltaTime)
+{
+	if (true == m_bFallingDead)
+	{
+		Update_State_Fall(fDeltaTime);
+	}
+	else
+	{
+
+	}
+
+	m_fDelayTime -= (_float)fDeltaTime;
+	if (m_fDelayTime < 0.f)
+	{
+		//
+	}
+	else if (false == m_bOncePlaySound && m_fDelayTime < 5.f)
+	{
+		m_bOncePlaySound = true;
+		g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_0.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+		g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_1.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+	}
 	return S_OK;
 }
 
