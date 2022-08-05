@@ -69,6 +69,9 @@ _int CGear::Update(_double dDeltaTime)
 		}
 	}
 
+
+	//FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 2.5f));
+
 	return _int();
 }
 
@@ -131,7 +134,7 @@ HRESULT CGear::SetUp_Components()
 {
 	CTransform::TRANSFORMDESC tDesc = {};
 
-	tDesc.fMovePerSec = 5;
+	tDesc.fMovePerSec = m_GearStateDesc.fSpeed;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.vPivot = _float3(0, 0, 0);
 	tDesc.fScalingPerSec = 1;
@@ -178,6 +181,11 @@ HRESULT CGear::SetUp_Components()
 	case CGear::GEARTYPE_7:
 	{
 		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_SM_ENV_CC_CogMedium_03), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+		break;
+	}
+	case CGear::GEARTYPE_8:
+	{
+		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_SM_ENV_CC_WaterWheel_01), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 		break;
 	}
 	}

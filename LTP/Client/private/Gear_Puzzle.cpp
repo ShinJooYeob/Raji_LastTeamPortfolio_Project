@@ -38,9 +38,13 @@ HRESULT CGear_Puzzle::Initialize_Clone(void * pArg)
 
 	SetUp_Gear();
 
-	//m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, true);
+	m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, true);
 
 	m_pGear[0]->Set_TurnOn(true);
+
+
+
+
 	return S_OK;
 }
 
@@ -49,12 +53,14 @@ _int CGear_Puzzle::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)
 		return -1;
 
-	if (m_bTriggerOn == true)
+	if (m_iTriggerOn >= CGear_Puzzle::GEAR_START)
 	{
 		KeyboardInput(dDeltaTime);
-	}
 
-	Update_Collider(dDeltaTime);
+		Mini_Collision(dDeltaTime);
+
+		Update_Collider(dDeltaTime);
+	}
 
 	for (_uint i = 0; i < CGear::GEAR_END; i++)
 	{
@@ -181,7 +187,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -17.8f, 6.422f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -17.8f, 6.422f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -189,7 +195,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -17.8f, -18.536f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -17.8f, -18.536f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -198,7 +204,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -9.5f, -18.536f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -9.5f, -18.536f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	//====================================================================================
@@ -209,7 +215,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -14.f, -13.2f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -14.f, -13.2f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -218,7 +224,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -3.7f, -13.2f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -3.7f, -13.2f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -227,7 +233,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, 1.f, -21.303f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, 1.f, -21.303f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	//====================================================================================
@@ -238,7 +244,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, 11.2f, -25.171f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, 11.2f, -25.171f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -246,7 +252,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, 2.8f, -7.839f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, 2.8f, -7.839f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -254,7 +260,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -11.f, -7.839f, 1.f);
+	ColliderDesc.vPosition = _float4(-7.f, -11.f, -7.839f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	//====================================================================================
@@ -273,7 +279,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, 19.3f, 2.083f, 1.f);
+	ColliderDesc.vPosition = _float4(-8.f, 19.3f, 2.083f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -281,7 +287,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -11.4f, 2.083f, 1.f);
+	ColliderDesc.vPosition = _float4(-8.f, -11.4f, 2.083f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -302,7 +308,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, 16.f, 14.446f, 1.f);
+	ColliderDesc.vPosition = _float4(-8.f, 16.f, 14.446f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -311,7 +317,7 @@ HRESULT CGear_Puzzle::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(-6.5f, -10.9f, 14.446f, 1.f);
+	ColliderDesc.vPosition = _float4(-8.f, -10.9f, 14.446f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	//====================================================================================
@@ -353,7 +359,10 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_1;
 	GearDesc.fScale = _float3(0.5f, 0.5f, 0.5f);
 	GearDesc.fPos = m_vecColliderPos[1];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
+	//GearDesc.fRadius = 3.811f;
+	GearDesc.fRadius = 5.811f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_1]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
@@ -362,7 +371,9 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_2;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[2];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
+	GearDesc.fRadius = 4.592f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_2]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear),&GearDesc);
 	/////////////////////
 
@@ -372,7 +383,9 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_3;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[5];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
+	GearDesc.fRadius = 4.592f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_3]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
@@ -382,7 +395,9 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_4;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[8];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
+	GearDesc.fRadius = 4.806f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_4]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
@@ -392,7 +407,9 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_5;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[11];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
+	GearDesc.fRadius = 9.222f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_5]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
@@ -402,7 +419,9 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_6;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[14];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
+	GearDesc.fRadius = 9.222f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_6]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
@@ -410,10 +429,24 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	//////////////엔드 기어
 	ZeroMemory(&GearDesc, sizeof(CGear::GEAR_STATEDESC));
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_7;
-	GearDesc.fScale = _float3(0.5f, 0.5f, 0.5f);
+	GearDesc.fScale = _float3(0.9f, 0.9f, 0.9f);
 	GearDesc.fPos = m_vecColliderPos[17];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
+	GearDesc.fRadius = 8.2976f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_7]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
+	/////////////////////
+
+
+	//////////////물레방아
+	ZeroMemory(&GearDesc, sizeof(CGear::GEAR_STATEDESC));
+	GearDesc.iGearTypeNumber = CGear::GEARTYPE_8;
+	GearDesc.fScale = _float3(3.f, 3.f, 3.f);
+	GearDesc.fPos = _float3(239.442f, 24.4f, 397.255f);
+	GearDesc.fSpeed = 5.f;
+	GearDesc.iTurnDirection = 1;
+	GearDesc.fRadius = 8.2976f;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_8]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
 	return S_OK;
@@ -432,6 +465,69 @@ HRESULT CGear_Puzzle::Update_Collider(_double dDeltaTime)
 	}
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pColliderCom));
 
+	return S_OK;
+}
+
+HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
+{
+	//Collsion
+	for (_uint i = 0; i < CGear::GEAR_END; i++)
+	{
+		if(m_GearNumber == i)
+			continue;
+
+		_float fMaxDistance, fMinDistance;
+
+		fMinDistance = m_pGear[m_GearNumber]->Get_Radius() + m_pGear[i]->Get_Radius();
+		fMaxDistance = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pGear[i]->Get_Transform()->Get_MatrixState(CTransform::STATE_POS));
+		if (fMinDistance >= fMaxDistance)
+		{
+			m_pGear[m_GearNumber]->Set_Collsion(true);
+			break;
+		}
+		else{
+			m_pGear[m_GearNumber]->Set_Collsion(false);
+			
+		}
+	}
+
+	if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+	{
+		m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-XMLoadFloat3(&m_fPushDir), dDeltaTime *1.2);
+	}
+	else {
+		m_fPushDir = _float3(0.f, 0.f, 0.f);
+	}
+	//나중에 m_fPushDir에 문제 생기면 488번째랑 502번째 확인해보기
+	
+	//Turn
+	for (_uint i = 1; i < CGear::GEAR_END; i++)
+	{
+		_float fMaxDistance, fMinDistance;
+
+		fMinDistance = m_pGear[i]->Get_Radius() + m_pGear[i-1]->Get_Radius();
+		fMaxDistance = m_pGear[i]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pGear[i-1]->Get_Transform()->Get_MatrixState(CTransform::STATE_POS));
+		if (fMinDistance +0.5 >= fMaxDistance && m_pGear[i]->Get_TurnOn() == false)
+		{
+			if (m_pGear[i-1]->Get_TurnOn() == true)
+				m_pGear[i]->Set_TurnOn(true);
+		}
+		else {
+			m_pGear[i]->Set_TurnOn(false);
+
+		}
+	}
+
+	if (m_pGear[CGear::GEARTYPE_7]->Get_TurnOn() == true)
+	{
+		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(true);
+		m_iTriggerOn = CGear_Puzzle::GEAR_SUCCESS;
+	}
+	else if (m_pGear[CGear::GEARTYPE_8]->Get_TurnOn() == false)
+	{
+		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(false);
+		m_iTriggerOn = CGear_Puzzle::GEAR_START;
+	}
 	return S_OK;
 }
 
@@ -469,32 +565,402 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 	{
 	case CGear::GEARTYPE_2:
 	{
-		_Vector LeftPoint, RightPoint;
-		LeftPoint = XMLoadFloat3(&m_vecColliderPos[2]);
-		RightPoint = XMLoadFloat3(&m_vecColliderPos[3]);
+		_Vector vFirstPoint, vSecondPoint, vThirdPoint;
+		vFirstPoint = XMLoadFloat3(&m_vecColliderPos[2]);
+		vSecondPoint = XMLoadFloat3(&m_vecColliderPos[3]);
+		vThirdPoint = XMLoadFloat3(&m_vecColliderPos[4]);
+
+		_Vector vFirstDir, vSecondDir;
+		vFirstDir = XMVector3Normalize(vSecondPoint - vFirstPoint);
+		vSecondDir = XMVector3Normalize(vThirdPoint - vSecondPoint);
 
 		_float3 fGearPos;
-
 		fGearPos = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float fDis;
 
-		_Vector vDir;
-		vDir = XMVector3Normalize(RightPoint - LeftPoint);
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press)
+		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press && m_vecColliderPos[2].y == fGearPos.y)
 		{
-			if (m_vecColliderPos[3].z >= fGearPos.z)
+			fDis = fGearPos.Get_Distance(vFirstPoint);
+
+			if (fDis >= 0.1)
 			{
-				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vDir, dDeltaTime);
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[2]);
 			}
 		}
 
-		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press) //오른쪽으로 가니깐 오른쪽에 있는 인덱스 3기준으로 해야함 병합 후 바꾸자
+		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press && m_vecColliderPos[3].y == fGearPos.y)
 		{
-			if (m_vecColliderPos[2].z <= fGearPos.z)
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+			if (fDis >= 0.1)
 			{
-				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vDir, dDeltaTime);
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[3]);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
 			}
 		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press &&m_bDifferentDirectiOn[m_GearNumber] == true)
+		{
+			fDis = fGearPos.Get_Distance(vThirdPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[4]);
+			}
+		}
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press &&m_bDifferentDirectiOn[m_GearNumber] == true)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[3]);
+			}
+		}
+
+
+		break;
+	}
+	case CGear::GEARTYPE_3:
+	{
+		_Vector vFirstPoint, vSecondPoint, vThirdPoint;
+		vFirstPoint = XMLoadFloat3(&m_vecColliderPos[5]);
+		vSecondPoint = XMLoadFloat3(&m_vecColliderPos[6]);
+		vThirdPoint = XMLoadFloat3(&m_vecColliderPos[7]);
+
+		_Vector vFirstDir, vSecondDir;
+		vFirstDir = XMVector3Normalize(vSecondPoint - vFirstPoint);
+		vSecondDir = XMVector3Normalize(vThirdPoint - vSecondPoint);
+
+		_float3 fGearPos;
+		fGearPos = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float fDis;
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press && m_vecColliderPos[5].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vFirstPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[5]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press && m_vecColliderPos[6].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[6]);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == true)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[6]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == true)
+		{
+			fDis = fGearPos.Get_Distance(vThirdPoint);
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[7]);
+			}
+		}
+
+		break;
+	}
+	case CGear::GEARTYPE_4:
+	{
+		_Vector vFirstPoint, vSecondPoint, vThirdPoint;
+		vFirstPoint = XMLoadFloat3(&m_vecColliderPos[8]);
+		vSecondPoint = XMLoadFloat3(&m_vecColliderPos[9]);
+		vThirdPoint = XMLoadFloat3(&m_vecColliderPos[10]);
+
+		_Vector vFirstDir, vSecondDir;
+		vFirstDir = XMVector3Normalize(vSecondPoint - vFirstPoint);
+		vSecondDir = XMVector3Normalize(vThirdPoint - vSecondPoint);
+
+		_float3 fGearPos;
+		fGearPos = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float fDis;
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vFirstPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[8]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[9]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press && m_vecColliderPos[9].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[9]);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press && m_vecColliderPos[10].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vThirdPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[10]);
+			}
+		}
+
+		break;
+	}
+	case CGear::GEARTYPE_5:
+	{
+		_Vector vFirstPoint, vSecondPoint, vThirdPoint;
+		vFirstPoint = XMLoadFloat3(&m_vecColliderPos[11]);
+		vSecondPoint = XMLoadFloat3(&m_vecColliderPos[12]);
+		vThirdPoint = XMLoadFloat3(&m_vecColliderPos[13]);
+
+		_Vector vFirstDir, vSecondDir;
+		vFirstDir = XMVector3Normalize(vSecondPoint - vFirstPoint);
+		vSecondDir = XMVector3Normalize(vThirdPoint - vSecondPoint);
+
+		_float3 fGearPos;
+		fGearPos = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float fDis;
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vFirstPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[11]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[12]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press && m_vecColliderPos[12].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[12]);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press && m_vecColliderPos[13].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vThirdPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[13]);
+			}
+		}
+
+		break;
+	}
+	case CGear::GEARTYPE_6:
+	{
+		_Vector vFirstPoint, vSecondPoint, vThirdPoint;
+		vFirstPoint = XMLoadFloat3(&m_vecColliderPos[14]);
+		vSecondPoint = XMLoadFloat3(&m_vecColliderPos[15]);
+		vThirdPoint = XMLoadFloat3(&m_vecColliderPos[16]);
+
+		_Vector vFirstDir, vSecondDir;
+		vFirstDir = XMVector3Normalize(vSecondPoint - vFirstPoint);
+		vSecondDir = XMVector3Normalize(vThirdPoint - vSecondPoint);
+
+		_float3 fGearPos;
+		fGearPos = m_pGear[m_GearNumber]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_float fDis;
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vFirstPoint);
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[14]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press && m_bDifferentDirectiOn[m_GearNumber] == false)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[15]);
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press && m_vecColliderPos[15].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vSecondPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[15]);
+				m_bDifferentDirectiOn[m_GearNumber] = false;
+			}
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press && m_vecColliderPos[16].z == fGearPos.z)
+		{
+			fDis = fGearPos.Get_Distance(vThirdPoint);
+
+			if (fDis >= 0.1)
+			{
+				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
+				m_bDifferentDirectiOn[m_GearNumber] = true;
+				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
+			}
+			else {
+				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[16]);
+			}
+		}
+
 		break;
 	}
 	default:

@@ -7,7 +7,7 @@ BEGIN(Client)
 class CGear :public CMapObject
 {
 public:
-	enum GearType { GEARTYPE_1, GEARTYPE_2, GEARTYPE_3, GEARTYPE_4, GEARTYPE_5, GEARTYPE_6, GEARTYPE_7, GEAR_END };
+	enum GearType { GEARTYPE_1, GEARTYPE_2, GEARTYPE_3, GEARTYPE_4, GEARTYPE_5, GEARTYPE_6, GEARTYPE_7,GEARTYPE_8, GEAR_END };
 
 	typedef struct tagGear_StateDesc
 	{
@@ -15,6 +15,8 @@ public:
 		_float3	fPos;
 		_float3	fScale;
 		_uint	iTurnDirection = 0;
+		_float	fRadius = 0;
+		_float	fSpeed = 0;
 	}GEAR_STATEDESC;
 private:
 	CGear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -36,7 +38,13 @@ private:
 
 public:
 	CTransform*			Get_Transform() { return m_pTransformCom; }
+	_float				Get_Radius() { return m_GearStateDesc.fRadius; }
+	_bool				Get_TurnOn() { return m_bTurnOn; }
+	_bool				Get_Collsion() { return m_bCollsion; }
+
+public:
 	void				Set_TurnOn(_bool bTurnOn) { m_bTurnOn = bTurnOn; }
+	void				Set_Collsion(_bool bCollsion) { m_bCollsion = bCollsion; }
 
 private:
 	GEAR_STATEDESC		m_GearStateDesc;
@@ -46,9 +54,10 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 
-	_bool				m_bTurnOn = false;
-
 	_float4				m_fRumRight = _float4(0.5f, 0.5f, 0.5f, 1.f);
+
+	_bool				m_bTurnOn = false;
+	_bool				m_bCollsion = false;
 
 public:
 	static CGear* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
