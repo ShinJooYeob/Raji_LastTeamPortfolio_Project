@@ -84,66 +84,29 @@ _int CPlayer::Update(_double fDeltaTime)
 		{
 			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
+			INSTPARTICLEDESC arrDesc[3];
+
+			_uint iNum = 0;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0,2,0,0);
+			iNum++;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			iNum++;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_7");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			iNum++;
 
 
+			for (auto& tDesc : arrDesc)
 			{
-
-				//Prototype_Mesh_Big_Sword,
-				//	Prototype_Mesh_Big_Sword2,
-				//NONINSTNESHEFTDESC tNIMEDesc;
-
-				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.5f, 0.f, 0);
-				//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-				//tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword;
-				//tNIMEDesc.fMaxTime_Duration = 0.5f;
-				//tNIMEDesc.fAppearTime = 0.25f;
-
-				//tNIMEDesc.noisingdir = _float2(0, 1);
-
-				//tNIMEDesc.NoiseTextureIndex = 388;
-				//tNIMEDesc.MaskTextureIndex = 107;
-				//tNIMEDesc.iDiffuseTextureIndex = 273;
-				//tNIMEDesc.m_iPassIndex = 17;
-				//tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
-				//tNIMEDesc.vLimLight = _float4(1, 1, 0.642f, 1);
-				//tNIMEDesc.vColor = _float3(00.2f, 0, 0);
-
-				//tNIMEDesc.RotAxis = FollowingDir_Look;
-				//tNIMEDesc.RotationSpeedPerSec = 360.f;
-				//tNIMEDesc.vSize = _float3(0.05f, 0.05f, 0.08f);
-
-				//tNIMEDesc.fAlphaTestValue = 1.f;
-
-				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			}
-
-			{
-				//NONINSTNESHEFTDESC tNIMEDesc;
-
-				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.5f, 0.f, 0);
-				//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
-				//tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword2;
-				//tNIMEDesc.fMaxTime_Duration = 0.5f;
-				//tNIMEDesc.fAppearTime = 0.25f;
-
-				//tNIMEDesc.noisingdir = _float2(0, 1);
-
-				//tNIMEDesc.NoiseTextureIndex = 388;
-				//tNIMEDesc.MaskTextureIndex = 107;
-				//tNIMEDesc.iDiffuseTextureIndex = 273;
-				//tNIMEDesc.m_iPassIndex = 17;
-				//tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
-				//tNIMEDesc.vLimLight = _float4(1, 1, 0.642f, 1);
-				//tNIMEDesc.vColor = _float3(00.2f, 0, 0);
-
-				//tNIMEDesc.RotAxis = FollowingDir_Look;
-				//tNIMEDesc.RotationSpeedPerSec = 360.f;
-				//tNIMEDesc.vSize = _float3(0.05f, 0.05f, 0.08f);
-
-				//tNIMEDesc.fAlphaTestValue = 1.f;
-
-				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-				
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 			}
 
 
