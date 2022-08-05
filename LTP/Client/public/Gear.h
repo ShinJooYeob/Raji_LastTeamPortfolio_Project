@@ -7,7 +7,7 @@ BEGIN(Client)
 class CGear :public CMapObject
 {
 public:
-	enum GearType { GEARTYPE_1, GEARTYPE_2, GEARTYPE_3, GEARTYPE_4, GEARTYPE_5, GEARTYPE_6, GEARTYPE_7, GEAR_END };
+	enum GearType { GEARTYPE_1, GEARTYPE_2, GEARTYPE_3, GEARTYPE_4, GEARTYPE_5, GEARTYPE_6, GEARTYPE_7,GEARTYPE_8, GEAR_END };
 
 	typedef struct tagGear_StateDesc
 	{
@@ -16,6 +16,7 @@ public:
 		_float3	fScale;
 		_uint	iTurnDirection = 0;
 		_float	fRadius = 0;
+		_float	fSpeed = 0;
 	}GEAR_STATEDESC;
 private:
 	CGear(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);

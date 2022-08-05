@@ -7,6 +7,7 @@ BEGIN(Client)
 
 class CGear_Puzzle :public CMapObject
 {
+	enum Gear_TriggerType{GEAR_IDLE,GEAR_START,GEAR_SUCCESS,GEAR_END};
 private:
 	CGear_Puzzle(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CGear_Puzzle(const CGear_Puzzle& rhs);
@@ -47,13 +48,14 @@ private:
 	CGear*				m_pGear[CGear::GEAR_END];
 
 
-	_bool				m_bTriggerOn = true;
+	_uint				m_iTriggerOn = CGear_Puzzle::GEAR_IDLE;
 	_uint				m_GearNumber = 1;
 
 	_bool				m_bDifferentDirectiOn[CGear::GEAR_END] = {false};
 
 
-	_float3				PushDir;
+	_float3				m_fPushDir;
+	_uint				m_iCurrentGearNumber = 1;
 
 
 public:

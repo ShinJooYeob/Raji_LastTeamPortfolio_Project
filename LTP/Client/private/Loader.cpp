@@ -1186,8 +1186,8 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 	//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_PuzzleAssembly_Right_01.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
-	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+	//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+	//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 	pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_01.fbx", TransformMatrix);
@@ -1535,13 +1535,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	////// MERGE //
-	//FAILED_CHECK(Load_AllMonster());
-	//FAILED_CHECK(Load_AllBoss());
-	//FAILED_CHECK(Load_AllDynamicMapObject());
+	//// MERGE //
+	FAILED_CHECK(Load_AllMonster());
+	FAILED_CHECK(Load_AllBoss());
+	FAILED_CHECK(Load_AllDynamicMapObject());
 
-	// for (_uint i = 0; i < SCENE_END; i++)
-	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	 for (_uint i = 0; i < SCENE_END; i++)
+	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 
@@ -2150,6 +2150,8 @@ HRESULT CLoader::Load_AllDynamicMapObject()
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_SM_ENV_CC_CogMedium_02), TransformMatrix);
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(0.f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_SM_ENV_CC_CogMedium_03), TransformMatrix);
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(0.f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_SM_ENV_CC_WaterWheel_01), TransformMatrix);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_MandalaCircle_0), TransformMatrix);
@@ -3099,8 +3101,8 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_07.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 		//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_PuzzleAssembly_Right_01.fbx", TransformMatrix);
-		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
-		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+		//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
+		//pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_WaterWheel_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Garuda_Tower.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_StraightWall_02.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_CogLarge_01.fbx", TransformMatrix);

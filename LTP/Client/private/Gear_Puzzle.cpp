@@ -53,14 +53,14 @@ _int CGear_Puzzle::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)
 		return -1;
 
-	if (m_bTriggerOn == true)
+	if (m_iTriggerOn >= CGear_Puzzle::GEAR_START)
 	{
 		KeyboardInput(dDeltaTime);
+
+		Mini_Collision(dDeltaTime);
+
+		Update_Collider(dDeltaTime);
 	}
-
-	Mini_Collision(dDeltaTime);
-
-	Update_Collider(dDeltaTime);
 
 	for (_uint i = 0; i < CGear::GEAR_END; i++)
 	{
@@ -359,6 +359,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_1;
 	GearDesc.fScale = _float3(0.5f, 0.5f, 0.5f);
 	GearDesc.fPos = m_vecColliderPos[1];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
 	//GearDesc.fRadius = 3.811f;
 	GearDesc.fRadius = 5.811f;
@@ -370,6 +371,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_2;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[2];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
 	GearDesc.fRadius = 4.592f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_2]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear),&GearDesc);
@@ -381,6 +383,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_3;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[5];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
 	GearDesc.fRadius = 4.592f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_3]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
@@ -392,6 +395,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_4;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[8];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
 	GearDesc.fRadius = 4.806f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_4]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
@@ -403,6 +407,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_5;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[11];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
 	GearDesc.fRadius = 9.222f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_5]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
@@ -414,6 +419,7 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_6;
 	GearDesc.fScale = _float3(1.f, 1.f, 1.f);
 	GearDesc.fPos = m_vecColliderPos[14];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 1;
 	GearDesc.fRadius = 9.222f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_6]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
@@ -425,9 +431,22 @@ HRESULT CGear_Puzzle::SetUp_Gear()
 	GearDesc.iGearTypeNumber = CGear::GEARTYPE_7;
 	GearDesc.fScale = _float3(0.9f, 0.9f, 0.9f);
 	GearDesc.fPos = m_vecColliderPos[17];
+	GearDesc.fSpeed = 5.f;
 	GearDesc.iTurnDirection = 0;
 	GearDesc.fRadius = 8.2976f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_7]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
+	/////////////////////
+
+
+	//////////////물레방아
+	ZeroMemory(&GearDesc, sizeof(CGear::GEAR_STATEDESC));
+	GearDesc.iGearTypeNumber = CGear::GEARTYPE_8;
+	GearDesc.fScale = _float3(3.f, 3.f, 3.f);
+	GearDesc.fPos = _float3(239.442f, 24.4f, 397.255f);
+	GearDesc.fSpeed = 5.f;
+	GearDesc.iTurnDirection = 1;
+	GearDesc.fRadius = 8.2976f;
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pGear[CGear::GEARTYPE_8]), m_eNowSceneNum, TAG_OP(Prototype_Object_Map_Gear), &GearDesc);
 	/////////////////////
 
 	return S_OK;
@@ -474,12 +493,12 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 
 	if (m_pGear[m_GearNumber]->Get_Collsion() == true)
 	{
-		m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-XMLoadFloat3(&PushDir), dDeltaTime);
+		m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-XMLoadFloat3(&m_fPushDir), dDeltaTime *1.2);
 	}
 	else {
-		PushDir = _float3(0.f, 0.f, 0.f);
+		m_fPushDir = _float3(0.f, 0.f, 0.f);
 	}
-
+	//나중에 m_fPushDir에 문제 생기면 488번째랑 502번째 확인해보기
 	
 	//Turn
 	for (_uint i = 1; i < CGear::GEAR_END; i++)
@@ -488,7 +507,7 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 
 		fMinDistance = m_pGear[i]->Get_Radius() + m_pGear[i-1]->Get_Radius();
 		fMaxDistance = m_pGear[i]->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pGear[i-1]->Get_Transform()->Get_MatrixState(CTransform::STATE_POS));
-		if (fMinDistance +0.3 >= fMaxDistance && m_pGear[i]->Get_TurnOn() == false)
+		if (fMinDistance +0.5 >= fMaxDistance && m_pGear[i]->Get_TurnOn() == false)
 		{
 			if (m_pGear[i-1]->Get_TurnOn() == true)
 				m_pGear[i]->Set_TurnOn(true);
@@ -497,6 +516,17 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 			m_pGear[i]->Set_TurnOn(false);
 
 		}
+	}
+
+	if (m_pGear[CGear::GEARTYPE_7]->Get_TurnOn() == true)
+	{
+		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(true);
+		m_iTriggerOn = CGear_Puzzle::GEAR_SUCCESS;
+	}
+	else if (m_pGear[CGear::GEARTYPE_8]->Get_TurnOn() == false)
+	{
+		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(false);
+		m_iTriggerOn = CGear_Puzzle::GEAR_START;
 	}
 	return S_OK;
 }
@@ -557,7 +587,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = false;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vFirstDir);
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[2]);
@@ -572,7 +602,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = false;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vFirstDir);
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[3]);
@@ -588,7 +618,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vSecondDir);
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[4]);
@@ -604,7 +634,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vSecondDir);
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[3]);
@@ -638,7 +668,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = false;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vFirstDir);
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[5]);
@@ -654,7 +684,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = false;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vFirstDir);
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[6]);
@@ -670,7 +700,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vSecondDir);
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[6]);
@@ -684,7 +714,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vSecondDir);
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[7]);
@@ -717,7 +747,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vFirstDir);
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[8]);
@@ -731,7 +761,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vFirstDir);
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[9]);
@@ -747,7 +777,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vSecondDir);
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[9]);
@@ -764,7 +794,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vSecondDir);
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[10]);
@@ -797,7 +827,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vFirstDir);
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[11]);
@@ -811,7 +841,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vFirstDir);
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[12]);
@@ -827,7 +857,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vSecondDir);
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[12]);
@@ -844,7 +874,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vSecondDir);
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[13]);
@@ -876,7 +906,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vFirstDir);
+					XMStoreFloat3(&m_fPushDir, -vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[14]);
@@ -891,7 +921,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			{
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vFirstDir, dDeltaTime);
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vFirstDir);
+					XMStoreFloat3(&m_fPushDir, vFirstDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[15]);
@@ -907,7 +937,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(-vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, -vSecondDir);
+					XMStoreFloat3(&m_fPushDir, -vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[15]);
@@ -924,7 +954,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 				m_pGear[m_GearNumber]->Get_Transform()->MovetoDir(vSecondDir, dDeltaTime);
 				m_bDifferentDirectiOn[m_GearNumber] = true;
 				if (m_pGear[m_GearNumber]->Get_Collsion() == true)
-					XMStoreFloat3(&PushDir, vSecondDir);
+					XMStoreFloat3(&m_fPushDir, vSecondDir);
 			}
 			else {
 				m_pGear[m_GearNumber]->Get_Transform()->Set_MatrixState(CTransform::STATE_POS, m_vecColliderPos[16]);
