@@ -992,6 +992,28 @@ HRESULT CAssimpCreateMgr::Free_VertexData_STATIC()
 	return S_OK;
 
 }
+HRESULT CAssimpCreateMgr::Save_To_Effect()
+{
+
+	// 탐색
+	GetSingle(CGameInstance)->FolderFinder(STR_FILEPATH_PARTICLE_FOLDER_L);
+
+	// 탐색한 리스트 TXT 저장
+	// L"TextureParticlePath.txt"
+	// L"MeshParticlePath.txt"
+	wstring path;
+	path = wstring(STR_FILEPATH_PARTICLE_SAVE_L) + wstring(L"\\") + wstring(L"TextureParticlePath.txt");
+	GetSingle(CGameInstance)->SaveVectorToDat_Particle(path, L"texp");
+
+	GetSingle(CGameInstance)->FolderFinder(STR_FILEPATH_PARTICLE_FOLDER_L);
+	path = wstring(STR_FILEPATH_PARTICLE_SAVE_L) + wstring(L"\\") + wstring(L"MeshParticlePath.txt");
+
+	// 탐색한 리스트 TXT 저장
+	GetSingle(CGameInstance)->SaveVectorToDat_Particle(path, L"mesp");
+
+
+	return S_OK;
+}
 //HRESULT CAssimpCreateMgr::Create_ModelCom(const list<MYFILEPATH*>& NameList, const list<MODELDESC*>& DescList,
 //	SCENEID sceneid, CModel::MODELTYPE type, _Matrix defaultMat)
 //{

@@ -378,6 +378,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GT_SphereHarf);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GN_Wind01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_01_2_Trail_X);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightningBolt_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_D_Plane);
+
 
 
 	}

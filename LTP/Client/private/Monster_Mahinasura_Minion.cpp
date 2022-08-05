@@ -716,10 +716,10 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 #ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 4;
+	m_iOncePattern = 0;
 
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 4;
+		m_iOncePattern = 0;
 #endif // _DEBUG
 
 	switch (m_iOncePattern)

@@ -172,6 +172,8 @@ public:
 public: /* CFileInfoMgr */
 	HRESULT FolderFinder(const wstring& FileFolder);
 	void SaveVectorToDat(wstring savetxtName, wstring ExtensionName = L"");
+	void SaveVectorToDat_Particle(wstring savetxtName, wstring ExtensionName = L"");
+
 	list<MYFILEPATH*> Load_ExtensionList(wstring txtfilepath, string exe, bool bFlag = true);
 	wstring Get_PathData(wstring Fullpath);
 

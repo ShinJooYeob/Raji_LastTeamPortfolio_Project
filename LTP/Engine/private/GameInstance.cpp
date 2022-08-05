@@ -756,6 +756,15 @@ void CGameInstance::SaveVectorToDat(wstring savetxtName, wstring ExtensionName)
 	return m_pFileIoMgr->SaveVectorToDat(savetxtName,ExtensionName);
 
 }
+void CGameInstance::SaveVectorToDat_Particle(wstring savetxtName, wstring ExtensionName)
+{
+	NULL_CHECK_BREAK(m_pFileIoMgr);
+	return m_pFileIoMgr->SaveVectorToDat_Particle(savetxtName, ExtensionName);
+
+}
+
+
+
 
 list<MYFILEPATH*> CGameInstance::Load_ExtensionList(wstring txtfilepath, string exe, bool bFlag)
 {
