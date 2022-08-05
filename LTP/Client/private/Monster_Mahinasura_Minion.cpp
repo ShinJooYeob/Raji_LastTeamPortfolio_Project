@@ -262,23 +262,22 @@ HRESULT CMonster_Mahinasura_Minion::Ready_ParticleDesc()
 
 HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 {
-	_Matrix mat_Hand = m_pTransformCom->Get_WorldMatrix();
-//	_Matrix mat_Tail = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
 
-	mat_Hand.r[0] = XMVector3Normalize(mat_Hand.r[0]);
-	mat_Hand.r[1] = XMVector3Normalize(mat_Hand.r[1]);
-	mat_Hand.r[2] = XMVector3Normalize(mat_Hand.r[2]);
+	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
+	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
+	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
 
 	//mat_Tail.r[0] = XMVector3Normalize(mat_Tail.r[0]);
 	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
 	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
 
 
-	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
-	m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
+	mat_World.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
+	m_pTextureParticleTransform_RHand->Set_Matrix(mat_World);
 
-	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
-	m_pTextureParticleTransform_LHand->Set_Matrix(mat_Hand);
+	mat_World.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
+	m_pTextureParticleTransform_LHand->Set_Matrix(mat_World);
 
 
 
@@ -286,7 +285,8 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 	//mat_Hand.r[1] = _Sfloat3(0,1,0); 
 	//mat_Hand.r[2] = _Sfloat3(0,0,1); 
 
-	mat_Hand = m_vecTailAttackAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+	_Matrix mat_Hand = m_vecTailAttackAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed(); 
+
 	// m_pTailAttackColliderCom->Get_ColliderPosition(5).XMVector();
 	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
 
@@ -300,7 +300,21 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 
 	if (KEYDOWN(DIK_C))
 	{
-		
+		CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+
+
+		auto hitParticle = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_HIT4);
+		hitParticle.vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 3, 0, 0);
+		hitParticle.vPowerDirection = _float3(1, -1, 0);
+		GETPARTICLE->Create_Texture_Effect_Desc(hitParticle, m_eNowSceneNum);
+
+		//_Vector vec2 = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector() + mat_World.r[0] * -1.0f +
+		//	mat_World.r[1] * 3.0f + mat_World.r[2] * 3.0f;
+		//hitParticle.vFixedPosition = vec2;
+		//hitParticle.vPowerDirection = _float3(-1,-1,0);
+		//GETPARTICLE->Create_Texture_Effect_Desc(hitParticle, m_eNowSceneNum);
+
+
 	}
 #endif // _DEBUG
 
@@ -1162,7 +1176,6 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				// #TIME Hand 2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
-
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;

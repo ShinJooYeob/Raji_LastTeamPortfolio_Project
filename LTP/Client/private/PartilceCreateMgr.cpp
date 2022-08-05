@@ -354,6 +354,9 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Spread] = pUtil->Get_TextureParticleDesc(TEXT("Spread_Universal"));
 
 
+	mVecTextureEffectDesc[TEXTURE_EFFECTJ_HIT1] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_1"));
+
+
 	
 	// DefaultSetting
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Default].TotalParticleTime = 99999.f;
