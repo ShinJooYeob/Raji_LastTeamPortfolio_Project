@@ -20,7 +20,7 @@ typedef struct tagInstanceParticleAttribute
 
 	_float			_CamDist = 0;
 
-	_bool			_isAlive;
+	_bool			_isAlive = true;
 	
 	_float3			_TargetParentPosition = _float3(0);
 	_uint			_iIndex = 0;
@@ -58,6 +58,7 @@ public:
 
 
 	HRESULT Set_AsMapParticle(vector<_float3>& vecMapParticlePosition);
+	void Erase_Particle() { m_tInstanceDesc.TotalParticleTime = m_PassedTime; };
 
 protected:
 	CShader*					m_pShaderCom = nullptr;

@@ -93,8 +93,10 @@ HRESULT CAssimpCreateMgr::Load_Model_DatFile_One(const wchar_t* fbxName, _fMatri
 HRESULT CAssimpCreateMgr::Init_ModelName_FileList()
 {
 	// 파일 리스트 초기화
-	mList_DataFIle_Static = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "stc");
-	mList_DataFIle_Dynamic = GetSingle(CGameInstance)->Load_ExtensionList(STR_FILEPATH_RESOURCE_FBXDAT_L, "dyn");
+	wstring Path = STR_FILEPATH_RESOURCE_FBXDAT_L;
+
+	mList_DataFIle_Static = GetSingle(CGameInstance)->Load_ExtensionList(Path, "stc");
+	mList_DataFIle_Dynamic = GetSingle(CGameInstance)->Load_ExtensionList(Path, "dyn");
 	return S_OK;
 }
 

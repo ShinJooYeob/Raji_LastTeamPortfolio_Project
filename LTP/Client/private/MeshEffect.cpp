@@ -286,6 +286,7 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 void CMeshEffect::ResetParticle(INSTMESHATT * attribute)
 {
 	_float4 RandomPos = _float4(0);
+	attribute->_LocalMatirx = XMMatrixIdentity();
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -299,6 +300,7 @@ void CMeshEffect::ResetParticle(INSTMESHATT * attribute)
 	//랜덤한 라이프타임
 	attribute->_lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 	attribute->_age = 0;
+	attribute->_isAlive = true;
 
 	attribute->_Targetforce = attribute->_force = m_tInstanceDesc.Particle_Power * pUtil->RandomFloat(m_tInstanceDesc.PowerRandomRange.x, m_tInstanceDesc.PowerRandomRange.y);
 	attribute->_size = m_tInstanceDesc.ParticleSize;
@@ -595,12 +597,13 @@ HRESULT CMeshEffect_Ball::Initialize_Child_Clone()
 {
 	m_vecParticleAttribute.clear();
 
-	INSTMESHATT part;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
+		INSTMESHATT part;
+		ResetParticle(&part);
 		part._LocalMatirx = XMMatrixIdentity();
 
 		//랜덤한 라이프타임
@@ -702,7 +705,6 @@ HRESULT CMeshEffect_Straight::Initialize_Child_Clone()
 {
 	m_vecParticleAttribute.clear();
 
-	INSTMESHATT part;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -710,6 +712,9 @@ HRESULT CMeshEffect_Straight::Initialize_Child_Clone()
 
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
+
+		INSTMESHATT part;
+		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -809,7 +814,6 @@ HRESULT CMeshEffect_Cone::Initialize_Child_Clone()
 {
 	m_vecParticleAttribute.clear();
 
-	INSTMESHATT part;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -817,6 +821,8 @@ HRESULT CMeshEffect_Cone::Initialize_Child_Clone()
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
 
+		INSTMESHATT part;
+		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -917,13 +923,13 @@ HRESULT CMeshEffect_Spread::Initialize_Child_Clone()
 {
 	m_vecParticleAttribute.clear();
 
-	INSTMESHATT part;
-
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
 
+		INSTMESHATT part;
+		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -1081,7 +1087,6 @@ HRESULT CMeshEffect_Fountain::Initialize_Child_Clone()
 {
 	m_vecParticleAttribute.clear();
 
-	INSTMESHATT part;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -1089,6 +1094,8 @@ HRESULT CMeshEffect_Fountain::Initialize_Child_Clone()
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
 
+		INSTMESHATT part;
+		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
@@ -1208,7 +1215,6 @@ HRESULT CMeshEffect_Suck::Initialize_Child_Clone()
 
 	m_tInstanceDesc.fMaxBoundaryRadius = 99999.f;
 
-	INSTMESHATT part;
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -1216,6 +1222,8 @@ HRESULT CMeshEffect_Suck::Initialize_Child_Clone()
 	for (_uint i = 0; i < m_iNumInstance; i++)
 	{
 
+		INSTMESHATT part;
+		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;

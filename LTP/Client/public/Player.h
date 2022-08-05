@@ -572,10 +572,11 @@ private:
 private:
 	CTransform*												m_pTextureParticleTransform = nullptr;
 	CTransform*												m_pMeshParticleTransform = nullptr;
+	CTransform*												m_pJYTextureParticleTransform = nullptr;
 	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
-
+	class CInstanceEffect*									m_ArrToEraseEffect[2] = { nullptr ,nullptr};
 
 private:
 	HRESULT SetUp_Components();

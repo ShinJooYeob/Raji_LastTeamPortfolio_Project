@@ -21,7 +21,7 @@ typedef struct tagInstanceMeshAttribute
 	_float3			_randRotAxis = _float3(0, 1, 0);
 	_float			_randRotSpeed = XMConvertToRadians(720.f);
 
-	_bool			_isAlive;
+	_bool			_isAlive = true;
 	_float3			_TargetParentPosition = _float3(0);
 }INSTMESHATT;
 
@@ -117,7 +117,6 @@ private:
 	virtual ~CMeshEffect_Ball() = default;
 
 private:
-
 	virtual void Reset_Velocity(_float3& fAttVlocity)override;
 	virtual void Update_Position_by_Velocity(INSTMESHATT* tParticleAtt, _double fTimeDelta)override;
 

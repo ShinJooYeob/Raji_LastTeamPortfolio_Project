@@ -41,6 +41,30 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	}
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+	{
+		m_ParticlePassedTime = 0;
+
+		m_ParticleTargetTime = m_vecMeshParticleDesc[0].TotalParticleTime;
+		m_vParticleMovingDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+
+		m_pMeshParticleTransform->Set_IsOwnerDead(false);
+		m_pMeshParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(4));
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+	}
+
+
+
+
+
+
+
+
+
+
+
 	switch (m_tPlayerWeaponDesc.eWeaponState)
 	{
 	case EWeaponState::STATE_STRUCTURE:
@@ -99,12 +123,29 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	
 	if (m_ParticlePassedTime < m_ParticleTargetTime)
 	{
-
+		static _double ThunderTimer = 0;
+		ThunderTimer += fDeltaTime;
 		m_ParticlePassedTime += (_float)fDeltaTime;
 		m_pMeshParticleTransform->MovetoDir_bySpeed(m_vParticleMovingDir.XMVector(), 10.f, (_float)fDeltaTime);
+
+
+		if (ThunderTimer > m_ParticleTargetTime * 0.0666667f)
+		{
+			ThunderTimer = 0;
+
+			m_vecNonInstMeshDesc[0].eMeshType = COMPONENTPROTOTYPEID(Prototype_Mesh_Lightning_01 + rand() % 3);
+			m_vecNonInstMeshDesc[0].vPosition = m_pMeshParticleTransform->Get_MatrixState(CTransform::STATE_POS) +
+				XMVectorSetY(GetSingle(CUtilityMgr)->RandomFloat3(-1, 1).XMVector(), 0);
+			m_vecNonInstMeshDesc[0].vLookDir =
+				XMVector3Normalize(XMVectorSet(0, 8, 0, 0) + XMVectorSetY(GetSingle(CUtilityMgr)->RandomFloat3(-1, 1).XMVector(), 0));
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+		}
 	}
 	else
 	{
+
+		m_pMeshParticleTransform->Set_IsOwnerDead(true);
 		DeActive_Collision_2();
 	}
 	
@@ -285,6 +326,7 @@ void CPlayerWeapon_Sword::EffectParticleOn(_uint iIndex, void* pArg)
 		m_ParticleTargetTime = m_vecMeshParticleDesc[0].TotalParticleTime;
 		m_vParticleMovingDir = *(_float3*)(pArg);
 
+		m_pMeshParticleTransform->Set_IsOwnerDead(false);
 		m_pMeshParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(4));
 
 
@@ -650,9 +692,14 @@ HRESULT CPlayerWeapon_Sword::Ready_ParticleDesc()
 	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 
 	//1
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Sword_Saprk2"));
-	m_vecTextureParticleDesc[1].FollowingTarget = m_pMeshParticleTransform;
-	m_vecTextureParticleDesc[1].iFollowingDir = FollowingDir_Up;
+	// 
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_5"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pMeshParticleTransform;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].TotalParticleTime = 9999999999999.f;
+
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Sword_Saprk2"));
+	//m_vecTextureParticleDesc[1].FollowingTarget = m_pMeshParticleTransform;
+	//m_vecTextureParticleDesc[1].iFollowingDir = FollowingDir_Up;
 
 #pragma endregion
 
@@ -669,6 +716,30 @@ HRESULT CPlayerWeapon_Sword::Ready_ParticleDesc()
 #pragma endregion
 
 	
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+		tNIMEDesc.eMeshType = Prototype_Mesh_Lightning_01;
+
+		tNIMEDesc.fMaxTime_Duration = 0.5f;
+		tNIMEDesc.fAppearTime = 0.15f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 109;
+		tNIMEDesc.iDiffuseTextureIndex = 273;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 1);
+		tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.vSize = _float3(0.1f, 0.1f, -0.2f);
+
+		tNIMEDesc.fAlphaTestValue = 1.f;
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
 
 	return S_OK;
 }

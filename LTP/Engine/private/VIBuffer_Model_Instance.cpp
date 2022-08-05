@@ -180,7 +180,9 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 				iNeedToRenderingCount++;
 			}
 		}
-		
+
+		if (!iNeedToRenderingCount) return S_FALSE;
+
 		D3D11_MAPPED_SUBRESOURCE		SubResource;
 
 		m_pDeviceContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
@@ -213,6 +215,8 @@ HRESULT CVIBuffer_Model_Instance::Render(CShader* pShader, _uint iPassIndex, _ui
 	}
 	else
 	{
+		if (!iNeedToRenderingCount) return S_FALSE;
+
 		D3D11_MAPPED_SUBRESOURCE		SubResource;
 
 		m_pDeviceContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
@@ -310,6 +314,7 @@ HRESULT CVIBuffer_Model_Instance::Render_float4x4(CShader * pShader, _uint iPass
 
 
 	{
+		if (!iNeedToRenderingCount) return S_FALSE;
 		D3D11_MAPPED_SUBRESOURCE		SubResource;
 
 		m_pDeviceContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);

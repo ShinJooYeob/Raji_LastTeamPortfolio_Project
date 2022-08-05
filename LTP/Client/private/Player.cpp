@@ -20,6 +20,7 @@
 
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
+#include "InstanceEffect.h"
 
 //#define NotOnNavi
 
@@ -83,28 +84,68 @@ _int CPlayer::Update(_double fDeltaTime)
 		{
 			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
-			INSTPARTICLEDESC tDescs[5];
 
-			_uint iNum = 0;
 
-			//tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4"));
-			//tDescs[iNum].FollowingTarget = m_pTransformCom;
-			//iNum++;
-			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_3"));
-			tDescs[iNum].FollowingTarget = m_pTransformCom;
-			tDescs[iNum].ParticleSize2 = _float3(6.f);
-			iNum++;
-			tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_2"));
-			tDescs[iNum].FollowingTarget = m_pTransformCom;
+			{
 
-			iNum++;
-			//tDescs[iNum] = (pUtil->Get_TextureParticleDesc(L"JY_TextureEft_1"));
-			//tDescs[iNum].FollowingTarget = m_pTransformCom;
-			//tDescs[iNum].eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
-			iNum++;
+				//Prototype_Mesh_Big_Sword,
+				//	Prototype_Mesh_Big_Sword2,
+				//NONINSTNESHEFTDESC tNIMEDesc;
 
-			for (_uint i = 0 ; i < 4 ; i ++)
-				pUtil->Create_TextureInstance(m_eNowSceneNum, tDescs[i]);
+				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.5f, 0.f, 0);
+				//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+				//tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword;
+				//tNIMEDesc.fMaxTime_Duration = 0.5f;
+				//tNIMEDesc.fAppearTime = 0.25f;
+
+				//tNIMEDesc.noisingdir = _float2(0, 1);
+
+				//tNIMEDesc.NoiseTextureIndex = 388;
+				//tNIMEDesc.MaskTextureIndex = 107;
+				//tNIMEDesc.iDiffuseTextureIndex = 273;
+				//tNIMEDesc.m_iPassIndex = 17;
+				//tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
+				//tNIMEDesc.vLimLight = _float4(1, 1, 0.642f, 1);
+				//tNIMEDesc.vColor = _float3(00.2f, 0, 0);
+
+				//tNIMEDesc.RotAxis = FollowingDir_Look;
+				//tNIMEDesc.RotationSpeedPerSec = 360.f;
+				//tNIMEDesc.vSize = _float3(0.05f, 0.05f, 0.08f);
+
+				//tNIMEDesc.fAlphaTestValue = 1.f;
+
+				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+			}
+
+			{
+				//NONINSTNESHEFTDESC tNIMEDesc;
+
+				//tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.5f, 0.f, 0);
+				//tNIMEDesc.vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+				//tNIMEDesc.eMeshType = Prototype_Mesh_Big_Sword2;
+				//tNIMEDesc.fMaxTime_Duration = 0.5f;
+				//tNIMEDesc.fAppearTime = 0.25f;
+
+				//tNIMEDesc.noisingdir = _float2(0, 1);
+
+				//tNIMEDesc.NoiseTextureIndex = 388;
+				//tNIMEDesc.MaskTextureIndex = 107;
+				//tNIMEDesc.iDiffuseTextureIndex = 273;
+				//tNIMEDesc.m_iPassIndex = 17;
+				//tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
+				//tNIMEDesc.vLimLight = _float4(1, 1, 0.642f, 1);
+				//tNIMEDesc.vColor = _float3(00.2f, 0, 0);
+
+				//tNIMEDesc.RotAxis = FollowingDir_Look;
+				//tNIMEDesc.RotationSpeedPerSec = 360.f;
+				//tNIMEDesc.vSize = _float3(0.05f, 0.05f, 0.08f);
+
+				//tNIMEDesc.fAlphaTestValue = 1.f;
+
+				//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+				
+			}
+
 
 			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
@@ -127,7 +168,7 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
 		{
-			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, TAG_LAY(Layer_MapObject), TAG_OP(Prototype_Object_DynamicPlatform), &_float3(0.f)));
+			//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, TAG_LAY(Layer_MapObject), TAG_OP(Prototype_Object_DynamicPlatform), &_float3(0.f)));
 
 			/*_float3 fPos = Check_MousePicking();
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &fPos);*/
@@ -529,6 +570,17 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 {
 	if (true == m_bShieldMode)
 	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		m_pJYTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS,
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) 
+			 + XMVectorSet(0,0.75f,0,0) - vDamageDir * 3.5f);
+		m_pJYTextureParticleTransform->LookDir(-vDamageDir);
+		m_pJYTextureParticleTransform->Turn_CW(m_pJYTextureParticleTransform->Get_MatrixState_Normalized(CTransform::STATE_RIGHT), XMConvertToRadians(85.f));
+
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[9]);
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[10]);
+
 		return -2.f;
 	}
 
@@ -6640,6 +6692,32 @@ void CPlayer::Shield_Mode(_double fDeltaTime)
 	{
 	case UTILITY_START:
 		m_fAnimSpeed = 1.f;
+		
+		if (!m_bActionSwitch)
+		{
+			if (m_ArrToEraseEffect[0])
+			{
+				m_ArrToEraseEffect[0]->Erase_Particle();
+				m_ArrToEraseEffect[0] = nullptr;
+			}
+			if (m_ArrToEraseEffect[1])
+			{
+				m_ArrToEraseEffect[1]->Erase_Particle();
+				m_ArrToEraseEffect[1] = nullptr;
+			}
+
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[7]);
+			m_ArrToEraseEffect[0] =(CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+			NULL_CHECK_BREAK(m_ArrToEraseEffect[0]);
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[8]);
+			m_ArrToEraseEffect[1] = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+			NULL_CHECK_BREAK(m_ArrToEraseEffect[1]);
+
+			
+			m_bActionSwitch = true;
+		}
 
 		if (0.f < m_pModel->Get_PlayRate())
 		{
@@ -6670,6 +6748,22 @@ void CPlayer::Shield_Mode(_double fDeltaTime)
 	case UTILITY_ACTIVE:
 		break;
 	case UTILITY_END:
+		if (m_bActionSwitch)
+		{
+			if (m_ArrToEraseEffect[0])
+			{
+				m_ArrToEraseEffect[0]->Erase_Particle();
+				m_ArrToEraseEffect[0] = nullptr;
+			}
+			if (m_ArrToEraseEffect[1])
+			{
+				m_ArrToEraseEffect[1]->Erase_Particle();
+				m_ArrToEraseEffect[1] = nullptr;
+			}
+
+			m_bActionSwitch = false;
+		}
+
 		m_fAnimSpeed = 2.f;
 		m_eCurUtilityState = UTILITY_START;
 		Set_State_IdleStart(fDeltaTime);
@@ -8535,8 +8629,13 @@ HRESULT CPlayer::Ready_ParticleDesc()
 {
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	m_pJYTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	NULL_CHECK_RETURN(m_pJYTextureParticleTransform, E_FAIL);
+
+	m_pJYTextureParticleTransform->Set_TurnSpeed(1);
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -8568,6 +8667,27 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Fire_Mandara_2"));
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].EachParticleLifeTime = 3.0f;
+
+	//  7
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_2"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].EachParticleLifeTime = 1.25f;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].TempBuffer_0.z = 480.f;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTransformCom;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].TotalParticleTime = 9999999999999.f;
+
+	// 8
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_5"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pTransformCom;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].TotalParticleTime = 9999999999999.f;
+
+	// 9
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_1"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pJYTextureParticleTransform;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
+	// 10
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_3"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pJYTextureParticleTransform;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
 
 
 #pragma region NonInstMesh;
@@ -9086,7 +9206,8 @@ void CPlayer::Free()
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
-
+	Safe_Release(m_pJYTextureParticleTransform);
+	
 
 	//JJB
 	Safe_Release(m_pSkillUI);

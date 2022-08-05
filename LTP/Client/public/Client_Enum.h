@@ -1228,7 +1228,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Spring,
 	Prototype_Mesh_Spring2,
 	Prototype_Mesh_JYLaser,
-	
+	Prototype_Mesh_JYBall,
+	Prototype_Mesh_JYMadeHalfShield,
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 
@@ -3683,7 +3684,13 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_JYLaser:
 		return TEXT("JYLaser.fbx");
 		break;
+	case Prototype_Mesh_JYBall:
+		return TEXT("JY_Ball.fbx");
+		break;
 
+	case Prototype_Mesh_JYMadeHalfShield:
+		return TEXT("JY_MadeHalfShield.fbx");
+		break;
 		
 		
 

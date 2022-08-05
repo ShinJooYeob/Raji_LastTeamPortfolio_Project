@@ -97,6 +97,8 @@ private:
 	_float							m_ParticlePassedTime = 0;
 	_float							m_ParticleTargetTime = 0;
 	_float3							m_vParticleMovingDir = _float3(0, 0, 1);
+
+	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 public:
 	static CPlayerWeapon_Sword*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);

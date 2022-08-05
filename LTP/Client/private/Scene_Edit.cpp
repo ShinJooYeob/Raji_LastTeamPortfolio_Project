@@ -5318,6 +5318,13 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		if (bIsFollowingTransform)
 		{
 			m_tParticleDesc.FollowingTarget = (CTransform*)(m_vecBatchedObject[0].pObject->Get_Component(TAG_COM(Com_Transform)));
+
+			{
+				_bool bBool = (m_tParticleDesc.TempBuffer_1.x > 0) ? true : false;
+				ImGui::Checkbox("Completely Following", &bBool); ImGui::SameLine();
+				m_tParticleDesc.TempBuffer_1.x = (bBool) ? 1.f : 0;
+			}
+
 		}
 		else
 		{

@@ -95,7 +95,7 @@ _int CInstanceEffect::Render()
 				switch (_uint(m_tInstanceDesc.TempBuffer_0.w))
 				{
 				case FollowingDir_Right:
-					RotDir = matInvView.r[0];
+					RotDir = XMVector3Normalize(matInvView.r[0]);
 					break;
 				case FollowingDir_Up:
 					if (m_tInstanceDesc.TempBuffer_0.y > 0)
@@ -104,13 +104,16 @@ _int CInstanceEffect::Render()
 					}
 					else
 					{
-						RotDir = matInvView.r[1];
+						RotDir = XMVector3Normalize(matInvView.r[1]);
 					}
 					break;
 				case FollowingDir_Look:
-					RotDir = matInvView.r[2];
+					RotDir = XMVector3Normalize(matInvView.r[2]);
 					break;
 				}
+
+				if (XMVectorGetX(XMVector3Length(RotDir)) == 0)
+					RotDir = XMVectorSet(1, 0, 0, 0);
 
 				matInvView = matInvView * XMMatrixRotationAxis(RotDir, XMConvertToRadians(m_tInstanceDesc.TempBuffer_0.z *m_vecParticleAttribute[i]._age));
 			}
@@ -130,10 +133,20 @@ _int CInstanceEffect::Render()
 
 
 
+			if (m_tInstanceDesc.TempBuffer_1.x > 0 && m_tInstanceDesc.FollowingTarget != nullptr)
+			{
+				
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+					((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_tInstanceDesc.FollowingTarget->Get_MatrixState(CTransform::STATE_POS));
+				((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+			}
+			else
+			{
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+					((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_vecParticleAttribute[i]._TargetParentPosition.XMVector());
+				((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+			}
 
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
-				((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_vecParticleAttribute[i]._TargetParentPosition.XMVector());
-			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
 
 
 			((VTXINSTMAT*)SubResource.pData)[i].vColor = m_vecParticleAttribute[i]._color;
@@ -176,15 +189,19 @@ _int CInstanceEffect::Render()
 				switch (_uint(m_tInstanceDesc.TempBuffer_0.w))
 				{
 				case FollowingDir_Right:
-					RotDir = matLocal.r[0];
+					RotDir = XMVector3Normalize(matLocal.r[0]);
 					break;
 				case FollowingDir_Up:
-					RotDir = matLocal.r[1];
+					RotDir = XMVector3Normalize(matLocal.r[1]);
 					break;
 				case FollowingDir_Look:
-					RotDir = matLocal.r[2];
+					RotDir = XMVector3Normalize(matLocal.r[2]);
 					break;
 				}
+
+				if(XMVectorGetX(XMVector3Length(RotDir)) == 0)
+					RotDir = XMVectorSet(1, 0, 0, 0);
+
 				matLocal = matLocal * XMMatrixRotationAxis(RotDir, XMConvertToRadians(m_tInstanceDesc.TempBuffer_0.z * m_vecParticleAttribute[i]._age));
 			}
 
@@ -199,11 +216,19 @@ _int CInstanceEffect::Render()
 			//XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation), XMVectorSet(0, 1.5f, 0, 1.f));
 
 
+			if (m_tInstanceDesc.TempBuffer_1.x > 0 && m_tInstanceDesc.FollowingTarget != nullptr)
+			{
 
-			XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
-				((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_vecParticleAttribute[i]._TargetParentPosition.XMVector());
-			((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
-
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+					((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_tInstanceDesc.FollowingTarget->Get_MatrixState(CTransform::STATE_POS));
+				((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+			}
+			else
+			{
+				XMStoreFloat4(&(((VTXINSTMAT*)SubResource.pData)[i].vTranslation),
+					((_float3*)(&m_vecParticleAttribute[i]._LocalMatirx.m[3]))->XMVector() + m_vecParticleAttribute[i]._TargetParentPosition.XMVector());
+				((VTXINSTMAT*)SubResource.pData)[i].vTranslation.w = 1;
+			}
 
 			((VTXINSTMAT*)SubResource.pData)[i].vColor = m_vecParticleAttribute[i]._color;
 
@@ -391,7 +416,7 @@ void CInstanceEffect::ResetParticle(INSTANCEATT * attribute)
 	//랜덤한 라이프타임
 	attribute->_lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
 	attribute->_age = 0;
-
+	attribute->_isAlive = true;
 	attribute->_color = m_tInstanceDesc.TargetColor;
 	attribute->_Targetforce = attribute->_force = m_tInstanceDesc.Particle_Power * pUtil->RandomFloat(m_tInstanceDesc.PowerRandomRange.x, m_tInstanceDesc.PowerRandomRange.y);
 	attribute->_size = m_tInstanceDesc.ParticleSize;
