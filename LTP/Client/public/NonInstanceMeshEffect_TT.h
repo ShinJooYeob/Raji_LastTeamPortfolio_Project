@@ -38,7 +38,20 @@ public:
 	void				Set_ParentTransform(class CTransform* parentTrans);
 	void				Set_AddDesc(const MESHADDDATA& desc)
 	{
+	
+
 		mAddDesc = desc;
+
+		if (mAddDesc.DealyTime <= 0)
+		{
+			mIsDealy = false;
+		}
+		else
+		{
+			mIsDealy = true;
+			mDealyTime = mAddDesc.DealyTime;
+		}
+
 	}
 
 	HRESULT				Set_EasingMoveDesc(const MESHAEASING* desc, _uint count);
@@ -71,6 +84,8 @@ private:
 	_bool					mbEasingEnd = false;
 	_float					mAddRot = 0;
 
+	_double					mDealyTime = 0;
+	_bool					mIsDealy = false;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

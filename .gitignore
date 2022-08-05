@@ -130,3 +130,4 @@ LTP/Engine/bin/Engine.iobj
 LTP/Engine/bin/Engine.ipdb
 LTP/Client/bin/Client.iobj
 LTP/Client/bin/Client.ipdb
+LTP/Reference/Inc/Engine_Macro.h

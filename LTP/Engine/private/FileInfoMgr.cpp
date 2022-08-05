@@ -156,6 +156,104 @@ void CFileInfoMgr::SaveVectorToDat(wstring savetxtName, wstring ExtensionName)
 	fWrite.close();
 }
 
+void CFileInfoMgr::SaveVectorToDat_Particle(wstring savetxtName, wstring ExtensionName)
+{
+	bool isAllFile = true;
+	if (ExtensionName.size() > 2)
+		isAllFile = false;
+
+	// txt파일에 전체 리소스 정보 저장
+	if (mListFilePathData.empty())
+		return;
+
+	if(ExtensionName == L"texp")
+	{ 
+		// TextureParticle
+		// Particle
+		ofstream fWrite(savetxtName, ios::out);
+		if (fWrite.is_open())
+		{
+			for (auto pathdata : mListFilePathData)
+			{
+				wstring Fullpath = pathdata->FullPath;
+				wstring FileName = pathdata->FileName;
+				wstring Extension = pathdata->Extension;
+
+				if (isAllFile == false && Extension != ExtensionName)
+					continue;
+
+				_tchar buf[16] = L"";
+				_itow_s(pathdata->FileCount, buf, 10);
+				wstring FileCount = buf;
+
+				wstring filetxt =
+					wstring(L"TextureParticle") + L'|' +
+					wstring(L"Particle") + L'|' +
+					FileCount + L'|' +
+					Fullpath ;
+
+				// 문서 저장
+				string outText = CHelperClass::Convert_Wstr2str(filetxt);
+				fWrite << outText << "\n";
+
+			}
+			fWrite.close();
+
+		}
+	}
+	else if (ExtensionName == L"mesp")
+	{
+		// MeshParticle
+		// TestMeshParticle|
+		ofstream fWrite(savetxtName, ios::out);
+		if (fWrite.is_open())
+		{
+			for (auto pathdata : mListFilePathData)
+			{
+				wstring Fullpath = pathdata->FullPath;
+				wstring FileName = pathdata->FileName;
+				wstring Extension = pathdata->Extension;
+
+				if (isAllFile == false && Extension != ExtensionName)
+					continue;
+
+				_tchar buf[16] = L"";
+				_itow_s(pathdata->FileCount, buf, 10);
+				wstring FileCount = buf;
+
+				wstring filetxt =
+					wstring(L"MeshParticle") + L'|' +
+					wstring(L"TestMeshParticle") + L'|' +
+					FileCount + L'|' +
+					Fullpath;
+
+				// 문서 저장
+				string outText = CHelperClass::Convert_Wstr2str(filetxt);
+				fWrite << outText << "\n";
+
+			}
+		}
+		fWrite.close();
+
+	}
+
+	
+
+	
+
+
+	if (mListFilePathData.empty() == false)
+	{
+		for (auto pathdata : mListFilePathData)
+		{
+			Safe_Delete(pathdata);
+		}
+		mListFilePathData.clear();
+	}
+}
+
+
+
 list<MYFILEPATH*> CFileInfoMgr::Load_ExtensionList(wstring txtfilepath, string exe,bool bflag)
 {
 	list<MYFILEPATH*> pngPathList;

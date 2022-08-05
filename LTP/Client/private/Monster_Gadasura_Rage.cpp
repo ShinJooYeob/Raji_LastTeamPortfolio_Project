@@ -524,11 +524,9 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-//	m_iOncePattern = 16;
-
-
+	// m_iOncePattern = 0;
 	if(KEYPRESS(DIK_B))
-		m_iOncePattern = 26;
+		m_iOncePattern = 0;
 
 	switch (m_iOncePattern)
 	{
@@ -764,9 +762,9 @@ HRESULT CMonster_Gadasura_Rage::Ready_ParticleDesc()
 HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 {
 	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
-	ATTACHEDESC boneDesc = m_pWeapon->Get_WeaponDesc().eAttachedDesc;
-	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
-	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	_Matrix mat_Weapon = (*m_pWeapon->Get_VecAttachedDesc())[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+	m_pTextureParticleTransform_Hand->Set_Matrix(mat_Weapon);
 
 
 
@@ -776,7 +774,18 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World);
 
 
-	m_pTextureParticleTransform_Hand->Set_Matrix(mat_Weapon);
+
+
+#ifdef _DEBUG
+	if (KEYDOWN(DIK_V))
+	{
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+
+	}
+#endif // _DEBUG
 
 	return S_OK;
 }

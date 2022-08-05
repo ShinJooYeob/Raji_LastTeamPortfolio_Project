@@ -42,10 +42,16 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
-	tagPlayerWeaponDesc Get_WeaponDesc()
+	vector<ATTACHEDESC>* Get_VecAttachedDesc()
 	{
-		return m_Monster_Weapon_UniversalDesc;
+		return &m_vecAttachedDesc;
 	}
+
+	CCollider* Get_Collider()
+	{
+		return m_pColliderCom;
+	}
+
 
 
 private:

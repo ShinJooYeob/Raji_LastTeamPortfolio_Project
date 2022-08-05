@@ -632,7 +632,7 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 #ifdef _DEBUG
 
 	// #DEBUG PatternSET
-	m_iOncePattern = 0;
+	// m_iOncePattern = 5;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 10;
 #endif // _DEBUG
@@ -909,15 +909,11 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 	//mat_Tail.r[1] = XMVector3Normalize(mat_Tail.r[1]);
 	//mat_Tail.r[2] = XMVector3Normalize(mat_Tail.r[2]);
 
-
 	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(1).XMVector();
 	m_pTextureParticleTransform_RHand->Set_Matrix(mat_Hand);
 
 	mat_Hand.r[3] = m_pHandAttackColliderCom->Get_ColliderPosition(2).XMVector();
 	m_pTextureParticleTransform_LHand->Set_Matrix(mat_Hand);
-
-
-
 
 	mat_Hand = m_vecTailAttackAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
 	m_pTextureParticleTransform_Tail->Set_Matrix(mat_Hand);
@@ -927,8 +923,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
 	}
 
 	if (KEYDOWN(DIK_C))
@@ -1431,17 +1426,18 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.55f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.75)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
 
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 2 && PlayRate >= 0.8f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.8)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTextureParticleTransform_Tail);
 
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
+				
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
 				instanceDesc.vFixedPosition = m_pTextureParticleTransform_Tail->Get_MatrixState_Float3(CTransform::STATE_POS);
 				instanceDesc.TotalParticleTime = 1.0f;

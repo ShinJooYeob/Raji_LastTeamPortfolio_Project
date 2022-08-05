@@ -2077,55 +2077,55 @@ _int CImguiMgr::Update_DebugWnd_EditTest(_double fDeltaTime)
 {
 	CGameInstance* pInstance = g_pGameInstance;
 
-	if (ImGui::Button("Water"))
+	//if (ImGui::Button("Water"))
+	//{
+
+	//	CEnvMappedWater::EMWDESC tEmwDesc;
+	//	tEmwDesc.vPosition = _float3(70.f, 41.5f, 22.f);
+	//	tEmwDesc.vRotAxis_N_Angle = _float4(1, 0, 0, 90);
+	//	tEmwDesc.vScale = _float3(120.f, 120.f, 0);
+	//	tEmwDesc.vEmissive = _float4(0.3f, 0.5f, 0.01f, 1.f);
+	//	tEmwDesc.vNoisePushDir = _float2(0, -1.f);
+	//	tEmwDesc.fFlowRate = 0.01f;
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+
+	//	//66,60	2
+	//	tEmwDesc.vPosition = _float3(-6, 48.1f, 0.f);
+	//	tEmwDesc.vScale = _float3(66, 60, 1);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+
+	//	//58, 56 3
+	//	tEmwDesc.vPosition = _float3(0, 67.460f, 29.430f);
+	//	tEmwDesc.vScale = _float3(58, 56, 2);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+	//	//141 146 4
+	//	tEmwDesc.vPosition = _float3(60, 24.5f, 150.f);
+	//	tEmwDesc.vScale = _float3(141, 146, 3);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+
+	//	//264 ,240 5
+	//	tEmwDesc.vPosition = _float3(-41.900f, 0.8f, 295.8f);
+	//	tEmwDesc.vScale = _float3(264, 240, 4);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+	//	//264 ,240 5
+	//	tEmwDesc.vPosition = _float3(221.0f, 0.8f, 295.8f);
+	//	tEmwDesc.vScale = _float3(264, 240, 4);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+
+
+	//	tEmwDesc.vPosition = _float3(199.f, 23.6f, 150.f);
+	//	tEmwDesc.vScale = _float3(128, 161, 5);
+	//	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+	//}
+
+
+
+	if (ImGui::Button("SAVE_EFFECT_PATH"))
 	{
-
-		CEnvMappedWater::EMWDESC tEmwDesc;
-		tEmwDesc.vPosition = _float3(70.f, 41.5f, 22.f);
-		tEmwDesc.vRotAxis_N_Angle = _float4(1, 0, 0, 90);
-		tEmwDesc.vScale = _float3(120.f, 120.f, 0);
-		tEmwDesc.vEmissive = _float4(0.3f, 0.5f, 0.01f, 1.f);
-		tEmwDesc.vNoisePushDir = _float2(0, -1.f);
-		tEmwDesc.fFlowRate = 0.01f;
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-
-		//66,60	2
-		tEmwDesc.vPosition = _float3(-6, 48.1f, 0.f);
-		tEmwDesc.vScale = _float3(66, 60, 1);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-
-		//58, 56 3
-		tEmwDesc.vPosition = _float3(0, 67.460f, 29.430f);
-		tEmwDesc.vScale = _float3(58, 56, 2);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-		//141 146 4
-		tEmwDesc.vPosition = _float3(60, 24.5f, 150.f);
-		tEmwDesc.vScale = _float3(141, 146, 3);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-
-		//264 ,240 5
-		tEmwDesc.vPosition = _float3(-41.900f, 0.8f, 295.8f);
-		tEmwDesc.vScale = _float3(264, 240, 4);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-		//264 ,240 5
-		tEmwDesc.vPosition = _float3(221.0f, 0.8f, 295.8f);
-		tEmwDesc.vScale = _float3(264, 240, 4);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
-
-
-		tEmwDesc.vPosition = _float3(199.f, 23.6f, 150.f);
-		tEmwDesc.vScale = _float3(128, 161, 5);
-		FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_EDIT, TAG_LAY(Layer_EnvMappedWater), TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
+		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+	
 	}
 
-
-
-	//if (ImGui::Button("Delete_Static"))
-	//{
-	//	//
-	//	//GetSingle(CAssimpCreateMgr)->DataFree_TEST();
-	//
-	//}
 	return _int();
 }
 

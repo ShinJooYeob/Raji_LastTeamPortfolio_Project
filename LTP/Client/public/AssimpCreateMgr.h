@@ -39,6 +39,8 @@ public:
 
 	HRESULT Free_VertexData_STATIC();
 
+	HRESULT Save_To_Effect();
+
 private:
 	HRESULT Init_ModelName_FileList();
 	HRESULT Load_Model_DatFile_One(const wchar_t* fbxName, _fMatrix DefaultMat = XMMatrixIdentity());

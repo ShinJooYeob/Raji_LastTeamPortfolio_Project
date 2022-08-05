@@ -42,22 +42,21 @@
 #define STATIC_EFFECTLOAD(x) GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(x), TransformMatrix)
 
 
-// 경로
+#define  STR_FILEPATH_RESOURCE_L					L"..\\Bin\\Resources"
+#define  STR_FILEPATH_FBX_STATIC_L					L"..\\Bin\\Resources\\Mesh\\StaticMesh"
+#define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"..\\Bin\\Resources\\Mesh\\DynamicMesh"
 
-// FBX 경로
-#define  STR_FILEPATH_RESOURCE_L					L"../Bin/Resources"
-#define  STR_FILEPATH_FBX_STATIC_L					L"../Bin/Resources/Mesh/StaticMesh"
-#define  STR_FILEPATH_FBX_DYNAMICSTATIC_L			L"../Bin/Resources/Mesh/DynamicMesh"
+#define  STR_FILEPATH_PARTICLE_FOLDER_L				L"..\\Bin\\Resources\\Data\\ParicleData"
+#define  STR_FILEPATH_PARTICLE_SAVE_L				L"..\\Bin\\Resources\\Data\\ParicleData\\ParticlePathData"
 
-#define  STR_FILEPATH_RESOURCE_DAT_L				L"../Bin/Resources/Data/Mesh"
-#define  STR_FILEPATH_RESOURCE_PATH_L				L"../Bin/Resources/PathTxT"
 
-// | 로 나눈 경로
-#define  STR_FILEPATH_RESOURCE_STATICDAT_L				L"../Bin/Resources/PathTxT/3DPath_Static.txt"
-#define  STR_FILEPATH_RESOURCE_DYNAMICDAT_L				L"../Bin/Resources/PathTxT/3DPath_Dynamic.txt"
-#define  STR_FILEPATH_RESOURCE_FBXDAT_L					L"../Bin/Resources/PathTxT/FBX_Dat.txt"
+#define  STR_FILEPATH_RESOURCE_DAT_L				L"..\\Bin\\Resources\\Data\\Mesh"
+#define  STR_FILEPATH_RESOURCE_PATH_L				L"..\\Bin\\Resources\\PathTxT"
 
-// TXT 파일 이름
+#define  STR_FILEPATH_RESOURCE_STATICDAT_L				L"..\\Bin\\Resources\\PathTxT\\3DPath_Static.txt"
+#define  STR_FILEPATH_RESOURCE_DYNAMICDAT_L				L"..\\Bin\\Resources\\PathTxT\\3DPath_Dynamic.txt"
+#define  STR_FILEPATH_RESOURCE_FBXDAT_L					L"..\\Bin\\Resources\\PathTxT\\FBX_Dat.txt"
+
 #define STR_FILENAME_3DSTATIC_TXT					L"3DPath_Static.txt"
 #define STR_FILENAME_3DDYNAMIC_TXT					L"3DPath_Dynamic.txt"
 #define STR_FILENAME_FBXDAT_TXT						L"FBX_Dat.txt"

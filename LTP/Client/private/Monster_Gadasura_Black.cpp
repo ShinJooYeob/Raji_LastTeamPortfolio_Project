@@ -509,7 +509,7 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-//	 m_iOncePattern = 51;
+	m_iOncePattern = 2;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 51;
 
@@ -772,16 +772,36 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 	_Matrix mat_World = m_pTransformCom->Get_WorldMatrix();
 
-	ATTACHEDESC boneDesc = m_pWeapon->Get_WeaponDesc().eAttachedDesc;
-
-	_Matrix mat_Weapon = boneDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
-	_Vector Vec_WeaponPos = boneDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
-	mat_Weapon.r[3] = Vec_WeaponPos;
-
+	_Matrix mat_Weapon = (*m_pWeapon->Get_VecAttachedDesc())[0].Caculate_AttachedBoneMatrix_BlenderFixed();
 	m_pTextureParticleTransform_Hand->Set_Matrix(mat_Weapon);
 
-//	mat_Weapon.r[3] = Pos + m_pColliderCom->Get_ColliderPosition(9).XMVector();
-	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_Weapon);
+
+	_Matrix mat_Weapon2 = (*m_pWeapon->Get_VecAttachedDesc())[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+//	mat_Weapon2.r[3] = m_pWeapon->Get_Collider()->Get_ColliderPosition(0).XMVector();
+
+
+	//mat_Weapon2.r[3] = mat_Weapon2.r[3] + (
+	//	mat_Weapon2.r[0] * 0 +
+	//	mat_Weapon2.r[1] * -1.5f +
+	//	mat_Weapon2.r[2] * 0
+	//	);
+
+	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_Weapon2);
+
+
+
+#ifdef _DEBUG
+	if (KEYUP(DIK_V))
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTextureParticleTransform_Demo1);
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+
+	}
+#endif // _DEBUGz
 
 
 
@@ -1019,27 +1039,25 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iSoundIndex++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.0f)
+
+
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
 			{
-
-	
-
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash0, m_pTextureParticleTransform_Demo1);
 				m_EffectAdjust++;
 			}
 
 
 
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.3f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
 				// #TIME Attack1 
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_ATT0, m_pTextureParticleTransform_Demo1);
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_ATT1, m_pTransformCom);
-
-
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_ATT0, m_pTextureParticleTransform_Hand);
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Demo1;
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
 				instanceDesc.TotalParticleTime = 1.0f;
 				instanceDesc.EachParticleLifeTime = 0.5f;
 				instanceDesc.fDistortionNoisingPushPower = 5.0f;
@@ -1052,6 +1070,14 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 				m_EffectAdjust++;
 			}
+			if (m_EffectAdjust == 2 && PlayRate >= 0.35)
+			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash1, m_pTransformCom);
+				m_EffectAdjust++;
+
+			}
+
+
 
 			break;
 		}
@@ -1088,7 +1114,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
-			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 0.28f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0.0f, 0.0f, 1.0f, Value), _float4(Value, Value*0.5f, Value, 0.7f));
 
 
 			if (PlayRate > 0 && PlayRate <= 0.539215)
@@ -1145,21 +1171,19 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 0 && PlayRate >= 0.27)
 			{
-				// #TIME SmashAttack
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTextureParticleTransform_Demo1);
 				m_EffectAdjust++;
 			}
 
 			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
-				// #TIME SmashAttack
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH2, m_pTextureParticleTransform_Hand);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH2, m_pTextureParticleTransform_Hand);
 				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 2 && PlayRate >= 0.52)
 			{
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Demo1;
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
 				instanceDesc.TotalParticleTime = 1.f;
 				instanceDesc.EachParticleLifeTime = 1.f;
 				instanceDesc.Particle_Power = 15.0f;
@@ -1179,8 +1203,6 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				// #TIME SmashAttack
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
-
-			
 
 				m_EffectAdjust++;
 
@@ -1253,7 +1275,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Demo1;
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
 				instanceDesc.TotalParticleTime = 1.f;
 				instanceDesc.EachParticleLifeTime = 1.1f;
 				instanceDesc.Particle_Power = 5;
@@ -1353,7 +1375,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 2 && PlayRate >= 0.32)
 			{
 				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Demo1;
+				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
 				instanceDesc.TotalParticleTime = 0.3f;
 				instanceDesc.EachParticleLifeTime = 0.3f;
 				instanceDesc.Particle_Power = 8.0f;
