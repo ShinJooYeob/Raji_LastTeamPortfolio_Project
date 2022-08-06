@@ -295,24 +295,46 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_V))
 	{
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
-
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
-		CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+	//	CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+
+		auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+			9999.f,
+			0.1f,
+			_float4(0,0,0,1.f),
+			_float4(0, 0, 0, 0.5f),
+			1,
+			_float3(0.2f, 1.5f, 0.1f),
+			_float3(0.2f, 1.5f, 0.1f),
+			1);
+
+		dust2_f.eParticleTypeID = InstanceEffect_Straight;
+	//	dust2_f.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+		dust2_f.ePassID = InstancePass_BrightColor;
+
+		dust2_f.iTextureLayerIndex = 8;
+		dust2_f.iMaskingTextureIndex = 107;
+		dust2_f.iNoiseTextureIndex = 388;
+		dust2_f.iNoiseTextureIndex = 135;
+
+		dust2_f.iFollowingDir = FollowingDir_Up;
+		dust2_f.Particle_Power = 2.0f;
+		dust2_f.ParticleStartRandomPosMin = _float3(0, 0, 0);
+		dust2_f.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
+		//_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		//_Vector pos = mat.r[3];
+		//dust2_f.vFixedPosition = pos;
+		dust2_f.FollowingTarget = m_pTextureParticleTransform_Tail;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
 
 
-		auto hitParticle = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_HIT4);
-		hitParticle.vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 3, 0, 0);
-		hitParticle.vPowerDirection = _float3(1, -1, 0);
-		GETPARTICLE->Create_Texture_Effect_Desc(hitParticle, m_eNowSceneNum);
 
-		//_Vector vec2 = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector() + mat_World.r[0] * -1.0f +
-		//	mat_World.r[1] * 3.0f + mat_World.r[2] * 3.0f;
-		//hitParticle.vFixedPosition = vec2;
-		//hitParticle.vPowerDirection = _float3(-1,-1,0);
-		//GETPARTICLE->Create_Texture_Effect_Desc(hitParticle, m_eNowSceneNum);
+
 
 
 	}
@@ -587,7 +609,6 @@ HRESULT CMonster_Mahinasura_Minion::SetUp_Fight(_double dDeltaTime)
 	{
 		//m_pTransformCom->LookAt(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
-
 		_Vector vTarget = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	
 		//m_pTransformCom->Turn_Dir(XMVector3Normalize(m_pTransformCom->Get_MatrixScale(CTransform::STATE_LOOK)*0.9 + vTarget* 0.1));
@@ -730,7 +751,7 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 #ifdef _DEBUG
 	// #DEBUG PatternSET
-	m_iOncePattern = 0;
+	// m_iOncePattern = 2;
 
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 0;
@@ -1177,17 +1198,24 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				// #TIME Hand 2
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
-				instanceDesc.TotalParticleTime = 0.5f;
-				instanceDesc.EachParticleLifeTime = 0.3f;
-				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f, 1.0f);
-				instanceDesc.TargetColor2 = _float4(1);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 2;
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.01f,
+					0.3f,
+					_float4(0.98f, 0.28f, 0.20f, 1),
+					_float4(1.0f, 0.24f, 0.24f, 1),
+					3,
+					_float3(0.15f, 0.35f, 0.15f),
+					_float3(0.15f, 0.35f, 0.15f),
+					1);
+
+				dust2_f.Particle_Power = 8;
+
+				_Matrix mat = m_pTextureParticleTransform_LHand->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 2.5f;
+				dust2_f.vFixedPosition = pos;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 
@@ -1196,17 +1224,23 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_R, m_pTextureParticleTransform_RHand);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_RHand;
-				instanceDesc.TotalParticleTime = 0.5f;
-				instanceDesc.EachParticleLifeTime = 0.3f;
-				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f, 1.0f);
-				instanceDesc.TargetColor2 = _float4(1);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 2;
+				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.01f,
+					0.3f,
+					_float4(0.98f, 0.28f, 0.20f, 1),
+					_float4(1.0f, 0.24f, 0.24f, 1),
+					3,
+					_float3(0.15f, 0.35f, 0.15f),
+					_float3(0.15f, 0.35f, 0.15f),
+					1);
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				dust2_f.Particle_Power = 8;
+
+				_Matrix mat = m_pTextureParticleTransform_RHand->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 2.5f;
+				dust2_f.vFixedPosition = pos;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 			}
@@ -1251,20 +1285,39 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL2, m_pTextureParticleTransform_Tail);
 				m_EffectAdjust++;
 			}
-			if (m_EffectAdjust == 1 && PlayRate >= 0.1f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
-				instanceDesc.TotalParticleTime = 0.5f;
-				instanceDesc.EachParticleLifeTime = 0.3f;
-				instanceDesc.TargetColor = _float4(0.30f, 0.85f, 0.98f,1.0f);
-				instanceDesc.TargetColor2 = _float4(1);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				//instanceDesc.ColorChageFrequency = 2;
+				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.6f,
+					0.5f,
+					_float4(0, 0, 0, 1),
+					_float4(0, 0, 0, 0.0f),
+					1,
+					//	_float3(0.1f, 0.5f, 0.1f),
+					//	_float3(0.1f, 0.5f, 0.1f),
+					_float3(0.2f),
+					_float3(0.1f),
+					1);
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				dust2_f.iTextureLayerIndex = 43;
+
+				dust2_f.iFollowingDir = FollowingDir_Up;
+				dust2_f.Particle_Power = 8.0f;
+				dust2_f.ParticleStartRandomPosMin = _float3(-1, 1, -1);
+				dust2_f.ParticleStartRandomPosMax = _float3(1, 3, 1);
+
+				//_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+				//_Vector pos = mat.r[3];
+				//dust2_f.vFixedPosition = pos;
+				dust2_f.FollowingTarget = m_pTransformCom;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+
+				dust2_f.TargetColor = _float4(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+
 
 				m_EffectAdjust++;
 			}

@@ -325,20 +325,24 @@ public:
 		TEXTURE_EFFECTJ_Universal_Suck,
 		TEXTURE_EFFECTJ_Universal_Spread,
 
-		TEXTURE_EFFECTJ_HIT1,
-		TEXTURE_EFFECTJ_HIT2,
-		TEXTURE_EFFECTJ_HIT3,
-		TEXTURE_EFFECTJ_HIT4,
-		TEXTURE_EFFECTJ_HIT5,
 
-		TEXTURE_EFFECTJ_CASH_0,
-		TEXTURE_EFFECTJ_CASH_1,
-		TEXTURE_EFFECTJ_CASH_2,
-		TEXTURE_EFFECTJ_CASH_3,
-		TEXTURE_EFFECTJ_CASH_4,
-		TEXTURE_EFFECTJ_CASH_5,
-		TEXTURE_EFFECTJ_CASH_6,
-		TEXTURE_EFFECTJ_CASH_7,
+		// Ohter
+		JY_TextureEft_1,
+		JY_TextureEft_2,
+		JY_TextureEft_3,
+		JY_TextureEft_4,
+		JY_TextureEft_5,
+		JY_TextureEft_6,
+		JY_TextureEft_7,
+		JY_TextureEft_8,
+		Spear_ThrowAttack,
+		SpearNormalAttack,
+
+		// My
+		Um_Hit_1,
+		Um_Dust_1,
+		Um_Dust_2,
+		Um_Dust_2_FounTain,
 
 
 		TEXTURE_EFFECTJ_END,
@@ -397,6 +401,12 @@ public:
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
 	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
 
+	INSTPARTICLEDESC Get_EffectSetting(E_TEXTURE_EFFECTJ e,
+		_float TotalTime, _float EachTime,
+		_float4 Color1, _float4 Color2, _uint colorFrequency,
+		_float3 Size1, _float3 Size2, _uint sizeFrequency
+		);
+
 
 	// Meshinst
 	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);
@@ -446,100 +456,3 @@ public:
 };
 
 END
-/*
-HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
-{
-	// 파티클용 Transform Create
-	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
-	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
-
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
-	// Bow_Default Bow_Charze Bow_Charze_ArrowHead Bow_ArrowTrail Bow_ArrowEnter
-
-	_uint num = 0;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
-
-	num = 1;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Charze"));
-	m_vecTextureParticleDesc[num].FollowingTarget = m_pTextureParticleTransform;
-
-	num = 2;
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Bow_Default"));
-	m_vecTextureParticleDesc[num].FollowingTarget = nullptr;
-
-	return S_OK;
-}
-
-void CPlayerWeapon_Bow::Update_ParticleTransform(_double fDeltaTime)
-{
-	// 본체 위치에 업데이트
-
-	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
-
-	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	mat.r[2] = XMVector3Normalize(mat.r[2]);
-	_Vector vPos = mat.r[3];
-
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPos);
-
-	// 활 앞 뒤 세팅
-	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
-	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
-
-	mat.r[3] = vPos + (mat.r[2] * 0.65f + mat.r[0] * 0.05f + mat.r[1] * 0.05f);
-	m_vecTextureParticleDesc[2].vFixedPosition = mat.r[3];
-
-
-	for (auto& timer :m_fPlayParticleTimer)
-	{
-		timer -= fDeltaTime;
-		if (timer <= -100)
-			timer = -1;
-	}
-
-}
-
-HRESULT CPlayerWeapon_Bow::Set_Play_Particle(_uint ParticleIndex,_float Timer,_float3 offset)
-{
-
-	if (PARTILCECOUNT <= ParticleIndex)
-		return E_FAIL;
-
-	if (m_vecTextureParticleDesc.size() <= ParticleIndex)
-		return E_FAIL;
-
-//	m_vecTextureParticleDesc[ParticleIndex].
-
-	if (m_fPlayParticleTimer[ParticleIndex] <= 0.0f)
-	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[ParticleIndex]));
-		if (Timer == -1)
-		{
-			m_fPlayParticleTimer[ParticleIndex] = m_vecTextureParticleDesc[ParticleIndex].TotalParticleTime;
-		}
-		else
-			m_fPlayParticleTimer[ParticleIndex] = Timer;
-	}
-
-	return S_OK;
-
-}
-
-HRESULT CPlayerWeapon_Bow::Set_PlayOff_ALL()
-{
-	for (_uint i = 0; i < PARTILCECOUNT; ++i)
-	{
-		ZeroMemory(m_fPlayParticleTimer, sizeof(_float) * PARTILCECOUNT);
-	}
-
-	m_pTextureParticleTransform->Set_IsOwnerDead(true);
-	return S_OK;
-
-}
-
-*/

@@ -146,6 +146,31 @@ HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _u
 	return S_OK;
 }
 
+INSTPARTICLEDESC CPartilceCreateMgr::Get_EffectSetting(E_TEXTURE_EFFECTJ e, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
+{
+	INSTPARTICLEDESC desc = GETPARTICLE->Get_TypeDesc_TextureInstance(e);
+	if (TotalTime != 0)
+		desc.TotalParticleTime = TotalTime;
+	if (EachTime != 0)
+		desc.EachParticleLifeTime = EachTime;
+
+	if (colorFrequency != 0)
+	{
+		desc.TargetColor = Color1;
+		desc.TargetColor2 = Color2;
+		desc.ColorChageFrequency = colorFrequency;
+	}
+
+	if (sizeFrequency != 0)
+	{
+		desc.ParticleSize = Size1;
+		desc.ParticleSize2 = Size2;
+		desc.SizeChageFrequency = sizeFrequency;
+	}
+
+	return desc;
+}
+
 HRESULT CPartilceCreateMgr::Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene)
 {
 
@@ -349,12 +374,31 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_R_FlyFire] = pUtil->Get_TextureParticleDesc(TEXT("Bow_R_FlyFire"));
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Bow_Q_Ball] = pUtil->Get_TextureParticleDesc(TEXT("Bow_Q_Ball"));
 
+
+
+	// Universal
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Ball] = pUtil->Get_TextureParticleDesc(TEXT("Ball_Universal"));
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Suck] = pUtil->Get_TextureParticleDesc(TEXT("Suck_Universal"));
 	mVecTextureEffectDesc[TEXTURE_EFFECTJ_Universal_Spread] = pUtil->Get_TextureParticleDesc(TEXT("Spread_Universal"));
 
 
-	mVecTextureEffectDesc[TEXTURE_EFFECTJ_HIT1] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_1"));
+	// SameName
+	mVecTextureEffectDesc[JY_TextureEft_1] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_1"));
+	mVecTextureEffectDesc[JY_TextureEft_2] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_2"));
+	mVecTextureEffectDesc[JY_TextureEft_3] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_3"));
+	mVecTextureEffectDesc[JY_TextureEft_4] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_4"));
+	mVecTextureEffectDesc[JY_TextureEft_5] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_5"));
+	mVecTextureEffectDesc[JY_TextureEft_6] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_6"));
+	mVecTextureEffectDesc[JY_TextureEft_7] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_7"));
+	mVecTextureEffectDesc[JY_TextureEft_8] = pUtil->Get_TextureParticleDesc(TEXT("JY_TextureEft_8"));
+	mVecTextureEffectDesc[Spear_ThrowAttack] = pUtil->Get_TextureParticleDesc(TEXT("Spear_ThrowAttack"));
+	mVecTextureEffectDesc[SpearNormalAttack] = pUtil->Get_TextureParticleDesc(TEXT("SpearNormalAttack"));
+
+
+	mVecTextureEffectDesc[Um_Hit_1] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_1"));
+	mVecTextureEffectDesc[Um_Dust_1] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_1"));
+	mVecTextureEffectDesc[Um_Dust_2] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_2"));
+	mVecTextureEffectDesc[Um_Dust_2_FounTain] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_2_FounTain"));
 
 
 	
