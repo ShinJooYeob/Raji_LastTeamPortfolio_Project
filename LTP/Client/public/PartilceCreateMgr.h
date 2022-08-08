@@ -425,6 +425,7 @@ public:
 	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
 
 	INSTMESHDESC Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e,
+		COMPONENTPROTOTYPEID meshType,
 		_float TotalTime, _float EachTime,
 		_float4 Color1, _float4 Color2, _uint colorFrequency,
 		_float3 Size1, _float3 Size2, _uint sizeFrequency

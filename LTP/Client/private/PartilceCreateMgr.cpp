@@ -78,6 +78,9 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_01_2_Trail_X);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightningBolt_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_D_Plane);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_IceTrap_Ice);
+
+
 
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion);
@@ -88,8 +91,10 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
 
-
-
+		MS_Tornado_Cyl_2side_03
+		SM_4E_IceShards_01
+		SM_4E_IceShards_02
+		SM_4E_IceShards_03
 
 	*/
 
@@ -188,10 +193,13 @@ HRESULT CPartilceCreateMgr::Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene)
 	return S_OK;
 }
 
-INSTMESHDESC CPartilceCreateMgr::Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
+INSTMESHDESC CPartilceCreateMgr::Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e, COMPONENTPROTOTYPEID meshtype, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
 {
 
 	INSTMESHDESC desc = GETPARTICLE->Get_TypeDesc_MeshInstance(e);
+	if (meshtype != 0)
+		lstrcpy(desc.szModelMeshProtoTypeTag, TAG_CP(meshtype));
+
 	if (TotalTime != 0)
 		desc.TotalParticleTime = TotalTime;
 	if (EachTime != 0)
@@ -2977,7 +2985,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 276;
 		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.NoiseTextureIndex = 319;
+		MeshDesc.NoiseTextureIndex = 357;
 
 		// Noise
 		MeshDesc.noisingdir = _float2(0,-1).Get_Nomalize();
@@ -3040,17 +3048,17 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
-		AddDesc.DealyTime = 0.2f;
-		MeshDesc.vSize = _float3(size * 2.0f);
-		MeshDesc.iDiffuseTextureIndex = 416;
-		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 1.0f);
-		MeshDesc.vEmissive = _float4(0);
-		MeshDesc.m_iPassIndex = 17;
-		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		//	AddDesc.DealyTime = 0.2f;
+		//	MeshDesc.vSize = _float3(size * 2.0f);
+		//	MeshDesc.iDiffuseTextureIndex = 416;
+		//	MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 1.0f);
+		//	MeshDesc.vEmissive = _float4(0);
+		//	MeshDesc.m_iPassIndex = 17;
+	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
-		AddDesc.DealyTime = 0.4f;
+		AddDesc.DealyTime = 0.2f;
 		MeshDesc.vSize = _float3(size*3.0f);
-		MeshDesc.iDiffuseTextureIndex = 410;
+		MeshDesc.iDiffuseTextureIndex = 366;
 		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 0.0f);
 
 		MeshDesc.m_iPassIndex = 17;

@@ -802,19 +802,42 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 
 		{
-			INSTMESHDESC testa = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
-				0,
-				0,
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
 				_float4(1, 1, 1, 1),
-				_float4(0.20f, 0.98f, 0.67f, 1),
-				1,
-				_float3(0.30f, 1, 0.30f),
-				_float3(0.30f, 1.f, 0.30f),
-				0);
+				_float4(1, 0, 0, 1),
+				3,
+				_float3(2),
+				_float3(5),
+				1);
 
-			testa.FollowingTarget = m_pTransformCom;
+			//	SM_4E_IceShards_01
+			//	SM_4E_IceShards_02
+			//	SM_4E_IceShards_03
 
-			//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+
+			testMesh.Particle_Power = 8.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+
+			testMesh.iNoiseTextureIndex = 0;
+			testMesh.iMaskingTextureIndex = 0;
+
+
+			//testMesh.FollowingTarget = m_pTransformCom;
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[2] * 3;
+			//	_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
 
 
@@ -824,7 +847,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_C))
 	{
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
 				0,
 				0,
 				_float4(1, 1, 1, 1),
@@ -834,16 +857,16 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(0.30f, 1.f, 0.30f),
 				0);
 
-			testa.FollowingTarget = m_pTransformCom;
+			testTex.FollowingTarget = m_pTransformCom;
 
-			//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			//GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
 
 
 		// 기모으기
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
 				3,
 				0,
 				_float4(0.98f, 0.20f, 0.89f, 1),
@@ -853,11 +876,11 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(5),
 				1);
 
-			testa.FollowingTarget = m_pTransformCom;
+			testTex.FollowingTarget = m_pTransformCom;
 
-			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
-			testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+			testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 				0,
 				0,
 				_float4(1.0f, 0.18f, 0.02f, 1.0f),
@@ -866,25 +889,25 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(1, 3, 1).XMVector()*0.20f,
 				_float3(1, 3, 1).XMVector()*0.15f,
 				1);
-			testa.vEmissive_SBB = _float3(1, 1, 0);
+			testTex.vEmissive_SBB = _float3(1, 1, 0);
 
-			testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-			testa.ePassID = InstancePass_OriginColor;
-			testa.ParticleStartRandomPosMin = _float3(-3, 0, -3);
-			testa.ParticleStartRandomPosMax = _float3(3, 2, 3);
-			testa.Particle_Power = 1;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+			testTex.ePassID = InstancePass_OriginColor;
+			testTex.ParticleStartRandomPosMin = _float3(-3, 0, -3);
+			testTex.ParticleStartRandomPosMax = _float3(3, 2, 3);
+			testTex.Particle_Power = 1;
 
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 			_Vector pos = mat.r[3] + mat.r[1] * 1.0f;
-			testa.vFixedPosition = pos;
-			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			testTex.vFixedPosition = pos;
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
 
 
 		{
 			// image
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
 				0,
 				1.f,
 				_float4(1, 1, 1, 1),
@@ -895,27 +918,27 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(1).XMVector()*5,
 				_float3(1).XMVector()*5,
 				1);
-			testa.vEmissive_SBB = _float3(1, 1, 1);
+			testTex.vEmissive_SBB = _float3(1, 1, 1);
 
-		//	testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-		//	testa.ePassID = InstancePass_OriginColor;
-			testa.ParticleStartRandomPosMin = _float3(0, 0.5f, 0);
-			testa.ParticleStartRandomPosMax = _float3(0, 0.5f, 0);
-		//	testa.TempBuffer_0.z = 200;
-		//	testa.TempBuffer_0.w = FollowingDir_Look;
+		//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+		//	testTex.ePassID = InstancePass_OriginColor;
+			testTex.ParticleStartRandomPosMin = _float3(0, 0.5f, 0);
+			testTex.ParticleStartRandomPosMax = _float3(0, 0.5f, 0);
+		//	testTex.TempBuffer_0.z = 200;
+		//	testTex.TempBuffer_0.w = FollowingDir_Look;
 			
 
-			testa.iTextureLayerIndex = 107; // TextureChange
-		//	testa.m_fAlphaTestValue = 0.001f;
+			testTex.iTextureLayerIndex = 107; // TextureChange
+		//	testTex.m_fAlphaTestValue = 0.001f;
 			
-			testa.FollowingTarget = m_pTransformCom;
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			testTex.FollowingTarget = m_pTransformCom;
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
 
 		{
 			// Sunder
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 				0,
 				1.f,
 				_float4(0.1f, 1, 0.76f, 1),
@@ -924,30 +947,30 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(1,3,1).XMVector() * 1.0f,
 				_float3(1,3,1).XMVector() * 0.3f,
 				1);
-			testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-				testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-			//	testa.ePassID = InstancePass_OriginColor;
-				testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-				testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-				testa.TempBuffer_0.z = 2000;
-				testa.TempBuffer_0.w = FollowingDir_Up;
-				testa.Particle_Power = 2.0f;
+				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+			//	testTex.ePassID = InstancePass_OriginColor;
+				testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+				testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+				testTex.TempBuffer_0.z = 2000;
+				testTex.TempBuffer_0.w = FollowingDir_Up;
+				testTex.Particle_Power = 2.0f;
 
-			testa.iTextureLayerIndex = 106; 
-		//	testa.m_fAlphaTestValue = 0.001f;
+			testTex.iTextureLayerIndex = 106; 
+		//	testTex.m_fAlphaTestValue = 0.001f;
 
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 			_Vector pos = mat.r[3] + mat.r[2]*4.0f;
-			testa.vFixedPosition = pos;
+			testTex.vFixedPosition = pos;
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
 
 		{
 			// Sunder2
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 				0.01f,
 				0.4f,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -957,24 +980,24 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 				_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 				1);
-			testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-			testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-			testa.ePassID = InstancePass_OriginColor;
-			//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-			//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-			//testa.TempBuffer_0.z = 2000;
-			//testa.TempBuffer_0.w = FollowingDir_Up;
-			//testa.Particle_Power = 2.0f;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			testTex.ePassID = InstancePass_OriginColor;
+			//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+			//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+			//testTex.TempBuffer_0.z = 2000;
+			//testTex.TempBuffer_0.w = FollowingDir_Up;
+			//testTex.Particle_Power = 2.0f;
 			//
-			//testa.iTextureLayerIndex = 106;
-			////	testa.m_fAlphaTestValue = 0.001f;
+			//testTex.iTextureLayerIndex = 106;
+			////	testTex.m_fAlphaTestValue = 0.001f;
 			//
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 			_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-			testa.vFixedPosition = pos;
+			testTex.vFixedPosition = pos;
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
 
@@ -982,7 +1005,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			// Broken
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 				0.05f,
 				2.5f,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -993,24 +1016,24 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(3),
 				_float3(3),
 				1);
-			testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+			testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
-			// testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
-			// testa.ePassID = InstancePass_OriginColor;
-			//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-			//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-			testa.TempBuffer_0.z = 1;
-			testa.TempBuffer_0.w = FollowingDir_Look;
-			testa.vPowerDirection = mat.r[2];
-			// testa.Particle_Power = 30;
+			// testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
+			// testTex.ePassID = InstancePass_OriginColor;
+			//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+			//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+			testTex.TempBuffer_0.z = 1;
+			testTex.TempBuffer_0.w = FollowingDir_Look;
+			testTex.vPowerDirection = mat.r[2];
+			// testTex.Particle_Power = 30;
 			//
-			testa.iTextureLayerIndex = 112;
-			////	testa.m_fAlphaTestValue = 0.001f;
+			testTex.iTextureLayerIndex = 112;
+			////	testTex.m_fAlphaTestValue = 0.001f;
 			//
 			_Vector pos = mat.r[3] + mat.r[1] * 0.3f + mat.r[2] * 3.5f;
-			testa.vFixedPosition = pos;
+			testTex.vFixedPosition = pos;
 
-			GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
 
@@ -1019,7 +1042,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			// Fire
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_1,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_1,
 				0,
 				0,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1030,12 +1053,12 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(3),
 				_float3(3),
 				0);
-			testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+			testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 			_Vector pos = mat.r[3] + mat.r[1] * 0.3f + mat.r[2] * 3.5f;
-			testa.vFixedPosition = pos;
+			testTex.vFixedPosition = pos;
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
 
@@ -1229,7 +1252,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+				INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 					0.05f,
 					0.8f,
 					//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1240,13 +1263,13 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					_float3(2.9f),
 					_float3(3),
 					1);
-				testa.vEmissive_SBB = _float3(1, 0.01f, 1);
-				testa.vPowerDirection = mat.r[2];
+				testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
+				testTex.vPowerDirection = mat.r[2];
 				_Vector pos = mat.r[3] + mat.r[1] * 0.3f;
-				testa.vFixedPosition = pos;
-			//	testa.iTextureLayerIndex = 112;
+				testTex.vFixedPosition = pos;
+			//	testTex.iTextureLayerIndex = 112;
 
-				GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+				GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 			}
 
@@ -1336,7 +1359,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1347,26 +1370,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.7f,
 						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 4;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 4;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 
 
@@ -1433,7 +1456,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1444,26 +1467,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.7f,
 						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 4;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 4;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 				m_EffectAdjust++;
 
@@ -1535,7 +1558,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			{
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
 						0,
 						0.8f,
 						_float4(0.13f, 0.3f, 0.97f, 1.f),
@@ -1546,21 +1569,21 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1).XMVector() * 4.0f,
 						_float3(1).XMVector() * 4.2f,
 						1);
-					testa.vEmissive_SBB = _float3(0.5f, 0.5f, 0.0f);
+					testTex.vEmissive_SBB = _float3(0.5f, 0.5f, 0.0f);
 
-					//	testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-					//	testa.ePassID = InstancePass_OriginColor;
-					testa.ParticleStartRandomPosMin = _float3(0, 0.5f, 0);
-					testa.ParticleStartRandomPosMax = _float3(0, 0.5f, 0);
-					testa.TempBuffer_0.z = 50;
-					testa.TempBuffer_0.w = FollowingDir_Look;
+					//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+					//	testTex.ePassID = InstancePass_OriginColor;
+					testTex.ParticleStartRandomPosMin = _float3(0, 0.5f, 0);
+					testTex.ParticleStartRandomPosMax = _float3(0, 0.5f, 0);
+					testTex.TempBuffer_0.z = 50;
+					testTex.TempBuffer_0.w = FollowingDir_Look;
 
 
-					//	testa.iTextureLayerIndex = 36; // TextureChange
-					//	testa.m_fAlphaTestValue = 0.001f;
+					//	testTex.iTextureLayerIndex = 36; // TextureChange
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
-					testa.FollowingTarget = m_pTransformCom;
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					testTex.FollowingTarget = m_pTransformCom;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 
 
@@ -1596,7 +1619,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 					//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1606,31 +1629,31 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-					testa.ePassID = InstancePass_OriginColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					//testa.TempBuffer_0.z = 2000;
-					//testa.TempBuffer_0.w = FollowingDir_Up;
-					//testa.Particle_Power = 2.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_OriginColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					//testTex.TempBuffer_0.z = 2000;
+					//testTex.TempBuffer_0.w = FollowingDir_Up;
+					//testTex.Particle_Power = 2.0f;
 					//
-					//testa.iTextureLayerIndex = 106;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					//testTex.iTextureLayerIndex = 106;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
 
 				{
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 						0.05f,
 						2.5f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1641,22 +1664,22 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(3),
 						_float3(3),
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
-					// testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
-					// testa.ePassID = InstancePass_OriginColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 1;
-					testa.TempBuffer_0.w = FollowingDir_Look;
-					testa.vPowerDirection = mat.r[2];
-					// testa.Particle_Power = 30;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					// testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
+					// testTex.ePassID = InstancePass_OriginColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 1;
+					testTex.TempBuffer_0.w = FollowingDir_Look;
+					testTex.vPowerDirection = mat.r[2];
+					// testTex.Particle_Power = 30;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 					_Vector pos = mat.r[3] + mat.r[1] * 0.3f + mat.r[2] * 3.5f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 
 				}
@@ -1669,7 +1692,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			{
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1679,26 +1702,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.8f,
 						_float3(1, 3, 1).XMVector() * 0.3f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.01f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 5.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 5.0f;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 				m_EffectAdjust++;
 
@@ -1766,10 +1789,69 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
 
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0.01f,
+						0.4f,
+						//	_float4(0.71f, 0.29f, 0.98f, 1),
+						_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						_float4(1),
+						10,
+						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+						1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-				// #TIME StopBoundAttack
-				// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLBOUND1, m_pTransformCom);
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_OriginColor;
 
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+					_Vector pos = mat.r[3] + mat.r[2] * 2.5f;
+					testTex.vFixedPosition = pos;
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+
+				{
+					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+						Prototype_Mesh_SM_4E_IceShards_01,
+						0.01f,
+						0.8f,
+						_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						_float4(0,0,0,1),
+						1,
+						_float3(2),
+						_float3(5),
+						1);
+
+					//	SM_4E_IceShards_01
+					//	SM_4E_IceShards_02
+					//	SM_4E_IceShards_03
+
+
+					testMesh.eParticleTypeID = InstanceEffect_Fountain;
+					testMesh.eInstanceCount = Prototype_ModelInstance_32;
+					//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+
+					testMesh.Particle_Power = 8.0f;
+					testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+					testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+
+					testMesh.iNoiseTextureIndex = 0;
+					testMesh.iMaskingTextureIndex = 0;
+
+
+					//testMesh.FollowingTarget = m_pTransformCom;
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+					_Vector pos = mat.r[3] + mat.r[2] * 3;
+					//	_Vector pos = mat.r[3];
+					testMesh.vFixedPosition = pos;
+
+
+					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+				}
+				
 
 				m_EffectAdjust++;
 			}
@@ -1873,7 +1955,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1883,27 +1965,28 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-					testa.ePassID = InstancePass_BrightColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					//testa.TempBuffer_0.z = 2000;
-					//testa.TempBuffer_0.w = FollowingDir_Up;
-					//testa.Particle_Power = 2.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					testTex.ePassID = InstancePass_BrightColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					//testTex.TempBuffer_0.z = 2000;
+					//testTex.TempBuffer_0.w = FollowingDir_Up;
+					//testTex.Particle_Power = 2.0f;
 					//
-					//testa.iTextureLayerIndex = 106;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					//testTex.iTextureLayerIndex = 106;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
+
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1913,26 +1996,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.8f,
 						_float3(1, 3, 1).XMVector() * 0.3f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 5.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 5.0f;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 
 				m_EffectAdjust++;
@@ -1943,7 +2026,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1953,27 +2036,27 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-					testa.ePassID = InstancePass_BrightColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					//testa.TempBuffer_0.z = 2000;
-					//testa.TempBuffer_0.w = FollowingDir_Up;
-					//testa.Particle_Power = 2.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					testTex.ePassID = InstancePass_BrightColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					//testTex.TempBuffer_0.z = 2000;
+					//testTex.TempBuffer_0.w = FollowingDir_Up;
+					//testTex.Particle_Power = 2.0f;
 					//
-					//testa.iTextureLayerIndex = 106;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					//testTex.iTextureLayerIndex = 106;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 					_Vector pos = mat.r[3] + mat.r[2] * 8.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1983,26 +2066,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.8f,
 						_float3(1, 3, 1).XMVector() * 0.3f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 5.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 5.0f;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 
 					_Vector pos = mat.r[3] + mat.r[2] * 8.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 
 				m_EffectAdjust++;
@@ -2013,7 +2096,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -2023,27 +2106,28 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.5f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-					testa.ePassID = InstancePass_BrightColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					//testa.TempBuffer_0.z = 2000;
-					//testa.TempBuffer_0.w = FollowingDir_Up;
-					//testa.Particle_Power = 2.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					testTex.ePassID = InstancePass_BrightColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					//testTex.TempBuffer_0.z = 2000;
+					//testTex.TempBuffer_0.w = FollowingDir_Up;
+					//testTex.Particle_Power = 2.0f;
 					//
-					//testa.iTextureLayerIndex = 106;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					//testTex.iTextureLayerIndex = 106;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 					_Vector pos = mat.r[3] + mat.r[2] * 12.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
+
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -2053,26 +2137,26 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(1, 3, 1).XMVector() * 0.8f,
 						_float3(1, 3, 1).XMVector() * 0.3f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
 
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-					testa.ePassID = InstancePass_BrightColor;
-					testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					testa.TempBuffer_0.z = 2000;
-					testa.TempBuffer_0.w = FollowingDir_Up;
-					testa.Particle_Power = 5.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 5.0f;
 
-					testa.iTextureLayerIndex = 106;
-					//	testa.m_fAlphaTestValue = 0.001f;
+					testTex.iTextureLayerIndex = 106;
+					//	testTex.m_fAlphaTestValue = 0.001f;
 
 
 					_Vector pos = mat.r[3] + mat.r[2] * 12.0f;
-					testa.vFixedPosition = pos;
+					testTex.vFixedPosition = pos;
 
 
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
 
 				m_EffectAdjust++;
@@ -2155,7 +2239,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				{
 					// Sunder2
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0,
 						0.5f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -2165,22 +2249,22 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 						1);
-					testa.vEmissive_SBB = _float3(1, 1.f, 1);
+					testTex.vEmissive_SBB = _float3(1, 1.f, 1);
 
-					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
-					testa.ePassID = InstancePass_BrightColor;
-					//testa.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
-					//testa.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
-					//testa.TempBuffer_0.z = 2000;
-					//testa.TempBuffer_0.w = FollowingDir_Up;
-					//testa.Particle_Power = 2.0f;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
+					testTex.ePassID = InstancePass_BrightColor;
+					//testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					//testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					//testTex.TempBuffer_0.z = 2000;
+					//testTex.TempBuffer_0.w = FollowingDir_Up;
+					//testTex.Particle_Power = 2.0f;
 					//
-					//testa.iTextureLayerIndex = 106;
-					////	testa.m_fAlphaTestValue = 0.001f;
+					//testTex.iTextureLayerIndex = 106;
+					////	testTex.m_fAlphaTestValue = 0.001f;
 					//
 
-					testa.FollowingTarget = m_pTransformCom;
-					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					testTex.FollowingTarget = m_pTransformCom;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
 

@@ -524,7 +524,7 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	// m_iOncePattern = 0;
+	m_iOncePattern = 4;
 	if(KEYPRESS(DIK_B))
 		m_iOncePattern = 6;
 
@@ -779,10 +779,65 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
+				_float4(1, 1, 1, 1),
+				_float4(1, 0, 0, 1),
+				3,
+				_float3(2),
+				_float3(5),
+				1);
+
+			//	SM_4E_IceShards_01
+			//	SM_4E_IceShards_02
+			//	SM_4E_IceShards_03
+
+
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+
+			testMesh.Particle_Power = 8.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+
+			testMesh.iNoiseTextureIndex = 0;
+			testMesh.iMaskingTextureIndex = 0;
+
+
+			//testMesh.FollowingTarget = m_pTransformCom;
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[2] * 3;
+			//	_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+				0,
+				0,
+				_float4(1, 1, 1, 1),
+				_float4(0.20f, 0.98f, 0.67f, 1),
+				1,
+				_float3(0.30f, 1, 0.30f),
+				_float3(0.30f, 1.f, 0.30f),
+				0);
+
+			testTex.FollowingTarget = m_pTransformCom;
+
+			//GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
+
 
 	}
 #endif // _DEBUG
@@ -1473,7 +1528,47 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			// Routin
 			if (m_EffectAdjust == 0 && PlayRate >= 0)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
+
+
+				INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+					Prototype_Mesh_SM_4E_IceShards_01,
+					0.01f,
+					0.8f,
+					_float4(1, 1, 1, 1),
+					_float4(1, 0, 0, 1),
+					3,
+					_float3(2),
+					_float3(5),
+					1);
+
+				//	SM_4E_IceShards_01
+				//	SM_4E_IceShards_02
+				//	SM_4E_IceShards_03
+
+
+				testMesh.eParticleTypeID = InstanceEffect_Fountain;
+				testMesh.eInstanceCount = Prototype_ModelInstance_32;
+				//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+
+				testMesh.Particle_Power = 8.0f;
+				testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+				testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+
+				testMesh.iNoiseTextureIndex = 0;
+				testMesh.iMaskingTextureIndex = 0;
+
+
+				//testMesh.FollowingTarget = m_pTransformCom;
+				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 3;
+				//	_Vector pos = mat.r[3];
+				testMesh.vFixedPosition = pos;
+
+
+				GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+
 				m_EffectAdjust++;
 			}
 
@@ -1486,21 +1581,6 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
-				instanceDesc.TotalParticleTime = 1.f;
-				instanceDesc.EachParticleLifeTime = 1.0f;
-				instanceDesc.Particle_Power = 13;
-				instanceDesc.TargetColor = _float4(0.8f, 0.2f, 0.02f, 0.7f);
-				instanceDesc.TargetColor2 = _float4(0.8f, 0.2f, 0.02f, 1.0f);
-				instanceDesc.ParticleSize = _float3(0.3f);
-				instanceDesc.ParticleSize2 = _float3(0.1f);
-				instanceDesc.SizeChageFrequency = 6;
-				instanceDesc.ColorChageFrequency = 1;
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 
@@ -1508,35 +1588,21 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 3 && PlayRate >= 0.21)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
 				m_EffectAdjust++;
 			}
 
 			if (m_EffectAdjust == 4 && PlayRate >= 0.375)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
 
 				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 5 && PlayRate >= 0.4689655)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
-				instanceDesc.TotalParticleTime = 1.f;
-				instanceDesc.EachParticleLifeTime = 1.0f;
-				instanceDesc.Particle_Power = 13;
-				instanceDesc.TargetColor = _float4(1.0f, 0.2f, 0.02f, 0.7f);
-				instanceDesc.TargetColor2 = _float4(1.0f, 0.2f, 0.02f, 1.0f);
-				instanceDesc.ParticleSize = _float3(0.3f);
-				instanceDesc.ParticleSize2 = _float3(0.1f);
-				instanceDesc.SizeChageFrequency = 6;
-				instanceDesc.ColorChageFrequency = 1;
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+			
 
 				m_EffectAdjust++;
 
@@ -1544,36 +1610,20 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 6 && PlayRate >= 0.5)
 			{
-
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE2, m_pTransformCom);
 				m_EffectAdjust++;
 			}
 
 			if (m_EffectAdjust == 7 && PlayRate >= 0.62)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
-
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE0, m_pTransformCom);
 
 				m_EffectAdjust++;
 			}
 			if (m_EffectAdjust == 8 && PlayRate >= 0.751724)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
-				instanceDesc.TotalParticleTime = 1.f;
-				instanceDesc.EachParticleLifeTime = 1.0f;
-				instanceDesc.Particle_Power = 13;
-				instanceDesc.TargetColor = _float4(1.0f, 0.0f, 0.00f, 0.7f);
-				instanceDesc.TargetColor2 = _float4(1.0f, 0.0f, 0.00f, 1.0f);
-				instanceDesc.ParticleSize = _float3(0.3f);
-				instanceDesc.ParticleSize2 = _float3(0.1f);
-				instanceDesc.SizeChageFrequency = 6;
-				instanceDesc.ColorChageFrequency = 1;
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_SKILLTRIPLE3, m_pTransformCom);
+				
 
 				m_EffectAdjust++;
 
