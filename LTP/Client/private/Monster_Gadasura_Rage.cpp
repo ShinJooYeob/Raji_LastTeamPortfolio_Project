@@ -526,7 +526,7 @@ HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 	// #DEBUG PatternSET
 	// m_iOncePattern = 0;
 	if(KEYPRESS(DIK_B))
-		m_iOncePattern = 0;
+		m_iOncePattern = 6;
 
 	switch (m_iOncePattern)
 	{

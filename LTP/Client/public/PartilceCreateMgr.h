@@ -144,7 +144,7 @@ public:
 		MESHEFFECT_MONSTER_GM_Cash3,
 		MESHEFFECT_MONSTER_GM_Cash4,
 
-
+		
 
 
 		// ===========================================
@@ -340,10 +340,18 @@ public:
 
 		// My
 		Um_Hit_1,
+		Um_Hit_2,
+		Um_Hit_3,
+		Um_Hit_4,
 		Um_Dust_1,
 		Um_Dust_2,
 		Um_Dust_2_FounTain,
-
+		Um_Roll_1,
+		Um_Up_1,
+		Um_Imgae_1,
+		Um_Imgae_2,
+		Um_Sunder_1,
+		Um_FireMask_1,
 
 		TEXTURE_EFFECTJ_END,
 
