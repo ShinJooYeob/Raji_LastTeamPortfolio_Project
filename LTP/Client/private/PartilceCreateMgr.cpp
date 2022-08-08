@@ -155,7 +155,7 @@ HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _u
 	return S_OK;
 }
 
-INSTPARTICLEDESC CPartilceCreateMgr::Get_EffectSetting(E_TEXTURE_EFFECTJ e, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
+INSTPARTICLEDESC CPartilceCreateMgr::Get_EffectSetting_Tex(E_TEXTURE_EFFECTJ e, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
 {
 	INSTPARTICLEDESC desc = GETPARTICLE->Get_TypeDesc_TextureInstance(e);
 	if (TotalTime != 0)
@@ -188,12 +188,38 @@ HRESULT CPartilceCreateMgr::Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene)
 	return S_OK;
 }
 
+INSTMESHDESC CPartilceCreateMgr::Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
+{
+
+	INSTMESHDESC desc = GETPARTICLE->Get_TypeDesc_MeshInstance(e);
+	if (TotalTime != 0)
+		desc.TotalParticleTime = TotalTime;
+	if (EachTime != 0)
+		desc.EachParticleLifeTime = EachTime;
+
+	if (colorFrequency != 0)
+	{
+		desc.TargetColor = Color1;
+		desc.TargetColor2 = Color2;
+		desc.ColorChageFrequency = colorFrequency;
+	}
+
+	if (sizeFrequency != 0)
+	{
+		desc.ParticleSize = Size1;
+		desc.ParticleSize2 = Size2;
+		desc.SizeChageFrequency = sizeFrequency;
+	}
+
+	return desc;
+}
+
 
 
 HRESULT CPartilceCreateMgr::Create_MeshEffect(E_MESH_EFFECTJ type, CTransform * parentTransform,_float3 Offset)
 {
 
-	 NONINSTNESHEFTDESC meshDesc = Get_TypeDesc_NonInstacne(type);
+	NONINSTNESHEFTDESC meshDesc = Get_TypeDesc_NonInstacne(type);
 	meshDesc.vPosition = Offset;
 	meshDesc.vLookDir = parentTransform->Get_MatrixState(CTransform::STATE_LOOK);
 
@@ -443,6 +469,7 @@ HRESULT CPartilceCreateMgr::Ready_MeshInstanceEffect()
 	mVecMeshInstDesc[MESHINST_EFFECTJ_BOW_Q_ICE] = pUtil->Get_MeshParticleDesc(TEXT("Bow_Q_Ice"));
 	mVecMeshInstDesc[MESHINST_EFFECTJ_BOW_Q_ICE2] = pUtil->Get_MeshParticleDesc(TEXT("Bow_Q_Ice2"));
 	mVecMeshInstDesc[MESHINST_EFFECTJ_BOW_Q_PLANE] = pUtil->Get_MeshParticleDesc(TEXT("Bow_Q_Plane"));
+	mVecMeshInstDesc[Um_MeshBase] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase"));
 
 	return S_OK;
 }
@@ -2937,11 +2964,13 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	if (type == MESHEFFECT_MONSTER_GM_Cash3)
 	{
+
+
 		// Mesh
 		MeshDesc.eMeshType = Prototype_Mesh_SM_sinkhole;
 
 		// Time
-		MeshDesc.fMaxTime_Duration = 0.5f;
+		MeshDesc.fMaxTime_Duration = 0.7f;
 		MeshDesc.fAppearTime = 0.2f;
 		AddDesc.bAfterApperTime = true;
 
@@ -2951,7 +2980,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.NoiseTextureIndex = 319;
 
 		// Noise
-		MeshDesc.noisingdir = _float2(-1, -1).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(0,-1).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 
@@ -2962,9 +2991,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(-0.0f, 0, 3.0f);
-		_float size = 5;
-		MeshDesc.vSize = _float3(size);
+		MeshDesc.vPosition = _float3(-0.0f, 0, 2.f);
+		MeshDesc.vSize = _float3(1);
 
 
 		// Move
@@ -2974,7 +3002,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Rotwww
 
-		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.LookRotAxis = FollowingDir_Look;
 		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 
 		//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
@@ -2998,37 +3026,36 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.FollowTarget = nullptr;
 
 		// Shader
-	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
+		_float size = 4;
 		MeshDesc.vSize = _float3(size);
-		MeshDesc.iDiffuseTextureIndex = 305;
-	//	AddDesc.vAddDirectAngle = _float3(0, 0, GetSingle(CUtilityMgr)->RandomFloat(0, 360));
+		MeshDesc.iDiffuseTextureIndex = 317;
 		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 1.0f);
-		MeshDesc.vEmissive = _float4(1);
+		MeshDesc.vEmissive = _float4(0);
 
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
-		AddDesc.DealyTime = 0.3f;
-		MeshDesc.vSize = _float3(size*1.5f);
-		MeshDesc.iDiffuseTextureIndex = 321;
-	//	AddDesc.vAddDirectAngle = _float3(0, 0, GetSingle(CUtilityMgr)->RandomFloat(0, 360));
+		AddDesc.DealyTime = 0.2f;
+		MeshDesc.vSize = _float3(size * 2.0f);
+		MeshDesc.iDiffuseTextureIndex = 416;
 		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 1.0f);
 		MeshDesc.vEmissive = _float4(0);
 		MeshDesc.m_iPassIndex = 17;
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
-		AddDesc.DealyTime = 0.6f;
-		MeshDesc.vSize = _float3(size*2.5f);
-		MeshDesc.iDiffuseTextureIndex = 276;
-	//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.DealyTime = 0.4f;
+		MeshDesc.vSize = _float3(size*3.0f);
+		MeshDesc.iDiffuseTextureIndex = 410;
 		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 0.0f);
 
 		MeshDesc.m_iPassIndex = 17;
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
 	}
 
 

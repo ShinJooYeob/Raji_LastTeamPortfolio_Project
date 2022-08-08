@@ -301,7 +301,7 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 	{
 	//	CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
-		auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+		auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 			9999.f,
 			0.1f,
 			_float4(0,0,0,1.f),
@@ -1199,7 +1199,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_L, m_pTextureParticleTransform_LHand);
 
 
-				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.01f,
 					0.3f,
 					_float4(0.98f, 0.28f, 0.20f, 1),
@@ -1224,7 +1224,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_HAND_R, m_pTextureParticleTransform_RHand);
 
-				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.01f,
 					0.3f,
 					_float4(0.98f, 0.28f, 0.20f, 1),
@@ -1288,7 +1288,7 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
 
-				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.6f,
 					0.5f,
 					_float4(0, 0, 0, 1),

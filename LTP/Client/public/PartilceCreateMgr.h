@@ -362,6 +362,9 @@ public:
 		MESHINST_EFFECTJ_BOW_Q_ICE,
 		MESHINST_EFFECTJ_BOW_Q_ICE2,
 		MESHINST_EFFECTJ_BOW_Q_PLANE,
+
+		Um_MeshBase,
+
 		MESHINST_EFFECTJ_END,
 	};
 
@@ -409,7 +412,7 @@ public:
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
 	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
 
-	INSTPARTICLEDESC Get_EffectSetting(E_TEXTURE_EFFECTJ e,
+	INSTPARTICLEDESC Get_EffectSetting_Tex(E_TEXTURE_EFFECTJ e,
 		_float TotalTime, _float EachTime,
 		_float4 Color1, _float4 Color2, _uint colorFrequency,
 		_float3 Size1, _float3 Size2, _uint sizeFrequency
@@ -420,6 +423,12 @@ public:
 	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_MeshInst_Effect_World(E_MESHINST_EFFECTJ type, _float3 worldPos);
 	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
+
+	INSTMESHDESC Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e,
+		_float TotalTime, _float EachTime,
+		_float4 Color1, _float4 Color2, _uint colorFrequency,
+		_float3 Size1, _float3 Size2, _uint sizeFrequency
+	);
 
 
 	// MeshEffect

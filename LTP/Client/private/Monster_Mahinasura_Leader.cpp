@@ -929,7 +929,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_C))
 	{
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_4,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_4,
 				0,
 				0,
 				_float4(0.98f, 0.20f, 0.89f, 1),
@@ -950,7 +950,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 
 
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
 				0,
 				0,
 				_float4(1, 1, 1, 1),
@@ -969,7 +969,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 
 		// 기모으기
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
 				3,
 				0,
 				_float4(0.98f, 0.20f, 0.89f, 1),
@@ -983,7 +983,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 
 			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
 
-			testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+			testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 				0,
 				0,
 				_float4(1.0f, 0.18f, 0.02f, 1.0f),
@@ -1009,7 +1009,7 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 
 
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 				0.8f,
 				0.3f,
 				_float4(0.97f, 0.14f, 0.10f, 1.0f),
@@ -1292,7 +1292,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_RHand);
 				
-				INSTPARTICLEDESC dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				INSTPARTICLEDESC dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.01f,
 					0.3f,
 					_float4(0.98f, 0.20f, 0.89f, 1),
@@ -1317,7 +1317,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
 
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
 					0,
 					0.3f,
 					_float4(1, 1, 1, 1),
@@ -1395,7 +1395,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
 
-				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.01f,
 					0.3f,
 					_float4(0.98f, 0.20f, 0.89f, 1),
@@ -1429,7 +1429,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
 
-				auto dust2_f = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 					0.01f,
 					0.3f,
 					_float4(0.98f, 0.20f, 0.89f, 1),
@@ -1511,7 +1511,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
 
 
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 					0.5f,
 					0.45f,
 					_float4(0.97f, 0.14f, 0.10f, 1.0f),
@@ -1584,7 +1584,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 0 )
 			{
 
-				INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::TEXTURE_EFFECTJ_Universal_Suck,
+				INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::TEXTURE_EFFECTJ_Universal_Suck,
 					1.8f,
 					0.5f,
 					_float4(1.0f, 0.3f, 0, 0.8f),
@@ -1611,7 +1611,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 
-				 instanceDesc = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+				 instanceDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
 					2,
 					0,
 					 _float4(0, 0, 0, 1),
@@ -1654,7 +1654,7 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			if (m_EffectAdjust == 3 && PlayRate >= 0.82)
 			{
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 					0,
 					1.0f,
 					_float4(1.0f, 0.18f, 0.02f, 1.0f),

@@ -798,13 +798,33 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash1, m_pTransformCom);
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash2, m_pTransformCom);
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTextureParticleTransform_Demo1);
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
+
+
+		{
+			INSTMESHDESC testa = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				0,
+				0,
+				_float4(1, 1, 1, 1),
+				_float4(0.20f, 0.98f, 0.67f, 1),
+				1,
+				_float3(0.30f, 1, 0.30f),
+				_float3(0.30f, 1.f, 0.30f),
+				0);
+
+			testa.FollowingTarget = m_pTransformCom;
+
+			//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		}
+
+
+		
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
 				0,
 				0,
 				_float4(1, 1, 1, 1),
@@ -823,7 +843,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		// 기모으기
 		{
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
 				3,
 				0,
 				_float4(0.98f, 0.20f, 0.89f, 1),
@@ -837,7 +857,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
 
-			testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+			testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
 				0,
 				0,
 				_float4(1.0f, 0.18f, 0.02f, 1.0f),
@@ -864,7 +884,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		{
 			// image
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
 				0,
 				1.f,
 				_float4(1, 1, 1, 1),
@@ -895,7 +915,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		{
 			// Sunder
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 				0,
 				1.f,
 				_float4(0.1f, 1, 0.76f, 1),
@@ -927,7 +947,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		{
 			// Sunder2
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 				0.01f,
 				0.4f,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -962,7 +982,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			// Broken
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 				0.05f,
 				2.5f,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -999,7 +1019,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			// Fire
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_1,
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_1,
 				0,
 				0,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1209,7 +1229,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 					0.05f,
 					0.8f,
 					//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1316,7 +1336,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1413,7 +1433,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1515,7 +1535,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			{
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_1,
 						0,
 						0.8f,
 						_float4(0.13f, 0.3f, 0.97f, 1.f),
@@ -1576,7 +1596,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH0, m_pTransformCom);
 
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 					//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1610,7 +1630,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				{
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Imgae_2,
 						0.05f,
 						2.5f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1649,7 +1669,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			{
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1718,7 +1738,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "skd_l_ball";
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+			//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 
 				m_iAdjMovedIndex++;
 			}
@@ -1734,14 +1754,19 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_827.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_iSoundIndex++;
 			}
-			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
 			{
 				// #TIME StopBoundAttack
 				// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLBOUND0, m_pTransformCom);
+
+
 				m_EffectAdjust++;
 			}
-			if (m_EffectAdjust == 1 && PlayRate >= 0.3f)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.4245)
 			{
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
+
+
 				// #TIME StopBoundAttack
 				// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLBOUND1, m_pTransformCom);
 
@@ -1749,8 +1774,9 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 2 && PlayRate >= 0.6f)
+			if (m_EffectAdjust == 2 && PlayRate >= 0.6)
 			{
+
 
 				m_EffectAdjust++;
 			}
@@ -1847,7 +1873,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1877,7 +1903,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				}
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1917,7 +1943,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1947,7 +1973,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				}
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -1987,7 +2013,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0.01f,
 						0.4f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
@@ -2017,7 +2043,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				}
 				{
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
 						0.8f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
@@ -2129,7 +2155,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				{
 					// Sunder2
-					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
 						0,
 						0.5f,
 						//	_float4(0.71f, 0.29f, 0.98f, 1),
