@@ -466,6 +466,15 @@
     <Filter Include="01.GameObject\99.UI\PauseUI">
       <UniqueIdentifier>{02a01420-b9f9-4f6d-aa0a-e09750e674f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\GraphicUI">
+      <UniqueIdentifier>{c3e4338c-e360-4540-be15-10aa24f21a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI\SoundUI">
+      <UniqueIdentifier>{a40b8668-f0a0-4fbc-87a8-c801770186cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI\IngameUI">
+      <UniqueIdentifier>{201271a5-213c-46a6-a3ff-35879a190baf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1015,6 +1024,15 @@
     <ClInclude Include="..\public\PauseUI.h">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GraphicUI.h">
+      <Filter>01.GameObject\99.UI\GraphicUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SoundUI.h">
+      <Filter>01.GameObject\99.UI\SoundUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IngameUI.h">
+      <Filter>01.GameObject\99.UI\IngameUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1547,6 +1565,15 @@
     </ClCompile>
     <ClCompile Include="..\private\PauseUI.cpp">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GraphicUI.cpp">
+      <Filter>01.GameObject\99.UI\GraphicUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SoundUI.cpp">
+      <Filter>01.GameObject\99.UI\SoundUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\IngameUI.cpp">
+      <Filter>01.GameObject\99.UI\IngameUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

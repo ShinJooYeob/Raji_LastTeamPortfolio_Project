@@ -72,7 +72,7 @@ HRESULT CHpUI::Initialize_Clone(void * pArg)
 			//pTransform->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0), XMConvertToRadians(Angle + 180.f));
 			pTransform->Set_MatrixState(CTransform::STATE_POS, Pos);
 
-			pTransform->Scaled_All(_float3(0.2f));
+			pTransform->Scaled_All(_float3(0.05f));
 
 			m_vPosTransforms.push_back(pTransform);
 		}
@@ -142,6 +142,7 @@ _int CHpUI::Update(_double fDeltaTime)
 		{
 			_float Angle = (_float)i*(360.f / (_float)iMaxHP);
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			m_HpDesc.m_Dimensions = 0.7f;
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
 
 			Pos.y += 0.1f;
@@ -154,7 +155,7 @@ _int CHpUI::Update(_double fDeltaTime)
 			m_vPosTransforms[i]->Set_Matrix(Mat2);
 
 
-			m_vPosTransforms[i]->Scaled_All(_float3(1.1f - (m_HpDesc.m_pObjcect->Get_MaxHP() *0.01f), 0.5f, 0.5f));
+			m_vPosTransforms[i]->Scaled_All(_float3(0.4f - (m_HpDesc.m_pObjcect->Get_MaxHP() *0.01f), 0.1618f, 0.2f));
 		}
 
 		for (_int i = 0; i < m_vPosTransforms.size(); ++i)

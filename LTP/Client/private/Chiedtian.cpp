@@ -137,7 +137,7 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 	_int iRandom = rand() % 3 + 1;
@@ -183,6 +183,12 @@ _int CChiedtian::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
 		{
 			if(m_bIsAtaackAimEnd)
+				m_bIsHit = true;
+		}
+
+		if (m_fHP <= m_fHP / 2.f)
+		{
+			if (m_bIsAtaackAimEnd)
 				m_bIsHit = true;
 		}
 
@@ -308,21 +314,21 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_pModel->Change_AnimIndex(4);
 		}
-		////점프
-		//if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
-		//{
-		//	m_bIsAttack = true;
-		//	m_pModel->Change_AnimIndex_ReturnTo(10, 1);
-		//}
-		////일반 공격
-		//else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
-		//{
-		//	m_bIsAttack = true;
-		//	m_bIsBasicAttack = true;
+		//점프
+		if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
+		{
+			m_bIsAttack = true;
+			m_pModel->Change_AnimIndex_ReturnTo(10, 1);
+		}
+		//일반 공격
+		else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
+		{
+			m_bIsAttack = true;
+			m_bIsBasicAttack = true;
 
-		//	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
+			m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
-		//}
+		}
 		//스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
@@ -510,7 +516,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 1.9f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			iRandom = 0;
+			iRandom = 1;
 
 			switch (iRandom)
 			{
@@ -1318,7 +1324,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-					_float3 vGoalDir = (_float3(0).XMVector() - MonsterPos.XMVector());
+					_float3 vGoalDir = (_float3(-0.073f, 35.900f, 281.488f).XMVector() - MonsterPos.XMVector());
 
 					_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
 

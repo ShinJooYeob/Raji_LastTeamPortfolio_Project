@@ -28,7 +28,7 @@ HRESULT CVolcano::Initialize_Clone(void * pArg)
 	if (pArg != nullptr)
 	{
 		_float3 Pos =  *((_float3*)pArg);
-		Pos.y -= 0.2f;
+		Pos.y -= 1.f;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
 	}
 
@@ -37,7 +37,7 @@ HRESULT CVolcano::Initialize_Clone(void * pArg)
 	m_pTransformCom->Scaled_All(_float3(8.2f));
 
 	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	Pos.y += 0.2f;
+	//Pos.y -= 0.1f;
 	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_FlameTerrain), TAG_OP(Prototype_Object_Boss_FlameTeraain), &Pos);
 
 	return S_OK;

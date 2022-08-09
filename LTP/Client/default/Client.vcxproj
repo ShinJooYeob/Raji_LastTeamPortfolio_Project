@@ -198,7 +198,9 @@
     <ClInclude Include="..\public\Gear.h" />
     <ClInclude Include="..\public\Gear_Puzzle.h" />
     <ClInclude Include="..\public\Golu.h" />
+    <ClInclude Include="..\public\GraphicUI.h" />
     <ClInclude Include="..\public\HpUI.h" />
+    <ClInclude Include="..\public\IngameUI.h" />
     <ClInclude Include="..\public\InstanceEffect.h" />
     <ClInclude Include="..\public\InstanceMonsterBatchTrigger.h" />
     <ClInclude Include="..\public\JumpTrigger.h" />
@@ -300,6 +302,7 @@
     <ClInclude Include="..\public\NonInstanceMeshEffect.h" />
     <ClInclude Include="..\public\Mahabalasura_SpearWave.h" />
     <ClInclude Include="..\public\Snake_Poison_Raser.h" />
+    <ClInclude Include="..\public\SoundUI.h" />
     <ClInclude Include="..\public\SpearWave.h" />
     <ClInclude Include="..\public\StaticInstanceMapObject.h" />
     <ClInclude Include="..\public\TestLedgeTrigger.h" />
@@ -344,7 +347,9 @@
     <ClCompile Include="..\private\Gear.cpp" />
     <ClCompile Include="..\private\Gear_Puzzle.cpp" />
     <ClCompile Include="..\private\Golu.cpp" />
+    <ClCompile Include="..\private\GraphicUI.cpp" />
     <ClCompile Include="..\private\HpUI.cpp" />
+    <ClCompile Include="..\private\IngameUI.cpp" />
     <ClCompile Include="..\private\InstanceMonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\JumpTrigger.cpp" />
     <ClCompile Include="..\private\EnvMappedWater.cpp" />
@@ -430,6 +435,7 @@
     <ClCompile Include="..\private\NonInstanceMeshEffect.cpp" />
     <ClCompile Include="..\private\Mahabalasura_SpearWave.cpp" />
     <ClCompile Include="..\private\Snake_Poison_Raser.cpp" />
+    <ClCompile Include="..\private\SoundUI.cpp" />
     <ClCompile Include="..\private\SpearWave.cpp" />
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
     <ClCompile Include="..\private\TestLedgeTrigger.cpp" />
