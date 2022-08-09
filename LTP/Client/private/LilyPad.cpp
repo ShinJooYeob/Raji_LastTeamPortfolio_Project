@@ -63,7 +63,8 @@ _int CLilyPad::Update(_double fDeltaTime)
 	}
 	else if (m_fDuaton <= 3.f)
 	{
-		m_pTransformCom->Move_Down(fDeltaTime);
+		m_pTransformCom->Move_Down(fDeltaTime * m_fFallingAcc);
+		m_fFallingAcc += 0.01f;
 	}
 
 

@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "..\public\Rangda.h"
 #include "Rangda_MagicCircle.h"
-
+#include "Player.h"
+#include "Camera_Main.h"
+#include "Scene_Stage3.h"
+#include "PathArrow.h"
 
 _uint CALLBACK MagicCircleEffectThread(void* _Prameter)
 {
@@ -73,10 +76,22 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	_int iRandom = rand() % 11;
 
-	wstring teampString;
+
+	// JH
+	/*wstring teampString;
 	teampString = L"JJB_Narration" + to_wstring(iRandom) + L".wav";
 
-	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);*/
+	m_bBlockUpdate = true;
+	m_eCurDirectionState = STATE_IDLE;
+	m_pModel->Change_AnimIndex(0);
+	static_cast<CScene_Stage3*>(g_pGameInstance->Get_NowScene())->Set_PlayGoluSound(true);
+	static_cast<CPathArrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_UI_IMG)))->Set_Appear(true);
+
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 27.f;
+	m_fAttachCamPos.z -= 60.f;
+	//
 
 	return S_OK;
 }
@@ -84,8 +99,24 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 _int CRangda::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
-
+	 
 	m_pDissolve->Update_Dissolving(fDeltaTime);
+
+	// JH
+	if (true == m_bBlockUpdate)
+	{
+		Update_Direction(fDeltaTime);
+
+		if (false == m_bBlockAnim)
+		{
+			FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
+		}
+
+		m_pTransformCom->LookDir(XMVectorSet(-0.139760584f, 0.00000000f, -4.99804592f, 0.f));
+		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(154.189f, 96.400f, 195.346f));
+		return _int();
+	}
+	//
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
@@ -163,6 +194,11 @@ _int CRangda::Update(_double fDeltaTime)
 		else if (m_fHP <= 0)
 		{
 			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
+
+			// JH
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+			//
 		}
 
 		if (m_iMaterialCount - 3 < 8)
@@ -368,6 +404,106 @@ _fMatrix CRangda::Get_BoneMatrix(const char * pBoneName)
 	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
 
 	return TransformMatrix;
+}
+
+void CRangda::Change_Animation(_uint iAnimIndex)
+{
+	m_pModel->Change_AnimIndex(iAnimIndex);
+}
+
+void CRangda::Update_Direction(_double fDeltaTime)
+{
+	_uint iCurAnim = m_pModel->Get_NowAnimIndex();
+	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
+	m_fAnimmultiple = 1.f;
+	switch (iCurAnim)
+	{
+	case 6:
+		m_fAnimmultiple = 0.5f;
+		if (0.98f <= fAnimPlayRate)
+		{
+			m_pModel->Change_AnimIndex(3);
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+		}
+		else if (0.5f <= fAnimPlayRate)
+		{
+			if (0.7f <= fAnimPlayRate)
+			{
+				if (true == m_bOnceSwitch && 0.85f >= fAnimPlayRate)
+				{
+					static_cast<CPlayer*>(m_pPlayerObj)->Set_PlayerState(CPlayer::EPLAYER_STATE::STATE_FIRSTPERSONVIEW);
+					m_bOnceSwitch = false;
+				}
+				else if (false == m_bOnceSwitch)
+				{
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 0.1f, false);
+					m_bOnceSwitch = true;
+				}
+
+				_float fCurFogDensity = m_pRendererCom->Get_FogGlobalDensity();
+				if (0.2f >= fCurFogDensity)
+				{
+					fCurFogDensity = 0.2f;
+				}
+				else
+				{
+					fCurFogDensity -= 0.01f;
+				}
+				m_pRendererCom->Set_FogGlobalDensity(fCurFogDensity);
+			}
+		}
+		else if (0.2f <= fAnimPlayRate && false == m_bOnceSwitch2)
+		{
+			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Slash_02.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_bOnceSwitch2 = true;
+		}
+		else if (0.32f <= fAnimPlayRate && false == m_bOnceSwitch)
+		{
+			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Ground_Impact_01.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
+			g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_NPC))->Set_IsDead();
+			m_bOnceSwitch = true;
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.2f;
+			tCameraShakeRotDesc.fPower = 2.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.005f;
+			tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, false);
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+		}
+		else
+		{
+			m_fAnimmultiple = 20.f;
+		}
+		break;
+	case 3:
+		if (0.98f <= fAnimPlayRate)
+		{
+			m_bBlockUpdate = false;
+			m_pModel->Change_AnimIndex(0);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+		}
+		else if (0.5f <= fAnimPlayRate && true == m_bOnceSwitch)
+		{
+			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Scream_02.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 2.f, false);
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+			m_bOnceSwitch = false;
+		}
+		break;
+	}
+
+
+	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+
+	PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+	_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
+	m_pTransformCom->Turn_Dir(Dir, 0.90f);
 }
 
 HRESULT CRangda::Make_RandaMagicCircle(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
@@ -1440,6 +1576,11 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 1)
 		{
 			Set_IsDead();
+
+			// JH
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			//
 		}
 		if (iNowAnimIndex == 6 || iNowAnimIndex == 7)
 		{

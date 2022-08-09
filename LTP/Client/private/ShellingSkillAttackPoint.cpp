@@ -251,6 +251,7 @@ CShellingSkillAttackPoint * CShellingSkillAttackPoint::Create(ID3D11Device * pDe
 		MSGBOX("Failed to Created CShellingSkillAttackPoint");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

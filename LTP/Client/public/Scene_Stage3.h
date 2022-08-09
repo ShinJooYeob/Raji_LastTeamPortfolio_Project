@@ -19,6 +19,12 @@ public:
 
 	virtual _int Change_to_NextScene() override;
 
+public:
+	void	Set_PlayGoluSound(_bool bPlaySound);
+
+private:
+	void	Play_GoluSound(_double fTimeDelta);
+
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Layer_MainCamera(const _tchar* pLayerTag);
@@ -33,10 +39,16 @@ private:
 
 
 	HRESULT Ready_PostPorcessing();
+
+private:
+	_bool							m_bPlayGoluSound = false;
+	_float							m_fPlayGoluSoundDelay = 0.f;
+
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 	CUtilityMgr*					m_pUtilMgr = nullptr;
 	CTransform*						m_pPlayerTransform = nullptr;
+
 public:
 	static CScene_Stage3* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual void Free() override;

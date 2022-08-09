@@ -54,6 +54,7 @@ private:
 
 	_bool							m_bEndUpdate = false;
 	_bool							m_bGameClear = false;
+	_bool							m_bOncePlaySound = false;
 
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;

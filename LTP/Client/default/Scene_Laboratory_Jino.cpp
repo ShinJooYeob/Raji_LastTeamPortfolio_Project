@@ -27,6 +27,8 @@ HRESULT CScene_Laboratory_Jino::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	m_fGameOverDelay = 11.f;
+	m_bOncePlaySound = false;
+
 	return S_OK;
 }
 
@@ -59,7 +61,13 @@ _int CScene_Laboratory_Jino::LateUpdate(_double fDeltaTime)
 	if (true == m_bGameOver)
 	{
 		m_fGameOverDelay -= (_float)fDeltaTime;
-		if (0 >= m_fGameOverDelay)
+		if (false == m_bOncePlaySound && 8.f >= m_fGameOverDelay)
+		{
+			m_bOncePlaySound = true;
+			g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_0.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+			g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_1.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+		}
+		else if (0.f >= m_fGameOverDelay)
 		{
 			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LABORATORY_JINO), SCENEID::SCENE_LOADING));

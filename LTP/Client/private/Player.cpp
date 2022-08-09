@@ -68,6 +68,7 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	// Debuging Code
 
 	// TEST CODE
 	_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
@@ -77,111 +78,8 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 #pragma region For Debug Inputkey
-	{
+	DebugingCode();
 
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
-		{
-
-			{
-				NONINSTNESHEFTDESC tNIMEDesc;
-
-				tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
-				tNIMEDesc.vLookDir = _float3(1, 0, 0);
-
-
-				tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
-
-
-				tNIMEDesc.fMaxTime_Duration = 0.5f;
-				tNIMEDesc.fAppearTime = 0.01f;
-
-				tNIMEDesc.noisingdir = _float2(0.f,1.f).Get_Nomalize() * 10.f;
-				tNIMEDesc.fDistortionNoisingPushPower = 3.f;
-				tNIMEDesc.NoiseTextureIndex = 200;
-				tNIMEDesc.MaskTextureIndex = 63;
-				tNIMEDesc.iDiffuseTextureIndex = 321;
-				tNIMEDesc.m_iPassIndex = 23;
-				tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
-				tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
-				tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
-
-				tNIMEDesc.RotAxis = FollowingDir_Up;
-				tNIMEDesc.RotationSpeedPerSec = 1080.f;
-				tNIMEDesc.vSize = _float3(0.1, 0.1f, 0.1f);
-
-				tNIMEDesc.SizeSpeed = 15.f;
-				tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
-
-				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-					TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
-			}
-
-
-
-		}
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_COMMA)&DIS_Down)
-		{
-			m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
-		{
-			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
-		{
-			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DOF);
-		}
-
-
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
-		{
-			//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, TAG_LAY(Layer_MapObject), TAG_OP(Prototype_Object_DynamicPlatform), &_float3(0.f)));
-
-			/*_float3 fPos = Check_MousePicking();
-			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_Object_InteractObj_LilyPad), &fPos);*/
-			
-			//Set_State_PetalStart(fDeltaTime);
-
-			//INSTPARTICLEDESC tDesc4 = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
-			//tDesc4.FollowingTarget = nullptr;
-			//tDesc4.EachParticleLifeTime = 1.f;
-			//tDesc4.vFixedPosition = _float3(568.f, 24.300f, 403.5f);
-			//GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc4);
-
-			//tDesc4.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
-			//GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, tDesc4);
-			//
-
-
-			//INSTMESHDESC tDesc3 = GetSingle(CUtilityMgr)->Get_MeshParticleDesc(TEXT("Jino_Stage2_Mesh_PinkBall"));
-			//tDesc3.FollowingTarget = nullptr;
-			//tDesc3.vFixedPosition = _float3(495.42f, 4.61f, 420.7f);/*_float3(485.67f, 4.91f, 420.289f);*//*_float3(475.605f, 4.900f, 420.541f);*///_float3(473.970f, 4.900f, 414.755f);
-			//tDesc3.TotalParticleTime = 0.9f;
-			//tDesc3.EachParticleLifeTime = 1.f;
-			//GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, tDesc3);
-
-			//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, GetSingle(CUtilityMgr)->Get_TextureParticleDesc("asdasdasd"));
-		}
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
-		{
-			m_bPowerOverwhelming = !m_bPowerOverwhelming;
-		}
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
-		{
-			Resurrection();
-		}
-
-		if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
-		{
-			SetUp_CheckPoint_CurPos();
-		}
-	}
-#pragma endregion
 
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
@@ -209,77 +107,82 @@ _int CPlayer::Update(_double fDeltaTime)
 
 
 	//**************** Process Player State Logic *****************//
-	switch (m_eCurState)
 	{
-	case EPLAYER_STATE::STATE_SLEEP:
-		FAILED_CHECK(Update_State_Sleep(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_IDLE:
-		FAILED_CHECK(Update_State_Idle(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_MOV:
-		FAILED_CHECK(Update_State_Move(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_IDLE:
-		FAILED_CHECK(Update_State_DynamicPlatform_Idle(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_MOVE:
-		FAILED_CHECK(Update_State_DynamicPlatform_Move(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_DYNAMICPLATFORM_DEAD:
-		FAILED_CHECK(Update_State_DynamicPlatform_Dead(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_EVASION:
-		FAILED_CHECK(Update_State_Evasion(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_ATTACK:
-		FAILED_CHECK(Update_State_Attack(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_JUMP:
-		FAILED_CHECK(Update_State_Jump(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_FALL:
-		FAILED_CHECK(Update_State_Fall(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_UTILITYSKILL:
-		FAILED_CHECK(Update_State_UtilitySkill(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_ULTIMATESKILL:
-		FAILED_CHECK(Update_State_UltimateSkill(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_TAKE_DAMAGE:
-		FAILED_CHECK(Update_State_Damage(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_DEAD:
-		FAILED_CHECK(Update_State_Dead(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_EXECUTION:
-		FAILED_CHECK(Update_State_Execution(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_PARKOUR:
-		FAILED_CHECK(Update_State_Parkour(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_CURTAIN:
-		FAILED_CHECK(Update_State_Curtain(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_WALLRUN:
-		FAILED_CHECK(Update_State_WallRun(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_PILLAR:
-		FAILED_CHECK(Update_State_Pillar(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_PETAL:
-		FAILED_CHECK(Update_State_Petal(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_ELEVATOR:
-		FAILED_CHECK(Update_State_Elevator(fDeltaTime));
-		break;
-	case EPLAYER_STATE::STATE_STOPACTION:
-		FAILED_CHECK(Update_State_StopAction(fDeltaTime));
-		break;
-	default:
-		MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
-		break;
+		switch (m_eCurState)
+		{
+		case EPLAYER_STATE::STATE_SLEEP:
+			FAILED_CHECK(Update_State_Sleep(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_IDLE:
+			FAILED_CHECK(Update_State_Idle(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_MOV:
+			FAILED_CHECK(Update_State_Move(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_DYNAMICPLATFORM_IDLE:
+			FAILED_CHECK(Update_State_DynamicPlatform_Idle(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_DYNAMICPLATFORM_MOVE:
+			FAILED_CHECK(Update_State_DynamicPlatform_Move(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_DYNAMICPLATFORM_DEAD:
+			FAILED_CHECK(Update_State_DynamicPlatform_Dead(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_EVASION:
+			FAILED_CHECK(Update_State_Evasion(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_ATTACK:
+			FAILED_CHECK(Update_State_Attack(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_JUMP:
+			FAILED_CHECK(Update_State_Jump(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_FALL:
+			FAILED_CHECK(Update_State_Fall(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_UTILITYSKILL:
+			FAILED_CHECK(Update_State_UtilitySkill(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_ULTIMATESKILL:
+			FAILED_CHECK(Update_State_UltimateSkill(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_TAKE_DAMAGE:
+			FAILED_CHECK(Update_State_Damage(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_DEAD:
+			FAILED_CHECK(Update_State_Dead(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_EXECUTION:
+			FAILED_CHECK(Update_State_Execution(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_PARKOUR:
+			FAILED_CHECK(Update_State_Parkour(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_CURTAIN:
+			FAILED_CHECK(Update_State_Curtain(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_WALLRUN:
+			FAILED_CHECK(Update_State_WallRun(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_PILLAR:
+			FAILED_CHECK(Update_State_Pillar(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_PETAL:
+			FAILED_CHECK(Update_State_Petal(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_ELEVATOR:
+			FAILED_CHECK(Update_State_Elevator(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_STOPACTION:
+			FAILED_CHECK(Update_State_StopAction(fDeltaTime));
+			break;
+		case EPLAYER_STATE::STATE_FIRSTPERSONVIEW:
+			FAILED_CHECK(Update_State_FirstPersonView(fDeltaTime));
+			break;
+		default:
+			MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
+			break;
+		}
 	}
 	//
 
@@ -304,55 +207,6 @@ _int CPlayer::Update(_double fDeltaTime)
 		// Update PhysX
 		if (m_pHeadJoint)
 			m_pHeadJoint->Update_BeforeSimulation();
-
-
-		//// CameraShake Test
-		{
-			/*if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
-			{
-				m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
-			}*/
-			if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
-			{
-				//m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f, true);
-
-				GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
-				m_pMainCamera->Set_MaxTargetArmLength(3.f);
-			}
-			else if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Up)
-			{
-				m_pMainCamera->Set_MaxTargetArmLength(10.f);
-			}
-			//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
-			//{
-			//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
-			//	tCameraShakeDirDesc.fTotalTime = 1.f;
-			//	tCameraShakeDirDesc.fPower = 10.f;
-			//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
-			//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
-			//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
-			//}
-			//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
-			//{
-			//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
-			//	tCameraShakeDirDesc.fTotalTime = 1.f;
-			//	tCameraShakeDirDesc.fPower = 10.f;
-			//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
-			//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
-			//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
-			//}
-			//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
-			//{
-			//	CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
-			//	tCameraShakeRotDesc.fTotalTime = 1.f;
-			//	tCameraShakeRotDesc.fPower = 1.f; 
-			//	tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
-			//	tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
-			//	m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, true);
-			//}
-			// 
-		}
-
 
 		Update_Targeting(fDeltaTime);
 
@@ -494,9 +348,11 @@ void CPlayer::Resurrection()
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, m_fResurrectPos);
 	m_pNavigationCom->Set_CurNavCellIndex(m_iResurrectNavIndex);
 	m_pHPUI->Set_HitCount(0);
+	m_fHP = m_fMaxHP;
 	m_fFallingAcc = 0.f;
 	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_bUpdateAnimation = true;
+	m_bOncePlaySound = false;
 }
 
 void CPlayer::Set_CurParkourTrigger(CTriggerObject * pParkourTrigger)
@@ -900,6 +756,7 @@ void CPlayer::Set_State_StopActionStart()
 void CPlayer::Set_State_StopActionEnd()
 {
 	Set_State_IdleStart(g_fDeltaTime);
+	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 }
 
 void CPlayer::Set_State_PillarStart(_double fDeltaTime)
@@ -1395,17 +1252,6 @@ HRESULT CPlayer::Update_State_DynamicPlatform_Dead(_double fDeltaTime)
 
 	}
 
-	m_fDelayTime -= (_float)fDeltaTime;
-	if (m_fDelayTime < 0.f)
-	{
-		//
-	}
-	else if (false == m_bOncePlaySound && m_fDelayTime < 5.f)
-	{
-		m_bOncePlaySound = true;
-		g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_0.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
-		g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_1.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
-	}
 	return S_OK;
 }
 
@@ -2074,6 +1920,13 @@ HRESULT CPlayer::Update_State_StopAction(_double fDeltaTime)
 	return S_OK;
 }
 
+HRESULT CPlayer::Update_State_FirstPersonView(_double fDeltaTime)
+{
+	//Move_NotTurn(m_eInputDir, fDeltaTime, true);
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Update_State_Damage(_double fDeltaTime)
 {
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
@@ -2128,19 +1981,18 @@ HRESULT CPlayer::Update_State_Dead(_double fDeltaTime)
 
 	if (0.f < fAnimPlayRate)
 	{
-		if (0.98f < fAnimPlayRate)
+		if (0.5f < fAnimPlayRate && false == m_bOncePlaySound)
+		{
+			m_bOncePlaySound = true;
+			g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_0.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+			g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_1.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
+		}
+		else if (0.98f < fAnimPlayRate)
 		{
 			m_bUpdateAnimation = false;
 
-			if (false == m_bOncePlaySound)
-			{
-				m_bOncePlaySound = true;
-				g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_0.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
-				g_pGameInstance->PlaySoundW(TEXT("Jino_GameOver_Sound_1.wav"), CHANNELID::CHANNEL_EFFECT, 1.f);
-			}
-
 			m_fResurrectionDelay += (_float)fDeltaTime;
-			if (3.f <= m_fResurrectionDelay)
+			if (7.f <= m_fResurrectionDelay)
 			{
 				m_fResurrectionDelay = 0.f;
 				Resurrection();
@@ -2195,6 +2047,10 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerParkur, this, m_pCollider_Parkur));
 
+
+	//if(STATE_FIRSTPERSONVIEW == m_eCurState)
+		//m_pMainCameraTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, m_pCollider->Get_ColliderPosition(12));
+	
 	return S_OK;
 }
 
@@ -2318,9 +2174,19 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 
 	if (0 != iInputDir) 
 	{
-		m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
-			m_pMainCamera->Lock_CamLook(false);
-			m_fAttachCamPos_Offset = _float3(0.f, 13.f, -15.f);  
+		/*m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
+			m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
+			m_fAttachCamPos_Offset = _float3(0.f, -1.f, 3.f);  */
+
+		/*m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.1f, 0.f, 0.f));
+		m_fAttachCamPos_Offset = _float3(-3.f, 6.f, 0.f);
+		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);*/
+
+		m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 0.f));
+		m_fAttachCamPos_Offset = _float3(0.f, 3.f, -1.5f);
+		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
+
+
 		//	m_fAttachCamLook_Offset = _float3(0.f, 0.1f, 1.f);
 
 			//m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
@@ -2648,10 +2514,16 @@ void CPlayer::Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 	m_fMovDir = XMVector3Normalize(vMovDir);
 }
 
-void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
+void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime, _bool bOnNavigation)
 {
 	if (MOVDIR_END == eMoveDir)
+	{
+		if (true == bOnNavigation)
+		{
+			m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
+		}
 		return;
+	}
 
 	CCamera_Main* pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	_Vector vMyNormalizedLook = m_pTransformCom->Get_MatrixState_Normalized(CTransform::TransformState::STATE_LOOK);
@@ -2730,7 +2602,15 @@ void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime)
 	}
 	}
 
-	m_pTransformCom->MovetoDir(vMovDir, fMoveRate /*m_pNavigationCom*/);
+	if (true == bOnNavigation)
+	{
+		m_pModel->Change_AnimIndex(BASE_ANIM_WALK_F);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
+	}
+	else
+	{
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate /*m_pNavigationCom*/);
+	}
 
 	m_fMovDir = XMVector3Normalize(vMovDir);
 }
@@ -7490,37 +7370,14 @@ void CPlayer::Set_InputDir(_int iAxis_F, _int iAxis_R, _double fDeltaTime)
 
 void CPlayer::Set_PlayerState(EPLAYER_STATE eState)
 {
-	/**
-	*		Player State enums
-	*		STATE_IDLE, STATE_MOV, STATE_COMBO_ACTION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_DEAD, STATE_END
-	*/
 	switch (eState)
 	{
-	case EPLAYER_STATE::STATE_IDLE:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_MOV:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_ATTACK:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_JUMPATTACK:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_UTILITYSKILL:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_ULTIMATESKILL:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_EVASION:
-		m_eCurState = eState;
-		break;
-	case EPLAYER_STATE::STATE_PETAL:
-		m_eCurState = eState;
+	case EPLAYER_STATE::STATE_FIRSTPERSONVIEW:
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIRSTPERSONVIEW);
 		break;
 	}
+
+	m_eCurState = eState;
 }
 
 void CPlayer::Set_TurnInputDir()
@@ -7878,7 +7735,7 @@ void CPlayer::Targeting_Loop()
 	{
 		/*m_pMainCamera->Set_CameraLookWeight(0.98f);
 		m_pMainCamera->Set_CameraMoveWeight(0.98f);*/
-		fDist *= 2.5f;
+		fDist *= 2.5f;  
 		if (fDist > 25.f)
 		{
 			fDist = 25.f;
@@ -8127,6 +7984,155 @@ _float3 CPlayer::Check_MousePicking()
 	return fPickingPos;
 }
 
+void CPlayer::DebugingCode()
+{
+	// TEST CODE
+	_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+	//
+
+
+#pragma region For Debug Inputkey
+	{
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+		{
+			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+
+			INSTPARTICLEDESC arrDesc[3];
+
+			_uint iNum = 0;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			iNum++;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			iNum++;
+
+			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_7");
+			arrDesc[iNum].FollowingTarget = nullptr;
+			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			iNum++;
+
+
+			for (auto& tDesc : arrDesc)
+			{
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+			}
+
+
+			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_COMMA)&DIS_Down)
+		{
+			m_pMainCamera->Set_CameraMode(CAM_MODE_FREE);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
+		{
+			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
+		}
+		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
+		{
+			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DOF);
+		}
+
+
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down) 
+		{
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.2f;
+			tCameraShakeRotDesc.fPower = 2.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.005f;
+			tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, false);
+			/*if (STATE_FIRSTPERSONVIEW == m_eCurState)
+			{
+				m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+				m_eCurState = STATE_IDLE;
+			}
+			else
+			{
+				m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIRSTPERSONVIEW);
+				m_eCurState = STATE_FIRSTPERSONVIEW;
+			}*/
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_P) & DIS_Down)
+		{
+			m_bPowerOverwhelming = !m_bPowerOverwhelming;
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_I) & DIS_Down)
+		{
+			Resurrection();
+		}
+
+		if (g_pGameInstance->Get_DIKeyState(DIK_O) & DIS_Down)
+		{
+			SetUp_CheckPoint_CurPos();
+		}
+	}
+#pragma endregion
+
+
+	//// CameraShake Test
+	{
+		/*if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		{
+		m_pMainCamera->Start_CameraShaking_Thread(1.f, 10.f, 0.018f);
+		}*/
+		if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		{
+			//m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.2f, true);
+
+			GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
+			m_pMainCamera->Set_MaxTargetArmLength(3.f);
+		}
+		else if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Up)
+		{
+			m_pMainCamera->Set_MaxTargetArmLength(10.f);
+		}
+		//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		//{
+		//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+		//	tCameraShakeDirDesc.fTotalTime = 1.f;
+		//	tCameraShakeDirDesc.fPower = 10.f;
+		//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+		//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_UP));
+		//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
+		//}
+		//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		//{
+		//	CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+		//	tCameraShakeDirDesc.fTotalTime = 1.f;
+		//	tCameraShakeDirDesc.fPower = 10.f;
+		//	tCameraShakeDirDesc.fChangeDirectioninterval = 0.018f;
+		//	tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(m_pMainCamera->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT));
+		//	m_pMainCamera->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc);
+		//}
+		//if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
+		//{
+		//	CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+		//	tCameraShakeRotDesc.fTotalTime = 1.f;
+		//	tCameraShakeRotDesc.fPower = 1.f; 
+		//	tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+		//	tCameraShakeRotDesc.fShakingRotAxis = m_pMainCamera->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_UP);
+		//	m_pMainCamera->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, true);
+		//}
+		// 
+	}
+}
+
 _bool CPlayer::Is_Hiding()
 {
 	return m_bPlayerHide;
@@ -8306,6 +8312,16 @@ HRESULT CPlayer::SetUp_Components()
 	ColliderDesc.vScale = _float3(0.2f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, -0.1f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	tAttachedDesc = ATTACHEDESC();
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
+	m_vecAttachedDesc.push_back(tAttachedDesc);
+	m_pCollider->Set_ParantBuffer();
+
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.2f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, -0.1f, -0.1f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
 	tAttachedDesc.Initialize_AttachedDesc(this, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));

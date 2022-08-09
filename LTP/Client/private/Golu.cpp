@@ -59,15 +59,22 @@ _int CGolu::Update(_double fDeltaTime)
 	{
 	case EPLAYER_STATE::STATE_IDLE:
 		FAILED_CHECK(Update_State_Idle(fDeltaTime));
+		Update_Collider(fDeltaTime);
 		break;
 	case EPLAYER_STATE::STATE_MOV:
 		FAILED_CHECK(Update_State_Move(fDeltaTime));
+		Update_Collider(fDeltaTime);
 		break;
 	case EPLAYER_STATE::STATE_LANDING:
 		FAILED_CHECK(Update_State_Landing(fDeltaTime));
+		Update_Collider(fDeltaTime);
 		break;
 	case EPLAYER_STATE::STATE_FALL:
 		FAILED_CHECK(Update_State_Fall(fDeltaTime));
+		Update_Collider(fDeltaTime);
+		break;
+	case EPLAYER_STATE::STATE_RANGDA:
+		FAILED_CHECK(Update_State_Rangda(fDeltaTime));
 		break;
 	default:
 		MSGBOX("CGolu::Update : Unknown Golu Cur_State Value");
@@ -75,7 +82,6 @@ _int CGolu::Update(_double fDeltaTime)
 	}
 	//
 
-	Update_Collider(fDeltaTime);
 
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, m_bIsOnScreen));
 
@@ -90,8 +96,8 @@ _int CGolu::LateUpdate(_double fDeltaTimer)
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr, m_pDissolveCom));
 
 #ifdef _DEBUG
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
-	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_GameClear));
+	/*FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_GameClear));*/
 #endif // _DEBUG
 	return _int();
 }
@@ -168,6 +174,13 @@ void CGolu::Set_State_LandingStart(_double fDeltaTime)
 	m_pModel->Change_AnimIndex(BASE_ANIM_LANDING);
 }
 
+void CGolu::Set_State_RangdaStart()
+{
+	m_eCurState = STATE_RANGDA;
+	m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
+	m_pTransformCom->Scaled_All(_float3(2.f));
+}
+
 void CGolu::Set_GameOver()
 {
 	m_bGameOver = true;
@@ -229,6 +242,11 @@ HRESULT CGolu::Update_State_Landing(_double fDeltaTime)
 		Set_State_IdleStart(g_fDeltaTime);
 	}
 
+	return S_OK;
+}
+
+HRESULT CGolu::Update_State_Rangda(_double fDeltaTime)
+{
 	return S_OK;
 }
 
@@ -521,6 +539,7 @@ HRESULT CGolu::SetUp_EtcInfo()
 	Set_LimLight_N_Emissive(_float4(0, 0, 0, 0), _float4(0.5f, 0, 0, 0));
 
 	m_eCurState = STATE_IDLE;
+
 	return S_OK;
 }
 

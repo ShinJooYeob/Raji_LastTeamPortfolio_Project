@@ -65,6 +65,7 @@ public:
 	_fVector Get_AttachCamPosOffset();
 	_fVector Get_AttachCamLook();
 
+	void Set_AttachCamPos(_float3 fAttachCamPos);
 	void Set_AttachCamPosOffset(_float3 fAttachCamPosOffset);
 
 	virtual void Update_AttachCamPos();

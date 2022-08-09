@@ -18,7 +18,7 @@ class CGolu final : public CGameObject
 {
 public:
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_FALL, STATE_LANDING, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_FALL, STATE_LANDING, STATE_RANGDA, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -67,6 +67,9 @@ public:
 	// Falling
 	void						Set_State_LandingStart(_double fDeltaTime);
 
+	// Rangda
+	void						Set_State_RangdaStart();
+
 public:
 	void						Set_GameOver();
 
@@ -75,6 +78,8 @@ private:
 	HRESULT						Update_State_Move(_double fDeltaTime);
 	HRESULT						Update_State_Fall(_double fDeltaTime);
 	HRESULT						Update_State_Landing(_double fDeltaTime);
+
+	HRESULT						Update_State_Rangda(_double fDeltaTime);
 
 	HRESULT						Update_Collider(_double fDeltaTime);
 
