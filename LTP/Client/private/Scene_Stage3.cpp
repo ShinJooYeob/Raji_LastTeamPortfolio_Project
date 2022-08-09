@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "StaticInstanceMapObject.h"
 #include "Elevator.h"
+#include "Golu.h"
+#include "PathArrow.h"
 
 CScene_Stage3::CScene_Stage3(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -41,6 +43,8 @@ HRESULT CScene_Stage3::Initialize()
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
+
+	m_fPlayGoluSoundDelay = 0.f;
 	return S_OK;
 }
 
@@ -48,6 +52,11 @@ _int CScene_Stage3::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
+
+	if (true == m_bPlayGoluSound)
+	{
+		Play_GoluSound(fDeltaTime);
+	}
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -124,6 +133,25 @@ _int CScene_Stage3::Change_to_NextScene()
 	return _int();
 }
 
+void CScene_Stage3::Set_PlayGoluSound(_bool bPlaySound)
+{
+	m_bPlayGoluSound = bPlaySound;
+}
+
+void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
+{
+	m_fPlayGoluSoundDelay -= (_float)fTimeDelta;
+	if (0.f >= m_fPlayGoluSoundDelay)
+	{
+		m_fPlayGoluSoundDelay = 10.f;
+
+		_int iSelectSoundFileIndex = rand() % 10;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
+	}
+}
+
 
 
 HRESULT CScene_Stage3::Ready_Light()
@@ -197,6 +225,10 @@ HRESULT CScene_Stage3::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, TAG_LAY(Layer_NPC), TAG_OP(Prototype_NPC_Golu), &_float3(152.708f, 96.4f, 156.475f)));
+	CGameObject* pGolu = (CGolu*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE3, TAG_LAY(Layer_NPC)));
+	static_cast<CGolu*>(pGolu)->Set_State_RangdaStart();
+
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
@@ -216,6 +248,8 @@ HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
 	pPlayer->Update_AttachCamPos();
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, TAG_LAY(Layer_UI_IMG), TAG_OP(Prototype_UI_PathArrow), &_float3(152.708f, 96.4f, 156.475f)));
 	return S_OK;
 }
 

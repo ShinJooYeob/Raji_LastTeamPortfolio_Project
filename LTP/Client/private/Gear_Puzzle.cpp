@@ -43,7 +43,11 @@ HRESULT CGear_Puzzle::Initialize_Clone(void * pArg)
 	m_pGear[0]->Set_TurnOn(true);
 
 
-
+	//JH
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 3.f;
+	m_fAttachCamPos.x -= 80.f;
+	m_fAttachCamPos.z += 1.7f;
 
 	return S_OK;
 }
@@ -141,6 +145,17 @@ _int CGear_Puzzle::LateRender()
 
 	return _int();
 }
+
+_uint CGear_Puzzle::Get_PuzzleState()
+{
+	return m_iTriggerOn;
+}
+
+void CGear_Puzzle::Set_PuzzleState(_uint iState)
+{
+	m_iTriggerOn = iState;
+}
+
 HRESULT CGear_Puzzle::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));

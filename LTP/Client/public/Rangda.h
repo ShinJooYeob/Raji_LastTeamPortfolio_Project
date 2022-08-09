@@ -4,6 +4,9 @@
 BEGIN(Client)
 class CRangda final : public CBoss
 {
+public:
+	enum EDirectionState { STATE_IDLE, STATE_SMASH_HAND, STATE_ROAR, STATE_END };
+
 private:
 	CRangda(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CRangda(const CRangda& rhs);
@@ -27,6 +30,10 @@ public:
 public:
 	virtual _fVector Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix Get_BoneMatrix(const char* pBoneName) override;
+
+public:
+	// JH
+	void					Change_Animation(_uint iAnimIndex);
 
 private:
 	virtual HRESULT Ready_ParticleDesc() override;
@@ -77,6 +84,15 @@ private:
 
 	vector<_uint>		m_vecFinger;
 	_uint				m_MagicCircleDir = 0;
+
+	// JH
+	void				Update_Direction(_double fDeltaTime);
+	EDirectionState		m_eCurDirectionState = STATE_END;
+	_bool				m_bBlockUpdate = false;
+	_bool				m_bBlockAnim = false;
+	_bool				m_bOnceSwitch = false;
+	_bool				m_bOnceSwitch2 = false;
+	//
 
 private:
 	// Particle

@@ -466,6 +466,24 @@
     <Filter Include="01.GameObject\99.UI\PauseUI">
       <UniqueIdentifier>{02a01420-b9f9-4f6d-aa0a-e09750e674f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\11. MandalaPuzzleTrigger">
+      <UniqueIdentifier>{552dc876-a6dd-4252-9d44-acfbe4802e66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\12. DemonTreePuzzleTrigger">
+      <UniqueIdentifier>{89f2cc3e-1702-4205-95d4-3a715a640ddf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\13. GearPuzzleTrigger">
+      <UniqueIdentifier>{9a52da30-262f-4109-a4e6-52c0f0983696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\14. FogTrigger">
+      <UniqueIdentifier>{1cc392d2-2ced-4d1e-8d91-7402c343d863}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\15. EventTrigger">
+      <UniqueIdentifier>{333d089a-a51a-42d0-b57c-22eb07088b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI\PathArrow">
+      <UniqueIdentifier>{04398402-cbc6-4ce6-887a-e59fd5ee6a7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -952,8 +970,6 @@
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossCreateTrigger.h" />
-    <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
-    <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\Rangda_Statue.h">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Statue</Filter>
     </ClInclude>
@@ -997,7 +1013,6 @@
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClInclude>
     <ClInclude Include="CflameTerrain.h" />
-    <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Gear_Puzzle.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
     </ClInclude>
@@ -1014,6 +1029,27 @@
     </ClInclude>
     <ClInclude Include="..\public\PauseUI.h">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DynamicPlatform.h">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MandalaPuzzleTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\11. MandalaPuzzleTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemonTreePuzzleTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\12. DemonTreePuzzleTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GearPuzzleTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\13. GearPuzzleTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FogTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\14. FogTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EventTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\15. EventTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PathArrow.h">
+      <Filter>01.GameObject\99.UI\PathArrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1479,8 +1515,6 @@
       <Filter>01.GameObject\98.TriggerObject\07.InstanceMonsterBatchTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossCreateTrigger.cpp" />
-    <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
-    <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
     <ClCompile Include="..\private\Rangda_Statue.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Rangda\Rangda_Statue</Filter>
     </ClCompile>
@@ -1530,7 +1564,6 @@
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClCompile>
     <ClCompile Include="CflameTerrain.cpp" />
-    <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Gear.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
     </ClCompile>
@@ -1547,6 +1580,27 @@
     </ClCompile>
     <ClCompile Include="..\private\PauseUI.cpp">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DynamicPlatform.cpp">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\11. MandalaPuzzleTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\12. DemonTreePuzzleTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GearPuzzleTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\13. GearPuzzleTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FogTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\14. FogTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EventTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\15. EventTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PathArrow.cpp">
+      <Filter>01.GameObject\99.UI\PathArrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

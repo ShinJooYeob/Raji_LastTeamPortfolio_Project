@@ -161,6 +161,7 @@ HRESULT CGameObject::Change_Component_by_NewAssign(_uint iScenenNum, const _tcha
 	{
 		pCloneComponent = GetSingle(CGameInstance)->Clone_Component(0, tagPrototype, pArg);
 		NULL_CHECK_RETURN(pCloneComponent,E_FAIL);
+
 	}
 
 
@@ -228,6 +229,11 @@ _fVector CGameObject::Get_AttachCamPosOffset()
 _fVector CGameObject::Get_AttachCamLook()
 {
 	return m_fAttachCamLook.XMVector();
+}
+
+void CGameObject::Set_AttachCamPos(_float3 fAttachCamPos)
+{
+	m_fAttachCamPos = fAttachCamPos;
 }
 
 void CGameObject::Set_AttachCamPosOffset(_float3 fAttachCamPosOffset)

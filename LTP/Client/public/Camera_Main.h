@@ -136,8 +136,8 @@ private:
 	_int				Update_FreeMode(_double fDeltaTime);
 	_int				Update_NormalMode(_double fDeltaTime);
 	_int				Update_TargetingMode(_double fDeltaTime);
-
 	_int				Update_RajiGolu_MiniGameMode(_double fDeltaTime);
+	_int				Update_FirstPersonView(_double fDeltaTime);
 
 	void				Update_CamMoveWeight();
 
@@ -171,10 +171,10 @@ private:
 
 private: /* Target Info */
 	CGameObject*				m_pFocusTarget = nullptr;
+	CTransform*					m_pPlayerTramsformCom = nullptr;
 	_float						m_fTargetArmLength = 0.f;
 	_float						m_fMax_TargetArmLength = 100.f;
 	_float						m_fMin_TargetArmLength = 0.f;
-
 
 private:
 	_float3						m_fTargetingPoint = _float3(0.f, 0.f, 0.f);
@@ -182,13 +182,15 @@ private:
 	_float						m_fTargetingArmLength = 0.f;
 
 private: /* Fov Shaking */
-	_float					m_fFovTarget = 0.f;
-	_float					m_fFovMaxTime_Shaking = 0.f;
-	_float					m_fFovCurTime_Shaking = 0.f;
-	_float					m_fFovSpeed = 0.f;
-	_bool					m_bFovShaking = false;
-	_float					m_bFovShaking_ChangeArrow = 1.f;
+	_float						m_fFovTarget = 0.f;
+	_float						m_fFovMaxTime_Shaking = 0.f;
+	_float						m_fFovCurTime_Shaking = 0.f;
+	_float						m_fFovSpeed = 0.f;
+	_bool						m_bFovShaking = false;
+	_float						m_bFovShaking_ChangeArrow = 1.f;
 
+private: /* For ETC */
+	ATTACHEDESC					m_tAttachDesc;
 
 public:
 	static CCamera_Main* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

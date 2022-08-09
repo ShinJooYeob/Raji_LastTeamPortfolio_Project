@@ -89,6 +89,10 @@
 #include "BossCreateTrigger.h"
 #include "CinematicTrigger.h"
 #include "CurtainTrigger.h"
+#include "GearPuzzleTrigger.h"
+#include "FogTrigger.h"
+#include "EventTrigger.h"
+
 //Interact Obj
 #include "DynamicPlatform.h"
 #include "Elevator.h"
@@ -97,6 +101,8 @@
 #include "RepelWall.h"
 
 #include "InstanceMonsterBatchTrigger.h"
+
+#include "PathArrow.h"
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -428,7 +434,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_BossCreateTrigger), CBossCreateTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_CinematicTrigger), CCinematicTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_CurtainTrigger), CCurtainTrigger::Create(m_pDevice, m_pDeviceContext)));
-	
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_GearPuzzleTrigger), CGearPuzzleTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_FogTrigger), CFogTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Trigger_EventTrigger), CEventTrigger::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));
@@ -738,6 +746,10 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 		return E_FAIL;
 
 
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE3, TAG_CP(Prototype_Texture_PathArrow),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"ETC.txt")));
+
+
 	_Matrix			TransformMatrix;
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
@@ -756,6 +768,9 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Wasp), TransformMatrix);
 
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
@@ -771,6 +786,9 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NPC_Golu), CGolu::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UI_PathArrow), CPathArrow::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 
@@ -1294,7 +1312,6 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
 	
 
-
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_InteractObj_Lotus), CLotus::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(Load_AllMonster());
@@ -1540,13 +1557,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	//// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
+	////// MERGE //
+	//FAILED_CHECK(Load_AllMonster());
+	//FAILED_CHECK(Load_AllBoss());
+	//FAILED_CHECK(Load_AllDynamicMapObject());
 
-	 for (_uint i = 0; i < SCENE_END; i++)
-	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	// for (_uint i = 0; i < SCENE_END; i++)
+	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 
@@ -2767,6 +2784,8 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_ElevatorVertical_Cog_Top_01.fbx", TransformMatrix);
 
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Elevator_Vertical_01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"BallMesh.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"ArrowDir.fbx", TransformMatrix);
 #pragma endregion RangdaMapPrototype
 	}
 		break;

@@ -205,7 +205,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 enum ECameraMode
 {
-	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX, CAM_MODE_RAJIGOLU_MINIGAME
+	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX, CAM_MODE_RAJIGOLU_MINIGAME, CAM_MODE_FIRSTPERSONVIEW
 };
 
 enum UPGRADEID
@@ -296,6 +296,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_PlayerEffect_ShellingRange,
 	Prototype_PlayerEffect_ShellingPoint,
 	Prototype_NPC_Golu,
+	Prototype_UI_PathArrow,
 
 	//////////////////////////////////////////////////////////////////////////
 	Prototype_Trigger_ChangeCameraView,
@@ -314,6 +315,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_MonsterBatchTrigger,
 	Prototype_Trigger_CinematicTrigger,
 	Prototype_Trigger_CurtainTrigger,
+	Prototype_Trigger_GearPuzzleTrigger,
+	Prototype_Trigger_FogTrigger,
+	Prototype_Trigger_EventTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
@@ -461,6 +465,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_NPC_Golu:
 		return TEXT("Prototype_NPC_Golu");
 		break;
+	case Prototype_UI_PathArrow:
+		return TEXT("Prototype_UI_PathArrow");
+		break;
 	case Prototype_PlayerWeapon_Spear:
 		return TEXT("Prototype_PlayerWeapon_Spear");
 		break;
@@ -506,6 +513,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_Trigger_CurtainTrigger:
 		return TEXT("Prototype_Trigger_CurtainTrigger");
+		break;
+	case Prototype_Trigger_GearPuzzleTrigger:
+		return TEXT("Prototype_Trigger_GearPuzzleTrigger");
+		break;
+	case Prototype_Trigger_FogTrigger:
+		return TEXT("Prototype_Trigger_FogTrigger");
+		break;
+	case Prototype_Trigger_EventTrigger:
+		return TEXT("Prototype_Trigger_EventTrigger");
 		break;
 	case Prototype_Trigger_ChangeNavIndex:
 		return TEXT("Prototype_Trigger_ChangeNavIndex");
@@ -3274,6 +3290,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_BallMesh,
 	Prototype_Mesh_DarkBaldTree,
 	Prototype_Mesh_Elevator,
+	Prototype_Mesh_ArrowDir,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 
@@ -3371,7 +3388,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
-
+	Prototype_Texture_PathArrow,
 
 	Prototype_VIBuffer_Plat,
 		Prototype_VIBuffer_Terrain_0,
@@ -9700,6 +9717,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("BallMesh.fbx");
 		break;
 
+	case Prototype_Mesh_ArrowDir:
+		return TEXT("ArrowDir.fbx");
+		break;
+		
 	case Prototype_Mesh_DarkBaldTree:
 		return TEXT("DarkBaldTree.fbx");
 		break;
@@ -9974,6 +9995,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_EnvMappedWater");
 		break;
 
+	case Prototype_Texture_PathArrow:
+		return TEXT("Prototype_Texture_PathArrow");
+		break;
+		
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;

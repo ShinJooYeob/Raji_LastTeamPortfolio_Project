@@ -57,6 +57,7 @@ HRESULT CScene_Stage6::Initialize()
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
+
 	return S_OK;
 }
 
@@ -285,7 +286,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 0, -15.f);
+	CameraDesc.vEye = _float3(14.3749924f, 51.0999756f, -2.48100090f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -318,6 +319,9 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE6);
 	}
 	
+	m_pMainCam->Set_MaxTargetArmLength(12.f);
+	m_pMainCam->Set_MinTargetArmLength(6.f);
+	m_pMainCam->Set_TargetArmLength(10.f);
 	return S_OK;
 }
 
@@ -335,42 +339,29 @@ HRESULT CScene_Stage6::Ready_Layer_AssimpModelTest(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// _float3(14.375f, 18.8f, 4.519f) Start Pos
-	// 68.525f, 35.7f, 75.726f Curtain
-	// 30.102f, 27.321f, 30.743f Init pos
-	// 79.208f, 25.1f, 67.124f End Init pos
-	//_float3(171.799f, 13.6f, 136.063f) 2nd Ledge Start
-	// _float3(171.361f, 23.76f, 150.289f)	// 1st elevator
-
-	// 171.361f, 23.76f, 150.289f			// cur test
+	// _float3(14.375f, 18.8f, 4.519f) Start Pos 
 	// 65.279f, 2.043f, 325.343f
 	//_float3(151.975f, -22.4f, 377.3486f)	//Gear_Puzzle
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
 	m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
 
-
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-
-	// 43 43.7 30
-	
-
 	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(0.f, 2.3f, 3.f));
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(14.3749924f, 51.0999756f, -2.48100090f));
+	
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-
-
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
+	m_pMainCam->Lock_CamLook(true);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_TargetArmLength(0.f);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(14.3749924f, 51.0999756f, -2.48100090f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	return S_OK;
 }
@@ -579,6 +570,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
+	tElevatorDesc.fColliderScale = 0.3f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -589,6 +581,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.05f, 1.05f, 1.05f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
+	tElevatorDesc.fColliderScale = 0.3f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -599,6 +592,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
+	tElevatorDesc.fColliderScale = 0.4f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 

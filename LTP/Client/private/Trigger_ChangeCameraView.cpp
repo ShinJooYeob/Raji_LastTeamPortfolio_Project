@@ -144,23 +144,16 @@ void CTrigger_ChangeCameraView::CollisionTriger(CCollider * pMyCollider, _uint i
 		case EChangeCameraViewType::TYPE_STOP:
 			Change_CameraView_Stop(g_fDeltaTime);
 			break;
+		case EChangeCameraViewType::TYPE_FIRSTPERSON_VIEW:
+			Change_CameraView_FirstPerson_View(g_fDeltaTime);
+			break;
 		}
 	}
 }
 
 _bool CTrigger_ChangeCameraView::Check_CollisionToPlayer()
 {
-	// Temperate ( Later Change to Collider )
-	//_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	//_Vector vTriggerPos = m_pTransformCom_Main->Get_MatrixState(CTransform::TransformState::STATE_POS);
 
-	//_float fDist = XMVectorGetX(XMVector3Length(vTriggerPos - vPlayerPos));
-	//if (fDist <= 3.f)
-//	{
-//		return true;
-//	}
-	//
-//	return false;
 	return true;
 }
 
@@ -252,6 +245,14 @@ _int CTrigger_ChangeCameraView::Change_CameraView_TwoPoint_Interp(_double fDelta
 _int CTrigger_ChangeCameraView::Change_CameraView_Stop(_double fDeltaTime)
 {
 	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+
+	return _int();
+}
+
+_int CTrigger_ChangeCameraView::Change_CameraView_FirstPerson_View(_double fDeltaTime)
+{
+	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIRSTPERSONVIEW);
+	m_pPlayer->Set_PlayerState(CPlayer::EPLAYER_STATE::STATE_FIRSTPERSONVIEW);
 
 	return _int();
 }

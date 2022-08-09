@@ -18,7 +18,7 @@ class CPlayer final : public CGameObject
 public:
 	enum EPLAYER_STATE {
 		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, 
-		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_DYNAMICPLATFORM_DEAD, STATE_END
+		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_DYNAMICPLATFORM_DEAD, STATE_FIRSTPERSONVIEW, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -179,6 +179,7 @@ public: /* public Setter */
 	void	Set_FallingDead(_bool bFallingDead);
 	void	Set_PosY(_float fPos_y);
 	void	Set_OnLilyPad(_bool bOnLilyPad);
+	void	Set_PlayerState(EPLAYER_STATE eState);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
@@ -228,6 +229,7 @@ public:
 	// Falling
 	void	Set_State_FallingStart(_double fDeltaTime);
 
+	
 public:
 	EPLAYER_STATE Get_PlayerState();
 	EPARKOUR_LEDGESTATE Get_LedgeState();
@@ -287,6 +289,8 @@ private:
 
 	HRESULT Update_State_StopAction(_double fDeltaTime);
 
+	HRESULT Update_State_FirstPersonView(_double fDeltaTime);
+
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
@@ -310,7 +314,7 @@ private: /* Key Input */
 
 private: /* Actions */
 	void				Move(EINPUT_MOVDIR eMoveDir, _double fDeltaTime);
-	void				Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime);
+	void				Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime, _bool bOnNavigation = false);
 	void				Turn_Back(_double fDeltaTime);
 	void				Dodge(_double fDeltaTime);
 	void				LookAtInputDir(_double fDeltaTime);
@@ -342,7 +346,6 @@ private: /* Select Anim */
 
 private: /* private Setter */
 	void				Set_InputDir(_int iAxis_F, _int iAxis_R, _double fDeltaTime);
-	void				Set_PlayerState(EPLAYER_STATE eState);
 	void				Set_TurnInputDir();
 	void				Set_TurnInputDir_CalDir();
 	void				Set_MainAttackAnim(_bool bJumpAttack);
@@ -371,6 +374,8 @@ private: /* Getter */
 private:
 	_float3				Check_MousePicking();
 
+private:
+	void				DebugingCode();
 
 private:
 	_float4				m_fCamLookPoint;
@@ -568,7 +573,6 @@ private:
 	class CHpUI*			m_pHPUI = nullptr;
 
 	_bool					m_bMehsArrow= false;
-
 
 private:
 	CPlayerWeapon*			m_pPlayerWeapons[WEAPON_END - 1];

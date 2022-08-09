@@ -23,6 +23,10 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	_uint	Get_PuzzleState();
+	void	Set_PuzzleState(_uint iState);
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	SetUp_Collider();

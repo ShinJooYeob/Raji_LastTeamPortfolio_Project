@@ -173,6 +173,16 @@ void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
 		m_eCurCamMode = eCameraMode;
 	}
 		break;
+	case ECameraMode::CAM_MODE_FIRSTPERSONVIEW:
+	{
+		m_eCurCamMode = eCameraMode;
+	
+		CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		m_pPlayerTramsformCom = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+
+		m_tAttachDesc.Initialize_AttachedDesc(pPlayer, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
+	}
+	break;
 	}
 }
 
@@ -318,6 +328,11 @@ _int CCamera_Main::Update(_double fDeltaTime)
 		case ECameraMode::CAM_MODE_RAJIGOLU_MINIGAME:
 		{
 			Update_RajiGolu_MiniGameMode(fDeltaTime);
+		}
+		break;
+		case ECameraMode::CAM_MODE_FIRSTPERSONVIEW:
+		{
+			Update_FirstPersonView(fDeltaTime);
 		}
 		break;
 		}
@@ -756,6 +771,9 @@ HRESULT CCamera_Main::Set_ViewMatrix()
 
 _int CCamera_Main::Update_FreeMode(_double fDeltaTime)
 {
+	_Vector vtestpos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
 	{
 		m_pTransform->Move_Forward(fDeltaTime);
@@ -943,6 +961,43 @@ _int CCamera_Main::Update_RajiGolu_MiniGameMode(_double fDeltaTime)
 	// Cal Cam Look
 	_Vector vLookDir = XMVector3Normalize(vDistPos - vCamPos);
 	m_pTransform->LookDir_ver2(vLookDir);
+
+	return _int();
+}
+
+_int CCamera_Main::Update_FirstPersonView(_double fDeltaTime)
+{
+	/*_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
+	m_pTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fWheelMove * fDeltaTime * 0.1f);
+
+	fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
+	m_pTransform->Turn_CW(m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), fWheelMove * fDeltaTime * 0.1f);
+	_Vector vCamLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
+	if (0.6f <= XMVectorGetY(vCamLook))
+	{
+		vCamLook = XMVectorSetY(vCamLook, 0.6f);
+		m_pTransform->LookDir(vCamLook);
+	}
+	else if (-0.7f >= XMVectorGetY(vCamLook))
+	{
+		vCamLook = XMVectorSetY(vCamLook, -0.7f);
+		m_pTransform->LookDir(vCamLook);
+	}*/
+
+	// PLAYER LOOK
+	/*_Vector vCamLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
+	vCamLook = XMVectorSetY(vCamLook, 0.f);
+
+
+	m_pPlayerTramsformCom->LookDir(vCamLook);*/
+
+	_Vector vPos = m_tAttachDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 1.f);
+
+	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + vPos * (1.f - m_fCur_CamMoveWeight);
+	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
+
+	m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.5f, 1.f, 0.f), m_fCur_CamLookWeight, 0.999f);
 
 	return _int();
 }
