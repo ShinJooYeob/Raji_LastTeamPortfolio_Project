@@ -10,6 +10,8 @@
 
 #include "Player.h"
 
+#include "InstanceMonsterBatchTrigger.h"
+
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -470,6 +472,14 @@ _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmo
 	m_pHPUI->Set_ADD_HitCount();
 
 	return _float();
+}
+
+void CMahabalasura::Set_IsDead()
+{
+/*	CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_OP(Prototype_MonsterBatchTrigger)));
+	pMonsterBatchTrigger->Set_MonsterAllDie(true);*/
+	m_bIsDead = true;
+	Set_IsOwerDead(true);
 }
 
 HRESULT CMahabalasura::Ready_ParticleDesc()

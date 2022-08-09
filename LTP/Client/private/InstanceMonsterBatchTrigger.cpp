@@ -58,7 +58,6 @@ _int CInstanceMonsterBatchTrigger::Update(_double fDeltaTime)
 		m_fPoint.x = m_fValueMat.m[2][0];
 		m_fPoint.y = m_fValueMat.m[2][1];
 		m_fPoint.z = m_fValueMat.m[2][2];
-		_float test = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat3(&m_fPoint));
 		if (m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(XMLoadFloat3(&m_fPoint)) > m_fValueMat.m[1][2])
 		{
 			m_bMonsterAllDie = true;
