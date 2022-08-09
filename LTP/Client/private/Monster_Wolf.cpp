@@ -165,6 +165,7 @@ void CMonster_Wolf::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+						m_bAttackOn = false;
 					}
 					break;
 				}

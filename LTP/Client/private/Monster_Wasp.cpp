@@ -149,6 +149,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 	{
 		for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 		{
+
 			if (pMyCollider == m_vecInstancedTransform[i].pCollider)
 			{
 				if (m_vecInstancedTransform[i].bHit == false)
@@ -163,6 +164,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+						m_bAttackOn = false;
 					}
 					break;
 				}

@@ -558,8 +558,8 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 		///////////////////////////////////
 
 		//EMWUNROLL
-		[unroll(128)]
-		//[unroll(1)]
+		//[unroll(128)]
+		[unroll(1)]
 		//////////////////////////////////
 		for (int nCurStep = 0; nCurStep < nNumSteps; nCurStep += 10)
 		{
@@ -572,7 +572,7 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 			float curDepthLin = ConvertZToLinearDepth(curDepth);
 			float3 curPos = CalcViewPos(In.vCsProjPos.xy + csReflect.xy * ((float)nCurStep + 10.0), curDepthLin);
 
-			// Find the intersection between the ray and the scene
+			// Find the intersection between the ray and the  scene
 			// The intersection happens between two positions on the oposite sides of the plane
 			if (rayPlane.w >= dot(rayPlane.xyz, curPos) + DepthBias)
 			{

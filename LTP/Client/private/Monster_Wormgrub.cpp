@@ -167,6 +167,7 @@ void CMonster_Wormgrub::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+						m_bAttackOn = false;
 					}
 					break;
 				}

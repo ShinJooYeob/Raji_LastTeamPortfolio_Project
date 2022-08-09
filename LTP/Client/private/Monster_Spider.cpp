@@ -168,6 +168,7 @@ void CMonster_Spider::CollisionTriger(CCollider * pMyCollider, _uint iMyCollider
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+						m_bAttackOn = false;
 					}
 					break;
 				}
