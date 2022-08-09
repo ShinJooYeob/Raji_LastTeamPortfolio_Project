@@ -261,6 +261,13 @@ struct PS_OUT_SHADOW
 	vector      vDiffuse : SV_TARGET0;
 };
 
+struct PS_OUT_DISTORT_INFOG
+{
+	vector      vDiffuse : SV_TARGET0;
+	vector      vDepth : SV_TARGET1;
+	vector      vWorldPosition : SV_TARGET2;
+};
+
 PS_OUT_SHADOW PS_Shadow(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW      Out = (PS_OUT_SHADOW)0;
@@ -907,6 +914,82 @@ PS_OUT PS_MAIN_LillyDiscard(PS_IN In)
 }
 
 
+PS_OUT_DISTORT_INFOG PS_Distortion_All_DiffuseMix_AppearNDisApper_InFog(PS_IN_Distortion In)
+{
+	PS_OUT_DISTORT_INFOG		Out = (PS_OUT_DISTORT_INFOG)0;
+
+
+	if (g_fTimer < g_fAppearTimer)
+	{
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV - normalize(noisingdir)  * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+		In.vTexUV = OldTexUV;
+		//In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - g_fTimer)));
+		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - g_fTimer)));
+		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - g_fTimer)));
+	}
+	else if (g_fTimer > g_fMaxTime - g_fAppearTimer)
+	{
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV + normalize(noisingdir)   * (g_fTimer  - (g_fMaxTime - g_fAppearTimer))* (1 / g_fAppearTimer));
+
+		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
+			discard;
+		In.vTexUV = OldTexUV;
+	}
+
+	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
+	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
+	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
+
+	noise1 = (noise1 - 0.5f) * 2.0f;
+	noise2 = (noise2 - 0.5f) * 2.0f;
+	noise3 = (noise3 - 0.5f) * 2.0f;
+
+	noise1.xy = noise1.xy * distortion1.xy;
+	noise2.xy = noise2.xy * distortion2.xy;
+	noise3.xy = noise3.xy * distortion3.xy;
+
+	vector finalNoise = noise1 + noise2 + noise3;
+	float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale) + distortionBias);
+	float2 noiseCoords = saturate((finalNoise.xy * perturb) + In.vTexUV.xy);
+
+
+
+	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, noiseCoords.xy);
+	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
+
+	//fireColor *= alphaColor;
+	fireColor.a = length(alphaColor.xyz) * g_vColor;
+	Out.vDiffuse = fireColor;
+
+
+
+	vector BlurDesc = g_NoiseTexture.Sample(DefaultSampler, (In.vTexUV + g_fTimer * g_fDistortionNoisingPushPower * noisingdir));
+
+
+	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
+
+	float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y))*0.25f));
+
+
+	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV), 1.f / 1.075f);
+
+	//Out.vDiffuse = BackBuffer;
+	Out.vDiffuse = saturate((BackBuffer * (1 - Out.vDiffuse.a) + (Out.vDiffuse.a * vector(Out.vDiffuse.xyz, 1.f))));
+	Out.vDiffuse.a = 1.f;
+
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+
+	return Out;
+}
+
+
+
 
 technique11      DefaultTechnique
 {
@@ -1155,4 +1238,14 @@ technique11      DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_LillyDiscard();
 	}
 
+	pass Distortion_AppearNDisApper_InFog //23
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_Distortion();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Distortion_All_DiffuseMix_AppearNDisApper_InFog();
+	}
 }

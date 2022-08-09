@@ -54,6 +54,7 @@ HRESULT CChiedtuan_2Page_Weapon::Initialize_Clone(void * pArg)
 	m_fDistance = 20.f;
 	m_fWeaponPosY = 2.5f;
 
+	FAILED_CHECK(Ready_ParticleDesc());
 	return S_OK;
 }
 
@@ -113,6 +114,9 @@ _int CChiedtuan_2Page_Weapon::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 	}
 
+
+	FAILED_CHECK(Update_ParticleTransform());
+
 	return _int();
 }
 
@@ -122,6 +126,7 @@ _int CChiedtuan_2Page_Weapon::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel,nullptr, m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 
 	//if(m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_TL)
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
@@ -318,7 +323,7 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 	else
 	{
 		m_fDistance += (_float)fDeltaTime * 10.f;
-		if (m_fDistance >= 20.f)
+		if (m_fDistance >= 35.f)
 			m_bIsDistance = false;
 	}
 
@@ -332,8 +337,20 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_bIsBeginningPos = false;
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * 10.f);
+			vMyNewPos = XMVectorSetY(vMyNewPos, XMVectorGetY(vMyNewPos) + 1.f);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+
+			INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_11");
+			tDesc.FollowingTarget = m_pJYParticleTransform;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			tDesc.Particle_Power = 15.f;
+
+			_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+			m_pSwordTrail->Set_TrailTurnOn(true, m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 7.f);
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
 		}
 
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
@@ -349,8 +366,20 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_bIsBeginningPos = false;
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK)) * -10.f);
+			vMyNewPos = XMVectorSetY(vMyNewPos, XMVectorGetY(vMyNewPos) + 1.f);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+
+
+			_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+			m_pSwordTrail->Set_TrailTurnOn(true, m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 7.f);
+
+			INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_11");
+			tDesc.FollowingTarget = m_pJYParticleTransform;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			tDesc.Particle_Power = 15.f;
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
 		}
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
 		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
@@ -365,8 +394,22 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_bIsBeginningPos = false;
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * 10.f);
+			vMyNewPos = XMVectorSetY(vMyNewPos, XMVectorGetY(vMyNewPos) + 1.f);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+
+
+			_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+			m_pSwordTrail->Set_TrailTurnOn(true, m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 7.f);
+
+			INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_11");
+			tDesc.FollowingTarget = m_pJYParticleTransform;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			tDesc.Particle_Power = 15.f;
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
+
 		}
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
 		m_pTransformCom->Turn_Revolution_CW(BossTransform->Get_MatrixState(CTransform::STATE_POS), m_fDistance, fDeltaTime * 5.f);
@@ -381,8 +424,20 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 			m_bIsBeginningPos = false;
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, BossTransform->Get_MatrixState(CTransform::STATE_POS));
 			_Vector vMyNewPos = BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) + (XMVector3Normalize(BossTransform->Get_MatrixState(CTransform::TransformState::STATE_RIGHT)) * -10.f);
+			vMyNewPos = XMVectorSetY(vMyNewPos, XMVectorGetY(vMyNewPos) + 1.f);
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyNewPos);
 			m_pTransformCom->LookAtExceptY(BossTransform->Get_MatrixState(CTransform::STATE_POS));
+
+
+			_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+			m_pSwordTrail->Set_TrailTurnOn(true, m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 7.f);
+
+			INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_11");
+			tDesc.FollowingTarget = m_pJYParticleTransform;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			tDesc.Particle_Power = 15.f;
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
 		}
 
 		m_pTransformCom->LookDir(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS) - BossTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)));
@@ -392,6 +447,9 @@ void CChiedtuan_2Page_Weapon::WeaponSpinAttack(_double fDeltaTime)
 	}
 	break;
 	}
+	//_float3 vPivotPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+	//vPivotPos.y += 1.f;
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPivotPos);
 }
 
 void CChiedtuan_2Page_Weapon::SpinAttackOff()
@@ -405,6 +463,8 @@ void CChiedtuan_2Page_Weapon::SpinAttackOff()
 	m_fAngle = 0.f;
 	Set_WeaponPosition();
 	m_pDissolveCom->Set_DissolveOn(true, 1.f);
+
+	m_pSwordTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
 }
 
 void CChiedtuan_2Page_Weapon::VolcanoAttackOff()
@@ -517,9 +577,20 @@ void CChiedtuan_2Page_Weapon::ShakeWeaponY()
 
 HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 {
+
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
+
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.2f, 0.1f, 1.f);
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
+	
 
 	if (m_WeaponDesc.KatanaPOSType == CChiedtuan_2Page_Weapon::KATANA_TR)
 	{
@@ -685,6 +756,44 @@ HRESULT CChiedtuan_2Page_Weapon::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CChiedtuan_2Page_Weapon::Ready_ParticleDesc()
+{
+	Safe_Release(m_pJYParticleTransform);
+	m_pJYParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pJYParticleTransform, E_FAIL);
+
+	m_pJYParticleTransform->Set_IsOwnerDead(false);
+	INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_11");
+	tDesc.FollowingTarget = m_pJYParticleTransform;
+	tDesc.iFollowingDir = FollowingDir_Look;
+	tDesc.TotalParticleTime = 999999999.f;
+	tDesc.Particle_Power = 5.f;
+
+
+	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
+	return S_OK;
+}
+
+HRESULT CChiedtuan_2Page_Weapon::Update_ParticleTransform()
+{
+
+
+	_float Rate = GetSingle(CUtilityMgr)->RandomFloat(0, 1);
+	_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+	_float3 vPosition = (m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 8.f) * Rate + m_pCollider->Get_ColliderPosition(1).XMVector() * (1.f - Rate);
+
+	m_pJYParticleTransform->Set_MatrixState(CTransform::STATE_POS, vPosition);
+	
+	Rate = GetSingle(CUtilityMgr)->RandomFloat(-1, 1);
+
+	m_pJYParticleTransform->LookDir(XMVector3Normalize(vDir  + XMVectorSet(0, Rate,0,0)));
+	
+
+	m_pSwordTrail->Update_SwordTrail(m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * 7.f, g_fDeltaTime);
+
+	return S_OK;
+}
+
 CChiedtuan_2Page_Weapon * CChiedtuan_2Page_Weapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
 	CChiedtuan_2Page_Weapon*	pInstance = NEW CChiedtuan_2Page_Weapon(pDevice, pDeviceContext);
@@ -720,4 +829,9 @@ void CChiedtuan_2Page_Weapon::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pDissolveCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pSwordTrail);
+
+	if (m_pJYParticleTransform)
+		m_pJYParticleTransform->Set_IsOwnerDead(true);
+	Safe_Release(m_pJYParticleTransform);
 }

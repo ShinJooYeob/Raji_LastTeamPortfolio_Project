@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Chiedtuan_Weapon.h"
 
-
-
 CChiedtuan_Weapon::CChiedtuan_Weapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonsterWeapon(pDevice, pDeviceContext)
 {
@@ -62,6 +60,24 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 	if(m_bIsAttack)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 
+	if (m_StopTrailTimer > 0)
+	{
+		m_StopTrailTimer -= _float(fDeltaTime);
+
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+		m_pSwordTrail->Update_SwordTrail(mat.r[3], mat.r[3] + XMVector3Normalize(mat.r[1])  * m_SwordTrailLength, g_fDeltaTime);
+
+		if (m_StopTrailTimer <= 0)
+		{
+			m_pSwordTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+		}
+	}
+	else
+	{
+		 _Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
+		 m_pSwordTrail->Update_SwordTrail(mat.r[3], mat.r[3] + XMVector3Normalize(mat.r[1])  * m_SwordTrailLength, g_fDeltaTime);
+
+	}
 	return _int();
 }
 
@@ -82,7 +98,8 @@ _int CChiedtuan_Weapon::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &_float4x4(m_fAttachedMatrix),m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
-	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
 
@@ -137,6 +154,25 @@ void CChiedtuan_Weapon::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 	}
 }
 
+void CChiedtuan_Weapon::SwordTrailOnOff(_bool bBool)
+{
+	if (bBool)
+	{
+		m_StopTrailTimer = -1.f;
+		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+		_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+		m_pSwordTrail->Set_TrailTurnOn(bBool, m_pCollider->Get_ColliderPosition(1), m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * m_SwordTrailLength);
+	}
+	else
+	{
+		_Vector vDir = XMVector3Normalize(m_pCollider->Get_ColliderPosition(3).XMVector() - m_pCollider->Get_ColliderPosition(1).XMVector());
+		m_ArrStopSwordTrailPos[0] = m_pCollider->Get_ColliderPosition(1);
+		m_ArrStopSwordTrailPos[1] = m_pCollider->Get_ColliderPosition(1).XMVector() + vDir * m_SwordTrailLength;
+		m_StopTrailTimer = 0.25f;
+	}
+
+}
+
 void CChiedtuan_Weapon::Set_Dissolve(_bool FadeIn, _double Time)
 {
 	m_pDissolveCom->Set_DissolveOn(FadeIn, Time);
@@ -153,20 +189,32 @@ HRESULT CChiedtuan_Weapon::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.2f, 0.1f, 1.f);
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
+
 	if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TR)
 	{
+		m_SwordTrailLength = 7.f;
 		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_TL)
 	{
+		m_SwordTrailLength = 5.65f;
 		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon2), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BR)
 	{
+		m_SwordTrailLength = 6.f;
 		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon3), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 	else if (m_WeaponDesc.m_KatanaPOS == CChiedtuan_Weapon::KATANA_BL)
 	{
+		m_SwordTrailLength = 7.f;
 		FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	}
 
@@ -367,5 +415,6 @@ void CChiedtuan_Weapon::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pDissolveCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pSwordTrail);
 	
 }

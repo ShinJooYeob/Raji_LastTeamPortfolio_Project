@@ -82,35 +82,42 @@ _int CPlayer::Update(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
-			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
-			INSTPARTICLEDESC arrDesc[3];
-
-			_uint iNum = 0;
-
-			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
-			arrDesc[iNum].FollowingTarget = nullptr;
-			arrDesc[iNum].vFixedPosition= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0,2,0,0);
-			iNum++;
-
-			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
-			arrDesc[iNum].FollowingTarget = nullptr;
-			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			iNum++;
-
-			arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_7");
-			arrDesc[iNum].FollowingTarget = nullptr;
-			arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			iNum++;
-
-
-			for (auto& tDesc : arrDesc)
 			{
-				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+				NONINSTNESHEFTDESC tNIMEDesc;
+
+				tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+				tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+				tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+
+				tNIMEDesc.fMaxTime_Duration = 0.5f;
+				tNIMEDesc.fAppearTime = 0.01f;
+
+				tNIMEDesc.noisingdir = _float2(0.f,1.f).Get_Nomalize() * 10.f;
+				tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+				tNIMEDesc.NoiseTextureIndex = 200;
+				tNIMEDesc.MaskTextureIndex = 63;
+				tNIMEDesc.iDiffuseTextureIndex = 321;
+				tNIMEDesc.m_iPassIndex = 23;
+				tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+				tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+				tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+				tNIMEDesc.RotAxis = FollowingDir_Up;
+				tNIMEDesc.RotationSpeedPerSec = 1080.f;
+				tNIMEDesc.vSize = _float3(0.1, 0.1f, 0.1f);
+
+				tNIMEDesc.SizeSpeed = 15.f;
+				tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			}
 
 
-			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 		}
 
@@ -385,7 +392,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 
 #ifndef NotOnNavi
-		//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 #endif // NotOnNavi
 
 	}

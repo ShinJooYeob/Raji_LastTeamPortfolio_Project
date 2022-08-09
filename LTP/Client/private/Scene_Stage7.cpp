@@ -62,6 +62,18 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_C)&DIS_Down)
+	{
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss),
+			TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0, 35.9f, 281.188f)));
+
+		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(0.08f);
+		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(0.f);
+
+		m_pUtilMgr->Get_Renderer()->Set_ShadowIntensive(0.2f);
+	}
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
@@ -107,6 +119,16 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 
 		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(fGodRayIntensValue);
 	}
+	if (PlayerZ < 223.f && PlayerZ > 214.f)
+	{
+		_float fValue = max(min(PlayerZ, 223.f), 214.f);
+		_float ShadowInstense = g_pGameInstance->Easing(TYPE_Linear, 0.35f, 0.2f, PlayerZ - 214.f, 9.f);
+
+		ShadowInstense = max(min(ShadowInstense, 0.35f), 0.2f);
+		m_pUtilMgr->Get_Renderer()->Set_ShadowIntensive(ShadowInstense);
+	}
+
+
 	return 0;
 }
 
@@ -241,7 +263,8 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 14.0000162f, -18.2519970f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	// _float3(0.f, 10, 0.f) Start Pos
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 33.034f, 219.175f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 

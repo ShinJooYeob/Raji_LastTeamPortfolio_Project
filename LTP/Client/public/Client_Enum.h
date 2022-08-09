@@ -1244,6 +1244,13 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JYLaser,
 	Prototype_Mesh_JYBall,
 	Prototype_Mesh_JYMadeHalfShield,
+	Prototype_Mesh_JYChiedFireLine1,
+	Prototype_Mesh_JYChiedFireLine2,
+	Prototype_Mesh_JYChiedFireLine3,
+	Prototype_Mesh_JYOrnate1,
+	Prototype_Mesh_JYSwordEnergy,
+	
+
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 
@@ -3364,6 +3371,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_MskTex,
 	Prototype_Texture_PauseUI,
 	Prototype_Texture_TestEffect,
+	Prototype_Texture_ChiedTianFlame,
 	Prototype_Texture_HPUI,
 	Prototype_Texture_Util,
 	Prototype_Texture_UI,
@@ -3705,10 +3713,23 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_JYMadeHalfShield:
 		return TEXT("JY_MadeHalfShield.fbx");
 		break;
-		
-		
 
 
+	case Prototype_Mesh_JYChiedFireLine1:
+		return TEXT("ChiedFireLine.fbx");
+		break;
+	case Prototype_Mesh_JYChiedFireLine2:
+		return TEXT("ChiedFireLine2.fbx");
+		break;
+	case Prototype_Mesh_JYChiedFireLine3:
+		return TEXT("ChiedFireLine3.fbx");
+		break;
+	case Prototype_Mesh_JYOrnate1:
+		return TEXT("Ornate1.fbx");
+		break;
+	case Prototype_Mesh_JYSwordEnergy:
+		return TEXT("SwordEnergy.fbx");
+		break;
 
 	case Prototype_Mesh_Tornado2:
 		return TEXT("Tornado2.fbx");
@@ -10013,7 +10034,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		case Prototype_Texture_TestEffect:
 			return TEXT("Prototype_Texture_TestEffect");
 			break;
-
+		case Prototype_Texture_ChiedTianFlame:
+			return TEXT("Prototype_Texture_ChiedTianFlame");
+			break;
+			
 		case Prototype_Texture_HPUI:
 			return TEXT("Prototype_Texture_HPUI");
 			break;

@@ -1355,18 +1355,14 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 	}
 
-	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_EDIT)
+
+	IMGUITREE("Load Particle Data")
 	{
-		IMGUITREE("Edit_Test")
-		{
-
-			Update_DebugWnd_EditTest(fDeltaTime);
-
-			IMGUITREE_END
-		}
-		ImGui::Separator();
-
+		Update_DebugWnd_EditTest(fDeltaTime);
+		IMGUITREE_END
 	}
+	ImGui::Separator();
+
 
 //	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
 	//{
@@ -2123,6 +2119,8 @@ _int CImguiMgr::Update_DebugWnd_EditTest(_double fDeltaTime)
 	if (ImGui::Button("SAVE_EFFECT_PATH"))
 	{
 		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+
+		GetSingle(CUtilityMgr)->Ready_Particles();
 	
 	}
 

@@ -9,7 +9,7 @@ texture2D			g_NoiseTexture;
 
 texture2D			g_CurlTexture;
 
-float				g_Alpha;
+float				g_Alpha = 0.1f;
 
 
 cbuffer Distortion
@@ -110,6 +110,7 @@ struct VS_OUT_EnvNoise
 	float4		vViewNormal : TEXCOORD2;
 	float3		vCsProjPos : TEXCOORD3;
 	float4      vWorldPos : TEXCOORD4;
+	float4      vProjPos : TEXCOORD5;
 
 
 	float2		texCoords1 : COLOR0;
@@ -185,6 +186,7 @@ VS_OUT_EnvNoise VS_EnvMappedWater_Noise(VS_IN In)
 	Out.vViewPos = mul(vector(In.vPosition, 1.f), matWV);
 	Out.vViewNormal = normalize(vector((mul(vector(0, 0, -1.f, 0), matWV))));
 	Out.vCsProjPos = Out.vPosition.xyz / Out.vPosition.w;
+	Out.vProjPos = Out.vPosition;
 
 	//float4      vPosition : SV_POSITION;
 	//float4		vViewNormal : NORMAL;
@@ -238,6 +240,7 @@ struct PS_IN_EMW_Noise
 	float4		vViewNormal : TEXCOORD2;
 	float3		vCsProjPos : TEXCOORD3;
 	float4      vWorldPos : TEXCOORD4;
+	float4      vProjPos : TEXCOORD5;
 
 
 
@@ -487,211 +490,73 @@ PS_OUT_NOLIGHT PS_PaperCurlOut(PS_IN In)
 	return Out;
 }
 
-//static const float PixelSize = 2.0 / 720.0f;
-//static const int nNumSteps = 1280;
-//
-///**/
-//PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
-//{
-//	PS_OUT_EnvMapped		Out = (PS_OUT_EnvMapped)0;
-//
-//	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
-//	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
-//	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
-//
-//	noise1 = (noise1 - 0.5f) * 2.0f;
-//	noise2 = (noise2 - 0.5f) * 2.0f;
-//	noise3 = (noise3 - 0.5f) * 2.0f;
-//
-//	noise1.xy = noise1.xy * distortion1.xy;
-//	noise2.xy = noise2.xy * distortion2.xy;
-//	noise3.xy = noise3.xy * distortion3.xy;
-//
-//	vector finalNoise = noise1 + noise2 + noise3;
-//	float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale) + distortionBias);
-//	float2 noiseCoords = saturate((finalNoise.xy * perturb) + In.vTexUV.xy);
-//
-//
-//
-//	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, noiseCoords.xy);
-//	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
-//
-//	fireColor *= g_vColor;
-//	fireColor = pow(fireColor, 1. / 1.86181f);
-//	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
-//
-//
-//	Out.vDiffuse = saturate(fireColor);
-//
-//
-//	////vector BlurDesc = g_NoiseTexture.Sample(DefaultSampler, (In.vTexUV + g_fTimer * g_fDistortionNoisingPushPower * noisingdir));
-//	////float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
-//
-//	////vector		vNormal = vector(0,1,0, 0.f);
-//
-//
-//
-//	////vector ReflectDir = mul(mul(reflect(normalize(vector((g_vLightPosition - In.vWorldPos).xyz,0)), vNormal) , g_ViewMatrix), g_ProjMatrix);
-//	////float2 ReflectUV = normalize(ReflectDir.xy);
-//	////	
-//	////ReflectUV.x = (ReflectUV.x) * XTexelSize * 32.36f;
-//	////ReflectUV.y = (ReflectUV.y ) *  YTexelSize * 32.36f;
-//
-//	//////////////float2 TargetUV = saturate(float2(PosToUv.x , PosToUv.y));
-//	////float2 TargetUV = float2(PosToUv.x + (ReflectUV.x) , PosToUv.y + (ReflectUV.y) );
-//	////TargetUV.x = min(max(TargetUV.x, 0), 1);
-//	////TargetUV.y = min(max(TargetUV.y, 0), 1);
-//
-//
-//	//////float2 TargetUV = saturate(float2(PosToUv.x + (0.5f - (BlurDesc.x)) * 0.15625f, PosToUv.y + (0.5f - (BlurDesc.y)) * 0.25f));
-//
-//	//vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, TargetUV), 1.f / 1.0751f);
-//	//Out.vDiffuse = BackBuffer * (1 - MixRate) + Out.vDiffuse * (MixRate);
-//	//Out.vDiffuse.a = 1.f;
-//	//Out.vDiffuse = saturate(Out.vDiffuse);
-//
-//
-//	/*
-//	//float4      vPosition : SV_POSITION;
-//	//float4		vNormal : NORMAL;
-//	//float2      vTexUV : TEXCOORD0;
-//	//float4		vViewPos : TEXCOORD1;
-//	//float4		vViewNormal : TEXCOORD2;
-//	//float4		vCsProjPos : TEXCOORD3;
-//	*/
-//
-//	// Pixel position and normal in view space
-//	float3 vsPos = In.vViewPos.xyz;
-//	float3 vsNorm = normalize(In.vViewNormal);
-//
-//	// Calculate the camera to pixel direction
-//	float3 eyeToPixel = normalize(vsPos);
-//
-//	// Calculate the reflected view direction
-//	float3 vsReflect = reflect(eyeToPixel, vsNorm);
-//
-//	// The initial reflection color for the pixel
-//
-//	float4 reflectColor = float4(0,0,0,0);
-//
-//	if (vsReflect.z >= ViewAngleThreshold)
-//	{
-//		// Fade the reflection as the view angles gets close to the threshold
-//		float viewAngleThresholdInv = 1.0 - ViewAngleThreshold;
-//		float viewAngleFade = saturate(3.0 * (vsReflect.z - ViewAngleThreshold) / viewAngleThresholdInv);
-//
-//		// Transform the View Space Reflection to clip-space
-//		float3 vsPosReflect = vsPos + vsReflect;
-//		float3 csPosReflect = mul(float4(vsPosReflect, 1.0), g_ProjMatrix).xyz / vsPosReflect.z;
-//		float3 csReflect = csPosReflect - In.vCsProjPos;
-//
-//		// Resize Screen Space Reflection to an appropriate length.
-//		float reflectScale = PixelSize / length(csReflect.xy);
-//		csReflect *= reflectScale;
-//
-//		// Calculate the first sampling position in screen-space
-//		float2 ssSampPos = (In.vCsProjPos + csReflect).xy;
-//		ssSampPos = ssSampPos * float2(0.5, -0.5) + 0.5;
-//
-//		// Find each iteration step in screen-space
-//		float2 ssStep = csReflect.xy * float2(0.5 , -0.5) * 10.f;
-//
-//		// Build a plane laying on the reflection vector
-//		// Use the eye to pixel direction to build the tangent vector
-//		float4 rayPlane;
-//		float3 vRight = cross(normalize(eyeToPixel), normalize(vsReflect));
-//		rayPlane.xyz = normalize(cross(normalize(vsReflect), normalize(vRight)));
-//		rayPlane.w = dot(rayPlane.xyz, vsPos);
-//
-//		// Iterate over the HDR texture searching for intersection
-//		[unroll(128)]
-//		for (int nCurStep = 0; nCurStep < nNumSteps; nCurStep+=10)
-//		{
-//			// Sample from depth buffer
-//
-//		
-//			float curDepth = g_DepthTexture.Sample(PointClampSampler, ssSampPos).x;
-//			//float curDepth = DepthTex.SampleLevel(PointSampler, ssSampPos, 0.0).x;
-//			
-//			float curDepthLin = ConvertZToLinearDepth(curDepth);
-//			float3 curPos = CalcViewPos(In.vCsProjPos.xy + csReflect.xy * ((float)nCurStep + 10.0), curDepthLin);
-//
-//			// Find the intersection between the ray and the scene
-//			// The intersection happens between two positions on the oposite sides of the plane
-//			if (rayPlane.w >= dot(rayPlane.xyz, curPos) + DepthBias)
-//			{
-//				// Calculate the actual position on the ray for the given depth value
-//				float3 vsFinalPos = vsPos + (vsReflect / abs(vsReflect.z)) * abs(curDepthLin - vsPos.z + DepthBias);
-//				float2 csFinalPos = vsFinalPos.xy / PerspectiveValues.xy / vsFinalPos.z;
-//				ssSampPos = csFinalPos.xy * float2(0.5, -0.5) + 0.5;
-//
-//				// Get the HDR value at the current screen space location
-//				reflectColor.xyz = g_BackBufferTexture.Sample(PointClampSampler, ssSampPos).xyz;
-//				//reflectColor.xyz = HDRTex.SampleLevel(PointSampler, ssSampPos, 0.0).xyz;
-//
-//				// Fade out samples as they get close to the texture edges
-//				float edgeFade = saturate(distance(ssSampPos, float2(0.5, 0.5)) * 2.0 - EdgeDistThreshold);
-//
-//				// Calculate the fade value
-//				reflectColor.w = min(viewAngleFade, 1.0 - edgeFade * edgeFade);
-//
-//				// Apply the reflection sacle
-//				reflectColor.w *= ReflectionScale;
-//
-//				// Advance past the final iteration to break the loop
-//				nCurStep = nNumSteps;
-//			}
-//
-//			// Advance to the next sample
-//			ssSampPos += ssStep;
-//		}
-//	}
-//
-//	//return reflectColor;
-//
-//	float2 PosToUv = float2(In.vPosition.x / 1280, In.vPosition.y / 720);
-//
-//
-//
-//	float MixRate = Out.vDiffuse.a;
-//
-//	Out.vDiffuse = reflectColor;
-//
-//	vector BackBuffer = pow(g_BackBufferTexture.Sample(ClampSampler, PosToUv), 1.f / 1.0751f);
-//	Out.vDiffuse = BackBuffer * (1 - Out.vDiffuse.a) + Out.vDiffuse * (Out.vDiffuse.a);
-//
-//
-//	if (reflectColor.a == 0)
-//	{
-//		MixRate = 1.f;
-//		reflectColor = pow(g_BackBufferTexture.Sample(ClampSampler, PosToUv), 1.f / 1.0751f);
-//	}
-//
-//
-//	Out.vDiffuse = reflectColor * (1 - MixRate) + Out.vDiffuse * (MixRate);
-//
-//
-//
-//	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-//	Out.vEmissive = g_fEmissive;
-//	//Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-//	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-//	//Out.vLimLight = g_vLimLight;
-//
-//	return Out;
-//}
-//
-///**/
-//PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort2(PS_IN_EMW_Noise In)
-//{
-//	PS_OUT_EnvMapped		Out = (PS_OUT_EnvMapped)0;
-//
-//	discard;
-//	
-//	return Out;
-//}
+PS_OUT_MTRL PS_ChiedFlame(PS_IN_EMW_Noise In)
+{
+	PS_OUT_MTRL		Out = (PS_OUT_MTRL)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
+
+	if (Out.vDiffuse.a < g_Alpha)
+		discard;
+
+	Out.vDiffuse.a = pow(Out.vDiffuse.a, 2.2f);
+
+	Out.vNormal = vector(vector(0, 1, 0, 0).xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	//Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
+	Out.vEmissive = g_fEmissive;
+
+	vector BrightNoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV + float2(g_fTimer, g_fTimer*0.25f));
+
+	Out.vDiffuse.xyz = pow(Out.vDiffuse, 1.f / (1.f + BrightNoiseDesc.r));
+
+	if (g_fTimer > g_fMaxTime - g_fAppearTimer)
+	{
+
+		float DissolveValue = (g_fTimer -(g_fMaxTime - g_fAppearTimer))  / g_fAppearTimer;
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+
+		if (NoiseDesc.r < 0)
+			discard;
 
 
+		if (NoiseDesc.r < 0.15 && DissolveValue > 0 && DissolveValue < 1)
+		{
+			vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+			Out.vDiffuse = vector(BurnRampDesc.xyz, Out.vDiffuse.a);
+			Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		}
+
+	}
+	else if(g_fTimer < g_fPaperCurlIntensive)
+	{
+		float DissolveValue = (g_fPaperCurlIntensive - g_fTimer) / g_fPaperCurlIntensive;
+
+		vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - DissolveValue;
+
+		if (NoiseDesc.r < 0)
+			discard;
+
+
+		if (NoiseDesc.r < 0.15 && DissolveValue > 0 && DissolveValue < 1)
+		{
+			vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+			Out.vDiffuse = vector(BurnRampDesc.xyz, Out.vDiffuse.a);
+			Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		}
+
+	}
+
+
+
+
+
+
+	return Out;
+}
 
 technique11		DefaultTechnique
 {
@@ -789,16 +654,15 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_PaperCurlOut();
 	}
-	//pass EnvMappedWater_Noise_N_Distort//9
-	//{
-	//	SetBlendState(AlphaBlendingJustDiffuse, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-	//	SetDepthStencilState(ZTestAndWriteState, 0);
-	//	SetRasterizerState(CullMode_None);
+	pass ChiedFlame			//0
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
 
-	//	VertexShader = compile vs_5_0 VS_EnvMappedWater_Noise();
-	//	GeometryShader = NULL;
-	//	PixelShader = compile ps_5_0 PS_EnvMappedWater_Noise_N_Distort2();
-	//}
-	//
+		VertexShader = compile vs_5_0 VS_EnvMappedWater_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_ChiedFlame();
+	}
 	
 }

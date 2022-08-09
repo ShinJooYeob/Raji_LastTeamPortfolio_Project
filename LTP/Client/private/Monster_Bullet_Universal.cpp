@@ -119,7 +119,7 @@ HRESULT CMonster_Bullet_Universal::Initialize_Prototype(void * pArg)
 		tNIMEDesc.fAppearTime = 0.25f;
 		tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
 
-		tNIMEDesc.noisingdir = _float2(1, 0);
+		tNIMEDesc.noisingdir = _float2(-1, 0);
 
 		tNIMEDesc.fDistortionNoisingPushPower = 20.f;
 		tNIMEDesc.NoiseTextureIndex = 6;

@@ -61,6 +61,8 @@ private:
 		CTransform*			m_pTransformCom = nullptr;
 		CDissolve*			m_pDissolveCom = nullptr;
 		CCollider*			m_pCollider = nullptr;
+		CTransform*			m_pJYParticleTransform = nullptr;
+		CSwordTrail*		m_pSwordTrail = nullptr;
 
 		CGameObject*		m_PlayerObj = nullptr;
 		_float3				m_vPlayerPos;
@@ -94,6 +96,8 @@ private:
 	void	ShakeWeaponY();
 private:
 	HRESULT SetUp_Components();
+	HRESULT		Ready_ParticleDesc();
+	HRESULT		Update_ParticleTransform();
 
 public:
 	static CChiedtuan_2Page_Weapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

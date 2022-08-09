@@ -747,6 +747,8 @@ HRESULT CRenderer::Render_DeferredTexture()
 	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
 
 	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 3));
+	//이미 패스에서 같이 그렷음
+	//FAILED_CHECK(Copy_DeferredToReference());
 
 
 	return S_OK;
@@ -2360,7 +2362,7 @@ HRESULT CRenderer::Render_EffectObj()
 	m_RenderObjectList[RENDER_EFFECT].clear();
 
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Effect")));
-	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Effect")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Material")));
 
 
 

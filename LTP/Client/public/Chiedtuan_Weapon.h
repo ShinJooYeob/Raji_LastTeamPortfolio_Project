@@ -32,6 +32,8 @@ public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+
+	void SwordTrailOnOff(_bool bBool);
 public:
 	void	Set_WeaponDesc(WEAPOPNDESC WeaponDesc) {
 		m_WeaponDesc = WeaponDesc;
@@ -48,12 +50,17 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CDissolve*			m_pDissolveCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CSwordTrail*		m_pSwordTrail = nullptr;
 
 	WEAPOPNDESC			m_WeaponDesc;
 
 	_float4x4			m_fAttachedMatrix;
 
 	ATTACHEDESC			m_AttachedDesc;
+
+	_float3				m_ArrStopSwordTrailPos[2] = { _float3(0),_float3(0) };
+	_float				m_StopTrailTimer = 0;
+	_float				m_SwordTrailLength = 6.f;
 
 private:
 	void				Update_AttachMatrix();

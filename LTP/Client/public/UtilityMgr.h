@@ -134,10 +134,10 @@ private:
 
 	WeaponType  m_eSkillWeaponType = WEAPON_BOW;
 
-
+public:
+	HRESULT Ready_Particles();
 private:
 	_uint CountDigit(_uint iNum);
-	HRESULT Ready_Particles();
 	HRESULT Ready_TextureParticles();
 	HRESULT Ready_MeshParticles();
 

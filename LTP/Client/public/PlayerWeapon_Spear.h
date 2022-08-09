@@ -80,6 +80,7 @@ private:/*For Particle*/
 	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
 	CTransform*						m_pMeshParticleTransform = nullptr;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	CTransform*						m_pJYParticleTransform = nullptr;
 
 private:
 	_float4x4				m_fAttachedMatrix;

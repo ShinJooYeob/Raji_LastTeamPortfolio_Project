@@ -996,7 +996,6 @@
     <ClInclude Include="..\public\Volcano.h">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClInclude>
-    <ClInclude Include="CflameTerrain.h" />
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Gear_Puzzle.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
@@ -1014,6 +1013,9 @@
     </ClInclude>
     <ClInclude Include="..\public\PauseUI.h">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CflameTerrain.h">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtian_FlameTerrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1529,7 +1531,6 @@
     <ClCompile Include="..\private\Volcano.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClCompile>
-    <ClCompile Include="CflameTerrain.cpp" />
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Gear.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
@@ -1547,6 +1548,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PauseUI.cpp">
       <Filter>01.GameObject\99.UI\PauseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="CflameTerrain.cpp">
+      <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtian_FlameTerrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

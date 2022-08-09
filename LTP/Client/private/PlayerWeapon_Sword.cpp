@@ -287,17 +287,26 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		}
 		else
 		{
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
 			if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
-				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+				pUtil->SlowMotionStart(2.f, 0.02f);
 			}
 			pConflictedCollider->Set_Conflicted(0.5f);
+
+			m_vecTextureParticleDesc[2].vFixedPosition = m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition
+				= (pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() + pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector()) * 0.5f
+				+XMVectorSet(0,0.5f,0,0);
+
+			for (_uint i = 2; i < 5; i ++)
+				FAILED_CHECK_NONERETURN(pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[i]));
 
 			_int iSelectSoundFileIndex = rand() % 2;
 			_tchar pSoundFile[MAXLEN] = TEXT("");
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Sword_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
+			pUtil->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 		}
 	}
 }
@@ -700,6 +709,23 @@ HRESULT CPlayerWeapon_Sword::Ready_ParticleDesc()
 	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Sword_Saprk2"));
 	//m_vecTextureParticleDesc[1].FollowingTarget = m_pMeshParticleTransform;
 	//m_vecTextureParticleDesc[1].iFollowingDir = FollowingDir_Up;
+
+
+	//2
+	// 
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+
+
+	//3
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+
+	//4
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_7"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+
+
 
 #pragma endregion
 

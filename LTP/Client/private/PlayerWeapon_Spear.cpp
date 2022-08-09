@@ -182,12 +182,22 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		}
 		else  
 		{
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			if (0 > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
-				GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
+				pUtil->SlowMotionStart(2.f, 0.02f);
 			}
 			
+			m_pJYParticleTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(0));
+			m_pJYParticleTransform->Set_MatrixState(CTransform::STATE_POS, (pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() +
+				pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector())*0.5f);
+
+
+				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
+
+
 			pConflictedCollider->Set_Conflicted(0.3f);
 
 			_int iSelectSoundFileIndex = rand() % 2;
@@ -195,7 +205,7 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Trishul_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 			
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.1f, true);
+			pUtil->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.1f, true);
 			//GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Thread(0.2f, 10.f, 0.5f, true);
 		}
 	}
@@ -666,6 +676,8 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	NULL_CHECK_RETURN(m_pTextureParticleTransform, E_FAIL);
 	m_pMeshParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
+	m_pJYParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pJYParticleTransform, E_FAIL);
 
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
@@ -685,6 +697,16 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
 	m_vecTextureParticleDesc[3].iFollowingDir = FollowingDir_Look;
 	m_vecTextureParticleDesc[3].bBillboard = true;
+
+
+	//4
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_10"));
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_9"));
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_12"));
+	//m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_13"));
+	
+	m_vecTextureParticleDesc[4].FollowingTarget = m_pJYParticleTransform;
+	m_vecTextureParticleDesc[4].iFollowingDir = FollowingDir_Up;
 
 	return S_OK;
 }
@@ -726,7 +748,8 @@ void CPlayerWeapon_Spear::Free()
 
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
-
+	Safe_Release(m_pJYParticleTransform);
+	
 
 	Safe_Release(m_pModel_Skill);
 	Safe_Release(m_pTransformCom_Skill);

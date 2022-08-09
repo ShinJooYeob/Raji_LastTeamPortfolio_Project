@@ -9,6 +9,7 @@
 #include "Cell.h"
 #include "CollisionMgr.h"
 #include "ColliderBuffer.h"
+#include "AssimpCreateMgr.h"
 
 CScene_Edit::CScene_Edit(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -771,6 +772,8 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 		
 		CloseHandle(hFile);
 
+		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+		GetSingle(CUtilityMgr)->Ready_Particles();
 
 	}
 	break;
@@ -875,7 +878,8 @@ HRESULT CScene_Edit::Sava_Data(const char* szFileName, eDATATYPE iKinds)
 
 		CloseHandle(hFile);
 
-
+		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+		GetSingle(CUtilityMgr)->Ready_Particles();
 	}
 	break;
 	case Client::CScene_Edit::Data_CameraAction:
@@ -1298,6 +1302,10 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 	break;
 	case Client::CScene_Edit::Data_Particle_Texture:
 	{
+
+		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+		GetSingle(CUtilityMgr)->Ready_Particles();
+
 		m_tParticleDesc = INSTPARTICLEDESC();
 
 		//../bin/Resources/Data/Map/
@@ -1408,6 +1416,10 @@ HRESULT CScene_Edit::Load_Data(const char * szFileName, eDATATYPE iKinds)
 	break;
 	case Client::CScene_Edit::Data_Particle_Mesh:
 	{
+
+		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+		GetSingle(CUtilityMgr)->Ready_Particles();
+
 		m_tMeshDesc = INSTMESHDESC();
 
 		//../bin/Resources/Data/Map/
@@ -5223,6 +5235,8 @@ HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 
 		FAILED_CHECK(Widget_SaveLoadTextureParticle(fDeltatime));
 
+		Make_VerticalSpacing(1);
+		FAILED_CHECK(Ready_WithParticle());
 		
 		ImGui::TreePop();
 	}
@@ -5237,6 +5251,9 @@ HRESULT CScene_Edit::Update_ParticleTab(_double fDeltatime)
 		FAILED_CHECK(Widget_ModelParticleDesc(fDeltatime));
 
 		FAILED_CHECK(Widget_SaveLoadMeshParticle(fDeltatime));
+
+		Make_VerticalSpacing(1);
+		FAILED_CHECK(Ready_WithParticle());
 
 		ImGui::TreePop();
 	}
@@ -5681,9 +5698,8 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	if (ImGui::Button("Play Partlcle", ImVec2(-FLT_MIN, 30)))
 	{
 		GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_EDIT, m_tParticleDesc);
+		FAILED_CHECK(Play_WithParticle());
 	}
-
-
 
 
 
@@ -6039,8 +6055,8 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		if (ImGui::Button("Play Partlcle", ImVec2(-FLT_MIN, 30)))
 	{
 		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, m_tMeshDesc);
+		FAILED_CHECK(Play_WithParticle());
 	}
-
 
 
 
@@ -6658,6 +6674,291 @@ HRESULT CScene_Edit::Widget_SaveLoadMeshParticle(_double fDeltatime)
 
 
 
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Ready_WithParticle()
+{
+	Make_VerticalSpacing(2);
+
+	ImGui::Separator();
+	if (ImGui::TreeNode("With TextureParticle"))
+	{
+		m_vecWithParticleDesc;
+
+		if (ImGui::Button("Add TexParticle"))
+		{
+			WPDESC tDesc;
+
+			tDesc.bIsFollowingTrasnform = false;
+			tDesc.ParticleName = L"testTexParticle";
+			tDesc.vDir = _float3(0, 1, 0);
+			tDesc.vFixPosition = _float3(0, 0, 0);
+			tDesc.vFollowingDir = FollowingDir_Look;
+			m_vecWithParticleDesc.push_back(tDesc);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("All Clear"))
+		{
+			m_vecWithParticleDesc.clear();
+		}
+
+		Make_VerticalSpacing(3);
+
+		if (m_vecWithParticleDesc.size() > 0)
+		{
+
+			string TotalCount = "Total With Particle Count : " + to_string(m_vecWithParticleDesc.size());
+			ImGui::Text(TotalCount.c_str());
+
+			static int iIndex = 0;
+
+			iIndex = (_int)max(min(iIndex, m_vecWithParticleDesc.size() - 1), 0);
+			
+			if (ImGui::Button("-                  ", ImVec2(20, 18)))
+			{
+				iIndex--;
+				iIndex = (_int)max(min(iIndex, m_vecWithParticleDesc.size() - 1), 0);
+			}
+			ImGui::SameLine(0, 10);		ImGui::Text(string("Index : " + to_string(iIndex)).c_str());			ImGui::SameLine(0, 10);
+			if (ImGui::Button("+                  ", ImVec2(20, 18)))
+			{
+				iIndex++;
+				iIndex = (_int)max(min(iIndex, m_vecWithParticleDesc.size() - 1), 0);
+			}
+
+
+			string Astring = "";
+			Astring = Astring.assign(m_vecWithParticleDesc[iIndex].ParticleName.begin(), m_vecWithParticleDesc[iIndex].ParticleName.end());
+			char InputTextbuffer[MAX_PATH] = "";
+			ZeroMemory(InputTextbuffer, sizeof(char) * MAX_PATH);
+			strcpy_s(InputTextbuffer, Astring.c_str());
+
+			Make_VerticalSpacing(1);
+			ImGui::InputText("Particle FileName", InputTextbuffer, IM_ARRAYSIZE(InputTextbuffer));
+
+			Astring = InputTextbuffer;
+			m_vecWithParticleDesc[iIndex].ParticleName.assign(Astring.begin(), Astring.end());
+
+
+			Make_VerticalSpacing(1);
+			ImGui::Checkbox("Is Following Trans", &m_vecWithParticleDesc[iIndex].bIsFollowingTrasnform);
+			Make_VerticalSpacing(1);
+
+			if (m_vecWithParticleDesc[iIndex].bIsFollowingTrasnform)
+			{
+				if (ImGui::Button("-             a", ImVec2(20, 18)))
+				{
+					m_vecWithParticleDesc[iIndex].vFollowingDir= (eFollowingDirID)(m_vecWithParticleDesc[iIndex].vFollowingDir - 1);
+					if (m_vecWithParticleDesc[iIndex].vFollowingDir < FollowingDir_Right) m_vecWithParticleDesc[iIndex].vFollowingDir = FollowingDir_Right;
+				}ImGui::SameLine(0, 10);
+				ImGui::Text(Tag_InstancePass(m_vecWithParticleDesc[iIndex].vFollowingDir));
+				ImGui::SameLine(0, 10);		
+				if (ImGui::Button("+             a", ImVec2(20, 18)))
+				{
+					m_vecWithParticleDesc[iIndex].vFollowingDir = (eFollowingDirID)(m_vecWithParticleDesc[iIndex].vFollowingDir + 1);
+					if (m_vecWithParticleDesc[iIndex].vFollowingDir >= FollowingDir_End) m_vecWithParticleDesc[iIndex].vFollowingDir = (eFollowingDirID)(FollowingDir_End - 1);
+				}
+
+			}
+			else
+			{
+				static float TempFloatArr[3] = { 0,0,0 };
+				ZeroMemory(TempFloatArr, sizeof(_float) * 3);
+
+				TempFloatArr[0] = m_vecWithParticleDesc[iIndex].vFixPosition.x;
+				TempFloatArr[1] = m_vecWithParticleDesc[iIndex].vFixPosition.y;
+				TempFloatArr[2] = m_vecWithParticleDesc[iIndex].vFixPosition.z;
+				ImGui::InputFloat3("Swpan Position ", TempFloatArr);
+				m_vecWithParticleDesc[iIndex].vFixPosition.x = TempFloatArr[0];
+				m_vecWithParticleDesc[iIndex].vFixPosition.y = TempFloatArr[1];
+				m_vecWithParticleDesc[iIndex].vFixPosition.z = TempFloatArr[2];
+
+				Make_VerticalSpacing(1);
+
+				ZeroMemory(TempFloatArr, sizeof(_float) * 3);
+				TempFloatArr[0] = m_vecWithParticleDesc[iIndex].vDir.x;
+				TempFloatArr[1] = m_vecWithParticleDesc[iIndex].vDir.y;
+				TempFloatArr[2] = m_vecWithParticleDesc[iIndex].vDir.z;
+				ImGui::InputFloat3("Force Direct ", TempFloatArr);
+				m_vecWithParticleDesc[iIndex].vDir.x = TempFloatArr[0];
+				m_vecWithParticleDesc[iIndex].vDir.y = TempFloatArr[1];
+				m_vecWithParticleDesc[iIndex].vDir.z = TempFloatArr[2];
+			}
+
+
+
+		}
+
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::TreeNode("With MeshParticle"))
+	{
+		m_vecMeshDesc;
+		m_vecWithParticleDesc;
+
+		if (ImGui::Button("Add MeshParticle"))
+		{
+			WPDESC tDesc;
+
+			tDesc.bIsFollowingTrasnform = false;
+			tDesc.ParticleName = L"testMeshParticle";
+			tDesc.vDir = _float3(0, 1, 0);
+			tDesc.vFixPosition = _float3(0, 0, 0);
+			tDesc.vFollowingDir = FollowingDir_Look;
+			m_vecMeshDesc.push_back(tDesc);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("All Clear "))
+		{
+			m_vecMeshDesc.clear();
+		}
+
+		Make_VerticalSpacing(3);
+
+		if (m_vecMeshDesc.size() > 0)
+		{
+
+			string TotalCount = "Total With Particle Count :  " + to_string(m_vecMeshDesc.size());
+			ImGui::Text(TotalCount.c_str());
+
+			static int iIndex = 0;
+
+			iIndex = (_int)max(min(iIndex, m_vecMeshDesc.size() - 1), 0);
+
+			if (ImGui::Button("-                   ", ImVec2(20, 18)))
+			{
+				iIndex--;
+				iIndex = (_int)max(min(iIndex, m_vecMeshDesc.size() - 1), 0);
+			}
+			ImGui::SameLine(0, 10);		ImGui::Text(string("Index : " + to_string(iIndex)).c_str());				ImGui::SameLine(0, 10);
+			if (ImGui::Button("+                   ", ImVec2(20, 18)))
+			{
+				iIndex++;
+				iIndex = (_int)max(min(iIndex, m_vecMeshDesc.size() - 1), 0);
+			}
+
+
+			string Astring = "";
+			Astring = Astring.assign(m_vecMeshDesc[iIndex].ParticleName.begin(), m_vecMeshDesc[iIndex].ParticleName.end());
+			char InputTextbuffer[MAX_PATH] = "";
+			ZeroMemory(InputTextbuffer, sizeof(char) * MAX_PATH);
+			strcpy_s(InputTextbuffer, Astring.c_str());
+
+			Make_VerticalSpacing(1);
+			ImGui::InputText("Particle FileName ", InputTextbuffer, IM_ARRAYSIZE(InputTextbuffer));
+
+			Astring = InputTextbuffer;
+			m_vecWithParticleDesc[iIndex].ParticleName.assign(Astring.begin(), Astring.end());
+
+			Make_VerticalSpacing(1);
+			ImGui::Checkbox("Is Following Trans ", &m_vecMeshDesc[iIndex].bIsFollowingTrasnform);
+			Make_VerticalSpacing(1);
+
+			if (m_vecMeshDesc[iIndex].bIsFollowingTrasnform)
+			{
+				if (ImGui::Button("-             aa", ImVec2(20, 18)))
+				{
+					m_vecMeshDesc[iIndex].vFollowingDir = (eFollowingDirID)(m_vecMeshDesc[iIndex].vFollowingDir - 1);
+					if (m_vecMeshDesc[iIndex].vFollowingDir < FollowingDir_Right) m_vecMeshDesc[iIndex].vFollowingDir = FollowingDir_Right;
+				}ImGui::SameLine(0, 10);
+				ImGui::Text(Tag_InstancePass(m_vecWithParticleDesc[iIndex].vFollowingDir));
+				ImGui::SameLine(0, 10);
+				if (ImGui::Button("+             aa", ImVec2(20, 18)))
+				{
+					m_vecMeshDesc[iIndex].vFollowingDir = (eFollowingDirID)(m_vecMeshDesc[iIndex].vFollowingDir + 1);
+					if (m_vecMeshDesc[iIndex].vFollowingDir >= FollowingDir_End) m_vecMeshDesc[iIndex].vFollowingDir = (eFollowingDirID)(FollowingDir_End - 1);
+				}
+
+			}
+			else
+			{
+				static float TempFloatArr[3] = { 0,0,0 };
+				ZeroMemory(TempFloatArr, sizeof(_float) * 3);
+
+				TempFloatArr[0] = m_vecMeshDesc[iIndex].vFixPosition.x;
+				TempFloatArr[1] = m_vecMeshDesc[iIndex].vFixPosition.y;
+				TempFloatArr[2] = m_vecMeshDesc[iIndex].vFixPosition.z;
+				ImGui::InputFloat3("Swpan Position  ", TempFloatArr);
+				m_vecMeshDesc[iIndex].vFixPosition.x = TempFloatArr[0];
+				m_vecMeshDesc[iIndex].vFixPosition.y = TempFloatArr[1];
+				m_vecMeshDesc[iIndex].vFixPosition.z = TempFloatArr[2];
+
+				Make_VerticalSpacing(1);
+
+				ZeroMemory(TempFloatArr, sizeof(_float) * 3);
+				TempFloatArr[0] = m_vecMeshDesc[iIndex].vDir.x;
+				TempFloatArr[1] = m_vecMeshDesc[iIndex].vDir.y;
+				TempFloatArr[2] = m_vecMeshDesc[iIndex].vDir.z;
+				ImGui::InputFloat3("Force Direct  ", TempFloatArr);
+				m_vecMeshDesc[iIndex].vDir.x = TempFloatArr[0];
+				m_vecMeshDesc[iIndex].vDir.y = TempFloatArr[1];
+				m_vecMeshDesc[iIndex].vDir.z = TempFloatArr[2];
+			}
+
+
+
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+	Make_VerticalSpacing(2);
+
+	return S_OK;
+}
+
+HRESULT CScene_Edit::Play_WithParticle()
+{
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	for (auto& tVectorElement : m_vecWithParticleDesc)
+	{
+		INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(tVectorElement.ParticleName.c_str());
+
+		if (tVectorElement.bIsFollowingTrasnform)
+		{
+			tDesc.FollowingTarget = (CTransform*)(m_vecBatchedObject[0].pObject->Get_Component(TAG_COM(Com_Transform)));
+			tDesc.iFollowingDir = tVectorElement.vFollowingDir;
+		}
+		else
+		{
+			tDesc.vFixedPosition = tVectorElement.vFixPosition;
+			tDesc.vPowerDirection = tVectorElement.vDir;
+		}
+
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_EDIT, tDesc);
+
+	}
+
+	for (auto& tVectorElement : m_vecMeshDesc)
+	{
+		INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(tVectorElement.ParticleName.c_str());
+
+		if (tVectorElement.bIsFollowingTrasnform)
+		{
+			tDesc.FollowingTarget = (CTransform*)(m_vecBatchedObject[0].pObject->Get_Component(TAG_COM(Com_Transform)));
+			tDesc.iFollowingDir = tVectorElement.vFollowingDir;
+		}
+		else
+		{
+			tDesc.vFixedPosition = tVectorElement.vFixPosition;
+			tDesc.vPowerDirection = tVectorElement.vDir;
+		}
+
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_EDIT, tDesc);
+
+	}
 
 
 

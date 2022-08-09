@@ -27,7 +27,7 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	memcpy(&m_tMeshDesc, pArg, sizeof(NONINSTNESHEFTDESC));
 
 
-	if (m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 20)
+	if (m_tMeshDesc.m_iPassIndex != 23 &&(m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 20))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -158,8 +158,11 @@ _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 		else Set_IsDead();
 	}
 
-
-	if (m_tMeshDesc.m_iPassIndex > 17)
+	if (m_tMeshDesc.m_iPassIndex == 23)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this));
+	}
+	else if (m_tMeshDesc.m_iPassIndex > 17)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}

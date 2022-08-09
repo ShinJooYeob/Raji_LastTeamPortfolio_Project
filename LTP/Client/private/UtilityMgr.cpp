@@ -408,6 +408,8 @@ HRESULT CUtilityMgr::Ready_TextureParticles()
 	//../Bin/Resources/Data/ParicleData/ParticlePathData/TextureParticlePath.txt
 	//../Bin/Resources/Data/ParicleData/ParticlePathData/MeshParticlePath.txt
 
+	m_mapTextureParticles.clear();
+
 	wifstream		fin;
 
 	_tchar FullFilePath[MAX_PATH] = L"../Bin/Resources/Data/ParicleData/ParticlePathData/TextureParticlePath.txt";
@@ -584,9 +586,9 @@ HRESULT CUtilityMgr::Ready_TextureParticles()
 
 HRESULT CUtilityMgr::Ready_MeshParticles()
 {
+	m_mapMeshParticles.clear();
 
 	wifstream		fin;
-
 	//
 	_tchar FullFilePath[MAX_PATH] = L"../Bin/Resources/Data/ParicleData/ParticlePathData/MeshParticlePath.txt";
 

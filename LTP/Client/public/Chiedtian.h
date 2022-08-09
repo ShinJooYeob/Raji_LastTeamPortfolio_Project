@@ -37,6 +37,7 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CTransform*			m_pFireParticleTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
 
 	//¸öÃ¼
@@ -117,12 +118,15 @@ private:
 	void			Activate_SecondPage(_double fDeltaTime);
 	
 
+	vector<NONINSTNESHEFTDESC>	m_vecNonInstMeshDesc;
+	vector<INSTPARTICLEDESC>	m_vecTexInstDesc;
 
 
 
 
 private:
 	HRESULT SetUp_Components();
+	HRESULT Ready_ParticleDesc();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);
 
 public:

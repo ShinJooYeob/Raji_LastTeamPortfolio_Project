@@ -4,6 +4,7 @@
 #include "Chiedtuan_2Page_Weapon.h"
 
 #include "HpUI.h"
+#include "Volcano.h"
 
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -29,6 +30,8 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
+
+
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
@@ -41,6 +44,8 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	m_fAttackCoolTime = 2.f;
 	m_fSkillCoolTime = 5.f;
 	m_bIsHit = false;
+	Set_IsOcllusion(true);
+	Set_LimLight_N_Emissive(_float4(0), _float4(0.00f, 0.2f, 1.f,0.f));
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
 
@@ -137,7 +142,7 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 
 
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 	_int iRandom = rand() % 3 + 1;
@@ -146,7 +151,9 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
 
 	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	FAILED_CHECK(Ready_ParticleDesc());
 
+	//m_bIsHit = true;
 	return S_OK;
 }
 
@@ -159,6 +166,11 @@ _int CChiedtian::Update(_double fDeltaTime)
 	m_fJumpTime -= (_float)fDeltaTime;
 
 	m_fNarration -= (_float)fDeltaTime;
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_X)& DIS_Down)
+	{
+		Set_IsDead();
+	}
 
 	if (m_fNarration <= 0)
 	{
@@ -183,6 +195,11 @@ _int CChiedtian::Update(_double fDeltaTime)
 		if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
 		{
 			if(m_bIsAtaackAimEnd)
+				m_bIsHit = true;
+		}
+		if (m_fHP <= m_fHP / 2.f)
+		{
+			if (m_bIsAtaackAimEnd)
 				m_bIsHit = true;
 		}
 
@@ -229,6 +246,19 @@ _int CChiedtian::Update(_double fDeltaTime)
 					m_fAnimmultiple = (m_fSpinSpeed *0.1f) + 0.1f;
 				}
 
+
+				_float Value = max(min(g_pGameInstance->Easing(TYPE_Linear, 2.f, 0.f, (_float)4.f - m_fSpinTime, 4.f), 1.f), 0) * 0.4f;
+
+				m_pMainWeapons[1]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+				m_pMainWeapons[0]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+
+				m_pSubWeapons[1]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+				m_pSubWeapons[0]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+
 			}
 		}
 
@@ -240,6 +270,9 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_fAttackCoolTime = 1.f;
 			m_fSkillCoolTime = 5.f;
 
+
+			for (auto& Weapon : m_pMainWeapons) Weapon->SwordTrailOnOff(false);
+			for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
 
 			for (_int i = 0; i < m_pMainWeapons.size(); ++i)
 				m_pMainWeapons[i]->Set_IsAttackState(false);
@@ -326,28 +359,33 @@ _int CChiedtian::Update(_double fDeltaTime)
 		//스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
-			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 2.9f);
+			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			iRandom = 2;
+			iRandom = 0;
 
 			switch (iRandom)
 			{
 			case ATTACK_FIRE:
 			{
 				m_pModel->Change_AnimIndex_ReturnTo(12, 13);
-
+				for (auto& Weapon : m_pMainWeapons) Weapon->SwordTrailOnOff(false);
+				for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
 			}
 			break;
 			case ATTACK_SPIN:
 			{
 				m_pModel->Change_AnimIndex_UntilNReturn(7, 8, 9);
+				//for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
+				//for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
 			}
 			break;
 
 			case ATTACK_WHINING:
 			{
 				m_pModel->Change_AnimIndex_ReturnTo(6, 1);
+				for (auto& Weapon : m_pMainWeapons) Weapon->SwordTrailOnOff(false);
+				for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
 			}
 			break;
 
@@ -359,7 +397,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		}
 
 	}
-	//SecondPage
+	//SecondPage3
 	else
 	{
 		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
@@ -413,6 +451,8 @@ _int CChiedtian::Update(_double fDeltaTime)
 		{
 			m_fSpinTime -= (_float)fDeltaTime;
 
+
+
 			if (m_fSpinTime > 4.f)
 			{
 				if (m_fSpinSpeed > 10.f)
@@ -443,6 +483,8 @@ _int CChiedtian::Update(_double fDeltaTime)
 					m_fSpinSpeed -= (_float)fDeltaTime*3.f;
 					m_fAnimmultiple = (m_fSpinSpeed *0.1f) + 0.1f;
 				}
+
+
 
 			}
 		}
@@ -510,6 +552,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0.f, 1.9f);
 			m_bIsAttack = true;
 			m_bISkill = true;
+			//특정 스킬 다시하기
 			iRandom = 0;
 
 			switch (iRandom)
@@ -523,6 +566,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			case SECONDPAGEATTACK_VOLCANO:
 			{
 				m_pModel->Change_AnimIndex_ReturnTo(10, 0);
+				CVolcano::VolcanoCount2Zero();
 				m_bISVolcanoAttackStart = true;
 			}
 			break;
@@ -533,7 +577,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 
 	
-	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
+	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), 10);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(fDeltaTime));
 
@@ -901,6 +945,271 @@ HRESULT CChiedtian::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CChiedtian::Ready_ParticleDesc()
+{
+	Safe_Release(m_pFireParticleTransformCom);
+	m_pFireParticleTransformCom = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pFireParticleTransformCom, E_FAIL);
+
+	{
+		m_vecTexInstDesc.clear();
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		//0
+		{
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_12");
+			m_vecTexInstDesc.push_back(tDesc);
+		}
+		//1
+		{
+
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_9");
+			tDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+			tDesc.ParticleStartRandomPosMin = _float3(-1.f, 0, -1.f);
+			tDesc.ParticleStartRandomPosMax = _float3(1.f, 0.5f, 1.f);
+			m_vecTexInstDesc.push_back(tDesc);
+
+
+		}
+		//2
+		{
+
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_13");
+			tDesc.FollowingTarget = m_pFireParticleTransformCom;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			tDesc.TargetColor.w = 10.f;
+			tDesc.vEmissive_SBB = _float3(tDesc.vEmissive_SBB.x * 0.5f , 0,0);
+			m_vecTexInstDesc.push_back(tDesc);
+
+
+		}
+	}
+
+	{
+
+		m_vecNonInstMeshDesc.clear();
+
+		//0
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYChiedFireLine1;
+
+			tNIMEDesc.fMaxTime_Duration = 19.f;
+			tNIMEDesc.fAppearTime = 1.f;
+
+			tNIMEDesc.noisingdir = _float2(0.1f, 0);
+
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 321;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.129f);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+
+
+		//1
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYChiedFireLine2;
+
+			tNIMEDesc.fMaxTime_Duration = 20.f;
+			tNIMEDesc.fAppearTime = 0.75f;
+
+			tNIMEDesc.noisingdir = _float2(1.f, 0);
+
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 276;
+			tNIMEDesc.m_iPassIndex = 17;
+
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			//tNIMEDesc.vSize = _float3(0.125f);
+			//tNIMEDesc.vSize = _float3(0.162f, 0.162f, -0.162f);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+
+		//2
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 30.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYChiedFireLine3;
+
+			tNIMEDesc.fMaxTime_Duration = 19.f;
+			tNIMEDesc.fAppearTime = 1.5f;
+
+			tNIMEDesc.noisingdir = _float2(1.f, 1.f).Get_Nomalize() * 0.07f;
+			tNIMEDesc.fDistortionNoisingPushPower = 1.f;
+
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 321;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.129f);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
+		//3
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			//tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			//tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			//tNIMEDesc.eMeshType = Prototype_Mesh_JYOrnate1;
+
+			//tNIMEDesc.fMaxTime_Duration = 0.5f;
+			//tNIMEDesc.fAppearTime = 0.25f;
+
+			//tNIMEDesc.noisingdir = _float2(1.f, -2.f).Get_Nomalize() * 0.5f;
+			//tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+			//tNIMEDesc.NoiseTextureIndex = 200;
+			//tNIMEDesc.MaskTextureIndex = 63;
+			//tNIMEDesc.iDiffuseTextureIndex = 321;
+			//tNIMEDesc.m_iPassIndex = 23;
+			//tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			//tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			//tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			//tNIMEDesc.RotAxis = FollowingDir_Look;
+			//tNIMEDesc.RotationSpeedPerSec = 0.f;
+			//tNIMEDesc.vSize = _float3(0.16125f, 0.16125f, 0.12135f);
+
+			//tNIMEDesc.RotAxis = FollowingDir_Look;
+			//tNIMEDesc.OnceStartRot = 45;
+
+			//tNIMEDesc.MoveDir = FollowingDir_Look;
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYSwordEnergy;
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.25f;
+
+			tNIMEDesc.noisingdir = _float2(1.f, 0).Get_Nomalize() * 0.5f;
+			tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 321;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.258f, 0.258f, 0.258f);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+		//4
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			//tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			//tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYSwordEnergy;
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.25f;
+
+			tNIMEDesc.noisingdir = _float2(-1.f, 0).Get_Nomalize() * 0.5f;
+			tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 321;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.258f, 0.258f, 0.258f);
+
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+		//5
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.01f;
+
+			tNIMEDesc.noisingdir = _float2(1.f, 0.f).Get_Nomalize() * 0.03f;
+			tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 63;
+			tNIMEDesc.iDiffuseTextureIndex = 321;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.98046875f, 0.19140625f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.98046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.1f);
+
+			tNIMEDesc.SizeSpeed = 15.f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+			//	TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
@@ -1078,39 +1387,139 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		case 6:
 		{
 			m_bIsAtaackAimEnd = false;
+			
 
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.16)
+			//m_pMainWeapons[0]->SwordTrailOnOff(true);
+			//m_pMainWeapons[1]->SwordTrailOnOff(true);
+			//m_pMainWeapons[0]->SwordTrailOnOff(false);
+			//m_pMainWeapons[1]->SwordTrailOnOff(false);
+
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0.12)
 			{
+				m_vecNonInstMeshDesc[3].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -1.5f  +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * 3.5f +
+					XMVectorSet(0,2.5f,0,0);
+				m_vecNonInstMeshDesc[3].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+				m_vecNonInstMeshDesc[3].OnceStartRot = 320.f;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+
+
+				m_pMainWeapons[1]->SwordTrailOnOff(true);
+				++m_iAdjMovedIndex;
+			}
+			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.16)
+			{
+
+
 				g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.4533333)
+			if (m_iAdjMovedIndex == 2 && PlayRate >	0.1866666666)
+			{
+
+
+				m_pMainWeapons[1]->SwordTrailOnOff(false);
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.28)
+			{
+				m_vecNonInstMeshDesc[4].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -2.f + XMVectorSet(0, 6, 0, 0) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 2.f;
+
+				m_vecNonInstMeshDesc[4].vLookDir = XMVector3Normalize(-m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) + 
+										m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK))
+					;
+				m_vecNonInstMeshDesc[4].OnceStartRot = -10.f;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+				m_pMainWeapons[0]->SwordTrailOnOff(true);
+				m_pMainWeapons[1]->SwordTrailOnOff(true);
+				++m_iAdjMovedIndex;
+			}			
+			if (m_iAdjMovedIndex == 4 && PlayRate > 0.32)
+			{
+
+				
+				++m_iAdjMovedIndex;
+			}
+
+			if (m_iAdjMovedIndex == 5 && PlayRate > 0.4)
+			{
+				m_pMainWeapons[0]->SwordTrailOnOff(false);
+				m_pMainWeapons[1]->SwordTrailOnOff(false);
+				++m_iAdjMovedIndex;
+			}
+			
+			if (m_iAdjMovedIndex == 6 && PlayRate > 0.4533333)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
-
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.0526315)
+			if (m_iAdjMovedIndex == 7 && PlayRate > 0.50666666666666)
 			{
+				m_pMainWeapons[0]->SwordTrailOnOff(true);
+				++m_iAdjMovedIndex;
+			}
+			
+
+			if (m_iAdjMovedIndex == 8 && PlayRate > 0.0526315)
+			{
+
+				m_vecNonInstMeshDesc[3].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -1.5f +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -2.f;
+				m_vecNonInstMeshDesc[3].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+
+				m_vecNonInstMeshDesc[3].OnceStartRot = 304.5f;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+
 				for (_int i = 0; i < m_pMainWeapons.size(); ++i)
 				{
 					m_pMainWeapons[i]->Set_IsAttackState(true);
 				}
 				++m_iAdjMovedIndex;
 			}
-			if (m_iAdjMovedIndex == 3 && PlayRate > 0.5466)
+			if (m_iAdjMovedIndex == 9 && PlayRate > 0.5466)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
+			if (m_iAdjMovedIndex == 10 && PlayRate > 0.573333333333333)
+			{
+				m_pMainWeapons[0]->SwordTrailOnOff(false);
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 11 && PlayRate > 0.7733333333333333333)
+			{
+				m_vecNonInstMeshDesc[4].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * 2.f + XMVectorSet(0, 4, 0, 0);
 
-			if (m_iAdjMovedIndex == 4 && PlayRate > 0.92)
+				m_vecNonInstMeshDesc[4].vLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK))
+					;
+				m_vecNonInstMeshDesc[4].OnceStartRot = 185.f;
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+
+
+				m_pMainWeapons[0]->SwordTrailOnOff(true);
+				++m_iAdjMovedIndex;
+			}
+			
+			if (m_iAdjMovedIndex == 12 && PlayRate > 0.92)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
-			if (PlayRate > 0.92 && m_iAdjMovedIndex == 5)
+			if (PlayRate > 0.92 && m_iAdjMovedIndex == 12)
 			{
 				for (_int i = 0; i < m_pMainWeapons.size(); ++i)
 				{
@@ -1127,12 +1536,35 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				m_pTransformCom->Move_Forward(fDeltatime, m_pNavigationCom);
 			}
+
+			if (PlayRate > 0 && PlayRate < 0.92)
+			{
+				_float Value = max(min(g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 2.f, (_float)PlayRate , 0.92f), 1.f), 0) * 0.4f;
+				m_pMainWeapons[1]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value, 
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+				m_pMainWeapons[0]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+			}
 		}
 			break;
 
 		case 7://SpinAttackStartAnim
 		{
 			m_bIsLookAt = false;
+
+			if (PlayRate > 0 && PlayRate < 0.92)
+			{
+				_float Value = max(min(g_pGameInstance->Easing(TYPE_Linear, 0, 2.f, (_float)PlayRate, 0.92f), 1.f), 0) * 0.4f;
+				m_pMainWeapons[1]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+				m_pMainWeapons[0]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+
+				m_pSubWeapons[1]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+				m_pSubWeapons[0]->Set_LimLight_N_Emissive(_float4(0.60546875f, 0.06640625f, 0.1171875f, 1.f).XMVector() * Value,
+					_float4(1.f, 0.5f, 1.f, 0.f).XMVector() *Value);
+			}
 
 			if (!m_ActivateSecondPage)
 			{
@@ -1161,10 +1593,62 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					++m_iAdjMovedIndex;
 				}
+				if (m_iAdjMovedIndex == 1 && PlayRate > 0.9)
+				{
+					for (auto& Weapon : m_pMainWeapons) Weapon->SwordTrailOnOff(true);
+					for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(true);
+					++m_iAdjMovedIndex;
+				}
+
 			}
 			else
 			{
 
+				if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
+				{
+
+					m_vecNonInstMeshDesc[5].fMaxTime_Duration = 0.5f;
+					m_vecNonInstMeshDesc[5].vSize = _float3(0.1f, 0.1f, 0.1f);
+					m_vecNonInstMeshDesc[5].SizeSpeed = 15.f;
+					m_vecNonInstMeshDesc[5].vSizingRUL = _float3(1, 1, 1);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+
+					m_vecNonInstMeshDesc[1].vSize = _float3(0.125f);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+					m_vecNonInstMeshDesc[1].vSize = _float3(0.162f, 0.162f, -0.162f);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
+					++m_iAdjMovedIndex;
+				}
+				else if (m_iAdjMovedIndex == 1 && PlayRate > 0.1263157894736842)
+				{
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+
+					++m_iAdjMovedIndex;
+				}
+				else if (m_iAdjMovedIndex == 2 && PlayRate > 0.18947368421052631)
+				{
+					m_vecNonInstMeshDesc[5].fMaxTime_Duration = 19.f;
+					m_vecNonInstMeshDesc[5].vSize = _float3(40.f);
+					m_vecNonInstMeshDesc[5].SizeSpeed = 0.f;
+					m_vecNonInstMeshDesc[5].vSizingRUL = _float3(0, 0, 0);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+					++m_iAdjMovedIndex;
+
+				}
+				else if (m_iAdjMovedIndex == 3 && PlayRate > 0.25263157894736842)
+				{
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+					++m_iAdjMovedIndex;
+				}
+	
 			}
 		}
 
@@ -1318,7 +1802,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-					_float3 vGoalDir = (_float3(0).XMVector() - MonsterPos.XMVector());
+					_float3 vGoalDir = (_float3(-0.073f, 35.900f, 281.488f).XMVector() - MonsterPos.XMVector());
 
 					_float fLength = g_pGameInstance->Easing(TYPE_CircularIn, 0.f, vGoalDir.Get_Lenth(), (_float)PlayRate - 0.317073170f, 0.31707317146f);
 
@@ -1384,11 +1868,18 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start_Long.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
+
 		}
 		break;
 
 		case 13: //FireAttack
 		{
+			m_pFireParticleTransformCom->Set_MatrixState(CTransform::STATE_POS,
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *1.25f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) *-0.1f + XMVectorSet(0, 6.f, 0, 0));
+			m_pFireParticleTransformCom->LookAt(
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -3.5f);
+
 			m_bIsAtaackAimEnd = false;
 
 			m_bIsLookAt = true;
@@ -1397,17 +1888,38 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.14285714)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Loop.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+				m_vecTexInstDesc[0].vFixedPosition = m_vecTexInstDesc[1].vFixedPosition
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.15f, 0, 0) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -1.f +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[0]);
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
+
 				++m_iAdjMovedIndex;
 			}
 
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.14285714)
 			{
+
+
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.71428571428)
 			{
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+				m_vecTexInstDesc[0].vFixedPosition = m_vecTexInstDesc[1].vFixedPosition 
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.15f, 0, 0) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.f+
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[0]);
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
+
+
+
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
@@ -1606,6 +2118,10 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				m_pMainWeapons[i]->Set_IsAttackState(false);
 			}
+
+			for (auto& Weapon : m_pMainWeapons) Weapon->SwordTrailOnOff(false);
+			for (auto& Weapon : m_pSubWeapons) Weapon->SwordTrailOnOff(false);
+
 			//m_bIsLookAt = true;
 			m_fAttackCoolTime = 1.f;
 			m_fSkillCoolTime = 6.f;
@@ -1667,7 +2183,17 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 12)
 		{
 			//m_bIsLookAt = true;
-			m_bIsFireAttack = true;
+			if (!m_bIsFireAttack)
+			{
+
+				m_pFireParticleTransformCom->Set_MatrixState(CTransform::STATE_POS,
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) *1.f + XMVectorSet(0, 6.5f, 0, 0));
+				m_pFireParticleTransformCom->LookAt(
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -3.5f);
+
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[2]);
+				m_bIsFireAttack = true;
+			}
 			m_fFireTime = 10.f;
 			m_fAnimmultiple = 1.f;
 		}
@@ -1736,7 +2262,8 @@ void CChiedtian::Free()
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pFireCollider);
 	Safe_Release(m_pJumpCollider);
-
+	Safe_Release(m_pFireParticleTransformCom);
+	
 	for (auto& Weapon : m_pMainWeapons)
 		Safe_Release(Weapon);
 

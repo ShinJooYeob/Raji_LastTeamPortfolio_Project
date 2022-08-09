@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Volcano.h"
 
+_uint CVolcano::iPatterenCount = 0;
 
 CVolcano::CVolcano(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonsterWeapon(pDevice, pDeviceContext)
@@ -34,12 +35,18 @@ HRESULT CVolcano::Initialize_Clone(void * pArg)
 
 	//Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
 
-	m_pTransformCom->Scaled_All(_float3(8.2f));
+	m_pTransformCom->Scaled_All(_float3(1.5f,2.5f,1.5f));
 
 	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	Pos.y += 0.2f;
+	Pos.y += -0.87888888888f + _float(iPatterenCount) * 0.01f;;
+	iPatterenCount++;
+	//Pos.y += 0.2f;
 	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_FlameTerrain), TAG_OP(Prototype_Object_Boss_FlameTeraain), &Pos);
 
+	m_fCurTime_Duration = 0;
+	FAILED_CHECK(Ready_MeshDesc());
+	m_tSubFlameDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_tSubFlameDesc);
 	return S_OK;
 }
 
@@ -48,11 +55,12 @@ _int CVolcano::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	m_fAliveTime -= (_float)fDeltaTime;
+	m_fCurTime_Duration += (_float)fDeltaTime;
 
-	if (m_fAliveTime <= 0)
-	{
+	if (m_fCurTime_Duration > m_tVolcanoDesc.fMaxTime_Duration)
 		Set_IsDead();
-	}
+
+	m_pTransformCom->Turn_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_tVolcanoDesc.RotationSpeedPerSec) * fDeltaTime);
 
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
 
@@ -66,6 +74,7 @@ _int CVolcano::Update(_double fDeltaTime)
 
 _int CVolcano::LateUpdate(_double fDeltaTime)
 {
+	if (m_bIsDead) return 0;
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_NONANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
@@ -82,7 +91,9 @@ _int CVolcano::LateUpdate(_double fDeltaTime)
 
 _int CVolcano::Render()
 {
+	if (m_bIsDead) return 0;
 
+	Ready_MeshDesc();
 	if (__super::Render() < 0)		return -1;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
@@ -92,7 +103,10 @@ _int CVolcano::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+
+
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
+	FAILED_CHECK(Setup_MeshDesc());
 
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
 	
@@ -100,9 +114,10 @@ _int CVolcano::Render()
 	{
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 		{
+			if(j == 1)continue;
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
 		}
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 4, i));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_tVolcanoDesc.m_iPassIndex, i));
 	}
 
 	return _int();
@@ -117,17 +132,79 @@ void CVolcano::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, 
 {
 }
 
+HRESULT CVolcano::Ready_MeshDesc()
+{
+
+
+	{
+		m_tVolcanoDesc.eMeshType = Prototype_Mesh_Tornado;
+		m_tVolcanoDesc.fAppearTime = 0.25f;
+		m_tVolcanoDesc.fMaxTime_Duration = m_tVolcanoDesc.fAppearTime*2.f;
+
+		m_tVolcanoDesc.noisingdir = _float2(0, 1);
+
+		m_tVolcanoDesc.fDistortionNoisingPushPower = 20.f;
+		m_tVolcanoDesc.NoiseTextureIndex = 6;
+		m_tVolcanoDesc.MaskTextureIndex = 81;
+		m_tVolcanoDesc.iDiffuseTextureIndex = 299;
+		m_tVolcanoDesc.m_iPassIndex = 19;
+		m_tVolcanoDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		m_tVolcanoDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+		m_tVolcanoDesc.NoiseTextureIndex = 381;
+		m_tVolcanoDesc.vColor = _float4(1, 1, 1, 1);
+
+		m_tVolcanoDesc.RotAxis = FollowingDir_Up;
+		m_tVolcanoDesc.RotationSpeedPerSec = -1080.f;
+		m_tVolcanoDesc.vSize = _float3(1.f, 1.5f, 1.f);
+		//m_tVolcanoDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+		m_tVolcanoDesc.MoveDir = FollowingDir_Look;
+		m_tVolcanoDesc.MoveSpeed = 0.f;
+
+	}
+	{
+		m_tSubFlameDesc.eMeshType = Prototype_Mesh_Tornado2;
+		m_tSubFlameDesc.vLookDir = _float3(1, 0, 0);
+		m_tSubFlameDesc.fAppearTime = 0.25f;
+		m_tSubFlameDesc.fMaxTime_Duration = m_tSubFlameDesc.fAppearTime*2.f;
+
+		m_tSubFlameDesc.noisingdir = _float2(1, 0);
+
+		m_tSubFlameDesc.fDistortionNoisingPushPower = 20.f;
+		//m_tSubFlameDesc.NoiseTextureIndex = 381;
+		m_tSubFlameDesc.NoiseTextureIndex = 6;
+		m_tSubFlameDesc.MaskTextureIndex = 81;
+		m_tSubFlameDesc.iDiffuseTextureIndex = 299;
+		m_tSubFlameDesc.m_iPassIndex = 19;
+		m_tSubFlameDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		//m_tSubFlameDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 0.1f);
+		m_tSubFlameDesc.vColor = _float4(1, 1, 1, 1);
+
+		m_tSubFlameDesc.RotAxis = FollowingDir_Up;
+		m_tSubFlameDesc.RotationSpeedPerSec = 1080.f;
+		m_tSubFlameDesc.vSize = _float3(1.5f, 2.0f, 1.5f);
+		//m_tSubFlameDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+		m_tSubFlameDesc.MoveDir = FollowingDir_Look;
+		m_tSubFlameDesc.MoveSpeed = 0.f;
+		m_tSubFlameDesc.fAlphaTestValue = 0.8f;
+		
+	}
+	
+	return S_OK;
+}
+
 HRESULT CVolcano::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Volcano), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Tornado), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
 	tDesc.fMovePerSec = 5;
-	tDesc.fRotationPerSec = XMConvertToRadians(0);
+	tDesc.fRotationPerSec = 1;
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);
 
@@ -141,6 +218,34 @@ HRESULT CVolcano::SetUp_Components()
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.1f, 0.f, 1);
 	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	return S_OK;
+}
+
+HRESULT CVolcano::Setup_MeshDesc()
+{
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
+
+
+	Set_LimLight_N_Emissive(m_tVolcanoDesc.vLimLight, m_tVolcanoDesc.vEmissive);
+
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &m_tVolcanoDesc.vColor, sizeof(_float4)));
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tVolcanoDesc.fAppearTime, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tVolcanoDesc.fMaxTime_Duration, sizeof(_float)));
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tVolcanoDesc.noisingdir, sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tVolcanoDesc.fDistortionNoisingPushPower, sizeof(_float)));
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &m_tVolcanoDesc.fAlphaTestValue, sizeof(_float)));
+
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tVolcanoDesc.NoiseTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tVolcanoDesc.MaskTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", m_tVolcanoDesc.iDiffuseTextureIndex));
+
 
 	return S_OK;
 }

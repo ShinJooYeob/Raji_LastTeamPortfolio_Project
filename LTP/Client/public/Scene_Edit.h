@@ -41,7 +41,15 @@ class CScene_Edit final : public CScene
 
 
 #endif
+	typedef struct tagWithParticleDesc
+	{
+		wstring ParticleName;
+		_bool	bIsFollowingTrasnform = false;
+		eFollowingDirID vFollowingDir = FollowingDir_Right;
 
+		_float3 vFixPosition = _float3(0);
+		_float3 vDir = _float3(0,1,0);
+	}WPDESC;
 
 
 private:
@@ -183,8 +191,14 @@ private:
 	HRESULT Widget_SaveLoadTextureParticle(_double fDeltatime);
 	HRESULT Widget_SaveLoadMeshParticle(_double fDeltatime);
 
+	HRESULT Ready_WithParticle();
+	HRESULT Play_WithParticle();
+	
 	INSTPARTICLEDESC m_tParticleDesc;
 	INSTMESHDESC m_tMeshDesc;
+
+	vector<WPDESC>		m_vecWithParticleDesc;
+	vector<WPDESC>		m_vecMeshDesc;
 
 #pragma endregion ParticleTab
 
