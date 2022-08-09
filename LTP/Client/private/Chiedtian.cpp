@@ -363,7 +363,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			iRandom = 0;
+			//iRandom = 0;
 
 			switch (iRandom)
 			{

@@ -59,6 +59,7 @@ private:
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 	CUtilityMgr*					m_pUtilMgr = nullptr;
+	CTransform*						m_pPlayerTransform = nullptr;
 
 
 public:

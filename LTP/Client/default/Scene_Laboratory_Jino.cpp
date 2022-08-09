@@ -45,7 +45,12 @@ _int CScene_Laboratory_Jino::Update(_double fDeltaTime)
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
-
+	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE5), SCENEID::SCENE_LOADING));
+		return 0;
+	}
 	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	_Vector vDir = XMVector3Normalize(XMVectorSetY(m_pTransform_Raji->Get_MatrixState(CTransform::STATE_POS), 10) - XMVectorSet(128.f, -64.f, 256.f, 0));
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(128.f, -64.f, 256.f, 0) + vDir * 330.f);
@@ -76,7 +81,7 @@ _int CScene_Laboratory_Jino::LateUpdate(_double fDeltaTime)
 	else if (true == m_bGameClear)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE5), SCENEID::SCENE_LOADING));
 	}
 
 	return 0;
@@ -293,9 +298,10 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 	static_cast<CPlayer*>(pPlayer)->Set_State_FallingStart(g_fDeltaTime);
 	m_pTransform_Raji = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pTransform_Raji, E_FAIL);
+	m_pPlayerTransform = m_pTransform_Raji;
 
-	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-	PlayerNavi->FindCellIndex(m_pTransform_Raji->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	/*CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+	PlayerNavi->FindCellIndex(m_pTransform_Raji->Get_MatrixState(CTransform::TransformState::STATE_POS));*/
 	pPlayer->Update_AttachCamPos();
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_RAJIGOLU_MINIGAME);
@@ -503,13 +509,16 @@ HRESULT CScene_Laboratory_Jino::Ready_TriggerObject(const _tchar * szTriggerData
 
 HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 {
+
 #ifndef _DEBUG
 
+
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
-	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
+	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 0.83203125f, 0.68359375f, 1.f);
+	pLightDesc->vSpecular = _float4(0.40625f, 0.1875f, 0.05078125f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
 
@@ -519,31 +528,49 @@ HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.3f);
+	pRenderer->Set_ShadowIntensive(0.35f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	pRenderer->Set_SunSize(0.5f);
+	pRenderer->Set_GodrayLength(64.f);
+	pRenderer->Set_GodrayIntensity(0.1f);
+	pRenderer->Set_StartDecay(0.25f);
+	pRenderer->Set_DistDecay(1.6f);
+	pRenderer->Set_MaxDeltaLen(0.006f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+	_float Value = (1 - 0.98f) * 344.f + 16.f;
+	pRenderer->Set_LensfalreSupportSunSize(Value);
+	pRenderer->Set_LensefalreNoiseTexIndex(245);
+
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5f);
+	pRenderer->Set_BloomBrightnessMul(2.5f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(30.f);
+	pRenderer->Set_DofLength(45.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogStartDist(5.f);
-	pRenderer->Set_FogGlobalDensity(0.1f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
-
+	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
+	pRenderer->Set_FogStartDist(0.1f);
+	pRenderer->Set_FogGlobalDensity(0.06f);
+	pRenderer->Set_FogHeightFalloff(0.16f);
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR
 #else
+
 #ifdef DEBUGONSHADERSETTING
 
+
+
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
-	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
+	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 0.83203125f, 0.68359375f, 1.f);
+	pLightDesc->vSpecular = _float4(0.40625f, 0.1875f, 0.05078125f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
 
@@ -553,22 +580,39 @@ HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.3f);
+	pRenderer->Set_ShadowIntensive(0.35f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	pRenderer->Set_SunSize(0.5f);
+	pRenderer->Set_GodrayLength(64.f);
+	pRenderer->Set_GodrayIntensity(0.1f);
+	pRenderer->Set_StartDecay(0.25f);
+	pRenderer->Set_DistDecay(1.6f);
+	pRenderer->Set_MaxDeltaLen(0.006f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+	_float Value = (1 - 0.98f) * 344.f + 16.f;
+	pRenderer->Set_LensfalreSupportSunSize(Value);
+	pRenderer->Set_LensefalreNoiseTexIndex(245);
+
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5f);
+	pRenderer->Set_BloomBrightnessMul(2.5f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(30.f);
+	pRenderer->Set_DofLength(45.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogStartDist(5.f);
-	pRenderer->Set_FogGlobalDensity(0.1f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
-#endif
+	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
+	pRenderer->Set_FogStartDist(0.1f);
+	pRenderer->Set_FogGlobalDensity(0.06f);
+	pRenderer->Set_FogHeightFalloff(0.16f);
 
-#endif // !_DEBUGee
+
+#endif
+#endif // !_DEBUG
+
 	return S_OK;
 }
 

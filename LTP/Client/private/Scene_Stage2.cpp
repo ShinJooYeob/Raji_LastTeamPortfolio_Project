@@ -34,6 +34,7 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE2, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
 	//EH
 	FAILED_CHECK(Ready_TriggerObject(L"Stage2_InstanceMonsterTrigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
@@ -243,6 +244,12 @@ HRESULT CScene_Stage2::Ready_Layer_Monster(const _tchar * pLayerTag)
 	
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
 	
+	return S_OK;
+}
+
+HRESULT CScene_Stage2::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

@@ -37,6 +37,7 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
@@ -272,8 +273,8 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 14.0000162f, -18.2519970f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	// _float3(0.f, 10, 0.f) Start Pos
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 33.034f, 219.175f)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 33.034f, 219.175f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -319,6 +320,12 @@ HRESULT CScene_Stage7::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage7::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 
@@ -371,7 +378,6 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 	pRenderer->Set_FogStartDist(0.1f);
 	pRenderer->Set_FogGlobalDensity(0.06f);
 	pRenderer->Set_FogHeightFalloff(0.16f);
-
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR

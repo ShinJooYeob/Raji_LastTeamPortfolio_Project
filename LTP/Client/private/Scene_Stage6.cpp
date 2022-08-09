@@ -37,6 +37,8 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+
 
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
 	FAILED_CHECK(Ready_EnvMappedWater(TAG_LAY(Layer_EnvMappedWater)));
@@ -639,6 +641,12 @@ HRESULT CScene_Stage6::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	return S_OK;
 }
 
+HRESULT CScene_Stage6::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	return S_OK;
+}
+
 HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 {
 	CElevator::ELEVATORDESC tElevatorDesc;
@@ -754,7 +762,6 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
 
-
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(0.f, 164.f, 36.314f, 1.f));
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), -64.f));
@@ -784,7 +791,6 @@ HRESULT CScene_Stage6::Ready_PostPorcessing()
 	pRenderer->Set_FogStartDist(40.f);
 	pRenderer->Set_FogGlobalDensity(0.2f);
 	pRenderer->Set_FogHeightFalloff(0.03f);
-
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE
 	//POSTPROCESSING_CAMMOTIONBLUR

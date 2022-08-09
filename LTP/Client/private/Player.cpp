@@ -71,9 +71,10 @@ _int CPlayer::Update(_double fDeltaTime)
 	// Debuging Code
 
 	// TEST CODE
-	_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
-	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+
+	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+	//_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 	//
 
 
@@ -88,7 +89,10 @@ _int CPlayer::Update(_double fDeltaTime)
 	//**************** Checks *****************//
 	{
 		// Check Cur Pos Navi's Cell Option
-		Check_CurNaviCellOption();
+		if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+		{
+			Check_CurNaviCellOption();
+		}
 
 
 		// Check Player Key Input
@@ -246,7 +250,10 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 
 #ifndef NotOnNavi
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
 #endif // NotOnNavi
 
 	}
@@ -346,7 +353,11 @@ void CPlayer::Resurrection()
 {
 	Set_State_IdleStart(g_fDeltaTime);
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, m_fResurrectPos);
-	m_pNavigationCom->Set_CurNavCellIndex(m_iResurrectNavIndex);
+
+	if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+	{
+		m_pNavigationCom->Set_CurNavCellIndex(m_iResurrectNavIndex);
+	}
 	m_pHPUI->Set_HitCount(0);
 	m_fHP = m_fMaxHP;
 	m_fFallingAcc = 0.f;
@@ -1182,10 +1193,15 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 
 	m_pTransformCom->Move_Forward(fDeltaTime * (m_fJumpPower * 0.8f), m_pNavigationCom, true);
 	vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_float fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
-	if (fPrePos_y >= fOnNavPos_Y
+
+	_float fOnNavPos_Y = 0.f;
+	if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+	{
+		fOnNavPos_Y = m_pNavigationCom->Get_NaviHeight(vMyPos);
+	}
+	if (SCENE_LABORATORY_JINO != m_eNowSceneNum && fPrePos_y >= fOnNavPos_Y
 		&& fPos_y <= fOnNavPos_Y
-		&& (false == m_bOnLilyPad && (CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption()) || true == m_bOnLilyPad))
+		&& (false == m_bOnLilyPad && ( CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption()) || true == m_bOnLilyPad))
 	{
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y); 
 		Set_State_IdleStart(fDeltaTime);
@@ -7689,6 +7705,7 @@ void CPlayer::Targeting_Search()
 	// Check Nearest UniqMonster
 	_float			fCur_NearestDist = 10.f;
 	CGameObject*	pTarget_UniqMonster = nullptr;
+	m_pTargetingMonster_Transform = nullptr;
 	_Vector			vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	for (auto& UniqMonster : *UniqMonsters)
 	{
@@ -7727,6 +7744,7 @@ void CPlayer::Targeting_Loop()
 	{
 		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+
 		/*m_pMainCamera->Set_CameraLookWeight(0.9f);
 		m_pMainCamera->Set_CameraMoveWeight(0.9f);*/
 		return;
@@ -7987,9 +8005,9 @@ _float3 CPlayer::Check_MousePicking()
 void CPlayer::DebugingCode()
 {
 	// TEST CODE
-	_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
-	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
+//	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 	//
 
 
@@ -8362,12 +8380,19 @@ HRESULT CPlayer::SetUp_Components()
 	//
 
 
-	CNavigation::NAVIDESC NaviDesc;
-	NaviDesc.iCurrentIndex = 0;
-	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
-		return E_FAIL;
+	if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+	{
+		CNavigation::NAVIDESC NaviDesc;
+		NaviDesc.iCurrentIndex = 0;
+		if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
+	else
+	{
+		m_pNavigationCom = nullptr;
+	}
 
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
 
 	CHpUI::HPDesc HpDesc;

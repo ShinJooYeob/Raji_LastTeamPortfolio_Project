@@ -64,6 +64,8 @@ HRESULT CScene_Stage1::Initialize()
 
 	FAILED_CHECK(Ready_MapParticle());
 
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+
 	return S_OK;
 }
 
@@ -591,6 +593,12 @@ HRESULT CScene_Stage1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	CloseHandle(hFile);
 
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage1::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

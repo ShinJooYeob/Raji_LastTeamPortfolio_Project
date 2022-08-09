@@ -31,25 +31,25 @@ HRESULT CPauseUI::Initialize_Clone(void * pArg)
 	Ready_Layer_UI();
 
 	m_BtnContinueFont.fAngle = 0.f;
-	m_BtnContinueFont.szString = L"CONTINUE";
+	m_BtnContinueFont.szString = L"Continue";
 	m_BtnContinueFont.vPosition = _float2(590.f, 270.f);
 	m_BtnContinueFont.vColor = _float4(0.50f, 0.50f, 0.50f, 1.f);
 	m_BtnContinueFont.vFontScale = _float2(0.5f);
 
 	m_BtnGraphicFont.fAngle = 0.f;
-	m_BtnGraphicFont.szString = L"GAME GRAPHIC";
+	m_BtnGraphicFont.szString = L"Game Graphic";
 	m_BtnGraphicFont.vPosition = _float2(590.f, 315.f);
 	m_BtnGraphicFont.vColor = _float4(0.50f, 0.50f, 0.50f, 1.f);
 	m_BtnGraphicFont.vFontScale = _float2(0.5f);
 
 	m_BtnSoundFont.fAngle = 0.f;
-	m_BtnSoundFont.szString = L"GAME SOUND";
+	m_BtnSoundFont.szString = L"Game Sound";
 	m_BtnSoundFont.vPosition = _float2(590.f, 360.f);
 	m_BtnSoundFont.vColor = _float4(0.50f, 0.50f, 0.50f, 1.f);
 	m_BtnSoundFont.vFontScale = _float2(0.5f);
 
 	m_BtnExitFont.fAngle = 0.f;
-	m_BtnExitFont.szString = L"EXIT";
+	m_BtnExitFont.szString = L"Exit";
 	m_BtnExitFont.vPosition = _float2(605.f, 405.f);
 	m_BtnExitFont.vColor = _float4(0.50f, 0.50f, 0.50f, 1.f);
 	m_BtnExitFont.vFontScale = _float2(0.5f);

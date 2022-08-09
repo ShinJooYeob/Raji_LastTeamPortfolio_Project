@@ -32,6 +32,7 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
 
 
@@ -39,7 +40,7 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
 
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"Stage3_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage3_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
 	//
 	
 
@@ -68,7 +69,7 @@ _int CScene_Stage3::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE5), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LABORATORY_JINO), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
@@ -268,6 +269,11 @@ HRESULT CScene_Stage3::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 HRESULT CScene_Stage3::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_Boss_Rangda), &_float3(154.189f, 96.400f, 240.976f)));
+	return S_OK;
+}
+HRESULT CScene_Stage3::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 HRESULT CScene_Stage3::Ready_Layer_Terrain(const _tchar * pLayerTag)

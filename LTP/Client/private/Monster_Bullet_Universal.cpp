@@ -218,8 +218,15 @@ _int CMonster_Bullet_Universal::LateUpdate(_double dDeltaTime)
 
 _int CMonster_Bullet_Universal::Render()
 {
-	if (__super::Render() < 0)
-		return -1;
+	//if (__super::Render() < 0)
+	//	return -1;
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float4)));
+
+	_float DissolveValue = 0;
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);

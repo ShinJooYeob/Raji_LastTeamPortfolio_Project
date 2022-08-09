@@ -54,7 +54,11 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_bIsHit = false;
 
 	m_pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
-	m_vPlayerStartPos = ((CTransform*)(m_pPlayerObj->Get_Component(TAG_COM(Com_Transform))))->Get_MatrixState(CTransform::STATE_POS);
+	NULL_CHECK_RETURN(m_pPlayerObj, E_FAIL);
+	m_pPlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
+
+	m_vPlayerStartPos = (m_pPlayerTransform)->Get_MatrixState(CTransform::STATE_POS);
 	Set_IsOcllusion(true);
 
 	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -129,8 +133,7 @@ _int CSnake::Update(_double fDeltaTime)
 		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 	}
 
-	CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-	_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 	PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 
@@ -148,8 +151,7 @@ _int CSnake::Update(_double fDeltaTime)
 
 	if (m_bIsAttack && m_bIsLookAt)
 	{
-		CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-		_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+		_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 		PlayerPos.y = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 		_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -600,8 +602,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				_float3 FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
 
-				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+				_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 				PlayerPos.y = FindPos.y =  MonsterPos.y;
 
@@ -641,9 +642,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				_float3 MonsterPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				FindPos = (MonsterPos.XMVector() + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 20.f);
-
-				CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-				_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+				
+				_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
 
 				PlayerPos.y = FindPos.y = MonsterPos.y;
 

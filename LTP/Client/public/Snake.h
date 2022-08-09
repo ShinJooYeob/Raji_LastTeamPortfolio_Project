@@ -33,6 +33,8 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
 
+
+
 	CCollider*				m_pCollider = nullptr;
 	ATTACHEDESC				m_AttachedDesc;
 
@@ -71,8 +73,8 @@ private:
 	_Vector				m_vMapAngle;
 
 
-	CGameObject*		m_pPlayerObj;
-
+	CGameObject*		m_pPlayerObj = nullptr;
+	CTransform*			m_pPlayerTransform = nullptr;
 	_bool				TestBool = false;
 
 	// Particle

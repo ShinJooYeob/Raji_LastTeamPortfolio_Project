@@ -35,6 +35,8 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+
 	//
 	FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Maha.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
@@ -281,6 +283,12 @@ HRESULT CScene_Stage5::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

@@ -95,6 +95,7 @@ HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, 
 	tDesc.IsKinect = IsKinect;
 	
 	Safe_AddRef(tDesc.pRepelObjTransform);
+	Safe_AddRef(tDesc.pNavigation);
 
 	m_RepelObjectList.push_back(tDesc);
 
@@ -325,7 +326,10 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 		{
 
 			for (auto& RepelElement : m_RepelObjectList)
+			{
 				Safe_Release(RepelElement.pRepelObjTransform);
+				Safe_Release(RepelElement.pNavigation);
+			}
 			m_RepelObjectList.clear();
 
 
@@ -344,7 +348,10 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 				if (m_RepelObjectList.size() > 0)
 				{
 					for (auto& RepelElement : m_RepelObjectList)
+					{
 						Safe_Release(RepelElement.pRepelObjTransform);
+						Safe_Release(RepelElement.pNavigation);
+					}
 					m_RepelObjectList.clear();
 				}
 
@@ -409,7 +416,10 @@ HRESULT CCollisionMgr::Inspect_RepelGroup()
 	if (m_RepelObjectList.size() < 2)
 	{
 		for (auto& iter : m_RepelObjectList)
+		{
 			Safe_Release(iter.pRepelObjTransform);
+			Safe_Release(iter.pNavigation);
+		}
 		m_RepelObjectList.clear();
 
 		return S_FALSE;
@@ -427,6 +437,7 @@ HRESULT CCollisionMgr::Inspect_RepelGroup()
 		if (SourIter->pRepelObjTransform->Get_IsOwnerDead())
 		{
 			Safe_Release(SourIter->pRepelObjTransform);
+			Safe_Release(SourIter->pNavigation);
 			SourIter = m_RepelObjectList.erase(SourIter);
 			continue;
 		}
@@ -440,6 +451,7 @@ HRESULT CCollisionMgr::Inspect_RepelGroup()
 			if (DestIter->pRepelObjTransform->Get_IsOwnerDead())
 			{
 				Safe_Release(DestIter->pRepelObjTransform);
+				Safe_Release(DestIter->pNavigation);
 				DestIter = m_RepelObjectList.erase(DestIter);
 				continue;
 			}
@@ -480,7 +492,10 @@ HRESULT CCollisionMgr::Inspect_RepelGroup()
 	}
 
 	for (auto iter : m_RepelObjectList)
+	{
 		Safe_Release(iter.pRepelObjTransform);
+		Safe_Release(iter.pNavigation);
+	}
 	m_RepelObjectList.clear();
 
 
@@ -643,8 +658,11 @@ void CCollisionMgr::Free()
 	}
 
 
-	for (auto& RepelElement : m_RepelObjectList)	
+	for (auto& RepelElement : m_RepelObjectList)
+	{
 		Safe_Release(RepelElement.pRepelObjTransform);
+		Safe_Release(RepelElement.pNavigation);
+	}
 	m_RepelObjectList.clear();
 
 

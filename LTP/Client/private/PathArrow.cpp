@@ -120,7 +120,7 @@ HRESULT CPathArrow::SetUp_Components()
 
 HRESULT CPathArrow::SetUp_Etc()
 {
-	m_pTransformCom->Scaled_All(_float3(50.f));
+	m_pTransformCom->Scaled_All(_float3(1.5f));
 	Set_LimLight_N_Emissive(_float4(1.f), _float4(1.f));
 
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE3, TAG_LAY(Layer_Player)));
