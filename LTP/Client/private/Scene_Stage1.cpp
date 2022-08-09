@@ -34,7 +34,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
 
-	FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1_0.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
@@ -48,7 +48,10 @@ HRESULT CScene_Stage1::Initialize()
 
 	
 	////_float Length = _float3(-64, 64, -64).Get_Distance(_float3(128.f, -128.f, -256.f).XMVector());
-	//
+
+	//EH
+	FAILED_CHECK(Ready_TriggerObject(L"Stage1_InstanceMonsterTrigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));

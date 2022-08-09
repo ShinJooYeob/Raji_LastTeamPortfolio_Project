@@ -38,7 +38,7 @@ HRESULT CGear_Puzzle::Initialize_Clone(void * pArg)
 
 	SetUp_Gear();
 
-	m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, true);
+	//m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, true);
 
 	m_pGear[0]->Set_TurnOn(true);
 

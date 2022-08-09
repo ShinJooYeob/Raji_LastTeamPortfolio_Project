@@ -35,18 +35,16 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
 	
-	//
-	//								
+	//EH
+	FAILED_CHECK(Ready_TriggerObject(L"Stage2_InstanceMonsterTrigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
+
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_1.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_2.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_3.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_4.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_5.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_6.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_7.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_8.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//											
-	//											
+	//								
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
@@ -243,7 +241,7 @@ HRESULT CScene_Stage2::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Vayusura_Leader)));
 	
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber)));
 	
 	return S_OK;
 }
