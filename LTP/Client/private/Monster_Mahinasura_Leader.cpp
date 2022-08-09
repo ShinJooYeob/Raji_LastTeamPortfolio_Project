@@ -632,7 +632,7 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 #ifdef _DEBUG
 
 	// #DEBUG PatternSET
-	// m_iOncePattern = 5;
+	// m_iOncePattern = 2;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 10;
 #endif // _DEBUG
@@ -923,11 +923,113 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
+		{
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_4,
+				0,
+				0,
+				_float4(0.98f, 0.20f, 0.89f, 1),
+				_float4(0.98f, 0.20f, 0.89f, 1),
+				0,
+				_float3(0.30f, 1, 0.30f),
+				_float3(0.30f, 1.f, 0.30f),
+				0);
+
+			_Matrix mat = m_pTextureParticleTransform_RHand->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[2] * 3.0f;
+			testa.vFixedPosition = pos;
+
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
+		}
+	
+
+
+		{
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+				0,
+				0,
+				_float4(1, 1, 1, 1),
+				_float4(0.20f, 0.98f, 0.67f, 1),
+				1,
+				_float3(0.30f, 1, 0.30f),
+				_float3(0.30f, 1.f, 0.30f),
+				0);
+
+			testa.FollowingTarget = m_pTransformCom;
+
+			//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		}
+	
+
+
+		// 기모으기
+		{
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+				3,
+				0,
+				_float4(0.98f, 0.20f, 0.89f, 1),
+				_float4(1, 1, 1, 1),
+				1,
+				_float3(0.1f),
+				_float3(5),
+				1);
+
+			testa.FollowingTarget = m_pTransformCom;
+
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
+			testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+				0,
+				0,
+				_float4(1.0f, 0.18f, 0.02f, 1.0f),
+				_float4(0.96f, 0.18f, 0.11f, 0.5f),
+				2,
+				_float3(1, 3, 1).XMVector()*0.20f,
+				_float3(1, 3, 1).XMVector()*0.15f,
+				1);
+			testa.vEmissive_SBB = _float3(1, 1, 0);
+
+			testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+			testa.ePassID = InstancePass_OriginColor;
+			testa.ParticleStartRandomPosMin = _float3(-3, 0, -3);
+			testa.ParticleStartRandomPosMax = _float3(3, 2, 3);
+			testa.Particle_Power = 1;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[1] * 1.0f;
+			testa.vFixedPosition = pos;
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		}
+		
+
+
+		{
+			INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+				0.8f,
+				0.3f,
+				_float4(0.97f, 0.14f, 0.10f, 1.0f),
+				_float4(0.96f, 0.18f, 0.11f, 0.5f),
+				3,
+				_float3(1, 3, 1).XMVector()*0.80f,
+				_float3(1, 3, 1).XMVector()*0.35f,
+				2);
+			testa.vEmissive_SBB = _float3(1, 0.7f, 1);
+
+			testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+			testa.ePassID = InstancePass_OriginColor;
+			testa.ParticleStartRandomPosMin = _float3(-1,-0.5f,-1);
+			testa.ParticleStartRandomPosMax = _float3(2, 0, 2);
+			testa.Particle_Power = 10;
+
+			testa.FollowingTarget = m_pTransformCom;
+			GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+		}
+
 
 	}
 #endif // _DEBUG
@@ -1177,23 +1279,11 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_iSoundIndex++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.2f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.5)
 			{
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
-				instanceDesc.TotalParticleTime = 1.0f;
-				instanceDesc.EachParticleLifeTime = 0.5f;
-				instanceDesc.fDistortionNoisingPushPower = 5.0f;
-				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
-				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
-
-
+				
 				m_EffectAdjust++;
 			}
 
@@ -1202,6 +1292,52 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH1, m_pTextureParticleTransform_RHand);
 				
+				INSTPARTICLEDESC dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.01f,
+					0.3f,
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					3,
+					_float3(0.15f, 0.45f, 0.15f),
+					_float3(0.15f, 0.45f, 0.15f),
+					1);
+
+				// dust2_f.eParticleTypeID = InstanceEffect_Straight;
+				//	dust2_f.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	dust2_f.ePassID = InstancePass_BrightColor;
+
+
+				dust2_f.Particle_Power = 10;
+				dust2_f.ParticleStartRandomPosMin = _float3(0, 0, 0);
+				dust2_f.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
+				_Matrix mat = m_pTextureParticleTransform_RHand->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 2.0f;
+				dust2_f.vFixedPosition = pos;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_6,
+					0,
+					0.3f,
+					_float4(1, 1, 1, 1),
+					_float4(0.76f, 0.02f, 0.31f, 0),
+					1,
+					_float3(0.1f),
+					_float3(1.f),
+					1);
+
+				testa.ParticleStartRandomPosMin = _float3(0, 0, 0);
+				testa.ParticleStartRandomPosMax = _float3(0, 0, 0);
+				testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				 // testa.FollowingTarget = m_pTransformCom;
+				testa.SubPowerRandomRange_RUL = _float3(0, 1, 0);
+				testa.vFixedPosition = pos;
+				testa.Particle_Power = 10;
+				testa.iTextureLayerIndex = 15;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 			}
 
@@ -1259,19 +1395,33 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTextureParticleTransform_LHand);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_LHand;
-				instanceDesc.TotalParticleTime = 0.5f;
-				instanceDesc.EachParticleLifeTime = 0.5f;
-				instanceDesc.fDistortionNoisingPushPower = 5.0f;
-				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
-				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.01f,
+					0.3f,
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					3,
+					_float3(0.15f, 0.45f, 0.15f),
+					_float3(0.15f, 0.45f, 0.15f),
+					1);
+
+				// dust2_f.eParticleTypeID = InstanceEffect_Straight;
+				//	dust2_f.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	dust2_f.ePassID = InstancePass_BrightColor;
 
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				dust2_f.Particle_Power = 10;
+				dust2_f.ParticleStartRandomPosMin = _float3(0, -1, 0);
+				dust2_f.ParticleStartRandomPosMax = _float3(0, 1, 0);
+
+
+
+				_Matrix mat = m_pTextureParticleTransform_LHand->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 5.0f;
+				dust2_f.vFixedPosition = pos;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+
 				m_EffectAdjust++;
 			}
 
@@ -1279,18 +1429,31 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_R, m_pTextureParticleTransform_RHand);
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_RHand;
-				instanceDesc.TotalParticleTime = 0.5f;
-				instanceDesc.EachParticleLifeTime = 0.5f;
-				instanceDesc.fDistortionNoisingPushPower = 5.0f;
-				instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
-				instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
+				auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					0.01f,
+					0.3f,
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					_float4(0.98f, 0.20f, 0.89f, 1),
+					3,
+					_float3(0.15f, 0.45f, 0.15f),
+					_float3(0.15f, 0.45f, 0.15f),
+					1);
 
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				// dust2_f.eParticleTypeID = InstanceEffect_Straight;
+				//	dust2_f.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	dust2_f.ePassID = InstancePass_BrightColor;
+
+
+				dust2_f.Particle_Power = 10;
+				dust2_f.ParticleStartRandomPosMin = _float3(0, -1, 0);
+				dust2_f.ParticleStartRandomPosMax = _float3(0, 1, 0);
+
+				_Matrix mat = m_pTextureParticleTransform_RHand->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 3.5f;
+				dust2_f.vFixedPosition = pos;
+
+				GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+
 
 				m_EffectAdjust++;
 			}
@@ -1338,17 +1501,6 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_CASH3, m_pTextureParticleTransform_Tail);
 
 
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.FollowingTarget = m_pTextureParticleTransform_Tail;
-				instanceDesc.TotalParticleTime = 1.0f;
-				instanceDesc.EachParticleLifeTime = 0.3f;
-				instanceDesc.TargetColor = _float4(1.0f, 0.23f, 0.02f, 0.8f);
-				instanceDesc.TargetColor2 = _float4(1);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 
 				m_EffectAdjust++;
@@ -1357,6 +1509,31 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			if (m_EffectAdjust == 1 && PlayRate >= 0.4f)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
+
+
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+					0.5f,
+					0.45f,
+					_float4(0.97f, 0.14f, 0.10f, 1.0f),
+					_float4(1),
+					3,
+					_float3(1, 1, 1).XMVector()*0.5f,
+					_float3(1, 1, 1).XMVector()*0.5f,
+					//_float3(1, 3, 1).XMVector()*0.5f,
+					//_float3(1, 3, 1).XMVector()*0.35f,
+					2);
+				testa.vEmissive_SBB = _float3(1, 0.7f, 1);
+
+				testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+				testa.ePassID = InstancePass_OriginColor;
+				testa.ParticleStartRandomPosMin = _float3(-1, -0.5f, -1);
+				testa.ParticleStartRandomPosMax = _float3(2, 0, 2);
+				testa.Particle_Power = 10;
+				testa.vPowerDirection = _float3(1, 3, 1);
+
+				testa.FollowingTarget = m_pTransformCom;
+				GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
 
 				m_EffectAdjust++;
 			}
@@ -1404,25 +1581,59 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 				m_dAcceleration = 1;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.1f)
+			if (m_EffectAdjust == 0 )
 			{
 
-			auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Suck);
-			instanceDesc.FollowingTarget = m_pTransformCom;
-			instanceDesc.TotalParticleTime = 1.8f;
-			instanceDesc.EachParticleLifeTime = 0.5f;
-			instanceDesc.fDistortionNoisingPushPower = 5.0f;
-			instanceDesc.TargetColor = _float4(1.0f, 0, 0, 0.8f);
-			instanceDesc.TargetColor2 = _float4(1.0f, 0.3f, 0, 0.8f);
-			instanceDesc.ParticleStartRandomPosMin= _float3(-3);
-			instanceDesc.ParticleStartRandomPosMax= _float3(3);
-			instanceDesc.ParticleSize = _float3(0.3f);
-			instanceDesc.ParticleSize2 = _float3(0.1f);
-			instanceDesc.bEmissive = true;
-			instanceDesc.vEmissive_SBB = _float3(1);
-			instanceDesc.ColorChageFrequency = 4;
+				INSTPARTICLEDESC instanceDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::TEXTURE_EFFECTJ_Universal_Suck,
+					1.8f,
+					0.5f,
+					_float4(1.0f, 0.3f, 0, 0.8f),
+					_float4(1, 0, 0, 0.8f),
+					4,
+					_float3(0.3f),
+					_float3(0.1f),
+					1);
 
-			GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+				instanceDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+				instanceDesc.Particle_Power = 3.0f;
+
+				// instanceDesc.FollowingTarget = m_pTransformCom;
+				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[1] * 1.0f;
+				instanceDesc.vFixedPosition = pos;
+
+
+				instanceDesc.ParticleStartRandomPosMin = _float3(-3,-1,-3);
+				instanceDesc.ParticleStartRandomPosMax = _float3(3, 1, 3);
+				instanceDesc.bEmissive = true;
+				instanceDesc.vEmissive_SBB = _float3(1);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
+				 instanceDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+					2,
+					0,
+					 _float4(0, 0, 0, 1),
+					_float4(0.98f, 0.36f, 0.29f, 1),
+					1,
+					_float3(1.0f),
+					_float3(3.0f),
+					1);
+
+				 instanceDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				 instanceDesc.FollowingTarget = m_pTransformCom;
+
+				 instanceDesc.iTextureLayerIndex = 45;
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+				instanceDesc.TargetColor = _float4(0.98f, 0.36f, 0.29f, 1);
+				instanceDesc.TargetColor2 = _float4(0, 0, 0, 1);
+				//
+				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+
+
+
 			m_EffectAdjust++;
 			}
 
@@ -1437,23 +1648,43 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 			{
 
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL2, m_pTextureParticleTransform_Tail);
-				
-				auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Universal_Ball);
-				instanceDesc.vFixedPosition = m_pTextureParticleTransform_Tail->Get_MatrixState_Float3(CTransform::STATE_POS);
-				instanceDesc.TotalParticleTime = 1.0f;
-				instanceDesc.EachParticleLifeTime = 0.5f;
-				instanceDesc.TargetColor = _float4(0.0f, 0.03f, 0.02f, 0.8f);
-				instanceDesc.TargetColor2 = _float4(1);
-				instanceDesc.bEmissive = true;
-				instanceDesc.vEmissive_SBB = _float3(1);
-				instanceDesc.ColorChageFrequency = 4;
-
-				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 
 				m_EffectAdjust++;
 			}
 
-			
+			if (m_EffectAdjust == 3 && PlayRate >= 0.82)
+			{
+				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+					0,
+					1.0f,
+					_float4(1.0f, 0.18f, 0.02f, 1.0f),
+					_float4(0.96f, 0.18f, 0.11f, 0.5f),
+					2,
+					_float3(1, 3, 1).XMVector()*0.2f,
+					_float3(1 * 0.3f),
+				//	_float3(1, 3, 1).XMVector()*0.10f,
+					1);
+				testa.vEmissive_SBB = _float3(1, 1, 0);
+
+				testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+				testa.ePassID = InstancePass_OriginColor;
+				testa.ParticleStartRandomPosMin = _float3(-2, -0.5f, -2);
+				testa.ParticleStartRandomPosMax = _float3(2, 1, 2);
+				testa.Particle_Power = 3.5f;
+				testa.vPowerDirection = _float3(1, 2, 1);
+
+				_Matrix mat = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+				_Vector pos = mat.r[3];
+				testa.vFixedPosition = pos;
+				GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
+				//testa.ParticleSize = _float3(1*0.3f);
+				//testa.ParticleSize2 = _float3(1*0.3f);
+
+				//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+
+				m_EffectAdjust++;
+			}
 			break;
 		}
 		case 22: {

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\UtilityMgr.h"
+#include "..\public\AssimpCreateMgr.h"
 #include "MainApp.h"
 #include"SkillUI.h"
 #include "Camera_Main.h"
@@ -34,6 +35,9 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 
 	m_pDissolveTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, L"Prototype_Texture_Dissolve");
 	NULL_CHECK_RETURN(m_pDissolveTexture, E_FAIL);
+
+	// PathReLoad
+	GetSingle(CAssimpCreateMgr)->Save_To_Effect();
 
 	FAILED_CHECK(Ready_Particles());
 

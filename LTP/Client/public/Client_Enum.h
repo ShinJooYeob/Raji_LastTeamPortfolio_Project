@@ -1266,7 +1266,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_BG_Mountain_1,
 	Prototype_Mesh_BG_Mountain_2,
 	Prototype_Mesh_BG_Mountain_3,
-	
+
 #pragma endregion BossMesh
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -2245,6 +2245,20 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_SM_windMesh_b,
 	Prototype_Mesh_SM_windSmoke,
 	Prototype_Mesh_SM_Wing_T_01,
+
+		Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader,
+		Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion,
+		Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Purple,
+		Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Bomber,
+		Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Landmine,
+		Prototype_Mesh_SM_Ninjasura_Knife,
+		Prototype_Mesh_SM_sinkhole,
+		Prototype_Mesh_SM_Gadasura_Terrain_Bullet,
+
+
+
+
+
 	Prototype_Mesh_KurtzpelEnd,
 
 
@@ -6660,6 +6674,30 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 	case Prototype_Mesh_SM_Wing_T_01:
 		return TEXT("SM_Wing_T_01.fbx");
+		break;
+	case Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader:
+		return TEXT("Monster_Bullet_Vayusura_Leader.fbx");
+		break;
+	case Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion:
+		return TEXT("Monster_Bullet_Tezabsura_Minion.fbx");
+		break;
+	case Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Purple:
+		return TEXT("Monster_Bullet_Tezabsura_Purple.fbx");
+		break;
+	case Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Bomber:
+		return TEXT("Monster_Bullet_Tezabsura_Bomber.fbx");
+		break;
+	case Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Landmine:
+		return TEXT("Monster_Bullet_Tezabsura_Landmine.fbx");
+		break;
+	case Prototype_Mesh_SM_Ninjasura_Knife:
+		return TEXT("Ninjasura_Knife.fbx");
+		break;
+	case Prototype_Mesh_SM_sinkhole:
+		return TEXT("sinkhole.fbx");
+		break;
+	case Prototype_Mesh_SM_Gadasura_Terrain_Bullet:
+		return TEXT("Gadasura_Terrain_Bullet.fbx");
 		break;
 	case Prototype_Mesh_KurtzpelEnd:
 		return TEXT("SM_Wing_T_01.fbx");

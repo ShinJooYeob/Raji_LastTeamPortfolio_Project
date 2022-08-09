@@ -542,7 +542,7 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-//	m_iOncePattern = 0;
+//	m_iOncePattern = 2;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 0;
 
