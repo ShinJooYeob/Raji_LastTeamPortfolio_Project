@@ -2609,7 +2609,7 @@ void CPlayer::Move_NotTurn(EINPUT_MOVDIR eMoveDir, _double fDeltaTime, _bool bOn
 	}
 	else
 	{
-		m_pTransformCom->MovetoDir(vMovDir, fMoveRate /*m_pNavigationCom*/);
+		m_pTransformCom->MovetoDir(vMovDir, fMoveRate, m_pNavigationCom);
 	}
 
 	m_fMovDir = XMVector3Normalize(vMovDir);

@@ -407,6 +407,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_UI_UI,
 	Prototype_Object_SkillUI,
 	Prototype_Object_PauseUI,
+	Prototype_Object_GraphicUI,
+	Prototype_Object_SoundUI,
 	Prototype_Object_LobbyUI,
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
@@ -744,6 +746,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_PauseUI:
 		return TEXT("Prototype_Object_PauseUI");
+
+	case Prototype_Object_GraphicUI:
+		return TEXT("Prototype_Object_GraphicUI");
+
+	case Prototype_Object_SoundUI:
+		return TEXT("Prototype_Object_SoundUI");
 		
 	case Prototype_Object_LobbyUI:
 		return TEXT("Prototype_Object_LobbyUI");

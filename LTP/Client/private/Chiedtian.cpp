@@ -197,6 +197,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			if(m_bIsAtaackAimEnd)
 				m_bIsHit = true;
 		}
+
 		if (m_fHP <= m_fHP / 2.f)
 		{
 			if (m_bIsAtaackAimEnd)
@@ -341,21 +342,21 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_pModel->Change_AnimIndex(4);
 		}
-		////점프
-		//if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
-		//{
-		//	m_bIsAttack = true;
-		//	m_pModel->Change_AnimIndex_ReturnTo(10, 1);
-		//}
-		////일반 공격
-		//else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
-		//{
-		//	m_bIsAttack = true;
-		//	m_bIsBasicAttack = true;
+		//점프
+		if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
+		{
+			m_bIsAttack = true;
+			m_pModel->Change_AnimIndex_ReturnTo(10, 1);
+		}
+		//일반 공격
+		else if (m_fAttackCoolTime <= 0 && m_fRange > 2.f && m_fRange < 8.f && !m_bIsAttack && !m_bIsHit)
+		{
+			m_bIsAttack = true;
+			m_bIsBasicAttack = true;
 
-		//	m_pModel->Change_AnimIndex_ReturnTo(5, 1);
+			m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
-		//}
+		}
 		//스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
@@ -553,7 +554,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			iRandom = 0;
+			//iRandom = 1;
 
 			switch (iRandom)
 			{
