@@ -839,8 +839,6 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
-
-
 		
 	}
 
@@ -1788,6 +1786,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 1 && PlayRate >= 0.4245)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
+
 
 				{
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,

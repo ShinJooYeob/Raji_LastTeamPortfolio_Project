@@ -21,6 +21,8 @@ extern _bool g_bShowMouse;
 #define MYCOLORA(r,g,b)			_float4(0.rf,0.gf,0.bf,1.f)
 #define MYCOLOR(r,g,b,a)		_float4(r,g,b,a)
 
+#define  NONNOISE	388
+#define  NONNMASK	50
 
 namespace Client {};
 using namespace Client;

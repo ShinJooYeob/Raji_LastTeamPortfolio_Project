@@ -2,8 +2,6 @@
 #include "..\public\PartilceCreateMgr.h"
 #include "..\public\NonInstanceMeshEffect_TT.h"
 
-#define  NONNOISE	388
-#define  NONNMASK	50
 IMPLEMENT_SINGLETON(CPartilceCreateMgr);
 
 // #define RIMCOLOR(x,x,x);
@@ -15,7 +13,7 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 //	Mesh Effect USE
 
 	// USE LOAD
-		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
+			STATIC_EFFECTLOAD(Prototype_Mesh_circle);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
@@ -79,9 +77,14 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightningBolt_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_D_Plane);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_IceTrap_Ice);
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_03);
 
 
 
+		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Purple);
@@ -91,10 +94,6 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
 
-		MS_Tornado_Cyl_2side_03
-		SM_4E_IceShards_01
-		SM_4E_IceShards_02
-		SM_4E_IceShards_03
 
 	*/
 
@@ -3986,6 +3985,76 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
 
+	if (type == MESHEFFECT_MONSTER_GL_Attack2)
+	{
+		// #TODO 여기부터
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SP_End_X_L;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.5f;
+		MeshDesc.fAppearTime = 0.25f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 419;
+		MeshDesc.MaskTextureIndex = 93;
+		MeshDesc.NoiseTextureIndex = 105;
+		// Noise
+		MeshDesc.noisingdir = _float2(1, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(1.00f, 0.44f, 0.11f, 1.f);
+		MeshDesc.vLimLight = _float4(1, 0, 0, 1.f);
+		MeshDesc.vEmissive = _float4(0.1f, 0, 0, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(0.5f, 1, 0);
+		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
+		MeshDesc.vSize = _float3(1.f);
+
+		//	MeshDesc.vSize = _float3(5,10,5);
+
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 150, -0);
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0.0f;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, -0, -0);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 2;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+	}
+
 	if (type == MESHEFFECT_MONSTER_GL_Attack0) // wind
 	{
 		// Mesh
@@ -4050,6 +4119,93 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 	}
+
+	if (type == MESHEFFECT_MONSTER_GL_Cash0)
+	{
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_sinkhole;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.7f;
+		MeshDesc.fAppearTime = 0.0f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 276;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = 357;
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.1f, 0.1f, 0.5f, 1.f);
+		MeshDesc.vEmissive = _float4(0);
+
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(-0.0f, 0, 3.0f);
+		MeshDesc.vSize = _float3(1);
+
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Up;
+		//MeshDesc.MoveSpeed = 10.0f;d
+		//AddDesc.AccMoveSpeed = 110.0f;
+
+		// Rotwww
+
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		//	AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = true;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+		MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+
+
+		MeshDesc.vSize = _float3(10);
+		MeshDesc.iDiffuseTextureIndex = 366;
+		MeshDesc.vLimLight = _float4(0.98f, 0.07f, 0.01f, 0.0f);
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		AddDesc.DealyTime = 0.1f;
+		MeshDesc.fMaxTime_Duration = 0.6f;
+		MeshDesc.vPosition = _float3(-3.0f, 0, 3.0f);
+		MeshDesc.vSize = _float3(5);
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		MeshDesc.vPosition = _float3(3.0f, 0, 3.0f);
+		MeshDesc.vSize = _float3(5);
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
 
 #pragma endregion MONSTER_GL
 

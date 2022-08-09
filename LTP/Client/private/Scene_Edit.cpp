@@ -7366,13 +7366,9 @@ HRESULT CScene_Edit::Widget_SaveLoadCamAction(_double fDeltatime)
 
 HRESULT CScene_Edit::Update_HeightMap(_double fDeltatime)
 {
-
-
-
 	FAILED_CHECK(Widget_CreateDeleteHeightMap(fDeltatime));
 	
 	Make_VerticalSpacing(5);
-
 
 	return S_OK;
 }

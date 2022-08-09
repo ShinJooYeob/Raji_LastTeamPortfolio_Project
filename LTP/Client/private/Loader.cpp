@@ -381,7 +381,16 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_01_2_Trail_X);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightningBolt_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_D_Plane);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_IceTrap_Ice);
 
+		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_03);
+
+
+
+		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Purple);
@@ -390,6 +399,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ninjasura_Knife);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
+
 
 
 
@@ -1550,12 +1560,12 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 	//// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
-
-	 for (_uint i = 0; i < SCENE_END; i++)
-	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+//	FAILED_CHECK(Load_AllMonster());
+//	FAILED_CHECK(Load_AllBoss());
+//	FAILED_CHECK(Load_AllDynamicMapObject());
+//
+//	 for (_uint i = 0; i < SCENE_END; i++)
+//	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 

@@ -2064,7 +2064,6 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 		{
 			obj->Set_IsDead();
 		}
-
 	}
 
 	
