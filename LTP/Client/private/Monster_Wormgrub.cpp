@@ -143,7 +143,8 @@ void CMonster_Wormgrub::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedObj->Take_Damage(this, 1.f,XMVector3Normalize(XMVectorSetW(g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER) -
+				pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector(), 0)), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 

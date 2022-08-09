@@ -48,7 +48,7 @@ private:
 	CGear*				m_pGear[CGear::GEAR_END];
 
 
-	_uint				m_iTriggerOn = CGear_Puzzle::GEAR_IDLE;
+	_uint				m_iTriggerOn = CGear_Puzzle::GEAR_START;
 	_uint				m_GearNumber = 1;
 
 	_bool				m_bDifferentDirectiOn[CGear::GEAR_END] = {false};

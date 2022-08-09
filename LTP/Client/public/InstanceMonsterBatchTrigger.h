@@ -41,6 +41,7 @@ public:
 
 public:
 	_bool							Get_MonsterAllDie() {return m_bMonsterAllDie;}
+	void							Set_MonsterAllDie(_bool bMonsterAllDie) { m_bMonsterAllDie = bMonsterAllDie; }
 
 private:
 	HRESULT							SetUp_Components();

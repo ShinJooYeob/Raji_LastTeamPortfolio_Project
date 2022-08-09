@@ -7,6 +7,8 @@
 #include "MapObject.h"
 #include "StaticInstanceMapObject.h"
 #include "Transform.h"
+#include "TriggerObject.h"
+#include "MonsterBatchTrigger.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -38,6 +40,14 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Maha.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
 
 
+	//EH
+	FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
@@ -202,8 +212,8 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(101.544662f, 15.2501860f, 34.5041428f, 1.f), XMVectorSet(-0.0105530452f, -0.610475004f, 0.791965544f, 0.f));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(100.f, 30.f, 276.048f)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, 38.881f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(100.f, 30.f, 276.048f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, 38.881f)));
 	
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
@@ -416,6 +426,71 @@ HRESULT CScene_Stage5::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 
 
 
+
+
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+	//../bin/Resources/Data/ParicleData/TextureParticle/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+	lstrcat(szFullPath, szTriggerDataName);
+
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+
+	_int iIDLength = 0;
+
+
+	_float4x4 WorldMat = XMMatrixIdentity();
+	_float4x4 ValueMat = XMMatrixIdentity();
+	_tchar	 eObjectID[MAX_PATH] = L"";
+
+	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_MonsterBatchTrigger)));
+	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+	NULL_CHECK_RETURN(pMonsterBatchTrigger, E_FAIL);
+
+	CTransform * pTrigTransform = (CTransform*)pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+	//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+
+	pTrigTransform->Set_Matrix(WorldMat);
+	pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+
+
+	while (true)
+	{
+		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+
+		if (0 == dwByte) break;
+		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
+	}
+
+
+	CloseHandle(hFile);
 
 
 

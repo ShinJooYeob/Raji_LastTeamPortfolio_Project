@@ -42,6 +42,13 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
+
+	//EH
+	FAILED_CHECK(Ready_TriggerObject(L"Stage7_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage7_MonsterTrigger_1.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage7_MonsterTrigger_2.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage7_MonsterTrigger_3.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 	FAILED_CHECK(Ready_PostPorcessing());

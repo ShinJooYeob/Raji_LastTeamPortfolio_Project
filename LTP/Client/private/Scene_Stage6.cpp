@@ -7,6 +7,7 @@
 #include "EnvMappedWater.h"
 
 #include "StaticInstanceMapObject.h"
+#include "MonsterBatchTrigger.h"
 
 
 #include "physX/PhyxSampleTest.h"
@@ -44,6 +45,18 @@ HRESULT CScene_Stage6::Initialize()
 
 //	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
 
+	//EH
+	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//
 
 	
 	// Assimp Test
@@ -346,9 +359,9 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 65.279f, 2.043f, 325.343f
 	//_float3(151.975f, -22.4f, 377.3486f)	//Gear_Puzzle
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -564,6 +577,68 @@ HRESULT CScene_Stage6::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 		pObject->After_Initialize();
 
 	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+	//../bin/Resources/Data/ParicleData/TextureParticle/
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
+	lstrcat(szFullPath, szTriggerDataName);
+
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+
+	_int iIDLength = 0;
+
+
+	_float4x4 WorldMat = XMMatrixIdentity();
+	_float4x4 ValueMat = XMMatrixIdentity();
+	_tchar	 eObjectID[MAX_PATH] = L"";
+
+	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
+
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_MonsterBatchTrigger)));
+	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+	NULL_CHECK_RETURN(pMonsterBatchTrigger, E_FAIL);
+
+	CTransform * pTrigTransform = (CTransform*)pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
+
+	//////////////////////////////////////////////////////////////////////////메트릭스 넣기
+
+	pTrigTransform->Set_Matrix(WorldMat);
+	pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
+
+
+	while (true)
+	{
+		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+
+		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+
+		if (0 == dwByte) break;
+		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
+	}
+
 
 	CloseHandle(hFile);
 

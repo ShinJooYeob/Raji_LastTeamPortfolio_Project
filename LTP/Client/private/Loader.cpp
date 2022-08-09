@@ -692,6 +692,10 @@ HRESULT CLoader::Load_Scene_Stage2(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
 
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
 	FAILED_CHECK(Load_AllMonster());
 
 	FAILED_CHECK(Load_AllDynamicMapObject());
@@ -703,10 +707,6 @@ HRESULT CLoader::Load_Scene_Stage2(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 #pragma  region PROTOTYPE_GAMEOBJECT
 
 #pragma endregion
-
-	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_Texture_Monster_Bullet),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
 
 
 
@@ -755,6 +755,13 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Wasp), TransformMatrix);
+
+
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE3, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	FAILED_CHECK(Load_AllMonster());
 
 #pragma endregion
 
@@ -813,6 +820,16 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(0.f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TransformMatrix);
+
+
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+
+	FAILED_CHECK(Load_AllMonster());
+
+	FAILED_CHECK(Load_AllDynamicMapObject());
 
 
 #pragma  region PROTOTYPE_GAMEOBJECT
@@ -876,6 +893,11 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TransformMatrix);
 
 
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	FAILED_CHECK(Load_AllMonster());
 
 #pragma endregion
 
@@ -1275,6 +1297,11 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 		return E_FAIL;
 
 
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+
 	//if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TEXT("Prototype_Component_Navigation"),
 	//	CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/Test_Jino.dat")))))
 	//	return E_FAIL;
@@ -1411,8 +1438,14 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-	FAILED_CHECK(Load_AllBoss());
 
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+
+	FAILED_CHECK(Load_AllBoss());
+	FAILED_CHECK(Load_AllMonster());
 	FAILED_CHECK(Load_MapMesh(SCENE_STAGE7));
 
 #pragma endregion
@@ -1542,7 +1575,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	}
 
 
-	//// MERGE //
+	////// MERGE //
 	//FAILED_CHECK(Load_AllMonster());
 	//FAILED_CHECK(Load_AllBoss());
 	//FAILED_CHECK(Load_AllDynamicMapObject());
@@ -2039,6 +2072,7 @@ HRESULT CLoader::Load_AllMonster()
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Texture_Bullet), CMonster_Texture_Bullet::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Weapon_Universal), CMonster_Weapon_Universal::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Bullet_Plat), CMonster_Plat_Bullet::Create(m_pDevice, m_pDeviceContext)));
+
 
 #pragma endregion
 

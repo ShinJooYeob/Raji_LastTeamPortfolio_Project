@@ -35,7 +35,7 @@ class CMonster_Wasp final : public CMonster
 	typedef struct tagInstanceInfo
 	{
 		_float4x4 fValueMat;  //m[0][0] : MeshInstanceMonsterEnum, m[0][1] : Monster Max Size, m[0][2] : Cell Max Size, m[0][3] : Cell Count,
-							//m[1][0] : Life Count, m[1][1] : Monster Hit Count,
+							//m[1][0] : Life Count, m[1][1] : Monster Hit Count, m[1][2] : TriggerDistance,
 							//m[2][0]~m[2][2] : X,Y,Z
 		_float4x4 fSubValueMat;
 		void*		Object = nullptr;

@@ -34,6 +34,7 @@ public:
 	}
 
 	void		Set_Hit() { m_bIsHit = true; }
+	virtual	void	Set_IsDead()override;
 
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
