@@ -458,6 +458,14 @@ typedef struct tagEditSceneUI {
 	ID3D11ShaderResourceView* SRV = nullptr;
 }EDITUI;
 
+typedef struct tagMiniGameBulidingRenderTarget
+{
+	_float4							vClearColor = _float4(0);
+	ID3D11Texture2D*				pTexture2D = nullptr;
+	ID3D11RenderTargetView*			pRTV = nullptr;
+	ID3D11ShaderResourceView*		pSRV = nullptr;
+}MGBTARGET;
+
 
 // 전역화함
 

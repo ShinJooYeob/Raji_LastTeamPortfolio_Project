@@ -92,6 +92,10 @@ public:
 	void Set_Renderer(CRenderer* pRenderer);
 
 public:
+	CVIBuffer_Rect*			Get_VIBuffer_Rect() {	return m_pVIBufferRect;	};
+	CShader*				Get_RectShader() { return m_pRectShader; };
+
+public:
 	_int* Get_FireSkillPointArry() { return m_FireSkillPoint; }
 	_int* Get_IceSkillPointArry() { return m_IceSkillPoint; }
 	_int* Get_LightningSkillPointArry() { return m_LightningSkillPoint; }
@@ -114,6 +118,9 @@ private:
 	CTexture*				m_pDissolveTexture = nullptr;
 
 	SCDDESC				m_pLoadingSCD;
+
+	CVIBuffer_Rect*			m_pVIBufferRect = nullptr;
+	CShader*				m_pRectShader = nullptr;
 
 
 

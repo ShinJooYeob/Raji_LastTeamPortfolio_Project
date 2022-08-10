@@ -147,6 +147,13 @@ HRESULT CTexture::Insert_Texture_On_BindedLayer(_uint iIndex,  _tchar * szFilePa
 	return m_pBindedTextureLayer->Add_Model_Texture(iIndex,szFilePath);
 }
 
+ID3D11ShaderResourceView * CTexture::Get_ShaderResourceView(_uint iTextureIndex)
+{
+	NULL_CHECK_BREAK(m_pBindedTextureLayer);
+
+	return m_pBindedTextureLayer->Get_ShaderResourceView(iTextureIndex);
+}
+
 
 
 

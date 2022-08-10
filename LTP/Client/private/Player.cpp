@@ -8017,6 +8017,17 @@ void CPlayer::DebugingCode()
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
+
+			
+
+			{
+
+
+			}
+
+
+
+			/*
 			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
 			INSTPARTICLEDESC arrDesc[3];
@@ -8043,7 +8054,7 @@ void CPlayer::DebugingCode()
 			{
 				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 			}
-
+			*/
 
 			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
@@ -9193,6 +9204,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 
 	}
+
 #pragma endregion
 	return S_OK;
 }

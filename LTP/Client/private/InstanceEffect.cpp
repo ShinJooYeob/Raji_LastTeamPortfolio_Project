@@ -841,7 +841,10 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			part._iIndex = i;
 
 			m_vecParticleAttribute.push_back(part);
@@ -864,7 +867,11 @@ HRESULT CInstanceEffect_Ball::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 			part._iIndex = i;
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -959,7 +966,10 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			part._iIndex = i;
 			m_vecParticleAttribute.push_back(part);
 		}
@@ -978,7 +988,10 @@ HRESULT CInstanceEffect_Straight::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 			part._iIndex = i;
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1076,7 +1089,10 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
 			part._iIndex = i;
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1095,7 +1111,10 @@ HRESULT CInstanceEffect_Cone::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1195,7 +1214,10 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 
 			part._iIndex = i;
 			ResetParticle(&part);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1214,7 +1236,10 @@ HRESULT CInstanceEffect_Spread::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1347,7 +1372,10 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 			part._iIndex = i;
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1366,7 +1394,10 @@ HRESULT CInstanceEffect_Fountain::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[0])), vRight);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1487,7 +1518,10 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 			part._iIndex = i;
 			part._LocalMatirx = XMMatrixIdentity();
 			ResetParticle(&part);
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}
@@ -1507,7 +1541,10 @@ HRESULT CInstanceEffect_Suck::Initialize_Child_Clone()
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[1])), vUp);
 			XMStoreFloat4(((_float4*)(&part._LocalMatirx.m[2])), vLook);
 
-			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			if (m_tInstanceDesc.TempBuffer_1.y == 0)
+			{
+				part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+			}
 			m_vecParticleAttribute.push_back(part);
 		}
 	}

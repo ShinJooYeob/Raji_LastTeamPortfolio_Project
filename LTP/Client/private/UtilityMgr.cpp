@@ -36,6 +36,14 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	m_pDissolveTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, L"Prototype_Texture_Dissolve");
 	NULL_CHECK_RETURN(m_pDissolveTexture, E_FAIL);
 
+
+	m_pVIBufferRect = (CVIBuffer_Rect*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect));
+	NULL_CHECK_RETURN(m_pVIBufferRect, E_FAIL);
+
+	m_pRectShader = (CShader*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT));
+	NULL_CHECK_RETURN(m_pRectShader, E_FAIL);
+
+
 	// PathReLoad
 	GetSingle(CAssimpCreateMgr)->Save_To_Effect();
 
@@ -761,6 +769,11 @@ void CUtilityMgr::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pDissolveTexture);
+
+
+	Safe_Release(m_pVIBufferRect);
+	Safe_Release(m_pRectShader);
+
 	
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

@@ -221,6 +221,52 @@ _int CChiedtian::Update(_double fDeltaTime)
 		{
 			m_fSpinTime -= (_float)fDeltaTime;
 
+		
+			static _double ParticleTimer = 0;
+			ParticleTimer += fDeltaTime;
+			if (ParticleTimer > 0.2f)
+			{
+				ParticleTimer = 0;
+
+
+				CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+				INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+				tDesc.FollowingTarget = nullptr;
+				tDesc.PowerRandomRange = _float2(-tDesc.PowerRandomRange.y, tDesc.PowerRandomRange.y);
+
+				m_vecNonInstMeshDesc[6].vLookDir = pUtil->RandomFloat3(-1, 1).Get_Nomalize();
+				m_vecNonInstMeshDesc[7].vLookDir = m_vecNonInstMeshDesc[8].vLookDir =
+					m_vecNonInstMeshDesc[6].vLookDir.Get_Cross(m_vecNonInstMeshDesc[6].vLookDir.Get_Cross(XMVectorSet(0, 1, 0, 0)));
+
+				m_vecNonInstMeshDesc[6].SizeSpeed = 1.8f;
+				m_vecNonInstMeshDesc[7].SizeSpeed = 9.36f;
+				m_vecNonInstMeshDesc[8].SizeSpeed = 5.4f;
+
+				tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+					m_vecNonInstMeshDesc[8].vPosition =
+
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					XMVector3Normalize(
+						m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1.f, 1.f) +
+						m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * pUtil->RandomFloat(0.25f, 0.5f) +
+						m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * pUtil->RandomFloat(-1.f, 1.f)) * 10.f;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+
+
+				m_vecNonInstMeshDesc[6].vLookDir = _float3(0, 0, 1);
+				m_vecNonInstMeshDesc[7].vLookDir = _float3(0, 1, 0);
+				m_vecNonInstMeshDesc[8].vLookDir = _float3(0, 1, 0);
+			}
+
 			if (m_fSpinTime > 4.f)
 			{
 				if (m_fSpinSpeed > 10.f)
@@ -233,6 +279,9 @@ _int CChiedtian::Update(_double fDeltaTime)
 					m_fSpinSpeed += (_float)fDeltaTime* 5.f;
 					m_fAnimmultiple = (m_fSpinSpeed *0.1f) + 0.4f;
 				}
+
+			
+
 			}
 			else if (m_fSpinTime < 4.f)
 			{
@@ -357,13 +406,13 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 		}
-		//스킬 공격
+		///////////////////////////스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
 			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			//iRandom = 0;
+			iRandom = 0;
 
 			switch (iRandom)
 			{
@@ -984,6 +1033,40 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 
 
 		}
+		//3
+		{
+
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_15");
+			tDesc.FollowingTarget = nullptr;
+			tDesc.ePassID = InstancePass_AllDistortion_Bright; 
+			tDesc.EachParticleLifeTime = 0.35f;
+			m_vecTexInstDesc.push_back(tDesc);
+
+
+		}
+		//4
+		{
+
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_16");
+			tDesc.FollowingTarget = nullptr;
+			tDesc.vEmissive_SBB = _float3(0);
+			m_vecTexInstDesc.push_back(tDesc);
+
+
+		}
+		//5
+		{
+
+			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_18");
+			tDesc.FollowingTarget = m_pFireParticleTransformCom;
+			tDesc.iFollowingDir = FollowingDir_Look;
+			tDesc.TotalParticleTime = 10.f;
+			//tDesc.TargetColor.w = 10.f;
+			//tDesc.vEmissive_SBB = _float3(tDesc.vEmissive_SBB.x * 0.5f, 0, 0);
+			m_vecTexInstDesc.push_back(tDesc);
+
+
+		}
 	}
 
 	{
@@ -1206,6 +1289,118 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 			//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 			//	TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 		}
+		//6
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 33.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(0, 0, 1);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+
+			tNIMEDesc.noisingdir = _float2(1, 0);
+
+			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+			//m_tSubFlameDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.NoiseTextureIndex = 6;
+			tNIMEDesc.MaskTextureIndex = 81;
+			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			//tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 0.1f);
+			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 1080.f;
+
+			tNIMEDesc.SizeSpeed = 1.5f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+			tNIMEDesc.vSize = _float3(0.5f, 0.6667f, 0.5f);
+			//m_tSubFlameDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+			tNIMEDesc.fAlphaTestValue = 0.8f;
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+
+		//7
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.25f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1);
+
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 69;
+			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(1.f, 0.f, 0.0f, 1.f);
+			tNIMEDesc.vColor = _float3(0.5f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.StartRot = GetSingle(CUtilityMgr)->RandomFloat(0, 360);
+			tNIMEDesc.RotationSpeedPerSec = 360.f;
+
+			tNIMEDesc.SizeSpeed = 7.8f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 0);
+			tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.00001f);
+
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+
+		}
+		//8
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.25f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1);
+
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 69;
+			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.m_iPassIndex = 16;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(1.f, 0.f, 0.0f, 1.f);
+			tNIMEDesc.vColor = _float3(0.5f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Look;
+			tNIMEDesc.StartRot = GetSingle(CUtilityMgr)->RandomFloat(0, 360);
+			tNIMEDesc.RotationSpeedPerSec = 360.f;
+
+			tNIMEDesc.SizeSpeed = 4.5f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+			tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.1f);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
 	}
 
 	return S_OK;
@@ -1330,16 +1525,106 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					m_iAdjMovedIndex++;
 				}
-				if (m_iAdjMovedIndex == 1 && PlayRate < 0.2926829268)
+				else if (m_iAdjMovedIndex == 1 && PlayRate < 0.254901960784313f)
 				{
+					{
+
+						CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+						INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+						tDesc.FollowingTarget = nullptr;
+
+						m_vecNonInstMeshDesc[6].SizeSpeed = 1.5f;
+						m_vecNonInstMeshDesc[7].SizeSpeed = 7.8f;
+						m_vecNonInstMeshDesc[8].SizeSpeed = 4.5f;
+					
+						tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+							m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							XMVector3Normalize(	m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+							m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -3.5f) * 11.f;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+					}
+
+
+					m_iAdjMovedIndex++;
+				}
+				if (m_iAdjMovedIndex == 2 && PlayRate < 0.2926829268)
+				{
+
 					m_bIsLookAt = false;
 					m_iAdjMovedIndex++;
 				}
-				else if (m_iAdjMovedIndex == 2 && PlayRate > 0.529411764)
+				else if (m_iAdjMovedIndex == 3 && PlayRate > 0.3921568623921565)
 				{
+					{
+
+						CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+						INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+						tDesc.FollowingTarget = nullptr;
+
+						m_vecNonInstMeshDesc[6].SizeSpeed = 1.5f;
+						m_vecNonInstMeshDesc[7].SizeSpeed = 7.8f;
+						m_vecNonInstMeshDesc[8].SizeSpeed = 4.5f;
+
+						tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+							m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							XMVector3Normalize(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+								m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -3.5f) * 15.f;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+					}
+
+					m_iAdjMovedIndex++;
+
+				}
+				else if (m_iAdjMovedIndex == 4 && PlayRate > 0.529411764)
+				{
+					{
+
+						CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+						INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+						tDesc.FollowingTarget = nullptr;
+
+						m_vecNonInstMeshDesc[6].SizeSpeed = 1.5f;
+						m_vecNonInstMeshDesc[7].SizeSpeed = 7.8f;
+						m_vecNonInstMeshDesc[8].SizeSpeed = 4.5f;
+
+						tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+							m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+							XMVector3Normalize(m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+								m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -3.5f) * 19.f;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+					}
+
 					m_pMainWeapons[0]->Set_IsAttackState(false);
 					m_iAdjMovedIndex++;
 				}
+
 
 				if (PlayRate > 0.215686274 && PlayRate < 0.529411764)
 				{
@@ -1421,6 +1706,30 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 2 && PlayRate >	0.1866666666)
 			{
 
+				CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+				INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+				tDesc.FollowingTarget = nullptr;
+
+
+				m_vecNonInstMeshDesc[6].SizeSpeed = 1.8f;
+				m_vecNonInstMeshDesc[7].SizeSpeed = 9.36f;
+				m_vecNonInstMeshDesc[8].SizeSpeed = 5.4f;
+
+				tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+					m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 8.f +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * 6.5f;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+
 
 				m_pMainWeapons[1]->SwordTrailOnOff(false);
 				++m_iAdjMovedIndex;
@@ -1471,6 +1780,9 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 8 && PlayRate > 0.0526315)
 			{
 
+
+
+
 				m_vecNonInstMeshDesc[3].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -1.5f +
 					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -2.f;
@@ -1489,6 +1801,31 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 9 && PlayRate > 0.5466)
 			{
+				CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+				INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
+
+				tDesc.FollowingTarget = nullptr;
+
+
+				m_vecNonInstMeshDesc[6].SizeSpeed = 1.8f;
+				m_vecNonInstMeshDesc[7].SizeSpeed = 9.36f;
+				m_vecNonInstMeshDesc[8].SizeSpeed = 5.4f;
+
+				tDesc.vFixedPosition = m_vecNonInstMeshDesc[6].vPosition = m_vecNonInstMeshDesc[7].vPosition =
+					m_vecNonInstMeshDesc[8].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * -1.0f;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+
+
 				g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
@@ -1736,6 +2073,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (!m_ActivateSecondPage)
 			{
+
+
 				if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
 				{
 					m_bIsLookAt = false;
@@ -1745,6 +2084,12 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
 				{
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+					m_vecNonInstMeshDesc[7].vPosition =m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
 
 					m_iAdjMovedIndex++;
 				}
@@ -1767,6 +2112,13 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				}
 				if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
 				{
+
+					m_vecTexInstDesc[3].vFixedPosition = m_vecTexInstDesc[4].vFixedPosition =
+						m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[3]);
+					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[4]);
+
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					m_bIsLookAt = false;
 					m_iAdjMovedIndex++;
@@ -1918,7 +2270,6 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[0]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
-
 
 
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
@@ -2193,6 +2544,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -3.5f);
 
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[2]);
+				//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[5]);
 				m_bIsFireAttack = true;
 			}
 			m_fFireTime = 10.f;

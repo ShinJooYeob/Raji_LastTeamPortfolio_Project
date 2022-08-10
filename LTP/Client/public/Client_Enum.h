@@ -428,7 +428,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_InteractObj_Lotus,
 
 	Prototype_Object_DynamicPlatform,
-	Prototype_Object_RepelWall,
+	Prototype_Object_RepelWall, 
+		Prototype_Object_MiniGameBuilding,
 
 	Object_Prototype_End
 };
@@ -787,9 +788,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_DynamicPlatform:
 		return TEXT("Prototype_Object_DynamicPlatform");
-	
+
 	case Prototype_Object_RepelWall:
 		return TEXT("Prototype_Object_RepelWall");
+
+	case Prototype_Object_MiniGameBuilding:
+		return TEXT("Prototype_Object_MiniGameBuilding");
 		
 		///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -956,6 +960,7 @@ enum LAYERID
 
 	Layer_InteractObject,
 	Layer_EnvMappedWater,
+	Layer_MiniGameBuilding,
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1162,6 +1167,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_EnvMappedWater:
 		return TEXT("Layer_EnvMappedWater");
 		break;
+	case Layer_MiniGameBuilding:
+		return TEXT("Layer_MiniGameBuilding");
+		break;
 		
 	default:
 		__debugbreak();
@@ -1273,7 +1281,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JYChiedFireLine3,
 	Prototype_Mesh_JYOrnate1,
 	Prototype_Mesh_JYSwordEnergy,
-	
+	Prototype_Mesh_MiniGameBuilding,
 
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
@@ -3414,11 +3422,12 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_HPUI,
 	Prototype_Texture_Util,
 	Prototype_Texture_UI,
-	Prototype_Texture_Monster_Bullet,
+		Prototype_Texture_Monster_Bullet,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
 	Prototype_Texture_PathArrow,
+	Prototype_Texture_MingameBuildingTex,
 
 	Prototype_VIBuffer_Plat,
 		Prototype_VIBuffer_Terrain_0,
@@ -3775,6 +3784,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		break;
 
 
+	case Prototype_Mesh_MiniGameBuilding:
+		return TEXT("MiniGameBuilding.fbx");
+		break;
+		
 
 
 
@@ -10065,6 +10078,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Texture_PathArrow:
 		return TEXT("Prototype_Texture_PathArrow");
 		break;
+
+	case Prototype_Texture_MingameBuildingTex:
+		return TEXT("Prototype_Texture_MingameBuildingTex");
+		break;
+
 		
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");

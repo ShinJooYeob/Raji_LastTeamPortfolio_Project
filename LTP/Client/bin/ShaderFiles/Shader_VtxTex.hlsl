@@ -558,6 +558,45 @@ PS_OUT_MTRL PS_ChiedFlame(PS_IN_EMW_Noise In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_MAIN_MinigameBuildingMixColor(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	vector SourceDesc = g_SourTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	
+	if (Out.vDiffuse.a < 0.1f)
+		discard;
+	//0 //(0.36328125f, 0.3359375f ,0.30859375f)
+	//1 //(0.4375f, 0.35546875f, 0.27734375f)
+
+	float flen = length(Out.vDiffuse.xyz);
+	//float flen = max(max(Out.vDiffuse.x, Out.vDiffuse.y), Out.vDiffuse.z);
+
+	vector vColor = vector(0.38823529411764f, 0.33333333333333f, 0.290196078431372f, 1.f) * flen +
+		vector(0.32941176470588f, 0.27450980392156f, 0.258823529411764f, 1.f) * (1 - flen);
+
+	flen = saturate(flen - 0.2f);
+
+	Out.vDiffuse.xyz = (SourceDesc.xyz* (1 - flen) + vColor.xyz* flen);
+	Out.vDiffuse.a = 1.f;
+	return Out;
+}
+
+
+
+PS_OUT_NOLIGHT PS_CopyScreen(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
+
+	return Out;
+}
+
+
+
+
 technique11		DefaultTechnique
 {
 	pass Rect			//0
@@ -654,7 +693,7 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_PaperCurlOut();
 	}
-	pass ChiedFlame			//0
+	pass ChiedFlame			//9
 	{
 		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
@@ -664,5 +703,24 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_ChiedFlame();
 	}
-	
+	pass Rect_MiniGameMixColor			//10
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MinigameBuildingMixColor();
+	}
+	pass Rect_CopyScreen			//11
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_CopyScreen();
+	}
 }

@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "StaticInstanceMapObject.h"
 #include "MonsterBatchTrigger.h"
+#include "MiniGameBuilding.h"
 
 CScene_Stage1::CScene_Stage1(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -30,6 +31,8 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	
+	
+	//FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE1, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
@@ -71,6 +74,7 @@ HRESULT CScene_Stage1::Initialize()
 
 _int CScene_Stage1::Update(_double fDeltaTime)
 {
+	//m_pPlayerTransform
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
@@ -91,9 +95,25 @@ _int CScene_Stage1::Update(_double fDeltaTime)
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
 
-	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	_Vector vDir = XMVector3Normalize(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), 10) - XMVectorSet(128.f, -64.f, 256.f, 0));
+	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	_Vector vDir = XMVector3Normalize(XMVectorSetY( m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS),10) - XMVectorSet(128.f, -64.f, 256.f, 0));
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(128.f, -64.f, 256.f, 0) + vDir * 330.f);
+
+	_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	if (PlayerPos.x > 34.4f && PlayerPos.x < 37.5f)
+	{
+		CGameInstance* pInstance = g_pGameInstance;
+		_float3 vDiffuse = pInstance->Easing_Vector(TYPE_Linear, _float3(1.f), _float3(0.78125f, 0.78125f, 1.f), PlayerPos.x - 34.4f, 3.1f);
+		_float3 vAmbient = pInstance->Easing_Vector(TYPE_Linear, _float3(1.f), _float3(0.6640625f, 0.65625f, 1.f), PlayerPos.x - 34.4f, 3.1f);
+		_float vFogColor = pInstance->Easing(TYPE_Linear, 0.234375f, 0.5f, PlayerPos.x - 34.4f, 3.1f);
+
+
+		pLightDesc->vDiffuse = _float4(vDiffuse, 1.f);
+		pLightDesc->vAmbient = _float4(vAmbient, 1.f);
+		m_pUtilMgr->Get_Renderer()->Set_FogColor(_float3(vFogColor));
+		////pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+		////pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	}
 
 	return 0;
 }
@@ -453,8 +473,10 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	//pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -475,6 +497,8 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 	pRenderer->Set_DofLength(30.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->Set_FogColor(_float3{ 0.234375f });
+	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
 	pRenderer->Set_FogStartDist(5.f);
 	pRenderer->Set_FogGlobalDensity(0.1f);
 	pRenderer->Set_FogHeightFalloff(0.1f);
@@ -598,7 +622,17 @@ HRESULT CScene_Stage1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 
 HRESULT CScene_Stage1::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	return S_OK;
+}
+
+HRESULT CScene_Stage1::Ready_MiniGameBuilding(const _tchar * pLayerTag)
+{
+	CMiniGameBuilding::MGBDESC tDesc;
+	tDesc.vPosition = _float3(31.773f, 37.5f, 64.801f);
+	tDesc.vScale = _float3(1.f);
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding),&tDesc));
+
 	return S_OK;
 }
 

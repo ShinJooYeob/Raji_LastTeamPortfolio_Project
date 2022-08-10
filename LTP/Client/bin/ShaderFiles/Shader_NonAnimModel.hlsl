@@ -639,26 +639,29 @@ PS_OUT_NODEFERRED PS_Distortion_All_DiffuseMix_AppearNDisApper(PS_IN_Distortion 
 	PS_OUT_NODEFERRED		Out = (PS_OUT_NODEFERRED)0;
 
 
+
 	if (g_fTimer < g_fAppearTimer)
 	{
-
-
-		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV - normalize(noisingdir)  * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
+		In.vTexUV = OldTexUV;
 		//In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - g_fTimer)));
 		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - g_fTimer)));
 		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - g_fTimer)));
 	}
 	else if (g_fTimer > g_fMaxTime - g_fAppearTimer)
 	{
-		In.vTexUV = (In.vTexUV + noisingdir * (g_fTimer - (g_fMaxTime - g_fAppearTimer))* (1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV + normalize(noisingdir)   * (g_fTimer - (g_fMaxTime - g_fAppearTimer))* (1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
-
+		In.vTexUV = OldTexUV;
 	}
+
 
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
 	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
@@ -783,24 +786,26 @@ PS_OUT PS_Noise_AppearNDisApper(PS_IN_Distortion In)
 
 	if (g_fTimer < g_fAppearTimer)
 	{
-		
-
-		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV - normalize(noisingdir)  * (g_fAppearTimer - g_fTimer) *(1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
+		In.vTexUV = OldTexUV;
 		//In.texCoords1 = saturate((In.texCoords1 - noisingdir * (g_fAppearTimer - g_fTimer)));
 		//In.texCoords2 = saturate((In.texCoords2 - noisingdir * (g_fAppearTimer - g_fTimer)));
 		//In.texCoords3 = saturate((In.texCoords3 - noisingdir * (g_fAppearTimer - g_fTimer)));
 	}
 	else if (g_fTimer > g_fMaxTime - g_fAppearTimer)
 	{
-		In.vTexUV = (In.vTexUV + noisingdir * (g_fTimer - (g_fMaxTime - g_fAppearTimer)  )* (1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV + normalize(noisingdir)   * (g_fTimer - (g_fMaxTime - g_fAppearTimer))* (1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
-
+		In.vTexUV = OldTexUV;
 	}
+
 
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
 	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);

@@ -38,6 +38,8 @@ public:
 	HRESULT Insert_Empty_TextureLayer(_tchar* szStateKey);
 	HRESULT Insert_Texture_On_BindedLayer(_uint iIndex, _tchar* szFilePath);
 
+
+	ID3D11ShaderResourceView* Get_ShaderResourceView(_uint iTextureIndex = 0);
 private:
 	map<wstring, CTextureLayer*>				m_mapTextureLayers;
 	typedef map<wstring, CTextureLayer*>		TEXTURELAYERS;

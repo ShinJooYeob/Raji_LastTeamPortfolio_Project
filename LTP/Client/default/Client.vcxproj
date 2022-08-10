@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
+    <ClInclude Include="..\public\MiniGameBuilding.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\FogTrigger.h" />
     <ClInclude Include="..\public\Gadasura_Rage_Hollogram.h" />
@@ -348,6 +349,7 @@
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
+    <ClCompile Include="..\private\MiniGameBuilding.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
     <ClCompile Include="..\private\FogTrigger.cpp" />
     <ClCompile Include="..\private\Gear.cpp" />

@@ -23,6 +23,7 @@ public:
 
 	_uint Get_TextureListSize() { return (_uint)(m_vecTextures.size()); }
 	HRESULT NullCheckTexture(_uint iIndex);
+	ID3D11ShaderResourceView* Get_ShaderResourceView(_uint iTextureIndex);
 private:
 	virtual HRESULT Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures = 1);
 	virtual HRESULT Initialize_Prototype();

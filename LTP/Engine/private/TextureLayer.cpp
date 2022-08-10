@@ -190,6 +190,17 @@ HRESULT CTextureLayer::NullCheckTexture(_uint iIndex)
 	return S_OK;
 }
 
+ID3D11ShaderResourceView * CTextureLayer::Get_ShaderResourceView(_uint iTextureIndex)
+{
+	if (iTextureIndex >= m_vecTextures.size())
+	{
+		__debugbreak();
+		return nullptr;
+	}
+
+	return m_vecTextures[iTextureIndex];
+}
+
 HRESULT CTextureLayer::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iNumTextures)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(nullptr));

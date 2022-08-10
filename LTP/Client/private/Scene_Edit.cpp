@@ -5324,6 +5324,14 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 		ImGui::SameLine(0, 10);		ImGui::Text(TAG_INSTPASS(m_tParticleDesc.ePassID));
 	}
 
+	Make_VerticalSpacing(1);
+
+	{
+
+		_bool bBool = (m_tParticleDesc.TempBuffer_1.y > 0) ? true : false;
+		ImGui::Checkbox("AtOnceSwpanParticle", &bBool); ImGui::SameLine();
+		m_tParticleDesc.TempBuffer_1.y = (bBool) ? 1.f : 0;
+	}
 
 	Make_VerticalSpacing(1);
 
@@ -5331,6 +5339,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	{
 
 		ImGui::Checkbox("FollowingTransform", &bIsFollowingTransform);
+		Make_VerticalSpacing(1);
 
 		if (bIsFollowingTransform)
 		{
@@ -5688,7 +5697,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	m_tParticleDesc.m_fAlphaTestValue = TempFloatArr[3];
 
 
-	ImGui::DragFloat("DepthTargetRender ", &m_tParticleDesc.TempBuffer_0.x);
+	ImGui::DragFloat("DepthTargetRender ", &m_tParticleDesc.TempBuffer_0.x,0.001f);
 
 
 

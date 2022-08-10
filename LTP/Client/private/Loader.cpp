@@ -102,6 +102,7 @@
 #include "LilyPad.h"
 #include "Lotus.h"
 #include "RepelWall.h"
+#include "MiniGameBuilding.h"
 
 #include "InstanceMonsterBatchTrigger.h"
 
@@ -273,6 +274,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"ShellingSkillRange.txt")));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_ShellingPoint),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"ShellingSkillTargetPoint.txt")));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_MingameBuildingTex),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"MiniGameBuilding.txt")));
 
 	// #TEST Create NoAssimp 
 
@@ -465,6 +468,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));
 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGameBuilding), CMiniGameBuilding::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
@@ -583,6 +587,10 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PlayerWeapon_Sword), TransformMatrix);
 
+
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	
+
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
@@ -628,6 +636,7 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Volcano), CVolcano::Create(m_pDevice, m_pDeviceContext)));
 	//FlameTerrain
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_FlameTeraain), CflameTerrain::Create(m_pDevice, m_pDeviceContext)));
+
 #pragma endregion
 
 	RELEASE_INSTANCE(CGameInstance);

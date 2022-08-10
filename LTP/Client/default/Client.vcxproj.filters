@@ -493,6 +493,9 @@
     <Filter Include="01.GameObject\99.UI\IngameUI">
       <UniqueIdentifier>{201271a5-213c-46a6-a3ff-35879a190baf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding">
+      <UniqueIdentifier>{e7ad1322-4e5f-4e61-a241-0814b75b8166}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1073,6 +1076,9 @@
     <ClInclude Include="..\public\IngameUI.h">
       <Filter>01.GameObject\99.UI\IngameUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MiniGameBuilding.h">
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1634,6 +1640,9 @@
     </ClCompile>
     <ClCompile Include="..\private\IngameUI.cpp">
       <Filter>01.GameObject\99.UI\IngameUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGameBuilding.cpp">
+      <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
