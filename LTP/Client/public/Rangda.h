@@ -34,6 +34,8 @@ public:
 public:
 	// JH
 	void					Change_Animation(_uint iAnimIndex);
+	void					Set_Dissolve_In();
+	//
 
 private:
 	virtual HRESULT Ready_ParticleDesc() override;

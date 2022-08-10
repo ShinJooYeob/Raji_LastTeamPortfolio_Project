@@ -8,7 +8,7 @@ class CCamera_Main;
 class CEventTrigger final : public CTriggerObject
 {
 public:
-	enum EEventType { TYPE_RANGDA_CUTSCENE, TYPE_END };
+	enum EEventType { TYPE_RANGDA_CUTSCENE, TYPE_CHIEDTIAN_CUTSCENE, TYPE_END };
 
 
 protected:
@@ -38,6 +38,7 @@ public:
 
 private:
 	void							EVENT_Rangda_Cutscene();
+	void							EVENT_Chiedtian_Cutscene();
 
 private:
 	HRESULT							SetUp_Components();

@@ -69,23 +69,11 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	// Debuging Code
-
-	// TEST CODE
-
-	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
-	//_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	//_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
-	//
-
-
-#pragma region For Debug Inputkey
+	// For Debuging
 	DebugingCode();
-
 
 	// Reset AnimSpeed
 	m_fAnimSpeed = 1.f;
-
 
 	//**************** Checks *****************//
 	{
@@ -243,30 +231,11 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 
 	// Update PhysX
-	if (m_pHeadJoint)
-	{
-		m_pHeadJoint->Update_AfterSimulation();
-	}
+	Update_PhysX();
 
-	if (true == m_bOnNavigation)
-	{
+	Check_PlayerOnNavi();
 
-#ifndef NotOnNavi
-		if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
-		{
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-		}
-#endif // NotOnNavi
-
-	}
-
-	LateUpdate_HPUI(fDeltaTimer);
-
-	if (m_bIsSkillUI)
-	{
-		m_pSkillUI->LateUpdate(fDeltaTimer);
-	}
-	m_pIngameUI->LateUpdate(fDeltaTimer);
+	LateUpdate_UI(fDeltaTimer);
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
@@ -276,6 +245,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	//FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Parkur));
 #endif // _DEBUG
+
 	return _int();
 }
 
@@ -935,10 +905,35 @@ void CPlayer::Update_AttachCamPos()
 
 void CPlayer::Set_Targeting(CGameObject * pTarget)
 {
-	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_TARGETING);
-	m_eCur_TargetingState = ETARGETING_STATE::TARGETING_BOSS;
-	m_pTargetingMonster = pTarget;
-	m_pTargetingMonster_Transform = static_cast<CTransform*>(m_pTargetingMonster->Get_Component(TAG_COM(Com_Transform)));
+	if (nullptr == pTarget)
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		m_pTargetingMonster = nullptr;
+		m_pTargetingMonster_Transform = nullptr;
+	}
+	else
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_TARGETING);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_BOSS;
+		m_pTargetingMonster = pTarget;
+		m_pTargetingMonster_Transform = static_cast<CTransform*>(m_pTargetingMonster->Get_Component(TAG_COM(Com_Transform)));
+	}
+}
+
+void CPlayer::Check_TargetingTarget(CGameObject * pTarget)
+{
+	if (nullptr == m_pTargetingMonster)
+	{
+		return;
+	}
+
+	if (pTarget == m_pTargetingMonster)
+	{
+		m_pTargetingMonster = nullptr;
+		m_pTargetingMonster_Transform = nullptr;
+	}
+
 }
 
 HRESULT CPlayer::Update_CamLookPoint(_double fDeltaTime)
@@ -2037,9 +2032,14 @@ HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 	{
 	case STATE_ATTACK:
 	case STATE_JUMPATTACK:
-	case STATE_UTILITYSKILL:
 	case STATE_ULTIMATESKILL:
 	case STATE_PILLAR:
+		break;
+	case STATE_UTILITYSKILL:
+		if (true == m_bShieldMode)
+		{
+			FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 3.f, m_pNavigationCom, true));
+		}
 		break;
 	default:
 		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 0.5f, m_pNavigationCom));
@@ -2081,11 +2081,26 @@ HRESULT CPlayer::Update_HPUI(_double fDeltaTime)
 	return S_OK;
 }
 
-HRESULT CPlayer::LateUpdate_HPUI(_double fDeltaTime)
+HRESULT CPlayer::LateUpdate_UI(_double fDeltaTime)
 {
 	if (m_pHPUI != nullptr)
 	{
 		m_pHPUI->LateUpdate(fDeltaTime);
+	}
+
+	if (m_bIsSkillUI)
+	{
+		m_pSkillUI->LateUpdate(fDeltaTime);
+	}
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Update_PhysX()
+{
+	if (m_pHeadJoint)
+	{
+		m_pHeadJoint->Update_AfterSimulation();
 	}
 
 	return S_OK;
@@ -2114,6 +2129,48 @@ void CPlayer::Check_CurNaviCellOption()
 	else
 	{
 		m_bPlayerHide = false;
+	}
+}
+
+void CPlayer::Check_PlayerOnNavi()
+{
+	if (true == m_bOnNavigation)
+	{
+#ifndef NotOnNavi
+		if (SCENE_LABORATORY_JINO != m_eNowSceneNum)
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
+#endif // NotOnNavi
+	}
+
+}
+
+void CPlayer::Check_Execution()
+{
+	if (true == m_bPressedInteractKey)
+	{
+		auto* pUniqueMonsters = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_Unique_Monster));
+		if (0 >= pUniqueMonsters->size())
+		{
+			return;
+		}
+
+		CGameObject* pNear_GroggyMonster = nullptr;
+		for (auto& pUniqueMonster : *pUniqueMonsters)
+		{
+			/*
+			if(pUniqueMonster' state is groggy)
+			{
+				
+			}
+			*/
+		}
+
+		if (nullptr == pNear_GroggyMonster)
+		{
+			return;
+		}
 	}
 }
 
@@ -7742,8 +7799,40 @@ void CPlayer::Targeting_Search()
 
 void CPlayer::Targeting_Loop()
 {
+	if (nullptr == m_pTargetingMonster)
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		return;
+	}
+
+	auto* UniqMonsters = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, TAG_LAY(Layer_Unique_Monster));
+	if (0 == UniqMonsters->size())
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		return;
+	}
+	auto& iter = find_if((*UniqMonsters).begin(), (*UniqMonsters).end(), [&](auto& UniqMonster) {
+		if (m_pTargetingMonster == UniqMonster)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	});
+
+	if (iter == (*UniqMonsters).end())
+	{
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		return;
+	}
+	
+
 	_Vector vPlayerPos = Get_BonePos("skd_hip");
-	_Vector vPlayerPos2 = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_Vector vTargetPos = m_pTargetingMonster_Transform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_Vector vCenterPos = (vPlayerPos + vTargetPos) * 0.5f;
 
@@ -7753,14 +7842,14 @@ void CPlayer::Targeting_Loop()
 		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
 
-		/*m_pMainCamera->Set_CameraLookWeight(0.9f);
-		m_pMainCamera->Set_CameraMoveWeight(0.9f);*/
+		m_pMainCamera->Set_CameraLookWeight(0.9f);
+		m_pMainCamera->Set_CameraMoveWeight(0.9f);
 		return;
 	} 
 	else 
 	{
-		/*m_pMainCamera->Set_CameraLookWeight(0.98f);
-		m_pMainCamera->Set_CameraMoveWeight(0.98f);*/
+		m_pMainCamera->Set_CameraLookWeight(0.95f);
+		m_pMainCamera->Set_CameraMoveWeight(0.95f);
 		fDist *= 2.5f;  
 		if (fDist > 25.f)
 		{
@@ -7788,15 +7877,19 @@ void CPlayer::Targeting_Boss()
 
 	_float fDist = XMVectorGetX(XMVector3Length(vPlayerPos - vTargetPos));// *0.15f;
 	
-		m_pMainCamera->Set_CameraLookWeight(0.99f);
-		m_pMainCamera->Set_CameraMoveWeight(0.99f);
-		fDist *= 2.5f;
-		if (fDist > 35.f)
+		m_pMainCamera->Set_CameraLookWeight(0.95f);
+		m_pMainCamera->Set_CameraMoveWeight(0.95f); 
+		fDist *= 2.f;
+		if (fDist > 90.f)
 		{
-			fDist = 35.f;
+			fDist = 90.f;
+		}
+		else if (fDist < 20)
+		{
+			fDist = 20.f;
 		}
 
-	_Vector vLookDir = XMVectorSet(0.f, -0.5f, 0.3f, 0.f) * (fDist + 4.5f);
+	_Vector vLookDir = XMVectorSet(0.f, -0.5f, 0.3f, 0.f) * (fDist + 6.f);
 
 	// Send to Center pos to Main Camera
 	m_pMainCamera->Set_TargetingPoint(vCenterPos);
@@ -8018,7 +8111,6 @@ void CPlayer::DebugingCode()
 	//_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 	//
 
-
 #pragma region For Debug Inputkey
 	{
 
@@ -8188,6 +8280,11 @@ void CPlayer::Set_CurParkurLedge(CTestLedgeTrigger* pTargetLedge)
 CTriggerObject * CPlayer::Get_CurParkurTriger()
 {
 	return m_pCurParkourTrigger;
+}
+
+CGameObject * CPlayer::Get_CurTargetingMonster()
+{
+	return m_pTargetingMonster;
 }
 
 HRESULT CPlayer::SetUp_Components()

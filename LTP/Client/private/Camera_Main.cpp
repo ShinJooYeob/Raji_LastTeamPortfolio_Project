@@ -905,7 +905,6 @@ _int CCamera_Main::Update_NormalMode(_double fDeltaTime)
 _int CCamera_Main::Update_TargetingMode(_double fDeltaTime)
 {
 	_Vector vCamPos = (m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight) + ((m_fTargetingPoint.XMVector() - m_fTargetingLook.XMVector()) * (1.f - m_fCur_CamMoveWeight));
-	//m_pTransform->MovetoTarget_ErrRange((m_fTargetingPoint.XMVector() - m_fTargetingLook.XMVector()), fDeltaTime, 0.1f);
 	m_pTransform->Turn_Dir(XMVector3Normalize(m_fTargetingLook.XMVector()), m_fCur_CamLookWeight, 0.99f);
 
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);

@@ -92,7 +92,8 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 
 	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	m_fAttachCamPos.y += 27.f;
-	m_fAttachCamPos.z -= 60.f;
+	m_fAttachCamPos.z -= 45.f;
+	m_pDissolve->Set_DissolveOn(false, 0.f);
 	//
 
 	return S_OK;
@@ -419,6 +420,11 @@ _fMatrix CRangda::Get_BoneMatrix(const char * pBoneName)
 void CRangda::Change_Animation(_uint iAnimIndex)
 {
 	m_pModel->Change_AnimIndex(iAnimIndex);
+}
+
+void CRangda::Set_Dissolve_In()
+{
+	m_pDissolve->Set_DissolveOn(true, 0.5f);
 }
 
 void CRangda::Update_Direction(_double fDeltaTime)

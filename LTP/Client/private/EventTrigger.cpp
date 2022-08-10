@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Camera_Main.h"
 #include "Rangda.h"
+#include "Chiedtian.h"
 #include "Scene_Stage3.h"
 
 CEventTrigger::CEventTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -93,6 +94,9 @@ void CEventTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		case TYPE_RANGDA_CUTSCENE:
 			EVENT_Rangda_Cutscene();
 			break;
+		case TYPE_CHIEDTIAN_CUTSCENE:
+			EVENT_Chiedtian_Cutscene();
+			break;
 		}
 
 		m_bActive = true;
@@ -103,12 +107,23 @@ void CEventTrigger::EVENT_Rangda_Cutscene()
 {
 	CRangda* pRangda = static_cast<CRangda*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE3, Tag_Layer(Layer_Boss), 0));
 	pRangda->Change_Animation(6);
+	pRangda->Set_Dissolve_In();
 
 	m_pPlayer->Set_State_StopActionStart();
 
 	static_cast<CScene_Stage3*>(g_pGameInstance->Get_NowScene())->Set_PlayGoluSound(false);
 
 	g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_UI_IMG))->Set_IsDead();
+}
+
+void CEventTrigger::EVENT_Chiedtian_Cutscene()
+{
+	CChiedtian* pChiedtian = static_cast<CChiedtian*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, Tag_Layer(Layer_Boss), 0));
+	pChiedtian->Change_Animation(14);
+	m_pPlayer->Set_State_StopActionStart();
+
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(pChiedtian);
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 }
 
 HRESULT CEventTrigger::SetUp_Components()
