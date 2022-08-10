@@ -168,6 +168,7 @@ void CMonster_Spider::CollisionTriger(CCollider * pMyCollider, _uint iMyCollider
 					if (m_vecInstancedTransform[i].iHp <= 0)
 					{
 						m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
+						m_bAttackOn = false;
 					}
 					break;
 				}
@@ -665,7 +666,7 @@ HRESULT CMonster_Spider::Adjust_AnimMovedTransform(_double dDeltatime)
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
 				if (m_pBatchTrigger->Get_MonsterAllDie())
-					m_vecInstancedTransform[i].iLifeCount = 1000;
+					m_vecInstancedTransform[i].iLifeCount = 10000000;
 
 				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{

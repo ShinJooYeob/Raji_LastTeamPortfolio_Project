@@ -142,7 +142,7 @@ _int CHpUI::Update(_double fDeltaTime)
 		{
 			_float Angle = (_float)i*(360.f / (_float)iMaxHP);
 			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
-			m_HpDesc.m_Dimensions = 0.7f;
+			//m_HpDesc.m_Dimensions = 0.7f;
 			_float3 Pos = _float3(0.f, 0, 0).XMVector() + (Mat.r[2] * m_HpDesc.m_Dimensions);
 
 			Pos.y += 0.1f;

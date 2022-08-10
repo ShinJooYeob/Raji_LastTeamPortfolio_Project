@@ -34,7 +34,6 @@ public:
 	}
 
 	void		Set_Hit() { m_bIsHit = true; }
-	virtual	void	Set_IsDead()override;
 
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
@@ -106,6 +105,8 @@ private:
 	vector<INSTPARTICLEDESC>								m_vecTextureParticleDesc;
 	vector<INSTMESHDESC>									m_vecMeshParticleDesc;
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
+
+	_bool								m_bInstanceMonsterDieSwitch = false;
 
 private:
 	HRESULT SetUp_Components();

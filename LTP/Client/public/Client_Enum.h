@@ -935,6 +935,7 @@ enum LAYERID
 	Layer_ColTrigger,
 	Layer_BatchMonsterTrigger,
 	Layer_ColDynamic,
+	Layer_InstanceMonsterTrigger,
 
 
 	Layer_UI_GamePlay,
@@ -997,6 +998,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		return TEXT("Layer_BatchMonsterTrigger");
 		break;
 		
+	case Layer_InstanceMonsterTrigger:
+		return TEXT("Layer_InstanceMonsterTrigger");
+
 	case Layer_ColDynamic:
 		return TEXT("Layer_ColDynamic");
 		

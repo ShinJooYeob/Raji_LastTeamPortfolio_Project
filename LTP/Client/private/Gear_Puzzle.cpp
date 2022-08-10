@@ -57,7 +57,7 @@ _int CGear_Puzzle::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)
 		return -1;
 
-	if (m_iTriggerOn >= CGear_Puzzle::GEAR_START)
+	if (m_iTriggerOn == CGear_Puzzle::GEAR_START)
 	{
 		KeyboardInput(dDeltaTime);
 
@@ -535,14 +535,18 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 
 	if (m_pGear[CGear::GEARTYPE_7]->Get_TurnOn() == true)
 	{
+		for (_uint i = 0; i < CGear::GEAR_END; i++)
+		{
+			m_pGear[i]->Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1.f, 0.5f, 1.f, 1.f));
+		}
 		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(true);
 		m_iTriggerOn = CGear_Puzzle::GEAR_SUCCESS;
 	}
-	else if (m_pGear[CGear::GEARTYPE_8]->Get_TurnOn() == false)
+	/*else if (m_pGear[CGear::GEARTYPE_8]->Get_TurnOn() == false)
 	{
 		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(false);
 		m_iTriggerOn = CGear_Puzzle::GEAR_START;
-	}
+	}*/
 	return S_OK;
 }
 

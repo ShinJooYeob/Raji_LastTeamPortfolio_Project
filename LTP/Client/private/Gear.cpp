@@ -36,7 +36,7 @@ HRESULT CGear::Initialize_Clone(void * pArg)
 	m_pTransformCom->Scaled_All(m_GearStateDesc.fScale);
 
 
-	m_fFrustumRadius = 20.f;
+	m_fFrustumRadius = 60.f;
 
 	//Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1, 0.5f, 1, 1));
 

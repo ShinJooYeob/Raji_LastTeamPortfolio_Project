@@ -40,8 +40,8 @@ public:
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
 public:
-	_bool							Get_MonsterAllDie() {return m_bMonsterAllDie;}
-	void							Set_MonsterAllDie(_bool bMonsterAllDie) { m_bMonsterAllDie = bMonsterAllDie; }
+	_bool							Get_MonsterAllDie() { return m_bMonsterAllDie; }
+	void							Set_MonsterAllDie(_bool bMonsterAllDie);
 
 private:
 	HRESULT							SetUp_Components();
@@ -52,6 +52,7 @@ private:
 
 	CTransform*						m_pPlayerTransform = nullptr;
 	_bool							m_bMonsterAllDie = false;
+	_bool							m_bAllDieOn = false;
 
 	_float3							m_fPoint;
 	

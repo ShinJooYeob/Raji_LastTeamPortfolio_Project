@@ -382,7 +382,15 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		m_pHPUI->Update(fDeltaTime);
 
 	if (m_bIsDissolveStart)
+	{
+		if (m_bInstanceMonsterDieSwitch == false)
+		{
+			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
+			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			m_bInstanceMonsterDieSwitch = true;
+		}
 		m_pDissolveCom->Set_DissolveOn(false, 6.4f);
+	}
 
 	return _int();
 }
@@ -472,14 +480,6 @@ _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmo
 	m_pHPUI->Set_ADD_HitCount();
 
 	return _float();
-}
-
-void CMahabalasura::Set_IsDead()
-{
-/*	CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_OP(Prototype_MonsterBatchTrigger)));
-	pMonsterBatchTrigger->Set_MonsterAllDie(true);*/
-	m_bIsDead = true;
-	Set_IsOwerDead(true);
 }
 
 HRESULT CMahabalasura::Ready_ParticleDesc()
