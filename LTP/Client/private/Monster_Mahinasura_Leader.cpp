@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Monster_Mahinasura_Leader.h"
-
+#include "Player.h"
 #include "HpUI.h"
 
 
@@ -212,6 +212,8 @@ _float CMonster_Mahinasura_Leader::Take_Damage(CGameObject * pTargetObject, _flo
 
 	if (0 >= m_fHP)
 	{
+		// JINO
+		static_cast<CPlayer*>((g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player))))->Check_TargetingTarget(this);
 		return -1.f;
 	}
 

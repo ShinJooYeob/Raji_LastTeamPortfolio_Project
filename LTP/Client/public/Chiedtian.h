@@ -32,6 +32,12 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	// JH
+	void				Change_Animation(_uint iAnimIndex);
+	void				Set_Dissolve_InOut(_bool bIsIn);
+	//
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -39,6 +45,7 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CTransform*			m_pFireParticleTransformCom = nullptr;
 	CNavigation*		m_pNavigationCom = nullptr;
+
 
 	//¸öÃ¼
 	CCollider*				m_pCollider = nullptr;
@@ -122,7 +129,18 @@ private:
 	vector<INSTPARTICLEDESC>	m_vecTexInstDesc;
 
 
+private:
+	// JH
+	void				Update_Direction(_double fDeltaTime);
 
+	CDissolve*			m_pDissolve = nullptr;
+	_bool				m_bBlockUpdate = false;
+	_bool				m_bBlockAnim = false;
+	_bool				m_bOnceSwitch = false;
+	_bool				m_bOncePlaySound = false;
+	_uint				m_iNextAnimIndex = 0;
+	_float				m_fDelayTime = 0.f;
+	//
 
 private:
 	HRESULT SetUp_Components();

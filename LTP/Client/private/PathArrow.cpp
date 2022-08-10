@@ -22,7 +22,7 @@ HRESULT CPathArrow::Initialize_Prototype(void * pArg)
 
 HRESULT CPathArrow::Initialize_Clone(void * pArg)
 {
-	FAILED_CHECK(__super::Initialize_Clone(pArg));
+	FAILED_CHECK(__super::Initialize_Clone(pArg)); 
 
 	FAILED_CHECK(SetUp_Components());
 	FAILED_CHECK(SetUp_Etc());
@@ -45,7 +45,7 @@ _int CPathArrow::Update(_double fDeltaTime)
 
 	vPlayerPos = XMVectorSetY(vPlayerPos, XMVectorGetY(vPlayerPos) + 0.5f);
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPlayerPos + vLookDir * 1.5f);
-
+	m_pTransformCom->LookDir(vLookDir);
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	return _int();
 }
@@ -87,11 +87,11 @@ void CPathArrow::Set_Appear(_bool bAppear)
 {
 	if (true == bAppear)
 	{
-		m_pDissolveCom->Set_DissolveOn(true, 0.5f);		// Appear
+		m_pDissolveCom->Set_DissolveOn(true, 1.f);		// Appear
 	}
 	else if (false == bAppear)
 	{
-		m_pDissolveCom->Set_DissolveOn(false, 0.5f);	// Disappear
+		m_pDissolveCom->Set_DissolveOn(false, 1.f);	// Disappear
 	}
 }
 

@@ -238,6 +238,9 @@ public:
 	void				Set_CurParkurLedge(class CTestLedgeTrigger* pTargetLedge);
 	CTriggerObject*		Get_CurParkurTriger();
 
+public:
+	CGameObject*		Get_CurTargetingMonster();
+
 private: /* Change Start State */
 	void	Set_State_IdleStart(_double fDeltaTime);								// Idle
 	void	Set_State_MoveStart(_double fDeltaTime);								// Move
@@ -259,6 +262,7 @@ public:
 
 public:
 	void	Set_Targeting(CGameObject* pTarget);
+	void	Check_TargetingTarget(CGameObject* pTarget);
 
 private:
 	HRESULT	Update_CamLookPoint(_double fDeltaTime);
@@ -298,11 +302,15 @@ private:
 
 	HRESULT	Update_Collider(_double fDeltaTime);
 	HRESULT Update_HPUI(_double fDeltaTime);
-	HRESULT LateUpdate_HPUI(_double fDeltaTime);
+	HRESULT LateUpdate_UI(_double fDeltaTime);
+
+	HRESULT Update_PhysX();
 
 private: /* Check */
 	_bool				Check_InputDirIsForward();
 	void				Check_CurNaviCellOption();
+	void				Check_PlayerOnNavi();
+	void				Check_Execution();
 
 private: /* Key Input */
 	_bool				Check_PlayerKeyInput(_double fDeltaTime);
@@ -337,7 +345,6 @@ private: /* Actions */
 	void				Sword_Ultimate(_double fDeltaTime);
 
 	/** For Parkours */
-	// Ledging
 	void				Ledging(_double fDeltaTime);
 
 private: /* Select Anim */
@@ -361,18 +368,15 @@ private: /* Motion Trail*/
 	void				CheckOn_MotionTrail();
 	void				Active_MotionTrail();
 
-private:
+private: /* Check */
 	void				Check_NextComboCommand();
 	_bool				Change_NextCombo();
+	_float3				Check_MousePicking();
 
 
 private: /* Getter */
 	void				LookAt_MousePos(_float fWeight = 0.85f);
 	_fVector			Get_MousePos();
-
-
-private:
-	_float3				Check_MousePicking();
 
 private:
 	void				DebugingCode();
@@ -549,7 +553,7 @@ private: /* Targeting */
 
 private: /* ETC */
 	_bool					m_bPlayerHide = false;
-
+	_bool					m_bBlockRender = false;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

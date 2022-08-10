@@ -319,7 +319,7 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_Laboratory_Jino::Ready_Layer_Objects(const _tchar * pLayerTag)
 {
 	CDynamicPlatform::DYNAMICPLATFORMDESC tDynamicPlatSpawnDesc;
-	tDynamicPlatSpawnDesc.fSpawnPos = _float3(0.f, 60.f, 0.f);
+	tDynamicPlatSpawnDesc.fSpawnPos = _float3(0.f, 30.f, 0.f);
 	tDynamicPlatSpawnDesc.eOnTarget = CDynamicPlatform::EONTARGET::TARGET_BOTH;
 	tDynamicPlatSpawnDesc.ePattern = CDynamicPlatform::PATTERN_END;
 	tDynamicPlatSpawnDesc.iIndex = 99;
@@ -377,12 +377,6 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_Objects(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, pLayerTag, TAG_OP(Prototype_Object_DynamicPlatform), &tDynamicPlatSpawnDesc));
 	m_vecDynamicPlatforms_Raji.push_back(static_cast<CDynamicPlatform*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LABORATORY_JINO, pLayerTag)));
 
-	tDynamicPlatSpawnDesc.fSpawnPos = _float3(-10.f, 30.f, 0.f);
-	tDynamicPlatSpawnDesc.ePattern = CDynamicPlatform::PATTERN_1;
-	tDynamicPlatSpawnDesc.iIndex = 8;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, pLayerTag, TAG_OP(Prototype_Object_DynamicPlatform), &tDynamicPlatSpawnDesc));
-	m_vecDynamicPlatforms_Raji.push_back(static_cast<CDynamicPlatform*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LABORATORY_JINO, pLayerTag)));
-
 
 
 	tDynamicPlatSpawnDesc.fSpawnPos = _float3(10.f, 90.f, 0.f);
@@ -431,12 +425,6 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_Objects(const _tchar * pLayerTag)
 	tDynamicPlatSpawnDesc.fSpawnPos = _float3(15.f, 40.f, 0.f);
 	tDynamicPlatSpawnDesc.ePattern = CDynamicPlatform::PATTERN_1;
 	tDynamicPlatSpawnDesc.iIndex = 7;
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, pLayerTag, TAG_OP(Prototype_Object_DynamicPlatform), &tDynamicPlatSpawnDesc));
-	m_vecDynamicPlatforms_Golu.push_back(static_cast<CDynamicPlatform*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LABORATORY_JINO, pLayerTag)));
-
-	tDynamicPlatSpawnDesc.fSpawnPos = _float3(10.f, 30.f, 0.f);
-	tDynamicPlatSpawnDesc.ePattern = CDynamicPlatform::PATTERN_1;
-	tDynamicPlatSpawnDesc.iIndex = 8;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_LABORATORY_JINO, pLayerTag, TAG_OP(Prototype_Object_DynamicPlatform), &tDynamicPlatSpawnDesc));
 	m_vecDynamicPlatforms_Golu.push_back(static_cast<CDynamicPlatform*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_LABORATORY_JINO, pLayerTag)));
 

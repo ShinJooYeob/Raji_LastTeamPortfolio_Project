@@ -2,9 +2,10 @@
 #include "..\public\Chiedtian.h"
 #include "Chiedtuan_Weapon.h"
 #include "Chiedtuan_2Page_Weapon.h"
-
+#include "Camera_Main.h"
 #include "HpUI.h"
 #include "Volcano.h"
+#include "Player.h"
 
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -145,21 +146,51 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0, 0));
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-	_int iRandom = rand() % 3 + 1;
+	FAILED_CHECK(Ready_ParticleDesc());
+
+	//m_bIsHit = true;
+
+	// JH
+	/*_int iRandom = rand() % 3 + 1;
 
 	wstring teampString;
 	teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
 
-	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-	FAILED_CHECK(Ready_ParticleDesc());
-
-	//m_bIsHit = true;
+	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);*/
+	m_bBlockUpdate = true;
+	m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 5.f;
+	m_fAttachCamPos.z -= 10.f;
+	m_fDelayTime = 3.f;
+	m_pModel->Change_AnimIndex(14);
+	m_bIsMainWeaponOff = true;
+	//
 	return S_OK;
 }
 
 _int CChiedtian::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	// JH
+	m_pDissolve->Update_Dissolving(fDeltaTime);
+
+	if (true == m_bBlockUpdate)
+	{
+		Update_Direction(fDeltaTime);
+
+		_Vector vTestPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+		if (false == m_bBlockAnim)
+		{
+			FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple* m_fTestHPIndex), m_bIsOnScreen));
+		}
+
+		return _int();
+	}
+	//
 
 	m_fAttackCoolTime -= (_float)fDeltaTime;
 	m_fSkillCoolTime -= (_float)fDeltaTime;
@@ -188,6 +219,19 @@ _int CChiedtian::Update(_double fDeltaTime)
 	{
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex(3, 1.f);
+
+		// Jino
+		static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		m_fAttachCamPos.y += 5.f;
+		m_fAttachCamPos.z -= 10.f;
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+		static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();
+		//
+
+
 	}
 
 	if (!m_ActivateSecondPage)
@@ -340,7 +384,12 @@ _int CChiedtian::Update(_double fDeltaTime)
 		{
 			m_bIsHit = false;
 			m_bIsAttack = true;
-			m_pModel->Change_AnimIndex(4);
+
+			// JH
+			if (m_fHP > 0.f)
+			{
+				m_pModel->Change_AnimIndex(4);
+			}
 		}
 		//점프
 		if (!m_bIsHit && !m_bIsAttack && m_fRange < 8.f &&m_fJumpTime <= 0)
@@ -645,7 +694,7 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pJumpCollider));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
-
+ 
 	if (!m_ActivateSecondPage)
 	{
 		if (!m_bIsMainWeaponOff)
@@ -663,8 +712,9 @@ _int CChiedtian::LateUpdate(_double fDeltaTime)
 			SecondPageWeapon->LateUpdate(fDeltaTime);
 	}
 
-
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	// JH
+	if(false == m_bBlockUpdate)
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(fDeltaTime);
@@ -685,14 +735,16 @@ _int CChiedtian::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	_uint NumMaterial = m_pModel->Get_NumMaterial();
+	FAILED_CHECK(m_pDissolve->Render(7));
 
-	for (_uint i = 0; i < NumMaterial; i++)
-	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	}
+	//_uint NumMaterial = m_pModel->Get_NumMaterial();
+
+	//for (_uint i = 0; i < NumMaterial; i++)
+	//{
+	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+	//}
 #ifdef _DEBUG
 	//m_pNavigationCom->Render(m_pTransformCom);
 #endif // _DEBUG
@@ -734,9 +786,230 @@ _float CChiedtian::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount
 	return _float();
 }
 
+void CChiedtian::Change_Animation(_uint iAnimIndex)
+{
+	switch (iAnimIndex)
+	{
+	case 14:
+		m_bBlockAnim = false;
+		break;
+	default:
+		m_pModel->Change_AnimIndex(iAnimIndex);
+		break;
+	}
+}
+
+void CChiedtian::Set_Dissolve_InOut(_bool bIsIn)
+{
+	if (bIsIn == true)
+	{
+		m_pDissolve->Set_DissolveOn(true, 0.2f);
+	}
+	else
+	{
+		m_pDissolve->Set_DissolveOn(false, 0.2f);
+	}
+}
+
 void CChiedtian::Activate_SecondPage(_double fDeltaTime)
 {
 
+}
+
+void CChiedtian::Update_Direction(_double fDeltaTime)
+{
+	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
+
+	switch (m_pModel->Get_NowAnimIndex())
+	{
+	case 1:
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0 >= m_fDelayTime)
+		{
+			m_pModel->Change_AnimIndex(10);
+			m_bOnceSwitch = true;
+		}
+	}
+		break;
+	case 14:
+	{
+		if (false == m_bOnceSwitch && 0.0379f <= fAnimPlayRate && 0.045f > fAnimPlayRate)
+		{
+			m_bOnceSwitch = true;
+			m_bBlockAnim = true;
+		}
+		else if (0.98f <= fAnimPlayRate)
+		{
+			m_pModel->Change_AnimIndex(1);
+			m_fDelayTime = 3.f;
+			m_bOnceSwitch = true;
+		}
+		else if (false == m_bOnceSwitch && 0.75f <= fAnimPlayRate)
+		{
+			_int iRandom = rand() % 3 + 1;
+
+			wstring teampString;
+			teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
+
+			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			m_bOnceSwitch = true;
+		}
+		else if (0.045f <= fAnimPlayRate && 0.75f > fAnimPlayRate)
+		{
+			if (true == m_bOnceSwitch)
+			{
+				m_bBlockAnim = true;
+
+				m_fDelayTime -= (_float)fDeltaTime;
+				if (m_fDelayTime <= 0.f)
+				{
+					m_fDelayTime = 0.f;
+					m_bOnceSwitch = false;
+					m_bBlockAnim = false;
+				}
+			}
+			_float fCurDof = (m_pRendererCom->Get_DofLength() >= 150.f ? 150.f : m_pRendererCom->Get_DofLength() + 0.5f);
+			m_pRendererCom->Set_DofLength(fCurDof);
+
+			if (0.656f <= fAnimPlayRate)
+			{
+				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				m_fAttachCamPos.y += 5.f;
+				m_fAttachCamPos.z -= 10.f;
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(0.f, 0.f, 1.f).XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.17699897f, 45.2099724f, 312.646881f));
+			}
+			else if (0.506f <= fAnimPlayRate)
+			{
+				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				m_fAttachCamPos.y += 8.5f;
+				m_fAttachCamPos.z -= 3.5f;
+				m_fAttachCamPos.x += 0.25f;
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, -0.5f, 0.5f, 0.f));
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(0.f, -0.5f, 0.5f).XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.42699993f, 48.7100258f, 319.146820f));
+
+				if (0.512f <= fAnimPlayRate && 0.566f > fAnimPlayRate && true == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = false;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+				else if (0.566f <= fAnimPlayRate && false == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = true;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+
+			}
+			else if (0.316f <= fAnimPlayRate)
+			{
+				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				m_fAttachCamPos.y += 9.f;
+				m_fAttachCamPos.z += 2.5f;
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, -0.6f, -0.5f, 0.f));
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(0.f, -0.6f, -0.5f).XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.17699897f, 49.2099838f, 325.147156f));
+
+				if (0.36f <= fAnimPlayRate && 0.446f > fAnimPlayRate && true == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = false;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+				else if (0.446f <= fAnimPlayRate && false == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = true;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+			}
+			else if (0.253f <= fAnimPlayRate)
+			{
+				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				m_fAttachCamPos.y += 8.f;
+				m_fAttachCamPos.z -= 3.f;
+				m_fAttachCamPos.x += 3.f;
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(-0.5f, -0.5f, 0.5f, 0.f));
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(-0.5f, -0.5f, 0.5f).XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(4.17699862f, 48.2100296f, 319.647278f));
+
+				if (0.275f <= fAnimPlayRate && false == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = true;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+			}
+			else if (0.05f <= fAnimPlayRate)
+			{
+				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+				m_fAttachCamPos.y += 8.f;
+				m_fAttachCamPos.z -= 3.f;   
+				m_fAttachCamPos.x -= 3.f; 
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.5f, -0.5f, 0.5f, 0.f));
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(0.5f, -0.5f, 0.5f).XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-1.82299995f, 48.2100296f, 319.647278f));
+
+				if (0.094f <= fAnimPlayRate && 0.174f > fAnimPlayRate  && false == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = true;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+				else if (0.174f <= fAnimPlayRate && true == m_bOncePlaySound)
+				{
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					m_bOncePlaySound = false;
+					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
+				}
+			}
+		}
+	}
+		break;
+	case 10:
+	{
+		if (0.98f <= fAnimPlayRate)
+		{
+			m_pModel->Change_AnimIndex(0);
+			m_bBlockUpdate = false;
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			m_bIsMainWeaponOff = false;
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);
+		}
+		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)
+		{
+			Set_Dissolve_InOut(false);
+			m_bOnceSwitch = false;
+			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+		}
+		else if (false == m_bOnceSwitch && 0.512f <= fAnimPlayRate)
+		{
+			Set_Dissolve_InOut(true);
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.127f, 35.81f, 281.077f));
+
+			m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			m_fAttachCamPos.y += 5.f;
+			m_fAttachCamPos.z -= 20.f;
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->LookDir(_float3(0.f, 0.f, 1.f).XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.127000064f, 40.8100204f, 261.077118f));
+			m_bOnceSwitch = true;
+
+		}
+
+		if (true == m_bOncePlaySound && 0.6f <= fAnimPlayRate)
+		{
+			m_bOncePlaySound = false;
+			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+		}
+	}
+		break;
+	}
 }
 
 HRESULT CChiedtian::SetUp_Components()
@@ -942,6 +1215,11 @@ HRESULT CChiedtian::SetUp_Components()
 	m_JumpAttachedDesc = tAttachedDesc;
 
 
+	CDissolve::DISSOLVEDESC DissolveDesc;
+	DissolveDesc.pModel = m_pModel;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.pShader = m_pShaderCom;
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
 
 	return S_OK;
 }
@@ -2085,6 +2363,11 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		if (iNowAnimIndex == 3)
 		{
 			Set_IsDead();
+
+			// Jino
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			//
 		}
 		if (iNowAnimIndex == 4)
 		{
@@ -2264,7 +2547,8 @@ void CChiedtian::Free()
 	Safe_Release(m_pFireCollider);
 	Safe_Release(m_pJumpCollider);
 	Safe_Release(m_pFireParticleTransformCom);
-	
+	Safe_Release(m_pDissolve);
+
 	for (auto& Weapon : m_pMainWeapons)
 		Safe_Release(Weapon);
 
