@@ -56,7 +56,7 @@ private:
 	}
 
 public:
-	void Set_Play_MeshEffect_Colbullet();
+	void Set_Play_MeshEffect_Colbullet(bool bParticle = true);
 	
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
@@ -132,6 +132,10 @@ private: // particle
 	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
 
 	CGameObject*					m_BulletObj = nullptr;
+	CGameObject*					m_BulletMeshEffect = nullptr;
+
+	_bool							m_dealyEffect_Rain = false;
+	_double							m_dealyEffect_Time = 0;
 
 
 private:

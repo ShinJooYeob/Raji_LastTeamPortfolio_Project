@@ -170,7 +170,8 @@ public:
 
 		MESHEFFECT_MONSTER_GL_Cash0,
 		MESHEFFECT_MONSTER_GL_Cash1,
-		MESHEFFECT_MONSTER_GL_Cash2,
+			MESHEFFECT_MONSTER_GL_Cash2,
+			MESHEFFECT_MONSTER_GL_Cash3,
 
 
 		// ===========================================
@@ -353,6 +354,7 @@ public:
 		Um_Imgae_2,
 		Um_Sunder_1,
 		Um_FireMask_1,
+		Um_FireMask_2,
 
 		TEXTURE_EFFECTJ_END,
 
@@ -448,6 +450,8 @@ public:
 
 	HRESULT Clear_MeshEffect();
 
+	const class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
+
 
 private:
 	HRESULT			Ready_MeshEffect();
@@ -466,6 +470,7 @@ private:
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
 	vector<INSTMESHDESC>		mVecMeshInstDesc;
 
+	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
 
 
 

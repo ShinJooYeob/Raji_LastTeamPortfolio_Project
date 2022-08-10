@@ -439,9 +439,9 @@ HRESULT CMonster_Vayusura_Leader::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Vayusura_Leader::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	//	m_iOncePattern = 0;
+	m_iOncePattern = 0;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 10;
+		m_iOncePattern = 0;
 
 	switch (m_iOncePattern)
 	{
@@ -597,33 +597,90 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
 
-	//if (m_BulletObj)
-	//{
-	//	CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
-	//	m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
+	if (m_BulletObj)
+	{
+		CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
+		m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
 
-	//	// distance 비교해서 총알 이펙트 죽이기
-	//	_float3 PP = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
-	//	_float PY = PP.y;
-	//	_float MyY = m_pTextureParticleTransform_Demo2->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+	}
 
-	//	if (fabs(PY - MyY) < 0.1f)
-	//	{
-	//		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
-	//		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+	m_dealyEffect_Time -= timer;
 
-	//		m_BulletObj->Set_IsOwerDead(true);
-	//		m_BulletObj = nullptr;
+	if (m_dealyEffect_Rain && m_dealyEffect_Time <= 0)
+	{
+		m_dealyEffect_Rain = false;
 
-	//	}
-	//}
+		{
 
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_ICE2,
+				Prototype_Mesh_SM_RainDrop,
+				3.f,
+				0.5f,
+				_float4(0.0f, 0.0f, 1.0f, 1),
+				_float4(1.0f, 1.0f, 1.0f, 1),
+				1,
+				_float3(0.3f, 0.5f, 0.3f),
+				_float3(0.3f, 0.5f, 0.3f),
+				1);
+
+			// testMesh.fDistortionNoisingPushPower = 0;
+			testMesh.Particle_Power = -20.0f;
+			// testMesh.ePassID = MeshPass_MaskingNoising;
+			// testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_128;
+			// _float randpower = GetSingle(CUtilityMgr)->RandomFloat(3, 8);
+			// 
+			// testMesh.Particle_Power = randpower;
+			// testMesh.iNoiseTextureIndex = NONNOISE;
+			// 
+			testMesh.ParticleStartRandomPosMin = _float3(-5, 10, -5);
+			testMesh.ParticleStartRandomPosMax = _float3(5, 10, 5);
+			_Matrix mat = m_pTextureParticleTransform_Demo2->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+	}
 
 
 
 	if (KEYDOWN(DIK_V))
 	{
+		{
+
+		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_ICE2,
+			Prototype_Mesh_SM_RainDrop,
+			3.f,
+			0.5f,
+			_float4(1.0f, 1.0f, 1.0f, 1),
+			_float4(0.0f, 0.0f, 0.0f, 1),
+			0,
+			_float3(0.3f,0.5f,0.3f),
+			_float3(0.3f, 0.5f, 0.3f),
+			1);
+
+		// testMesh.fDistortionNoisingPushPower = 0;
+		testMesh.Particle_Power = -20.0f;
+		// testMesh.ePassID = MeshPass_MaskingNoising;
+		// testMesh.eParticleTypeID = InstanceEffect_Fountain;
+		testMesh.eInstanceCount = Prototype_ModelInstance_128;
+		// _float randpower = GetSingle(CUtilityMgr)->RandomFloat(3, 8);
+		// 
+		// testMesh.Particle_Power = randpower;
+		// testMesh.iNoiseTextureIndex = NONNOISE;
+		// 
+		testMesh.ParticleStartRandomPosMin = _float3(-5,10 , -5);
+		testMesh.ParticleStartRandomPosMax = _float3(5, 10 , 5);
+		_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		_Vector pos = mat.r[3];
+		testMesh.vFixedPosition = pos;
+
+		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
 	}
+
 	if (KEYDOWN(DIK_C))
 	{
 	}
@@ -634,10 +691,21 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 }
 
-void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet()
+void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet(bool bParticle)
 {
-	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
-	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+	if (bParticle)
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
+		m_dealyEffect_Rain = true;
+		m_dealyEffect_Time = 1.0f;
+
+		
+
+	}
+	if (m_BulletMeshEffect)
+		m_BulletMeshEffect->Set_IsDead();
+	m_BulletMeshEffect = nullptr;
 	Safe_Release(m_BulletObj);
 
 }
@@ -791,12 +859,15 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.bBornAttachOn = true;
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
-				g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
-				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+				
+				Set_Bullet(g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
+				m_BulletMeshEffect = (CGameObject*)GETPARTICLE->GetMeshEffect();
+				if (m_BulletMeshEffect == nullptr)
+					DEBUGBREAK;
 
 				//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 
-			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
 
 				m_iAdjMovedIndex++; //애니메이션이 동작할 때 한번만 발동시키기 위해 ++시킨다.
 			}

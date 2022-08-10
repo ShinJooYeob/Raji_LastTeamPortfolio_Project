@@ -1356,11 +1356,12 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 	}
 
 
-	IMGUITREE("Load Particle Data")
-	{
-		Update_DebugWnd_EditTest(fDeltaTime);
-		IMGUITREE_END
-	}
+	//IMGUITREE("Load Particle Data")
+	//{
+	//	Update_DebugWnd_EditTest(fDeltaTime);
+	//	IMGUITREE_END
+	//}
+	
 	ImGui::Separator();
 
 
