@@ -51,6 +51,7 @@
 #include "PauseUI.h"
 #include "GraphicUI.h"
 #include "SoundUI.h"
+#include "IngameUI.h"
 
 
 //Dynamic_Map
@@ -431,6 +432,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PauseUI), CPauseUI::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_GraphicUI), CGraphicUI::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_SoundUI), CSoundUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_IngameUI), CIngameUI::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_TestObject), CTestObject::Create(m_pDevice, m_pDeviceContext)));
 

@@ -70,6 +70,7 @@ public:
 	void			Set_UIPosition(_float fX, _float fY) { m_fX = fX, m_fY = fY; }
 	void			Set_TextureIndex(_int Number) { m_iTextureIndex = Number; }
 	void			Set_Size(_float SizeX, _float SizeY) { m_fSizeX = SizeX, m_fSizeY = SizeY; }
+	void			Set_Angle(_float fAngle);
 
 	void			Set_IsDraw(_bool Draw) { m_bDraw = Draw; }
 	void			Set_IsPushed(_bool Pushed) { m_bPushed = m_bPushed; }

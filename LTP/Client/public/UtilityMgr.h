@@ -103,11 +103,20 @@ public:
 	WeaponType Get_SkillWeaponType() { return m_eSkillWeaponType; }
 
 public:
-	void  Set_FireSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
-	void  Set_IceSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
-	void  Set_LightningSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
-	void  Set_SKillPoint(_int PointCount) { m_iSkillPoint = PointCount; }
-	void  Set_SkillWeaponType(WeaponType Type) { m_eSkillWeaponType = Type; }
+	void	Set_FireSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void	Set_IceSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void	Set_LightningSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
+	void	Set_SKillPoint(_int PointCount) { m_iSkillPoint = PointCount; }
+	void	Set_SkillWeaponType(WeaponType Type) { m_eSkillWeaponType = Type; }
+
+public:
+	void	PlusSpearSkillPersent(_float fPersent = 5.f) { m_fSpearSkillPersent += 5.f; }
+	void	PlusBowSkillPersent(_float fPersent = 5.f) { m_fBowSkillPersent += 5.f; }
+	void	PlusSwordshieldSkillPersent(_float fPersent = 5.f) { m_fSwordshieldSkillPersent += 5.f; }
+
+	_float	Get_SpearSkillPersent() { return m_fSpearSkillPersent; }
+	_float	Get_BowSkillPersent() { return m_fBowSkillPersent; }
+	_float	Get_SwordshieldSkillPersent() { return m_fSwordshieldSkillPersent; }
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -140,6 +149,11 @@ private:
 	_int		m_iSkillPoint = 18;
 
 	WeaponType  m_eSkillWeaponType = WEAPON_BOW;
+
+private:
+	_float		m_fSpearSkillPersent = 0.f;
+	_float		m_fBowSkillPersent = 0.f;
+	_float		m_fSwordshieldSkillPersent = 0.f;
 
 public:
 	HRESULT Ready_Particles();
