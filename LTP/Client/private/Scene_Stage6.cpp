@@ -45,7 +45,7 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
 
-//	FAILED_CHECK(Ready_Layer_Monster_Boss(TAG_LAY(Layer_Monster)));
+	// #RICK 병합시 수정
 
 	//EH
 	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
@@ -60,6 +60,8 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+
 
 	
 	// Assimp Test

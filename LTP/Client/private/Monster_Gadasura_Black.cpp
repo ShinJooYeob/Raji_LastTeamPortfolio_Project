@@ -509,9 +509,9 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	m_iOncePattern = 51;
+	// m_iOncePattern = 51;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 6;
+		m_iOncePattern = 3;
 
 
 	//_uint Once = m_iOncePattern;
@@ -1263,7 +1263,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					1);
 				testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 				testTex.vPowerDirection = mat.r[2];
-				_Vector pos = mat.r[3] + mat.r[1] * 0.3f;
+				_Vector pos = mat.r[3] + mat.r[1] * 0.2f;
 				testTex.vFixedPosition = pos;
 			//	testTex.iTextureLayerIndex = 112;
 
@@ -1855,12 +1855,6 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 2 && PlayRate >= 0.6)
-			{
-
-
-				m_EffectAdjust++;
-			}
 
 			break;
 		}

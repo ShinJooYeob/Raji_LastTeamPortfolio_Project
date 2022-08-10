@@ -558,13 +558,11 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 	case 40:
 	{
 		m_iOnceAnimNumber = 4;
-		Set_LimLight_N_Emissive();
 		break;
 	}
 	default:
 	{
 		m_iOnceAnimNumber = 4;
-		Set_LimLight_N_Emissive();
 		break;
 	}
 	}
@@ -738,6 +736,7 @@ HRESULT CMonster_Vayusura_Minion::Ready_ParticleDesc()
 	m_pTextureParticleTransform_Foot = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_BREAK(m_pTextureParticleTransform_Foot);
 	mPlaneTimer = 0;
+	mFlyTimer = 0;
 	return S_OK;
 }
 
@@ -770,12 +769,15 @@ HRESULT CMonster_Vayusura_Minion::Update_Particle(_double timer)
 
 	if (mPlaneTimer >= 0)
 		mPlaneTimer -= timer;
-	
+
+	if (mFlyTimer >= 0)
+		mFlyTimer -= timer;
+
 
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Test, m_pTextureParticleTransform_HEAD);
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash1, m_pTextureParticleTransform_HEAD);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Test, m_pTextureParticleTransform_HEAD);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pTextureParticleTransform_HEAD);
 	}
 
 	return S_OK;
@@ -846,6 +848,7 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 		m_iSoundIndex = 0;
 		m_iAttackStartSound = 0;
+		Set_LimLight_N_Emissive();
 
 		if (PlayRate > 0.98 && m_bIOnceAnimSwitch == true)
 		{
@@ -913,15 +916,18 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		}
 		case 5:
 		{
-			_float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
-			Value = max(min(Value, 1.f), 0.f);
+			_float Value = 0.5f;
 			Set_LimLight_N_Emissive(_float4(1.0f, 0.0f, 0.0f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+			
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
 				m_bColliderAttackOn = true;
 				m_iAdjMovedIndex++;
 			}
+
+
+			
 
 			if (PlayRate > 0.15f && PlayRate < 0.9f)
 			{
@@ -931,21 +937,57 @@ HRESULT CMonster_Vayusura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				if (mPlaneTimer <= 0)
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.71f, 0.8f, 0.8f, 1.f), 0.8f);
 
+
+
+				if (mFlyTimer <= 0)
+				{
+					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pTextureParticleTransform_HEAD);
+					mFlyTimer = 0.5;
+				}
+
+
 				if (fabs((FootY)-(PY)) < 2.0f && mPlaneTimer <= 0)
 				{
 					mPlaneTimer = 0.07f;
-
 					Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Plane, m_pTextureParticleTransform_Foot);
+
+
+					{
+						INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+							Prototype_Mesh_SM_meteo,
+							0.01f,
+							0.5f,
+							// _float4(1),
+							_float4(1.0f, 1.0f, 1.0f, 1),
+							_float4(0.0f, 0.0f, 0.0f, 1),
+							1,
+							_float3(1).XMVector() * 5.0f,
+							_float3(1).XMVector() * 2.0f,
+							1);
+
+						testMesh.fDistortionNoisingPushPower = 0;
+						testMesh.ePassID = MeshPass_MaskingNoising;
+						testMesh.eParticleTypeID = InstanceEffect_Fountain;
+						testMesh.eInstanceCount = Prototype_ModelInstance_8;
+						_float randpower = GetSingle(CUtilityMgr)->RandomFloat(3, 8);
+
+						testMesh.Particle_Power = randpower;
+						testMesh.iNoiseTextureIndex = NONNOISE;
+
+						testMesh.ParticleStartRandomPosMin = _float3(-1,0,-1);
+						testMesh.ParticleStartRandomPosMax = _float3(1, 0, 1);
+						_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+						_Vector pos = mat.r[3];
+						testMesh.vFixedPosition = pos;
+
+						GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+					}
+
 				}
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate > 0.3f)
-			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Plane, m_pTransformCom);
+	
 
-				//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash0, m_pTextureParticleTransform_Demo1);
-				m_EffectAdjust++;
-			}
 
 			if (m_iSoundIndex == 0)
 			{

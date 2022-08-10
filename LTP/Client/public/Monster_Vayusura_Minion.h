@@ -123,6 +123,7 @@ private: // particle
 	CTransform*						m_pTextureParticleTransform_WingL = nullptr;
 	CTransform*						m_pTextureParticleTransform_Foot = nullptr;
 	_double							mPlaneTimer = 0;
+	_double							mFlyTimer = 0;
 	
 
 private:

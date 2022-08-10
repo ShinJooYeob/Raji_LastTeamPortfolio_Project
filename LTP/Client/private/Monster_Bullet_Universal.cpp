@@ -332,7 +332,7 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		}
 		case VAYUSURA_LEADER_BULLET:
 		{
-			//static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet();
+			static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet(true);
 			Set_IsDead();
 			break;
 		}
@@ -784,6 +784,8 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 
 	if(true == Monster_Object->Get_AttackCanceOn() || fDistance <= 0.2)
 	{
+		static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet(false);
+
 		Set_IsDead();
 	}
 

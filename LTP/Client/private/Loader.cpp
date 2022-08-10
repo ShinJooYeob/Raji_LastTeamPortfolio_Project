@@ -395,11 +395,15 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightningBolt_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_D_Plane);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_IceTrap_Ice);
-
 		STATIC_EFFECTLOAD(Prototype_Mesh_MS_Tornado_Cyl_2side_03);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_IceShards_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_meteo);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_half_ball_closed_1);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
+
+
 
 
 
