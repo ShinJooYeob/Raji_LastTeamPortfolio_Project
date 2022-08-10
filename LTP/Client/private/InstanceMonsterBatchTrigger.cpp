@@ -53,7 +53,7 @@ _int CInstanceMonsterBatchTrigger::Update(_double fDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
 
-	if (m_eNowSceneNum != SCENEID::SCENE_EDIT && m_bOnceSwitch == true)
+	if (m_eNowSceneNum != SCENEID::SCENE_EDIT && m_bOnceSwitch == true && m_bAllDieOn == false)
 	{//그리고 인스턴스들 공격할 때 네비 Y태워서 올라가는 문제해결하자
 		m_fPoint.x = m_fValueMat.m[2][0];
 		m_fPoint.y = m_fValueMat.m[2][1];
@@ -145,6 +145,12 @@ void CInstanceMonsterBatchTrigger::CollisionTriger(CCollider * pMyCollider, _uin
 		m_bOnceSwitch = true;
 	}
 	//Set_IsDead();
+}
+
+void CInstanceMonsterBatchTrigger::Set_MonsterAllDie(_bool bMonsterAllDie)
+{
+	m_bMonsterAllDie = bMonsterAllDie;
+	m_bAllDieOn = bMonsterAllDie;
 }
 
 HRESULT CInstanceMonsterBatchTrigger::SetUp_Components()

@@ -6,6 +6,8 @@
 #include "Scene_Stage3.h"
 #include "PathArrow.h"
 
+#include "InstanceMonsterBatchTrigger.h"
+
 _uint CALLBACK MagicCircleEffectThread(void* _Prameter)
 {
 	THREADARG tThreadArg{};
@@ -291,8 +293,16 @@ _int CRangda::Update(_double fDeltaTime)
 	if(m_bIsScreamAttack)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pScreamCollider));
 
-	if(m_bIsDissolveStart)
+	if (m_bIsDissolveStart)
+	{
+		if (m_bInstanceMonsterDieSwitch == false)
+		{
+			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
+			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			m_bInstanceMonsterDieSwitch = true;
+		}
 		m_pDissolve->Set_DissolveOn(false, 9.4f);
+	}
 	return _int();
 }
 
@@ -381,7 +391,7 @@ _float CRangda::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 		m_bIsHit = true;
 	else if (m_fHP == 4)
 		m_bIsHit = true;
-	else if (m_fHP == 0)
+	else if (m_fHP <= 0)
 		m_bIsHit = true;
 
 

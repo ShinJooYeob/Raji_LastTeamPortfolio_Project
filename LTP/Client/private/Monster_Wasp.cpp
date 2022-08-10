@@ -683,7 +683,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 				m_vecInstancedTransform[i].iLifeCount += 1;
 
 				if (m_pBatchTrigger->Get_MonsterAllDie())
-					m_vecInstancedTransform[i].iLifeCount = 1000;
+					m_vecInstancedTransform[i].iLifeCount = 100000000;
 
 				if (m_vecInstancedTransform[i].iLifeCount > m_Instance_Info.fValueMat.m[1][0])
 				{

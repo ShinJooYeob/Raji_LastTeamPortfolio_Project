@@ -106,6 +106,8 @@ private:
 	vector<NONINSTNESHEFTDESC>		m_vecJYNonInstMeshDesc;
 	_float3							m_vForEffectHandPos = _float3(0);
 
+	_bool								m_bInstanceMonsterDieSwitch = false;
+
 public:
 	HRESULT Make_RandaMagicCircle(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec);
 
