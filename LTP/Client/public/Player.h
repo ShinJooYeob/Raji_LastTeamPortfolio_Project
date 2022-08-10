@@ -580,6 +580,7 @@ private:
 	//JJB
 	_bool					m_bIsSkillUI = false;
 	class CSkillUI*			m_pSkillUI = nullptr;
+	class CIngameUI*		m_pIngameUI = nullptr;
 
 private:
 	CTransform*												m_pTextureParticleTransform = nullptr;

@@ -213,6 +213,9 @@ HRESULT CScene_StageSelect::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_StageSelect::Ready_Layer_UI(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_IngameUI)));
+
 	return S_OK;
 }
 

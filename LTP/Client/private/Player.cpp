@@ -17,6 +17,7 @@
 
 #include "HpUI.h"
 #include "SkillUI.h"
+#include "IngameUI.h"
 
 #include "NonInstanceMeshEffect.h"
 #include "PartilceCreateMgr.h"
@@ -225,6 +226,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		{
 			m_pSkillUI->Update(fDeltaTime);
 		}
+		m_pIngameUI->Update(fDeltaTime);
 
 		FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	}
@@ -264,6 +266,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 	{
 		m_pSkillUI->LateUpdate(fDeltaTimer);
 	}
+	m_pIngameUI->LateUpdate(fDeltaTimer);
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
@@ -2368,6 +2371,8 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
+
+		m_pIngameUI->Set_WeaponUIAngle(1);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_BOW)
 	{
@@ -2385,6 +2390,7 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(0));
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle_Must(1));
 
+		m_pIngameUI->Set_WeaponUIAngle(0);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_3) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_SWORD)
 	{
@@ -2401,6 +2407,8 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
 		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
+
+		m_pIngameUI->Set_WeaponUIAngle(2);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_4) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_CHAKRA)
 	{
@@ -8402,6 +8410,7 @@ HRESULT CPlayer::SetUp_Components()
 	HpDesc.m_Dimensions = 0.63f;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkillUI), m_eNowSceneNum, TAG_OP(Prototype_Object_SkillUI));
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pIngameUI), m_eNowSceneNum, TAG_OP(Prototype_Object_IngameUI));
 
 	return S_OK;
 }
@@ -9260,4 +9269,5 @@ void CPlayer::Free()
 
 	//JJB
 	Safe_Release(m_pSkillUI);
+	Safe_Release(m_pIngameUI);
 }

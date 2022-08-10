@@ -123,6 +123,11 @@ _int CUI::LateRender()
 	return _int();
 }
 
+void CUI::Set_Angle(_float fAngle)
+{
+	m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(fAngle));
+}
+
 HRESULT CUI::Set_ChangeTextureLayer(_tchar * LayerName)
 {
 	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(LayerName));
