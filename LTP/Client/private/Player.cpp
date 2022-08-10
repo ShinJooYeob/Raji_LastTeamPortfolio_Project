@@ -2093,6 +2093,8 @@ HRESULT CPlayer::LateUpdate_UI(_double fDeltaTime)
 		m_pSkillUI->LateUpdate(fDeltaTime);
 	}
 
+	m_pIngameUI->LateUpdate(fDeltaTime);
+
 	return S_OK;
 }
 

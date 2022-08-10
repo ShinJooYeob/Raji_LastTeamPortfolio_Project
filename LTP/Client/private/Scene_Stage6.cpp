@@ -60,7 +60,6 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 
 
 	
