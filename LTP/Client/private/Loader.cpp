@@ -331,6 +331,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //		}
 
 		// USE LOAD
+		_Matrix TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+		
 		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
@@ -402,10 +405,10 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_meteo);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_half_ball_closed_1);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 
-
-
-
+		
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -416,6 +419,10 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ninjasura_Knife);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
+
+		// ALLLOAD
+		// for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)
+		// 	STATIC_EFFECTLOAD((COMPONENTPROTOTYPEID)i);
 
 
 

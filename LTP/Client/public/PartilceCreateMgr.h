@@ -327,7 +327,6 @@ public:
 		TEXTURE_EFFECTJ_Universal_Suck,
 		TEXTURE_EFFECTJ_Universal_Spread,
 
-
 		// Ohter
 		JY_TextureEft_1,
 		JY_TextureEft_2,
@@ -343,6 +342,7 @@ public:
 		// My
 		Um_Hit_1,
 		Um_Hit_2,
+		Um_Hit_2_DisDiffuse,
 		Um_Hit_3,
 		Um_Hit_4,
 		Um_Dust_1,
@@ -356,6 +356,7 @@ public:
 		Um_FireMask_1,
 		Um_FireMask_2,
 
+
 		TEXTURE_EFFECTJ_END,
 
 	};
@@ -367,6 +368,12 @@ public:
 		MESHINST_EFFECTJ_BOW_Q_PLANE,
 
 		Um_MeshBase,
+		Um_MeshBase2,
+		Um_MeshBase_Cone,
+		Um_Mesh_Sword1,
+		Um_Mesh_Sword2,
+
+
 
 		MESHINST_EFFECTJ_END,
 	};
@@ -428,10 +435,10 @@ public:
 	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
 
 	INSTMESHDESC Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e,
-		COMPONENTPROTOTYPEID meshType,
-		_float TotalTime, _float EachTime,
-		_float4 Color1, _float4 Color2, _uint colorFrequency,
-		_float3 Size1, _float3 Size2, _uint sizeFrequency
+		COMPONENTPROTOTYPEID meshType = COMPONENTPROTOTYPEID(0),
+		_float TotalTime=0, _float EachTime=0,
+		_float4 Color1 = _float4(1), _float4 Color2 = _float4(1), _uint colorFrequency = 0,
+		_float3 Size1 = _float3(1), _float3 Size2 = _float3(1), _uint sizeFrequency=0
 	);
 
 
