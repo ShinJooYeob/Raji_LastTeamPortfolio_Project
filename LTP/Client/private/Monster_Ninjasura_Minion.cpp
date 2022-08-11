@@ -450,78 +450,7 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 	// 	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
 
 
-
 		{
-
-			////
-			//// Mesh
-			//MeshDesc.eMeshType = Prototype_Mesh_SM_DivineLaserBeam_02;
-
-			//// Time
-			//MeshDesc.fMaxTime_Duration = 0.2f;
-			//MeshDesc.fAppearTime = 0.1f;
-			//AddDesc.bAfterApperTime = true;
-
-			//// Tex
-			//MeshDesc.iDiffuseTextureIndex = 317;
-
-			//MeshDesc.MaskTextureIndex = 72;
-
-			//MeshDesc.NoiseTextureIndex = 182;
-
-
-			//// Noise
-			//MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
-			//MeshDesc.fDistortionNoisingPushPower = 50.0f;
-			//MeshDesc.vColor = _float4(1, 1, 1, 1);
-
-			//// Color
-			//MeshDesc.vLimLight = _float4(0.69f, 0.04f, 0.87f, 1.0f);
-			//MeshDesc.vLimLight = _float4(0.01f, 0.71f, 0.96f, 1.0f);
-			//MeshDesc.vEmissive = _float4(0.8f, 0.5f, 1.0f, 1.f);
-			//MeshDesc.vEmissive = _float4(1);
-
-			//// Transform_Base
-			//MeshDesc.vPosition = _float3(0.0f, -0.5f, -7.0f);
-			//MeshDesc.vSize = _float3(0.3f, 0.5f, 0.3f);
-
-			//// Move
-			//MeshDesc.MoveDir = FollowingDir_Look;
-			//MeshDesc.MoveSpeed = 0;
-			//AddDesc.AccMoveSpeed = 0;
-
-			//// RotS
-			//AddDesc.LookRotAxis = FollowingDir_Look;
-			//AddDesc.vAddDirectAngle = _float3(70, 0, 0);
-			//AddDesc.LookRotSpeed = 0;
-
-			//MeshDesc.RotAxis = FollowingDir_Look;
-			//MeshDesc.RotationSpeedPerSec = 0.0f;
-			//AddDesc.AccRotSpeed = 0;
-			//AddDesc.InitRot = _float3(0, 0, 0.0f);
-
-			//// Scale
-			//AddDesc.AccScaleSpeed = -3.0f;
-			//AddDesc.ScaleReFlag = false;
-
-			//AddDesc.bLockScale[0] = false;
-			//AddDesc.bLockScale[1] = false;
-			//AddDesc.bLockScale[2] = true;
-
-
-			//// Fix
-			//AddDesc.FixFlag_Move = true;
-			//AddDesc.FixFlag_Rot = true;
-			//AddDesc.FollowTarget = nullptr;
-
-			//// Shader
-			//MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-			//Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
-
-			//MeshDesc.vPosition = _float3(0.0f, 2.0f, -7.0f);
-			//AddDesc.vAddDirectAngle = _float3(100, 0, 0);
-			//Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
-
 			//
 			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 				//	Prototype_Mesh_SM_DivineLaserBeam_02,
@@ -611,7 +540,6 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 
 		}
 		{
-
 			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_Mesh_Sword2,
 				COMPONENTPROTOTYPEID(0),
 				0,
@@ -1106,7 +1034,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				{
 					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.8f,
+						0.4f,
 						0.2f,
 						_float4(0.15f, 0.38f, 0.92f, 1),
 						_float4(0.15f, 0.38f, 0.92f, 0.0f),
@@ -1153,7 +1081,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					testTex.Particle_Power = 5.0f;
 
-
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
 					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
 					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
 
@@ -1318,7 +1246,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				{
 					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.8f,
+						0.4f,
 						0.2f,
 						_float4(0.15f, 0.38f, 0.92f, 1),
 						_float4(0.15f, 0.38f, 0.92f, 0.0f),
@@ -1365,6 +1293,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					testTex.Particle_Power = 5.0f;
 
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
 
 					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
 					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
@@ -1471,7 +1400,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				{
 					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.8f,
+						0.4f,
 						0.2f,
 						_float4(0.15f, 0.38f, 0.92f, 1),
 						_float4(0.15f, 0.38f, 0.92f, 0.0f),
@@ -1518,6 +1447,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					testTex.Particle_Power = 5.0f;
 
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
 
 					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
 					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);

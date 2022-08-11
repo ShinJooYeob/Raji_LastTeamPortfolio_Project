@@ -87,6 +87,8 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
+	
 
 
 
@@ -5557,8 +5559,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
 
 			// Transform_Base
-		MeshDesc.vPosition = _float3(0.0f, -0.4f, 0);
-		MeshDesc.vSize = _float3(0.5f);
+		MeshDesc.vPosition = _float3(0.0f, -1.0f, 0);
+		MeshDesc.vSize = _float3(1.0f);
 
 		// Move
 		MeshDesc.MoveDir = FollowingDir_Look;
@@ -5613,6 +5615,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.iDiffuseTextureIndex = 278;
 		MeshDesc.iDiffuseTextureIndex = 370;
 		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 77;
 		MeshDesc.NoiseTextureIndex = 384;
 
 
@@ -5627,7 +5630,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Transform_Base
 		MeshDesc.vPosition = _float3(-1.0f, 1.0f, -0.2f);
-		MeshDesc.vSize = _float3(1.3f);
+		MeshDesc.vSize = _float3(3.0f);
 
 		// Move
 		MeshDesc.MoveDir = FollowingDir_Look;
@@ -5713,7 +5716,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
 
 		// Scale
-		AddDesc.AccScaleSpeed = 1.0f;
+		AddDesc.AccScaleSpeed = 5.0f;
+		AddDesc.ScaleMax = 0.5f;
 		AddDesc.ScaleReFlag = false;
 
 		AddDesc.bLockScale[0] = true;

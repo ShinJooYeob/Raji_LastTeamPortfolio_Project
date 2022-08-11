@@ -451,11 +451,76 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 
 	if (KEYDOWN(DIK_V))
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
+
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				Prototype_Mesh_SM_GN_Wind01,
+				0,
+				0.3f,
+				_float4(0.15f, 0.38f, 0.92f, 1),
+				_float4(0.15f, 0.38f, 0.92f, 0.0f),
+				0,
+				_float3(0.3f),
+				_float3(0.3f),
+				1);
+
+
+			testMesh.bAutoTurn = true;
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(1080);
+
+			testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
+
+
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
 	}
 
 	if (KEYDOWN(DIK_C))
 	{
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
+				0,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				1,
+				_float3(0.05f, 3, 0.05f),
+				_float3(0.05f, 4, 0.05f),
+				1);
+			//	testTex.eParticleTypeID = InstanceEffect_Ball;
+			//	testTex.ePassID = InstancePass_OriginColor;
+			//	testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.vEmissive_SBB = _float3(1,0,0);
+
+			testTex.Particle_Power = 5.0f;
+
+
+			testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
+			testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
+
+			testTex.vPowerDirection = _float3(1, 1, 1);
+			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+			testTex.iTextureLayerIndex = 10;
+			//	testTex.iMaskingTextureIndex = 74;
+			//	testTex.iNoiseTextureIndex = 160;
+			//	testTex.TempBuffer_1.y = 0.0f;
+
+			////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
+			_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+			_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+			testTex.vFixedPosition = pos;
+
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+
+
+		}
+
 	}
 
 	return S_OK;
@@ -547,7 +612,7 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-//	m_iOncePattern = 8;
+	m_iOncePattern = 8;
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 6;
 
@@ -1199,6 +1264,26 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 1 && PlayRate >= 0.35)
 			{
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo1);
+
+				/*
+
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_GN_Wind01;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.6f;
+		MeshDesc.fAppearTime = 0.3f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.iDiffuseTextureIndex = 370;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 77;
+		MeshDesc.NoiseTextureIndex = 384;
+
+				
+				*/
 				m_EffectAdjust++;
 			}
 
