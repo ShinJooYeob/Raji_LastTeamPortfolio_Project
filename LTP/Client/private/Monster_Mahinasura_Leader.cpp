@@ -55,6 +55,7 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 
 	if (m_fHP <= 0)
 	{
+		m_bRepelOff = true;
 		m_bLookAtOn = false;
 		m_pDissolve->Update_Dissolving(dDeltaTime);
 		m_pDissolve->Set_DissolveOn(false, 2.f);
@@ -563,7 +564,8 @@ HRESULT CMonster_Mahinasura_Leader::Update_Collider(_double dDeltaTime)
 			break;
 		}
 	}
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	if (m_bRepelOff != true)
+		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
 
 	return S_OK;
 }
@@ -598,7 +600,7 @@ HRESULT CMonster_Mahinasura_Leader::CoolTime_Manager(_double dDeltaTime)
 		m_dInfinity_CoolTime += dDeltaTime;
 	}
 
-	if (m_dOnceCoolTime > 4 && m_fDistance < 3 || m_bComboAnimSwitch == true)
+	if (m_dOnceCoolTime > 2 && m_fDistance < 3 || m_bComboAnimSwitch == true)
 	{
 		m_dOnceCoolTime = 0;
 		m_dInfinity_CoolTime = 0;
@@ -741,6 +743,15 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 		break;
 	case 42:
 		m_iOnceAnimNumber = 8; //groggy
+		break;
+	case 43:
+		m_iOnceAnimNumber = 9; //Trishul
+		break;
+	case 44:
+		m_iOnceAnimNumber = 11; // Bow
+		break;
+	case 45:
+		m_iOnceAnimNumber = 13; // Sword
 		break;
 
 	}

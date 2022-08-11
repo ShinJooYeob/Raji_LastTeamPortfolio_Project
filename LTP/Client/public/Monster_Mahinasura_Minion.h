@@ -145,6 +145,10 @@ private://Dissolve
 private://groggi
 	_bool				m_bGroggiOn = false;
 
+private://Repel
+	_bool				m_bRepelOff = false;
+
+
 public:
 	static CMonster_Mahinasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

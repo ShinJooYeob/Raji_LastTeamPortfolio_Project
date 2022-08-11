@@ -144,6 +144,9 @@ private://Sound
 private://Dissolve
 	_double				m_dDissolveTime = 0;
 
+private://Repel
+	_bool				m_bRepelOff = false;
+
 public:
 	static CMonster_Mahinasura_Leader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
