@@ -180,9 +180,13 @@ public: /* public Setter */
 	void	Set_PosY(_float fPos_y);
 	void	Set_OnLilyPad(_bool bOnLilyPad);
 	void	Set_PlayerState(EPLAYER_STATE eState);
+	void	Set_TargetingLookDir(_float3 fTargetingLookDir);
+	void	Set_MaxBossTargetingDist(_float fDist);
+	void	Set_MinBossTargetingDist(_float fDist);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
+	virtual _float	Take_Damage_Instance(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f);
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 public:
@@ -554,6 +558,9 @@ private: /* Targeting */
 private: /* ETC */
 	_bool					m_bPlayerHide = false;
 	_bool					m_bBlockRender = false;
+	_float3					m_fTargetingLookDir = _float3(0.f, -0.5f, 0.3f);
+	_float					m_fDist_MaxBossTargeting = 90.f;
+	_float					m_fDist_MinBossTargeting = 20.f;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

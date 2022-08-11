@@ -33,7 +33,7 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
-	//FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
+	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
@@ -46,10 +46,10 @@ HRESULT CScene_Stage5::Initialize()
 	//FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Mahabalasura_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 
@@ -280,6 +280,7 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 HRESULT CScene_Stage5::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 59.350f, 322.283f)));
 
 	return S_OK;
 }

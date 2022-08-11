@@ -224,7 +224,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		m_fAttachCamPos.z -= 10.f;
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
-		static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();
+		/*static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();*/
 		//
 
 
@@ -1023,7 +1023,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 			m_bBlockUpdate = false;
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			m_bIsMainWeaponOff = false;
-			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			/*static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();*/
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);
 		}
 		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)

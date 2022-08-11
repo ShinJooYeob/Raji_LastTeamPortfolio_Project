@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Rangda.h"
 #include "Chiedtian.h"
+#include "Mahabalasura.h"
 #include "Scene_Stage3.h"
 
 CEventTrigger::CEventTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -97,6 +98,9 @@ void CEventTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 		case TYPE_CHIEDTIAN_CUTSCENE:
 			EVENT_Chiedtian_Cutscene();
 			break;
+		case TYPE_MAHABALASURA_CUTSCENE:
+			EVENT_Mahabalasura_Cutscene();
+			break;
 		}
 
 		m_bActive = true;
@@ -124,6 +128,16 @@ void CEventTrigger::EVENT_Chiedtian_Cutscene()
 
 	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(pChiedtian);
 	GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+}
+
+void CEventTrigger::EVENT_Mahabalasura_Cutscene()
+{
+	CMahabalasura* pMahabalasura = static_cast<CMahabalasura*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, Tag_Layer(Layer_Boss), 0));
+	pMahabalasura->Change_AnimIndex(7);
+	m_pPlayer->Set_State_StopActionStart();
+
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MaxTargetArmLength(0.f);
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MinTargetArmLength(0.f);
 }
 
 HRESULT CEventTrigger::SetUp_Components()
