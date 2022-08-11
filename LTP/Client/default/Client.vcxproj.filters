@@ -499,6 +499,9 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
       <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\11.WorldTexture_Universal">
+      <UniqueIdentifier>{d93fffe1-4e9b-466a-9440-5e42c7fd2ed0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1082,6 +1085,9 @@
     <ClInclude Include="..\public\MiniGameBuilding.h">
       <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WorldTexture_Universal.h">
+      <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1646,6 +1652,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MiniGameBuilding.cpp">
       <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTexture_Universal.cpp">
+      <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

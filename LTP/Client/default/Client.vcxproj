@@ -326,6 +326,7 @@
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="..\public\Volcano.h" />
     <ClInclude Include="..\public\WallRunTrigger.h" />
+    <ClInclude Include="..\public\WorldTexture_Universal.h" />
     <ClInclude Include="CflameTerrain.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -477,6 +478,7 @@
     <ClCompile Include="..\private\UtilityMgr.cpp" />
     <ClCompile Include="..\private\Volcano.cpp" />
     <ClCompile Include="..\private\WallRunTrigger.cpp" />
+    <ClCompile Include="..\private\WorldTexture_Universal.cpp" />
     <ClCompile Include="..\public\Camera_Editor.cpp" />
     <ClCompile Include="..\public\Imgui\imgui.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_demo.cpp" />
