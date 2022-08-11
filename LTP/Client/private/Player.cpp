@@ -8120,7 +8120,7 @@ void CPlayer::DebugingCode()
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
-			
+			/*
 
 			{
 				NONINSTNESHEFTDESC tNIMEDesc;
@@ -8232,7 +8232,7 @@ void CPlayer::DebugingCode()
 					TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			}
 
-
+			*/
 			/*
 			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 

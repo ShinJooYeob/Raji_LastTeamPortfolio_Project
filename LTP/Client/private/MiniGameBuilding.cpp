@@ -80,6 +80,9 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 		if (TextInt > 3)TextInt = 0;
 	}
 
+	m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(30));
+
+	m_pTransformCom->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltaTime);
 
 	return _int();
 }

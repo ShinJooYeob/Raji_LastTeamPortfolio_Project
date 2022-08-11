@@ -32,7 +32,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	
 	
-	//FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
+	FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE1, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
@@ -629,7 +629,7 @@ HRESULT CScene_Stage1::Ready_Layer_UI(const _tchar * pLayerTag)
 HRESULT CScene_Stage1::Ready_MiniGameBuilding(const _tchar * pLayerTag)
 {
 	CMiniGameBuilding::MGBDESC tDesc;
-	tDesc.vPosition = _float3(31.773f, 37.5f, 64.801f);
+	tDesc.vPosition = _float3(20.513f, 37.5f, 43.651f);
 	tDesc.vScale = _float3(1.f);
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding),&tDesc));
 
