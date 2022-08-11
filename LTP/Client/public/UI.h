@@ -114,13 +114,15 @@ private:
 	_bool		m_bPushed = false;			//클릭이 되면 true로 바꾼다.
 
 	_int		m_iTextureIndex = 0;
-	_int		m_iPassIndex = 0;
+	_int		m_iPassIndex = 1;
 
 	_float		m_fAliveTime = 1.5f;			//데미지UI일때 보여지는 시간
 	_float		m_fFadeTime = 0.f;
 	_bool		m_bFadeState = false;
 	_float		m_fAngle = 0.f;
 	_float		m_fUV_Y = 1.f;
+
+	_float		m_PassedTimer = 0;	
 
 private:
 	HRESULT SetUp_Components();

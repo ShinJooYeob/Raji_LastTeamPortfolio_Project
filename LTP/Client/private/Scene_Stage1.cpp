@@ -32,7 +32,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	
 	
-	FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
+	//FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
 	FAILED_CHECK(Ready_MapData(L"Stage_1.dat", SCENE_STAGE1, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1Trigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 			
@@ -436,11 +436,12 @@ HRESULT CScene_Stage1::Ready_TriggerObject(const _tchar * szTriggerDataName, SCE
 HRESULT CScene_Stage1::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
-
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	//pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -461,6 +462,8 @@ HRESULT CScene_Stage1::Ready_PostPorcessing()
 	pRenderer->Set_DofLength(30.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->Set_FogColor(_float3{ 0.234375f });
+	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
 	pRenderer->Set_FogStartDist(5.f);
 	pRenderer->Set_FogGlobalDensity(0.1f);
 	pRenderer->Set_FogHeightFalloff(0.1f);

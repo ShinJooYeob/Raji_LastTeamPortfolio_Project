@@ -48,7 +48,7 @@ _int CUI::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-
+	m_PassedTimer += (_float)fDeltaTime;
 
 	Update_Rect();
 
@@ -116,7 +116,7 @@ _int CUI::Render()
 	//else
 	//	m_pVIBufferCom->Render(m_pShaderCom, 0);
 
-	m_pVIBufferCom->Render(m_pShaderCom, 1);
+	m_pVIBufferCom->Render(m_pShaderCom, m_iPassIndex);
 
 
 	return S_OK;
@@ -204,11 +204,24 @@ HRESULT CUI::SettingTexture()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
-	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_SettingUIDesc.iNoiseTextureIndex));
-	//FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_SettingUIDesc.iMaskTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 180));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 0));
+
 
 	m_fUV_Y = 0.5f;
-	m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float)));
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
+	_float4 g_vColor = _float4(1, 1, 1, 1);
+	_float2 noisingdir = _float2(0, 0.5f);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &g_vColor, sizeof(_float4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
+
+
+
+
+
+
 	return S_OK;
 }
 

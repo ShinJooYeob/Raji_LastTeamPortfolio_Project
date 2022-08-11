@@ -32,7 +32,6 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
-	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
 
 
@@ -40,7 +39,7 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
 
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_InstanceMonsterTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_InstanceMonsterTrigger)));
 	//
 	
 
@@ -50,6 +49,8 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	m_fPlayGoluSoundDelay = 0.f;
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+
 	return S_OK;
 }
 
@@ -273,7 +274,7 @@ HRESULT CScene_Stage3::Ready_Layer_Boss(const _tchar * pLayerTag)
 }
 HRESULT CScene_Stage3::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 HRESULT CScene_Stage3::Ready_Layer_Terrain(const _tchar * pLayerTag)

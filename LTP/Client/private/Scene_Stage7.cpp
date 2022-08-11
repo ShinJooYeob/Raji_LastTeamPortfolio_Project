@@ -37,7 +37,6 @@ HRESULT CScene_Stage7::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
-	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
@@ -48,7 +47,7 @@ HRESULT CScene_Stage7::Initialize()
 
 	//EH
 	FAILED_CHECK(Ready_TriggerObject(L"Stage7_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_InstanceMonsterTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage7_MonsterTrigger_1.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage7_MonsterTrigger_2.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -62,6 +61,8 @@ HRESULT CScene_Stage7::Initialize()
 	m_fSceneStartTimer = 0.f;
 	GetSingle(CUtilityMgr)->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
 
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+	
 	return S_OK;
 }
 
@@ -316,7 +317,7 @@ HRESULT CScene_Stage7::Ready_Layer_Boss(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage7::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

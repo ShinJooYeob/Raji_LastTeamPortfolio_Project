@@ -35,7 +35,6 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
 	FAILED_CHECK(Ready_Layer_Boss(TAG_LAY(Layer_Boss)));
 
-	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 	//
 	FAILED_CHECK(Ready_MapData(L"BossStage_Mahabalasura.dat", SCENE_STAGE5, TAG_LAY(Layer_StaticMapObj)));
@@ -43,17 +42,19 @@ HRESULT CScene_Stage5::Initialize()
 
 
 	//EH
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Mahabalasura_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
+
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 	return S_OK;
 }
@@ -84,13 +85,9 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_C)&DIS_Down)
 	{
 
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss),
-			TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(98.f, 34.360, 322.568f)));
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss),
+			TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(98.f, 34.360f, 322.568f)));
 
-		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(0.08f);
-		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(0.f);
-
-		m_pUtilMgr->Get_Renderer()->Set_ShadowIntensive(0.2f);
 	}
 
 	_float3 PlayerPos = (m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
@@ -226,8 +223,8 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(101.544662f, 15.2501860f, 34.5041428f, 1.f), XMVectorSet(-0.0105530452f, -0.610475004f, 0.791965544f, 0.f));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(100.f, 30.f, 276.048f)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, 38.881f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(100.f, 30.f, 276.048f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, 38.881f)));
 	
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
@@ -301,7 +298,7 @@ HRESULT CScene_Stage5::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

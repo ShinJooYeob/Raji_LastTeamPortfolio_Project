@@ -37,7 +37,6 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 
-	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 
 	FAILED_CHECK(Ready_Layer_InteractObject(TAG_LAY(Layer_InteractObject)));
@@ -75,6 +74,8 @@ HRESULT CScene_Stage6::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+	
 	return S_OK;
 }
 
@@ -360,7 +361,7 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 65.279f, 2.043f, 325.343f
 	//_float3(151.975f, -22.4f, 377.3486f)	//Gear_Puzzle
 
-	// FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f))); //Gear
+	 FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(65.279f, 2.043f, 325.343f))); //Gear
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
@@ -644,7 +645,7 @@ HRESULT CScene_Stage6::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 
 HRESULT CScene_Stage6::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGESELECT, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 

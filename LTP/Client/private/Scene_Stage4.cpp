@@ -45,6 +45,8 @@ HRESULT CScene_Stage4::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	
+	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
+
 	return S_OK;
 }
 
@@ -359,7 +361,7 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage4::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_SkillUI)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_SkillUI)));
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 
 	return S_OK;
