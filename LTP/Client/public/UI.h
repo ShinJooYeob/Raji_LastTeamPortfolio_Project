@@ -39,6 +39,10 @@ public:
 		_bool		bClick = false;
 		
 		_uint		eUIKindsID = UIID_JB;
+		_bool		bSettingOtherTexture = false;
+		_float		fAlpha = 1.f;
+		_uint		iNoiseTextureIndex = 0;
+		_uint		iMaskTextureIndex = 0;
 	}SETTING_UI;
 
 private:
@@ -64,6 +68,7 @@ public:
 	_float2			Get_Size() { return _float2(m_fSizeX, m_fSizeY); }
 	_bool			Get_IsDraw() { return m_bDraw; }
 	_bool			Get_FadeState() { return m_bFadeState; }
+	_float			Get_Alpha() { return m_SettingUIDesc.fAlpha; }
 
 public:
 	void			Set_PassIndex(_int Index) { m_iPassIndex = Index; }
@@ -71,9 +76,12 @@ public:
 	void			Set_TextureIndex(_int Number) { m_iTextureIndex = Number; }
 	void			Set_Size(_float SizeX, _float SizeY) { m_fSizeX = SizeX, m_fSizeY = SizeY; }
 	void			Set_Angle(_float fAngle);
+	void			Set_Alpha(_float fAlpha) { m_SettingUIDesc.fAlpha = fAlpha; }
 
 	void			Set_IsDraw(_bool Draw) { m_bDraw = Draw; }
 	void			Set_IsPushed(_bool Pushed) { m_bPushed = m_bPushed; }
+
+	void			Set_UV_Y(_float fY) { m_fUV_Y = fY; }
 
 	HRESULT			Set_ChangeTextureLayer(_tchar* LayerName);
 
@@ -83,10 +91,10 @@ public:
 
 private:
 	CShader*			m_pShaderCom = nullptr;
-	CTexture*			m_pTextureCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
+	CTexture*			m_pTextureCom = nullptr;
 
 private:
 	_float4x4	m_ProjMatrix;
@@ -112,6 +120,7 @@ private:
 	_float		m_fFadeTime = 0.f;
 	_bool		m_bFadeState = false;
 	_float		m_fAngle = 0.f;
+	_float		m_fUV_Y = 1.f;
 
 private:
 	HRESULT SetUp_Components();
@@ -119,6 +128,7 @@ private:
 private:
 	void SetUp_UIInfo(SETTING_UI& pStruct);			// 얻어온 구조체 값으로 멤버변수 채우기
 	void Update_Rect();								// 위치 바꿨을 때 렉트 위치 갱신하기 위해 호출
+	HRESULT SettingTexture();							//마스크,노이즈 텍스처
 
 public:
 	static CUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

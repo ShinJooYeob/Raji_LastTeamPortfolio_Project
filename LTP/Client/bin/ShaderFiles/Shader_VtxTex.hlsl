@@ -10,6 +10,7 @@ texture2D			g_NoiseTexture;
 texture2D			g_CurlTexture;
 
 float				g_Alpha = 0.1f;
+float				g_UV_Y = 1.f;
 
 
 cbuffer Distortion
@@ -99,6 +100,14 @@ struct VS_OUT_Noise
 	float2		texCoords2 : COLOR1;
 	float2		texCoords3 : COLOR2;
 
+};
+
+struct VS_OUT_Noise_2
+{
+	float4      vPosition : SV_POSITION;
+	float2      vTexUV : TEXCOORD0;
+
+	float2		texCoords1 : COLOR0;
 };
 
 struct VS_OUT_EnvNoise
@@ -284,6 +293,25 @@ PS_OUT_NOLIGHT PS_MAIN_RECT(PS_IN In)
 
 	if (Out.vDiffuse.a < 0.1f)
 		discard; 
+
+	//Out.vDiffuse *= g_vColor;
+
+	return Out;
+}
+
+PS_OUT_NOLIGHT PS_GAUGE_RECT(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	//if (In.vTexUV.y > g_UV_Y)
+		In.vTexUV.y = g_UV_Y;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
+	if (Out.vDiffuse.a < 0.1f)
+		discard;
+
+
+
 
 	//Out.vDiffuse *= g_vColor;
 
@@ -722,5 +750,15 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_RECT();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_CopyScreen();
+	}
+	pass UI_Gauge		//12
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_GAUGE_RECT();
 	}
 }
