@@ -2,6 +2,7 @@
 #include "..\public\Monster_Mahinasura_Minion.h"
 #include "Player.h"
 #include "HpUI.h"
+#include "WorldTexture_Universal.h"
 
 CMonster_Mahinasura_Minion::CMonster_Mahinasura_Minion(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -58,6 +59,7 @@ _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 
 	if (m_fHP <= 0)
 	{
+		m_bGroggiOn = false;
 		m_bLookAtOn = false;
 		m_pDissolve->Update_Dissolving(dDeltaTime);
 		m_pDissolve->Set_DissolveOn(false, 2.f);
@@ -943,6 +945,11 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 			m_dInfinity_CoolTime = 0;
 		}
 		m_eMonster_State = Anim_State::MONSTER_IDLE;
+
+		if (m_bGroggiOn == true)
+		{
+			m_bGroggiOn = false;
+		}
 	}
 	
 	if (PlayRate <= 0.98) //애니메이션의 비율 즉, 0.98은 거의 끝나가는 시점
@@ -1073,6 +1080,26 @@ HRESULT CMonster_Mahinasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime
 		}
 		case 8:
 		{
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
+			{
+				m_bGroggiOn = true;
+
+				CWorldTexture_Universal::WORLDTEXTURE_UNIVERSALDESC WorldTexture_UniversalDesc;
+
+				WorldTexture_UniversalDesc.iWorldTextureNumber = CWorldTexture_Universal::ALPABET;
+				WorldTexture_UniversalDesc.fScale = _float3(0.5f, 0.5f, 0.5f);
+				WorldTexture_UniversalDesc.fPositioning = _float3(0.f,3.f,0.f);
+				WorldTexture_UniversalDesc.dDuration = 100;
+				WorldTexture_UniversalDesc.pObject = this;
+
+				WorldTexture_UniversalDesc.bBillboardOn = true;
+				WorldTexture_UniversalDesc.bMagnetOn = true;
+				WorldTexture_UniversalDesc.pSwitch = &m_bGroggiOn;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_WorldTexture_Universal), TAG_OP(Prototype_Object_WorldTexture_Universal),&WorldTexture_UniversalDesc));
+				//g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWorldTexture_Universal), m_eNowSceneNum, TAG_OP(Prototype_Object_WorldTexture_Universal), &WorldTexture_UniversalDesc);
+				m_iAdjMovedIndex++;
+			}
 			if (PlayRate > 0 && PlayRate <= 0.98)
 			{
 				m_bLookAtOn = false;

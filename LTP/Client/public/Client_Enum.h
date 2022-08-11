@@ -421,6 +421,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Monster_Texture_Bullet,
 	Prototype_Object_Monster_Weapon_Universal,
 
+	//EH_Texture
+	Prototype_Object_WorldTexture_Universal,
+
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
 	Prototype_Object_InteractObj_LilyPad,
@@ -778,6 +781,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Monster_Weapon_Universal:
 		return TEXT("Prototype_Object_Monster_Weapon_Universal");
 
+	case Prototype_Object_WorldTexture_Universal:
+		return TEXT("Prototype_Object_WorldTexture_Universal");
+
 	case Prototype_Object_InteractObj_Elevator:
 		return TEXT("Prototype_Object_InteractObj_Elevator");
 
@@ -966,6 +972,9 @@ enum LAYERID
 	Layer_InteractObject,
 	Layer_EnvMappedWater,
 	Layer_MiniGameBuilding,
+
+	//EH
+	Layer_WorldTexture_Universal
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1177,6 +1186,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 		break;
 	case Layer_MiniGameBuilding:
 		return TEXT("Layer_MiniGameBuilding");
+		break;
+
+	case Layer_WorldTexture_Universal:
+		return TEXT("Layer_WorldTexture_Universal");
 		break;
 		
 	default:
@@ -3431,7 +3444,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_HPUI,
 	Prototype_Texture_Util,
 	Prototype_Texture_UI,
-		Prototype_Texture_Monster_Bullet,
+	Prototype_Texture_Monster_Bullet,
+	Prototype_WorldTexture_Universal,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
@@ -10073,6 +10087,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Texture_Monster_Bullet:
 		return TEXT("Prototype_Texture_Monster_Bullet");
+		break;
+
+	case Prototype_WorldTexture_Universal:
+		return TEXT("Prototype_WorldTexture_Universal");
 		break;
 
 	case Prototype_Texture_ShellingRange:

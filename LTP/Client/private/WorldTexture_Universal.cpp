@@ -215,9 +215,9 @@ HRESULT CWorldTexture_Universal::PlayOn(_double dDeltaTime)
 
 HRESULT CWorldTexture_Universal::Alpabet(_double dDeltaTime)
 {
-	if (*m_WorldTexture_UniversalDesc.pSwitch == true)
+	if (*m_WorldTexture_UniversalDesc.pSwitch == false)
 	{
-		int a = 10;
+		Set_IsDead();
 	}
 	return S_OK;
 }
