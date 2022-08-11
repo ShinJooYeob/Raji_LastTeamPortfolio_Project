@@ -57,7 +57,7 @@ _int CIngameUI::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 	m_pWeaponUI->LateUpdate(fDeltaTime);
-	//m_pWeaponMidleUI->LateUpdate(fDeltaTime);
+	m_pWeaponMidleUI->LateUpdate(fDeltaTime);
 
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 
@@ -68,7 +68,7 @@ _int CIngameUI::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
-	Render_Fonts();
+	//Render_Fonts();
 
 	return _int();
 }
@@ -144,6 +144,7 @@ HRESULT CIngameUI::Ready_Layer_UI()
 
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeaponUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+	m_pWeaponUI->Set_RenderSortValue(2.f);
 
 	ZeroMemory(&SettingUI, sizeof(SettingUI));
 
@@ -154,16 +155,19 @@ HRESULT CIngameUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("IngameWeaponMidleUI");
-	SettingUI.m_fSizeX = 45.f;
-	SettingUI.m_fSizeY = 45.f;
-	SettingUI.m_fX = 1146.f;
-	SettingUI.m_fY = 619.f;
+	SettingUI.m_fSizeX = 65.f;
+	SettingUI.m_fSizeY = 65.f;
+	SettingUI.m_fX = 1145.f;
+	SettingUI.m_fY = 617.f;
 	SettingUI.fAngle = 0.f;
-	SettingUI.iTextureIndex = 38;
+	SettingUI.iTextureIndex = 139;
+	SettingUI.bSettingOtherTexture = true;
+	SettingUI.iNoiseTextureIndex = 319;
 
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeaponMidleUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-
+	m_pWeaponMidleUI->Set_RenderSortValue(2.f);
+	m_pWeaponMidleUI->Set_PassIndex(12);
 
 	return S_OK;
 }

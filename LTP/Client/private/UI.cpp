@@ -82,6 +82,11 @@ _int CUI::Render()
 	m_pShaderCom->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4));
 	m_pShaderCom->Set_RawValue("g_ProjMatrix", &m_ProjMatrix, sizeof(_float4x4));
 
+	m_pShaderCom->Set_RawValue("g_Alpha", &m_SettingUIDesc.fAlpha, sizeof(_float));
+
+	if (m_SettingUIDesc.bSettingOtherTexture)
+		SettingTexture();
+
 	switch (m_SettingUIDesc.eUIKindsID)
 	{
 	case Client::CUI::UIID_JB:
@@ -192,6 +197,19 @@ void CUI::Update_Rect()
 
 	m_pTransformCom->Scaled_All(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(m_fX - (g_iWinCX * 0.5f), -m_fY + (g_iWinCY * 0.5f), 0.f, 1.f));
+}
+
+HRESULT CUI::SettingTexture()
+{
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_SettingUIDesc.iNoiseTextureIndex));
+	//FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_SettingUIDesc.iMaskTextureIndex));
+
+	m_fUV_Y = 0.5f;
+	m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float));
+	return S_OK;
 }
 
 CUI * CUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg)
