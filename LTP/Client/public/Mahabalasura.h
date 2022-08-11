@@ -39,6 +39,11 @@ public:
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
 
+public:
+	// JH
+	void				Change_AnimIndex(_uint iAnimIndex);
+	void				Set_OnCamLookAtMe(_bool bOn);
+	//
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -107,6 +112,22 @@ private:
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
 	_bool								m_bInstanceMonsterDieSwitch = false;
+
+
+private:
+	// JH
+	void				Update_Direction(_double fDeltaTime);
+
+	CDissolve*			m_pDissolve = nullptr;
+	_bool				m_bBlockUpdate = false;
+	_bool				m_bBlockAnim = false;
+	_bool				m_bOnceSwitch = false;
+	_bool				m_bOncePlaySound = false;
+	_uint				m_iNextAnimIndex = 0;
+	_float				m_fDelayTime = 0.f;
+	_int				m_iCutSceneStep = -1;
+	_bool				m_bOnLookAtMe = false;
+	//
 
 private:
 	HRESULT SetUp_Components();

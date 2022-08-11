@@ -95,6 +95,8 @@ _int CPlayer::Update(_double fDeltaTime)
 			m_fInterval_MotionTrail = 0.1f;
 			CheckOn_MotionTrail();
 		}
+
+		//Check_Execution();
 	}
 	//
 
@@ -413,6 +415,63 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 	}
 
 	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, true);
+
+	if (true == m_bShieldMode)
+	{
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+		return 0.f;
+	}
+
+	if (0.f < fDamageAmount)
+	{
+		fDamageAmount *= -1.f;
+	}
+
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount * -1);
+
+	_float fRemainHP = Add_NowHP(fDamageAmount);
+
+	if (0.f >= fRemainHP)
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+		else
+		{
+			m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+			Set_State_DeathStart();
+			return fRemainHP;
+		}
+	}
+	else
+	{
+		if (true == bKnockback)
+		{
+			Set_State_DamageStart(fKnockbackPower, vDamageDir);
+		}
+	}
+
+	_int iSelectSoundFileIndex = rand() % 9;
+	_tchar pSoundFile[MAXLEN] = TEXT("");
+	swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
+	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+	//"Jino_Raji_Hit_%d.wav"
+
+	return fRemainHP;
+}
+
+_float CPlayer::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	if (STATE_STOPACTION == m_eCurState || STATE_EVASION == m_eCurState || STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming || 0 >= m_fHP)
+	{
+		return 0.f;
+	}
+
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 0.5f, 0.1f, true);
 
 	if (true == m_bShieldMode)
 	{
@@ -2153,10 +2212,7 @@ void CPlayer::Check_Execution()
 	if (true == m_bPressedInteractKey)
 	{
 		auto* pUniqueMonsters = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_Unique_Monster));
-		if (0 >= pUniqueMonsters->size())
-		{
-			return;
-		}
+		if (nullptr == pUniqueMonsters || 0 >= pUniqueMonsters->size())		return;
 
 		CGameObject* pNear_GroggyMonster = nullptr;
 		for (auto& pUniqueMonster : *pUniqueMonsters)
@@ -7463,6 +7519,21 @@ void CPlayer::Set_PlayerState(EPLAYER_STATE eState)
 	m_eCurState = eState;
 }
 
+void CPlayer::Set_TargetingLookDir(_float3 fTargetingLookDir)
+{
+	m_fTargetingLookDir = fTargetingLookDir;
+}
+
+void CPlayer::Set_MaxBossTargetingDist(_float fDist)
+{
+	m_fDist_MaxBossTargeting = fDist;
+}
+
+void CPlayer::Set_MinBossTargetingDist(_float fDist)
+{
+	m_fDist_MinBossTargeting = fDist;
+}
+
 void CPlayer::Set_TurnInputDir()
 {
 	if (MOVDIR_END == m_eInputDir)
@@ -7882,16 +7953,16 @@ void CPlayer::Targeting_Boss()
 		m_pMainCamera->Set_CameraLookWeight(0.95f);
 		m_pMainCamera->Set_CameraMoveWeight(0.95f); 
 		fDist *= 2.f;
-		if (fDist > 90.f)
+		if (fDist > m_fDist_MaxBossTargeting)
 		{
-			fDist = 90.f;
+			fDist = m_fDist_MaxBossTargeting;
 		}
-		else if (fDist < 20)
+		else if (fDist < m_fDist_MinBossTargeting)
 		{
-			fDist = 20.f;
+			fDist = m_fDist_MinBossTargeting;
 		}
 
-	_Vector vLookDir = XMVectorSet(0.f, -0.5f, 0.3f, 0.f) * (fDist + 6.f);
+	_Vector vLookDir = m_fTargetingLookDir.XMVector() * (fDist + 6.f);
 
 	// Send to Center pos to Main Camera
 	m_pMainCamera->Set_TargetingPoint(vCenterPos);

@@ -132,6 +132,11 @@ void CCamera_Main::Set_CameraLookAt(_fVector vLookAt)
 	m_pTransform->LookDir(vLookAt);
 }
 
+void CCamera_Main::Set_CameraLookAt_Turn(_fVector vLookAt)
+{
+	m_pTransform->Turn_Dir(vLookAt, 0.99f);
+}
+
 void CCamera_Main::Set_TargetArmLength(_float fTargetArmLength)
 {
 	m_fTargetArmLength = fTargetArmLength;
@@ -966,36 +971,11 @@ _int CCamera_Main::Update_RajiGolu_MiniGameMode(_double fDeltaTime)
 
 _int CCamera_Main::Update_FirstPersonView(_double fDeltaTime)
 {
-	/*_long fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_X);
-	m_pTransform->Turn_CW(XMVectorSet(0, 1, 0, 0), fWheelMove * fDeltaTime * 0.1f);
-
-	fWheelMove = g_pGameInstance->Get_DIMouseMoveState(CInput_Device::MMS_Y);
-	m_pTransform->Turn_CW(m_pTransform->Get_MatrixState(CTransform::STATE_RIGHT), fWheelMove * fDeltaTime * 0.1f);
-	_Vector vCamLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
-	if (0.6f <= XMVectorGetY(vCamLook))
-	{
-		vCamLook = XMVectorSetY(vCamLook, 0.6f);
-		m_pTransform->LookDir(vCamLook);
-	}
-	else if (-0.7f >= XMVectorGetY(vCamLook))
-	{
-		vCamLook = XMVectorSetY(vCamLook, -0.7f);
-		m_pTransform->LookDir(vCamLook);
-	}*/
-
-	// PLAYER LOOK
-	/*_Vector vCamLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
-	vCamLook = XMVectorSetY(vCamLook, 0.f);
-
-
-	m_pPlayerTramsformCom->LookDir(vCamLook);*/
-
 	_Vector vPos = m_tAttachDesc.Get_AttachedBoneWorldPosition_BlenderFixed();
 	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 1.f);
 
 	_Vector vCamPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS) * m_fCur_CamMoveWeight + vPos * (1.f - m_fCur_CamMoveWeight);
 	m_pTransform->Set_MatrixState(CTransform::TransformState::STATE_POS, vCamPos);
-
 	m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.5f, 1.f, 0.f), m_fCur_CamLookWeight, 0.999f);
 
 	return _int();

@@ -8,7 +8,7 @@ class CCamera_Main;
 class CEventTrigger final : public CTriggerObject
 {
 public:
-	enum EEventType { TYPE_RANGDA_CUTSCENE, TYPE_CHIEDTIAN_CUTSCENE, TYPE_END };
+	enum EEventType { TYPE_RANGDA_CUTSCENE, TYPE_CHIEDTIAN_CUTSCENE, TYPE_MAHABALASURA_CUTSCENE, TYPE_END };
 
 
 protected:
@@ -34,11 +34,12 @@ public:
 	virtual EParkourTriggerType 	Get_ParkourTriggerType();
 
 	virtual void					CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
-		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+									_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
 private:
 	void							EVENT_Rangda_Cutscene();
 	void							EVENT_Chiedtian_Cutscene();
+	void							EVENT_Mahabalasura_Cutscene();
 
 private:
 	HRESULT							SetUp_Components();

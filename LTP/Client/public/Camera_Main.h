@@ -78,6 +78,7 @@ public: /* Get Camera Transform State */
 public: /* Set Camera Pos/Look*/
 	void				Set_CameraPos(_fVector vPos);
 	void				Set_CameraLookAt(_fVector vLookAt);
+	void				Set_CameraLookAt_Turn(_fVector vLookAt);
 
 public:
 	ECameraMode			Get_CameraMode() { return m_eCurCamMode; }

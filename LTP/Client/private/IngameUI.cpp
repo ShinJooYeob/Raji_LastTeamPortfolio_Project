@@ -212,7 +212,7 @@ CGameObject * CIngameUI::Clone(void * pArg)
 void CIngameUI::Free()
 {
 	__super::Free();
-
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pWeaponUI);
 	Safe_Release(m_pWeaponMidleUI);
 }
