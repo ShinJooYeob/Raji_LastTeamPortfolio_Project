@@ -13,7 +13,8 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 //	Mesh Effect USE
 
 	// USE LOAD
-			STATIC_EFFECTLOAD(Prototype_Mesh_circle);
+
+		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_circle);
@@ -84,10 +85,10 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_meteo);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_half_ball_closed_1);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 
-			
-		
-		
+
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -99,8 +100,10 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
 
-	
-		
+		// ALLLOAD
+		// for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)
+		// 	STATIC_EFFECTLOAD((COMPONENTPROTOTYPEID)i);
+
 
 	*/
 
@@ -454,6 +457,8 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	mVecTextureEffectDesc[Um_Hit_2] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_2"));
 	mVecTextureEffectDesc[Um_Hit_3] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_3"));
 	mVecTextureEffectDesc[Um_Hit_4] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_4"));
+	mVecTextureEffectDesc[Um_Hit_2_DisDiffuse] = pUtil->Get_TextureParticleDesc(TEXT("Um_Hit_2_DisDiffuse"));
+	
 	mVecTextureEffectDesc[Um_Dust_1] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_1"));
 	mVecTextureEffectDesc[Um_Dust_2] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_2"));
 	mVecTextureEffectDesc[Um_Dust_2_FounTain] = pUtil->Get_TextureParticleDesc(TEXT("Um_Dust_2_FounTain"));
@@ -491,6 +496,12 @@ HRESULT CPartilceCreateMgr::Ready_MeshInstanceEffect()
 	mVecMeshInstDesc[MESHINST_EFFECTJ_BOW_Q_ICE2] = pUtil->Get_MeshParticleDesc(TEXT("Bow_Q_Ice2"));
 	mVecMeshInstDesc[MESHINST_EFFECTJ_BOW_Q_PLANE] = pUtil->Get_MeshParticleDesc(TEXT("Bow_Q_Plane"));
 	mVecMeshInstDesc[Um_MeshBase] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase"));
+
+	mVecMeshInstDesc[Um_MeshBase2] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase2"));
+	mVecMeshInstDesc[Um_MeshBase_Cone] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase_Cone"));
+	mVecMeshInstDesc[Um_Mesh_Sword1] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword1"));
+	mVecMeshInstDesc[Um_Mesh_Sword2] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword2"));
+
 
 	return S_OK;
 }
@@ -4908,7 +4919,71 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	if (type == MESHEFFECT_MONSTER_VL_Cash3)
 	{
-		
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fAppearTime = 0.0f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 208;
+		MeshDesc.NoiseTextureIndex = 289;
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		// Color
+		MeshDesc.vLimLight = _float4(0.96f, 0.45f, 0.09f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
+
+		// Transform_Base
+		MeshDesc.vPosition = _float3(0, 0.0f, 0);
+		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
+		MeshDesc.vSize = _float3(2.0f);
+
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 2.0f;
+		//	AddDesc.AccScaleSpeed = 2.0f;
+		AddDesc.ScaleMax = 0.0f;
+		//	AddDesc.ScaleMax = 10.0f;
+
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = true;
+		AddDesc.FixFlag_Rot = true;
+		AddDesc.FollowTarget = Transfom;
+
+		// Shader
+		MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
 
 
