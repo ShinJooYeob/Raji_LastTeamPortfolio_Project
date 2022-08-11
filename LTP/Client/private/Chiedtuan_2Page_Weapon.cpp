@@ -768,7 +768,7 @@ HRESULT CChiedtuan_2Page_Weapon::Ready_ParticleDesc()
 	tDesc.iFollowingDir = FollowingDir_Look;
 	tDesc.TotalParticleTime = 999999999.f;
 	tDesc.Particle_Power = 5.f;
-
+	//tDesc.vEmissive_SBB = _float3(0);
 
 	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tDesc);
 	return S_OK;

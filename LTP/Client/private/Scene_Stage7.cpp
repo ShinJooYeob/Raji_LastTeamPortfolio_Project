@@ -42,11 +42,11 @@ HRESULT CScene_Stage7::Initialize()
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtitan_Trigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
 
 	//EH
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage7_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage7_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian_InstanceMonsterTrigger.dat", SCENE_STAGE7, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
@@ -73,17 +73,7 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_C)&DIS_Down)
-	{
 
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss),
-			TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0, 35.9f, 281.188f)));
-
-		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(0.08f);
-		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(0.f);
-
-		m_pUtilMgr->Get_Renderer()->Set_ShadowIntensive(0.2f);
-	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{

@@ -127,7 +127,7 @@ private:
 
 	vector<NONINSTNESHEFTDESC>	m_vecNonInstMeshDesc;
 	vector<INSTPARTICLEDESC>	m_vecTexInstDesc;
-
+	_bool						m_bIs2PageOnceJump = false;
 
 private:
 	// JH

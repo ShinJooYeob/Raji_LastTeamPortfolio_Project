@@ -65,7 +65,7 @@ private:
 	CTransform*			m_pPlayerTransform = nullptr;
 	_bool				m_bIsSpearTurn = false;
 
-	_int				TestNumber = 0;
+	_uint				m_iRainAttackCount = 0;
 
 	//Weapon
 	class CMahabalasura_Weapon*				m_pSpear = nullptr;

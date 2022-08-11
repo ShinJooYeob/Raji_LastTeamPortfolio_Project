@@ -37,7 +37,6 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 		memcpy(&m_eAttachedDesc, pArg, sizeof(ATTACHEDESC));
 	}
 
-	Set_LimLight_N_Emissive(_float4(255.f, 0.f, 10.f, 255.f), _float4(0));
 
 
 	m_fAttackTime = GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.f);
@@ -50,6 +49,9 @@ HRESULT CMahabalasura_Arms::Initialize_Clone(void * pArg)
 _int CMahabalasura_Arms::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+
+
 
 
 	if (m_fAttackTime <= 0 && !m_bIsAttack)
@@ -168,6 +170,9 @@ HRESULT CMahabalasura_Arms::Adjust_AnimMovedTransform(_double fDeltatime)
 	{
 		if (iNowAnimIndex == 1)
 		{
+			//_float Value = (0.5f - fabs(PlayRate - 0.5f)) * 4.f;
+			//Set_LimLight_N_Emissive(XMVectorSet(0.06640625f, 0.1484375f, 0.30859375f, 1.f) *Value, XMVectorSet(1, 0.5f, 1.f, 0) * Value);
+
 			if (PlayRate > 0.56f && m_iAdjMovedIndex == 0)
 			{
 				_float3 TempPos;

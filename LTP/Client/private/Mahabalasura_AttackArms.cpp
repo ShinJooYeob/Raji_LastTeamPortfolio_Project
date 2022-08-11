@@ -249,6 +249,7 @@ _int CMahabalasura_AttackArms::LateUpdate(_double fDeltaTime)
 	m_vecForEmissive.reserve(m_vecInstancedTransform.size());
 
 	_uint iDeadCount = 0;
+	CGameInstance* pInstance = g_pGameInstance;
 
 	for (auto& tDesc : m_vecInstancedTransform)
 	{
@@ -266,11 +267,15 @@ _int CMahabalasura_AttackArms::LateUpdate(_double fDeltaTime)
 		m_vecForRenderTransform.push_back(tDesc.pTransform);
 
 
-		_float Value = (tDesc.fPassedTime - 1) / (3.f);
+		_float Value = (tDesc.fPassedTime - _uint(tDesc.fPassedTime))*0.5f + 0.25f ;
 
 		Value = max(min((Value), 1.f), 0);
 
-		m_vecForLimLight.push_back(_float4(0.3f *Value, 0.2f * Value, 0.8f *Value,  Value /** 0.003f*/ ));
+		//_float3 ColorValue = pInstance->Easing_Vector(TYPE_Linear,_float3(1),_float3(0.3125f, 0.734375f, 0.87109375f), Value,1.f);
+
+		m_vecForLimLight.push_back(_float4(_float3(XMVectorSet(0.06640625f, 0.1484375f, 0.30859375f, 0)* Value), 1.f/** 0.003f*/));
+		//m_vecForLimLight.push_back(_float4(_float3(XMVectorSet(0.3125f, 0.734375f, 0.87109375f, 0)* Value), 1.f/** 0.003f*/));
+		//m_vecForLimLight.push_back(_float4(_float3(XMVectorSet(0.3125f, 0.734375f, 0.87109375f, 0)* Value), Value /** 0.003f*/));
 		m_vecForEmissive.push_back(_float4(1.f, 0.5f, 1.f, 0));
 	}
 

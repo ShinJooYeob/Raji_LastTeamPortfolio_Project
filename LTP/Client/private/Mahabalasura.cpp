@@ -121,6 +121,12 @@ _int CMahabalasura::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_X)& DIS_Down)
+	{
+		Set_IsDead();
+	}
+
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 	{
 
@@ -285,7 +291,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 
 		iRandom = mOnlyPattern; // DEBUG
-		//iRandom = 3;
+		iRandom = 2;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -311,11 +317,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 			m_bIsTeleport = true;
 			m_bIsTeleportSound = false;
-			_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-			_int iTemp = rand() % 2 == 0 ? -1 : 1;
-			Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+			//_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+			//_int iTemp = rand() % 2 == 0 ? -1 : 1;
+			//Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
 
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.721f, 34.260f, 323.105f));
 			m_bIsArmAttack = true;
 			mPatternCount2 = 0;
 			for (auto& Arm : m_pArms)
@@ -328,12 +334,13 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		{
 			m_bIsTeleport = true;
 			m_bIsTeleportSound = false;
-			_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-			_int iTemp = rand() % 2 == 0 ? -1 : 1;
-			Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+			//_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+			//_int iTemp = rand() % 2 == 0 ? -1 : 1;
+			//Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
 
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.721f, 34.260f, 323.105f));
 			m_pModel->Change_AnimIndex_ReturnTo(9, 0);
+			m_iRainAttackCount = 0;
 		}
 		break;
 
@@ -344,9 +351,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		break;
 
 		}
-		++TestNumber;
-		if (TestNumber > 3)
-			TestNumber = 0;
+
 
 	}
 
@@ -634,34 +639,37 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 		//04
 		{
 			NONINSTNESHEFTDESC tNIMEDesc;
-			tNIMEDesc.vPosition = _float3(100.f, 34.26f, 323.380f);
-			tNIMEDesc.vLookDir = _float3(0, 1, 0);
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
+			tNIMEDesc.vPosition = _float3(101.721f, 33.260f, 323.105f);
+			tNIMEDesc.vLookDir = _float3(0, -1, 0);
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
 			tNIMEDesc.fMaxTime_Duration = 7.25f;
 
-			tNIMEDesc.fAppearTime = 0.25f;
 
-			tNIMEDesc.noisingdir = _float2(0, -1);
+			tNIMEDesc.fAppearTime = 0.0001f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1).XMVector()*0.015f;
 
 			tNIMEDesc.NoiseTextureIndex = 381;
-			tNIMEDesc.MaskTextureIndex = 109;
-			tNIMEDesc.iDiffuseTextureIndex = 271;
-			tNIMEDesc.m_iPassIndex = 19;
-			tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+			tNIMEDesc.MaskTextureIndex = 59;
+			tNIMEDesc.iDiffuseTextureIndex = 156;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(0.1f, 0.5f, 1.f, 0);
 			tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
 			tNIMEDesc.vColor = _float3(1.f, 0, 0);
 
-			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotAxis = FollowingDir_Look;
 			tNIMEDesc.RotationSpeedPerSec = 0.f;
-			tNIMEDesc.vSize = _float3(0.45f, 0.45f, -0.45f);
+			tNIMEDesc.OnceStartRot = 90;
+
+			tNIMEDesc.SizeSpeed = 10.f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+			tNIMEDesc.vSizieLimit = _float3(1.f, 1.f, 1.f);
+			tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.01f);
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
 
-			tNIMEDesc.m_iPassIndex = 20;
-			tNIMEDesc.vLookDir = _float3(1, 0, 0);
-
-			tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f);
 
 
 
@@ -672,32 +680,37 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 		{
 
 			NONINSTNESHEFTDESC tNIMEDesc;
-			tNIMEDesc.vPosition = _float3(60.f, 34.26f, 323.380f);
-			tNIMEDesc.vLookDir = _float3(0, 1, 0);
 
-			tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
-			tNIMEDesc.fMaxTime_Duration = 7.25f;
+			tNIMEDesc.vPosition = _float3(101.721f, 34.260f, 323.105f);
+			tNIMEDesc.vLookDir = _float3(0, -1, 0);
 
-			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+			tNIMEDesc.fMaxTime_Duration = 2.25f;
 
-			tNIMEDesc.noisingdir = _float2(0, -1);
 
-			tNIMEDesc.NoiseTextureIndex = 388;
-			tNIMEDesc.MaskTextureIndex = 109;
-			tNIMEDesc.iDiffuseTextureIndex = 271;
-			tNIMEDesc.m_iPassIndex = 19;
-			tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+			tNIMEDesc.fAppearTime = 0.0001f;
+
+			tNIMEDesc.noisingdir = _float2(0, -1).XMVector()*0.015f;
+
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 59;
+			tNIMEDesc.iDiffuseTextureIndex = 156;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(0.1f, 0.5f, 1.f, 0);
 			tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
 			tNIMEDesc.vColor = _float3(1.f, 0, 0);
 
-			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotAxis = FollowingDir_Look;
 			tNIMEDesc.RotationSpeedPerSec = 0.f;
-			tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
+			tNIMEDesc.OnceStartRot = 90;
+
+			tNIMEDesc.SizeSpeed = 10.f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 0);
+			tNIMEDesc.vSizieLimit = _float3(1.f, 1.f, 0.000001f);
+			tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.000001f);
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
 
-			tNIMEDesc.vPosition = _float3(60.f, 34.27f, 323.380f);
-			tNIMEDesc.NoiseTextureIndex = 381;
 
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
@@ -714,7 +727,7 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 			tNIMEDesc.NoiseTextureIndex = 381;
 			tNIMEDesc.MaskTextureIndex = 109;
 			tNIMEDesc.iDiffuseTextureIndex = 273;
-			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.m_iPassIndex = 24;
 			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
 			tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 1);
 			tNIMEDesc.vColor = _float3(1.f, 0, 0);
@@ -805,7 +818,39 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
+		//10
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
 
+			tNIMEDesc.vPosition = _float3(101.721f, 34.260f, 323.105f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+
+			tNIMEDesc.fMaxTime_Duration = 0.5f;
+			tNIMEDesc.fAppearTime = 0.01f;
+
+			tNIMEDesc.noisingdir = _float2(1.f, 0.f).Get_Nomalize() * 0.03f;
+			tNIMEDesc.fDistortionNoisingPushPower = 3.f;
+			tNIMEDesc.NoiseTextureIndex = 200;
+			tNIMEDesc.MaskTextureIndex = 59;
+			tNIMEDesc.iDiffuseTextureIndex = 370;
+			tNIMEDesc.m_iPassIndex = 23;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.19140625f, 0.98046875f, 0.19140625f, 1.f);
+			tNIMEDesc.vColor = _float3(0.48046875f, 0.19140625f, 0.19140625f);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 360.f;
+			tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.1f);
+
+			tNIMEDesc.SizeSpeed = 15.f;
+			tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
 	}
 
 	return S_OK;
@@ -1343,18 +1388,21 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.f)
 			{
-				m_vecNonInstMeshDesc[4].fMaxTime_Duration = m_vecNonInstMeshDesc[5].fMaxTime_Duration = 4.f;
-				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
-					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
-				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
-					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+				if (m_iRainAttackCount == 0)
+				{
+					m_vecNonInstMeshDesc[4].fMaxTime_Duration = m_vecNonInstMeshDesc[5].fMaxTime_Duration = 6.0f;
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[4]);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
 
+				}
+					m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					m_vecNonInstMeshDesc[9].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
 
-				m_vecNonInstMeshDesc[9].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				m_vecNonInstMeshDesc[9].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
 
-				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
-					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
 
 
 				m_iAdjMovedIndex++;
@@ -1367,12 +1415,30 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Primary_Attack.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 			
 
-				CMahabalasura_AttackSpear::MBSASD tDesc;
-				tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				tDesc.fTotalTime = 5.f;
-				tDesc.iKinds = 0;
+				if (m_iRainAttackCount == 0)
+				{
 
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
+					CMahabalasura_AttackSpear::MBSASD tDesc;
+					tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					tDesc.fTotalTime = 5.f;
+					tDesc.iKinds = 0;
+
+					FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
+					m_iRainAttackCount++;
+				}
+				else if(m_iRainAttackCount == 1)
+				{
+
+					CMahabalasura_AttackSpear::MBSASD tDesc;
+					tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+					tDesc.fTotalTime = 5.f;
+					tDesc.iKinds = 1;
+					FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
+
+
+					m_iRainAttackCount++;
+
+				}
 
 				//CMahabalasura_Weapon::WEAPONDESC InstanceDesc;
 				//InstanceDesc.m_CloneType = CMahabalasura_Weapon::CLONE_INSTANCE;
@@ -1404,11 +1470,6 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				//Spear->Set_InstanceWeapon(2);
 				//Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLRAIN_2, m_pTextureParticleTransform);
 
-				CMahabalasura_AttackSpear::MBSASD tDesc;
-				tDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-				tDesc.fTotalTime = 5.f;
-				tDesc.iKinds = 1;
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Spear"), TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), &tDesc));
 
 				++m_iAdjMovedIndex;
 			}
@@ -1438,11 +1499,11 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsTeleport = true;
 				m_bIsTeleportSound = false;
 
-				_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
-				_int iTemp = rand() % 2 == 0 ? -1 : 1;
-				Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
+				//_float3 Pos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+				//_int iTemp = rand() % 2 == 0 ? -1 : 1;
+				//Pos = _float3(Pos.x + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)), Pos.y, Pos.z + (iTemp * GetSingle(CUtilityMgr)->RandomFloat(1.f, 2.5f)));
 
-				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, Pos);
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.721f, 34.260f, 323.105f));
 
 				++m_iAdjMovedIndex;
 
@@ -1519,12 +1580,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 
-				for (size_t i = 0; i < 15; i++)
+				for (size_t i = 0; i < 25; i++)
 				{
 					m_vecNonInstMeshDesc[6].eMeshType = COMPONENTPROTOTYPEID(Prototype_Mesh_Lightning_01 + rand() % 3);
 
 
-					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-10,10).XMVector()	,0);
+					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-15,15).XMVector()	,0);
 					m_vecNonInstMeshDesc[6].vLookDir =
 						XMVector3Normalize(XMVectorSet(0,8,0,0) + XMVectorSetY(pUtil->RandomFloat3(-1, 1).XMVector(), 0));
 
@@ -1570,12 +1631,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 
-				for (size_t i = 0; i < 15; i++)
+				for (size_t i = 0; i < 25; i++)
 				{
 					m_vecNonInstMeshDesc[6].eMeshType = COMPONENTPROTOTYPEID(Prototype_Mesh_Lightning_01 + rand() % 3);
 
 
-					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-10, 10).XMVector(), 0);
+					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-15, 15).XMVector(), 0);
 					m_vecNonInstMeshDesc[6].vLookDir =
 						XMVector3Normalize(XMVectorSet(0, 8, 0, 0) + XMVectorSetY(pUtil->RandomFloat3(-1, 1).XMVector(), 0));
 
@@ -1622,12 +1683,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 
-				for (size_t i = 0; i < 15; i++)
+				for (size_t i = 0; i < 25; i++)
 				{
 					m_vecNonInstMeshDesc[6].eMeshType = COMPONENTPROTOTYPEID(Prototype_Mesh_Lightning_01 + rand() % 3);
 
 
-					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-10, 10).XMVector(), 0);
+					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-15, 15).XMVector(), 0);
 					m_vecNonInstMeshDesc[6].vLookDir =
 						XMVector3Normalize(XMVectorSet(0, 8, 0, 0) + XMVectorSetY(pUtil->RandomFloat3(-1, 1).XMVector(), 0));
 
@@ -1678,12 +1739,12 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 
-				for (size_t i = 0; i < 15; i++)
+				for (size_t i = 0; i < 25; i++)
 				{
 					m_vecNonInstMeshDesc[6].eMeshType = COMPONENTPROTOTYPEID(Prototype_Mesh_Lightning_01 + rand() % 3);
 
 
-					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-10, 10).XMVector(), 0);
+					m_vecNonInstMeshDesc[6].vPosition = PlayerPos + XMVectorSetY(pUtil->RandomFloat3(-15, 15).XMVector(), 0);
 					m_vecNonInstMeshDesc[6].vLookDir =
 						XMVector3Normalize(XMVectorSet(0, 8, 0, 0) + XMVectorSetY(pUtil->RandomFloat3(-1, 1).XMVector(), 0));
 
@@ -1859,8 +1920,15 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		if (iNowAnimIndex == 9)
 		{
-			m_fAttackCoolTime = 2.f;
-			m_fSkillCoolTime = 5.f;
+			if(m_iRainAttackCount == 1)
+			{
+				m_pModel->Change_AnimIndex_ReturnTo_Must(9, 0);
+			}
+			else
+			{
+				m_fAttackCoolTime = 2.f;
+				m_fSkillCoolTime = 5.f;
+			}
 		}
 		if (iNowAnimIndex == 11)
 		{

@@ -156,7 +156,9 @@ typedef struct tagNonInstanceMeshEffect
 
 	_float3				vSize = _float3(1);
 	_float3				vSizingRUL = _float3(0, 0, 0);
+	_float3				vSizieLimit = _float3(0);
 	_float				SizeSpeed = 0;
+
 	eFollowingDirID		RotAxis = FollowingDir_Up;
 	_float				OnceStartRot = 0.f;
 	_float				StartRot = 0.f;

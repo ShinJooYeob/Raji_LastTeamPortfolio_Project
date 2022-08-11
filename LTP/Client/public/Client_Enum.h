@@ -1290,7 +1290,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JYOrnate1,
 	Prototype_Mesh_JYSwordEnergy,
 	Prototype_Mesh_MiniGameBuilding,
-
+	Prototype_Mesh_JY_HalfRing,
+	
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 
@@ -3795,9 +3796,13 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_MiniGameBuilding:
 		return TEXT("MiniGameBuilding.fbx");
 		break;
+
+	case Prototype_Mesh_JY_HalfRing:
+		return TEXT("JY_HalfRing.fbx");
+		break;
+
+
 		
-
-
 
 	case Prototype_Mesh_Plat_Wall:
 		return TEXT("Plat_Wall.fbx");

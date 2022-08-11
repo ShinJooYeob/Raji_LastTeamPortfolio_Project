@@ -27,7 +27,7 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 	memcpy(&m_tMeshDesc, pArg, sizeof(NONINSTNESHEFTDESC));
 
 
-	if (m_tMeshDesc.m_iPassIndex != 23 &&(m_tMeshDesc.m_iPassIndex < 16 || m_tMeshDesc.m_iPassIndex > 20))
+	if (!((m_tMeshDesc.m_iPassIndex >= 23 && m_tMeshDesc.m_iPassIndex <= 24) || (m_tMeshDesc.m_iPassIndex >= 16 && m_tMeshDesc.m_iPassIndex <= 20)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -122,13 +122,23 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 	}
 	if (m_tMeshDesc.SizeSpeed != 0)
 	{
+		_float3 OldScale = m_pTransformCom->Get_Scale();
+
 		if (m_tMeshDesc.vSizingRUL.x != 0)
 			m_pTransformCom->Scaling(CTransform::STATE_RIGHT, m_tMeshDesc.vSizingRUL.x * fDeltaTime);
-		if (m_tMeshDesc.vSizingRUL.y != 0)
+		if (m_tMeshDesc.vSizingRUL.y != 0 )
 			m_pTransformCom->Scaling(CTransform::STATE_UP, m_tMeshDesc.vSizingRUL.y * fDeltaTime);
-		if (m_tMeshDesc.vSizingRUL.z != 0)
+		if (m_tMeshDesc.vSizingRUL.z != 0 )
 			m_pTransformCom->Scaling(CTransform::STATE_LOOK, m_tMeshDesc.vSizingRUL.z * fDeltaTime);
 
+		_float3 NowScale = m_pTransformCom->Get_Scale();
+
+		if ((m_tMeshDesc.vSizingRUL.x != 0) &&((OldScale.x - m_tMeshDesc.vSizieLimit.x) *(NowScale.x - m_tMeshDesc.vSizieLimit.x) < 0))
+			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, OldScale.x);
+		if ((m_tMeshDesc.vSizingRUL.y != 0) && ((OldScale.y - m_tMeshDesc.vSizieLimit.y) *(NowScale.y - m_tMeshDesc.vSizieLimit.y) < 0))
+			m_pTransformCom->Scaled(CTransform::STATE_UP, OldScale.y);
+		if ((m_tMeshDesc.vSizingRUL.z != 0) && ((OldScale.z - m_tMeshDesc.vSizieLimit.z) *(NowScale.z - m_tMeshDesc.vSizieLimit.z) < 0))
+			m_pTransformCom->Scaled(CTransform::STATE_LOOK, OldScale.z);
 
 	}
 

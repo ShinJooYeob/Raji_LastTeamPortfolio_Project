@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\Mahabalasura_AttackSpear.h"
 
+#define MBSAtkSpearSize 0.285f,0.285f,0.35f
+
 CMahabalasura_AttackSpear::CMahabalasura_AttackSpear(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonsterWeapon(pDevice, pDeviceContext)
 {
@@ -218,13 +220,13 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 
 		}
 		*/
-		for (_uint i = 0; i < 32; i++)
+		for (_uint i = 0; i < 16; i++)
 		{
 
 			{
 				TTD tTTD;
 
-				_Vector TargetPosition = DefaultPivot + XMVectorSet(0.5f,0, 0.5f,0) * (5.f + 45.f * (_float)(i / 32.f));
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(0.5f,0, 0.5f,0)*2.f * (5.f + 45.f * (_float)(i / 32.f));
 
 				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
@@ -234,7 +236,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
 				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
-				tTTD.pTransform->Scaled_All(_float3(0.35f, 0.35f, 0.35f));
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
 				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
 				tTTD.bIsDead = false;
 				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) * 1.47916665f;
@@ -244,7 +246,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 			{
 				TTD tTTD;
 
-				_Vector TargetPosition = DefaultPivot + XMVectorSet(0.5f, 0, -0.5f, 0) * (5.f + 45.f* (_float)(i / 32.f));
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(0.5f, 0, -0.5f, 0)*2.f * (5.f + 45.f* (_float)(i / 32.f));
 
 				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
@@ -254,7 +256,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
 				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
-				tTTD.pTransform->Scaled_All(_float3(0.35f, 0.35f, 0.35f));
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
 				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
 				tTTD.bIsDead = false;
 				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) *1.47916665f;
@@ -264,7 +266,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 			{
 				TTD tTTD;
 
-				_Vector TargetPosition = DefaultPivot + XMVectorSet(-0.5f, 0, -0.5f, 0) * (5.f + 45.f* (_float)(i / 32.f));
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(-0.5f, 0, -0.5f, 0)*2.f * (5.f + 45.f* (_float)(i / 32.f));
 
 				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
@@ -274,7 +276,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
 				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
-				tTTD.pTransform->Scaled_All(_float3(0.35f, 0.35f, 0.35f));
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
 				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
 				tTTD.bIsDead = false;
 				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) *1.47916665f;
@@ -284,7 +286,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 			{
 				TTD tTTD;
 
-				_Vector TargetPosition = DefaultPivot + XMVectorSet(-0.5f, 0, 0.5f, 0) * (5.f + 45.f* (_float)(i / 32.f));
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(-0.5f, 0, 0.5f, 0)*2.f * (5.f + 45.f* (_float)(i / 32.f));
 
 				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
@@ -294,7 +296,88 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
 				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
-				tTTD.pTransform->Scaled_All(_float3(0.35f, 0.35f, 0.35f));
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
+				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
+				tTTD.bIsDead = false;
+				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) * 1.47916665f;
+
+				m_vecInstancedTransform.push_back(tTTD);
+			}
+
+			{
+				TTD tTTD;
+
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(0.707f, 0, 0, 0)*2.f * (5.f + 45.f * (_float)(i / 32.f));
+
+				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
+
+				tTTD.pTransform->Set_MoveSpeed(pUtil->RandomFloat(30, 45));
+				//
+				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
+				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
+				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
+				tTTD.bIsDead = false;
+				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) * 1.47916665f;
+
+				m_vecInstancedTransform.push_back(tTTD);
+			}
+			{
+				TTD tTTD;
+
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(0, 0, 0.707f, 0)*2.f * (5.f + 45.f* (_float)(i / 32.f));
+
+				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
+
+				tTTD.pTransform->Set_MoveSpeed(pUtil->RandomFloat(30, 45));
+				//
+				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
+				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
+				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
+				tTTD.bIsDead = false;
+				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) *1.47916665f;
+
+				m_vecInstancedTransform.push_back(tTTD);
+			}
+			{
+				TTD tTTD;
+
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(-0.707f, 0, 0, 0)*2.f * (5.f + 45.f* (_float)(i / 32.f));
+
+				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
+
+				tTTD.pTransform->Set_MoveSpeed(pUtil->RandomFloat(30, 45));
+				//
+				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
+				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
+				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
+				tTTD.bIsDead = false;
+				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) *1.47916665f;
+
+				m_vecInstancedTransform.push_back(tTTD);
+			}
+			{
+				TTD tTTD;
+
+				_Vector TargetPosition = DefaultPivot + XMVectorSet(0, 0, -0.707f, 0) *2.f* (5.f + 45.f* (_float)(i / 32.f));
+
+				tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+				NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
+
+				tTTD.pTransform->Set_MoveSpeed(pUtil->RandomFloat(30, 45));
+				//
+				tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
+				tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
+
+				tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
 				tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
 				tTTD.bIsDead = false;
 				tTTD.fPassedTime = -(_float)((_float)(i / 32.f)) * 1.47916665f;
@@ -305,6 +388,10 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 	}
 	else
 	{
+		_Vector PlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+		_float Length = max(min(XMVectorGetX(XMVector3Length(DefaultPivot - PlayerPos)) * 1.25f, 35.f),20.f);
+		_float Interval = Length / 4.f;
+
 		for (_uint i = 0; i < 128; i++)
 		{
 
@@ -312,7 +399,7 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 
 			pGuideTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(_float(i % 32) *11.25f + DefulatAngle));
 
-			_Vector TargetPosition = DefaultPivot + pGuideTransform->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * (35.f - 8.f/*0.46875f */* (_float)(i / 32));
+			_Vector TargetPosition = DefaultPivot + pGuideTransform->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * (Interval*4.f - Interval/*0.46875f */* (_float)(i / 32));
 
 			tTTD.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 			NULL_CHECK_RETURN(tTTD.pTransform, E_FAIL);
@@ -322,10 +409,10 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 			tTTD.pTransform->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(TargetPosition, 70.f));
 			tTTD.pTransform->LookDir_ver2(XMVector3Normalize(-(TargetPosition)+tTTD.pTransform->Get_MatrixState(CTransform::STATE_POS)));
 
-			tTTD.pTransform->Scaled_All(_float3(0.35f, 0.35f, 0.35f));
+			tTTD.pTransform->Scaled_All(_float3(MBSAtkSpearSize));
 			tTTD.pTransform->Set_TurnSpeed(XMConvertToRadians(1080));
 			tTTD.bIsDead = false;
-			tTTD.fPassedTime = -(_float)((_float)(i / 32)) * 0.3697916625f;
+			tTTD.fPassedTime = -(_float)((_float)(i / 32)) * 0.39444444f;
 
 
 			m_vecInstancedTransform.push_back(tTTD);

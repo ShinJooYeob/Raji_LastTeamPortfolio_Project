@@ -167,6 +167,7 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	m_pModel->Change_AnimIndex(14);
 	m_bIsMainWeaponOff = true;
 	//
+
 	return S_OK;
 }
 
@@ -176,7 +177,6 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 	// JH
 	m_pDissolve->Update_Dissolving(fDeltaTime);
-
 	if (true == m_bBlockUpdate)
 	{
 		Update_Direction(fDeltaTime);
@@ -198,10 +198,6 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 	m_fNarration -= (_float)fDeltaTime;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_X)& DIS_Down)
-	{
-		Set_IsDead();
-	}
 
 	if (m_fNarration <= 0)
 	{
@@ -652,7 +648,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			//iRandom = 1;
+			iRandom = 1;
 
 			switch (iRandom)
 			{
@@ -1316,7 +1312,7 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 
 			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_15");
 			tDesc.FollowingTarget = nullptr;
-			tDesc.ePassID = InstancePass_AllDistortion_Bright; 
+			//tDesc.ePassID = InstancePass_AllDistortion_Bright; 
 			tDesc.EachParticleLifeTime = 0.35f;
 			m_vecTexInstDesc.push_back(tDesc);
 
@@ -1679,6 +1675,40 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}
+		//9
+		{
+
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.vPosition = _float3(-0.073f, 35.900f, 281.488f);
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_JY_HalfRing;
+			tNIMEDesc.fAppearTime = 0.35f;
+			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+
+			tNIMEDesc.noisingdir = _float2(2, 0);
+
+			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.MaskTextureIndex = 46;
+			tNIMEDesc.iDiffuseTextureIndex = 299;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.05f, 0.15f, 0.05f, 0);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = 0.f;
+			tNIMEDesc.vSize = _float3(0.2f, 0.2f, 0.2f);
+			//m_tVolcanoDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+
+			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		}
 	}
 
 	return S_OK;
@@ -1702,6 +1732,23 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 		case 0:
 		{
+			static _double ParticleTimer = 0;
+			ParticleTimer += fDeltatime;
+			if (ParticleTimer > 0.15f)
+			{
+				ParticleTimer = 0;
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+				m_vecNonInstMeshDesc[9].vPosition = _float3(-0.073f, 33.900f, 281.488f).XMVector() + XMVectorSetY(pUtil->RandomFloat3(-20, 20).XMVector(), 0);
+				m_vecNonInstMeshDesc[9].vLookDir = XMVector3Normalize(XMVectorSetY(pUtil->RandomFloat3(-1, 1).XMVector(), 0));
+				m_vecNonInstMeshDesc[9].vSize = _float3(pUtil->RandomFloat(0.2f, 0.6f));
+
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
+					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
+
+			}
+
 			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
@@ -1828,6 +1875,9 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 
+
+
+						
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -1952,6 +2002,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			m_bIsAtaackAimEnd = false;
 			
+
 
 			//m_pMainWeapons[0]->SwordTrailOnOff(true);
 			//m_pMainWeapons[1]->SwordTrailOnOff(true);
@@ -2248,12 +2299,12 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				}
 				else if (m_iAdjMovedIndex == 2 && PlayRate > 0.18947368421052631)
 				{
-					m_vecNonInstMeshDesc[5].fMaxTime_Duration = 19.f;
-					m_vecNonInstMeshDesc[5].vSize = _float3(40.f);
-					m_vecNonInstMeshDesc[5].SizeSpeed = 0.f;
-					m_vecNonInstMeshDesc[5].vSizingRUL = _float3(0, 0, 0);
-					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
-						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+					//m_vecNonInstMeshDesc[5].fMaxTime_Duration = 19.f;
+					//m_vecNonInstMeshDesc[5].vSize = _float3(40.f);
+					//m_vecNonInstMeshDesc[5].SizeSpeed = 0.f;
+					//m_vecNonInstMeshDesc[5].vSizingRUL = _float3(0, 0, 0);
+					//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
 					++m_iAdjMovedIndex;
 
 				}
@@ -2397,6 +2448,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[3]);
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[4]);
 
+
+
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					m_bIsLookAt = false;
 					m_iAdjMovedIndex++;
@@ -2423,6 +2476,22 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				}
 				if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
 				{
+
+					m_vecNonInstMeshDesc[5].fMaxTime_Duration = 0.5f;
+					m_vecNonInstMeshDesc[5].vSize = _float3(0.1f, 0.1f, 0.1f);
+					m_vecNonInstMeshDesc[5].SizeSpeed = 15.f;
+					m_vecNonInstMeshDesc[5].vSizingRUL = _float3(1, 1, 1);
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead),
+						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+					
+
+					//m_vecNonInstMeshDesc[1].vSize = _float3(0.125f);
+					//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+					//m_vecNonInstMeshDesc[1].vSize = _float3(0.162f, 0.162f, -0.162f);
+					//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 					m_iAdjMovedIndex++;
@@ -2442,6 +2511,25 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
 				{
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					if (!m_bIs2PageOnceJump)
+					{
+
+						m_vecNonInstMeshDesc[5].fMaxTime_Duration = 999999999999999.f;
+						m_vecNonInstMeshDesc[5].vSize = _float3(40.f);
+						m_vecNonInstMeshDesc[5].SizeSpeed = 0.f;
+						m_vecNonInstMeshDesc[5].vSizingRUL = _float3(0, 0, 0);
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead),
+							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[5]);
+
+						m_bIs2PageOnceJump = true;
+					}
+
+					//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+					//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+					//	TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
+
+
 					m_bIsLookAt = false;
 					m_iAdjMovedIndex++;
 				}
@@ -2889,6 +2977,14 @@ CGameObject * CChiedtian::Clone(void * pArg)
 void CChiedtian::Free()
 {
 	__super::Free();
+
+	list<CGameObject*>* pList = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_ParticleNoDead));
+	if (pList != nullptr)
+	{
+		for (auto& pNoDeadParticleObj : *pList)
+			((CNonInstanceMeshEffect*)pNoDeadParticleObj)->Set_GonnabeDie();
+	}
+
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);

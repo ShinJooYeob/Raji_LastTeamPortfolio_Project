@@ -43,8 +43,8 @@ HRESULT CScene_Stage5::Initialize()
 
 
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Mahabalasura_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_InstanceMonsterTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Mahabalasura_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -81,6 +81,17 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_C)&DIS_Down)
+	{
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss),
+			TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(98.f, 34.360, 322.568f)));
+
+		m_pUtilMgr->Get_Renderer()->Set_FogHeightFalloff(0.08f);
+		m_pUtilMgr->Get_Renderer()->Set_GodrayIntensity(0.f);
+
+		m_pUtilMgr->Get_Renderer()->Set_ShadowIntensive(0.2f);
+	}
 
 	_float3 PlayerPos = (m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
 
