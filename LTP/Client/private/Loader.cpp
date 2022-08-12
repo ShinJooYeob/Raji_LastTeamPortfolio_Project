@@ -1688,6 +1688,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Chain_Buff);
 
 #pragma endregion
 

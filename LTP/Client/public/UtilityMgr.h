@@ -66,6 +66,7 @@ public:
 
 	/*For Utility Texture */
 	HRESULT Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader* pShader, const char* szhlslConstName, _uint iTextureIndex = 0);
+	ID3D11ShaderResourceView* Get_UtilTex_SRV(UTILTEXTUREID eID, _uint iTextureIndex = 0);
 
 
 	/*For Dissolve*/

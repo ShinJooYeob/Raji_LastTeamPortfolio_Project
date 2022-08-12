@@ -5399,6 +5399,7 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 
 
+
 	Make_VerticalSpacing(1);
 
 	if (m_tParticleDesc.ePassID >= InstancePass_MaskingNoising && m_tParticleDesc.ePassID <= InstancePass_MaskingNoising_Appear_Bright)
@@ -5836,6 +5837,12 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		m_tMeshDesc.vPowerDirection.z = TempFloatArr[2];
 	}
 
+	Make_VerticalSpacing(2);
+	{
+		int DiffuseIndex = int(m_tMeshDesc.TempBuffer_0.w);
+		ImGui::InputInt("Change Diffuse", &DiffuseIndex);
+		m_tMeshDesc.TempBuffer_0.w = _float(DiffuseIndex);
+	}
 
 	Make_VerticalSpacing(1);
 
@@ -6893,13 +6900,13 @@ HRESULT CScene_Edit::Ready_WithParticle()
 			strcpy_s(InputTextbuffer, Astring.c_str());
 
 			Make_VerticalSpacing(1);
-			ImGui::InputText("Particle FileName ", InputTextbuffer, IM_ARRAYSIZE(InputTextbuffer));
+			ImGui::InputText("Particle FileName.", InputTextbuffer, IM_ARRAYSIZE(InputTextbuffer));
 
 			Astring = InputTextbuffer;
 			m_vecWithParticleDesc[iIndex].ParticleName.assign(Astring.begin(), Astring.end());
 
 			Make_VerticalSpacing(1);
-			ImGui::Checkbox("Is Following Trans ", &m_vecMeshDesc[iIndex].bIsFollowingTrasnform);
+			ImGui::Checkbox("Is Following Trans.", &m_vecMeshDesc[iIndex].bIsFollowingTrasnform);
 			Make_VerticalSpacing(1);
 
 			if (m_vecMeshDesc[iIndex].bIsFollowingTrasnform)
@@ -6926,7 +6933,7 @@ HRESULT CScene_Edit::Ready_WithParticle()
 				TempFloatArr[0] = m_vecMeshDesc[iIndex].vFixPosition.x;
 				TempFloatArr[1] = m_vecMeshDesc[iIndex].vFixPosition.y;
 				TempFloatArr[2] = m_vecMeshDesc[iIndex].vFixPosition.z;
-				ImGui::InputFloat3("Swpan Position  ", TempFloatArr);
+				ImGui::InputFloat3("Swpan Position.  ", TempFloatArr);
 				m_vecMeshDesc[iIndex].vFixPosition.x = TempFloatArr[0];
 				m_vecMeshDesc[iIndex].vFixPosition.y = TempFloatArr[1];
 				m_vecMeshDesc[iIndex].vFixPosition.z = TempFloatArr[2];
@@ -6937,7 +6944,7 @@ HRESULT CScene_Edit::Ready_WithParticle()
 				TempFloatArr[0] = m_vecMeshDesc[iIndex].vDir.x;
 				TempFloatArr[1] = m_vecMeshDesc[iIndex].vDir.y;
 				TempFloatArr[2] = m_vecMeshDesc[iIndex].vDir.z;
-				ImGui::InputFloat3("Force Direct  ", TempFloatArr);
+				ImGui::InputFloat3("Force Direct.  ", TempFloatArr);
 				m_vecMeshDesc[iIndex].vDir.x = TempFloatArr[0];
 				m_vecMeshDesc[iIndex].vDir.y = TempFloatArr[1];
 				m_vecMeshDesc[iIndex].vDir.z = TempFloatArr[2];

@@ -45,7 +45,7 @@ HRESULT CModelInstance::Initialize_Clone(void * pArg)
 
 
 HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<CTransform*>* pvecWorldMatrixs, _float fFrustumsize,
-	vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer, _bool bPrimitiveCullingOn)
+	vector<_float4>*  pvecLimLight, vector<_float4>*  pvecEmissive, vector<_float4>*  pvecTimmer, _bool bPrimitiveCullingOn, ID3D11ShaderResourceView* pChangeDiffuseSRV )
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -55,22 +55,42 @@ HRESULT CModelInstance::Render(class CShader* pShader, _uint iPassIndex, vector<
 
 	_uint NumMaterial = m_tDesc.m_pTargetModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
+
+	if (pChangeDiffuseSRV != nullptr)
 	{
-		
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+		pShader->Set_Texture(MODLETEXTYPEFORENGINE(1), pChangeDiffuseSRV);
+
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+
+			for (_uint j = 2; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
 
 
-		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i,  m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize , pvecLimLight, pvecEmissive, pvecTimmer, bPrimitiveCullingOn));
+			FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i, m_pInstanceBuffer,
+				pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer, bPrimitiveCullingOn));
+		}
+
+	}
+	else
+	{
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+
+			for (_uint j = 1; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+
+			FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing(pShader, iPassIndex, i, m_pInstanceBuffer,
+				pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive, pvecTimmer, bPrimitiveCullingOn));
+		}
 	}
 
 	return 0;
 }
 
 HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, vector<_float4x4>* pvecWorldMatrixs, _float fFrustumsize,
-	vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive , vector<_float4>*  pvecTiemer, _bool bPrimitiveCullingOn)
+	vector<_float4>*  pvecLimLight , vector<_float4>*  pvecEmissive , vector<_float4>*  pvecTiemer, _bool bPrimitiveCullingOn, ID3D11ShaderResourceView* pChangeDiffuseSRV)
 {
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, ));
@@ -80,17 +100,37 @@ HRESULT CModelInstance::Render_By_float4x4(CShader * pShader, _uint iPassIndex, 
 
 	_uint NumMaterial = m_tDesc.m_pTargetModel->Get_NumMaterial();
 
-	for (_uint i = 0; i < NumMaterial; i++)
+	if (pChangeDiffuseSRV != nullptr)
 	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+		pShader->Set_Texture(MODLETEXTYPEFORENGINE(1), pChangeDiffuseSRV);
+
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+			for (_uint j = 2; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
 
 
-		FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
-			pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive,pvecTiemer, bPrimitiveCullingOn));
+			FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
+				pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive, pvecTiemer, bPrimitiveCullingOn));
+		}
+
 	}
+	else
+	{
 
 
+		for (_uint i = 0; i < NumMaterial; i++)
+		{
+			for (_uint j = 1; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_tDesc.m_pTargetModel->Bind_OnShader(pShader, i, j, MODLETEXTYPEFORENGINE(j)));
+
+
+			FAILED_CHECK(m_tDesc.m_pTargetModel->Render_ForInstancing_float4x4(pShader, iPassIndex, i, m_pInstanceBuffer,
+				pvecWorldMatrixs, "g_BoneMatrices", fFrustumsize, pvecLimLight, pvecEmissive, pvecTiemer, bPrimitiveCullingOn));
+		}
+
+
+	}
 
 
 

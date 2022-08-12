@@ -299,6 +299,24 @@ HRESULT CUtilityMgr::Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader * pShader,
 	return S_OK;
 }
 
+ID3D11ShaderResourceView * CUtilityMgr::Get_UtilTex_SRV(UTILTEXTUREID eID, _uint iTextureIndex)
+{
+	switch (eID)
+	{
+	case Client::CUtilityMgr::UTILTEX_NOISE:
+		FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+		break;
+	case Client::CUtilityMgr::UTILTEX_MASK:
+		FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"MaskTexture"));
+		break;
+	default:
+		break;
+	}
+
+
+	return m_pTexture->Get_ShaderResourceView(iTextureIndex);
+}
+
 HRESULT CUtilityMgr::Bind_DissolveTex_OnShader(CShader * pShader, _uint iRampTextureIndex)
 {
 	if (iRampTextureIndex < 1) iRampTextureIndex = 1;

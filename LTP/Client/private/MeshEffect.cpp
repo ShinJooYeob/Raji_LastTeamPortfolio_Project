@@ -123,8 +123,6 @@ _int CMeshEffect::Render()
 {
 	FAILED_CHECK(SetUp_ConstantTable());
 
-	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
-
 
 	vector<_float4>* vecEmissive = nullptr;
 	vector<_float4>* vecTimer = nullptr;
@@ -137,10 +135,15 @@ _int CMeshEffect::Render()
 		vecTimer = &m_vecTimer;
 
 
-	
-
-	FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, m_tInstanceDesc.ePassID + 1, &m_vecWorld, 0, &m_vecLimLight, vecEmissive, vecTimer));
-
+	if (m_tInstanceDesc.TempBuffer_0.w > 0)
+	{
+		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, m_tInstanceDesc.ePassID + 1, &m_vecWorld, 0, 
+			&m_vecLimLight, vecEmissive, vecTimer, false, GetSingle(CUtilityMgr)->Get_UtilTex_SRV(CUtilityMgr::UTILTEX_NOISE,_uint(m_tInstanceDesc.TempBuffer_0.w))));
+	}
+	else
+	{
+		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, m_tInstanceDesc.ePassID + 1, &m_vecWorld, 0, &m_vecLimLight, vecEmissive, vecTimer));
+	}
 
 	
 
