@@ -87,6 +87,8 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
+	
 
 
 
@@ -5533,8 +5535,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.eMeshType = Prototype_Mesh_SM_TS_Double_Slash_01;
 
 		// Time
-		MeshDesc.fMaxTime_Duration = 0.5f;
-		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fMaxTime_Duration = 0.6f;
+		MeshDesc.fAppearTime = 0.3f;
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
@@ -5557,8 +5559,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
 
 			// Transform_Base
-		MeshDesc.vPosition = _float3(0.0f, -0.4f, 0);
-		MeshDesc.vSize = _float3(0.5f);
+		MeshDesc.vPosition = _float3(0.0f, -1.0f, 0);
+		MeshDesc.vSize = _float3(1.0f);
 
 		// Move
 		MeshDesc.MoveDir = FollowingDir_Look;
@@ -5571,7 +5573,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.LookRotSpeed = 0;
 
 		MeshDesc.RotAxis = FollowingDir_Look;
-		MeshDesc.RotationSpeedPerSec = 30;
+		MeshDesc.RotationSpeedPerSec = 25;
 		AddDesc.AccRotSpeed = 0;
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
 
@@ -5601,51 +5603,53 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 	if (type == MESHEFFECT_MONSTER_NL_Cash2)
 	{
 
-		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_SM_GN_Wind01;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Ninjasura_Knife;
 
 		// Time
 		MeshDesc.fMaxTime_Duration = 0.6f;
 		MeshDesc.fAppearTime = 0.3f;
-		AddDesc.bAfterApperTime = true;
+		AddDesc.bAfterApperTime = false;
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 278;
-		MeshDesc.iDiffuseTextureIndex = 370;
+		MeshDesc.iDiffuseTextureIndex = 317;
 		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.NoiseTextureIndex = 384;
+		MeshDesc.NoiseTextureIndex = 381;
 
 
 		// Noise
-		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
-		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 50.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 
 		// Color
-		MeshDesc.vLimLight = _float4(1);
-		MeshDesc.vEmissive = _float4(1);
+		MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
+		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.3f, 0.1f, 0.1f, 1.f);
+		// MeshDesc.vEmissive = _float4(1);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f,s 0.1f, 1.f);
 
 		// Transform_Base
-		MeshDesc.vPosition = _float3(-1.0f, 1.0f, -0.2f);
-		MeshDesc.vSize = _float3(1.3f);
+		MeshDesc.vPosition = _float3(0.3f, 1.2f, 0.5f);
+		MeshDesc.vSize = _float3(5.0f);
 
 		// Move
-		MeshDesc.MoveDir = FollowingDir_Look;
-		MeshDesc.MoveSpeed = 0;
-		AddDesc.AccMoveSpeed = 0;
+		//MeshDesc.MoveDir = FollowingDir_Right;
+		//MeshDesc.MoveSpeed = 0;
+		//AddDesc.AccMoveSpeed = 0;
 
 		// RotS
-		AddDesc.LookRotAxis = FollowingDir_Right;
-		AddDesc.vAddDirectAngle = _float3(90, 0, 0);
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 		AddDesc.LookRotSpeed = 0;
 
 		MeshDesc.RotAxis = FollowingDir_Look;
-		MeshDesc.RotationSpeedPerSec = 30;
+		MeshDesc.RotationSpeedPerSec = 0;
 		AddDesc.AccRotSpeed = 0;
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
 
 		// Scale
-		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.AccScaleSpeed = 5.0f;
+		AddDesc.ScaleMax = 5.0f;
 		AddDesc.ScaleReFlag = false;
 
 		AddDesc.bLockScale[0] = true;
@@ -5656,7 +5660,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		// Fix
 		AddDesc.FixFlag_Move = false;
 		AddDesc.FixFlag_Rot = false;
-		AddDesc.FollowTarget = Transfom;
+		AddDesc.FollowTarget = nullptr;
 
 		// Shader
 	//	MeshDesc.m_iPassIndex = 16; // 왜곡
@@ -5665,6 +5669,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
 
 		// 2
 		// Mesh
@@ -5713,7 +5718,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
 
 		// Scale
-		AddDesc.AccScaleSpeed = 1.0f;
+		AddDesc.AccScaleSpeed = 5.0f;
+		AddDesc.ScaleMax = 0.5f;
 		AddDesc.ScaleReFlag = false;
 
 		AddDesc.bLockScale[0] = true;
@@ -5732,7 +5738,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
-		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 
 

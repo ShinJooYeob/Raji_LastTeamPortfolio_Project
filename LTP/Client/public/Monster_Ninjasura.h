@@ -136,10 +136,11 @@ private://Dissolve
 	_double				m_dDissolveTime = 0;
 	
 private: // particle	
-	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
+	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
+	CTransform*						m_pTextureParticleTransform_Leg = nullptr;
+	// static const int				ShurikenSize = 3;
+	// CGameObject*					m_ArrayShuriken[ShurikenSize] = {nullptr,};
+
 
 
 public:

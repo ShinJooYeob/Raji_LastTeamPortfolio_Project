@@ -2977,14 +2977,15 @@ CGameObject * CChiedtian::Clone(void * pArg)
 void CChiedtian::Free()
 {
 	__super::Free();
-
-	list<CGameObject*>* pList = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_ParticleNoDead));
-	if (pList != nullptr)
+	if (m_bIsClone)
 	{
-		for (auto& pNoDeadParticleObj : *pList)
-			((CNonInstanceMeshEffect*)pNoDeadParticleObj)->Set_GonnabeDie();
+		list<CGameObject*>* pList = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_ParticleNoDead));
+		if (pList != nullptr)
+		{
+			for (auto& pNoDeadParticleObj : *pList)
+				((CNonInstanceMeshEffect*)pNoDeadParticleObj)->Set_GonnabeDie();
+		}
 	}
-
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
