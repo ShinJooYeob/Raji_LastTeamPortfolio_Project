@@ -448,26 +448,46 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
 		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo2);
 
+		//	_float4(0.25f, 0.18f, 1, 1),
+		//	_float4(0.15f, 0.38f, 1, 1),
 
 		{
-			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_Mesh_Sword2,
-				Prototype_Mesh_SM_Ninjasura_Knife,
-				0.05f,
-				0.3f,
-				_float4(0.25f, 0.18f, 1, 1),
-				_float4(0.15f, 0.38f, 1, 1),
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+			//	Prototype_Mesh_SM_ControlPointMatch_Square_02,
+				Prototype_Mesh_SM_Box_Basic,
+				0.01f,
+				0.5f,
+			//	_float4(0.15f, 0.38f, 1, 1),
+			//	_float4(0.25f, 0.18f, 1, 1),
+				_float4(0),
+				_float4(0),
 				1,
-				_float3(3),
-				_float3(3),
+				_float3(1.5f),
+				_float3(0.5f),
 				1);
 
-			testMesh.vPowerDirection = _float3(0, 0, 1);
+			testMesh.vPowerDirection = _float3(0, 1, 0);
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
 			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			testMesh.TempBuffer_0.w = 270;
+			testMesh.iMaskingTextureIndex = 101;
+			testMesh.iNoiseTextureIndex= NONNOISE;
 
+			testMesh.vEmissive_SBB = _float3(1, 0, 0);
+			testMesh.fDistortionNoisingPushPower = 10.0f;
 
-			_Matrix mat = m_pPlayerTransform->Get_WorldMatrix();
-			_Vector pos = mat.r[3] + mat.r[1] * 3.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(0);
+			testMesh.ParticleStartRandomPosMax = _float3(0);
+			testMesh.Particle_Power = 3;
+
+			
+				
+
+		//	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Matrix mat = m_pTextureParticleTransform_Hand->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
 			testMesh.vFixedPosition = pos;
+		//	testMesh.FollowingTarget = m_pTextureParticleTransform_Hand;
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
@@ -477,40 +497,167 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_C))
 	{
 		{
-			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
+
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
 				0,
 				0.5f,
 				_float4(1),
 				_float4(1, 1, 1, 0.5f),
-				1,
-				_float3(0.05f, 3, 0.05f),
-				_float3(0.05f, 4, 0.05f),
-				1);
-			//	testTex.eParticleTypeID = InstanceEffect_Ball;
-			//	testTex.ePassID = InstancePass_OriginColor;
-			//	testTex.ePassID = InstancePass_BrightColor;
-			//	testTex.vEmissive_SBB = _float3(1,0,0);
+				0,
+				_float3(0.5f),
+				_float3(0.1f),
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+				//	testTex.ePassID = InstancePass_MaskingNoising;
 
+
+			testTex.ParticleStartRandomPosMin = _float3(0, 3, 0);
+			testTex.ParticleStartRandomPosMax = _float3(0, 3, 0);
+			testTex.Particle_Power = 2.0f;
+
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
+
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
+
+		//	testTex.m_fAlphaTestValue = 0.5f;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.vPowerDirection = _float3(0, 1, 0);
+			testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				3.f,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(1.0f),
+				_float3(0.3f),
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+				testTex.ePassID = InstancePass_BrightColor;
+				//	testTex.ePassID = InstancePass_MaskingNoising;s
+				// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+
+
+			testTex.ParticleStartRandomPosMin = _float3(-1,0,-1);
+			testTex.ParticleStartRandomPosMax = _float3(1,0,1);
 			testTex.Particle_Power = 5.0f;
 
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
 
-			testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
-			testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
 
-			testTex.vPowerDirection = _float3(1, 1, 1);
-			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+		//	testTex.m_fAlphaTestValue = 0.2f;
 
-			testTex.iTextureLayerIndex = 10;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+				0,
+				0,
+				_float4(0.17f, 0.60f, 1.0f, 0.8f),
+				_float4(0.15f, 0.91f, 0.66f, 0.1f),
+				1,
+				_float3(4.0f),
+				_float3(5.0f),
+				1);
+
+
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+				0,
+				0,
+				_float4(0.17f, 0.60f, 1.0f, 0.8f),
+				_float4(0.15f, 0.91f, 0.66f, 0.1f),
+				1,
+				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+				_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			  testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			//  testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.ePassID = InstancePass_MaskingNoising;
+			//  testTex.vEmissive_SBB = _float3(1, 1, 1);
+
+
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Look;
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+				0,
+				0,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(0.1f, 1, 0.1f).XMVector() * 10.f,
+				_float3(0.1f, 1, 0.1f).XMVector() * 0.1f,
+				1);
+			testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+			//	testTex.ePassID = InstancePass_OriginColor;
+			//	testTex.ePassID = InstancePass_BrightColor;
+			testTex.vEmissive_SBB = _float3(0.5f,0.1f,0.1f);
+
+			testTex.Particle_Power = -0.5f;
+
+			testTex.iTextureLayerIndex = 29;
+			testTex.ParticleStartRandomPosMin = _float3(-5, 5, -5);
+			testTex.ParticleStartRandomPosMax = _float3(5, 15, 5);
+
+		//	testTex.vPowerDirection = _float3(1, 1, 1);
+		//	testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
 			//	testTex.iMaskingTextureIndex = 74;
 			//	testTex.iNoiseTextureIndex = 160;
 			//	testTex.TempBuffer_1.y = 0.0f;
 
 			////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
-			_Matrix mat = m_pTextureParticleTransform_Hand->Get_WorldMatrix();
-			_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-			testTex.vFixedPosition = pos;
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+
+			//_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+			//_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+			//testTex.vFixedPosition = pos;
+
+
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+
 		}
+
+
 
 	}
 
@@ -603,9 +750,12 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
 	// #DEBUG PatternSET
-	m_iOncePattern = 8;
+	// m_iOncePattern = 8;
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 6;
+	//	m_iOncePattern = 12;
+	m_iOncePattern = 1;
 
 	switch (m_iOncePattern)
 	{
@@ -895,6 +1045,53 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate >= 0.9)
 			{
 				m_bIOnceAnimSwitch = false;
+
+				
+
+			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.1)
+			{
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+						0,
+						0,
+						_float4(0.17f, 0.60f, 1.0f, 0.8f),
+						_float4(0.15f, 0.91f, 0.66f, 0.1f),
+						1,
+						_float3(4.0f),
+						_float3(5.0f),
+						1);
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0,
+						0,
+						_float4(0.17f, 0.60f, 1.0f, 0.8f),
+						_float4(0.15f, 0.91f, 0.66f, 0.1f),
+						1,
+						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+						1);
+					//	testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					//  testTex.ePassID = InstancePass_BrightColor;
+					//	testTex.ePassID = InstancePass_MaskingNoising;
+					//  testTex.vEmissive_SBB = _float3(1, 1, 1);
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Look;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+				m_EffectAdjust++;
+
 			}
 			break;
 		}
@@ -927,7 +1124,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 						XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(0, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(-1, 0)));
 						m_bTurnMotion = true;
 					}
-					else {
+					else
+					{
 						XMStoreFloat4(&m_fDirection, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * pUtil->RandomFloat(0, 1) + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * pUtil->RandomFloat(0, 1)));
 						m_bTurnMotion = false;
 					}
@@ -935,14 +1133,61 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
 					m_MotionTrailTime = 0;
 				}
-				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat4(&m_fDirection), 60.f, dDeltaTime,m_pNavigationCom);
+				m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat4(&m_fDirection), 60.f, dDeltaTime, m_pNavigationCom);
 			}
-			else {
+			else
+			{
 				if (m_iAfterPattern != 3 && m_iAfterPattern != 20) ////////////패턴3일땐 일부러 안나오게 하기 위한 예외처리!@#!#$@!#$!@$!@$
 				{
 					m_bIOnceAnimSwitch = false;
 					m_bMotionTrailOn = false;
 				}
+			}
+
+			if (m_EffectAdjust == 0)
+			{
+				{
+
+				INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+					0,
+					0,
+					_float4(1),
+					_float4(1, 1, 1, 0.5f),
+					0,
+					_float3(0.1f, 1, 0.1f).XMVector() * 10.f,
+					_float3(0.1f, 1, 0.1f).XMVector() * 0.1f,
+					1);
+				testTex.eParticleTypeID = InstanceEffect_Straight;
+				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	testTex.ePassID = InstancePass_OriginColor;
+				//	testTex.ePassID = InstancePass_BrightColor;
+				testTex.vEmissive_SBB = _float3(0.5f, 0.1f, 0.1f);
+
+				testTex.Particle_Power = -0.5f;
+
+				testTex.iTextureLayerIndex = 29;
+				testTex.ParticleStartRandomPosMin = _float3(-5, 5, -5);
+				testTex.ParticleStartRandomPosMax = _float3(5, 15, 5);
+
+				//	testTex.vPowerDirection = _float3(1, 1, 1);
+				//	testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+					//	testTex.iMaskingTextureIndex = 74;
+					//	testTex.iNoiseTextureIndex = 160;
+					//	testTex.TempBuffer_1.y = 0.0f;
+
+					////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
+				testTex.FollowingTarget = m_pTransformCom;
+				testTex.iFollowingDir = FollowingDir_Up;
+
+				//_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+				//_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+				//testTex.vFixedPosition = pos;
+
+
+				GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+				m_EffectAdjust++;
 			}
 
 			break;
@@ -1030,6 +1275,61 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_MotionTrailTime = 0;
 				}
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2)
+			{
+
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+						0,
+						0,
+						_float4(0.73f, 0.39f, 0.88f, 0.8f),
+						_float4(0.39f, 0.88f, 0.73f, 0.3f),
+						1,
+						_float3(4.0f),
+						_float3(5.0f),
+						1);
+
+
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0,
+						0,
+						_float4(0.73f, 0.39f, 0.88f, 1.0f),
+						_float4(0.39f, 0.88f, 0.73f, 1.0f),
+						3,
+						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+						1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
+
+
+					//	testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_OriginColor;
+
+					//  testTex.ePassID = InstancePass_BrightColor;
+					//	testTex.ePassID = InstancePass_MaskingNoising;
+					//  testTex.vEmissive_SBB = _float3(1, 1, 1);
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Look;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+		
+
+				m_EffectAdjust++;
+			}
 			break;
 		}
 		case 12:
@@ -1047,7 +1347,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_pTransformCom->Move_Forward(dDeltaTime * 10, m_pNavigationCom);
 			}
-			else {
+			else
+			{
 				m_bMotionTrailOn = false;
 				if (m_iAdjMovedIndex == 0)
 				{
@@ -1061,6 +1362,53 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Sword_Sheath_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0)
+			{
+				{
+
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0,
+						0,
+						_float4(1),
+						_float4(1, 1, 1, 0.5f),
+						0,
+						_float3(0.1f, 1, 0.1f).XMVector() * 10.f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 0.1f,
+						1);
+					testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					//	testTex.ePassID = InstancePass_OriginColor;
+					//	testTex.ePassID = InstancePass_BrightColor;
+					testTex.vEmissive_SBB = _float3(0.5f, 0.1f, 0.1f);
+
+					testTex.Particle_Power = -0.5f;
+
+					testTex.iTextureLayerIndex = 29;
+					testTex.ParticleStartRandomPosMin = _float3(-5, 5, -5);
+					testTex.ParticleStartRandomPosMax = _float3(5, 15, 5);
+
+					//	testTex.vPowerDirection = _float3(1, 1, 1);
+					//	testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+						//	testTex.iMaskingTextureIndex = 74;
+						//	testTex.iNoiseTextureIndex = 160;
+						//	testTex.TempBuffer_1.y = 0.0f;
+
+						////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+
+					//_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+					//_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+					//testTex.vFixedPosition = pos;
+
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+				m_EffectAdjust++;
+			}
+
 			break;
 		}
 		case 13:
@@ -1076,6 +1424,61 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.45f, 0.f, 1.f, 1.f), 1.f);
 					m_MotionTrailTime = 0;
 				}
+			}
+
+			if (m_EffectAdjust == 0)
+			{
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::JY_TextureEft_8,
+						0,
+						0,
+						_float4(0.73f, 0.39f, 0.88f, 0.8f),
+						_float4(0.39f, 0.88f, 0.73f, 0.3f),
+						1,
+						_float3(4.0f),
+						_float3(5.0f),
+						1);
+
+
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0,
+						0,
+						_float4(0.73f, 0.39f, 0.88f, 1.0f),
+						_float4(0.39f, 0.88f, 0.73f, 1.0f),
+						3,
+						_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+						1);
+					testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
+
+
+					//	testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.ePassID = InstancePass_OriginColor;
+
+					//  testTex.ePassID = InstancePass_BrightColor;
+					//	testTex.ePassID = InstancePass_MaskingNoising;
+					//  testTex.vEmissive_SBB = _float3(1, 1, 1);
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Look;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+
+
+				m_EffectAdjust++;
+
 			}
 			break;
 		}
@@ -1094,7 +1497,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				m_pTransformCom->Move_Forward(dDeltaTime * 5, m_pNavigationCom);
 			}
-			else {
+			else
+			{
 				m_bMotionTrailOn = false;
 				if (m_iAdjMovedIndex == 0)
 				{
@@ -1108,7 +1512,54 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninjasura_Sword_Sheath_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iSoundIndex++;
 			}
-		
+
+			if (m_EffectAdjust == 0)
+			{
+				{
+
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+						0,
+						0,
+						_float4(1),
+						_float4(1, 1, 1, 0.5f),
+						0,
+						_float3(0.1f, 1, 0.1f).XMVector() * 10.f,
+						_float3(0.1f, 1, 0.1f).XMVector() * 0.1f,
+						1);
+					testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+					//	testTex.ePassID = InstancePass_OriginColor;
+					//	testTex.ePassID = InstancePass_BrightColor;
+					testTex.vEmissive_SBB = _float3(0.5f, 0.1f, 0.1f);
+
+					testTex.Particle_Power = -0.5f;
+
+					testTex.iTextureLayerIndex = 29;
+					testTex.ParticleStartRandomPosMin = _float3(-5, 5, -5);
+					testTex.ParticleStartRandomPosMax = _float3(5, 15, 5);
+
+					//	testTex.vPowerDirection = _float3(1, 1, 1);
+					//	testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+						//	testTex.iMaskingTextureIndex = 74;
+						//	testTex.iNoiseTextureIndex = 160;
+						//	testTex.TempBuffer_1.y = 0.0f;
+
+						////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+
+					//_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+					//_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+					//testTex.vFixedPosition = pos;
+
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+				m_EffectAdjust++;
+			}
+
+
 			break;
 		}
 		case 16:
@@ -1202,7 +1653,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				Monster_BulletDesc.iBulletMeshNumber = CMonster_Bullet_Universal::NINJASURA_KNIFE;
 				Monster_BulletDesc.fSpeedPerSec = 15.f;
-				Monster_BulletDesc.fScale = _float3(0.9f, 0.9f, 0.9f);
+				Monster_BulletDesc.fScale = _float3(0.9f);
+				//	Monster_BulletDesc.fScale = _float3(0.01f);
 
 				Monster_BulletDesc.Object_Transform = m_pTransformCom;
 				Monster_BulletDesc.fPositioning = _float3(0.5f, 3.f, 1.5f); //여기의 값을 바꾸면 밑의 fPos.y도 바꿔줘야함
@@ -1226,15 +1678,51 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				CGameObject* ShurkenObj = nullptr;
 				CTransform* ShurkenTrans = nullptr;
 
+				// smoke
+				INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+					10.0f,
+					0.4f,
+					_float4(1, 1, 1, 0.6f),
+					_float4(1, 1, 1, 0.3f),
+					1,
+					_float3(2.0f),
+					_float3(0.1f),
+					1);
+				//	testTex.eParticleTypeID = InstanceEffect_Straight;
+				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+				//	testTex.ePassID = InstancePass_MaskingNoising;
+
+				testTex.ParticleStartRandomPosMin = _float3(0, 0, 0);
+				testTex.ParticleStartRandomPosMax = _float3(0, 0.5f, 0);
+
+				testTex.Particle_Power = 5.0f;
+
+				//testTex.iTextureLayerIndex = 20;
+				testTex.iMaskingTextureIndex = 74;
+				//testTex.iMaskingTextureIndex = 68;
+				testTex.iNoiseTextureIndex = 350;
+
+				testTex.vEmissive_SBB = _float3(1.0f, 0.5f, 0.5f);
+				testTex.m_fAlphaTestValue = 0.5f;
+				testTex.vPowerDirection = _float3(0, 1, 0);
+				testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
+
+
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.15f));
 				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 				ShurkenTrans = static_cast<CTransform*>(ShurkenObj->Get_Component(TAG_COM(Com_Transform)));
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, ShurkenTrans);
 
+
+
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f));
 				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
 				ShurkenTrans = static_cast<CTransform*>(ShurkenObj->Get_Component(TAG_COM(Com_Transform)));
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, ShurkenTrans);
+				testTex.FollowingTarget = ShurkenTrans;
+				// testTex.iFollowingDir;
+				GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f));
 				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
@@ -1255,13 +1743,49 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 0 && PlayRate >= 0.3157)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash1, m_pTextureParticleTransform_Leg);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash1, m_pTransformCom);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash3, m_pTextureParticleTransform_Hand);
+
 				m_EffectAdjust++;
 			}
 
-			if (m_EffectAdjust == 1 && PlayRate >= 0.35)
+			if (m_EffectAdjust == 1 && PlayRate >= 0.3)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Leg);
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+						1.0f,
+						0.5f,
+						_float4(1),
+						_float4(1, 1, 1, 0.5f),
+						0,
+						_float3(0.6f),
+						_float3(0.1f),
+						1);
+					//	testTex.eParticleTypeID = InstanceEffect_Ball;
+					testTex.ePassID = InstancePass_MaskingNoising;
+					testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+					testTex.ParticleStartRandomPosMin = _float3(0, 0, 0);
+					testTex.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
+					testTex.iTextureLayerIndex = 20;
+					testTex.iMaskingTextureIndex = 74;
+					testTex.iMaskingTextureIndex = 68;
+					testTex.iNoiseTextureIndex = 350;
+					testTex.TempBuffer_1.y = 0;
+
+					// _Matrix mat = m_pTextureParticleTransform_Hand->Get_WorldMatrix();
+					// _Vector pos = mat.r[3] - mat.r[2] * 0;
+					// testTex.vFixedPosition = pos;
+
+					testTex.m_fAlphaTestValue = 0.5f;
+					testTex.FollowingTarget = m_pTextureParticleTransform_Hand;
+
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+
 				m_EffectAdjust++;
 			}
 
@@ -1280,7 +1804,8 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					m_dSoundTime = 0;
 				}
 			}
-			else {
+			else
+			{
 				m_bLookAtOn = false;
 			}
 
@@ -1290,6 +1815,49 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_2215.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 
 				m_iSoundIndex++;
+			}
+
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.2417)
+			{
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+						2.5f,
+						0.5f,
+						_float4(1),
+						_float4(1, 1, 1, 0.5f),
+						0,
+						_float3(1.0f),
+						_float3(0.3f),
+						0);
+					//	testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+					testTex.ePassID = InstancePass_BrightColor;
+					//	testTex.ePassID = InstancePass_MaskingNoising;s
+					// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+
+
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0, 1);
+					testTex.Particle_Power = 5.0f;
+
+					//testTex.iTextureLayerIndex = 20;
+					//testTex.iMaskingTextureIndex = 74;
+					//testTex.iMaskingTextureIndex = 68;
+					//testTex.iNoiseTextureIndex = 350;
+
+					//testTex.TempBuffer_1.y = 0;
+					//testTex.TempBuffer_1.x = 0;
+
+				//	testTex.m_fAlphaTestValue = 0.2f;
+
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+					m_EffectAdjust++;
+				}
 			}
 		}
 		}

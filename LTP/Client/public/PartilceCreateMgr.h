@@ -355,8 +355,8 @@ public:
 		Um_Sunder_1,
 		Um_FireMask_1,
 		Um_FireMask_2,
-
-
+		Um_FireMask_2_png,
+		Um_FireMask_3,
 		TEXTURE_EFFECTJ_END,
 
 	};
@@ -369,6 +369,7 @@ public:
 
 		Um_MeshBase,
 		Um_MeshBase2,
+		Um_MeshBase3,
 		Um_MeshBase_Cone,
 		Um_Mesh_Sword1,
 		Um_Mesh_Sword2,

@@ -99,6 +99,7 @@ _int CStaticInstanceMapObject::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+//	return 0;
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));

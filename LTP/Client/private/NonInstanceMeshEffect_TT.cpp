@@ -548,6 +548,7 @@ _int CNonInstanceMeshEffect_TT::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &mMeshDesc.noisingdir, sizeof(_float2)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &mMeshDesc.fDistortionNoisingPushPower, sizeof(_float)));
 
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &mMeshDesc.fAlphaTestValue, sizeof(_float)));
 
 
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", mMeshDesc.NoiseTextureIndex));
