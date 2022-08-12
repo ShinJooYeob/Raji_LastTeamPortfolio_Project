@@ -502,6 +502,9 @@
     <Filter Include="01.GameObject\11.WorldTexture_Universal">
       <UniqueIdentifier>{d93fffe1-4e9b-466a-9440-5e42c7fd2ed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\08.Scene_Stage8">
+      <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

@@ -38,8 +38,8 @@ HRESULT CMonster_Ninjasura_Minion::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f));
-//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f));// Stage2
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 #endif
 
@@ -54,6 +54,7 @@ _int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 
 	if (m_fHP <= 0)
 	{
+		m_bRepelOff = true;
 		m_bLookAtOn = false;
 		m_pDissolve->Update_Dissolving(dDeltaTime);
 		m_pDissolve->Set_DissolveOn(false, 2.f);
@@ -406,7 +407,7 @@ HRESULT CMonster_Ninjasura_Minion::Update_Collider(_double dDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pAttackColliderCom));
 	}
 
-	if(m_bMotionTrailOn == false)
+	if(m_bMotionTrailOn == false && m_bRepelOff != true)
 		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.2f, m_pNavigationCom));
 
 
@@ -967,7 +968,7 @@ HRESULT CMonster_Ninjasura_Minion::SetUp_Components()
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	HpDesc.m_Dimensions = 1.5f;
+	HpDesc.m_Dimensions = 1.f;
 	m_fMaxHP = 15.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);

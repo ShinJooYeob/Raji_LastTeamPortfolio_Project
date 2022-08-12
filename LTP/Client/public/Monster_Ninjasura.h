@@ -134,6 +134,9 @@ private://Sound
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
+
+private://Repel
+	_bool				m_bRepelOff = false;
 	
 private: // particle	
 	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
