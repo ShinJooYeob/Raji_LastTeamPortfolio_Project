@@ -224,6 +224,7 @@ _float CMonster_Ninjasura::Take_Damage(CGameObject * pTargetObject, _float fDama
 	return _float();
 }
 
+
 HRESULT CMonster_Ninjasura::SetUp_Info()
 {
 
@@ -415,17 +416,12 @@ HRESULT CMonster_Ninjasura::Update_Collider(_double dDeltaTime)
 
 HRESULT CMonster_Ninjasura::Ready_ParticleDesc()
 {
-	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
+	m_pTextureParticleTransform_Hand = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Hand);
 
-	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
+	m_pTextureParticleTransform_Leg = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_BREAK(m_pTextureParticleTransform_Leg);
 
-	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
-
-	m_pTextureParticleTransform_Demo4 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo4);
 	return S_OK;
 }
 
@@ -437,41 +433,41 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
 	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
 
-
-
 	mat_World.r[3] = m_pColliderCom->Get_ColliderPosition(2).XMVector();
-	m_pTextureParticleTransform_Demo2->Set_Matrix(mat_World); // Leg
+	m_pTextureParticleTransform_Leg->Set_Matrix(mat_World); // Leg
 
 
-	_Matrix mat_spine_01 = m_vecAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
-	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_spine_01); // 
+	mat_World.r[3] = m_vecAttackAttachedDesc[2].Get_AttachedBoneWorldPosition();
+	m_pTextureParticleTransform_Hand->Set_Matrix(mat_World); // 
 
 	
 
 
 	if (KEYDOWN(DIK_V))
 	{
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo2);
+
 
 		{
-			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
-				Prototype_Mesh_SM_GN_Wind01,
-				0,
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_Mesh_Sword2,
+				Prototype_Mesh_SM_Ninjasura_Knife,
+				0.05f,
 				0.3f,
-				_float4(0.15f, 0.38f, 0.92f, 1),
-				_float4(0.15f, 0.38f, 0.92f, 0.0f),
-				0,
-				_float3(0.3f),
-				_float3(0.3f),
+				_float4(0.25f, 0.18f, 1, 1),
+				_float4(0.15f, 0.38f, 1, 1),
+				1,
+				_float3(3),
+				_float3(3),
 				1);
 
-
-			testMesh.bAutoTurn = true;
-			testMesh.fRotSpeed_Radian = XMConvertToRadians(1080);
-
-			testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
+			testMesh.vPowerDirection = _float3(0, 0, 1);
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
 
 
+			_Matrix mat = m_pPlayerTransform->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[1] * 3.0f;
+			testMesh.vFixedPosition = pos;
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
@@ -510,15 +506,10 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 			//	testTex.TempBuffer_1.y = 0.0f;
 
 			////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
-			_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+			_Matrix mat = m_pTextureParticleTransform_Hand->Get_WorldMatrix();
 			_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
 			testTex.vFixedPosition = pos;
-
-
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-
-
-
 		}
 
 	}
@@ -1145,7 +1136,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			if (m_EffectAdjust == 0)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Demo1);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Hand);
 				m_EffectAdjust++;
 			}
 			break;
@@ -1176,7 +1167,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 0)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Demo1);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash0, m_pTextureParticleTransform_Hand);
 				m_EffectAdjust++;
 			}
 			break;
@@ -1230,18 +1221,25 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 				fPos.y += 3.f;
 
 
-				_Vector vLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - XMLoadFloat3(&fPos) );
+				_Vector vLook = XMVector3Normalize(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) - XMLoadFloat3(&fPos));
+
+				CGameObject* ShurkenObj = nullptr;
+				CTransform* ShurkenTrans = nullptr;
 
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.15f));
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				ShurkenTrans = static_cast<CTransform*>(ShurkenObj->Get_Component(TAG_COM(Com_Transform)));
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, ShurkenTrans);
 
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f));
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
-
+				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				ShurkenTrans = static_cast<CTransform*>(ShurkenObj->Get_Component(TAG_COM(Com_Transform)));
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, ShurkenTrans);
 
 				XMStoreFloat3(&Monster_BulletDesc.fLook, XMVector3Normalize(vLook * 0.85f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f));
-				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
-
+				ShurkenObj = (g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
+				ShurkenTrans = static_cast<CTransform*>(ShurkenObj->Get_Component(TAG_COM(Com_Transform)));
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, ShurkenTrans);
 
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Ninja_Moon_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 
@@ -1257,33 +1255,13 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 0 && PlayRate >= 0.3157)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash1, m_pTextureParticleTransform_Demo2);
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash1, m_pTextureParticleTransform_Leg);
 				m_EffectAdjust++;
 			}
 
 			if (m_EffectAdjust == 1 && PlayRate >= 0.35)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo1);
-
-				/*
-
-		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_SM_GN_Wind01;
-
-		// Time
-		MeshDesc.fMaxTime_Duration = 0.6f;
-		MeshDesc.fAppearTime = 0.3f;
-		AddDesc.bAfterApperTime = true;
-
-		// Tex
-		MeshDesc.iDiffuseTextureIndex = 278;
-		MeshDesc.iDiffuseTextureIndex = 370;
-		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.MaskTextureIndex = 77;
-		MeshDesc.NoiseTextureIndex = 384;
-
-				
-				*/
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Leg);
 				m_EffectAdjust++;
 			}
 
@@ -1362,8 +1340,12 @@ void CMonster_Ninjasura::Free()
 	Safe_Release(m_pHPUI);
 	Safe_Release(m_pDissolve);
 
-	Safe_Release(m_pTextureParticleTransform_Demo1);
-	Safe_Release(m_pTextureParticleTransform_Demo2);
-	Safe_Release(m_pTextureParticleTransform_Demo3);
-	Safe_Release(m_pTextureParticleTransform_Demo4);
+	Safe_Release(m_pTextureParticleTransform_Hand);
+	Safe_Release(m_pTextureParticleTransform_Leg);
+	
+	//for (_uint i = 0; i<ShurikenSize;i++)
+	//{
+	//	Safe_Release(m_ArrayShuriken[i]);
+	//}
+
 }

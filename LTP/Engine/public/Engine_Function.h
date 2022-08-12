@@ -87,6 +87,16 @@ namespace Engine
 	}
 
 	template <typename LIST>
+	void Safe_Releasee_List(LIST& list)
+	{
+
+		for (auto& val : list)
+		{
+			Safe_Release(val);
+		}
+	}
+
+	template <typename LIST>
 	void Safe_Delete_List(LIST& list)
 	{
 

@@ -434,8 +434,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
 		
 
 		// Bullet
