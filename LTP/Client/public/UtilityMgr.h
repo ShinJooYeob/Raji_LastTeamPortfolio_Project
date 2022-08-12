@@ -43,6 +43,10 @@ public:
 	_float3	RandomFloat3(_float Min, _float Max);
 	_float3	RandomFloat3(_float3 Min, _float3 Max);
 
+	/*For MinMax*/
+	static _float	MinFloat(_float a, _float b);
+	static _float	MaxFloat(_float a, _float b);
+
 
 	/*For SlowMotion*/
 	void SlowMotionStart(_float fTargetTime = 0.5f, _float TargetSpeed = 0.0f, _float TargetCurveRate = 0.5f);

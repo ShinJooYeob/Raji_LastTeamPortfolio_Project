@@ -122,6 +122,17 @@ _float3 CUtilityMgr::RandomFloat3(_float3 Min, _float3 Max)
 	return _float3(RandomFloat(Min.x, Max.x), RandomFloat(Min.y, Max.y), RandomFloat(Min.z, Max.z));
 }
 
+_float CUtilityMgr::MinFloat(_float a, _float b)
+{
+	return a < b ? a:b;
+}
+
+_float CUtilityMgr::MaxFloat(_float a, _float b)
+{
+	return a < b ? b : a;
+}
+
+
 void CUtilityMgr::SlowMotionStart(_float fTargetTime , _float TargetSpeed , _float TargetCurveRate )
 {
 	NULL_CHECK_BREAK(m_pMainApp);
