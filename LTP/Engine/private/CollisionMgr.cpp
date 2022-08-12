@@ -125,35 +125,46 @@ void CCollisionMgr::Clear_CollisionGroup()
 
 void CCollisionMgr::Start_InspectMainCollision()
 {
-	if (m_eCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
+
+	switch (m_eCollisionThreadState)
+	{
+	case Engine::CCollisionMgr::CTS_ENTER:
 	{
 		EnterCriticalSection(m_pCriSec);
 		m_eCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
 		LeaveCriticalSection(m_pCriSec);
 	}
-
-	if (m_eCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
+		break;
+	case Engine::CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED:
 	{
 		EnterCriticalSection(m_pCriSec);
 		m_eCollisionThreadState = CollsionThreadStateID::CTS_ENTER;
 		LeaveCriticalSection(m_pCriSec);
 	}
+		break;
+
+	default: return;
+	}
 }
 
 void CCollisionMgr::Start_InspectRepelCollision()
 {
-	if (m_eRepelCollisionThreadState == CollsionThreadStateID::CTS_ENTER)
+
+	switch (m_eRepelCollisionThreadState)
 	{
+	case Engine::CCollisionMgr::CTS_ENTER:
 		EnterCriticalSection(m_pCriSec);
 		m_eRepelCollisionThreadState = CollsionThreadStateID::CTS_PROCESSING;
 		LeaveCriticalSection(m_pCriSec);
-	}
+		break;
 
-	if (m_eRepelCollisionThreadState == CCollisionMgr::CTS_SCENECHANGING)
-	{
+	case Engine::CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED:
 		EnterCriticalSection(m_pCriSec);
 		m_eRepelCollisionThreadState = CollsionThreadStateID::CTS_ENTER;
 		LeaveCriticalSection(m_pCriSec);
+		break;
+
+	default: return;
 	}
 }
 
@@ -285,6 +296,10 @@ HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_
 						Safe_Release(ColideElements.pCollisionObject);
 					}
 					m_CollisionGroupList[i].clear();
+
+					EnterCriticalSection(_CriSec);
+					m_eCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
+					LeaveCriticalSection(_CriSec);
 				}
 
 				continue;
@@ -353,6 +368,10 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 						Safe_Release(RepelElement.pNavigation);
 					}
 					m_RepelObjectList.clear();
+
+					EnterCriticalSection(_CriSec);
+					m_eRepelCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
+					LeaveCriticalSection(_CriSec);
 				}
 
 				continue;

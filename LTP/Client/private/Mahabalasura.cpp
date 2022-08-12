@@ -324,7 +324,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 
 		iRandom = mOnlyPattern; // DEBUG
-		iRandom = 2;
+		//iRandom = 2;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:

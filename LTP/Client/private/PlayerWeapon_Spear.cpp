@@ -191,11 +191,23 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			}
 			
 			m_pJYParticleTransform->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(0));
-			m_pJYParticleTransform->Set_MatrixState(CTransform::STATE_POS, (pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() +
-				pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector())*0.5f);
 
 
-				pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[4]);
+			m_vecNonInstMeshDesc[0].vPosition = m_vecNonInstMeshDesc[1].vPosition = m_vecTextureParticleDesc[5].vFixedPosition
+				= (pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() +
+					pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector())*0.5f;
+				// +XMVectorSet(0, 0.125f, 0, 0);
+			m_vecNonInstMeshDesc[0].vLookDir = m_vecNonInstMeshDesc[1].vLookDir =
+				XMVector3Normalize(pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() -
+					pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector());
+
+
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+			pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[5]);
 
 
 			pConflictedCollider->Set_Conflicted(0.3f);
@@ -707,6 +719,95 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	
 	m_vecTextureParticleDesc[4].FollowingTarget = m_pJYParticleTransform;
 	m_vecTextureParticleDesc[4].iFollowingDir = FollowingDir_Up;
+	// 5 
+
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_19"));
+	m_vecTextureParticleDesc[5].FollowingTarget = nullptr;
+
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+
+
+	//0
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+		tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.15f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 200;
+		tNIMEDesc.MaskTextureIndex = 69;
+		tNIMEDesc.iDiffuseTextureIndex = 299;
+		tNIMEDesc.m_iPassIndex = 19;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1.f, 0.f, 0.0f, 1.f);
+		tNIMEDesc.vColor = _float3(0.5f, 0.19140625f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.StartRot = GetSingle(CUtilityMgr)->RandomFloat(0, 360);
+		tNIMEDesc.RotationSpeedPerSec = 360.f;
+
+		tNIMEDesc.SizeSpeed = 4.95f;
+
+		tNIMEDesc.vSizingRUL = _float3(1, 1, 0);
+		tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.00001f);
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+		//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
+		//	TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
+
+	}
+	//1
+	{
+
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+		tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_JYBall;
+
+		tNIMEDesc.fMaxTime_Duration = 0.35f;
+		tNIMEDesc.fAppearTime = 0.15f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1);
+
+		tNIMEDesc.NoiseTextureIndex = 200;
+		tNIMEDesc.MaskTextureIndex = 69;
+		tNIMEDesc.iDiffuseTextureIndex = 299;
+		tNIMEDesc.m_iPassIndex = 16;
+		tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1.f, 0.f, 0.0f, 1.f);
+		tNIMEDesc.vColor = _float3(0.5f, 0.19140625f, 0.19140625f);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.StartRot = GetSingle(CUtilityMgr)->RandomFloat(0, 360);
+		tNIMEDesc.RotationSpeedPerSec = 360.f;
+
+		tNIMEDesc.SizeSpeed = 1.98f;
+		tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+		tNIMEDesc.vSize = _float3(0.05f, 0.05f, 0.05f);
+
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+
+
+
+
+
 
 	return S_OK;
 }

@@ -20,7 +20,7 @@ void CALLBACK EraseFinishedThread(void* _Prameter)
 	{
 		//매번 돌릴 필요 없으니까 1초에 한번씩 돌리자... 근데 이거 종료 타이밍 잘 못 맞추면 오류있을거같음
 		//근데 다쓴 쓰래드를 삭제하는 코드는 여기랑 Free 함수에 밖에 없기 때문에 괜찬을거같음
-		Sleep(1000);
+		Sleep(10);
 		if ((*tThreadArg.IsClientQuit))
 			break;
 
@@ -99,7 +99,7 @@ HRESULT CThreadMgr::PlayThread(void* _ThreadFunc, void* _pArg, void* pDesc)
 void CThreadMgr::Free()
 {
 	m_bIsClientQuit = true;
-
+	Sleep(500);
 	for (auto& Handle : m_vecThread)
 	{
 		WaitForSingleObject(Handle, INFINITE);

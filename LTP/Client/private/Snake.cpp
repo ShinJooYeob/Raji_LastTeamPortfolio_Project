@@ -854,6 +854,31 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		break;
 		case 8:
 		{
+			//static _float LimLightTimer = 0;
+			//static _bool LimLightBool = false;
+			//LimLightTimer += (_float)fDeltatime;
+			//_float3 vLLC = _float3(0, 1.f, 0.5f);
+
+			//if (LimLightTimer > 0.35f)
+			//{
+			//	LimLightTimer = 0;
+			//	LimLightBool = !LimLightBool;
+			//}
+			//if (LimLightBool)
+			//{
+			//	vLLC = g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(0.87f, 0.39f, 0.96f), _float3(0, 1.f, 0.5f), LimLightTimer, 0.35f);
+			//}
+			//else
+			//{
+			//	vLLC = g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(0, 1.f, 0.5f), _float3(0.87f, 0.39f, 0.96f), LimLightTimer, 0.35f);
+			//}
+
+			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
+			Value = max(min(Value, 1.f), 0.f);
+			//Set_LimLight_N_Emissive(_float4(0.87f, 0.39f, 0.96f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
+			Set_LimLight_N_Emissive(_float4(0, 1.f, 0.5f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
+			//Set_LimLight_N_Emissive(_float4(vLLC, Value), _float4(Value, Value*0.5f, Value, 0.9f));
+
 			if (PlayRate > 0.10055865921787709f  && m_iAdjMovedIndex == 0)
 			{
 				m_pRaserObj->Start_BeamEffect();

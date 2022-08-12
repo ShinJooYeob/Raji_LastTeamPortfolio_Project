@@ -297,7 +297,7 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 
 			m_vecTextureParticleDesc[2].vFixedPosition = m_vecTextureParticleDesc[3].vFixedPosition = m_vecTextureParticleDesc[4].vFixedPosition
 				= (pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() + pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector()) * 0.5f
-				+XMVectorSet(0,0.5f,0,0);
+				 +XMVectorSet(0, 0.1f, 0, 0);
 
 			for (_uint i = 2; i < 5; i ++)
 				FAILED_CHECK_NONERETURN(pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[i]));

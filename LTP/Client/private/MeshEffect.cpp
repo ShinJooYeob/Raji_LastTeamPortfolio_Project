@@ -77,7 +77,7 @@ _int CMeshEffect::LateUpdate(_double TimeDelta)
 			continue;
 
 		mat = m_vecParticleAttribute[i]._LocalMatirx.XMatrix();
-		mat.r[3] = mat.r[3] + m_vecParticleAttribute[i]._TargetParentPosition.XMVector();
+		mat.r[3] = XMVectorSetW(mat.r[3] + m_vecParticleAttribute[i]._TargetParentPosition.XMVector(),1);
 
 
 		if (m_tInstanceDesc.bEmissive)
@@ -318,11 +318,7 @@ void CMeshEffect::ResetParticle(INSTMESHATT * attribute)
 	//자식들의 Velocity를 초기화하는 과정
 	Reset_Velocity(attribute->_velocity);
 
-	if (m_tInstanceDesc.bAutoTurn)
-	{
-		attribute->_randRotAxis = pUtil->RandomFloat3(-1, 1).Get_Nomalize();
-		attribute->_randRotSpeed = pUtil->RandomFloat(0.75f, 1.25f) * m_tInstanceDesc.fRotSpeed_Radian;
-	}
+
 
 	_Vector vRight, vUp, vLook;
 
@@ -334,6 +330,32 @@ void CMeshEffect::ResetParticle(INSTMESHATT * attribute)
 	XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[1])), vUp* attribute->_size.y);
 	XMStoreFloat4(((_float4*)(&attribute->_LocalMatirx.m[2])), vLook* attribute->_size.z);
 
+	if (m_tInstanceDesc.bAutoTurn)
+	{
+		if (m_tInstanceDesc.TempBuffer_0.x > 0)
+		{
+			switch (eFollowingDirID(_uint(m_tInstanceDesc.TempBuffer_0.y)))
+			{
+			case FollowingDir_Right:
+				attribute->_randRotAxis = (*(_float3*)(&attribute->_LocalMatirx.m[0])).Get_Nomalize();
+				break;
+			case FollowingDir_Up:
+				attribute->_randRotAxis = (*(_float3*)(&attribute->_LocalMatirx.m[1])).Get_Nomalize();
+				break;
+			case FollowingDir_Look:
+				attribute->_randRotAxis = (*(_float3*)(&attribute->_LocalMatirx.m[2])).Get_Nomalize();
+				break;
+			default:
+				attribute->_randRotAxis = pUtil->RandomFloat3(-1, 1).Get_Nomalize();
+				break;
+			}
+		}
+		else
+		{
+			attribute->_randRotAxis = pUtil->RandomFloat3(-1, 1).Get_Nomalize();
+		}
+		attribute->_randRotSpeed = pUtil->RandomFloat(0.75f, 1.25f) * m_tInstanceDesc.fRotSpeed_Radian;
+	}
 }
 
 void CMeshEffect::Update_ParticleAttribute(_double fDeltaTime)
@@ -582,7 +604,8 @@ void CMeshEffect_Ball::Update_Position_by_Velocity(INSTMESHATT * tParticleAtt, _
 	{
 		_Matrix TempMat = tParticleAtt->_LocalMatirx.XMatrix();
 		TempMat.r[3] = XMVectorSet(0, 0, 0, 1);
-		TempMat = TempMat * XMMatrixRotationAxis(tParticleAtt->_randRotAxis.XMVector(), tParticleAtt->_randRotSpeed * (_float)fTimeDelta);
+
+		TempMat = TempMat * XMMatrixRotationAxis(tParticleAtt->_randRotAxis.Get_Nomalize(), tParticleAtt->_randRotSpeed * (_float)fTimeDelta);
 		tParticleAtt->_LocalMatirx = TempMat;
 	}
 
@@ -608,7 +631,9 @@ HRESULT CMeshEffect_Ball::Initialize_Child_Clone()
 
 		//랜덤한 라이프타임
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 
@@ -717,7 +742,8 @@ HRESULT CMeshEffect_Straight::Initialize_Child_Clone()
 		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		m_vecParticleAttribute.push_back(part);
 	}
@@ -825,7 +851,8 @@ HRESULT CMeshEffect_Cone::Initialize_Child_Clone()
 		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
@@ -932,7 +959,8 @@ HRESULT CMeshEffect_Spread::Initialize_Child_Clone()
 		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);
@@ -1098,7 +1126,9 @@ HRESULT CMeshEffect_Fountain::Initialize_Child_Clone()
 		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		m_vecParticleAttribute.push_back(part);
 	}
@@ -1226,7 +1256,8 @@ HRESULT CMeshEffect_Suck::Initialize_Child_Clone()
 		ResetParticle(&part);
 
 		part._lifeTime = m_tInstanceDesc.EachParticleLifeTime * pUtil->RandomFloat(0.7f, 1.3f);
-		part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
+		if (m_tInstanceDesc.TempBuffer_0.z == 0)
+			part._age = -m_tInstanceDesc.EachParticleLifeTime + (_float(i + 1) / _float(m_iNumInstance)) * m_tInstanceDesc.EachParticleLifeTime;
 
 		part._color = m_tInstanceDesc.TargetColor;
 		m_vecParticleAttribute.push_back(part);

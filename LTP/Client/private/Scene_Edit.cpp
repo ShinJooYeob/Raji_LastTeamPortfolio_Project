@@ -5773,6 +5773,14 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	}
 	Make_VerticalSpacing(1);
 
+	{
+
+		_bool bBool = (m_tMeshDesc.TempBuffer_0.z > 0) ? true : false;
+		ImGui::Checkbox("AtOnceSwpanParticle", &bBool); ImGui::SameLine();
+		m_tMeshDesc.TempBuffer_0.z = (bBool) ? 1.f : 0;
+	}
+
+	Make_VerticalSpacing(1);
 
 	static bool	bIsFollowingTransform = false;
 	{
@@ -6049,6 +6057,29 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 		_float Angle = XMConvertToDegrees(m_tMeshDesc.fRotSpeed_Radian);
 		ImGui::DragFloat("Rot Speed", &Angle,0.5f,0,FLT_MAX);
 		m_tMeshDesc.fRotSpeed_Radian = XMConvertToRadians(max(Angle, 0));
+
+		{
+			_bool bBool = (m_tMeshDesc.TempBuffer_0.x > 0) ? true : false;
+			ImGui::Checkbox("IsNeedSetTurnDir", &bBool); ImGui::SameLine();
+			m_tMeshDesc.TempBuffer_0.x = (bBool) ? 1.f : 0;
+		}
+
+		if (m_tMeshDesc.TempBuffer_0.x != 0)
+		{
+			if (ImGui::Button("-               ", ImVec2(20, 18)))
+			{
+				m_tMeshDesc.TempBuffer_0.y = (m_tMeshDesc.TempBuffer_0.y - 1);
+				if (m_tMeshDesc.TempBuffer_0.y < FollowingDir_Right) m_tMeshDesc.TempBuffer_0.y = FollowingDir_Right;
+
+			}ImGui::SameLine(0, 10);
+			if (ImGui::Button("+                ", ImVec2(20, 18)))
+			{
+				m_tMeshDesc.TempBuffer_0.y = (m_tMeshDesc.TempBuffer_0.y + 1);
+				if (m_tMeshDesc.TempBuffer_0.y >= FollowingDir_End) m_tMeshDesc.TempBuffer_0.y = (FollowingDir_End - 1);
+			}
+			string Temp = "Rot Dir : " + string(Tag_InstancePass(eFollowingDirID(_uint(m_tMeshDesc.TempBuffer_0.y))));
+			ImGui::SameLine(0, 10);		ImGui::Text(Temp.c_str());
+		}
 	}
 
 
@@ -6825,7 +6856,7 @@ HRESULT CScene_Edit::Ready_WithParticle()
 			m_vecMeshDesc.push_back(tDesc);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("All Clear "))
+		if (ImGui::Button("All Clear Mesh"))
 		{
 			m_vecMeshDesc.clear();
 		}

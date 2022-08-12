@@ -620,19 +620,22 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear(PS_Noise_IN In)
 	if (In.vTimer.x  < g_fAppearTimer)
 	{
 
-
-		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x) *(1 / g_fAppearTimer));
-
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV - normalize(noisingdir)  * (g_fAppearTimer - In.vTimer.x) *(1 / g_fAppearTimer));
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
+
+		In.vTexUV = OldTexUV;
 	}
 	else if (In.vTimer.x  > In.vTimer.y - g_fAppearTimer)
 	{
-		In.vTexUV = (In.vTexUV + noisingdir * (In.vTimer.x - (In.vTimer.y - g_fAppearTimer))* (1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV + normalize(noisingdir) * (In.vTimer.x - (In.vTimer.y - g_fAppearTimer))* (1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
 
+		In.vTexUV = OldTexUV;
 	}
 
 
@@ -721,20 +724,24 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear_Bright(PS_Noise_IN In)
 	if (In.vTimer.x  < g_fAppearTimer)
 	{
 
-
-		In.vTexUV = (In.vTexUV - noisingdir * (g_fAppearTimer - In.vTimer.x) *(1 / g_fAppearTimer));
-
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV - normalize(noisingdir)  * (g_fAppearTimer - In.vTimer.x) *(1 / g_fAppearTimer));
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
+
+		In.vTexUV = OldTexUV;
 	}
 	else if (In.vTimer.x  > In.vTimer.y - g_fAppearTimer)
 	{
-		In.vTexUV = (In.vTexUV + noisingdir * (In.vTimer.x - (In.vTimer.y - g_fAppearTimer))* (1 / g_fAppearTimer));
+		float2 OldTexUV = In.vTexUV;
+		In.vTexUV = (In.vTexUV + normalize(noisingdir) * (In.vTimer.x - (In.vTimer.y - g_fAppearTimer))* (1 / g_fAppearTimer));
 
 		if (In.vTexUV.x < 0 || In.vTexUV.x >1 || In.vTexUV.y < 0 || In.vTexUV.y >1)
 			discard;
 
+		In.vTexUV = OldTexUV;
 	}
+
 	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;

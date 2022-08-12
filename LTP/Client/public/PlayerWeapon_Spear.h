@@ -81,6 +81,7 @@ private:/*For Particle*/
 	CTransform*						m_pMeshParticleTransform = nullptr;
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	CTransform*						m_pJYParticleTransform = nullptr;
+	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
 
 private:
 	_float4x4				m_fAttachedMatrix;
