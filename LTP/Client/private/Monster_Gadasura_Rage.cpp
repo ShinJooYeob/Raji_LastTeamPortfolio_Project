@@ -988,6 +988,10 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 
 	return S_OK;
 }
+HRESULT CMonster_Gadasura_Rage::Play_SpawnEffect()
+{
+	return S_OK;
+}
 HRESULT CMonster_Gadasura_Rage::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));

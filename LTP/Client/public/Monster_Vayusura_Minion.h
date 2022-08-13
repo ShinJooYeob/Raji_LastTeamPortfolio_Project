@@ -49,6 +49,7 @@ private:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
+	virtual HRESULT Play_SpawnEffect()override;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

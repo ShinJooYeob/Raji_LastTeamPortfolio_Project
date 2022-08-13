@@ -46,6 +46,7 @@ private:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
+	virtual HRESULT Play_SpawnEffect()override;
 
 private: //애니메이션
 	HRESULT				PlayAnim(_double dDeltaTime);

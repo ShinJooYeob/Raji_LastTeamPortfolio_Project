@@ -40,9 +40,9 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	///////////////test
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////
 
 	m_pTransformCom->Scaled_All(_float3(1.5f,1.5f,1.5f));
@@ -54,7 +54,11 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 {
-	if (__super::Update(dDeltaTime) < 0)return -1;
+	if (__super::Update(dDeltaTime) < 0)
+		return -1;
+
+	if (__super::Update(dDeltaTime)  == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_fHP <= 0)
 	{
@@ -112,6 +116,10 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
+
 	if (m_bIsOnScreen)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
@@ -139,6 +147,9 @@ _int CMonster_Mahinasura_Minion::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -169,6 +180,8 @@ _int CMonster_Mahinasura_Minion::LateRender()
 	if (__super::LateRender() < 0)
 		return -1;
 
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	return _int();
 }
@@ -303,7 +316,6 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 
 	if (KEYDOWN(DIK_C))
 	{
-	//	CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
 		auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
 			9999.f,
@@ -343,6 +355,46 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 
 	}
 #endif // _DEBUG
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Minion::Play_SpawnEffect()
+{
+
+	{
+
+		auto dust2_f = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+			9999.f,
+			0.1f,
+			_float4(0, 0, 0, 1.f),
+			_float4(0, 0, 0, 0.5f),
+			1,
+			_float3(0.2f, 1.5f, 0.1f),
+			_float3(0.2f, 1.5f, 0.1f),
+			1);
+
+		dust2_f.eParticleTypeID = InstanceEffect_Straight;
+		//	dust2_f.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+		dust2_f.ePassID = InstancePass_BrightColor;
+
+		dust2_f.iTextureLayerIndex = 8;
+		dust2_f.iMaskingTextureIndex = 107;
+		dust2_f.iNoiseTextureIndex = 388;
+		dust2_f.iNoiseTextureIndex = 135;
+
+		dust2_f.iFollowingDir = FollowingDir_Up;
+		dust2_f.Particle_Power = 2.0f;
+		dust2_f.ParticleStartRandomPosMin = _float3(0, 0, 0);
+		dust2_f.ParticleStartRandomPosMax = _float3(0, 0, 0);
+
+		//_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		//_Vector pos = mat.r[3];
+		//dust2_f.vFixedPosition = pos;
+		dust2_f.FollowingTarget = m_pTextureParticleTransform_Tail;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(dust2_f, m_eNowSceneNum);
+	}
 
 	return S_OK;
 }

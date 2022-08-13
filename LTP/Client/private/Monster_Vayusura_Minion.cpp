@@ -783,6 +783,11 @@ HRESULT CMonster_Vayusura_Minion::Update_Particle(_double timer)
 	return S_OK;
 }
 
+HRESULT CMonster_Vayusura_Minion::Play_SpawnEffect()
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Vayusura_Minion::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));

@@ -664,6 +664,11 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 	return S_OK;
 }
 
+HRESULT CMonster_Ninjasura::Play_SpawnEffect()
+{
+	return S_OK;
+}
+
 HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 {
 	SetUp_Fight(dDeltaTime);

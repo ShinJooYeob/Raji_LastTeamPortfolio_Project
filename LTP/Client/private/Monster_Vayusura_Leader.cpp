@@ -775,6 +775,11 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 
 }
 
+HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
+{
+	return S_OK;
+}
+
 void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet(bool bParticle)
 {
 	if (bParticle)
