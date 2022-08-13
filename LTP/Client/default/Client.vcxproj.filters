@@ -502,8 +502,20 @@
     <Filter Include="01.GameObject\11.WorldTexture_Universal">
       <UniqueIdentifier>{d93fffe1-4e9b-466a-9440-5e42c7fd2ed0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Scene\04.Scene_InGame\08.Scene_Stage8">
+    <Filter Include="02.Scene\04.Scene_InGame\08.Scene_Minigame1">
       <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame">
+      <UniqueIdentifier>{4347594b-2519-4ce1-92c3-a9baff0781ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival">
+      <UniqueIdentifier>{a270ce5a-a836-418f-9377-2ae15ab717e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\MiniGame_Golu">
+      <UniqueIdentifier>{d41010e7-dd10-4346-8ed0-009b9447cd93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet">
+      <UniqueIdentifier>{d2e800f1-0da1-4c02-8a22-297fb50f2b64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -701,9 +713,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Monster_Gadasura_Black.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Monster_Tezabsura_Minion.h">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PhysX\PhysXMgr.h">
       <Filter>05.PhysX\1.Mgr</Filter>
@@ -1091,6 +1100,18 @@
     <ClInclude Include="..\public\WorldTexture_Universal.h">
       <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Scene_Minigame1.h">
+      <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Tezabsura_Minion.h">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_Golu.h">
+      <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\MiniGame_Golu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Golu_Bullet.h">
+      <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1248,9 +1269,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Monster_Gadasura_Black.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Gadasura_Black</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp">
-      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>01.GameObject\01.Player</Filter>
@@ -1658,6 +1676,18 @@
     </ClCompile>
     <ClCompile Include="..\private\WorldTexture_Universal.cpp">
       <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Minigame1.cpp">
+      <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp">
+      <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_Golu.cpp">
+      <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\MiniGame_Golu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Golu_Bullet.cpp">
+      <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

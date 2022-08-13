@@ -39,11 +39,13 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 	m_fJumpPower = 4.5f;
 
 
+#ifdef _DEBUG
 	//////////////////testPosition
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+#endif
 
 	return S_OK;
 }

@@ -2,7 +2,12 @@
 #include "GameInstance.h"
 #include "Shader.h"
 
-
+/*
+1. Main Cam -> FocusTarget Settomg
+2. Target Obj->Set_AttachCamPos()
+3. Main Cam->Lock_CamLook(true, Look)
+4. Main Cam->Set_TargetArmLength, Max, Min, Or Cur
+*/
 
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: m_pDevice(pDevice)

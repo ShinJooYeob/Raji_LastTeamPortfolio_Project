@@ -755,12 +755,12 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 			{
 				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
 					m_iSoundIndex[i]++;
 				}
 				else if (m_iSoundIndex[i] == 1 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.5121)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
 					m_iSoundIndex[i]++;
 				}
 

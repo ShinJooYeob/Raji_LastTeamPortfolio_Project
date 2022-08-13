@@ -35,6 +35,8 @@ public:
 	HRESULT Load_Scene_Boss(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 	HRESULT Load_Scene_Ending(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
+	HRESULT	Load_Scene_Minigame1(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
+
 
 	HRESULT Load_Scene_Edit(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 

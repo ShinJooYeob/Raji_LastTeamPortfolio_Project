@@ -231,6 +231,8 @@ enum SCENEID
 
 	SCENE_LABORATORY_JINO,
 
+	SCENE_MINIGAME1,
+
 	SCENE_EDIT,
 	SCENE_END
 };
@@ -266,6 +268,8 @@ static const char* Tag_ScenenName(SCENEID eTag)
 		return "SCENE_ENDING";
 	case SCENE_LABORATORY_JINO:
 		return "SCENE_LABORATORY_JINO";
+	case SCENE_MINIGAME1:
+		return "SCENE_MINIGAME1";
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
@@ -423,6 +427,7 @@ enum OBJECTPROTOTYPEID
 
 	//EH_Texture
 	Prototype_Object_WorldTexture_Universal,
+	Prototype_Object_Golu_Bullet,
 
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
@@ -433,7 +438,9 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_DynamicPlatform,
 	Prototype_Object_RepelWall, 
-		Prototype_Object_MiniGameBuilding,
+	Prototype_Object_MiniGameBuilding,
+
+	Prototype_Object_MiniGame_Golu,
 
 	Object_Prototype_End
 };
@@ -784,6 +791,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_WorldTexture_Universal:
 		return TEXT("Prototype_Object_WorldTexture_Universal");
 
+	case Prototype_Object_Golu_Bullet:
+		return TEXT("Prototype_Object_Golu_Bullet");
+
 	case Prototype_Object_InteractObj_Elevator:
 		return TEXT("Prototype_Object_InteractObj_Elevator");
 
@@ -804,8 +814,11 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_MiniGameBuilding:
 		return TEXT("Prototype_Object_MiniGameBuilding");
+
+	case Prototype_Object_MiniGame_Golu:
+		return TEXT("Prototype_Object_MiniGame_Golu");
 		
-		///////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
 		return TEXT("Prototype_Object_Static_PhysX");
 
@@ -974,7 +987,8 @@ enum LAYERID
 	Layer_MiniGameBuilding,
 
 	//EH
-	Layer_WorldTexture_Universal
+	Layer_WorldTexture_Universal,
+	Layer_Golu_Bullet
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1190,6 +1204,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_WorldTexture_Universal:
 		return TEXT("Layer_WorldTexture_Universal");
+		break;
+
+	case Layer_Golu_Bullet:
+		return TEXT("Layer_Golu_Bullet");
 		break;
 		
 	default:
@@ -3446,6 +3464,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_UI,
 	Prototype_Texture_Monster_Bullet,
 	Prototype_WorldTexture_Universal,
+	Prototype_Golu_Bullet,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
@@ -10091,6 +10110,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_WorldTexture_Universal:
 		return TEXT("Prototype_WorldTexture_Universal");
+		break;
+
+	case Prototype_Golu_Bullet:
+		return TEXT("Prototype_Golu_Bullet");
 		break;
 
 	case Prototype_Texture_ShellingRange:
