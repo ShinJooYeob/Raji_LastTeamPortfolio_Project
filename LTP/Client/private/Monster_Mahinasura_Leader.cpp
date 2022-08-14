@@ -961,7 +961,46 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL3, m_pTransformCom);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_TAIL1, m_pTransformCom);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_ML_HAND_L, m_pTransformCom);
+		
+
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
+				_float4(1, 1, 1, 1),
+				_float4(1, 0, 0, 1),
+				3,
+				_float3(2),
+				_float3(5),
+				1);
+
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+
+			testMesh.Particle_Power = 8.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+
+			testMesh.iNoiseTextureIndex = 0;
+			testMesh.iMaskingTextureIndex = 0;
+
+
+			//testMesh.FollowingTarget = m_pTransformCom;
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[2] * 3;
+			//	_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+
 	}
 
 	if (KEYDOWN(DIK_C))

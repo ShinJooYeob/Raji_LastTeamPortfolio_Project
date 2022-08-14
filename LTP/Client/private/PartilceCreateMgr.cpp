@@ -1414,7 +1414,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		// Transform_Base
 		MeshDesc.vPosition = _float3(0, -0.5f, 0);
 		MeshDesc.vSize = _float3(1.2f, 0.65f, 1.2f);
-		MeshDesc.vSize = _float3(1.2f, 0.65f, 1.2f).XMVector()*1.2f;
+		MeshDesc.vSize = _float3(1.0f, 0.4f, 1.0f).XMVector()*1.2f;
+		MeshDesc.fAlphaTestValue = 0.2f;
 
 
 		// Move
@@ -1431,7 +1432,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.InitRot = _float3(0, -0, -0);
 
 		// Scale
-		AddDesc.AccScaleSpeed = 1.0f;
+		AddDesc.AccScaleSpeed = 0.3f;
 		AddDesc.ScaleReFlag = false;
 
 		AddDesc.bLockScale[0] = true;
@@ -1726,7 +1727,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		// Transform_Base
 		MeshDesc.vPosition = _float3(0, -0.5f, 0);
 		MeshDesc.vSize = _float3(1.2f, 0.65f, 1.2f);
-		MeshDesc.vSize = _float3(1.2f, 0.65f, 1.2f).XMVector()*1.5f;
+		MeshDesc.vSize = _float3(1.2f, 0.4f, 1.2f).XMVector()*1.5f;
 
 
 		// Move
@@ -1875,7 +1876,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 376;
-		MeshDesc.MaskTextureIndex = 143;
+		MeshDesc.MaskTextureIndex = 100;
 		MeshDesc.NoiseTextureIndex = 382;
 
 		// Noise
@@ -1890,7 +1891,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 			// Transform_Base
 		MeshDesc.vPosition = _float3(0.5f, 0.5f, 4.5f);
 		MeshDesc.vSize = _float3(0.8f);
-
+		MeshDesc.fAlphaTestValue = 0.2f;
 
 			// Move
 			//MeshDesc.MoveDir = FollowingDir_Up;
@@ -1949,7 +1950,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 376;
-		MeshDesc.MaskTextureIndex = 143;
+		MeshDesc.MaskTextureIndex = 100;
 		MeshDesc.NoiseTextureIndex = 382;
 
 		// Noise
@@ -2027,7 +2028,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 376;
-		MeshDesc.MaskTextureIndex = 143;
+		MeshDesc.MaskTextureIndex = 100;
 		MeshDesc.NoiseTextureIndex = 382;
 
 		// Noise

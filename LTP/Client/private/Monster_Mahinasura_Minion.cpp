@@ -327,8 +327,8 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))
 	{
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
-		mTest_DisSpawn = !mTest_DisSpawn;
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_MM_TAIL, m_pTransformCom);
 	}
 
 	if (KEYDOWN(DIK_C))
@@ -969,7 +969,7 @@ HRESULT CMonster_Mahinasura_Minion::Once_AnimMotion(_double dDeltaTime)
 	// m_iOncePattern = 2;
 
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 0;
+		m_iOncePattern = 2;
 #endif // _DEBUG
 
 	switch (m_iOncePattern)
