@@ -193,6 +193,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DistortionObject"), TEXT("Target_Defferred")));
 
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_SubDistortionObject"), TEXT("Target_Defferred")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_SubDistortionObject"), TEXT("Target_Depth")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_SubDistortionObject"), TEXT("Target_WorldPosition")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_SubDistortionObject"), TEXT("Target_MtrlEmissive")));
 	
 	/* For.MRT_LightAcc : 그림자 그릴때 바인드 */
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow")));
@@ -539,6 +543,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Render_EnvMappedObj());
 	FAILED_CHECK(Render_SwordTrail());
 	FAILED_CHECK(Render_DistortionObject());
+	FAILED_CHECK(Render_SubDistortionObject());
 
 
 
@@ -563,6 +568,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
 		FAILED_CHECK(Render_Bloom());
 
+	FAILED_CHECK(Render_ScreenEffect());
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 
@@ -2345,6 +2351,27 @@ HRESULT CRenderer::Render_DistortionObject()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_SubDistortionObject()
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_SubDistortionObject")));
+	
+
+	for (auto& RenderObject : m_RenderObjectList[RENDER_SUBDISTORTION])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_SUBDISTORTION].clear();
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_SubDistortionObject")));
+	FAILED_CHECK(Copy_DeferredToReference());
+	
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_EffectObj()
 {
 
@@ -2385,6 +2412,27 @@ HRESULT CRenderer::Render_EnvMappedObj()
 }
 
 
+
+HRESULT CRenderer::Render_ScreenEffect()
+{
+
+	m_RenderObjectList[RENDER_SCREENEFFECT].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
+	{
+		return pSour->Get_RenderSortValue() > pDest->Get_RenderSortValue();
+	});
+	for (auto& RenderObject : m_RenderObjectList[RENDER_SCREENEFFECT])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_SCREENEFFECT].clear();
+
+
+	return S_OK;
+}
 
 HRESULT CRenderer::Render_UI()
 {

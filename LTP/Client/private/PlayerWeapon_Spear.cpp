@@ -2,6 +2,8 @@
 #include "..\public\PlayerWeapon_Spear.h"
 #include "Camera_Main.h"
 #include "UtilityMgr.h"
+#include "MeshEffect.h"
+#include "InstanceEffect.h"
 
 CPlayerWeapon_Spear::CPlayerWeapon_Spear(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CPlayerWeapon(pDevice, pDeviceContext)
@@ -260,6 +262,27 @@ void CPlayerWeapon_Spear::Dissolve_Out(_double fTargetTime)
 	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
 }
 
+void CPlayerWeapon_Spear::Update_JavelinMode(_double fTargetTime)
+{
+
+	_Matrix mat = m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	_float3 TargetPos = mat.r[3] + mat.r[0] * -0.78f + mat.r[1] * -1.2f + mat.r[2] * -1.f;
+
+	if (TargetPos.y < m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y + 1.f)
+	{
+		m_pJYParticleTransform2->Set_MatrixState(CTransform::STATE_POS, _float3(-99999.f));
+		m_pJYParticleTransform2->LookDir(XMVector3Normalize(XMVectorSet(99999999.f, 99999999.f, 99999999.f,0)));
+	}
+	else
+	{
+		m_pJYParticleTransform2->Set_MatrixState(CTransform::STATE_POS, TargetPos);
+		m_pJYParticleTransform2->LookDir(XMVector3Normalize(mat.r[2] + mat.r[0] * 0.2f + mat.r[1] * 0.1f));
+	}
+
+
+}
+
 _int CPlayerWeapon_Spear::Update_Structure(_double fDeltaTime)
 {
 	m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
@@ -269,7 +292,10 @@ _int CPlayerWeapon_Spear::Update_Structure(_double fDeltaTime)
 
 _int CPlayerWeapon_Spear::Update_Equip(_double fDeltaTime)
 {
-
+	if (true == m_bMode_Javelin)
+	{
+		Update_JavelinMode(fDeltaTime);
+	}
 	return _int();
 }
 
@@ -403,20 +429,89 @@ void CPlayerWeapon_Spear::Update_ParticleTransform()
 {
 	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
 	m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(1).XMVector());
+
+
+	//m_pJYParticleTransform2->Set_MatrixState(CTransform::STATE_POS,
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_POS) +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 1.f +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_UP)* 1.f +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_LOOK)* 1.f);
+
+	//m_pJYParticleTransform2->LookAt(m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_POS) +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 1.f +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_UP)* 1.f +
+	//	m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_LOOK)* -1.f);
+
 }
 
 void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 {
+	m_bMode_Javelin = false;
+
 	switch (ePitvot)
 	{
 	case ESpearPivot::SPEAR_PIVOT_NORMAL:
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-97, -120, -60), _float3(-0.661f, -0.04f, -1.133f));
 		m_bActiveCollision = false;
+		m_bOnceControll = false;
+		
+		if (m_pThrowChargingEffect != nullptr)
+		{
+			m_pThrowChargingEffect->Set_GonnabeDie();
+			m_pThrowChargingEffect = nullptr;
+		}
+		if (m_pThrowChargingEffect2 != nullptr)
+		{
+			m_pThrowChargingEffect2->Set_GonnabeDie();
+			m_pThrowChargingEffect2 = nullptr;
+		}
+		if (m_pThrowChargingEffectTex != nullptr)
+		{
+			m_pThrowChargingEffectTex->Set_GonnabeDie();
+			m_pThrowChargingEffectTex = nullptr;
+		}
+		
+
 		break;
 	case ESpearPivot::SPEAR_PIVOT_THROW:
+		m_bMode_Javelin = true;
+		if (!m_bOnceControll)
+		{
+
+			if (m_pThrowChargingEffect != nullptr)
+			{
+				m_pThrowChargingEffect->Set_GonnabeDie();
+				m_pThrowChargingEffect = nullptr;
+			}
+			if (m_pThrowChargingEffect2 != nullptr)
+			{
+				m_pThrowChargingEffect2->Set_GonnabeDie();
+				m_pThrowChargingEffect2 = nullptr;
+			}
+			if (m_pThrowChargingEffectTex != nullptr)
+			{
+				m_pThrowChargingEffectTex->Set_GonnabeDie();
+				m_pThrowChargingEffectTex = nullptr;
+			}
+
+			GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+			m_pThrowChargingEffect = (CMeshEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+
+			GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[1]);
+			m_pThrowChargingEffect2 = (CMeshEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+
+
+			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[6]);
+			m_pThrowChargingEffectTex = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+
+			m_bOnceControll = true;
+		}
+
+
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(90, 0, 0), _float3(-0.661f, -0.04f, -1.133f));
 		break;
 	case ESpearPivot::SPEAR_PIVOT_TAKEDOWN:
+		m_bOnceControll = false;
 		m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.f, 1.f, 1.f), _float3(80, 130, 0), _float3(-0.661f, -0.04f, -1.133f));
 		break;
 	}
@@ -424,6 +519,24 @@ void CPlayerWeapon_Spear::Change_Pivot(ESpearPivot ePitvot)
 
 void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
 {
+	m_bOnceControll = false;
+
+	if (m_pThrowChargingEffect != nullptr)
+	{
+		m_pThrowChargingEffect->Set_GonnabeDie();
+		m_pThrowChargingEffect = nullptr;
+	}
+	if (m_pThrowChargingEffect != nullptr)
+	{
+		m_pThrowChargingEffect->Set_GonnabeDie();
+		m_pThrowChargingEffect = nullptr;
+	}
+	if (m_pThrowChargingEffectTex != nullptr)
+	{
+		m_pThrowChargingEffectTex->Set_GonnabeDie();
+		m_pThrowChargingEffectTex = nullptr;
+	}
+	
 	CTransform* pPlayerTransform = static_cast<CTransform*>(m_tPlayerWeaponDesc.pOwner->Get_Component(TAG_COM(Com_Transform)));
 	_Vector vPlayerPos = pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Trishul_Throw.wav"), vPlayerPos, CHANNELID::CHANNEL_PLAYER, 1.f);
@@ -436,15 +549,57 @@ void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
 
 
 
-	m_pMeshParticleTransform->Set_IsOwnerDead(false);
-	GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
+	m_vecMeshParticleDesc[2].vFixedPosition = m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_POS) +
+		m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_RIGHT) * 0.15f +
+		m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_UP)* 1.2f +
+		m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_LOOK)* 2.5f;
+	m_vecMeshParticleDesc[2].vPowerDirection = -m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform->Get_MatrixState(CTransform::STATE_LOOK);
+
+	GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[2]);
+
+
+	//m_pMeshParticleTransform->Set_IsOwnerDead(false);
+	//m_vecTextureParticleDesc[3].ParticleSize2 = _float3(2);
+	//m_vecTextureParticleDesc[3].TotalParticleTime = 0.3f;
+	//GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[3]);
+
+
+	GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[3]);
 	
 }
 
 void CPlayerWeapon_Spear::Throw_End()
 {
+	if (m_pThrowChargingEffect != nullptr)
+	{
+		m_pThrowChargingEffect->Set_GonnabeDie();
+		m_pThrowChargingEffect = nullptr;
+	}
+	if (m_pThrowChargingEffect2 != nullptr)
+	{
+		m_pThrowChargingEffect2->Set_GonnabeDie();
+		m_pThrowChargingEffect2 = nullptr;
+	}
+	if (m_pThrowChargingEffectTex != nullptr)
+	{
+		m_pThrowChargingEffectTex->Set_GonnabeDie();
+		m_pThrowChargingEffectTex = nullptr;
+	}
 
-	m_pMeshParticleTransform->Set_IsOwnerDead(true);
+	if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Press)
+	{
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+		m_pThrowChargingEffect = (CMeshEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+
+		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[1]);
+		m_pThrowChargingEffect2 = (CMeshEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[6]);
+		m_pThrowChargingEffectTex = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+	}
+
+	m_bOnceControll = false;
+	//m_pMeshParticleTransform->Set_IsOwnerDead(true);
 
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 	m_bThrowing = false;
@@ -495,6 +650,13 @@ HRESULT CPlayerWeapon_Spear::Add_CollisionGroups()
 		Update_Colliders_4();
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider_Ultimate));
 	}
+
+	// JY
+	if (true == m_bOnceControll_2)
+	{
+		Update_Colliders();
+	}
+	//
 
 	//m_pCollider_Ultimate->Update_ConflictPassedTime(g_fDeltaTime);
 	
@@ -690,7 +852,9 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	NULL_CHECK_RETURN(m_pMeshParticleTransform, E_FAIL);
 	m_pJYParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_RETURN(m_pJYParticleTransform, E_FAIL);
-
+	m_pJYParticleTransform2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+	NULL_CHECK_RETURN(m_pJYParticleTransform2, E_FAIL);
+	
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 	//	0
@@ -699,16 +863,16 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
 
-
+	
 	//	1
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSmallParticle"));
 	//	2
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"FireSlamCircle"));
 	//	3
-	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"Spear_ThrowAttack"));
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_22"));
 	m_vecTextureParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
 	m_vecTextureParticleDesc[3].iFollowingDir = FollowingDir_Look;
-	m_vecTextureParticleDesc[3].bBillboard = true;
+	//m_vecTextureParticleDesc[3].bBillboard = true;
 
 
 	//4
@@ -724,12 +888,47 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_19"));
 	m_vecTextureParticleDesc[5].FollowingTarget = nullptr;
 
+	//6
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_21"));
+	m_vecTextureParticleDesc[6].FollowingTarget = m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform;
+	m_vecTextureParticleDesc[6].iFollowingDir = FollowingDir_Look;
+	m_vecTextureParticleDesc[6].TotalParticleTime = 99999999999999.f;
 
-
-
+	m_vecTextureParticleDesc[6].ParticleStartRandomPosMin = _float3(-0.2f, 0.2f, -0.2f);
+	m_vecTextureParticleDesc[6].ParticleStartRandomPosMax	= _float3(0.2f, 0.3f, 0.2f);
 	//////////////////////////////////////////////////////////////////////////
 
+	{
+		//0
+		{
+			m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"JY_Mesh_4"));
+			m_vecMeshParticleDesc[0].FollowingTarget = m_pJYParticleTransform2;
+			m_vecMeshParticleDesc[0].iFollowingDir = FollowingDir_Look;
+			m_vecMeshParticleDesc[0].TotalParticleTime = 99999999999.f;
 
+		}
+		//1
+		{
+			m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"JY_Mesh_5"));
+			m_vecMeshParticleDesc[1].FollowingTarget = m_tPlayerWeaponDesc.eAttachedDesc.pAttachingObjectTransform;;
+			m_vecMeshParticleDesc[1].iFollowingDir = FollowingDir_Up;
+			m_vecMeshParticleDesc[1].TotalParticleTime = 99999999999.f;
+
+		}
+		//2
+		{
+			m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"JY_Mesh_6"));
+			m_vecMeshParticleDesc[2].FollowingTarget = nullptr;
+			m_vecMeshParticleDesc[2].ParticleSize2 = _float3(1.f);
+		}
+		//3
+		{
+			m_vecMeshParticleDesc.push_back(pUtil->Get_MeshParticleDesc(L"JY_Mesh_7"));
+			m_vecMeshParticleDesc[3].FollowingTarget = m_pMeshParticleTransform;
+			m_vecMeshParticleDesc[3].iFollowingDir = FollowingDir_Look;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	//0
 	{
 
@@ -850,6 +1049,7 @@ void CPlayerWeapon_Spear::Free()
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pMeshParticleTransform);
 	Safe_Release(m_pJYParticleTransform);
+	Safe_Release(m_pJYParticleTransform2);
 	
 
 	Safe_Release(m_pModel_Skill);

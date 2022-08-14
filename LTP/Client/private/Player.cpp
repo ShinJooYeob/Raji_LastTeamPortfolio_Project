@@ -8190,7 +8190,31 @@ void CPlayer::DebugingCode()
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
+	
+			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
+			//static bool IsOn = false;
+			//
+			//IsOn = !IsOn;
+			//if (IsOn)
+			//{
+			//	pUtil->Set_RadialBlurTargetPos_ByWorldPos(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
+			//	pUtil->Set_IsRadialBlurFadeIn(IsOn,0.0f,0.7f,0.3f);
+			//}
+			//else
+			//{
+			//	pUtil->Set_RadialBlurTargetPos_ByWorldPos(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS));
+			//	pUtil->Set_IsRadialBlurFadeIn(IsOn);
+			//}
+
+			/*
+			INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_1");
+			tDesc.FollowingTarget = nullptr;
+
+			tDesc.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+			GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, tDesc);
+			*/
+			/*
 			//7
 			{
 
@@ -8265,40 +8289,33 @@ void CPlayer::DebugingCode()
 					TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
 			}
 
-			
-			//CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
+			*/
 
-			//INSTPARTICLEDESC arrDesc[3];
+			INSTPARTICLEDESC arrDesc[3];
 
-			//_uint iNum = 0;
+			_uint iNum = 0;
 
-			////arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
-			////arrDesc[iNum].FollowingTarget = nullptr;
-			////arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			////iNum++;
-
-			////arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
-			////arrDesc[iNum].FollowingTarget = nullptr;
-			////arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			////iNum++;
-
-			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_19");
+			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
 			//arrDesc[iNum].FollowingTarget = nullptr;
-			//arrDesc[iNum].eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
 			//arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
 			//iNum++;
 
-			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_19");
+			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
 			//arrDesc[iNum].FollowingTarget = nullptr;
-			//arrDesc[iNum].eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
-			//arrDesc[iNum].Particle_Power *= -1.f;
 			//arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
 			//iNum++;
 
-			//for (auto& tDesc : arrDesc)
-			//{
-			//	pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
-			//}
+			arrDesc[iNum] = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_23");
+			arrDesc[iNum].FollowingTarget = m_pTransformCom;
+			arrDesc[iNum].iFollowingDir = FollowingDir_Look;
+			arrDesc[iNum].TempBuffer_0.x = 1.f;
+			arrDesc[iNum].TempBuffer_1.w = 0.0f;
+			iNum++;
+
+			for (auto& tDesc : arrDesc)
+			{
+				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+			}
 			
 
 			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));

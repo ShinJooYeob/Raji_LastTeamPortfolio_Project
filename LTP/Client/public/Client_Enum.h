@@ -1291,6 +1291,11 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_JYSwordEnergy,
 	Prototype_Mesh_MiniGameBuilding,
 	Prototype_Mesh_JY_HalfRing,
+		Prototype_Mesh_JY_Gazebo_Piece01,
+		Prototype_Mesh_JY_Gazebo_Piece02,
+		Prototype_Mesh_JY_Gazebo_Piece03,
+		Prototype_Mesh_JY_Gazebo_Piece04,
+		
 	
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
@@ -3801,6 +3806,19 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("JY_HalfRing.fbx");
 		break;
 
+
+	case Prototype_Mesh_JY_Gazebo_Piece01:
+		return TEXT("Gazebo_Piece01.fbx");
+		break;
+	case Prototype_Mesh_JY_Gazebo_Piece02:
+		return TEXT("Gazebo_Piece02.fbx");
+		break;
+	case Prototype_Mesh_JY_Gazebo_Piece03:
+		return TEXT("Gazebo_Piece03.fbx");
+		break;
+	case Prototype_Mesh_JY_Gazebo_Piece04:
+		return TEXT("Gazebo_Piece04.fbx");
+		break;
 
 		
 

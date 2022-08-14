@@ -35,6 +35,7 @@ cbuffer	DissolveBuffer
 	float	g_fDissolveValue = 0;
 };
 
+
 struct BoneMatrixArray
 {
 	matrix				BoneMatrices[150];
@@ -64,7 +65,8 @@ cbuffer	ShadowPipeLine
 cbuffer ScreenSizeBuffer
 {
 	float				fScreemWidth = 1280;
-	float				fScreemHeight = 720;
+float				fScreemHeight = 720;
+float2				iResolution = float2(1280, 720);
 };
 
 cbuffer EmissiveNLimLight

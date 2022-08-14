@@ -168,12 +168,15 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	m_bIsMainWeaponOff = true;
 	//
 
+	m_bBlockUpdate = false;
+	m_bIsHit = true;
 	return S_OK;
 }
 
 _int CChiedtian::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
 
 	// JH
 	m_pDissolve->Update_Dissolving(fDeltaTime);
@@ -648,7 +651,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			//iRandom = 1;
+			iRandom = 0;
 
 			switch (iRandom)
 			{
@@ -1340,6 +1343,19 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 			m_vecTexInstDesc.push_back(tDesc);
 
 
+		}
+	}
+
+	{
+		m_vecMeshParticleDesc.clear();
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		//5
+		{
+			INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_1");
+			tDesc.FollowingTarget = nullptr;
+			tDesc.TotalParticleTime = 14.f;
+
+			m_vecMeshParticleDesc.push_back(tDesc);
 		}
 	}
 
@@ -2448,7 +2464,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[3]);
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[4]);
 
-
+					
 
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					m_bIsLookAt = false;
@@ -2803,6 +2819,13 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			Set_IsDead();
 
+			list<CGameObject*>* pList = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_ParticleNoDead));
+			if (pList != nullptr)
+			{
+				for (auto& pNoDeadParticleObj : *pList)
+					((CNonInstanceMeshEffect*)pNoDeadParticleObj)->Set_GonnabeDie();
+			}
+
 			// Jino
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
@@ -2865,7 +2888,15 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			else
 			{
-				m_bIsSpinAttack = true;
+				if (!m_bIsSpinAttack)
+				{
+
+					m_vecMeshParticleDesc[0].vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+					GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+
+					m_bIsSpinAttack = true;
+				}
+
 
 				for (auto& SecondPageWeapon : m_pSecondPageWeapons)
 				{
@@ -2889,7 +2920,9 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			else
 			{
 				if (!m_bIsSpinAttack)
+				{
 					m_bIsSpinAttack = true;
+				}
 			}
 		}
 		if (iNowAnimIndex == 10)
@@ -2977,15 +3010,6 @@ CGameObject * CChiedtian::Clone(void * pArg)
 void CChiedtian::Free()
 {
 	__super::Free();
-	if (m_bIsClone)
-	{
-		list<CGameObject*>* pList = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, Tag_Layer(Layer_ParticleNoDead));
-		if (pList != nullptr)
-		{
-			for (auto& pNoDeadParticleObj : *pList)
-				((CNonInstanceMeshEffect*)pNoDeadParticleObj)->Set_GonnabeDie();
-		}
-	}
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);

@@ -33,7 +33,7 @@ HRESULT CInstanceEffect::Initialize_Clone(void * pArg)
 
 
 	Safe_AddRef(m_tInstanceDesc.FollowingTarget);
-	m_tInstanceDesc.vNoisePushingDir = m_tInstanceDesc.vNoisePushingDir.Get_Nomalize();
+	//m_tInstanceDesc.vNoisePushingDir = m_tInstanceDesc.vNoisePushingDir.Get_Nomalize();
 
 	 
 
@@ -340,7 +340,8 @@ HRESULT CInstanceEffect::SetUp_ConstantTable()
 
 	
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fWorldMixing", &m_tInstanceDesc.TempBuffer_0.x, sizeof(_float)));
-
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTransparencyRate", &m_tInstanceDesc.TempBuffer_1.w, sizeof(_float)));
+	
 	_float4 Emissive = _float4(m_tInstanceDesc.vEmissive_SBB, 1);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &Emissive, sizeof(_float4)));
 
@@ -565,8 +566,15 @@ void CInstanceEffect::Update_ParticleAttribute(_double fDeltaTime)
 
 			if (iter->_age < 0) continue;
 
-			if (iter->_age < iter->_lifeTime)
+
+			if (m_tInstanceDesc.eParticleTypeID != InstanceEffect_Suck && iter->_age - fDeltaTime < 0)
 			{
+				ResetParticle(&(*iter));
+
+			}
+			else if (iter->_age < iter->_lifeTime)
+			{
+	
 				Update_Position_by_Velocity(&(*iter), fDeltaTime);
 
 				Update_TextureChange(&(*iter), fDeltaTime, pInstance);

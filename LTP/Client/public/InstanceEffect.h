@@ -60,6 +60,9 @@ public:
 	HRESULT Set_AsMapParticle(vector<_float3>& vecMapParticlePosition);
 	void Erase_Particle() { m_tInstanceDesc.TotalParticleTime = m_PassedTime; };
 
+
+	void	Set_GonnabeDie() { m_tInstanceDesc.TotalParticleTime = m_PassedTime; };
+
 protected:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;

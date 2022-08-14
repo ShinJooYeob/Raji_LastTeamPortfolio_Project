@@ -92,6 +92,12 @@ public:
 	/* For Get World Object */
 	class CCamera_Main* Get_MainCamera();
 
+
+	/*For Radial Blur*/
+	void Set_RadialBlurTargetPos_ByWorldPos(_float3 vPos);
+	void Set_IsRadialBlurFadeIn(_bool bBool, _float fZoomRadialSize = 0.25f, _float fZoomPower = 0.7f, _float TargetTimer = 1.f);
+
+
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);
@@ -137,6 +143,7 @@ private:
 	CShader*				m_pRectShader = nullptr;
 
 
+	class CRadialBlurUI*		m_pRadialUI = nullptr;
 
 	map<wstring, INSTPARTICLEDESC>				m_mapTextureParticles;
 	typedef map<wstring, INSTPARTICLEDESC>		TEXPARTICLES;

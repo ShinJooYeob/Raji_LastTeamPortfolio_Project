@@ -125,9 +125,10 @@ private:
 	void			Activate_SecondPage(_double fDeltaTime);
 	
 
-	vector<NONINSTNESHEFTDESC>	m_vecNonInstMeshDesc;
-	vector<INSTPARTICLEDESC>	m_vecTexInstDesc;
-	_bool						m_bIs2PageOnceJump = false;
+	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
+	vector<INSTPARTICLEDESC>		m_vecTexInstDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	_bool							m_bIs2PageOnceJump = false;
 
 private:
 	// JH

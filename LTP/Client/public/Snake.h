@@ -86,6 +86,7 @@ private:
 	_float3				m_StartAnimPos;
 	_float3				m_AttackAnimPos;
 	vector<NONINSTNESHEFTDESC>		m_vecJYMeshNonInst;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 
 	class CSnake_Poison_Raser* m_pRaserObj = nullptr;
 

@@ -40,7 +40,6 @@ public:
 	virtual HRESULT Set_ViewMatrix();
 	HRESULT Set_ProjectMatrix(_bool bIsOrtho = false);
 
-
 protected:
 	_bool						m_bIsOrtho = true;
 	CTransform*					m_pTransform = nullptr;

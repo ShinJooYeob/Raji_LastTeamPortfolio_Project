@@ -97,6 +97,8 @@ _int CSnake_Poison_Raser::LateUpdate(_double fDeltaTime)
 
 	// 1: x = fabs(vLazerStartPosition.y - vLazerEndPosition.y) : fabs(vLazerStartPosition.y - 2.13f)
 
+	m_pExplosionTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(m_pExplosionTransformCom->Get_MatrixState(CTransform::STATE_POS), 2.2f));
+
 	m_pExplosionTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(0));
 
 	if (m_fCurTime_Duration > 0.3f && !m_iAdjustCount)
@@ -105,6 +107,8 @@ _int CSnake_Poison_Raser::LateUpdate(_double fDeltaTime)
 
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_ArrDesc[0]);
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_ArrDesc[1]);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_ArrDesc[2]);
+
 
 	}
 
@@ -314,6 +318,15 @@ HRESULT CSnake_Poison_Raser::Ready_MeshDesc()
 	m_ArrDesc[0].vEmissive_SBB = m_ArrDesc[1].vEmissive_SBB = _float3(1.f, 0.2f, 1.f);
 	m_ArrDesc[0].eInstanceCount = m_ArrDesc[1].eInstanceCount = Prototype_VIBuffer_Point_Instance_256;
 
+
+	m_ArrDesc[2] = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_20");
+	m_ArrDesc[2].FollowingTarget = m_pExplosionTransformCom;
+	m_ArrDesc[2].iFollowingDir = FollowingDir_Look;
+	m_ArrDesc[2].EachParticleLifeTime = 5.25f;
+	m_ArrDesc[2].ParticleSize = _float3(12);
+	m_ArrDesc[2].ParticleStartRandomPosMin = _float3(-3.f, 0.0f, -3.f);
+	m_ArrDesc[2].ParticleStartRandomPosMax = _float3(3.f, 0.5f, 3.f);
+	
 	return S_OK;
 }
 

@@ -388,7 +388,27 @@ HRESULT CSnake::Ready_ParticleDesc()
 
 	}
 
+	{
+		m_vecMeshParticleDesc.clear();
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		//0
+		{
+			INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_2");
+			tDesc.FollowingTarget = nullptr;
 
+			tDesc.eInstanceCount = Prototype_ModelInstance_32;
+			m_vecMeshParticleDesc.push_back(tDesc);
+		}
+		//1
+		{
+			INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_3");
+			tDesc.FollowingTarget = nullptr;
+
+			tDesc.Particle_Power = 50.f;
+			tDesc.eInstanceCount = Prototype_ModelInstance_32;
+			m_vecMeshParticleDesc.push_back(tDesc);
+		}
+	}
 	return S_OK;
 }
 
@@ -688,6 +708,31 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				m_vecJYMeshNonInst[0].vPosition = XMVectorSetY(FindPos.XMVector(),2.13f);
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYMeshNonInst[0]);
+
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+
+				m_vecMeshParticleDesc[0].vFixedPosition = m_vecMeshParticleDesc[1].vFixedPosition = XMVectorSetY(FindPos.XMVector(), 2.13f);
+				m_vecMeshParticleDesc[1].vPowerDirection = XMVector3Normalize(g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA) -
+					m_vecMeshParticleDesc[1].vFixedPosition.XMVector());
+				_uint iRandValue = rand() % 4;
+				for (_uint i = 0 ; i < 4 ; i ++)
+				{
+					wstring MeshTag = L"Gazebo_Piece0" + to_wstring(i+1) + L".fbx";
+					ZeroMemory(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+					lstrcpy(m_vecMeshParticleDesc[0].szModelMeshProtoTypeTag, MeshTag.c_str());
+
+					pUtil->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
+
+					if (i == iRandValue)
+					{
+						ZeroMemory(m_vecMeshParticleDesc[1].szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+						lstrcpy(m_vecMeshParticleDesc[1].szModelMeshProtoTypeTag, MeshTag.c_str());
+
+						pUtil->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[1]);
+					}
+
+				}
 
 
 

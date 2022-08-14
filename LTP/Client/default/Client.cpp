@@ -5,6 +5,7 @@
 #include "Client.h"
 #include "MainApp.h"
 #include "ImguiMgr.h"
+#include "Camera.h"
 
 #define MAX_LOADSTRING 100
 
@@ -215,6 +216,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_ABOUT:
                 DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
+
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
@@ -231,6 +233,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
         }
         break;
+
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

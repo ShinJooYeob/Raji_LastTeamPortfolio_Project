@@ -47,7 +47,7 @@ private:
 	_float				m_fMaxTime_Duration = 0;
 	_uint				m_iAdjustCount = 0;
 
-	INSTPARTICLEDESC	m_ArrDesc[2];
+	INSTPARTICLEDESC	m_ArrDesc[3];
 	NONINSTNESHEFTDESC		m_tLazerInsideMeshDesc;
 	NONINSTNESHEFTDESC		m_tLazerOutsideMeshDesc;
 

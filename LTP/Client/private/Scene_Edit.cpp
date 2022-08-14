@@ -5406,12 +5406,12 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	{
 		m_tParticleDesc.vNoisePushingDir;
 		
-		_float2 tt = m_tParticleDesc.vNoisePushingDir.Get_Nomalize();
+		_float2 tt = m_tParticleDesc.vNoisePushingDir;
 		float fArr[2];
 		memcpy(fArr, &tt, sizeof(float) * 2);
 		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
 		memcpy(&tt, fArr, sizeof(float) * 2);
-		m_tParticleDesc.vNoisePushingDir = tt.Get_Nomalize();
+		m_tParticleDesc.vNoisePushingDir = tt;
 
 		ImGui::DragFloat("Push Power", &m_tParticleDesc.fDistortionNoisingPushPower, 0.001f, -100, 100);
 			
@@ -5434,12 +5434,12 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 
 		m_tParticleDesc.vNoisePushingDir;
 
-		_float2 tt = m_tParticleDesc.vNoisePushingDir.Get_Nomalize();
+		_float2 tt = m_tParticleDesc.vNoisePushingDir;
 		float fArr[2];
 		memcpy(fArr, &tt, sizeof(float) * 2);
 		ImGui::DragFloat2("Distortion Pusing Dir", fArr, 0.0001f, -1, 1);
 		memcpy(&tt, fArr, sizeof(float) * 2);
-		m_tParticleDesc.vNoisePushingDir = tt.Get_Nomalize();
+		m_tParticleDesc.vNoisePushingDir = tt;
 
 
 		ImGui::DragFloat("Push Power", &m_tParticleDesc.fDistortionNoisingPushPower, 0.001f, -100, 100);
@@ -5694,13 +5694,15 @@ HRESULT CScene_Edit::Widget_SettingParticleDesc(_double fDeltatime)
 	Make_VerticalSpacing(1);
 
 	TempFloatArr[3] = m_tParticleDesc.m_fAlphaTestValue;
-	ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3]);
+	ImGui::DragFloat("AlphaTestValue", &TempFloatArr[3],0.001f);
 	m_tParticleDesc.m_fAlphaTestValue = TempFloatArr[3];
 
 
 	ImGui::DragFloat("DepthTargetRender ", &m_tParticleDesc.TempBuffer_0.x,0.001f);
 
 
+	ImGui::DragFloat("Transparency Rate", &m_tParticleDesc.TempBuffer_1.w, 0.001f);
+	m_tParticleDesc.TempBuffer_1.w = max(min(m_tParticleDesc.TempBuffer_1.w, 1.f), 0);
 
 	Make_VerticalSpacing(1);
 
@@ -5850,12 +5852,12 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 	{
 		m_tMeshDesc.vNoisePushingDir;
 
-		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
+		_float2 tt = m_tMeshDesc.vNoisePushingDir;
 		float fArr[2];
 		memcpy(fArr, &tt, sizeof(float) * 2);
 		ImGui::DragFloat2("Noise Pusing Dir", fArr, 0.0001f, -1, 1);
 		memcpy(&tt, fArr, sizeof(float) * 2);
-		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
+		m_tMeshDesc.vNoisePushingDir = tt;
 
 
 		int tempint = m_tMeshDesc.iNoiseTextureIndex;
@@ -5887,12 +5889,12 @@ HRESULT CScene_Edit::Widget_ModelParticleDesc(_double fDeltatime)
 
 		m_tMeshDesc.vNoisePushingDir;
 
-		_float2 tt = m_tMeshDesc.vNoisePushingDir.Get_Nomalize();
+		_float2 tt = m_tMeshDesc.vNoisePushingDir;
 		float fArr[2];
 		memcpy(fArr, &tt, sizeof(float) * 2);
 		ImGui::DragFloat2("Distortion Pusing Dir", fArr, 0.0001f, -1, 1);
 		memcpy(&tt, fArr, sizeof(float) * 2);
-		m_tMeshDesc.vNoisePushingDir = tt.Get_Nomalize();
+		m_tMeshDesc.vNoisePushingDir = tt;
 
 
 

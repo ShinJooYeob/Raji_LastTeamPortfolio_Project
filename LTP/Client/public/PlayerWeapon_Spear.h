@@ -36,6 +36,9 @@ public:
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
 private:
+	void				Update_JavelinMode(_double fTargetTime);
+
+private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
 	virtual _fMatrix	Get_BoneMatrix(const char* pBoneName) override;
 	virtual void		Update_AttachCamPos() override;
@@ -82,6 +85,11 @@ private:/*For Particle*/
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 	CTransform*						m_pJYParticleTransform = nullptr;
 	vector<NONINSTNESHEFTDESC>		m_vecNonInstMeshDesc;
+	CTransform*						m_pJYParticleTransform2 = nullptr;
+	class CMeshEffect*				m_pThrowChargingEffect = nullptr;
+	class CMeshEffect*				m_pThrowChargingEffect2 = nullptr;
+	class CInstanceEffect*			m_pThrowChargingEffectTex = nullptr;
+	
 
 private:
 	_float4x4				m_fAttachedMatrix;
@@ -91,6 +99,12 @@ private:
 	_uint					m_iPassNum;
 	_uint					m_iCurAnim;
 	_bool					m_bUltimateAttacking = false;
+
+	// JY
+	_bool					m_bOnceControll = false;
+	_bool					m_bOnceControll_2 = false;
+	_bool					m_bMode_Javelin = false;
+	//
 
 private:
 	CShader*				m_pShaderCom = nullptr;

@@ -4,7 +4,7 @@
 #include "Mahabalasura_SpearWave.h"
 
 #define InstanceCount 64
-#define LimLightColor _float3(0.3f,0.2f,0.8f)
+#define LimLightColor _float3(0.375f,0.25f,1.f)
 
 CCopyMahabalasura::CCopyMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -52,35 +52,37 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 
 	{
 		NONINSTNESHEFTDESC tNIMEDesc;
-		tNIMEDesc.vPosition = _float3(100.f, 34.26f, 323.380f);
-		tNIMEDesc.vLookDir = _float3(0, 1, 0);
+
+		tNIMEDesc.vPosition = _float3(101.721f, 33.260f, 323.105f);
+		tNIMEDesc.vLookDir = _float3(0, -1, 0);
 
 		tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
-		tNIMEDesc.fMaxTime_Duration = 9999999999999.f;
+		tNIMEDesc.fMaxTime_Duration = 999999999999999.f;
 
-		tNIMEDesc.fAppearTime = 0.25f;
 
-		tNIMEDesc.noisingdir = _float2(0, -1);
+		tNIMEDesc.fAppearTime = 0.0001f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1).XMVector()*0.015f;
 
 		tNIMEDesc.NoiseTextureIndex = 381;
-		tNIMEDesc.MaskTextureIndex = 109;
-		tNIMEDesc.iDiffuseTextureIndex = 271;
-		tNIMEDesc.m_iPassIndex = 19;
-		tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+		tNIMEDesc.MaskTextureIndex = 59;
+		tNIMEDesc.iDiffuseTextureIndex = 156;
+		tNIMEDesc.m_iPassIndex = 23;
+		tNIMEDesc.vEmissive = _float4(0.1f, 0.5f, 1.f, 0);
 		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
 		tNIMEDesc.vColor = _float3(1.f, 0, 0);
 
-		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotAxis = FollowingDir_Look;
 		tNIMEDesc.RotationSpeedPerSec = 0.f;
-		tNIMEDesc.vSize = _float3(0.45f, 0.45f, -0.45f);
+		tNIMEDesc.OnceStartRot = 90;
+
+		tNIMEDesc.SizeSpeed = 10.f;
+		tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+		tNIMEDesc.vSizieLimit = _float3(1.f, 1.f, 1.f);
+		tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.01f);
 
 		tNIMEDesc.fAlphaTestValue = 0.0f;
 
-		tNIMEDesc.eMeshType = Prototype_Mesh_Cylinder;
-		tNIMEDesc.m_iPassIndex = 20;
-		tNIMEDesc.vLookDir = _float3(1, 0, 0);
-
-		tNIMEDesc.vSize = _float3(16.5f, 16.5f, -16.5f);
 
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
@@ -96,33 +98,36 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 	{
 
 		NONINSTNESHEFTDESC tNIMEDesc;
-		tNIMEDesc.vPosition = _float3(60.f, 34.26f, 323.380f);
-		tNIMEDesc.vLookDir = _float3(0, 1, 0);
 
-		tNIMEDesc.eMeshType = Prototype_Mesh_Plat_Wall;
-		tNIMEDesc.fMaxTime_Duration = 9999999999999.f;
+		tNIMEDesc.vPosition = _float3(101.721f, 34.260f, 323.105f);
+		tNIMEDesc.vLookDir = _float3(0, -1, 0);
 
-		tNIMEDesc.fAppearTime = 0.25f;
+		tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+		tNIMEDesc.fMaxTime_Duration = 9999999999999999999999.f;
 
-		tNIMEDesc.noisingdir = _float2(0, -1);
 
-		tNIMEDesc.NoiseTextureIndex = 388;
-		tNIMEDesc.MaskTextureIndex = 109;
-		tNIMEDesc.iDiffuseTextureIndex = 271;
-		tNIMEDesc.m_iPassIndex = 19;
-		tNIMEDesc.vEmissive = _float4(0, 0.5f, 1.f, 0);
+		tNIMEDesc.fAppearTime = 0.0001f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1).XMVector()*0.015f;
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 59;
+		tNIMEDesc.iDiffuseTextureIndex = 156;
+		tNIMEDesc.m_iPassIndex = 23;
+		tNIMEDesc.vEmissive = _float4(0.1f, 0.5f, 1.f, 0);
 		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
 		tNIMEDesc.vColor = _float3(1.f, 0, 0);
 
-		tNIMEDesc.RotAxis = FollowingDir_Up;
+		tNIMEDesc.RotAxis = FollowingDir_Look;
 		tNIMEDesc.RotationSpeedPerSec = 0.f;
-		tNIMEDesc.vSize = _float3(4.f, 2.f, -0.0001f);
+		tNIMEDesc.OnceStartRot = 90;
+
+		tNIMEDesc.SizeSpeed = 10.f;
+		tNIMEDesc.vSizingRUL = _float3(1, 1, 0);
+		tNIMEDesc.vSizieLimit = _float3(1.f, 1.f, 0.000001f);
+		tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.000001f);
 
 		tNIMEDesc.fAlphaTestValue = 0.0f;
-
-		tNIMEDesc.vPosition = _float3(60.f, 34.27f, 323.380f);
-		tNIMEDesc.NoiseTextureIndex = 381;
-
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 			TAG_OP(Prototype_NonInstanceMeshEffect), &tNIMEDesc);
@@ -168,10 +173,10 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
 	_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
-
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
 	{
-		m_vecInstancedTransform[i].fPassedTime += (_float)fDeltaTime;
+		m_vecInstancedTransform[i].fPassedTime += (_float)fDeltaTime*pUtil->RandomFloat(0.8f,1.2f);
 		m_vecInstancedTransform[i].pTransform->LookAt(XMLoadFloat3(&m_startPos));
 
 		if (i % 2 == 0)
@@ -273,6 +278,7 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 	m_vecRenderInstanceLimLight.clear();
 	m_vecRenderInstanceEmissive.clear();
 	m_vecRenderInstanceTransform.clear();
+	m_vecPassedInstanceTimer.clear();
 
 	sort(m_vecColliderIndexs.begin(), m_vecColliderIndexs.end());
 
@@ -291,6 +297,7 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 		{
 			m_vecRenderInstanceTransform.push_back(m_vecInstancedTransform[i].pTransform);
 			m_vecRenderInstanceLimLight.push_back((m_vecInstancedTransform[i].vLimLight));
+			m_vecPassedInstanceTimer.push_back(_float4(m_vecInstancedTransform[i].fPassedTime, FLT_MAX, 0, 0));
 			m_vecRenderInstanceEmissive.push_back(_float4(m_vecInstancedTransform[i].vLimLight.w, m_vecInstancedTransform[i].vLimLight.w * 0.5f, m_vecInstancedTransform[i].vLimLight.w,0.f));
 		}
 		//_bool bState = false;
@@ -333,7 +340,7 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 
 
 	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SUBDISTORTION, this));
 	//m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackCollider));
@@ -346,29 +353,38 @@ _int CCopyMahabalasura::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	//CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-	//_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+	//_float4 color = _float4(1.f, 0.734375f, 0.75234375f, 1);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &m_vecNonInstMeshDesc[3].vColor, sizeof(_float4)));
 
 
-	//{
-	//	_Matrix mat = m_vecInstancedTransform[i]->Get_WorldMatrix();
-	//	mat.r[0] = XMVector3Normalize(mat.r[0]);
-	//	mat.r[1] = XMVector3Normalize(mat.r[1]);
-	//	mat.r[2] = XMVector3Normalize(mat.r[2]);
-	//	mat.r[3] = mat.r[3] + m_vecInstancedTransform[i]->Get_MatrixState(CTransform::STATE_LOOK);
-	//	m_pCollider->Update_Transform(i + 1, mat);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_vecNonInstMeshDesc[3].fAppearTime, sizeof(_float)));
 
+	_float2 NoiseDir = _float2(1, 0).Get_Nomalize() * 0.7f;
+	_float p = 0.5;
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &NoiseDir, sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &p, sizeof(_float)));
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_vecNonInstMeshDesc[3].noisingdir, sizeof(_float2)));
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_vecNonInstMeshDesc[3].fDistortionNoisingPushPower, sizeof(_float)));
 
-	//}
+	//FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &m_vecNonInstMeshDesc[3].fAlphaTestValue, sizeof(_float)));
+
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture",198));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 108));
+
+	//FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 168));
+	//FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_vecNonInstMeshDesc[3].NoiseTextureIndex));
+	//FAILED_CHECK(GetSingle(CUtilityMgr)->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_vecNonInstMeshDesc[3].MaskTextureIndex));
+	FAILED_CHECK(m_pShaderCom->Set_Texture("g_BackBufferTexture", g_pGameInstance->Get_SRV(L"Target_ReferenceDefferred")));
 
 	
-	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 2, &m_vecRenderInstanceTransform,0,&m_vecRenderInstanceLimLight,&m_vecRenderInstanceEmissive));
+	FAILED_CHECK(m_pModelInstance->Render(m_pShaderCom, 3, &m_vecRenderInstanceTransform,0,&m_vecRenderInstanceLimLight,&m_vecRenderInstanceEmissive,&m_vecPassedInstanceTimer));
 
 
 	//FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
@@ -470,7 +486,7 @@ HRESULT CCopyMahabalasura::Ready_ParticleDesc()
 		tNIMEDesc.MaskTextureIndex = 64;
 		tNIMEDesc.iDiffuseTextureIndex = 365;
 		tNIMEDesc.m_iPassIndex = 17;
-		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
 		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
 		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
 
@@ -493,7 +509,7 @@ HRESULT CCopyMahabalasura::Ready_ParticleDesc()
 		tNIMEDesc.MaskTextureIndex = 10;
 		tNIMEDesc.iDiffuseTextureIndex = 365;
 		tNIMEDesc.m_iPassIndex = 19;
-		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
 		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
 		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
 
@@ -525,7 +541,7 @@ HRESULT CCopyMahabalasura::Ready_ParticleDesc()
 		tNIMEDesc.MaskTextureIndex = 10;
 		tNIMEDesc.iDiffuseTextureIndex = 365;
 		tNIMEDesc.m_iPassIndex = 19;
-		tNIMEDesc.vEmissive = _float4(1.f, 1.f, 1.f, 0);
+		tNIMEDesc.vEmissive = _float4(1.f, 0.5f, 1.f, 0);
 		tNIMEDesc.vLimLight = _float4(0.10015625f, 0.005625f, 0.206875f, 0.2f);
 		tNIMEDesc.vColor = _float3(1.0f, 1, 1);
 
@@ -537,6 +553,42 @@ HRESULT CCopyMahabalasura::Ready_ParticleDesc()
 		tNIMEDesc.MoveDir = FollowingDir_Look;
 		tNIMEDesc.MoveSpeed = 0.f;
 		tNIMEDesc.m_bNotDead = true;
+
+		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
+	}
+	//3
+	{
+		NONINSTNESHEFTDESC tNIMEDesc;
+
+		tNIMEDesc.vPosition = _float3(101.721f, 33.260f, 323.105f);
+		tNIMEDesc.vLookDir = _float3(0, -1, 0);
+
+		tNIMEDesc.eMeshType = Prototype_Mesh_Half_Sheild;
+		tNIMEDesc.fMaxTime_Duration = 999999999999999.f;
+
+
+		tNIMEDesc.fAppearTime = 0.0001f;
+
+		tNIMEDesc.noisingdir = _float2(0, -1).XMVector()*0.015f;
+
+		tNIMEDesc.NoiseTextureIndex = 381;
+		tNIMEDesc.MaskTextureIndex = 59;
+		tNIMEDesc.iDiffuseTextureIndex = 156;
+		tNIMEDesc.m_iPassIndex = 23;
+		tNIMEDesc.vEmissive = _float4(0.1f, 0.5f, 1.f, 0);
+		tNIMEDesc.vLimLight = _float4(1, 1, 0.2f, 0);
+		tNIMEDesc.vColor = _float3(1.f, 0, 0);
+
+		tNIMEDesc.RotAxis = FollowingDir_Look;
+		tNIMEDesc.RotationSpeedPerSec = 0.f;
+		tNIMEDesc.OnceStartRot = 90;
+
+		tNIMEDesc.SizeSpeed = 10.f;
+		tNIMEDesc.vSizingRUL = _float3(1, 1, 1);
+		tNIMEDesc.vSizieLimit = _float3(1.f, 1.f, 1.f);
+		tNIMEDesc.vSize = _float3(0.01f, 0.01f, 0.01f);
+
+		tNIMEDesc.fAlphaTestValue = 0.0f;
 
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}

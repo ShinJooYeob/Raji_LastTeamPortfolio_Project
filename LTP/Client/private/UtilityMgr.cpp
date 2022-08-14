@@ -5,6 +5,7 @@
 #include"SkillUI.h"
 #include "Camera_Main.h"
 #include "InstanceEffect.h"
+#include "RadialBlurUI.h"
 
 IMPLEMENT_SINGLETON(CUtilityMgr);
 
@@ -28,6 +29,9 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	ZeroMemory(m_StartTime, sizeof(clock_t)*E_DEBUGTIMER::DEBUGTIMER_END);
 
 
+	FAILED_CHECK(g_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_ScreenEffectUI),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"ScreenEffectUI.txt")));
+
 	m_pTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_Util));
 	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
 	FAILED_CHECK(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
@@ -42,6 +46,11 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 
 	m_pRectShader = (CShader*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VT));
 	NULL_CHECK_RETURN(m_pRectShader, E_FAIL);
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_Prototype(L"Prototype_RadialBlurUI", CRadialBlurUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect), L"Prototype_RadialBlurUI"));
+	m_pRadialUI = (CRadialBlurUI*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect));
 
 
 	// PathReLoad
@@ -410,6 +419,19 @@ CCamera_Main* CUtilityMgr::Get_MainCamera()
 	CCamera_Main* pMainCam = nullptr;
 	pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
 	return pMainCam;
+}
+
+void CUtilityMgr::Set_RadialBlurTargetPos_ByWorldPos(_float3 vPos)
+{
+	NULL_CHECK_BREAK(m_pRadialUI);
+
+	m_pRadialUI->Set_TargetPos_ByWorldPos(vPos);
+}
+
+void CUtilityMgr::Set_IsRadialBlurFadeIn(_bool bBool, _float fZoomRadialSize, _float fZoomPower, _float TargetTimer)
+{
+	NULL_CHECK_BREAK(m_pRadialUI);
+	m_pRadialUI->Set_IsRadialIn(bBool,  fZoomRadialSize,  fZoomPower,  TargetTimer);
 }
 
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()

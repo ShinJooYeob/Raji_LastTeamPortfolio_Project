@@ -361,6 +361,10 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		// USE LOAD
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		
+		//JY
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightCastRing_01);
+		//
+
 		STATIC_EFFECTLOAD(Prototype_Mesh_circle);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Bow_Em_02);
@@ -436,6 +440,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
 		
+		//JY_Used
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -584,6 +590,10 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TransformMatrix);
+
+
+	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon), TransformMatrix);
@@ -1552,6 +1562,11 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TransformMatrix);
 
+
+
+	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
+
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon), TransformMatrix);
 
@@ -1715,8 +1730,9 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
-	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Chain_Buff);
-
+	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_Z_Plane);
+	
 #pragma endregion
 
 #pragma  region PROTOTYPE_GAMEOBJECT
@@ -2247,6 +2263,10 @@ HRESULT CLoader::Load_AllBoss()
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TransformMatrix);
+
+
+	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_SecondPage_ChieftianWeapon), TransformMatrix);

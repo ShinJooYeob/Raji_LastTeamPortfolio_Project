@@ -64,6 +64,7 @@ private:
 	vector<CTransform*> m_vecRenderInstanceTransform;
 	vector<_float4>		m_vecRenderInstanceLimLight;
 	vector<_float4>		m_vecRenderInstanceEmissive;
+	vector<_float4>		m_vecPassedInstanceTimer;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -88,7 +89,7 @@ private:
 	class CNonInstanceMeshEffect*									m_EffectWall = nullptr;
 
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
-
+	
 private:
 	HRESULT SetUp_Components();
 	HRESULT	Adjust_AnimMovedTransform(_double fDeltatime);

@@ -124,6 +124,8 @@ HRESULT CCamera::Set_ProjectMatrix(_bool bIsOrtho)
 }
 
 
+
+
 void CCamera::Free()
 {
 	__super::Free();

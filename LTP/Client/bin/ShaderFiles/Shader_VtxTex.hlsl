@@ -12,7 +12,12 @@ texture2D			g_CurlTexture;
 float				g_Alpha = 0.1f;
 float				g_UV_Y = 1.f;
 
-
+cbuffer RadialBlur
+{
+	float2				g_vCenter = float2(0.5f, 0.5f);
+	float				g_fZoomSize = 0.25f;
+	float				g_fZoomPower = 0.5f;
+}
 cbuffer Distortion
 {
 	float3				g_vScale = float3(1, 2, 3);
@@ -643,6 +648,46 @@ PS_OUT_NOLIGHT PS_CopyScreen(PS_IN In)
 }
 
 
+PS_OUT_NOLIGHT PS_RadialBlur(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	float weight0;
+	float normalization;
+	float4 color;
+
+	float2 vDir = In.vTexUV - g_vCenter;
+	vDir.x *= iResolution.x / iResolution.y; //fix aspect ratio
+
+
+	int Count = max((length(vDir) - g_fZoomSize) / DiagTexelSize, 2);
+
+	float fPower = DiagTexelSize * max(g_fZoomPower,0.1f);
+
+	vDir = normalize(vDir);
+
+
+
+	// 색깔을 검정색으로 초기화합니다.
+	color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	[unroll(100)]
+	for (int i = 0; i < Count; i++)
+	{
+		color += g_SourTexture.Sample(ClampSampler, saturate( In.vTexUV + (vDir * fPower * (float)i))    );
+	}
+	color /= min((Count),100);
+
+	// 알파 채널을 1로 설정합니다.
+
+	color.a = 1.0f;
+
+
+	Out.vDiffuse = color;
+	return Out;
+}
+
+
 
 
 technique11		DefaultTechnique
@@ -780,5 +825,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_Rect_Noise();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_GAUGE_RECT();
+	}
+
+	pass RadialBlur// 13
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_RadialBlur();
 	}
 }

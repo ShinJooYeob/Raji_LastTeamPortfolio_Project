@@ -24,6 +24,8 @@ cbuffer ForNoise
 
 	float	g_fAppearTimer = 1.f;
 	float g_fDistortionNoisingPushPower = 0.5f;
+
+	float g_fTransparencyRate = 0.f;
 }
 
 
@@ -417,7 +419,10 @@ PS_OUT PS_MAIN_INST(PS_IN In)
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, g_fWorldMixing);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x , g_fEmissive.y, g_fEmissive.z,1);
 	Out.vLimLight = 0.f;
-
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	return Out;
 }
@@ -449,7 +454,10 @@ PS_OUT PS_BrightColor(PS_IN In)
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 	Out.vLimLight = 0.f;
 	Out.vDiffuse = saturate(Out.vDiffuse);
-
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
 	return Out;
 }
 
@@ -510,6 +518,10 @@ PS_OUT PS_MAIN_NoiseFireEffect(PS_Noise_IN In)
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
 	return Out;
 
 }
@@ -555,7 +567,11 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 
 	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
-	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vDiffuse = saturate(Out.vDiffuse);	
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
 
 	return Out;
@@ -627,6 +643,11 @@ PS_OUT PS_MAIN_NoiseAppear(PS_Noise_IN In)
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
+
 	return Out;
 
 }
@@ -694,6 +715,10 @@ PS_OUT PS_MAIN_NoiseAppear_Bright(PS_Noise_IN In)
 		discard;
 	Out.vDiffuse = saturate(Out.vDiffuse);
 	Out.vEmissive = vector(Out.vDiffuse.a * g_fEmissive.x, g_fEmissive.y, g_fEmissive.z, 1);
+	if (g_fTransparencyRate > 0)
+	{
+		Out.vNormal = vector(0, 0, 0, g_fTransparencyRate);
+	}
 
 	return Out;
 

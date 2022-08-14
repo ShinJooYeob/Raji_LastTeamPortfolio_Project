@@ -240,9 +240,10 @@ CComponent* CGameInstance::Get_Commponent_By_LayerIndex(_uint eSceneNum, const _
 
 CGameObject * CGameInstance::Get_GameObject_By_LayerIndex(_uint eSceneNum, const _tchar * tagLayer, _uint iLayerIndex)
 {
-	if (tagLayer == nullptr || m_pObjectMgr == nullptr)
+	NULL_CHECK_RETURN(m_pObjectMgr, nullptr);
+
+	if (tagLayer == nullptr)
 	{
-		__debugbreak();
 		return nullptr;
 	}
 

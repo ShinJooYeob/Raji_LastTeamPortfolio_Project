@@ -55,6 +55,7 @@ public:
 	virtual void Update_Position_by_Velocity(INSTMESHATT* tParticleAtt, _double fTimeDelta)PURE;
 
 
+	void	Set_GonnabeDie() { m_tInstanceDesc.TotalParticleTime = m_PassedTime; };
 
 protected:
 	CShader*					m_pShaderCom = nullptr;
