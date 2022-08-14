@@ -40,7 +40,7 @@ HRESULT CScene_Stage7::Initialize()
 
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
-	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtitan_Trigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -266,8 +266,8 @@ HRESULT CScene_Stage7::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_CameraInitState(XMVectorSet(0.f, 14.0000162f, -18.2519970f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	// _float3(0.f, 10, 0.f) Start Pos
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 33.034f, 219.175f)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 33.034f, 219.175f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Player), &_float3(0.f, 10, -6.252f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE7, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -311,7 +311,7 @@ HRESULT CScene_Stage7::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage7::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
 	return S_OK;
 }
 

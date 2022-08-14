@@ -26,6 +26,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -35,6 +38,7 @@ private:
 	vector<CTransform*>		m_vecRenderVector;
 	vector<_float4>			m_vecLimLight;
 	vector<_float4>			m_vecEmissive;
+	CCollider*			m_pCollider = nullptr;
 
 	_float3				m_vStartPosition;
 private:

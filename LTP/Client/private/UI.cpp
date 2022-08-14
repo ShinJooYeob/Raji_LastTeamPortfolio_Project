@@ -50,6 +50,14 @@ _int CUI::Update(_double fDeltaTime)
 
 	m_PassedTimer += (_float)fDeltaTime;
 
+	if (m_bIsCahngeUV_Y)
+	{
+		m_fY_EsingTime = 0.f;
+		EsingUV_Y(fDeltaTime);
+	}
+
+
+
 	Update_Rect();
 
 	return _int();
@@ -133,6 +141,13 @@ void CUI::Set_Angle(_float fAngle)
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(fAngle));
 }
 
+void CUI::Set_UV_Y(_float fY)
+{
+	m_bIsCahngeUV_Y = true;
+
+	m_fGoalUV_Y = fY;
+}
+
 HRESULT CUI::Set_ChangeTextureLayer(_tchar * LayerName)
 {
 	FAILED_CHECK(m_pTextureCom->Change_TextureLayer(LayerName));
@@ -204,16 +219,16 @@ HRESULT CUI::SettingTexture()
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
-	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 180));
-	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 0));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_SettingUIDesc.iNoiseTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 53));
 
 
-	m_fUV_Y = 0.5f;
+	//m_fUV_Y = 0.2f;
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float)));
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
-	_float4 g_vColor = _float4(1, 1, 1, 1);
-	_float2 noisingdir = _float2(0, 0.5f);
+	_float4 g_vColor = m_vColor;
+	_float2 noisingdir = _float2(0.0f, 0.25f);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &g_vColor, sizeof(_float4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
 
@@ -223,6 +238,20 @@ HRESULT CUI::SettingTexture()
 
 
 	return S_OK;
+}
+
+void CUI::EsingUV_Y(_double fDeltaTime)
+{
+	CGameInstance* pGameInstacnce = GetSingle(CGameInstance);
+
+	m_fY_EsingTime += (_float)fDeltaTime;
+	m_fUV_Y = pGameInstacnce->Easing(TYPE_Linear, m_fUV_Y, m_fGoalUV_Y, m_fY_EsingTime, 1.f);
+
+	if (m_fY_EsingTime >= 1.f)
+	{
+		m_bIsCahngeUV_Y = false;
+		m_fY_EsingTime = 0;
+	}
 }
 
 CUI * CUI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg)

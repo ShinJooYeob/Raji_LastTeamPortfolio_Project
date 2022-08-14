@@ -30,7 +30,7 @@ HRESULT CRangda_Finger::Initialize_Clone(void * pArg)
 	}
 	m_iPassIndex = 3;
 
-	m_pTransformCom->Scaled_All(_float3(2.f));
+	m_pTransformCom->Scaled_All(_float3(5.f));
 	m_pTransformCom->Rotation_CCW(XMVectorSet(0,1.f,0,0),XMConvertToRadians(90.f));
 
 	return S_OK;

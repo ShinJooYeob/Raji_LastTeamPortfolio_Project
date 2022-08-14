@@ -100,6 +100,7 @@ _int CRangda_Statue::Update(_double fDeltaTime)
 		m_bIsDissolveStart = true;
 		//Set_IsDead();
 		m_fAliveTime = 4.f;
+		m_bIsCollison = false;
 	}
 
 	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
@@ -123,6 +124,16 @@ _int CRangda_Statue::Update(_double fDeltaTime)
 	m_pTransformCom->Set_Matrix(WorldMat);
 	m_pTransformCom->Set_TurnSpeed(RotSpeed);
 
+	_Matrix Matrix = XMMatrixIdentity();
+	Matrix = m_pSubTransformCom->Get_WorldMatrix(); /* * XMMatrixScaling(1.f, 3.f, 1.f);*/
+
+	m_pRaserCollider->Update_Transform(0, Matrix);
+	m_pRaserCollider->Update_ConflictPassedTime(1);
+	if (m_bIsCollison)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pRaserCollider));
+	}
+
 
 	return _int();
 }
@@ -138,6 +149,8 @@ _int CRangda_Statue::LateUpdate(_double fDeltaTime)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
+
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pRaserCollider));
 
 	return _int();
 }
@@ -217,6 +230,16 @@ _int CRangda_Statue::LateRender()
 	return _int();
 }
 
+void CRangda_Statue::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
+}
+
 HRESULT CRangda_Statue::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -229,6 +252,15 @@ HRESULT CRangda_Statue::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom));
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pSubTransformCom));
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pRaserCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(8.f, 250.f, 5.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+	FAILED_CHECK(m_pRaserCollider->Add_ColliderBuffer(COLLIDER_OBB, &ColliderDesc));
 	
 
 	CDissolve::DISSOLVEDESC DissolveDesc;

@@ -69,6 +69,11 @@ _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_T) & DIS_Up)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
+	}
 	// For Debuging
 	DebugingCode();
 
@@ -670,7 +675,7 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	{
 		m_pModel->Change_AnimIndex(SPEAR_ANIM_ULTIMATE, 0.1f, true);
 
-
+		GetSingle(CUtilityMgr)->ResetSpearPersent();
 
 		 m_vecNonInstMeshDesc[3].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) 	+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 0.5f;
 		m_vecNonInstMeshDesc[3].vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK);
@@ -685,9 +690,11 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 		break;
 	case WEAPON_BOW:
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
+		GetSingle(CUtilityMgr)->ResetBowPersent();
 		break;
 	case WEAPON_SWORD:
 	{
+		GetSingle(CUtilityMgr)->ResetSwordshieldPersent();
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
 
 		m_vecNonInstMeshDesc[6].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);

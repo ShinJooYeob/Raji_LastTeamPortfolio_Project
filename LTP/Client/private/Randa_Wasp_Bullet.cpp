@@ -87,6 +87,23 @@ _int CRanda_Wasp_Bullet::Update(_double fDeltaTime)
 		Set_IsDead();
 
 
+	CGameObject* PlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
+	CTransform* PlayerTransform = (CTransform*)PlayerObj->Get_Component(TAG_COM(Com_Transform));
+	_Matrix mat = PlayerTransform->Get_WorldMatrix();
+
+	mat.r[0] = XMVector3Normalize(mat.r[0]);
+	mat.r[1] = XMVector3Normalize(mat.r[1]);
+	mat.r[2] = XMVector3Normalize(mat.r[2]);
+
+	m_pCollider->Update_Transform(0, mat);
+
+	for (_uint i = 0; i < m_vecRenderVector.size(); i++)
+	{
+		m_pCollider->Update_Transform(i+1, m_vecRenderVector[i]->Get_WorldMatrix());
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+
 	return _int();
 }
 
@@ -101,6 +118,7 @@ _int CRanda_Wasp_Bullet::LateUpdate(_double fDeltaTime)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	
 
 	return _int();
@@ -131,6 +149,15 @@ _int CRanda_Wasp_Bullet::LateRender()
 		return -1;
 
 	return _int();
+}
+
+void CRanda_Wasp_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
 }
 
 HRESULT CRanda_Wasp_Bullet::SetUp_Components()
@@ -173,7 +200,25 @@ HRESULT CRanda_Wasp_Bullet::SetUp_Components()
 		m_vecRWB.push_back(tDesc);
 	}
 
+	COLLIDERDESC			ColliderDesc;
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
 
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(100.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	for (_uint i = 0; i < 256; i++)
+	{
+		//피격 충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(0.8f, 0.8f, 0.8f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.9f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+	}
 
 
 	return S_OK;

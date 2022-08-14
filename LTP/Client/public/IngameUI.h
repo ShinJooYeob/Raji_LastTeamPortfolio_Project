@@ -25,6 +25,8 @@ public:
 	void	Set_WeaponUIAngle(_int iWeapon);
 	void	TurnWeaponUIAngle(_double fDeltaTime);
 
+	void	Set_GaugeUI(_float fGauge);
+
 private:
 	CRenderer*		m_pRendererCom = nullptr;
 
@@ -48,10 +50,14 @@ private:
 	_float			m_fBowCount = 0.f;
 	_float			m_fSpearCount = 0.f;
 
+	_bool			m_bIsChangeColor = false;
+	_float3			m_vColor;
+	_float			m_fColorEsingTime = 0;
 
 private:
 	HRESULT Ready_Layer_UI();
 	HRESULT Render_Fonts();
+	void	ChangeEsingColor(_double fDeltaTime);
 
 private:
 	HRESULT SetUp_Components();

@@ -151,6 +151,8 @@ void CPlayerWeapon_Shield::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 {
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
+		GetSingle(CUtilityMgr)->PlusSwordshieldSkillPersent(1.f);
+
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 		{

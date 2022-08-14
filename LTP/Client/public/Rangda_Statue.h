@@ -19,11 +19,16 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CModel*				m_pModel = nullptr;
+	CCollider*			m_pRaserCollider = nullptr;
 
 	CModel*				m_pSubModel = nullptr;
 	CTransform*			m_pSubTransformCom = nullptr;
@@ -36,6 +41,7 @@ private:
 	_float				m_fAliveTime = 4.f;
 
 	_bool				m_bIsDissolveStart = false;
+	_bool				m_bIsCollison = true;
 	NONINSTNESHEFTDESC	m_tMeshDesc;
 	INSTPARTICLEDESC	m_tTexDesc;
 

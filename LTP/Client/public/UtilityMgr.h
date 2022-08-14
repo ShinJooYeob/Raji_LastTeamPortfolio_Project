@@ -114,6 +114,10 @@ public:
 	void	PlusBowSkillPersent(_float fPersent = 5.f) { m_fBowSkillPersent += 5.f; }
 	void	PlusSwordshieldSkillPersent(_float fPersent = 5.f) { m_fSwordshieldSkillPersent += 5.f; }
 
+	void	ResetSpearPersent() { m_fSpearSkillPersent = 0.f; }
+	void	ResetBowPersent() { m_fBowSkillPersent = 0.f; }
+	void	ResetSwordshieldPersent() { m_fSwordshieldSkillPersent = 0.f; }
+
 	_float	Get_SpearSkillPersent() { return m_fSpearSkillPersent; }
 	_float	Get_BowSkillPersent() { return m_fBowSkillPersent; }
 	_float	Get_SwordshieldSkillPersent() { return m_fSwordshieldSkillPersent; }

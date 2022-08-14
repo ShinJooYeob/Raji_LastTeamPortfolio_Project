@@ -303,6 +303,9 @@ PS_OUT_NOLIGHT PS_GAUGE_RECT(PS_IN_Noise In)
 {
 	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
 
+	if (length(In.vTexUV - float2(0.5f, 0.5f)) > 0.4f)
+		discard;
+
 	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
 	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
 	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
@@ -323,6 +326,7 @@ PS_OUT_NOLIGHT PS_GAUGE_RECT(PS_IN_Noise In)
 
 	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, noiseCoords.xy);
 	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
+
 	if (g_UV_Y > noiseCoords.y)
 		alphaColor = 0;
 

@@ -176,6 +176,10 @@ void CSpearWave::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(0.5f);
 
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		pUtil->PlusSpearSkillPersent(1.f);
+
 	}
 }
 

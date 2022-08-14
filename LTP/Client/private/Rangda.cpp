@@ -208,6 +208,10 @@ _int CRangda::Update(_double fDeltaTime)
 		{
 
 			_float3 vPos = Get_FingerPos(m_iMaterialCount - 3);
+			CTransform* PlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+			_float3 PlayerPos = PlayerTransform->Get_MatrixState(CTransform::STATE_POS);
+			PlayerPos.y += 3.f;
+			vPos = PlayerPos;
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_Finger"), TAG_OP(Prototype_Object_Boss_Rangda_Finger), &vPos);
 		}
 

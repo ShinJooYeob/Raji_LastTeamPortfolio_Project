@@ -69,6 +69,7 @@ public:
 	_bool			Get_IsDraw() { return m_bDraw; }
 	_bool			Get_FadeState() { return m_bFadeState; }
 	_float			Get_Alpha() { return m_SettingUIDesc.fAlpha; }
+	_float4			Get_Color() { return m_vColor; }
 
 public:
 	void			Set_PassIndex(_int Index) { m_iPassIndex = Index; }
@@ -81,7 +82,9 @@ public:
 	void			Set_IsDraw(_bool Draw) { m_bDraw = Draw; }
 	void			Set_IsPushed(_bool Pushed) { m_bPushed = m_bPushed; }
 
-	void			Set_UV_Y(_float fY) { m_fUV_Y = fY; }
+	void			Set_UV_Y(_float fY);
+
+	void			Set_Color(_float4 Color) { m_vColor = Color; }
 
 	HRESULT			Set_ChangeTextureLayer(_tchar* LayerName);
 
@@ -120,7 +123,13 @@ private:
 	_float		m_fFadeTime = 0.f;
 	_bool		m_bFadeState = false;
 	_float		m_fAngle = 0.f;
+
+
+	_bool		m_bIsCahngeUV_Y = false;
+	_float		m_fY_EsingTime = 0.f;
+	_float		m_fGoalUV_Y = 0;
 	_float		m_fUV_Y = 1.f;
+	_float4		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	_float		m_PassedTimer = 0;	
 
@@ -131,6 +140,7 @@ private:
 	void SetUp_UIInfo(SETTING_UI& pStruct);			// 얻어온 구조체 값으로 멤버변수 채우기
 	void Update_Rect();								// 위치 바꿨을 때 렉트 위치 갱신하기 위해 호출
 	HRESULT SettingTexture();							//마스크,노이즈 텍스처
+	void EsingUV_Y(_double fDeltaTime);
 
 public:
 	static CUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
