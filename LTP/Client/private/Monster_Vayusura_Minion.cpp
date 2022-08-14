@@ -52,6 +52,9 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 
 	if (m_fHP <= 0)

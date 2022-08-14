@@ -31,8 +31,8 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 	m_EffectAdjust = 0;
 
 	m_bisSpawnParticle = false;
-	m_SpawnDealytime = 1.f;
-	Play_SpawnEffect();
+
+
 
 	return S_OK;
 }

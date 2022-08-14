@@ -336,27 +336,63 @@ public:
 		JY_TextureEft_6,
 		JY_TextureEft_7,
 		JY_TextureEft_8,
+
+		JY_TextureEft_9,
+		JY_TextureEft_10,
+		JY_TextureEft_11,
+		JY_TextureEft_12,
+		JY_TextureEft_13,
+		JY_TextureEft_14,
+		JY_TextureEft_15,
+		JY_TextureEft_16,
+		JY_TextureEft_17,
+		JY_TextureEft_18,
+		JY_TextureEft_19,
+		JY_TextureEft_20,
+		JY_TextureEft_21,
+		JY_TextureEft_22,
+		JY_TextureEft_23,
+		JY_TextureEft_24,
+		JY_TextureEft_25,
+
+
 		Spear_ThrowAttack,
 		SpearNormalAttack,
 
 		// My
+		Um_Dust_1,
+		Um_Dust_2,
+		Um_Dust_2_FounTain,
+		Um_Dust_3,
+		Um_FireMask_1,
+		Um_FireMask_2,
+		Um_FireMask_2_png,
+		Um_FireMask_3,
 		Um_Hit_1,
 		Um_Hit_2,
 		Um_Hit_2_DisDiffuse,
 		Um_Hit_3,
 		Um_Hit_4,
-		Um_Dust_1,
-		Um_Dust_2,
-		Um_Dust_2_FounTain,
-		Um_Roll_1,
-		Um_Up_1,
 		Um_Imgae_1,
 		Um_Imgae_2,
+		Um_Roll_1,
 		Um_Sunder_1,
-		Um_FireMask_1,
-		Um_FireMask_2,
-		Um_FireMask_2_png,
-		Um_FireMask_3,
+		Um_Up_1,
+
+		Um_Spawn1_Image,
+		Um_Spawn1_Image_suck,
+		Um_Spawn2_Image,
+		Um_Spawn2_Image_power,
+		Um_Spawn2_Image_powerdown,
+		Um_Spawn3_Imagepng,
+		Um_Spawn3_Imagepng_ground,
+		Um_Spawn3_Imagepng_ground2,
+		Um_Spawn3_Imagepng_magic,
+		Um_Spawn3_Imagepng_magic2,
+		Um_Spawn3_Imagepng_Snow,
+		Um_Spawn3_Imagepng_Snow2,
+		Um_Spawn4_smoke,
+
 		TEXTURE_EFFECTJ_END,
 
 	};
@@ -429,6 +465,7 @@ public:
 		_float3 Size1, _float3 Size2, _uint sizeFrequency
 		);
 
+	void Set_CreatBound_Tex(INSTPARTICLEDESC& tex,_float3 Min, _float3 Max);
 
 	// Meshinst
 	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);

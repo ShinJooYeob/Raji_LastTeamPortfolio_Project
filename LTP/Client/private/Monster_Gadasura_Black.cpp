@@ -46,12 +46,20 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 //	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 #endif
+
+	// Particle
+	m_SpawnDealytime = 1.0f;
+	Play_SpawnEffect();
+
 	return S_OK;
 }
 
 _int CMonster_Gadasura_Black::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_fHP <= 0)
 	{
@@ -97,6 +105,9 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -125,6 +136,9 @@ _int CMonster_Gadasura_Black::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -155,8 +169,10 @@ _int CMonster_Gadasura_Black::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
-	return _int();
+	return UPDATE_SKIP;	return _int();
 }
 
 void CMonster_Gadasura_Black::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -1032,7 +1048,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			_Vector pos = mat.r[3] + mat.r[1] * 0.3f + mat.r[2] * 3.5f;
 			testTex.vFixedPosition = pos;
 
-			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		// GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
 
@@ -1061,6 +1077,58 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		}
 
+
+		// spawn
+		{
+			// magic
+			INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
+
+				CPartilceCreateMgr::Um_Spawn3_Imagepng,
+				0,
+				0,
+				_float4(0.98f, 0.15f, 0.84f, 0.7f),
+				_float4(0.98f, 0.45f, 0.94f, 0.2f),
+				1,
+				_float3(4.0f),
+				_float3(4.0f),
+				1);
+
+			GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.4f, 0), _float3(0, 0.4f, 0));
+
+			base.TempBuffer_0.z = 100;
+			base.TempBuffer_0.w = FollowingDir_Look;
+
+			base.FollowingTarget = m_pTransformCom;
+			base.iFollowingDir = FollowingDir_Look;
+
+
+			GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+		}
+		{
+			// Sunder2
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+				0.01f,
+				0.4f,
+				//	_float4(0.71f, 0.29f, 0.98f, 1),
+				_float4(0.98f, 0.15f, 0.84f, 1.0f),
+				_float4(1),
+				10,
+				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+				_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
+				1);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
+
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			testTex.ePassID = InstancePass_OriginColor;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
+			testTex.vFixedPosition = pos;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
+
+
 	}
 
 #endif // _DEBUGz
@@ -1072,6 +1140,32 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 HRESULT CMonster_Gadasura_Black::Play_SpawnEffect()
 {
+	{
+		// magic
+		INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
+
+			CPartilceCreateMgr::Um_Spawn3_Imagepng,
+			0,
+			0,
+			_float4(0.98f, 0.15f, 0.84f, 0.7f),
+			_float4(0.98f, 0.45f, 0.94f, 0.2f),
+			1,
+			_float3(4.0f),
+			_float3(4.0f),
+			1);
+
+		GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.4f, 0), _float3(0, 0.4f, 0));
+
+		base.TempBuffer_0.z = 100;
+		base.TempBuffer_0.w = FollowingDir_Look;
+
+		base.FollowingTarget = m_pTransformCom;
+		base.iFollowingDir = FollowingDir_Look;
+
+
+		GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+	}
+
 	return S_OK;
 }
 

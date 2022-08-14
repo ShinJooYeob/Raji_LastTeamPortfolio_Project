@@ -1869,7 +1869,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Minion"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
-
+		CreatePos.x += 2;
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Mahinasura_Minion), &CreatePos));
 
@@ -1881,6 +1881,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Mahinasura_Leader"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
@@ -1894,6 +1895,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Black"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Black), &CreatePos));
@@ -1906,6 +1908,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Gadasura_Rage"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Gadasura_Rage), &CreatePos));
@@ -1919,6 +1922,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Minion"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
@@ -1932,6 +1936,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Vayusura_Leader"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Vayusura_Leader), &CreatePos));
@@ -1944,6 +1949,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura_Minion"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura_Minion), &CreatePos));
@@ -1954,6 +1960,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
 
 		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
 		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Ninjasura), &CreatePos));

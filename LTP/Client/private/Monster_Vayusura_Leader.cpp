@@ -52,6 +52,9 @@ _int CMonster_Vayusura_Leader::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	if (m_fHP <= 0)
 	{
 		m_bLookAtOn = false;
@@ -109,7 +112,8 @@ _int CMonster_Vayusura_Leader::Update(_double dDeltaTime)
 _int CMonster_Vayusura_Leader::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -136,7 +140,8 @@ _int CMonster_Vayusura_Leader::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -166,6 +171,8 @@ _int CMonster_Vayusura_Leader::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	return _int();
 }

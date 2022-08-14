@@ -45,6 +45,10 @@ HRESULT CMonster_Gadasura_Rage::Initialize_Clone(void * pArg)
 //	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 
+	// Particle
+	m_SpawnDealytime = 0.5f;
+	Play_SpawnEffect();
+
 	return S_OK;
 }
 
@@ -52,6 +56,9 @@ _int CMonster_Gadasura_Rage::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_fHP <= 0)
 	{
@@ -108,6 +115,9 @@ _int CMonster_Gadasura_Rage::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -136,7 +146,8 @@ _int CMonster_Gadasura_Rage::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -166,7 +177,8 @@ _int CMonster_Gadasura_Rage::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
-
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	return _int();
 }
 
