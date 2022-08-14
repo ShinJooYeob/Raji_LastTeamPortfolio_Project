@@ -131,6 +131,11 @@ void CTrigger_ChangeCameraView::CollisionTriger(CCollider * pMyCollider, _uint i
 	// Change_CameraView_TwoPoint_Interp
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
+		if (true == static_cast<CPlayer*>(pConflictedObj)->Get_IsBlockCamTriggerState())
+		{
+			return;
+		}
+
 		switch (m_tChangeCameraViewDesc.eChangeCameraViewType)
 		{
 		case EChangeCameraViewType::TYPE_FIX:

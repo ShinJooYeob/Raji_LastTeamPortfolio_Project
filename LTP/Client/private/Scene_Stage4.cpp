@@ -7,6 +7,7 @@
 #include "StaticInstanceMapObject.h"
 #include "AssimpCreateMgr.h"
 #include "Elevator.h"
+#include "Grovetender.h"
 
 CScene_Stage4::CScene_Stage4(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -283,6 +284,7 @@ HRESULT CScene_Stage4::Ready_Layer_Boss(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_MahabalasuraAttackArms), &_float3(3.f)));
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Boss_MahabalasuraCopy), &_float3(3.f, 0.f, 2.f)));*/
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Object_Grovetender), &_float3(0.f, 0.f, 0.f)));
 	return S_OK;
 }
 

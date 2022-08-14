@@ -44,7 +44,18 @@ _int CPathArrow::Update(_double fDeltaTime)
 	vLookDir = XMVectorSetY(vLookDir, 0.f);
 
 	vPlayerPos = XMVectorSetY(vPlayerPos, XMVectorGetY(vPlayerPos) + 0.5f);
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPlayerPos + vLookDir * 1.5f);
+
+	if (m_fMin_Dist >= m_fCur_Dist && 0 > m_fMovDir)
+	{
+		m_fMovDir *= -1.f;
+	}
+	else if (m_fMax_Dist <= m_fCur_Dist && 0 < m_fMovDir)
+	{
+		m_fMovDir *= -1.f;
+	}
+	m_fCur_Dist += m_fMovDir;
+	
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPlayerPos + vLookDir * m_fCur_Dist);
 	m_pTransformCom->LookDir(vLookDir);
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));
 	return _int();
@@ -109,7 +120,7 @@ HRESULT CPathArrow::SetUp_Components()
 
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;
@@ -130,6 +141,8 @@ HRESULT CPathArrow::SetUp_Etc()
 	m_pGoluTransform = (CTransform*)pGolu->Get_Component(TAG_COM(Com_Transform));
 
 	m_pDissolveCom->Set_DissolveOn(false, 0.f);
+
+	m_fMovDir = 0.05f;
 	return S_OK;
 }
 

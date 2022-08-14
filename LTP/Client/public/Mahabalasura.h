@@ -117,8 +117,8 @@ private:
 private:
 	// JH
 	void				Update_Direction(_double fDeltaTime);
+	void				Update_Dead(_double fDeltaTime);
 
-	CDissolve*			m_pDissolve = nullptr;
 	_bool				m_bBlockUpdate = false;
 	_bool				m_bBlockAnim = false;
 	_bool				m_bOnceSwitch = false;

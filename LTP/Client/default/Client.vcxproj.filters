@@ -499,6 +499,15 @@
     <Filter Include="01.GameObject\02.Monster\Boss\Snake\Snake_Poison_Raser">
       <UniqueIdentifier>{e5fe924d-7581-48d6-ac83-3f7d3e26b52a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MahaHead">
+      <UniqueIdentifier>{6fffe02a-589c-4f16-9ecb-638189b2b700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Grovetender">
+      <UniqueIdentifier>{bd2180e3-7249-47a1-b2f2-53b25c669312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Grovetender\GrovetenderDeadZone">
+      <UniqueIdentifier>{b6f20fc8-33af-48c0-a931-e6d7bac0baf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1027,7 +1036,6 @@
     <ClInclude Include="..\public\Volcano.h">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="CflameTerrain.h" />
     <ClInclude Include="..\public\Gear_Puzzle.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
@@ -1082,6 +1090,16 @@
     <ClInclude Include="..\public\MiniGameBuilding.h">
       <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MahaHead.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MahaHead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DynamicPlatform.h">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grovetender.h">
+      <Filter>01.GameObject\11.Grovetender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GrovetenderDeadZone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1647,6 +1665,13 @@
     <ClCompile Include="..\private\MiniGameBuilding.cpp">
       <Filter>01.GameObject\07.MapObject\01.DynamicObject\MiniGameBuilding</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\MahaHead.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MahaHead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grovetender.cpp">
+      <Filter>01.GameObject\11.Grovetender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

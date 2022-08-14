@@ -140,6 +140,7 @@ private:
 	_bool				m_bOncePlaySound = false;
 	_uint				m_iNextAnimIndex = 0;
 	_float				m_fDelayTime = 0.f;
+	_bool				m_bReady = true;
 	//
 
 private:

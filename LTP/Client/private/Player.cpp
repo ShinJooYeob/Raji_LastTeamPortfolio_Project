@@ -61,6 +61,7 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_PlayerEffects()); 
 
 	FAILED_CHECK(Ready_ParticleDesc());
+	
 
 	return S_OK;
 }
@@ -68,6 +69,14 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 _int CPlayer::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
+	{
+		Set_State_IdleStart(fDeltaTime);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.350f, 322.283f)));
+	}
+
+	//Set_State_IdleStart(fDeltaTime);
 
 	// For Debuging
 	DebugingCode();
@@ -559,6 +568,8 @@ void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 	case EWEAPON_TYPE::WEAPON_SWORD:
 		m_pModel->Change_AnimIndex(BASE_ANIM_IDLE_SWORD, 0.15f, true);
 	}
+
+	m_bAttackEnd = true;
 }
 
 void CPlayer::Set_State_MoveStart(_double fDeltaTime)
@@ -794,12 +805,14 @@ void CPlayer::Set_State_StopActionStart()
 {
 	m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
 	m_eCurState = STATE_STOPACTION;
+	m_bBlockCamTrigger = true;
 }
 
 void CPlayer::Set_State_StopActionEnd()
 {
 	Set_State_IdleStart(g_fDeltaTime);
 	m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+	m_bBlockCamTrigger = false;
 }
 
 void CPlayer::Set_State_PillarStart(_double fDeltaTime)
@@ -2315,11 +2328,10 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 		/*m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.1f, 0.f, 0.f));
 		m_fAttachCamPos_Offset = _float3(-3.f, 6.f, 0.f);
 		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);*/
-
-		m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 0.f));
-		m_fAttachCamPos_Offset = _float3(0.f, 3.f, -1.5f);
-		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
-
+		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -0.35f, 1.f, 0.f));
+		m_fAttachCamPos_Offset = _float3(0.f, 12.f, -15.f);
+		//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 
 		//	m_fAttachCamLook_Offset = _float3(0.f, 0.1f, 1.f);
 
@@ -8098,7 +8110,6 @@ void CPlayer::LookAt_MousePos(_float fWeight)
 	GetCursorPos(&ptMouse);
 	ScreenToClient(g_hWnd, &ptMouse);
 
-
 	_Vector vCursorPos = XMVectorSet(
 		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
 		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
@@ -8191,6 +8202,7 @@ void CPlayer::DebugingCode()
 		if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
 		{
 
+			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR);
 			/*
 
 			{
@@ -8442,6 +8454,11 @@ void CPlayer::DebugingCode()
 _bool CPlayer::Is_Hiding()
 {
 	return m_bPlayerHide;
+}
+
+_bool CPlayer::Get_IsBlockCamTriggerState()
+{
+	return m_bBlockCamTrigger;
 }
 
 CPlayer::EPARKOUR_LEDGESTATE CPlayer::Get_LedgeState()
@@ -8703,6 +8720,7 @@ HRESULT CPlayer::SetUp_Components()
 HRESULT CPlayer::SetUp_EtcInfo()
 {
 	m_pTransformCom->Rotation_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(170.f));
+	m_bBlockCamTrigger = false;
 
 	//
 	m_eCurWeapon = EWEAPON_TYPE::WEAPON_NONE;

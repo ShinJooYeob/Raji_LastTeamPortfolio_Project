@@ -234,6 +234,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_J)& DIS_Down)
 		{
+			m_ActivateSecondPage = true;
 			if(m_bIsAtaackAimEnd)
 				m_bIsHit = true;
 		}
@@ -648,7 +649,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			iRandom = 1;
+			iRandom = 0;
 
 			switch (iRandom)
 			{
@@ -837,6 +838,7 @@ void CChiedtian::Change_Animation(_uint iAnimIndex)
 	{
 	case 14:
 		m_bBlockAnim = false;
+		m_bReady = false;
 		break;
 	default:
 		m_pModel->Change_AnimIndex(iAnimIndex);
@@ -879,10 +881,13 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 		break;
 	case 14:
 	{
-		if (false == m_bOnceSwitch && 0.0379f <= fAnimPlayRate && 0.045f > fAnimPlayRate)
+		if (true == m_bReady)
 		{
-			m_bOnceSwitch = true;
-			m_bBlockAnim = true;
+			if (false == m_bOnceSwitch && 0.0379f <= fAnimPlayRate && 0.045f > fAnimPlayRate)
+			{
+				m_bOnceSwitch = true;
+				m_bBlockAnim = true;
+			}
 		}
 		else if (0.98f <= fAnimPlayRate)
 		{
@@ -991,6 +996,8 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 			}
 			else if (0.05f <= fAnimPlayRate)
 			{
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+
 				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 				m_fAttachCamPos.y += 8.f;
 				m_fAttachCamPos.z -= 3.f;   
@@ -1023,8 +1030,9 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 			m_bBlockUpdate = false;
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			m_bIsMainWeaponOff = false;
-			/*static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();*/
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);
+			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 		}
 		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)
 		{
@@ -2513,6 +2521,11 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 					if (!m_bIs2PageOnceJump)
 					{
+						//JH
+						GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+						GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, -0.35f, 1.f, 0.f));
+						m_pPlayerObj->Set_AttachCamPosOffset(_float3(0.f, 12.f, -15.f));
+						//
 
 						m_vecNonInstMeshDesc[5].fMaxTime_Duration = 999999999999999.f;
 						m_vecNonInstMeshDesc[5].vSize = _float3(40.f);
@@ -2816,6 +2829,8 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				SecondPageWeapon->Set_Dissolve(true,2.f);
 			}
+
+
 		}
 		if (iNowAnimIndex == 5)
 		{

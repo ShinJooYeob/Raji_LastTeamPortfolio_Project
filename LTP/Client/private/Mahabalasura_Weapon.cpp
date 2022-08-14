@@ -402,6 +402,18 @@ HRESULT CMahabalasura_Weapon::Set_InstanceWeapon(_int iCount)
 	return S_OK;
 }
 
+void CMahabalasura_Weapon::Set_Dissolve_Appear(_bool bAppear)
+{
+	if (true == bAppear)
+	{
+		m_pDissolveCom->Set_DissolveOn(true, 1.f);
+	}
+	else
+	{
+		m_pDissolveCom->Set_DissolveOn(false, 1.f);
+	}
+}
+
 void CMahabalasura_Weapon::Update_AttachMatrix()
 {
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix()  * m_WeaponDesc.m_eAttachedDesc.Caculate_AttachedBoneMatrix();
@@ -419,7 +431,7 @@ HRESULT CMahabalasura_Weapon::SetUp_Components()
 
 	CDissolve::DISSOLVEDESC DissolveDesc;
 	DissolveDesc.pModel = m_pModel;
-	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_NONANIM_ATTACHED;
 	DissolveDesc.pShader = m_pShaderCom;
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &DissolveDesc));
 

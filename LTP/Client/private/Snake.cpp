@@ -3,6 +3,11 @@
 #include "Player.h"
 #include "Snake_Poison_Raser.h"
 
+// JH
+#include "Camera_Main.h"
+#include "Player.h"
+//
+
 CSnake::CSnake(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -77,12 +82,37 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pRaserObj), m_eNowSceneNum, TAG_OP(Prototype_Object_Boss_Snake_Poison_Raser), &RaserDesc);
 
 	m_fAngleSpeed = 1.f;
+
+	// JH
+	m_bBlockUpdate = true;
+	m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-90.f));
+	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 5.f;
+	m_fAttachCamPos.z -= 10.f;
+	m_fDelayTime = 3.5f;
+	static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();
+	m_pModel->Change_AnimIndex(0);
+	m_iCurCutSceneState = -1;
+	// 150.f			// 220.f
+	//
 	return S_OK;
 }
 
 _int CSnake::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
+	if (true == m_bBlockUpdate)
+	{
+		Update_Direction(fDeltaTime);
+
+		_Vector vTestPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_POS);
+		FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple)));
+
+		return _int();
+	}
+	//
 
 	//if (!TestBool)
 	//{
@@ -413,6 +443,108 @@ HRESULT CSnake::Update_Particle(_double timer)
 	return S_OK;
 }
 
+void CSnake::Set_CutSceneState(_int iState)
+{
+	m_iCurCutSceneState = iState;
+}
+
+
+void CSnake::Update_Direction(_double fDeltaTime)
+{
+	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
+
+	if (0 == m_iCurCutSceneState)
+	{
+		m_pModel->Change_AnimIndex(3);
+		m_iCurCutSceneState = 1;
+	}
+	else if (1 == m_iCurCutSceneState)
+	{
+		if (0.3214f > fAnimPlayRate)
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(38.39f, -144.8f, 87.017f));
+			m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(215.f));
+		}
+		else if (0.98f <= fAnimPlayRate)
+		{
+			m_pModel->Change_AnimIndex(0);
+			m_iCurCutSceneState = 2;
+			m_fDelayTime = 7.f;
+		}
+		else if (0.7f <= fAnimPlayRate)
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.f, -150.f, 93.197f));
+			m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-90.f));
+		}
+		else if (0.3214f <= fAnimPlayRate && false == m_bOnceSwitch)
+		{
+			m_bOnceSwitch = true;
+			g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor))->Set_IsDead();
+			_float4 fSoundPos = g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA);
+			fSoundPos.x += 1.f;
+			fSoundPos.y += 1.f;
+			g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), fSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
+			g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), fSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
+
+			CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+			tCameraShakeDirDesc.fTotalTime = 0.5f;
+			tCameraShakeDirDesc.fPower = 10.f;
+			tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
+			_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+			fShakeDir.y = 0.f;
+			tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, false);
+
+			CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+			tCameraShakeRotDesc.fTotalTime = 0.5f;
+			tCameraShakeRotDesc.fPower = 1.f;
+			tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
+			tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+		}
+	}
+	else if(2 == m_iCurCutSceneState)
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (6.f >= m_fDelayTime && true == m_bOnceSwitch)
+		{
+			m_bOnceSwitch = false;
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+			m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK) * -1.f);
+			m_fAttachCamPos.y += 165.f;
+			m_fAttachCamPos.z = 95.f;
+			m_fAttachCamPos.x = 85.f;
+			m_pModel->Change_AnimIndex(7);
+			m_iCurCutSceneState = 3;
+
+		}
+	}
+	else if (3 == m_iCurCutSceneState)
+	{
+		if (0.2875f <= fAnimPlayRate && false == m_bOnceSwitch)
+		{
+			m_bOnceSwitch = true;
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 3.f, 2.f, false);
+		}
+		else if (0.98f <= fAnimPlayRate)
+		{
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			m_iCurCutSceneState = 4;
+			m_fDelayTime = 4;
+			m_pModel->Change_AnimIndex(1);
+		}
+	} 
+	else if (4 == m_iCurCutSceneState)
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_bBlockUpdate = false;
+		}
+	}
+}
 
 HRESULT CSnake::SetUp_Components()
 {

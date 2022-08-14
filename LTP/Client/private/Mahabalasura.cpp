@@ -121,8 +121,8 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 	m_fAttachCamPos.y += 2.f;
 	m_fAttachCamPos.z -= 4.f;
 	m_pModel->Change_AnimIndex(0);
-	m_iCutSceneStep = -1;
-	m_fDelayTime = 3.f;
+	m_iCutSceneStep = 0;
+	m_fDelayTime = 3.f; 
 	//
 
 	return S_OK;
@@ -132,18 +132,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-
 	// JH
 	if (true == m_bBlockUpdate)
 	{
-		if (true == m_bOnLookAtMe)
-		{
-			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-			_Vector vCamPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_Camera_Transform()->Get_MatrixState(CTransform::TransformState::STATE_POS);
-			_Vector vLookDir = XMVector3Normalize(vMyPos - vCamPos);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraLookAt_Turn(vLookDir);
-		}
-
 		Update_Direction(fDeltaTime);
 
 		_Vector vTestPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -153,6 +144,14 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
 		}
 
+		return _int();
+	}
+	else if (m_fHP <= 0.f)
+	{
+		Update_Dead(fDeltaTime);
+		m_pSpear->Update(fDeltaTime);
+		m_pDissolveCom->Update_Dissolving(fDeltaTime);
+		FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
 		return _int();
 	}
 	//
@@ -181,6 +180,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
 	{
 		Set_IsDead();
+
+		// JH
+		static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		//
 	}
 
 	if (m_fHP <= 0 && !m_bIsHit)
@@ -424,7 +428,10 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		if (m_bInstanceMonsterDieSwitch == false)
 		{
 			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
-			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			if (nullptr != pMonsterBatchTrigger)
+			{
+				pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			}
 			m_bInstanceMonsterDieSwitch = true;
 		}
 		m_pDissolveCom->Set_DissolveOn(false, 6.4f);
@@ -962,33 +969,24 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 			m_fDelayTime -= (_float)fDeltaTime;
 			if (0 >= m_fDelayTime)
 			{
-				m_pModel->Change_AnimIndex(7);
 				m_iCutSceneStep = 1;
 			}
 		}
 		else if (1 == m_iCutSceneStep)
 		{
-			m_fDelayTime -= (_float)fDeltaTime;
-			if (0.f >= m_fDelayTime)
-			{
-				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Intro.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
-				m_bOnceSwitch = false;
-				m_iCutSceneStep = 2;
-				m_fDelayTime = 4.f;
-			}
-			
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraLookAt_Turn(_float3(0.f, 0.1f, 1.f).XMVector());
 			m_bOnLookAtMe = false;
-			m_fAnimmultiple = 1.f;
 			m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 			m_fAttachCamPos.y += 2.f;
 			m_fAttachCamPos.z -= 4.f;
-
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraLookAt_Turn(_float3(0.f, 0.1f, 1.f).XMVector());
+			m_iCutSceneStep = 2;
+			m_fDelayTime = 4.5f;
+			g_pGameInstance->Play3D_Sound(L"JJB_MrM_Intro.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 		}
 		else if (2 == m_iCutSceneStep)
 		{
 			m_fDelayTime -= (_float)fDeltaTime;
-
 			if (0.f >= m_fDelayTime)
 			{
 				static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
@@ -998,61 +996,113 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 				static_cast<CPlayer*>(m_pPlayerObj)->Set_MaxBossTargetingDist(20.f);
 				static_cast<CPlayer*>(m_pPlayerObj)->Set_MinBossTargetingDist(0.f);
 				m_bBlockUpdate = false;
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+
+				g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor))->Set_IsDead();
+				m_fDelayTime = 3.f;
+				m_iCutSceneStep = 0;
 			}
 		}
-	} 
+	}
 		break;
-	case 7:
+	}
+}
+
+void CMahabalasura::Update_Dead(_double fDeltaTime)
+{
+	switch (m_iCutSceneStep)
 	{
-		if (0.f < fAnimPlayRate)
+	case 0:
+	{
+		m_pModel->Change_AnimIndex(0);
+		
+		if (false == m_bOncePlaySound)
 		{
-			if (0.553f >= fAnimPlayRate)
+			g_pGameInstance->Play3D_Sound(L"Jino_MrM_Dead_0.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_bOncePlaySound = true;
+		}
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_pDissolveCom->Set_DissolveOn(false, 1.f);
+			m_pSpear->Set_Dissolve_Appear(false);
+
+			if (true == m_bOncePlaySound)
 			{
-				m_fAnimmultiple = 2.f;
-				_float fHeight = g_pGameInstance->Easing(EasingTypeID::TYPE_QuinticIn, 59.350f, 34.3f, fAnimPlayRate, 0.553f);
-				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				vPos = XMVectorSetY(vPos, fHeight);
-				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Teleport_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				m_bOncePlaySound = false;
 			}
-			else
-			{
-				if (false == m_bOnceSwitch)
-				{
-					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 2.f, 0.2f, false);
+			m_fDelayTime = 3.5f;
+			m_iCutSceneStep = 1;
+		}
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();
+	}
+		break;
+	case 1:
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			Set_LimLight_N_Emissive(_float4(0.0f), _float4(0.f));
+			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(103.3f, 67.f, 387.203f));
+			m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, -1.f, 0.f));
+			m_fDelayTime = 2.f;
+			m_iCutSceneStep = 2;
+		}
+	}
+		break;
+	case 2:
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			g_pGameInstance->Play3D_Sound(L"JJB_MrM_Teleport_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_pDissolveCom->Set_DissolveOn(true, 1.f);
+			m_fDelayTime = 3.f;
+			m_iCutSceneStep = 3;
+			m_pTransformCom->Set_MoveSpeed(1.f);
+		}
+	}
+		break;
+	case 3:
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCutSceneStep = 4;
+			m_fDelayTime = 6.f;
+			m_pModel->Change_AnimIndex(1);
+			m_pDissolveCom->Set_DissolveOn(false, 6.f);
+		}
+	}
+		break;
+	case 4:
+	{
+		m_fDelayTime -= (_float)fDeltaTime;
+		m_pTransformCom->Move_Up(fDeltaTime);
+		m_pTransformCom->Set_MoveSpeed(m_pTransformCom->Get_MoveSpeed() + (_float)fDeltaTime);
 
-					CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
-					tCameraShakeDirDesc.fTotalTime = 0.2f;
-					tCameraShakeDirDesc.fPower = 30.f;
-					tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
-					_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
-					fShakeDir.y = 0.f;
-					tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
-					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, true);
-
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
-					m_bOnceSwitch = true;
-				}
-				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				vPos = XMVectorSetY(vPos, 34.3f);
-				m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
-			}
-
-			if (0.98f <= fAnimPlayRate)
-			{
-				m_pModel->Change_AnimIndex(0);
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraLookAt_Turn(_float3(0.f, 0.1f, 1.f).XMVector());
-				m_bOnLookAtMe = false;
-				m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				m_fAttachCamPos.y += 2.f;
-				m_fAttachCamPos.z -= 4.f;
-
-				m_fDelayTime = 1.5f;
-			}
+		if (false == m_bOncePlaySound)
+		{
+			g_pGameInstance->Play3D_Sound(L"Jino_MrM_Dead_1.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+			m_bOncePlaySound = true;
+		}
+		if (0.f >= m_fDelayTime)
+		{
+			Set_IsDead();
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 		}
 	}
 		break;
 	}
+
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 2.f;
+	m_fAttachCamPos.z -= 4.f;
+	
 }
 
 HRESULT CMahabalasura::SetUp_Components()

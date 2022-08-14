@@ -439,7 +439,6 @@ void CRangda::Update_Direction(_double fDeltaTime)
 		if (0.98f <= fAnimPlayRate)
 		{
 			m_pModel->Change_AnimIndex(3);
-			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 		}
 		else if (0.5f <= fAnimPlayRate)
 		{
@@ -452,6 +451,7 @@ void CRangda::Update_Direction(_double fDeltaTime)
 				}
 				else if (false == m_bOnceSwitch)
 				{
+					m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 0.1f, false);
 					m_bOnceSwitch = true;
 				}
@@ -486,8 +486,7 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
 
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, false);
-			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 0.1f, false);
 		}
 		else
 		{
@@ -506,7 +505,6 @@ void CRangda::Update_Direction(_double fDeltaTime)
 		{
 			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Scream_02.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 2.f, false);
-			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
 			m_bOnceSwitch = false;
 		}
 		break;

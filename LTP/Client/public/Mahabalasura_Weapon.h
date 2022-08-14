@@ -43,6 +43,9 @@ public:
 		return m_pTransformCom;
 	}
 
+	// JH
+	void		Set_Dissolve_Appear(_bool bAppear);
+	//
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
