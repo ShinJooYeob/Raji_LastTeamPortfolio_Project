@@ -1142,7 +1142,6 @@
       <Filter>01.GameObject\11.Grovetender</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GrovetenderDeadZone.h" />
-    </ClInclude>
     <ClInclude Include="..\public\ParticleCollider.h">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Particle_Collider</Filter>
     </ClInclude>
@@ -1736,7 +1735,6 @@
       <Filter>01.GameObject\11.Grovetender</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
-    </ClCompile>
     <ClCompile Include="..\private\ParticleCollider.cpp">
       <Filter>01.GameObject\02.Monster\Boss\Boss_Particle_Collider</Filter>
     </ClCompile>

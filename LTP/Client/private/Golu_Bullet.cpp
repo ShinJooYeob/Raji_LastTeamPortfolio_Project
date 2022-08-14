@@ -178,6 +178,9 @@ HRESULT CGolu_Bullet::SetUp_Collider()
 
 	switch (m_Golu_BulletDesc.iGoluBulletNumber)
 	{
+	case 0:
+		break;
+
 	default:
 	{
 		COLLIDERDESC			ColliderDesc;
@@ -202,6 +205,9 @@ HRESULT CGolu_Bullet::Update_Collider(_double dDeltaTime)
 
 	switch (m_Golu_BulletDesc.iGoluBulletNumber)
 	{
+
+	case 0:
+		break;
 	default:
 	{
 		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
