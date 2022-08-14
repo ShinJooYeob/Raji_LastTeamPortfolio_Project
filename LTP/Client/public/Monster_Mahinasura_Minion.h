@@ -29,7 +29,6 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
-
 	 
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
@@ -44,6 +43,7 @@ public:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
+	virtual HRESULT Play_SpawnEffect()override;
 
 
 private:

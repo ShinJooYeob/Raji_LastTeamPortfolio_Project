@@ -51,7 +51,8 @@ _int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
-
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	if (m_fHP <= 0)
 	{
 		m_bRepelOff = true;
@@ -107,7 +108,8 @@ _int CMonster_Ninjasura_Minion::Update(_double dDeltaTime)
 _int CMonster_Ninjasura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	//////////
 	if (m_bIsOnScreen && false == m_bMotionTrailOn)
 	{
@@ -142,7 +144,8 @@ _int CMonster_Ninjasura_Minion::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -172,7 +175,8 @@ _int CMonster_Ninjasura_Minion::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
-
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	return _int();
 }
 
@@ -607,6 +611,11 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 	}
 
 
+	return S_OK;
+}
+
+HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
+{
 	return S_OK;
 }
 

@@ -29,28 +29,32 @@ public:
 
 
 protected:
+//	 #Particle Func NOUSE
+//	virtual HRESULT		Set_Play_Particle(_uint ParticleIndex, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);
+//	virtual HRESULT		Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPos = _float3::Zero(), _float3 offset = _float3::Zero(), _float Timer = -1);
+//	virtual HRESULT		Set_Dead_Transform(_uint ParticleIndex);
+//	INSTPARTICLEDESC&	Get_VecParticle(_uint index);
+//	void				Set_VecParticle(_uint index, INSTPARTICLEDESC& d);
+
 //	 #Particle Func
 	virtual HRESULT		Ready_ParticleDesc();
-	virtual HRESULT		Set_Play_Particle(_uint ParticleIndex, _fVector FixVec = _fVector(), _float3 offset = _float3::Zero(), _float Timer = -1);
-	virtual HRESULT		Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPos = _float3::Zero(), _float3 offset = _float3::Zero(), _float Timer = -1);
-	virtual HRESULT		Set_Dead_Transform(_uint ParticleIndex);
-
 	virtual HRESULT		Update_Particle(_double timer);
 
+	virtual HRESULT		Play_SpawnEffect(); // SpawnEffect
+	void				Set_DealyTimer(_double time) { m_SpawnDealytime = time; }
+
 	virtual HRESULT		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool * pb = nullptr);
-	INSTPARTICLEDESC&	Get_VecParticle(_uint index);
-	void				Set_VecParticle(_uint index, INSTPARTICLEDESC& d);
+
+
 
 protected:
 	/* Partilce */
-//	CTransform*						m_PartilceTransform = nullptr;
-	vector<INSTPARTICLEDESC>		m_vecTextureParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	_float							m_fPlayParticleTimer[PARTILCECOUNT] = { 0, };
-
-	CModelInstance*					m_pModelInstance = nullptr;
-	vector<CTransform*>				m_vecInstancedTransform;
 	_uint							m_EffectAdjust = 0;
+	_bool							m_bisSpawnParticle = false;
+	_double							m_SpawnDealytime = 0;
+
+//	CModelInstance*					m_pModelInstance = nullptr;
+//	vector<CTransform*>				m_vecInstancedTransform;
 
 
 

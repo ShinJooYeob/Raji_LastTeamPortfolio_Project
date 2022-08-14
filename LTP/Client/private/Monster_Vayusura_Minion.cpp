@@ -51,6 +51,9 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 
 	if (m_fHP <= 0)
@@ -782,6 +785,11 @@ HRESULT CMonster_Vayusura_Minion::Update_Particle(_double timer)
 		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pTextureParticleTransform_HEAD);
 	}
 
+	return S_OK;
+}
+
+HRESULT CMonster_Vayusura_Minion::Play_SpawnEffect()
+{
 	return S_OK;
 }
 

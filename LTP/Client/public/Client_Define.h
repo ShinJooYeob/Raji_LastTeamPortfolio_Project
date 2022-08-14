@@ -24,6 +24,11 @@ extern _bool g_bShowMouse;
 #define  NONNOISE	388
 #define  NONNMASK	50
 
+#define  UPDATE_SKIP	2
+#define  UPDATE_ERROR	-1
+#define  UPDATE_NONE	0
+
+
 namespace Client {};
 using namespace Client;
 

@@ -41,9 +41,14 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 	/////////////////test
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	/////////////////
+
+
+	// Particle
+	m_SpawnDealytime = 0.5f;
+	Play_SpawnEffect();
 
 	return S_OK;
 }
@@ -52,6 +57,9 @@ _int CMonster_Mahinasura_Leader::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_fHP <= 0)
 	{
@@ -105,6 +113,9 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -136,6 +147,8 @@ _int CMonster_Mahinasura_Leader::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -166,6 +179,8 @@ _int CMonster_Mahinasura_Leader::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	return _int();
 }
@@ -1042,12 +1057,118 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 			testa.Particle_Power = 10;
 
 			testa.FollowingTarget = m_pTransformCom;
-			GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+			// GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
 		}
+
+		// SPAWN
+		{
+			// fire
+			INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
+				// CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow2,
+				CPartilceCreateMgr::Um_Spawn4_smoke,
+				1.5f,
+				0.3f,
+				_float4(0.98f, 0.27f, 0.61f, 0.8f),
+				_float4(0.98f, 0.87f, 0.81f, 0.5f),
+				//	_float4(1,1,1,0.0f),
+				1,
+				_float3(1.0f),
+				_float3(0.8f),
+				1);
+
+			//	base.eParticleTypeID = InstanceEffect_Suck;;
+			//	base.ePassID = InstancePass_BrightColor;
+
+			base.iTextureLayerIndex = 22;
+
+			_float val = 1.0f;
+			base.ParticleStartRandomPosMin = _float3(-val, -1.0f, -val);
+			base.ParticleStartRandomPosMax = _float3(val, 0.0f, val);
+			base.FollowingTarget = m_pTransformCom;
+			base.iFollowingDir = FollowingDir_Up;
+			base.Particle_Power = 3.0f;
+			base.vEmissive_SBB = _float3(1.0f, 0.8f, 0.3f);
+
+			GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+		}
+
+
+
 
 
 	}
 #endif // _DEBUG
+
+	return S_OK;
+}
+
+HRESULT CMonster_Mahinasura_Leader::Play_SpawnEffect()
+{
+
+	{
+		// ring
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+			CPartilceCreateMgr::Um_Spawn2_Image,
+			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
+			0,
+			0.3f,
+			_float4(1.0f),
+			_float4(0),
+			1,
+			_float3(1.0f),
+			_float3(5.0f),
+			1);
+		testTex.iTextureLayerIndex = 8;
+
+		testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
+		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Look;
+		testTex.vEmissive_SBB = _float3(1, 0.8f, 0.8f);
+		testTex.m_fAlphaTestValue = 0.2f;
+
+		//	testTex.TempBuffer_0.z = 0;
+		//	testTex.TempBuffer_0.w = FollowingDir_Right;
+		//	testTex.iFollowingDir = FollowingDir_Up;
+		//	testTex.TempBuffer_1.x = 0.0f;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+	}
+
+	{
+		// fire
+		INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
+			// CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow2,
+			CPartilceCreateMgr::Um_Spawn4_smoke,
+			1.2f,
+			0.5f,
+			_float4(0.98f, 0.27f, 0.61f, 0.8f),
+			_float4(0.98f, 0.87f, 0.81f, 0.3f),
+			//	_float4(1,1,1,0.0f),
+			1,
+			_float3(1.0f),
+			_float3(0.1f),
+			1);
+
+		//	base.eParticleTypeID = InstanceEffect_Suck;;
+		//	base.ePassID = InstancePass_BrightColor;
+		// base.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+
+		base.iTextureLayerIndex = 22;
+
+		_float val = 0.8f;
+		base.ParticleStartRandomPosMin = _float3(-val, -1.0f, -val);
+		base.ParticleStartRandomPosMax = _float3(val, 0.5f, val);
+		base.FollowingTarget = m_pTransformCom;
+		base.iFollowingDir = FollowingDir_Up;
+		base.Particle_Power = 3.5f;
+		base.vEmissive_SBB = _float3(1.0f, 0.8f, 0.3f);
+		base.vEmissive_SBB = _float3(1.0f);
+
+		GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+	}
+
+
 
 	return S_OK;
 }
