@@ -122,7 +122,6 @@ _int CChiedtuan_Weapon::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-
 	FAILED_CHECK(m_pDissolveCom->Render(8));
 
 	//_uint NumMaterial = m_pModel->Get_NumMaterial();

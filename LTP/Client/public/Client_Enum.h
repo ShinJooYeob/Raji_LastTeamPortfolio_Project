@@ -442,6 +442,8 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_MiniGame_Golu,
 
+	Prototype_Object_MahaHead,
+	Prototype_Object_Grovetender,
 	Object_Prototype_End
 };
 
@@ -812,6 +814,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_RepelWall:
 		return TEXT("Prototype_Object_RepelWall");
 
+	case Prototype_Object_MahaHead:
+		return TEXT("Prototype_Object_MahaHead");
+
+	case Prototype_Object_Grovetender:
+		return TEXT("Prototype_Object_Grovetender");
+		
 	case Prototype_Object_MiniGameBuilding:
 		return TEXT("Prototype_Object_MiniGameBuilding");
 
@@ -3373,6 +3381,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_DarkBaldTree,
 	Prototype_Mesh_Elevator,
 	Prototype_Mesh_ArrowDir,
+	Prototype_Mesh_MahaHead,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 
@@ -3443,6 +3452,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_InteractObj_Elevator,
 	Prototype_Mesh_InteractObj_LilyPad,
 	Prototype_Mesh_InteractObj_Lotus,
+	Prototype_Mesh_Golem,
 
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
@@ -9864,6 +9874,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_ArrowDir:
 		return TEXT("ArrowDir.fbx");
 		break;
+
+	case Prototype_Mesh_MahaHead:
+		return TEXT("MahaHead.fbx");
+		break;
 		
 	case Prototype_Mesh_DarkBaldTree:
 		return TEXT("DarkBaldTree.fbx");
@@ -10085,7 +10099,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_InteractObj_Lotus:
 		return TEXT("SM_Lotus_01.fbx");
 		break;
-		
+	
+	case Prototype_Mesh_Golem:
+		return TEXT("Golem.fbx");
+		break;
+
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;

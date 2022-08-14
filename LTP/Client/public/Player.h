@@ -165,6 +165,7 @@ public:
 	_bool				Get_IsLedgeReachBackState();
 	_int				Get_CurPlayAnimation();
 	_bool				Is_Hiding();
+	_bool				Get_IsBlockCamTriggerState();
 
 public: /* For CheckPoint/Resurrection */
 	void	SetUp_CheckPoint_CurPos();
@@ -496,7 +497,7 @@ private: /* Animation Control */
 
 private: /* Control */
 	_float					m_fDelayTime = 0.f;
-
+	_bool					m_bBlockCamTrigger = false;
 
 private: /* For Cheat Mode*/
 	_bool					m_bPowerOverwhelming = false;

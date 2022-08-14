@@ -267,7 +267,7 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 
 	
 
-
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MahaHead)));
 
 
 
@@ -277,7 +277,8 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 HRESULT CScene_Stage5::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 59.350f, 322.283f)));
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 59.350f, 322.283f)));
 
 	return S_OK;
 }

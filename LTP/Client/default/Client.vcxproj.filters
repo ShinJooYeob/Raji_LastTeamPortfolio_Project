@@ -520,6 +520,15 @@
     <Filter Include="01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet">
       <UniqueIdentifier>{d2e800f1-0da1-4c02-8a22-297fb50f2b64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\MahaHead">
+      <UniqueIdentifier>{6fffe02a-589c-4f16-9ecb-638189b2b700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Grovetender">
+      <UniqueIdentifier>{bd2180e3-7249-47a1-b2f2-53b25c669312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Grovetender\GrovetenderDeadZone">
+      <UniqueIdentifier>{b6f20fc8-33af-48c0-a931-e6d7bac0baf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1045,7 +1054,6 @@
     <ClInclude Include="..\public\Volcano.h">
       <Filter>01.GameObject\02.Monster\Boss\Chiedtian\Chiedtuan_Volcano</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="CflameTerrain.h" />
     <ClInclude Include="..\public\Gear_Puzzle.h">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Gear_Puzzle</Filter>
@@ -1117,6 +1125,17 @@
     </ClInclude>
     <ClInclude Include="..\public\Golu_Bullet.h">
       <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MahaHead.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MahaHead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DynamicPlatform.h">
+      <Filter>01.GameObject\09.InteractObjects\03. DynamicPlatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grovetender.h">
+      <Filter>01.GameObject\11.Grovetender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GrovetenderDeadZone.h" />
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1697,6 +1716,14 @@
     </ClCompile>
     <ClCompile Include="..\private\Golu_Bullet.cpp">
       <Filter>01.GameObject\12.MiniGame\0.MiniGame_GoluSurvival\Golu_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MahaHead.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\MahaHead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grovetender.cpp">
+      <Filter>01.GameObject\11.Grovetender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

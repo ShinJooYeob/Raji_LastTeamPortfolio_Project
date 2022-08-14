@@ -32,6 +32,10 @@ private:
 private:
 	CTransform*			m_pPlayerTransform = nullptr;
 	CTransform*			m_pGoluTransform = nullptr;
+	_float				m_fMovDir = 0.1f;
+	_float				m_fMax_Dist = 3.f;
+	_float				m_fMin_Dist = 2.f;
+	_float				m_fCur_Dist = 2.f;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;

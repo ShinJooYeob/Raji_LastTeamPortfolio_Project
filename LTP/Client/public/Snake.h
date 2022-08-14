@@ -26,6 +26,10 @@ public:
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
 
+	// JH
+	void			Set_CutSceneState(_int iState);
+	//
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -89,6 +93,19 @@ private:
 	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
 
 	class CSnake_Poison_Raser* m_pRaserObj = nullptr;
+
+private:
+	// JH
+	void				Update_Direction(_double fDeltaTime);
+
+	_bool				m_bBlockUpdate = false;
+	_bool				m_bOnceSwitch = false;
+	_bool				m_bOncePlaySound = false;
+	_uint				m_iNextAnimIndex = 0;
+	_float				m_fDelayTime = 0.f;
+	_bool				m_bReady = true;
+	_int				m_iCurCutSceneState = -1;
+	//
 
 private:
 	HRESULT SetUp_Components();

@@ -6,6 +6,7 @@
 #include "Chiedtian.h"
 #include "Mahabalasura.h"
 #include "Scene_Stage3.h"
+#include "MahaHead.h"
 
 CEventTrigger::CEventTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CTriggerObject(pDevice, pDeviceContext)
@@ -132,12 +133,14 @@ void CEventTrigger::EVENT_Chiedtian_Cutscene()
 
 void CEventTrigger::EVENT_Mahabalasura_Cutscene()
 {
-	CMahabalasura* pMahabalasura = static_cast<CMahabalasura*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, Tag_Layer(Layer_Boss), 0));
-	pMahabalasura->Change_AnimIndex(7);
+	CMahaHead* pMahead = static_cast<CMahaHead*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, Tag_Layer(Layer_MazeDoor), 0));
+	pMahead->Set_CurState(1);
 	m_pPlayer->Set_State_StopActionStart();
-
-	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MaxTargetArmLength(0.f);
-	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MinTargetArmLength(0.f);
+	//CMahabalasura* pMahabalasura = static_cast<CMahabalasura*>(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, Tag_Layer(Layer_Boss), 0));
+	//pMahabalasura->Change_AnimIndex(7);
+	
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MaxTargetArmLength(5.f);
+	GetSingle(CUtilityMgr)->Get_MainCamera()->Set_MinTargetArmLength(5.f);
 }
 
 HRESULT CEventTrigger::SetUp_Components()

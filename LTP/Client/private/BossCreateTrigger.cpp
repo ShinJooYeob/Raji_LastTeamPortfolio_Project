@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\BossCreateTrigger.h"
+#include "Grovetender.h"
 
 CBossCreateTrigger::CBossCreateTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CTriggerObject(pDevice, pDeviceContext)
@@ -112,7 +113,8 @@ void CBossCreateTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 		else if (m_eBossType == CBossCreateTrigger::BOSS_SNAKE)
 		{
 			//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(19.472f, -190.f, 93.197f));5
-			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(0.f, -150.f, 93.197f));
+			//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(0.f, -150.f, 93.197f));
+			g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, Tag_Layer(LAYERID::Layer_MazeDoor), TAG_OP(Prototype_Object_Grovetender), &_float3(0.f, 0.f, 0.f));
 		}
 		else if (m_eBossType == CBossCreateTrigger::BOSS_MAHABASURA)
 		{
