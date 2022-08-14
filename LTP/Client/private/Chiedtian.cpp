@@ -6,6 +6,7 @@
 #include "HpUI.h"
 #include "Volcano.h"
 #include "Player.h"
+#include "ParticleCollider.h"
 
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -157,15 +158,15 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
 
 	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);*/
-	m_bBlockUpdate = true;
-	m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
-	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
-	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	m_fAttachCamPos.y += 5.f;
-	m_fAttachCamPos.z -= 10.f;
-	m_fDelayTime = 3.f;
-	m_pModel->Change_AnimIndex(14);
-	m_bIsMainWeaponOff = true;
+	//m_bBlockUpdate = false;
+	//m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
+	//m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	//m_fAttachCamPos.y += 5.f;
+	//m_fAttachCamPos.z -= 10.f;
+	//m_fDelayTime = 3.f;
+	//m_pModel->Change_AnimIndex(14);
+	//m_bIsMainWeaponOff = true;
 	//
 
 	m_bBlockUpdate = false;
@@ -302,6 +303,21 @@ _int CChiedtian::Update(_double fDeltaTime)
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+
+				CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+				CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+				CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+				ColliderDesc.ColliderType = COLLIDER_SPHERE;
+				ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+				ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+				ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+				ColliderDesc.pTargetTransform = Transform;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+					TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 
 				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 
@@ -455,15 +471,15 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 		}
-		///////////////////////////스킬 공격
+		/////////////////////////스킬 공격
 		else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 		{
 			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			//iRandom = 0;
+			m_iTest = 2;
 
-			switch (iRandom)
+			switch (m_iTest)
 			{
 			case ATTACK_FIRE:
 			{
@@ -489,10 +505,10 @@ _int CChiedtian::Update(_double fDeltaTime)
 			break;
 
 			}
-			++m_iTest;
+			//++m_iTest;
 
-			if (m_iTest > 2)
-				m_iTest = 0;
+			//if (m_iTest > 2)
+			//	m_iTest = 0;
 		}
 
 	}
@@ -652,7 +668,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			iRandom = 0;
+			//iRandom = 1;
 
 			switch (iRandom)
 			{
@@ -1251,12 +1267,12 @@ HRESULT CChiedtian::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSub), (CComponent**)&m_pFireCollider));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.f);
+	ColliderDesc.vScale = _float3(15.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, -4.f, 0.f, 1);
 	FAILED_CHECK(m_pFireCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "root", _float3(1), _float3(0), _float3(0, 0, 0));
+	tAttachedDesc.Initialize_AttachedDesc(this, "root", _float3(1), _float3(0), _float3(0, -5.f, 0.f));
 	m_FireAttachedDesc = tAttachedDesc;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_ColliderSubSub), (CComponent**)&m_pJumpCollider));
@@ -1899,7 +1915,18 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+						 
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
 
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
 						
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
@@ -1939,6 +1966,21 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 
+
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
+
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -1969,6 +2011,22 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+
+
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
@@ -2081,6 +2139,20 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
 
+
+				CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+				CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+				CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+				ColliderDesc.ColliderType = COLLIDER_SPHERE;
+				ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+				ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+				ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+				ColliderDesc.pTargetTransform = Transform;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+					TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 
 
@@ -2175,6 +2247,19 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[7]);
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 					TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[8]);
+
+				CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+				CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+				CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+				ColliderDesc.ColliderType = COLLIDER_SPHERE;
+				ColliderDesc.ColliderDesc.vScale = _float3(8.5f, 8.5f, 8.5f);
+				ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+				ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+				ColliderDesc.pTargetTransform = Transform;
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+					TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
 				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 

@@ -45,6 +45,26 @@ _int CIngameUI::Update(_double fDeltaTime)
 	if (m_bIsChangeWeapon)
 		TurnWeaponUIAngle(fDeltaTime);
 
+	CUtilityMgr* UtillMgr = GetSingle(CUtilityMgr);
+
+	switch (m_iBeforeWeapon)
+	{
+	case 0:
+		Set_GaugeUI(1.f - (UtillMgr->Get_BowSkillPersent()/100.f));
+		break;
+
+	case 1:
+		Set_GaugeUI(1.f - UtillMgr->Get_SpearSkillPersent() / 100.f);
+		break;
+
+	case 2:
+		Set_GaugeUI(1.f - UtillMgr->Get_SwordshieldSkillPersent() / 100.f);
+		break;
+
+	}
+
+	if (m_bIsChangeColor)
+		ChangeEsingColor(fDeltaTime);
 
 	m_pWeaponUI->Update(fDeltaTime);
 	m_pWeaponMidleUI->Update(fDeltaTime);
@@ -85,16 +105,31 @@ void CIngameUI::Set_WeaponUIAngle(_int iWeapon)
 	m_bIsChangeWeapon = true;
 	m_iNextWeapon = iWeapon;
 
+	CUtilityMgr* UtillMgr = GetSingle(CUtilityMgr);
+
+
 	switch (iWeapon)
 	{
 	case 0:
 		m_fTurningAngle = 240.f;
+		Set_GaugeUI(1.f - (UtillMgr->Get_BowSkillPersent() / 100.f));
+		//m_pWeaponMidleUI->Set_Color(_float4(0.45490f, 0.67843f, 0.85098f, 1.f));
+		m_vColor = _float3(0.45490f, 0.67843f, 0.85098f);
+		m_bIsChangeColor = true;
 		break;
 	case 1:
 		m_fTurningAngle = 120.f;
+		Set_GaugeUI(1.f - UtillMgr->Get_SpearSkillPersent() / 100.f);
+		//m_pWeaponMidleUI->Set_Color(_float4(0.796078f, 0.19215f, 0.f, 1.f));
+		m_vColor = _float3(0.796078f, 0.19215f, 0.f);
+		m_bIsChangeColor = true;
 		break;
 	case 2:
 		m_fTurningAngle = 0.f;
+		Set_GaugeUI(1.f - UtillMgr->Get_SwordshieldSkillPersent() / 100.f);
+		//m_pWeaponMidleUI->Set_Color(_float4(1.f, 0.709f, 0.f, 1.f));
+		m_vColor = _float3(1.f, 0.709f, 0.f);
+		m_bIsChangeColor = true;
 		break;
 	}
 }
@@ -109,7 +144,7 @@ void CIngameUI::TurnWeaponUIAngle(_double fDeltaTime)
 
 	m_pWeaponUI->Set_Angle(fAngle);
 
-	if (m_fDeltaTime >= .5f)
+	if (m_fDeltaTime >= 0.5f)
 	{
 		m_pWeaponUI->Set_Angle(m_fTurningAngle);
 		m_bIsChangeWeapon = false;
@@ -118,6 +153,11 @@ void CIngameUI::TurnWeaponUIAngle(_double fDeltaTime)
 		m_fWeaponNowUIAngle = m_fTurningAngle;
 	}
 
+}
+
+void CIngameUI::Set_GaugeUI(_float fGauge)
+{
+	m_pWeaponMidleUI->Set_UV_Y(fGauge);
 }
 
 HRESULT CIngameUI::Ready_Layer_UI()
@@ -160,9 +200,10 @@ HRESULT CIngameUI::Ready_Layer_UI()
 	SettingUI.m_fX = 1145.f;
 	SettingUI.m_fY = 617.f;
 	SettingUI.fAngle = 0.f;
-	SettingUI.iTextureIndex = 139;
+	SettingUI.iTextureIndex = 140;
 	SettingUI.bSettingOtherTexture = true;
 	SettingUI.iNoiseTextureIndex = 319;
+	SettingUI.iMaskTextureIndex = 214;
 
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeaponMidleUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
@@ -180,6 +221,24 @@ HRESULT CIngameUI::Render_Fonts()
 		m_Skillpercent.vColor, m_Skillpercent.fAngle, m_Skillpercent.vFontScale);
 
 	return S_OK;
+}
+
+void CIngameUI::ChangeEsingColor(_double fDeltaTime)
+{
+	m_fColorEsingTime += (_float)fDeltaTime;
+	_float4 Color = m_pWeaponMidleUI->Get_Color();
+
+	CGameInstance* pInstance = g_pGameInstance;
+
+	_float3 EsingColor = pInstance->Easing_Vector(TYPE_Linear, _float3(Color.x, Color.y, Color.z), m_vColor, m_fColorEsingTime, 1.f);
+	m_pWeaponMidleUI->Set_Color(_float4(EsingColor, 1.f));
+
+	if (m_fColorEsingTime >= 1.f)
+	{
+		m_fColorEsingTime = 0.f;
+		m_bIsChangeColor = false;
+	}
+	
 }
 
 HRESULT CIngameUI::SetUp_Components()

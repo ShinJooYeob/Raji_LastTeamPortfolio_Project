@@ -122,6 +122,10 @@ void CShellingArrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 {
 	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
 	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		pUtil->PlusBowSkillPersent(1.f);
+
 		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(0.5f);
 

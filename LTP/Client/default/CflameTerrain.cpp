@@ -93,7 +93,7 @@ _int CflameTerrain::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SUBBLEND, this));
 
 #ifdef _DEBUG
-	//FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pCollider));
+	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Add_DebugGroup(m_pCollider));
 #endif // _DEBUG
 
 	return _int();
@@ -154,6 +154,11 @@ _int CflameTerrain::LateRender()
 
 void CflameTerrain::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
 }
 
 _float CflameTerrain::Compute_RenderSortValue()

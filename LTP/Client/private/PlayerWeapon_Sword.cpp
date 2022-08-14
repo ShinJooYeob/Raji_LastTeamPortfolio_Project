@@ -289,6 +289,8 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		{
 			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
+			pUtil->PlusSwordshieldSkillPersent(1.f);
+
 			if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
 				pUtil->SlowMotionStart(2.f, 0.02f);

@@ -231,7 +231,9 @@
     <ClInclude Include="..\public\Monster_Wolf.h" />
     <ClInclude Include="..\public\Monster_Wormgrub.h" />
     <ClInclude Include="..\public\Monster_Plat_Bullet.h" />
+    <ClInclude Include="..\public\ParticleCollider.h" />
     <ClInclude Include="..\public\ParticleCreater.h" />
+    <ClInclude Include="..\public\Particle_ColliderInOut.h" />
     <ClInclude Include="..\public\PathArrow.h" />
     <ClInclude Include="..\public\PauseUI.h" />
     <ClInclude Include="..\public\PillarTrigger.h" />
@@ -395,7 +397,9 @@
     <ClCompile Include="..\private\Monster_Wolf.cpp" />
     <ClCompile Include="..\private\Monster_Wormgrub.cpp" />
     <ClCompile Include="..\private\Monster_Plat_Bullet.cpp" />
+    <ClCompile Include="..\private\ParticleCollider.cpp" />
     <ClCompile Include="..\private\ParticleCreater.cpp" />
+    <ClCompile Include="..\private\Particle_ColliderInOut.cpp" />
     <ClCompile Include="..\private\PathArrow.cpp" />
     <ClCompile Include="..\private\PauseUI.cpp" />
     <ClCompile Include="..\private\PillarTrigger.cpp" />
