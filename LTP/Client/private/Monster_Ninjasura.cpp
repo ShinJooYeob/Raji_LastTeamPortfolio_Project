@@ -672,35 +672,38 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 
 HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 {
-
+	if (m_SpawnEffectAdjust == 0)
 	{
-		// ring
-		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
-			CPartilceCreateMgr::Um_Spawn2_Image,
-			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
-			0,
-			0.3f,
-			_float4(1.0f),
-			_float4(0),
-			1,
-			_float3(0.5f),
-			_float3(3.0f),
-			1);
-		testTex.iTextureLayerIndex = 18;
+		m_SpawnEffectAdjust++;
+		{
+			// ring
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+				CPartilceCreateMgr::Um_Spawn2_Image,
+				//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
+				0,
+				0.3f,
+				_float4(1.0f),
+				_float4(0),
+				1,
+				_float3(0.5f),
+				_float3(3.0f),
+				1);
+			testTex.iTextureLayerIndex = 18;
 
-		testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
-		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
-		testTex.FollowingTarget = m_pTransformCom;
-		testTex.iFollowingDir = FollowingDir_Look;
-		testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
-		testTex.m_fAlphaTestValue = 0.2f;
+			testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
+			testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Look;
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
+			testTex.m_fAlphaTestValue = 0.2f;
 
-		//	testTex.TempBuffer_0.z = 0;
-		//	testTex.TempBuffer_0.w = FollowingDir_Right;
-		//	testTex.iFollowingDir = FollowingDir_Up;
-		//	testTex.TempBuffer_1.x = 0.0f;
+			//	testTex.TempBuffer_0.z = 0;
+			//	testTex.TempBuffer_0.w = FollowingDir_Right;
+			//	testTex.iFollowingDir = FollowingDir_Up;
+			//	testTex.TempBuffer_1.x = 0.0f;
 
-		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
 	}
 	return S_OK;
 }
@@ -717,12 +720,12 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 		_uint i = m_pModel->Get_NowAnimIndex();
 		switch (i)
 		{
-		//case 1:
-		//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-		//	break;
-		//case 2:
-		//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
-		//	break;
+			//case 1:
+			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			//	break;
+			//case 2:
+			//	m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
+			//	break;
 		case 3:
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.f);
 			break;
@@ -739,7 +742,7 @@ HRESULT CMonster_Ninjasura::PlayAnim(_double dDeltaTime)
 			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.2f);
 			break;
 		default:
-			m_pModel->Change_AnimIndex(m_iOnceAnimNumber,0.15f);
+			m_pModel->Change_AnimIndex(m_iOnceAnimNumber, 0.15f);
 			break;
 		}
 	}

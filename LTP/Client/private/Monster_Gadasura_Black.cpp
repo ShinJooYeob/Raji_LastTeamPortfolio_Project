@@ -1152,59 +1152,61 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 HRESULT CMonster_Gadasura_Black::Play_SpawnEffect()
 {
 
-
-
+	if (m_SpawnEffectAdjust == 0)
 	{
-		// magic
-		INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
+		m_SpawnEffectAdjust++;
 
-			CPartilceCreateMgr::Um_Spawn3_Imagepng,
-			0.05f,
-			0,
-			_float4(0.98f, 0.15f, 0.84f, 0.8f),
-			_float4(0.98f, 0.45f, 0.94f, 0.3f),
-			1,
-			_float3(2.0f),
-			_float3(4.0f),
-			1);
+		{
+			// magic
+			INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
 
-		base.eInstanceCount = Prototype_VIBuffer_Point_Instance_1;
+				CPartilceCreateMgr::Um_Spawn3_Imagepng,
+				0.05f,
+				0,
+				_float4(0.98f, 0.15f, 0.84f, 0.8f),
+				_float4(0.98f, 0.45f, 0.94f, 0.3f),
+				1,
+				_float3(2.0f),
+				_float3(4.0f),
+				1);
+
+			base.eInstanceCount = Prototype_VIBuffer_Point_Instance_1;
 
 
-	//	base.ParticleStartRandomPosMin = _float3(0,1,0);
-	//	base.ParticleStartRandomPosMax = _float3(0,1,0);
+			//	base.ParticleStartRandomPosMin = _float3(0,1,0);
+			//	base.ParticleStartRandomPosMax = _float3(0,1,0);
 
-		GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
+			GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
 
-		base.FollowingTarget = m_pTransformCom;
-		base.iFollowingDir = FollowingDir_Right;
+			base.FollowingTarget = m_pTransformCom;
+			base.iFollowingDir = FollowingDir_Right;
 
-		GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+			GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+		}
+
+		{
+			// Sunder2
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+				0,
+				0,
+				//	_float4(0.71f, 0.29f, 0.98f, 1),
+				_float4(0.98f, 0.15f, 0.84f, 1.0f),
+				_float4(1),
+				10,
+				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+				_float3(0.1f, 1, 0.1f).XMVector() * 4.0f,
+				1);
+			testTex.vEmissive_SBB = _float3(1, 0.1f, 0.1f);
+
+			//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			testTex.ePassID = InstancePass_BrightColor;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Look;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
 	}
-
-	{
-		// Sunder2
-		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
-			0,
-			0,
-			//	_float4(0.71f, 0.29f, 0.98f, 1),
-			_float4(0.98f, 0.15f, 0.84f, 1.0f),
-			_float4(1),
-			10,
-			_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
-			_float3(0.1f, 1, 0.1f).XMVector() * 4.0f,
-			1);
-		testTex.vEmissive_SBB = _float3(1, 0.1f, 0.1f);
-
-	//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-		testTex.ePassID = InstancePass_BrightColor;
-
-		testTex.FollowingTarget = m_pTransformCom;
-		testTex.iFollowingDir = FollowingDir_Look;
-
-		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-	}
-
 	return S_OK;
 }
 

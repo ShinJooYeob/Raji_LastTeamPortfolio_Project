@@ -1006,11 +1006,14 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 }
 HRESULT CMonster_Gadasura_Rage::Play_SpawnEffect()
 {
-
+	if (m_SpawnEffectAdjust == 0)
 	{
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_Cash1, m_pTransformCom);
-	}
+		m_SpawnEffectAdjust++;
 
+		{
+			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_Cash1, m_pTransformCom);
+		}
+	}
 
 	return S_OK;
 }
