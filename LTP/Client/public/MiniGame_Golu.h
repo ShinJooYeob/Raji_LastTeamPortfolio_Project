@@ -39,8 +39,10 @@ public:
 
 	HRESULT	Camera_Walking(_double dDeltaTime);
 
+//InGame
 	HRESULT	Play_MiniGame(_double dDeltaTime);
 
+//Input
 	HRESULT	Keyboard_Input(_double dDeltatime);
 	HRESULT	SkillNumber_Input(_double dDeltatime);
 	HRESULT	Mouse_Input(_double dDeltatime);
@@ -48,6 +50,11 @@ public:
 private:
 	HRESULT	LookAt_MousePos(_float fWeight);
 	_float3	Check_MousePicking();
+
+
+private:
+	HRESULT Ready_TriggerObject(const _tchar* szTriggerDataName, SCENEID eSceneID, const _tchar* pLayerTag);
+	HRESULT	Ready_Round();
 
 
 private:

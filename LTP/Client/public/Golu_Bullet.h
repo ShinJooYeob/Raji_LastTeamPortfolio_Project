@@ -19,8 +19,11 @@ public:
 
 		_float3		fScale;
 		_float3		fPositioning;
+		_float		fSpeed;
 
 		_double		dDuration;
+
+		_float3		fDestinationPos;
 
 		void*		pObject = nullptr;
 	}GOLU_BULLETDESC;
@@ -41,15 +44,21 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT	SetUp_Info();
-
-private:
-	HRESULT	Billboard();
-	HRESULT Magnet();
+	HRESULT	SetUp_Collider();
+	HRESULT	Update_Collider(_double dDeltaTime);
 
 private:
 	HRESULT PlayOn(_double dDeltaTime);
+
+private: // ETC function
+	HRESULT	Billboard();
+	HRESULT Magnet();
+	_bool	SrcPosToDestPos(_double dDeltaTime, _float fSpeed);
+	HRESULT CreateDestPos();
+
 private:
 	HRESULT FireBall(_double dDeltaTime);
+
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -67,8 +76,6 @@ private:
 	GOLU_BULLETDESC		m_Golu_BulletDesc;
 
 	_double				m_dDurationTime = 0;
-
-
 
 
 public:

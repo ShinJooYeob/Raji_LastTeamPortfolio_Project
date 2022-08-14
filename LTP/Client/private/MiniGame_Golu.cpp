@@ -3,6 +3,7 @@
 #include "HpUI.h"
 #include "Camera_Main.h"
 #include "Golu_Bullet.h"
+#include "InstanceMonsterBatchTrigger.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -51,12 +52,17 @@ HRESULT CMiniGame_Golu::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 	//네비메쉬 47 이후 인덱스부터 아무거나 쓰면 되겠끔 만들자
+
 	return S_OK;
 }
 
 _int CMiniGame_Golu::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+
 
 	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
@@ -224,7 +230,7 @@ HRESULT CMiniGame_Golu::SetUp_Components()
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	HpDesc.m_Dimensions = 1.2f;
-	m_fMaxHP = 15.f;
+	m_fMaxHP = 9;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
@@ -374,10 +380,17 @@ HRESULT CMiniGame_Golu::Mouse_Input(_double dDeltatime)
 		CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
 
 		Golu_BulletDesc.iGoluBulletNumber = CGolu_Bullet::FIREBALL;
-		Golu_BulletDesc.fScale = _float3(0.5f, 0.5f, 0.5f);
-		Golu_BulletDesc.fPositioning = _float3(0.f, 3.f, 0.f);
+		Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+		Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 0.f);
+		Golu_BulletDesc.fSpeed = 5.f;
 		Golu_BulletDesc.dDuration = 100;
+
 		Golu_BulletDesc.pObject = this;
+
+		_float3 MousePickingPos;
+		MousePickingPos = Check_MousePicking();
+		MousePickingPos.y += 0.3f;
+		Golu_BulletDesc.fDestinationPos = MousePickingPos;
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
 	}
@@ -471,13 +484,12 @@ _float3 CMiniGame_Golu::Check_MousePicking()
 
 HRESULT CMiniGame_Golu::SetUp_Collider()
 {
-
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
 
 
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(5.f, 5.f, 5.f);
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -510,9 +522,95 @@ HRESULT CMiniGame_Golu::Update_Collider(_double dDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pColliderCom));
 
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.f, m_pNavigationCom));
 
 
+	return S_OK;
+}
+
+HRESULT CMiniGame_Golu::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+{
+	{
+
+		CGameInstance* pInstance = g_pGameInstance;
+
+		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
+		lstrcat(szFullPath, szTriggerDataName);
+
+
+		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		DWORD	dwByte = 0;
+		_int iIDLength = 0;
+
+
+
+
+		while (true)
+		{
+
+
+
+			_uint eNumber = 0;
+			_tchar eObjectID[MAX_PATH];
+			_float4x4 WorldMat = XMMatrixIdentity();
+			_float4x4 ValueData = XMMatrixIdentity();
+			_float4x4 SubValueData = XMMatrixIdentity();
+
+			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
+
+			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
+			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
+			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
+
+			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
+			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
+			if (0 == dwByte) break;
+
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
+
+			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
+
+			NULL_CHECK_RETURN(pObject, E_FAIL);
+
+			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
+
+			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
+
+			pObject->Set_ValueMat(&ValueData);
+			pObject->Set_SubValueMat(&SubValueData);
+
+			pObject->After_Initialize();
+
+		}
+
+		CloseHandle(hFile);
+	}
+
+
+
+
+
+
+
+
+	return S_OK;
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_Golu::Ready_Round()
+{
 	return S_OK;
 }
 

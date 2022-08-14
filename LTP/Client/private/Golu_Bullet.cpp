@@ -42,6 +42,7 @@ HRESULT CGolu_Bullet::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
 	return S_OK;
 }
 
@@ -60,6 +61,9 @@ _int CGolu_Bullet::Update(_double dDeltaTime)
 
 	PlayOn(dDeltaTime);
 
+
+	Update_Collider(dDeltaTime);
+
 	return _int();
 }
 
@@ -69,6 +73,10 @@ _int CGolu_Bullet::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this));
 
+
+#ifdef _DEBUG
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
+#endif
 
 	return _int();
 }
@@ -117,13 +125,15 @@ HRESULT CGolu_Bullet::SetUp_Components()
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
-	tDesc.fMovePerSec = 5;
+	tDesc.fMovePerSec = m_Golu_BulletDesc.fSpeed;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.vPivot = _float3(0, 0, 0);
 	tDesc.fScalingPerSec = 1;
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
+
+	SetUp_Collider();
 
 	return S_OK;
 }
@@ -161,6 +171,51 @@ HRESULT CGolu_Bullet::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CGolu_Bullet::SetUp_Collider()
+{
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
+
+
+	switch (m_Golu_BulletDesc.iGoluBulletNumber)
+	{
+	default:
+	{
+		COLLIDERDESC			ColliderDesc;
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		break;
+	}
+	}
+
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::Update_Collider(_double dDeltaTime)
+{
+	if (m_pColliderCom == nullptr)
+		return S_OK;
+
+	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
+
+	switch (m_Golu_BulletDesc.iGoluBulletNumber)
+	{
+	default:
+	{
+		_uint	iNumCollider = m_pColliderCom->Get_NumColliderBuffer();
+		for (_uint i = 0; i < iNumCollider; i++)
+			m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
+		break;
+	}
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pColliderCom));
+
+	return S_OK;
+}
+
 HRESULT CGolu_Bullet::Billboard()
 {
 	//뷰 스페이스에서 역행렬을 하면 카메라의 월드 스페이스가 나옴
@@ -192,6 +247,34 @@ HRESULT CGolu_Bullet::Magnet()
 	return S_OK;
 }
 
+_bool CGolu_Bullet::SrcPosToDestPos(_double dDeltaTime, _float fSpeed)
+{
+	_Vector vWorldMousePos,vDir;
+	_float	fDistance;
+
+	vWorldMousePos = XMLoadFloat3(&m_Golu_BulletDesc.fDestinationPos);
+
+	vDir = XMVector3Normalize(vWorldMousePos - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(vWorldMousePos);
+
+	if (fDistance >= 0.1)
+	{
+		m_pTransformCom->MovetoDir_bySpeed(vDir, fSpeed, dDeltaTime);
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+
+HRESULT CGolu_Bullet::CreateDestPos()
+{
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_Golu_BulletDesc.fDestinationPos);
+	return S_OK;
+}
+
 HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 {
 	switch (m_Golu_BulletDesc.iGoluBulletNumber)
@@ -213,6 +296,8 @@ HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 
 HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 {
+	SrcPosToDestPos(dDeltaTime , m_Golu_BulletDesc.fSpeed);
+
 	return S_OK;
 }
 
