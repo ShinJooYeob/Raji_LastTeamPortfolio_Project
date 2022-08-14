@@ -150,6 +150,11 @@
 #include "Monster_Plat_Bullet.h"
 ////////////////////////////////////////////////////////////////////////////////
 
+//EH Class//////////////////////////////////////////////////////////////////////
+#include "WorldTexture_Universal.h"
+#include "MiniGame_Golu.h"
+#include "Golu_Bullet.h"
+////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
 #include "TestNonAnimInstancing.h"
@@ -211,6 +216,9 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 		pLoader->Load_Scene_Laboratory_Jino(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
 
+	case SCENEID::SCENE_MINIGAME1:
+		pLoader->Load_Scene_Minigame1(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
 	case SCENEID::SCENE_EDIT:
 
 		pLoader->Load_Scene_Edit(tThreadArg.IsClientQuit, tThreadArg.CriSec);
@@ -732,9 +740,15 @@ HRESULT CLoader::Load_Scene_Stage1(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 #pragma endregion
 
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE1, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE1, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 #pragma endregion
 
@@ -783,9 +797,15 @@ HRESULT CLoader::Load_Scene_Stage2(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
 
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE2, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 	FAILED_CHECK(Load_AllMonster());
 
@@ -851,10 +871,15 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Wasp), TransformMatrix);
 
-
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE3, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE3, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 	FAILED_CHECK(Load_AllMonster());
 
@@ -923,10 +948,15 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(0.f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon), TransformMatrix);
 
-
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 
 	FAILED_CHECK(Load_AllMonster());
@@ -994,10 +1024,15 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TransformMatrix);
 
-
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 	FAILED_CHECK(Load_AllMonster());
 
@@ -1398,10 +1433,15 @@ HRESULT CLoader::Load_Scene_Stage6(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_6.dat")))))
 		return E_FAIL;
 
-
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE6, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 
 	//if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_STAGE6, TEXT("Prototype_Component_Navigation"),
@@ -1539,10 +1579,15 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 
-
+#pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_Texture_Monster_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE7, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 
 
 	FAILED_CHECK(Load_AllBoss());
@@ -1691,6 +1736,81 @@ HRESULT CLoader::Load_Scene_Ending(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	return S_OK;
 }
 
+HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+#pragma  region Static_Mesh
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
+
+#pragma  endregion
+#pragma region PROTOTYPE_COMPONENT
+
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME1, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_MiniGame1.dat")))))
+		return E_FAIL;
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
+
+
+	FAILED_CHECK(Load_AllMonster());
+
+	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME1));
+
+
+#pragma endregion
+
+#pragma region EH
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+
+	/* For.Prototype_Component_Prototype_Golu_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Golu_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Golu_Bullet.txt")));
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Golu), CMiniGame_Golu::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Golu_Bullet), CGolu_Bullet::Create(m_pDevice, m_pDeviceContext)));
+#pragma endregion
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	EnterCriticalSection(_CriSec);
+	m_iLoadingMaxCount = 1;
+	m_iLoadingProgressCount = 0;
+	LeaveCriticalSection(_CriSec);
+
+	for (int i = 0; i < m_iLoadingMaxCount; ++i)
+	{
+		EnterCriticalSection(_CriSec);
+		m_iLoadingProgressCount = i;
+		LeaveCriticalSection(_CriSec);
+	}
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	return S_OK;
+}
+
 HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -1726,8 +1846,9 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	FAILED_CHECK(Load_AllBoss());
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 //
-//	for (_uint i = 0; i < SCENE_END; i++)
-//	 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//Map Make
+	// for (_uint i = 0; i < SCENE_END; i++)
+	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 
 	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2220,6 +2341,7 @@ HRESULT CLoader::Load_AllMonster()
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Texture_Bullet), CMonster_Texture_Bullet::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Weapon_Universal), CMonster_Weapon_Universal::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Monster_Bullet_Plat), CMonster_Plat_Bullet::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_WorldTexture_Universal), CWorldTexture_Universal::Create(m_pDevice, m_pDeviceContext)));
 
 
 #pragma endregion
@@ -3615,6 +3737,134 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 
 	}
 		break;
+	case SCENE_MINIGAME1:
+	{
+		static _bool bBool = false;
+
+		if (bBool) return S_FALSE;
+		bBool = true;
+
+#pragma  region Static_Mesh
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+	
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_TempleBase_01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_D_SoldierStatue_01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Window_Ba.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SnakeMapMesh.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_Dome_014.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_3_Window_06.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_3_Window_06.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_3_Window_06.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+
+#pragma endregion
+
+	}
+	break;
 	case SCENE_END:
 		break;
 	default:

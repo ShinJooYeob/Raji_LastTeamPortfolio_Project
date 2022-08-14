@@ -37,10 +37,13 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 
+#ifdef _DEBUG
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
 
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+#endif
 
 	return S_OK;
 }
@@ -301,7 +304,9 @@ HRESULT CMonster_Jalsura::Update_Collider(_double dDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
 
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+	if (m_bRepelOff != true)
+		FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.5f, m_pNavigationCom));
+
 	return S_OK;
 }
 
@@ -570,7 +575,7 @@ HRESULT CMonster_Jalsura::SetUp_Components()
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	HpDesc.m_Dimensions = 1.5f;
+	HpDesc.m_Dimensions = 1.2f;
 	m_fMaxHP = 15.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);

@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
+    <ClInclude Include="..\public\Golu_Bullet.h" />
     <ClInclude Include="..\public\MiniGameBuilding.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
     <ClInclude Include="..\public\FogTrigger.h" />
@@ -216,10 +217,12 @@
     <ClInclude Include="..\public\MandalaPuzzle.h" />
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
+    <ClInclude Include="..\public\MiniGame_Golu.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Rage.h" />
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
     <ClInclude Include="..\public\Monster_Spider.h" />
+    <ClInclude Include="..\public\Monster_Tezabsura_Minion.h" />
     <ClInclude Include="..\public\Monster_Wasp.h" />
     <ClInclude Include="..\public\Monster_Weapon_Universal.h" />
     <ClInclude Include="..\public\Monster_Wolf.h" />
@@ -264,7 +267,6 @@
     <ClInclude Include="..\public\Monster_Texture_Bullet.h" />
     <ClInclude Include="..\public\Monster_Tezabsura_Bomber.h" />
     <ClInclude Include="..\public\Monster_Tezabsura_Landmine.h" />
-    <ClInclude Include="..\public\Monster_Tezabsura_Minion.h" />
     <ClInclude Include="..\public\Monster_Tezabsura_Purple.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Leader.h" />
     <ClInclude Include="..\public\Monster_Vayusura_Minion.h" />
@@ -289,6 +291,7 @@
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
+    <ClInclude Include="..\public\Scene_Minigame1.h" />
     <ClInclude Include="..\public\Scene_Stage1.h" />
     <ClInclude Include="..\public\Scene_Stage2.h" />
     <ClInclude Include="..\public\Scene_Boss.h" />
@@ -327,6 +330,7 @@
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="..\public\Volcano.h" />
     <ClInclude Include="..\public\WallRunTrigger.h" />
+    <ClInclude Include="..\public\WorldTexture_Universal.h" />
     <ClInclude Include="CflameTerrain.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -350,6 +354,7 @@
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
+    <ClCompile Include="..\private\Golu_Bullet.cpp" />
     <ClCompile Include="..\private\MiniGameBuilding.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
     <ClCompile Include="..\private\FogTrigger.cpp" />
@@ -369,6 +374,7 @@
     <ClCompile Include="..\private\MandalaMesh.cpp" />
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\MiniGame_Golu.cpp" />
     <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
@@ -377,6 +383,7 @@
     <ClCompile Include="..\private\Monster_Ninjasura.cpp" />
     <ClCompile Include="..\private\Monster_Ninjasura_Minion.cpp" />
     <ClCompile Include="..\private\Monster_Spider.cpp" />
+    <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp" />
     <ClCompile Include="..\private\Monster_Wasp.cpp" />
     <ClCompile Include="..\private\Monster_Weapon_Universal.cpp" />
     <ClCompile Include="..\private\Monster_Wolf.cpp" />
@@ -415,7 +422,6 @@
     <ClCompile Include="..\private\Monster_Texture_Bullet.cpp" />
     <ClCompile Include="..\private\Monster_Tezabsura_Bomber.cpp" />
     <ClCompile Include="..\private\Monster_Tezabsura_Landmine.cpp" />
-    <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp" />
     <ClCompile Include="..\private\Monster_Tezabsura_Purple.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Leader.cpp" />
     <ClCompile Include="..\private\Monster_Vayusura_Minion.cpp" />
@@ -437,6 +443,7 @@
     <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
+    <ClCompile Include="..\private\Scene_Minigame1.cpp" />
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />
     <ClCompile Include="..\private\ShellingSkillRange.cpp" />
@@ -479,6 +486,7 @@
     <ClCompile Include="..\private\UtilityMgr.cpp" />
     <ClCompile Include="..\private\Volcano.cpp" />
     <ClCompile Include="..\private\WallRunTrigger.cpp" />
+    <ClCompile Include="..\private\WorldTexture_Universal.cpp" />
     <ClCompile Include="..\public\Camera_Editor.cpp" />
     <ClCompile Include="..\public\Imgui\imgui.cpp" />
     <ClCompile Include="..\public\Imgui\imgui_demo.cpp" />

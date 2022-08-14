@@ -38,6 +38,9 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
+	_bool	Get_GroggyOn() { return m_bGroggiOn; }
+
+public:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
@@ -138,6 +141,13 @@ private://Sound
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
+
+private://groggi
+	_bool				m_bGroggiOn = false;
+
+private://Repel
+	_bool				m_bRepelOff = false;
+
 
 public:
 	static CMonster_Mahinasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
