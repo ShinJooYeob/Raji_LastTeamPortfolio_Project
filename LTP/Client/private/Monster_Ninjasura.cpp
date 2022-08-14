@@ -790,13 +790,13 @@ HRESULT CMonster_Ninjasura::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Ninjasura::Once_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 8;
 	// m_iOncePattern = 2;
 
 	if (KEYPRESS(DIK_B))
-	//	m_iOncePattern = 12;
-	m_iOncePattern = 1;
+		m_iOncePattern = 1;
+#endif // _DEBUG
 
 	switch (m_iOncePattern)
 	{

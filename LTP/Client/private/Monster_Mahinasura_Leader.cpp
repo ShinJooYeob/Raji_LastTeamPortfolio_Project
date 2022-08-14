@@ -1111,11 +1111,11 @@ HRESULT CMonster_Mahinasura_Leader::Play_SpawnEffect()
 			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
 			0,
 			0.3f,
-			_float4(1.0f),
+			_float4(0.8f),
 			_float4(0),
 			1,
 			_float3(1.0f),
-			_float3(5.0f),
+			_float3(4.0f),
 			1);
 		testTex.iTextureLayerIndex = 8;
 
@@ -1123,7 +1123,7 @@ HRESULT CMonster_Mahinasura_Leader::Play_SpawnEffect()
 		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
 		testTex.FollowingTarget = m_pTransformCom;
 		testTex.iFollowingDir = FollowingDir_Look;
-		testTex.vEmissive_SBB = _float3(1, 0.8f, 0.8f);
+		testTex.vEmissive_SBB = _float3(1, 0.5f, 0.8f);
 		testTex.m_fAlphaTestValue = 0.2f;
 
 		//	testTex.TempBuffer_0.z = 0;
@@ -1139,8 +1139,8 @@ HRESULT CMonster_Mahinasura_Leader::Play_SpawnEffect()
 		INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
 			// CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow2,
 			CPartilceCreateMgr::Um_Spawn4_smoke,
-			1.2f,
-			0.5f,
+			0.8f,
+			0.4f,
 			_float4(0.98f, 0.27f, 0.61f, 0.8f),
 			_float4(0.98f, 0.87f, 0.81f, 0.3f),
 			//	_float4(1,1,1,0.0f),

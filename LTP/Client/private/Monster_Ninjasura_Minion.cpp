@@ -592,7 +592,7 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 			testTex.iTextureLayerIndex = 10;
 			//	testTex.iMaskingTextureIndex = 74;
 			//	testTex.iNoiseTextureIndex = 160;
-			//	testTex.TempBuffer_1.y = 0.0f;
+				testTex.TempBuffer_1.y = 0.0f;
 
 			////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
 			_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
@@ -601,13 +601,7 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-		
-
 		}
-
-
-
-
 
 	}
 
@@ -735,10 +729,13 @@ HRESULT CMonster_Ninjasura_Minion::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Ninjasura_Minion::Once_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-//	m_iOncePattern = 2;
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 0;
+#endif // _DEBUG
 
 	switch (m_iOncePattern)
 	{

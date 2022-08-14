@@ -45,6 +45,10 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
+	// Partilce
+	Set_DealyTimer(0.5f);
+
+
 	return S_OK;
 }
 

@@ -45,7 +45,7 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	 Set_DealyTimer(0.5f);
+	Set_DealyTimer(1.5f);
 
 	return S_OK;
 }
@@ -60,8 +60,8 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 	m_pMotionTrail->Update_MotionTrail(dDeltaTime);
 
 	if (m_fHP <= 0)
-		m_bRepelOff = true;
 	{
+		m_bRepelOff = true;
 		m_bLookAtOn = false;
 		m_pDissolve->Update_Dissolving(dDeltaTime);
 		m_pDissolve->Set_DissolveOn(false, 2.f);
@@ -580,9 +580,13 @@ HRESULT CMonster_Vayusura_Minion::Once_AnimMotion(_double dDeltaTime)
 
 HRESULT CMonster_Vayusura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
 	// #DEBUG PatternSET
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
-		m_iInfinityPattern = 0;
+		m_iOncePattern = 0;
+#endif // _DEBUG
 
 	switch (m_iInfinityPattern)
 	{
@@ -800,17 +804,21 @@ HRESULT CMonster_Vayusura_Minion::Play_SpawnEffect()
 			CPartilceCreateMgr::Um_Spawn2_Image,
 			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
 			0,
-			0.3f,
+			0.6f,
 			_float4(1.0f),
-			_float4(0),
+			_float4(0.0f),
 			1,
 			_float3(0.5f),
 			_float3(3.0f),
 			1);
-		testTex.iTextureLayerIndex = 18;
+		testTex.iTextureLayerIndex = 20;
+		testTex.eParticleTypeID = InstanceEffect_Ball;
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 
-		testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
-		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
+
+
+		testTex.ParticleStartRandomPosMin = _float3(0, 1.2f, 0);
+		testTex.ParticleStartRandomPosMax = _float3(0, 1.2f, 0);
 		testTex.FollowingTarget = m_pTransformCom;
 		testTex.iFollowingDir = FollowingDir_Look;
 		testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
@@ -823,6 +831,37 @@ HRESULT CMonster_Vayusura_Minion::Play_SpawnEffect()
 
 		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 	}
+
+	{
+		// ring
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+			CPartilceCreateMgr::Um_Spawn4_smoke,
+			0,
+			0.4f,
+			_float4(1.0f),
+			_float4(0.0f),
+			1,
+			_float3(0.5f),
+			_float3(0.7f),
+			1);
+		testTex.iTextureLayerIndex = 20;
+		testTex.eParticleTypeID = InstanceEffect_Ball;
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+
+
+
+		testTex.ParticleStartRandomPosMin = _float3(0, 1.2f, 0);
+		testTex.ParticleStartRandomPosMax = _float3(0, 1.2f, 0);
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Look;
+		testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
+		testTex.m_fAlphaTestValue = 0.2f;
+		testTex.Particle_Power = 1.0f;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+	}
+
+
 	return S_OK;
 }
 

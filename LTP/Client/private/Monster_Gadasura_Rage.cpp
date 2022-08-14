@@ -537,12 +537,14 @@ HRESULT CMonster_Gadasura_Rage::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Rage::Once_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 51;
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
-		// m_iOncePattern = 6;
-		 m_iOncePattern = 0;
-	
+		m_iOncePattern = 0;
+#endif // _DEBUG
+
 	switch (m_iOncePattern)
 	{
 	case 0:

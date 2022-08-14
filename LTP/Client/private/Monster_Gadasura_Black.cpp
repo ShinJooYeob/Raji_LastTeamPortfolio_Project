@@ -526,11 +526,14 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
+
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 51;
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 3;
-
+#endif // _DEBUG
 
 	//_uint Once = m_iOncePattern;
 	//_uint Before = m_iAfterPattern;
