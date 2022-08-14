@@ -78,6 +78,9 @@ private:
 	_double				m_dDurationTime = 0;
 
 
+	_float				m_fAngle = 0;
+
+
 public:
 	static CGolu_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

@@ -383,7 +383,7 @@ HRESULT CMiniGame_Golu::Mouse_Input(_double dDeltatime)
 		Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
 		Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 0.f);
 		Golu_BulletDesc.fSpeed = 5.f;
-		Golu_BulletDesc.dDuration = 100;
+		Golu_BulletDesc.dDuration = 5;
 
 		Golu_BulletDesc.pObject = this;
 

@@ -44,6 +44,7 @@ HRESULT CGolu_Bullet::Initialize_Clone(void * pArg)
 
 
 	return S_OK;
+
 }
 
 _int CGolu_Bullet::Update(_double dDeltaTime)
@@ -60,7 +61,6 @@ _int CGolu_Bullet::Update(_double dDeltaTime)
 	Billboard();
 
 	PlayOn(dDeltaTime);
-
 
 	Update_Collider(dDeltaTime);
 
@@ -302,7 +302,15 @@ HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 
 HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 {
-	SrcPosToDestPos(dDeltaTime , m_Golu_BulletDesc.fSpeed);
+	m_fAngle += 360.f;
+	//로테이션이 초기 상태를 기준으로 돌림
+	//턴이 현재 상태를 기준으로 돌림
+	//m_pTransformCom->Rotation_CCW(XMVE, XMConvertToRadians(m_fAngle));
+	m_pTransformCom->Set_TurnSpeed(1);
+	m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK),XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
+
+	if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
+		Set_IsDead();
 
 	return S_OK;
 }
