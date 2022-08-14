@@ -49,13 +49,14 @@ protected:
 
 protected:
 	/* Partilce */
+	CDissolve*						m_pDissolveCom = nullptr;
 	_uint							m_EffectAdjust = 0;
 	_bool							m_bisSpawnParticle = false;
 	_bool							m_bIsPlaySpawnParticle = false;
 	_uint							m_SpawnEffectAdjust = 0;
 	_double							m_SpawnDealytime = 0;
 
-//	CModelInstance*					m_pModelInstance = nullptr;
+	//	CModelInstance*					m_pModelInstance = nullptr;
 //	vector<CTransform*>				m_vecInstancedTransform;
 
 

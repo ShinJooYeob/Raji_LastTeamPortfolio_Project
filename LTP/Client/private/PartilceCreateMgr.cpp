@@ -513,8 +513,9 @@ HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 	mVecTextureEffectDesc[Um_Spawn3_Imagepng_Snow] = pUtil->Get_TextureParticleDesc(TEXT("Um_Spawn3_Imagepng_Snow"));
 	mVecTextureEffectDesc[Um_Spawn3_Imagepng_Snow2] = pUtil->Get_TextureParticleDesc(TEXT("Um_Spawn3_Imagepng_Snow2"));
 	mVecTextureEffectDesc[Um_Spawn4_smoke] = pUtil->Get_TextureParticleDesc(TEXT("Um_Spawn4_smoke"));
+	mVecTextureEffectDesc[Um_Spawn5_Png_Ring] = pUtil->Get_TextureParticleDesc(TEXT("Um_Spawn5_Png_Ring"));
 
-
+	
 	
 	
 	
@@ -547,7 +548,8 @@ HRESULT CPartilceCreateMgr::Ready_MeshInstanceEffect()
 	mVecMeshInstDesc[Um_MeshBase_Cone] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase_Cone"));
 	mVecMeshInstDesc[Um_Mesh_Sword1] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword1"));
 	mVecMeshInstDesc[Um_Mesh_Sword2] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword2"));
-
+	mVecMeshInstDesc[Um_Mesh_MaskApper] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_MaskApper"));
+	
 
 	return S_OK;
 }
@@ -5808,6 +5810,88 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 
 	}
+	if (type == MESHEFFECT_MONSTER_NL_Cash4)
+	{
+		// 2
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Ninjasura_Knife;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.0f;
+		MeshDesc.fAppearTime = 0.3f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 317;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = 381;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 50.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.35f, 0.16f, 0.0f, 0.0f);
+		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 1.0f);
+		MeshDesc.vEmissive = _float4(0.3f, 0.1f, 0.1f, 1.f);
+		// MeshDesc.vEmissive = _float4(1);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f,s 0.1f, 1.f);
+
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0, 3, -3);
+		MeshDesc.vSize = _float3(2.0f);
+
+		// Move
+		//MeshDesc.MoveDir = FollowingDir_Look;
+		//MeshDesc.MoveSpeed = 0;
+		//AddDesc.AccMoveSpeed = 0;
+
+		// RotS
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(20, 0, 0);
+		AddDesc.LookRotSpeed = 0;
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 0;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 2.0f;
+		AddDesc.ScaleMax = 3.5f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	//	pEaseDesc = NEW MESHAEASING[2];
+	//	pEaseDesc[0] = CreateEasingDesc(TYPE_QuadOut, _float3(0, 1.f, 1.f), 0.5f);
+	//	pEaseDesc[1] = CreateEasingDesc(TYPE_Linear, _float3(0, -2.0f, 4.f), 0.2f);
+	//
+	//	Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom, pEaseDesc, 2);
+
+
+	}
+
+
+	
 
 #pragma endregion MONSTER_NL
 

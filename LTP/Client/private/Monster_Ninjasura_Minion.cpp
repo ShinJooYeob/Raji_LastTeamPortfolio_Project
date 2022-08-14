@@ -661,8 +661,8 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 				_float4(1),
 				_float4(1, 1, 1, 0.0f),
 				1,
+				_float3(0.05f, 1, 0.05f),
 				_float3(0.05f, 2, 0.05f),
-				_float3(0.05f, 4, 0.05f),
 				1);
 			//	testTex.eParticleTypeID = InstanceEffect_Ball;
 			//	testTex.ePassID = InstancePass_OriginColor;
@@ -671,11 +671,11 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 
 			testTex.vEmissive_SBB = _float3(1, 1, 1);
 
-			testTex.Particle_Power = 1.0f;
+			testTex.Particle_Power = 2.f;
 
-			_float val = 0.5f;
-			testTex.ParticleStartRandomPosMin = _float3(-val, 1, -val);
-			testTex.ParticleStartRandomPosMax = _float3(val, 3, val);
+			_float val = 0.6f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0.5f, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 2, val);
 
 			testTex.vPowerDirection = _float3(1, 1, 1);
 			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
@@ -688,40 +688,38 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
+	}
 
+
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 0.8f)
+	{
 		// smoke
-
+		m_SpawnEffectAdjust++;
 		{
-			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
-				1.0f,
-				0.6f,
-				_float4(1),
-				_float4(1, 1, 1, 0.0f),
+			// ring
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+				CPartilceCreateMgr::Um_Spawn4_smoke,
+				0.05f,
+				0.3f,
+				_float4(0.8f),
+				_float4(0.0f),
 				1,
-				_float3(0.05f, 2, 0.05f),
-				_float3(0.05f, 4, 0.05f),
+				_float3(1.0f),
+				_float3(0.0f),
 				1);
-			//	testTex.eParticleTypeID = InstanceEffect_Ball;
-			//	testTex.ePassID = InstancePass_OriginColor;
-			//	testTex.ePassID = InstancePass_BrightColor;
-			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-
-			testTex.vEmissive_SBB = _float3(1, 1, 1);
-
-			testTex.Particle_Power = 1.0f;
-
-			_float val = 0.5f;
-			testTex.ParticleStartRandomPosMin = _float3(-val, 1, -val);
-			testTex.ParticleStartRandomPosMax = _float3(val, 3, val);
-
-			testTex.vPowerDirection = _float3(1, 1, 1);
-			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
-
 			testTex.iTextureLayerIndex = 10;
-			testTex.TempBuffer_1.y = 0.0f;
+			testTex.eParticleTypeID = InstanceEffect_Fountain;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+			testTex.Particle_Power = 5.0f;
 
+
+
+			testTex.ParticleStartRandomPosMin = _float3(0,0,0);
+			testTex.ParticleStartRandomPosMax = _float3(0,0.5f,0);
 			testTex.FollowingTarget = m_pTransformCom;
-
+			testTex.iFollowingDir = FollowingDir_Up;
+			testTex.vEmissive_SBB = _float3(1, 0.8f, 0.1f);
+			testTex.m_fAlphaTestValue = 0.2f;
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}

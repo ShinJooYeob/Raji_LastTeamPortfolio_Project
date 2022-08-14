@@ -392,6 +392,8 @@ public:
 		Um_Spawn3_Imagepng_Snow,
 		Um_Spawn3_Imagepng_Snow2,
 		Um_Spawn4_smoke,
+		Um_Spawn5_Png_Ring,
+
 
 		TEXTURE_EFFECTJ_END,
 
@@ -409,7 +411,7 @@ public:
 		Um_MeshBase_Cone,
 		Um_Mesh_Sword1,
 		Um_Mesh_Sword2,
-
+		Um_Mesh_MaskApper,
 
 
 		MESHINST_EFFECTJ_END,

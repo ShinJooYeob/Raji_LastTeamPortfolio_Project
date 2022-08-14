@@ -44,7 +44,7 @@ HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
 	//////////////////////////////
 #endif
 	// Particle
-	 Set_DealyTimer(0.5f);
+	 Set_DealyTimer(2.5f);
 	return S_OK;
 }
 
@@ -453,6 +453,7 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 	{
 		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
 		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo2);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash4, m_pPlayerTransform);
 
 		//	_float4(0.25f, 0.18f, 1, 1),
 		//	_float4(0.15f, 0.38f, 1, 1),
@@ -494,6 +495,42 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 			_Vector pos = mat.r[3];
 			testMesh.vFixedPosition = pos;
 		//	testMesh.FollowingTarget = m_pTextureParticleTransform_Hand;
+
+		//	GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_Mesh_MaskApper,
+				Prototype_Mesh_SM_Ninjasura_Knife,
+				0.5f,
+				0,
+				//	_float4(0.15f, 0.38f, 1, 1),
+				//	_float4(0.25f, 0.18f, 1, 1),
+				_float4(0),
+				_float4(0),
+				0,
+				_float3(3.0f),
+				_float3(3.0f),
+				1);
+
+			//testMesh.vPowerDirection = _float3(0, 1, 0);
+			//testMesh.eParticleTypeID = InstanceEffect_Suck;
+			testMesh.eInstanceCount = Prototype_ModelInstance_4;
+			//testMesh.TempBuffer_0.w = 270;
+			//testMesh.iMaskingTextureIndex = 101;
+			//testMesh.iNoiseTextureIndex = NONNOISE;
+
+			//testMesh.vEmissive_SBB = _float3(1, 0, 0);
+			//testMesh.fDistortionNoisingPushPower = 10.0f;
+
+			_float Val = 1.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-Val, -1.f, -Val);
+			testMesh.ParticleStartRandomPosMax = _float3(Val, 1.0f, Val);
+			//testMesh.Particle_Power = 3;
+
+			testMesh.FollowingTarget = m_pTextureParticleTransform_Hand;
+			testMesh.iFollowingDir = FollowingDir_Right;
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
@@ -675,36 +712,91 @@ HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 	if (m_SpawnEffectAdjust == 0)
 	{
 		m_SpawnEffectAdjust++;
+
+
 		{
-			// ring
-			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
-				CPartilceCreateMgr::Um_Spawn2_Image,
-				//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
-				0,
-				0.3f,
-				_float4(1.0f),
-				_float4(0),
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
+				0.8f,
+				0.4f,
+				_float4(1),
+				_float4(1, 1, 1, 0.0f),
 				1,
-				_float3(0.5f),
-				_float3(3.0f),
+				_float3(0.05f, 1.2f, 0.05f),
+				_float3(0.05f, 1.5f, 0.05f),
 				1);
-			testTex.iTextureLayerIndex = 18;
+			//	testTex.eParticleTypeID = InstanceEffect_Ball;
+			//	testTex.ePassID = InstancePass_OriginColor;
+			//	testTex.ePassID = InstancePass_BrightColor;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
 
-			testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
-			testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
+			testTex.vEmissive_SBB = _float3(1, 1.f, 0.5f);
+
+			testTex.Particle_Power = 2.f;
+
+			_float val = 0.7f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0.0f, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 2.f, val);
+
+			testTex.vPowerDirection = _float3(1, 1, 1);
+			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+			testTex.iTextureLayerIndex = 3;
+			testTex.TempBuffer_1.y = 0.0f;
+
 			testTex.FollowingTarget = m_pTransformCom;
-			testTex.iFollowingDir = FollowingDir_Look;
-			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
-			testTex.m_fAlphaTestValue = 0.2f;
-
-			//	testTex.TempBuffer_0.z = 0;
-			//	testTex.TempBuffer_0.w = FollowingDir_Right;
-			//	testTex.iFollowingDir = FollowingDir_Up;
-			//	testTex.TempBuffer_1.x = 0.0f;
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
+
 	}
+
+
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.0f)
+	{
+		m_SpawnEffectAdjust++;
+
+		// smoke
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				0.05f,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(0.5f),
+				_float3(0.3f),
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+			testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.ePassID = InstancePass_MaskingNoising;s
+			// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.3f);
+
+			_float val = 0.8f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+			testTex.Particle_Power = 5.0f;
+
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
+
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
+
+		//	testTex.m_fAlphaTestValue = 0.2f;
+
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+	}
+
 	return S_OK;
 }
 
@@ -1879,6 +1971,7 @@ HRESULT CMonster_Ninjasura::Adjust_AnimMovedTransform(_double dDeltaTime)
 					testTex.ePassID = InstancePass_BrightColor;
 					//	testTex.ePassID = InstancePass_MaskingNoising;s
 					// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+					 testTex.vEmissive_SBB = _float3(1, 0.5f, 0.3f);
 
 
 					testTex.ParticleStartRandomPosMin = _float3(-1, 0, -1);
