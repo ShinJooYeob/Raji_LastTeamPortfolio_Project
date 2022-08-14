@@ -51,6 +51,8 @@ protected:
 	/* Partilce */
 	_uint							m_EffectAdjust = 0;
 	_bool							m_bisSpawnParticle = false;
+	_bool							m_bIsPlaySpawnParticle = false;
+	
 	_double							m_SpawnDealytime = 0;
 
 //	CModelInstance*					m_pModelInstance = nullptr;

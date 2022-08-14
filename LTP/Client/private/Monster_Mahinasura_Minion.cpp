@@ -34,7 +34,6 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 	//m_pTransformCom->Scaled_All(_float3(100, 100, 100));
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(170));
 
-
 	SetUp_Info();
 
 	//#BUG NAVIONPLEASE
@@ -52,8 +51,7 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 
 	// Particle
-	m_SpawnDealytime = 0.5f;
-	Play_SpawnEffect();
+	Set_DealyTimer(0.5f);
 
 	return S_OK;
 }

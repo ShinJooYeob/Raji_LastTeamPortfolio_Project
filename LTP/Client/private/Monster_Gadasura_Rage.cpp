@@ -41,14 +41,13 @@ HRESULT CMonster_Gadasura_Rage::Initialize_Clone(void * pArg)
 
 	//////////////////testPosition
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 
 	// Particle
-	m_SpawnDealytime = 0.5f;
-	Play_SpawnEffect();
+	 Set_DealyTimer(1.0f);
 
 	return S_OK;
 }
@@ -1005,8 +1004,15 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 }
 HRESULT CMonster_Gadasura_Rage::Play_SpawnEffect()
 {
+
+	{
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_Cash1, m_pTransformCom);
+	}
+
+
 	return S_OK;
 }
+
 HRESULT CMonster_Gadasura_Rage::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));

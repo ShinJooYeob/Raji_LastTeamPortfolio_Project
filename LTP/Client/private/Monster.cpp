@@ -31,7 +31,8 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 	m_EffectAdjust = 0;
 
 	m_bisSpawnParticle = false;
-
+	m_bIsPlaySpawnParticle = false;
+	
 
 
 	return S_OK;
@@ -44,6 +45,12 @@ _int CMonster::Update(_double dDeltaTime)
 
 	if (m_bisSpawnParticle == false)
 	{
+		if (m_bIsPlaySpawnParticle == false)
+		{
+			m_bIsPlaySpawnParticle = true;
+			Play_SpawnEffect();
+		}
+
 		if (m_SpawnDealytime < 0)
 		{
 			m_bisSpawnParticle = true;

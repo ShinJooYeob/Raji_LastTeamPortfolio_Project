@@ -47,8 +47,7 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 
 	// Particle
-	m_SpawnDealytime = 0.5f;
-	Play_SpawnEffect();
+	Set_DealyTimer(0.5f);
 
 	return S_OK;
 }

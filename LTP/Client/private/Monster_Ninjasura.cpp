@@ -39,11 +39,12 @@ HRESULT CMonster_Ninjasura::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	//////////////////testPosition
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 #endif
-
+	// Particle
+	 Set_DealyTimer(0.5f);
 	return S_OK;
 }
 
@@ -671,6 +672,36 @@ HRESULT CMonster_Ninjasura::Update_Particle(_double timer)
 
 HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 {
+
+	{
+		// ring
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+			CPartilceCreateMgr::Um_Spawn2_Image,
+			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
+			0,
+			0.3f,
+			_float4(1.0f),
+			_float4(0),
+			1,
+			_float3(0.5f),
+			_float3(3.0f),
+			1);
+		testTex.iTextureLayerIndex = 18;
+
+		testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
+		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Look;
+		testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
+		testTex.m_fAlphaTestValue = 0.2f;
+
+		//	testTex.TempBuffer_0.z = 0;
+		//	testTex.TempBuffer_0.w = FollowingDir_Right;
+		//	testTex.iFollowingDir = FollowingDir_Up;
+		//	testTex.TempBuffer_1.x = 0.0f;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+	}
 	return S_OK;
 }
 
