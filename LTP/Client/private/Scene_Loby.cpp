@@ -198,6 +198,7 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_LOBY, TAG_LAY(Layer_Camera_Main)));
 
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+	m_pMainCam->Ortho_OnOff(false);
 
 	return S_OK;
 }

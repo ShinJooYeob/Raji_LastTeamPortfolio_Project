@@ -44,7 +44,6 @@ HRESULT CGolu_Bullet::Initialize_Clone(void * pArg)
 
 
 	return S_OK;
-
 }
 
 _int CGolu_Bullet::Update(_double dDeltaTime)
@@ -178,7 +177,7 @@ HRESULT CGolu_Bullet::SetUp_Collider()
 
 	switch (m_Golu_BulletDesc.iGoluBulletNumber)
 	{
-	case 0:
+	case 10:
 		break;
 
 	default:
@@ -206,7 +205,7 @@ HRESULT CGolu_Bullet::Update_Collider(_double dDeltaTime)
 	switch (m_Golu_BulletDesc.iGoluBulletNumber)
 	{
 
-	case 0:
+	case 10:
 		break;
 	default:
 	{

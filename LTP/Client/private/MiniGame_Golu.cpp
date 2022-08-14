@@ -60,10 +60,6 @@ _int CMiniGame_Golu::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-
-
 	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	if (m_fHP <= 0)
@@ -162,8 +158,8 @@ void CMiniGame_Golu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 
 _float CMiniGame_Golu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	m_fHP += -fDamageAmount;
+	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	//m_fHP += -fDamageAmount;
 
 
 	if (0 >= m_fHP)
@@ -307,6 +303,10 @@ HRESULT CMiniGame_Golu::SetUp_Info()
 HRESULT CMiniGame_Golu::Play_MiniGame(_double dDeltaTime)
 {
 	Keyboard_Input(dDeltaTime);
+
+
+
+	Ready_Round();
 	return S_OK;
 }
 
@@ -458,28 +458,34 @@ _float3 CMiniGame_Golu::Check_MousePicking()
 		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
 		0, 1.f);
 
-	_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+	//_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
 
-	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+	//_Vector vRayDir = XMVectorSetW(XMVector4Transform(vCursorPos, InvProjMat), 0);// - XMVectorSet(0, 0, 0, 1);
 
-	_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
-	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
-
-
-	CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
-	_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+	//_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	//vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
 
 
-	_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
+	//CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	//_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
 
-	_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
 
-	fPickingPos.x = vTargetPos.x;
-	fPickingPos.y = fPos_Y + 0.001f;
-	fPickingPos.z = vTargetPos.z;
+	//_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
 
-	return fPickingPos;
+	//_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
+
+	
+	_float3 vPlayerPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	_float3 vTargetPos = _float3(vPlayerPos.x + XMVectorGetX(vCursorPos)* ORTHOGONAL_CAMERA_Y *g_iWinCX / g_iWinCY * 0.5f, vPlayerPos.y, vPlayerPos.z + XMVectorGetY(vCursorPos)* ORTHOGONAL_CAMERA_Y * 0.5f);
+	
+
+	//fPickingPos.x = vTargetPos.x;
+	//fPickingPos.y = fPos_Y + 0.001f;
+	//fPickingPos.z = vTargetPos.z;
+
+	return vTargetPos;
 }
 
 HRESULT CMiniGame_Golu::SetUp_Collider()
@@ -611,7 +617,56 @@ HRESULT CMiniGame_Golu::Ready_TriggerObject(const _tchar * szTriggerDataName, SC
 
 HRESULT CMiniGame_Golu::Ready_Round()
 {
+	if (m_bNextRoundOn == true)
+	{
+		switch (m_iNextRoundNumber)
+		{
+		case 1:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 2:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger2.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 3:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger3.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 4:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger4.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	CInstanceMonsterBatchTrigger* TriggerObject = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+
+	if (TriggerObject == nullptr)
+	{
+		m_bNextRoundOn = true;
+	}
+	//if (TriggerObject->Get_MonsterAllDie() == true)
+	//{
+	//	m_bNextRoundOn = true;
+	//}
+
 	return S_OK;
+
 }
 
 HRESULT CMiniGame_Golu::Camera_Walking(_double dDeltaTime)

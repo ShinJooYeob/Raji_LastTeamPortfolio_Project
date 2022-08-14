@@ -42,9 +42,10 @@ public:
 
 protected:
 	_bool						m_bIsOrtho = true;
+	_float						m_fIsOrthoScreenSize = 30.f;
+
 	CTransform*					m_pTransform = nullptr;
 	CAMERADESC					m_CameraDesc;
-
 
 
 public:

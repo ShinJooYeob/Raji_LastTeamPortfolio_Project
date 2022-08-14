@@ -275,6 +275,7 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Set_TargetArmLength(15.f);
 	m_pMainCam->Set_MaxTargetArmLength(15.f);
 	m_pMainCam->Set_MinTargetArmLength(15.f);
+	m_pMainCam->Ortho_OnOff(false);
 	return S_OK;
 }
 

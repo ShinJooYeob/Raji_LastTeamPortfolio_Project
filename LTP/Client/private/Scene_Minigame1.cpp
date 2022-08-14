@@ -9,6 +9,7 @@
 #include "MiniGameBuilding.h"
 #include "MiniGame_Golu.h"
 
+
 CScene_Minigame1::CScene_Minigame1(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
 {
@@ -208,6 +209,7 @@ HRESULT CScene_Minigame1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Set_TargetArmLength(40.f); //Camera Length
 	m_pMainCam->Set_MaxTargetArmLength(10.f);
 	m_pMainCam->Set_MinTargetArmLength(1.f);
+	m_pMainCam->Ortho_OnOff(true, ORTHOGONAL_CAMERA_Y);
 	return S_OK;
 }
 

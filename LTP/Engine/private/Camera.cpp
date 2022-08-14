@@ -63,7 +63,7 @@ _int CCamera::Update(_double fDeltaTime, _bool bOrtho)
 		return -1;
 
 	Set_ViewMatrix();
-	Set_ProjectMatrix();
+	Set_ProjectMatrix(bOrtho);
 	//if (FAILED(m_pGraphicDevice->SetTransform(D3DTS_VIEW, &(m_pTransform->Get_InverseWorldMatrix()))))
 	//	return -1;
 
@@ -112,7 +112,7 @@ HRESULT CCamera::Set_ProjectMatrix(_bool bIsOrtho)
 	CGameInstance* pIsntance = GetSingle(CGameInstance);
 
 	if (bIsOrtho)
-		pIsntance->Set_Transform(PLM_PROJ, XMMatrixOrthographicLH(_float(m_CameraDesc.iWinCX), _float(m_CameraDesc.iWinCY), 0.f, 1.f));
+		pIsntance->Set_Transform(PLM_PROJ, XMMatrixOrthographicLH(_float(m_fIsOrthoScreenSize * m_CameraDesc.fAspect), _float(m_fIsOrthoScreenSize), -m_CameraDesc.fFar, m_CameraDesc.fFar));
 
 	else
 		pIsntance->Set_Transform(PLM_PROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy,

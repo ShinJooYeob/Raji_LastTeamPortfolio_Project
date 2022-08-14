@@ -339,6 +339,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Set_MaxTargetArmLength(12.f);
 	m_pMainCam->Set_MinTargetArmLength(6.f);
 	m_pMainCam->Set_TargetArmLength(10.f);
+	m_pMainCam->Ortho_OnOff(false);
 	return S_OK;
 }
 

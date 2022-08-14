@@ -229,7 +229,6 @@ HRESULT CScene_Stage1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 
 		NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-
 	}
 	else 
 	{
@@ -237,6 +236,7 @@ HRESULT CScene_Stage1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	
 	m_pMainCam->Set_TargetArmLength(8.f);
+	m_pMainCam->Ortho_OnOff(false);
 
 	return S_OK;
 }

@@ -112,6 +112,12 @@ void CCamera_Main::Lock_CamLook(_bool bCamLock, _fVector vFixDir)
 	m_fFixLookDir = vFixDir;
 }
 
+void CCamera_Main::Ortho_OnOff(_bool bBool, _float fScreenYPixel)
+{
+	m_bIsOrtho = bBool;
+	m_fIsOrthoScreenSize = fScreenYPixel;
+}
+
 _fVector CCamera_Main::Get_CameraState(CTransform::TransformState eState)
 {
 	return  m_pTransform->Get_MatrixState(eState);
@@ -296,7 +302,7 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 
 _int CCamera_Main::Update(_double fDeltaTime)
 {
-	__super::Update(fDeltaTime);
+	__super::Update(fDeltaTime,m_bIsOrtho);
 
 	Update_CamMoveWeight();
 

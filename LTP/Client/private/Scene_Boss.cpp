@@ -141,7 +141,8 @@ HRESULT CScene_Boss::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE3);
 	}
-	
+	m_pMainCam->Ortho_OnOff(false);
+
 	return S_OK;
 }
 
