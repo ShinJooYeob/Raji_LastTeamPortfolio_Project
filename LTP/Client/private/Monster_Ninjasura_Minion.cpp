@@ -44,7 +44,7 @@ HRESULT CMonster_Ninjasura_Minion::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	 Set_DealyTimer(2.5f);
+	 Set_DealyDIssolveTime(2.5f);
 	return S_OK;
 }
 
@@ -132,6 +132,15 @@ _int CMonster_Ninjasura_Minion::LateUpdate(_double dDeltaTime)
 #endif
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_pHPUI != nullptr && m_bMotionTrailOn == false)
 	{
@@ -954,7 +963,7 @@ HRESULT CMonster_Ninjasura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 	switch (m_iInfinityPattern)
 	{
 	case 0:
-		m_iInfinityAnimNumber = 0;
+		m_iInfinityAnimNumber = 1;
 		break;
 	case 1:
 		m_iInfinityAnimNumber = 1;
@@ -973,6 +982,9 @@ HRESULT CMonster_Ninjasura_Minion::Infinity_AnimMotion(_double dDeltaTime)
 		break;
 	case 6:
 		m_iInfinityAnimNumber = 1;
+		break;
+	case 20:
+		m_iInfinityAnimNumber = 0;
 		break;
 	default:
 		m_iInfinityAnimNumber = 1;
@@ -1071,7 +1083,7 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 		{
 			if (m_iAdjMovedIndex == 0 && m_bMotionTrailOn == false)
 			{
-				m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
+			//	m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.f, 0.f, 1.f), 1.f);
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1005.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 1.f);
 				m_iAdjMovedIndex++;
 			}

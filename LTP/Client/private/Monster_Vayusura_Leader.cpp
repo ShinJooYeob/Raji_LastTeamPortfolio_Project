@@ -46,7 +46,7 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	 Set_DealyTimer(0.5f);
+	 Set_DealyDIssolveTime(0.5f);
 
 
 	return S_OK;
@@ -133,6 +133,15 @@ _int CMonster_Vayusura_Leader::LateUpdate(_double dDeltaTime)
 #ifdef _DEBUG
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 #endif
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_pHPUI != nullptr)
 	{

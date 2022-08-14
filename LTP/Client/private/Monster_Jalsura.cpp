@@ -46,7 +46,7 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 #endif
 
 	// Partilce
-	Set_DealyTimer(0.5f);
+	Set_DealyDIssolveTime(0.5f);
 
 
 	return S_OK;

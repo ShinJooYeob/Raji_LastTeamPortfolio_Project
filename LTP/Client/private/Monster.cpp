@@ -31,7 +31,7 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 	m_EffectAdjust = 0;
 
 	m_bisSpawnParticle = false;
-	m_bIsPlaySpawnParticle = false;
+	m_bIsSpawnPartilceOne = false;
 	
 	m_SpawnEffectAdjust = 0;
 
@@ -48,9 +48,9 @@ _int CMonster::Update(_double dDeltaTime)
 	{
 		Play_SpawnEffect();
 
-		if (m_bIsPlaySpawnParticle == false)
+		if (m_bIsSpawnPartilceOne == false)
 		{
-			m_bIsPlaySpawnParticle = true;
+			m_bIsSpawnPartilceOne = true;
 		}
 
 		if (m_SpawnDealytime < 0)
@@ -144,6 +144,5 @@ void CMonster::Free()
 	__super::Free();
 
 	Safe_Release(m_pNavigationCom);
-	Safe_Release(m_pDissolveCom);
 
 }

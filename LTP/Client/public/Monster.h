@@ -41,7 +41,11 @@ protected:
 	virtual HRESULT		Update_Particle(_double timer);
 
 	virtual HRESULT		Play_SpawnEffect(); // SpawnEffect
-	void				Set_DealyTimer(_double time) { m_SpawnDealytime = time; }
+	void				Set_DealyDIssolveTime(_double time, _double disTIme = 0.5f)
+	{
+		m_SpawnDealytime = time; 
+		m_SpawnDissolveTime = disTIme;
+	}
 
 	virtual HRESULT		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool * pb = nullptr);
 
@@ -49,12 +53,13 @@ protected:
 
 protected:
 	/* Partilce */
-	CDissolve*						m_pDissolveCom = nullptr;
 	_uint							m_EffectAdjust = 0;
 	_bool							m_bisSpawnParticle = false;
-	_bool							m_bIsPlaySpawnParticle = false;
+	_bool							m_bIsSpawnPartilceOne = false;
+	_bool							m_bIsSpawnDissolove = false;
 	_uint							m_SpawnEffectAdjust = 0;
 	_double							m_SpawnDealytime = 0;
+	_double							m_SpawnDissolveTime= 0.5f;
 
 	//	CModelInstance*					m_pModelInstance = nullptr;
 //	vector<CTransform*>				m_vecInstancedTransform;

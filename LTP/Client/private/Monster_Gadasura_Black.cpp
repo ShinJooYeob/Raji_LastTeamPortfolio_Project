@@ -49,7 +49,7 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 #endif
 
 	// Particle
-	 Set_DealyTimer(0.8f);
+	 Set_DealyDIssolveTime(0.8f);
 	return S_OK;
 }
 
@@ -123,6 +123,15 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
@@ -710,6 +719,9 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 	case 6:
 		m_iInfinityAnimNumber = 24;
 		break;
+	case 24:
+		m_iInfinityAnimNumber = 0;
+		break;
 	default:
 		m_iInfinityAnimNumber = 0;
 		break;
@@ -1285,6 +1297,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			m_bLookAtOn = false;
+			break;
+		}
 		case 3:
 		{
 			if (PlayRate >= 0.28571 && PlayRate <= 0.571428)

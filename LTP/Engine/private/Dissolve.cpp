@@ -279,7 +279,8 @@ _int CDissolve::Render_Shadow(_uint iPassIndex)
 
 HRESULT CDissolve::Set_DissolveOn(_bool bFadeIn, _double TargetTime)
 {
-	if (m_PassedTime < m_TargetTime) return S_FALSE;
+	if (m_PassedTime < m_TargetTime)
+		return S_FALSE;
 
 	m_bIsDissolving = true;
 	m_bIsFadeIn = bFadeIn;

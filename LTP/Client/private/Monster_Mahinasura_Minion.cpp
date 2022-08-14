@@ -51,7 +51,7 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 
 	// Particle
-	Set_DealyTimer(0.5f);
+	Set_DealyDIssolveTime(0.5f);
 
 	return S_OK;
 }
@@ -63,6 +63,8 @@ _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime)  == UPDATE_SKIP)
 		return UPDATE_SKIP;
+
+	
 
 	if (m_fHP <= 0)
 	{
@@ -142,6 +144,14 @@ _int CMonster_Mahinasura_Minion::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
@@ -318,6 +328,7 @@ HRESULT CMonster_Mahinasura_Minion::Update_Particle(_double timer)
 	if (KEYDOWN(DIK_V))
 	{
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_TEST, m_pTextureParticleTransform_LHand);
+		mTest_DisSpawn = !mTest_DisSpawn;
 	}
 
 	if (KEYDOWN(DIK_C))

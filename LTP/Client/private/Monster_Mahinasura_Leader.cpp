@@ -47,7 +47,7 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 
 	// Particle
-	Set_DealyTimer(0.5f);
+	Set_DealyDIssolveTime(0.5f);
 
 	return S_OK;
 }
@@ -135,6 +135,15 @@ _int CMonster_Mahinasura_Leader::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 	
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
+
 	if (m_pHPUI != nullptr)
 	{
 		m_pHPUI->LateUpdate(dDeltaTime);
