@@ -199,8 +199,6 @@ void CMonster_Vayusura_Leader::CollisionTriger(CCollider * pMyCollider, _uint iM
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
 
-		Safe_Release(m_BulletObj);
-
 	}
 }
 
@@ -602,8 +600,7 @@ HRESULT CMonster_Vayusura_Leader::Ready_ParticleDesc()
 	m_pTextureParticleTransform_Demo1 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo1);
 
-	m_pTextureParticleTransform_Demo2 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
-	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo2);
+
 
 	m_pTextureParticleTransform_Demo3 = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_BREAK(m_pTextureParticleTransform_Demo3);
@@ -628,100 +625,11 @@ HRESULT CMonster_Vayusura_Leader::Update_Particle(_double timer)
 	mat_World.r[3] = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World); // Head
 
-	if (m_BulletObj)
-	{
-		CTransform* trans = (CTransform*)m_BulletObj->Get_Component(TAG_COM(Com_Transform));
-		m_pTextureParticleTransform_Demo2->Set_Matrix(trans->Get_WorldMatrix());
-
-	}
-
-	m_dealyEffect_Time -= timer;
-
-	if (m_dealyEffect_Rain && m_dealyEffect_Time <= 0)
-	{
-		m_dealyEffect_Rain = false;
-
-		{
-
-			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_ICE2,
-				Prototype_Mesh_SM_RainDrop,
-				3.f,
-				0.5f,
-				_float4(0.0f, 0.0f, 1.0f, 1),
-				_float4(1.0f, 1.0f, 1.0f, 1),
-				1,
-				//_float3(0.3f, 0.5f, 0.3f),
-				//_float3(0.3f, 0.5f, 0.3f),
-				_float3(0.15f, 0.4f, 0.15f),
-				_float3(0.15f, 0.4f, 0.15f),
-				1);
-
-			// testMesh.fDistortionNoisingPushPower = 0;
-			testMesh.Particle_Power = -20.0f;
-			// testMesh.ePassID = MeshPass_MaskingNoising;
-			// testMesh.eParticleTypeID = InstanceEffect_Fountain;
-			testMesh.eInstanceCount = Prototype_ModelInstance_64;
-			// _float randpower = GetSingle(CUtilityMgr)->RandomFloat(3, 8);
-			// 
-			// testMesh.Particle_Power = randpower;
-			// testMesh.iNoiseTextureIndex = NONNOISE;
-			// 
-			testMesh.ParticleStartRandomPosMin = _float3(-5, 10, -5);
-			testMesh.ParticleStartRandomPosMax = _float3(5, 10,5);
-			_Matrix mat = m_pTextureParticleTransform_Demo2->Get_WorldMatrix();
-			_Vector pos = mat.r[3];
-			testMesh.vFixedPosition = pos;
-
-			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-		}
-
-		{
-			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_PLANE,
-				Prototype_Mesh_circle,
-				3.0f,
-				0.3f,
-				_float4(0.15f, 0.38f, 0.92f, 1),
-				_float4(0.15f, 0.38f, 0.92f, 0.0f),
-				1,
-				_float3(1.0f),
-				_float3(15.0f),
-				1);
-
-			// testMesh.fDistortionNoisingPushPower = 0;
-			// testMesh.Particle_Power = ;
-			// testMesh.eParticleTypeID = InstanceEffect_Fountain;
-			testMesh.eInstanceCount = Prototype_ModelInstance_8;
-			testMesh.ePassID = MeshPass_MaskingNoising;
-			// testMesh.Particle_Power = randpower;
-			testMesh.iMaskingTextureIndex = 64;
-			testMesh.iNoiseTextureIndex = 102;
-			testMesh.vEmissive_SBB = _float3(1, 0, 0);
-
-			testMesh.ParticleStartRandomPosMin = _float3(-5, 0.0f, -5);
-			testMesh.ParticleStartRandomPosMax = _float3(5, 0.0f, 5);
-			_Matrix mat = m_pPlayerTransform->Get_WorldMatrix();
-			_Vector pos = mat.r[3];
-			testMesh.vFixedPosition = pos;
-			testMesh.vNoisePushingDir = _float2(-1, 0);
-			// GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-
-			//testMesh.iMaskingTextureIndex = 200;
-			//GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-
-			//testMesh.iMaskingTextureIndex = 144;
-			//GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-		}
-
-	}
-
-
-
 	if (KEYDOWN(DIK_V))
 	{
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash3, m_pTextureParticleTransform_Demo2);
 
 		{
-
 		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_ICE2,
 			Prototype_Mesh_SM_RainDrop,
 			3.f,
@@ -893,24 +801,6 @@ HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
 	return S_OK;
 }
 
-void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet(bool bParticle)
-{
-	if (bParticle)
-	{
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash2, m_pTextureParticleTransform_Demo2);
-	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash1, m_pTextureParticleTransform_Demo2);
-		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash3, m_pTextureParticleTransform_Demo2);
-
-		m_dealyEffect_Rain = true;
-		m_dealyEffect_Time = 1.0f;
-
-	}
-
-	m_BulletMeshEffect = nullptr;
-	Safe_Release(m_BulletObj);
-
-}
-
 HRESULT CMonster_Vayusura_Leader::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -1061,11 +951,8 @@ HRESULT CMonster_Vayusura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime)
 				Monster_BulletDesc.pBoneName = "heel_twist_01_r";
 
 				
-				Set_Bullet(g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc));
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTextureParticleTransform_Demo2);
-				m_BulletMeshEffect = (CGameObject*)GETPARTICLE->GetMeshEffect();
-				if (m_BulletMeshEffect == nullptr)
-					DEBUGBREAK;
+				g_pGameInstance->Add_GameObject_GetObject(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Bullet_Universal), &Monster_BulletDesc);
+		
 
 				//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1145.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.5f);
 
@@ -1139,9 +1026,7 @@ void CMonster_Vayusura_Leader::Free()
 	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pTextureParticleTransform_Demo1);
-	Safe_Release(m_pTextureParticleTransform_Demo2);
 	Safe_Release(m_pTextureParticleTransform_Demo3);
 	Safe_Release(m_pTextureParticleTransform_Demo4);
-	Safe_Release(m_BulletObj);
 	
 }

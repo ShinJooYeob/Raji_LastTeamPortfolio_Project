@@ -118,6 +118,48 @@ HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 	return S_OK;
 }
 
+_int CPartilceCreateMgr::Update_EffectMgr(_double Timer)
+{
+	if (mListMeshInstDesc_Delay.empty() == false)
+	{
+		mListMeshInstDesc_Delay.begin();
+		for (auto iter = mListMeshInstDesc_Delay.begin(); iter != mListMeshInstDesc_Delay.end();)
+		{
+
+			iter->timer -= Timer;
+			if (iter->timer <= 0)
+			{
+				FAILED_CHECK(GetSingle(CUtilityMgr)->Create_MeshInstance(iter->scene, iter->data));
+				iter = mListMeshInstDesc_Delay.erase(iter);
+			}
+			else
+				iter++;
+		}
+	}
+
+
+
+	if (mListParticleDesc_Delay.empty() == false)
+	{
+		mListParticleDesc_Delay.begin();
+		for (auto iter = mListParticleDesc_Delay.begin(); iter != mListParticleDesc_Delay.end();)
+		{
+			
+			iter->timer -= Timer;
+			if (iter->timer <= 0)
+			{
+				FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(iter->scene, iter->data));
+				iter = mListParticleDesc_Delay.erase(iter);
+			}
+			else
+				iter++;
+		}
+
+	}
+
+	return 0;
+}
+
 HRESULT CPartilceCreateMgr::Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform)
 {
 	INSTPARTICLEDESC texdesc = Get_TypeDesc_TextureInstance(type);
@@ -163,10 +205,23 @@ HRESULT CPartilceCreateMgr::Create_MeshInst_Effect_World(E_MESHINST_EFFECTJ type
 }
 
 
-HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene)
+HRESULT CPartilceCreateMgr::Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene,_double timer)
 {
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(scene, desc));
+	if (timer != 0)
+	{
+		DELAYTEX tex;
+		tex.data = desc;
+		tex.scene = scene;
+		tex.timer = timer;
+
+		mListParticleDesc_Delay.push_back(tex);
+	}
+	else
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_TextureInstance(scene, desc));
+	}
+
 
 	return S_OK;
 }
@@ -203,13 +258,25 @@ void CPartilceCreateMgr::Set_CreatBound_Tex(INSTPARTICLEDESC & tex, _float3 Min,
 
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene)
+HRESULT CPartilceCreateMgr::Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene, _double timer)
 {
+	if (timer != 0)
+	{
+		DELAYMESH mesh;
+		mesh.data = desc;
+		mesh.scene = scene;
+		mesh.timer = timer;
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Create_MeshInstance(scene, desc));
+		mListMeshInstDesc_Delay.push_back(mesh);
+	}
+	else
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Create_MeshInstance(scene, desc));
+	}
 
 	return S_OK;
 }
+
 
 INSTMESHDESC CPartilceCreateMgr::Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e, COMPONENTPROTOTYPEID meshtype, _float TotalTime, _float EachTime, _float4 Color1, _float4 Color2, _uint colorFrequency, _float3 Size1, _float3 Size2, _uint sizeFrequency)
 {
@@ -5041,7 +5108,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		// Fix
 		AddDesc.FixFlag_Move = true;
 		AddDesc.FixFlag_Rot = true;
-		AddDesc.FollowTarget = Transfom;
+		AddDesc.FollowTarget = nullptr;
+		
 
 		// Shader
 		MeshDesc.m_iPassIndex = 16; // ¿Ö°î

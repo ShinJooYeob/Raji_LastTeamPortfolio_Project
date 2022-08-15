@@ -89,11 +89,18 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		Set_IsDead();
 		return _int();
 	}
-	if (m_pParentTranscom->Get_IsOwnerDead())
+	if(mAddDesc.FixFlag_Move)
+	{ }
+	else
 	{
-		Set_IsDead();
-		return _int();
+
+		if (m_pParentTranscom->Get_IsOwnerDead())
+		{
+			Set_IsDead();
+			return _int();
+		}
 	}
+
 
 	
 
