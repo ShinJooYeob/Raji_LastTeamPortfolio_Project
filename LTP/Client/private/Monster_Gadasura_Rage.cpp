@@ -791,15 +791,10 @@ HRESULT CMonster_Gadasura_Rage::Update_Particle(_double timer)
 	_Matrix mat_Weapon = (*m_pWeapon->Get_VecAttachedDesc())[0].Caculate_AttachedBoneMatrix_BlenderFixed();
 	m_pTextureParticleTransform_Hand->Set_Matrix(mat_Weapon);
 
-
-
 	mat_World.r[0] = XMVector3Normalize(mat_World.r[0]);
 	mat_World.r[1] = XMVector3Normalize(mat_World.r[1]);
 	mat_World.r[2] = XMVector3Normalize(mat_World.r[2]);
 	m_pTextureParticleTransform_Demo1->Set_Matrix(mat_World);
-
-
-
 
 #ifdef _DEBUG
 	if (KEYDOWN(DIK_V))

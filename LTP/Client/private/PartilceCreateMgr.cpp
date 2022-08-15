@@ -4312,30 +4312,30 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.eMeshType = Prototype_Mesh_SM_SG_tornado;
 
 		// Time
-		MeshDesc.fMaxTime_Duration = 0.8f;
-		MeshDesc.fAppearTime = 0.4f;
+		MeshDesc.fMaxTime_Duration = 1.0f;
+		MeshDesc.fAppearTime = 0.8f;
 		AddDesc.bAfterApperTime = false;
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 302;
-		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 0;
+		MeshDesc.MaskTextureIndex = 80;
 		MeshDesc.NoiseTextureIndex = 218;
 
 		// Noise
-		MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
 		MeshDesc.fDistortionNoisingPushPower = 100.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 
 		// Color
-		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
-		MeshDesc.vEmissive = _float4(0.1f, 0.1f, 0.5f, 1.f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.0f, 0.1f, 1.f);
 	//	MeshDesc.vEmissive = _float4(0);
-
 
 		// Transform_Base
 		MeshDesc.vPosition = _float3(-0.0f, -1, 0.0f);
-		MeshDesc.vSize = _float3(3);
-
+		MeshDesc.vSize = _float3(3.5f,2.0f, 3.5f);
+		MeshDesc.fAlphaTestValue = 0.55f;
 
 		// Move
 		//MeshDesc.MoveDir = FollowingDir_Up;
@@ -4357,9 +4357,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.AccScaleSpeed = 0.0f;
 		AddDesc.ScaleReFlag = false;
 
-		AddDesc.bLockScale[0] = true;
-		AddDesc.bLockScale[1] = true;
-		AddDesc.bLockScale[2] = true;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
 
 
 		// Fix
@@ -4369,10 +4369,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Shader
 	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
-
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
