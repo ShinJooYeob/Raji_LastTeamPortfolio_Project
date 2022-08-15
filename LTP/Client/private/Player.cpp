@@ -9552,7 +9552,6 @@ void CPlayer::Free()
 	Safe_Release(m_pDissolveCom);
 	
 	Safe_Release(m_pNavigationCom);
-	Safe_Release(m_pHeadJoint);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pCollider_Parkur);
@@ -9562,6 +9561,7 @@ void CPlayer::Free()
 	Safe_Release(m_pMeshParticleTransform);
 	Safe_Release(m_pJYTextureParticleTransform);
 	
+	Safe_Release(m_pHeadJoint);
 
 	//JJB
 	Safe_Release(m_pSkillUI);
