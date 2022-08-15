@@ -4988,7 +4988,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
 
 		// Time
-		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fMaxTime_Duration = 2.0f;
 		MeshDesc.fAppearTime = 0.0f;
 		AddDesc.bAfterApperTime = false;
 
@@ -5026,7 +5026,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
 
 		// Scale
-		AddDesc.AccScaleSpeed = 2.0f;
+		AddDesc.AccScaleSpeed = 3.5f;
 		//	AddDesc.AccScaleSpeed = 2.0f;
 		AddDesc.ScaleMax = 0.0f;
 		//	AddDesc.ScaleMax = 10.0f;
