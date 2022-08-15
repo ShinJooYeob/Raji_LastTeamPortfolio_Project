@@ -34,6 +34,11 @@ HRESULT CMahabalasura_AttackSpear::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Components());
 
 
+	CGameObject* pPlayerObj = (CGameObject*)g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TEXT("Layer_Player"));
+	m_pPlayerTrs = (CTransform*)pPlayerObj->Get_Component(TAG_COM(Com_Transform));;
+
+
+
 	return S_OK;
 }
 
@@ -92,9 +97,19 @@ _int CMahabalasura_AttackSpear::Update(_double fDeltaTime)
 
 
 	}
+	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
+	_Matrix mat = m_pPlayerTrs->Get_WorldMatrix();
 
+	m_pCollider->Update_Transform(0, mat);
 
+	for (_int i = 0; i < m_vecInstancedTransform.size(); ++i)
+	{
+		mat = m_vecInstancedTransform[i].pTransform->Get_WorldMatrix();
 
+		m_pCollider->Update_Transform(i+1, mat);
+	}
+
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 
 	if (iCount >= 128)
 	{
@@ -119,6 +134,8 @@ _int CMahabalasura_AttackSpear::LateUpdate(_double fDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup_InstanceModel(CRenderer::INSTSHADOW_NONANIMINSTANCE, this, &m_vecForRenderTransform, m_pModelInstance,m_pShaderCom,m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+
+	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
 	return _int();
 }
@@ -163,7 +180,7 @@ void CMahabalasura_AttackSpear::CollisionTriger(CCollider * pMyCollider, _uint i
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedObj->Take_Damage(this, 1.f, XMVector3Normalize(pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() - pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector()), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }
@@ -416,8 +433,26 @@ HRESULT CMahabalasura_AttackSpear::SetUp_Components()
 
 
 			m_vecInstancedTransform.push_back(tTTD);
-
 		}
+	}
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider));
+
+	COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(100.f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+
+	for (_int i = 0; i < 128; ++i)
+	{
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(8.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
 	}
 
 	Safe_Release(pGuideTransform);

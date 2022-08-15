@@ -7,13 +7,13 @@ BEGIN(Client)
 class CParticle_ColliderInOut : public CGameObject
 {
 public:
-	typedef struct tagSettingCollider
+	typedef struct tagSettingColliderInOut
 	{
 		COLLIDERTYPE	ColliderType = COLLIDERTYPE_END;
 		COLLIDERDESC	ColliderDesc;
 		CTransform*		pTargetTransform = nullptr;
 
-	}SETTINGCOLLIDER;
+	}SETTINGCOLLIDERINOUT;
 
 
 private:
@@ -35,10 +35,10 @@ public:
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
 	private:
-	CRenderer*				m_pRendererCom = nullptr;
-	CCollider*				m_pCollider = nullptr;
+	CRenderer*						m_pRendererCom = nullptr;
+	CCollider*						m_pCollider = nullptr;
 
-	SETTINGCOLLIDER			m_pColliderDesc;
+	SETTINGCOLLIDERINOUT			m_pColliderDesc;
 
 private:
 	HRESULT SetUp_Components();

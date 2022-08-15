@@ -7,6 +7,7 @@
 #include "Volcano.h"
 #include "Player.h"
 #include "ParticleCollider.h"
+#include "Particle_ColliderInOut.h"
 
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
@@ -622,6 +623,10 @@ _int CChiedtian::Update(_double fDeltaTime)
 			{
 				SecondPageWeapon->SpinAttackOff();
 			}
+
+			CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleColliderInOut));
+			Obj->Set_IsDead();
+
 		}
 
 		if (m_bIsVolcanoAttack)
@@ -668,7 +673,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			//iRandom = 1;
+			iRandom = 0;
 
 			switch (iRandom)
 			{
@@ -2417,6 +2422,19 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_vecNonInstMeshDesc[1].vSize = _float3(0.162f, 0.162f, -0.162f);
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
+
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss));
+					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+					CParticle_ColliderInOut::SETTINGCOLLIDERINOUT ColliderDesc;
+					ColliderDesc.ColliderType = COLLIDER_SPHERE;
+					ColliderDesc.ColliderDesc.vScale = _float3(60.f, 60.f, 60.f);
+					ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+					ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+					ColliderDesc.pTargetTransform = Transform;
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleColliderInOut),
+						TAG_OP(Prototype_Object_ParticleColliderInOut), &ColliderDesc);
 
 					++m_iAdjMovedIndex;
 				}

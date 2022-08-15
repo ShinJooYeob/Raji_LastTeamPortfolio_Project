@@ -12,6 +12,9 @@
 #include "Camera_Main.h"
 #include "InstanceMonsterBatchTrigger.h"
 
+#include "ParticleCollider.h"
+#include "Particle_ColliderInOut.h"
+
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -303,7 +306,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		}
 	}
 	//기본공격
-	if (m_fRange < 4.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit && m_fHP > 0)
+	if (m_fRange < 8.f && !m_bIsAttack && m_fAttackCoolTime <=0 && !m_bIsHit && m_fHP > 0)
 	{
 		m_bIsAttack = true;
 
@@ -321,14 +324,14 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	}
 
 
-	///////////스킬공격
+	/////////스킬공격
 	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit && m_fHP > 0)
 	{
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
 			m_bIsAttack = true;
 
 		iRandom = mOnlyPattern; // DEBUG
-		iRandom = 0;
+		iRandom = 3;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -388,8 +391,6 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		break;
 
 		}
-
-
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
@@ -1275,6 +1276,19 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
 
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_OBB;
+						ColliderDesc.ColliderDesc.vScale = _float3(20.5f, 20.5f, 450.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, -1.f, 90.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 						m_vecNonInstMeshDesc[0].vLookDir =
 							XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
 								+ m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
@@ -1302,6 +1316,18 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 								- m_vecNonInstMeshDesc[0].vPosition.XMVector());
 
 						pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]);
+
+						Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						ColliderDesc.ColliderType = COLLIDER_OBB;
+						ColliderDesc.ColliderDesc.vScale = _float3(20.5f, 20.5f, 450.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 90.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 					}
 
 				}
@@ -1371,6 +1397,20 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 					}
 					++m_iAdjMovedIndex;
 				}
@@ -1411,6 +1451,21 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
+
 					}
 					++m_iAdjMovedIndex;
 				}
@@ -1450,6 +1505,20 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 							TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[3]);
+
+						CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+						CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+						CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+						ColliderDesc.ColliderType = COLLIDER_SPHERE;
+						ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+						ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+						ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+						ColliderDesc.pTargetTransform = Transform;
+
+						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 					}
 			
 					++m_iAdjMovedIndex;
@@ -1805,6 +1874,21 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+					CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+					ColliderDesc.ColliderType = COLLIDER_SPHERE;
+					ColliderDesc.ColliderDesc.vScale = _float3(7.f, 7.f, 7.f);
+					ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+					ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+					ColliderDesc.fWaitingTime = 0.7f;
+					ColliderDesc.pTargetTransform = Transform;
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+						TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+
 				}
 
 
@@ -1856,6 +1940,20 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+					CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+					ColliderDesc.ColliderType = COLLIDER_SPHERE;
+					ColliderDesc.ColliderDesc.vScale = _float3(7.f, 7.f, 7.f);
+					ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+					ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+					ColliderDesc.fWaitingTime = 0.7f;
+					ColliderDesc.pTargetTransform = Transform;
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+						TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 				}
 
 
@@ -1908,6 +2006,20 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+					CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+					ColliderDesc.ColliderType = COLLIDER_SPHERE;
+					ColliderDesc.ColliderDesc.vScale = _float3(7.f, 7.f, 7.f);
+					ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+					ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+					ColliderDesc.fWaitingTime = 0.7f;
+					ColliderDesc.pTargetTransform = Transform;
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+						TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 				}
 
 
@@ -1964,6 +2076,20 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[6]);
+
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+					CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+					ColliderDesc.ColliderType = COLLIDER_SPHERE;
+					ColliderDesc.ColliderDesc.vScale = _float3(7.f, 7.f, 7.f);
+					ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+					ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+					ColliderDesc.fWaitingTime = 0.7f;
+					ColliderDesc.pTargetTransform = Transform;
+
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
+						TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 				}
 
 
