@@ -45,7 +45,7 @@ HRESULT CMonster_Vayusura_Minion::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	Set_DealyDIssolveTime(1.5f);
+	Set_DealyDIssolveTime(1.5f,1.5f);
 
 	return S_OK;
 }
@@ -78,8 +78,6 @@ _int CMonster_Vayusura_Minion::Update(_double dDeltaTime)
 		{
 			Set_IsDead();
 		}
-
-
 	}
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -799,6 +797,10 @@ HRESULT CMonster_Vayusura_Minion::Update_Particle(_double timer)
 	{
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Test, m_pTextureParticleTransform_HEAD);
 		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pTextureParticleTransform_HEAD);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pTransformCom);
+	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VM_Cash2, m_pPlayerTransform);
+
+
 	}
 
 	return S_OK;

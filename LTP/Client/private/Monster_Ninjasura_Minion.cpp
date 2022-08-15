@@ -44,7 +44,7 @@ HRESULT CMonster_Ninjasura_Minion::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	 Set_DealyDIssolveTime(2.5f);
+	 Set_DealyDIssolveTime(1.0f,0.3f);
 	return S_OK;
 }
 
@@ -647,10 +647,37 @@ HRESULT CMonster_Ninjasura_Minion::Update_Particle(_double timer)
 			testTex.vFixedPosition = pos;
 
 
-			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+			//GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
+				CPartilceCreateMgr::Um_Spawn4_smoke,
+				0.05f,
+				0.3f,
+				_float4(0.8f),
+				_float4(0.0f),
+				1,
+				_float3(1.5f),
+				_float3(0.0f),
+				1);
+			testTex.iTextureLayerIndex = 10;
+			testTex.eParticleTypeID = InstanceEffect_Fountain;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+			testTex.Particle_Power = 5.0f;
 
+
+			_float val = 1;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0,  -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 0.5f,val);
+			testTex.FollowingTarget = m_pPlayerTransform;
+			testTex.iFollowingDir = FollowingDir_Up;
+			testTex.vEmissive_SBB = _float3(1, 0.8f, 0.1f);
+			testTex.m_fAlphaTestValue = 0.2f;
+			testTex.TempBuffer_1.y = 1;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
 
 	}
 
@@ -695,17 +722,16 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 			testTex.FollowingTarget = m_pTransformCom;
 
 
-			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 	}
 
 
-	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 0.8f)
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 0.3f)
 	{
 		// smoke
 		m_SpawnEffectAdjust++;
 		{
-			// ring
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
 				CPartilceCreateMgr::Um_Spawn4_smoke,
 				0.05f,
@@ -713,7 +739,7 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 				_float4(0.8f),
 				_float4(0.0f),
 				1,
-				_float3(1.0f),
+				_float3(1.5f),
 				_float3(0.0f),
 				1);
 			testTex.iTextureLayerIndex = 10;
@@ -722,13 +748,14 @@ HRESULT CMonster_Ninjasura_Minion::Play_SpawnEffect()
 			testTex.Particle_Power = 5.0f;
 
 
-
-			testTex.ParticleStartRandomPosMin = _float3(0,0,0);
-			testTex.ParticleStartRandomPosMax = _float3(0,0.5f,0);
+			_float val = 1;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 0.5f, val);
 			testTex.FollowingTarget = m_pTransformCom;
 			testTex.iFollowingDir = FollowingDir_Up;
 			testTex.vEmissive_SBB = _float3(1, 0.8f, 0.1f);
 			testTex.m_fAlphaTestValue = 0.2f;
+			testTex.TempBuffer_1.y = 1;
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}

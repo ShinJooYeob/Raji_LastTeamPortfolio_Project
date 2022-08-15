@@ -46,7 +46,7 @@ HRESULT CMonster_Vayusura_Leader::Initialize_Clone(void * pArg)
 #endif
 
 // Particle
-	 Set_DealyDIssolveTime(0.5f);
+	Set_DealyDIssolveTime(1.0f, 1.0f);
 
 
 	return S_OK;
@@ -566,6 +566,11 @@ HRESULT CMonster_Vayusura_Leader::Infinity_AnimMotion(_double dDeltaTime)
 		}
 		break;
 	}
+	case 20:
+
+		m_iInfinityAnimNumber = 0; // flapping
+		break;
+
 	}
 
 	return S_OK;
@@ -812,14 +817,15 @@ HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
 				CPartilceCreateMgr::Um_Spawn2_Image,
 				//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
 				0,
-				0.6f,
-				_float4(1.0f),
+				0.7f,
+				_float4(0.5f),
 				_float4(0.0f),
 				1,
 				_float3(0.5f),
-				_float3(3.0f),
+				_float3(6.0f),
 				1);
-			testTex.iTextureLayerIndex = 20;
+			testTex.iTextureLayerIndex = 48;
+			testTex.iTextureLayerIndex = 30;
 			testTex.eParticleTypeID = InstanceEffect_Ball;
 			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 
@@ -827,8 +833,9 @@ HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
 
 			testTex.ParticleStartRandomPosMin = _float3(0, 1.2f, 0);
 			testTex.ParticleStartRandomPosMax = _float3(0, 1.2f, 0);
-			testTex.FollowingTarget = m_pTransformCom;
-			testTex.iFollowingDir = FollowingDir_Look;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			testTex.vFixedPosition = mat.r[3] + mat.r[1]*1.0f;
 			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
 			testTex.m_fAlphaTestValue = 0.2f;
 
@@ -840,6 +847,7 @@ HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
+
 		{
 			// ring
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
@@ -850,24 +858,36 @@ HRESULT CMonster_Vayusura_Leader::Play_SpawnEffect()
 				_float4(0.0f),
 				1,
 				_float3(0.5f),
-				_float3(0.7f),
+				_float3(0.3f),
 				1);
-			testTex.iTextureLayerIndex = 20;
+			testTex.iTextureLayerIndex = 48;
+			testTex.iTextureLayerIndex = 30;
 			testTex.eParticleTypeID = InstanceEffect_Ball;
 			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 
 
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			testTex.vFixedPosition = mat.r[3] + mat.r[1] * 1.0f;
 
 			testTex.ParticleStartRandomPosMin = _float3(0, 1.2f, 0);
 			testTex.ParticleStartRandomPosMax = _float3(0, 1.2f, 0);
-			testTex.FollowingTarget = m_pTransformCom;
-			testTex.iFollowingDir = FollowingDir_Look;
+			testTex.AlphaBlendON = true;
+
 			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
 			testTex.m_fAlphaTestValue = 0.2f;
 			testTex.Particle_Power = 1.0f;
 
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
+
+
+	}
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 0.5f)
+	{
+		m_SpawnEffectAdjust++;
+
+
+
 	}
 
 	return S_OK;
@@ -884,11 +904,8 @@ void CMonster_Vayusura_Leader::Set_Play_MeshEffect_Colbullet(bool bParticle)
 		m_dealyEffect_Rain = true;
 		m_dealyEffect_Time = 1.0f;
 
-		
-
 	}
-	if (m_BulletMeshEffect)
-		m_BulletMeshEffect->Set_IsDead();
+
 	m_BulletMeshEffect = nullptr;
 	Safe_Release(m_BulletObj);
 

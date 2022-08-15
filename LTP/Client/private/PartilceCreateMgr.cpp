@@ -4692,47 +4692,55 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	if (type == MESHEFFECT_MONSTER_VM_Cash2)
 	{
+	
+
 		// Mesh
 		MeshDesc.eMeshType = Prototype_Mesh_SM_half_ball_closed_1;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_sphere_melon;
+		MeshDesc.eMeshType = Prototype_Mesh_mySphere;
 
-
+		
 		// Time
-		MeshDesc.fMaxTime_Duration = 0.7f;
+		MeshDesc.fMaxTime_Duration = 0.5f;
+		// 2.0f;
 		MeshDesc.fAppearTime = 0.2f;
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
 		MeshDesc.iDiffuseTextureIndex = 320;
 		MeshDesc.iDiffuseTextureIndex = 321;
-		MeshDesc.MaskTextureIndex = 109;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 69;
+		MeshDesc.MaskTextureIndex = 77;
 		MeshDesc.NoiseTextureIndex = 221;
+		MeshDesc.NoiseTextureIndex = 248;
 
 		// Noise
 		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
-		MeshDesc.fDistortionNoisingPushPower = 20.0f;
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
 		MeshDesc.vLimLight = _float4(1.00f, 0.0f, 0.0f, 1.0f);
 		MeshDesc.vEmissive = _float4(1.0f, 0.0f, 0.0f, 1.f);
 
 			// Transform_Base
-		MeshDesc.vPosition = _float3(0, 0.5f, 2.0f);
-		MeshDesc.vSize = _float3(1.5f);
-		MeshDesc.vSize = _float3(1.5f, 1.0f,1.0f);
-	//	MeshDesc.vSize = _float3(3,1.5f,1.5f);
-
+		MeshDesc.vPosition = _float3(0, 0.0f, -1);
+		MeshDesc.vSize = _float3(3.f, 1.0f, 3.f).XMVector() * 10;
+		MeshDesc.vSize = _float3(1, 1.0f, 1).XMVector() * 30;
+		MeshDesc.fAlphaTestValue = 0.75f;
 
 
 		// Move
-		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveDir = FollowingDir_Right;
 		MeshDesc.MoveSpeed = 0;
 		AddDesc.AccMoveSpeed = 0;
 
 		// Rot
-		AddDesc.LookRotAxis = FollowingDir_Right;
+		AddDesc.LookRotAxis = FollowingDir_Up;
 		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 
-		MeshDesc.RotAxis = FollowingDir_Right;
+		MeshDesc.RotAxis = FollowingDir_Up;
+		MeshDesc.RotationSpeedPerSec = 35;
 		MeshDesc.RotationSpeedPerSec = 0;
 		AddDesc.AccRotSpeed = 0;
 		AddDesc.InitRot = _float3(0, 0, 0.0f);
@@ -4741,9 +4749,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.AccScaleSpeed = 0.0f;
 		AddDesc.ScaleReFlag = false;
 
-		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[0] = false;
 		AddDesc.bLockScale[1] = true;
-		AddDesc.bLockScale[2] = true;
+		AddDesc.bLockScale[2] = false;
 
 
 		// Fix
