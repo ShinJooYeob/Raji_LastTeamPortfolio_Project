@@ -538,6 +538,7 @@ HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
@@ -590,6 +591,7 @@ HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));

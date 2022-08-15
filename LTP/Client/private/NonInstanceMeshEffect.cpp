@@ -103,12 +103,54 @@ HRESULT CNonInstanceMeshEffect::Initialize_Clone(void * pArg)
 
 _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 {
+	if (m_bIsDead) return 0;
+
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration) 
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration)
 	{
 		if (m_tMeshDesc.m_bNotDead) return 0;
-		else Set_IsDead();
+		else
+		{
+			if (m_tMeshDesc.m_bReverseSizing)
+			{
+				m_fReverseSizePassedTimer +=(_float)fDeltaTime;
+				if (m_fReverseSizePassedTimer > m_tMeshDesc.m_bReverseSizingTimer)
+				{
+					Set_IsDead();
+					return 0;
+				}
+
+				if (m_tMeshDesc.SizeSpeed != 0)
+				{
+
+					_float3 OldScale = m_pTransformCom->Get_Scale();
+
+					if (m_tMeshDesc.vSizingRUL.x != 0)
+						m_pTransformCom->Scaling(CTransform::STATE_RIGHT, m_tMeshDesc.vSizingRUL.x * -fDeltaTime*2.f);
+					if (m_tMeshDesc.vSizingRUL.y != 0)
+						m_pTransformCom->Scaling(CTransform::STATE_UP, m_tMeshDesc.vSizingRUL.y * -fDeltaTime);
+					if (m_tMeshDesc.vSizingRUL.z != 0)
+						m_pTransformCom->Scaling(CTransform::STATE_LOOK, m_tMeshDesc.vSizingRUL.z * -fDeltaTime*2.f);
+
+
+					_float3 NowScale = m_pTransformCom->Get_Scale();
+
+					if ((m_tMeshDesc.vSizingRUL.x != 0) && ((OldScale.x - m_tMeshDesc.vSizieLimit.x) *(NowScale.x - m_tMeshDesc.vSizieLimit.x) < 0))
+						m_pTransformCom->Scaled(CTransform::STATE_RIGHT, OldScale.x);
+					if ((m_tMeshDesc.vSizingRUL.y != 0) && ((OldScale.y - m_tMeshDesc.vSizieLimit.y) *(NowScale.y - m_tMeshDesc.vSizieLimit.y) < 0))
+						m_pTransformCom->Scaled(CTransform::STATE_UP, OldScale.y);
+					if ((m_tMeshDesc.vSizingRUL.z != 0) && ((OldScale.z - m_tMeshDesc.vSizieLimit.z) *(NowScale.z - m_tMeshDesc.vSizieLimit.z) < 0))
+						m_pTransformCom->Scaled(CTransform::STATE_LOOK, OldScale.z);
+				}
+
+			}
+			else
+			{
+				Set_IsDead();
+				return 0;
+			}
+		}
 	}
 
 
@@ -120,7 +162,7 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 	{
 		m_pTransformCom->MovetoDir_bySpeed(m_vMoveDir.XMVector(), m_tMeshDesc.MoveSpeed, fDeltaTime);
 	}
-	if (m_tMeshDesc.SizeSpeed != 0)
+	if (!m_fReverseSizePassedTimer && m_tMeshDesc.SizeSpeed != 0)
 	{
 		_float3 OldScale = m_pTransformCom->Get_Scale();
 
@@ -160,13 +202,11 @@ _int CNonInstanceMeshEffect::Update(_double fDeltaTime)
 
 _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 {
+	if (m_bIsDead) return 0;
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration && m_fReverseSizePassedTimer > m_tMeshDesc.m_bReverseSizingTimer)		return 0;
+
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration)
-	{
-		if (m_tMeshDesc.m_bNotDead) return 0;
-		else Set_IsDead();
-	}
 
 	if (m_tMeshDesc.m_iPassIndex == 23)
 	{
@@ -186,13 +226,11 @@ _int CNonInstanceMeshEffect::LateUpdate(_double fDeltaTimer)
 
 _int CNonInstanceMeshEffect::Render()
 {
+	if (m_bIsDead) return 0;
+	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration && m_fReverseSizePassedTimer > m_tMeshDesc.m_bReverseSizingTimer)		return 0;
+
 	if (__super::Render() < 0)		return -1;
 
-	if (m_fCurTime_Duration > m_tMeshDesc.fMaxTime_Duration)
-	{
-		if (m_tMeshDesc.m_bNotDead) return 0;
-		else Set_IsDead();
-	}
 
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
@@ -210,7 +248,15 @@ _int CNonInstanceMeshEffect::Render()
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tMeshDesc.fAppearTime, sizeof(_float)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tMeshDesc.fMaxTime_Duration, sizeof(_float)));
+	if (m_tMeshDesc.m_bReverseSizing)
+	{
+		_float MaxTime = m_tMeshDesc.fMaxTime_Duration + m_tMeshDesc.m_bReverseSizingTimer;
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &MaxTime, sizeof(_float)));
+	}
+	else
+	{
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tMeshDesc.fMaxTime_Duration, sizeof(_float)));
+	}
 	
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tMeshDesc.noisingdir, sizeof(_float2)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tMeshDesc.fDistortionNoisingPushPower, sizeof(_float)));

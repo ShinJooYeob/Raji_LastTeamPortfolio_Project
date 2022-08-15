@@ -42,6 +42,7 @@ private:
 	virtual HRESULT Update_Particle(_double t) override;
 
 
+	ATTACHEDESC				m_HeadAttachedDesc;
 	//Left
 	CCollider*				m_pHand_L_Collider = nullptr;	
 	ATTACHEDESC				m_LeftAttachedDesc;

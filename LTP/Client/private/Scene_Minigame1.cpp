@@ -463,8 +463,9 @@ HRESULT CScene_Minigame1::Ready_PostPorcessing()
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(1.5f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(30.f);
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	//pRenderer->Set_DofLength(30.f);
+	//pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogStartDist(5.f);
@@ -501,6 +502,7 @@ HRESULT CScene_Minigame1::Ready_PostPorcessing()
 
 	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	//pRenderer->Set_DofLength(30.f);
+	//pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3{ 0.234375f });

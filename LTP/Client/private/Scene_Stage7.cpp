@@ -40,7 +40,7 @@ HRESULT CScene_Stage7::Initialize()
 
 
 	FAILED_CHECK(Ready_MapData(L"BossStage_Chiedtian.dat", SCENE_STAGE7, TAG_LAY(Layer_StaticMapObj)));
-	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtian.dat",   SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Chiedtitan_Trigger.dat", SCENE_STAGE7, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"JinhoBabo.dat", SCENE_STAGE7, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -311,7 +311,7 @@ HRESULT CScene_Stage7::Ready_Layer_Terrain(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage7::Ready_Layer_Boss(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, pLayerTag, TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
 	return S_OK;
 }
 
@@ -364,6 +364,7 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
@@ -415,7 +416,8 @@ HRESULT CScene_Stage7::Ready_PostPorcessing()
 	pRenderer->Set_BloomBrightnessMul(2.5f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofLength(45.f); 
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));

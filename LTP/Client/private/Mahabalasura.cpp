@@ -328,7 +328,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 
 		iRandom = mOnlyPattern; // DEBUG
-		iRandom = 3;
+		iRandom = 0;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -710,8 +710,8 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
 
-
-
+			tNIMEDesc.m_bReverseSizing = true;
+			tNIMEDesc.m_bReverseSizingTimer = 2.f;
 
 
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
@@ -751,6 +751,8 @@ HRESULT CMahabalasura::Ready_ParticleDesc()
 
 			tNIMEDesc.fAlphaTestValue = 0.0f;
 
+			tNIMEDesc.m_bReverseSizing = true;
+			tNIMEDesc.m_bReverseSizingTimer = 2.f;
 
 			m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 		}

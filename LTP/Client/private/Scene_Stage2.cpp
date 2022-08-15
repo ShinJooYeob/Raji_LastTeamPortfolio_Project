@@ -449,6 +449,7 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.265625f, 0.46875f, 0.47265625f));
@@ -485,6 +486,7 @@ HRESULT CScene_Stage2::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(45.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.265625f, 0.46875f, 0.47265625f));

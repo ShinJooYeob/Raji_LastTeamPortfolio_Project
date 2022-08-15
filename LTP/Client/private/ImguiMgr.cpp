@@ -1211,10 +1211,22 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 		if (bBool)
 		{
-			_float Value = pUtil->Get_Renderer()->Get_DofLength();
-			ImGui::DragFloat("Dof Length", &Value, 0.1f, 0.001f, 1024.f);
-			Value = max(min(Value, 1024.f), 0.01f);
-			pUtil->Get_Renderer()->Set_DofLength(Value);
+			{
+				_float Value = pUtil->Get_Renderer()->Get_DofLength();
+				ImGui::DragFloat("Dof Length", &Value, 0.1f, 0.001f, 1024.f);
+				Value = max(min(Value, 1024.f), 0.01f);
+				pUtil->Get_Renderer()->Set_DofLength(Value);
+			}
+			{
+
+			_float Value = pUtil->Get_Renderer()->Get_DofBlurIntensive();
+			ImGui::DragFloat("Dof BlurIntensive", &Value, 0.1f, 0.001f, 10.f);
+			Value = max(min(Value, 10.f), 0.001f);
+			pUtil->Get_Renderer()->Set_DofBlurIntensive(Value);
+
+			}
+
+
 		}
 
 

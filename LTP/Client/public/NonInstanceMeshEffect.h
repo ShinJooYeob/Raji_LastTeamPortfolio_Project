@@ -30,6 +30,7 @@ private:
 private:
 	NONINSTNESHEFTDESC		m_tMeshDesc;
 	_float					m_fCurTime_Duration = 0.f;
+	_float					m_fReverseSizePassedTimer = 0;
 
 	_float3				m_vRotAxis = _float3(0, 1, 0);
 	_float3				m_vMoveDir = _float3(0, 1, 0);

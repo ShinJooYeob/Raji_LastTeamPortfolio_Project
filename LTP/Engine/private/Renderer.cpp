@@ -1746,7 +1746,7 @@ HRESULT CRenderer::Render_CameraMotionBlur()
 
 HRESULT CRenderer::Render_DepthOfField()
 {
-	m_fTexleSize = 2.f;
+	m_fTexleSize = m_fDofBlurIntensive;
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fTexelSize", &m_fTexleSize, sizeof(_float)));
 
 	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
@@ -1798,7 +1798,7 @@ HRESULT CRenderer::Render_DepthOfField()
 
 	*/
 
-	FAILED_CHECK(Make_BluredDeffered(2));
+	FAILED_CHECK(Make_BluredDeffered(m_fTexleSize));
 
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));

@@ -939,6 +939,7 @@ enum LAYERID
 	Layer_MonsterBullet2,
 	Layer_Particle,
 	Layer_ParticleNoDead,
+	Layer_ParticleNoDead2,
 
 
 	Layer_Terrain,
@@ -1062,7 +1063,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_ParticleNoDead:
 		return TEXT("Layer_ParticleNoDead");
 		break;
-
+	case Layer_ParticleNoDead2:
+		return TEXT("Layer_ParticleNoDead2");
+		break;
+		
 		
 	case Layer_ClockBomb:
 		return TEXT("Layer_ClockBomb");

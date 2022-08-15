@@ -95,6 +95,7 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 	m_fAttachCamPos.z -= 45.f;
 	m_pDissolve->Set_DissolveOn(false, 0.f);
 	//
+	Set_LimLight_N_Emissive(_float4(1, 1, 0, 0), _float4(0));
 
 	return S_OK;
 }
@@ -436,6 +437,9 @@ void CRangda::Update_Direction(_double fDeltaTime)
 	_uint iCurAnim = m_pModel->Get_NowAnimIndex();
 	_float fAnimPlayRate = (_float)m_pModel->Get_PlayRate();
 	m_fAnimmultiple = 1.f;
+
+	static _uint iAnimChecker = 0;
+
 	switch (iCurAnim)
 	{
 	case 6:
@@ -479,6 +483,9 @@ void CRangda::Update_Direction(_double fDeltaTime)
 		}
 		else if (0.32f <= fAnimPlayRate && false == m_bOnceSwitch)
 		{
+
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
 			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Ground_Impact_01.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 			g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_NPC))->Set_IsDead();
 			m_bOnceSwitch = true;
@@ -487,10 +494,52 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			tCameraShakeRotDesc.fTotalTime = 0.2f;
 			tCameraShakeRotDesc.fPower = 2.f;
 			tCameraShakeRotDesc.fChangeDirectioninterval = 0.005f;
-			tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+			tCameraShakeRotDesc.fShakingRotAxis = pUtil->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+			pUtil->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
 
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 0.1f, false);
+			pUtil->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 0.1f, false);
+
+			INSTPARTICLEDESC tParticleTexDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_23");
+			tParticleTexDesc.vFixedPosition =((CTransform*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, 
+																Tag_Layer(Layer_NPC))->Get_Component(TAG_COM(Com_Transform))))->Get_MatrixState_Float3(CTransform::STATE_POS) ;
+			tParticleTexDesc.vPowerDirection = _float3(0,0,1);
+			tParticleTexDesc.ParticleSize = _float3(20.f);
+			pUtil->Create_TextureInstance(m_eNowSceneNum, tParticleTexDesc);
+
+
+			INSTMESHDESC tDesc1 = pUtil->Get_MeshParticleDesc(L"JY_Mesh_2");
+			tDesc1.FollowingTarget = nullptr;
+			tDesc1.eInstanceCount = Prototype_ModelInstance_32;
+
+			INSTMESHDESC tDesc2 = pUtil->Get_MeshParticleDesc(L"JY_Mesh_3");
+			tDesc2.FollowingTarget = nullptr;
+			tDesc2.Particle_Power = 50.f;
+			tDesc2.eInstanceCount = Prototype_ModelInstance_32;
+
+
+			tDesc1.vFixedPosition = tDesc2.vFixedPosition = tParticleTexDesc.vFixedPosition;
+			tDesc2.vPowerDirection = XMVector3Normalize(g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA) - tDesc2.vFixedPosition.XMVector());
+
+			_uint iRandValue = rand() % 4;
+			for (_uint i = 0; i < 4; i++)
+			{
+				wstring MeshTag = L"Gazebo_Piece0" + to_wstring(i + 1) + L".fbx";
+				ZeroMemory(tDesc1.szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+				lstrcpy(tDesc1.szModelMeshProtoTypeTag, MeshTag.c_str());
+
+				pUtil->Create_MeshInstance(m_eNowSceneNum, tDesc1);
+
+				if (i == iRandValue)
+				{
+					ZeroMemory(tDesc2.szModelMeshProtoTypeTag, sizeof(_tchar) * 128);
+					lstrcpy(tDesc2.szModelMeshProtoTypeTag, MeshTag.c_str());
+
+					pUtil->Create_MeshInstance(m_eNowSceneNum, tDesc2);
+				}
+
+			}
+			
+
 		}
 		else
 		{
@@ -498,6 +547,39 @@ void CRangda::Update_Direction(_double fDeltaTime)
 		}
 		break;
 	case 3:
+	{
+
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		if (fAnimPlayRate < 0.43410852713)
+		{
+
+				_float4 Emissive = g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(0), _float3(1.f, 0.3f, 1.f), fAnimPlayRate, 0.43410852713f);
+				Set_LimLight_N_Emissive(_float4(1,1, 1, 0), Emissive);
+			
+	
+
+			
+
+			pUtil->Set_RadialBlurTargetPos_ByWorldPos(m_ScreamAttachedDesc.Get_AttachedBoneWorldPosition());
+		}
+		else if (fAnimPlayRate < 0.5f)
+		{
+			_float4 Emissive = g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(1.f, 0.3f, 1.f), _float3(0.25f, 0.01f, 1.f), fAnimPlayRate - 0.43410852713f, 0.06589147287f);
+			Set_LimLight_N_Emissive(_float4(1, 1, 1, 0), Emissive);
+		}
+
+		if (fAnimPlayRate <= 0)
+		{
+			iAnimChecker = 0;
+		}
+		else if (iAnimChecker == 0)
+		{
+			iAnimChecker++;
+			
+			pUtil->Set_IsRadialBlurFadeIn(true, 0.1f, 0.7f, 1.8f);
+		}
+
+
 		if (0.98f <= fAnimPlayRate)
 		{
 			m_bBlockUpdate = false;
@@ -505,12 +587,22 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 		}
+		else if (fAnimPlayRate > 0.43410852713  && iAnimChecker == 1)
+		{
+			pUtil->Set_IsRadialBlurFadeIn(false, 1, 0, 0.2f);
+			iAnimChecker++;
+		}
 		else if (0.5f <= fAnimPlayRate && true == m_bOnceSwitch)
 		{
+
 			g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Scream_02.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 2.f, false);
+			pUtil->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 3.f, 2.f, false);
 			m_bOnceSwitch = false;
+		
+
 		}
+
+	}
 		break;
 	}
 
@@ -902,6 +994,8 @@ HRESULT CRangda::SetUp_Components()
 	tAttachedDesc.Initialize_AttachedDesc(this, "head", _float3(1), _float3(0), _float3(0.000036f, 47.287f, -731.925f));
 	m_ScreamAttachedDesc = tAttachedDesc;
 	
+
+
 	return S_OK;
 }
 

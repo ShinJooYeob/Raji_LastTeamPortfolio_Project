@@ -283,6 +283,7 @@
     <ClInclude Include="..\public\PlayerWeapon_Shield.h" />
     <ClInclude Include="..\public\PlayerWeapon_Spear.h" />
     <ClInclude Include="..\public\PlayerWeapon_Sword.h" />
+    <ClInclude Include="..\public\HitEffectUI.h" />
     <ClInclude Include="..\public\RadialBlurUI.h" />
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Randa_Wasp_Bullet.h" />
@@ -443,6 +444,7 @@
     <ClCompile Include="..\private\PlayerWeapon_Shield.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Spear.cpp" />
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp" />
+    <ClCompile Include="..\private\HitEffectUI.cpp" />
     <ClCompile Include="..\private\RadialBlurUI.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Randa_Wasp_Bullet.cpp" />

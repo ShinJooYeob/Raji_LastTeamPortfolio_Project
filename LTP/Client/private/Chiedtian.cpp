@@ -158,19 +158,19 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 	teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
 
 	g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);*/
-	//m_bBlockUpdate = false;
-	//m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
-	//m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
-	//m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	//m_fAttachCamPos.y += 5.f;
-	//m_fAttachCamPos.z -= 10.f;
-	//m_fDelayTime = 3.f;
-	//m_pModel->Change_AnimIndex(14);
-	//m_bIsMainWeaponOff = true;
+	m_bBlockUpdate = true;
+	m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(1.177f, 40.21f, 322.647f));
+	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_fAttachCamPos.y += 5.f;
+	m_fAttachCamPos.z -= 10.f;
+	m_fDelayTime = 3.f;
+	m_pModel->Change_AnimIndex(14);
+	m_bIsMainWeaponOff = true;
 	//
 
-	m_bBlockUpdate = false;
-	m_bIsHit = true;
+	//m_bBlockUpdate = false;
+	//m_bIsHit = true;
 	return S_OK;
 }
 
@@ -477,7 +477,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			m_iTest = 2;
+			m_iTest = 0;
 
 			switch (m_iTest)
 			{
@@ -1045,13 +1045,18 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 	{
 		if (0.98f <= fAnimPlayRate)
 		{
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
 			m_pModel->Change_AnimIndex(0);
 			m_bBlockUpdate = false;
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			pUtil->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			m_bIsMainWeaponOff = false;
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+
+
+
 		}
 		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)
 		{
@@ -1078,6 +1083,21 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 		{
 			m_bOncePlaySound = false;
 			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+
+
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+			INSTPARTICLEDESC tParticleTexDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_23");
+			tParticleTexDesc.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+			tParticleTexDesc.vPowerDirection = _float3(0, 0, 1);
+			tParticleTexDesc.TargetColor = _float4(_float3(1.5), tParticleTexDesc.TargetColor.w);
+			//tParticleTexDesc.vEmissive_SBB = _float3(0);
+			tParticleTexDesc.TempBuffer_0.x = 0.4f;
+			tParticleTexDesc.TempBuffer_1.w = 0.4f;
+			tParticleTexDesc.ParticleSize = _float3(15.f);
+			pUtil->Create_TextureInstance(m_eNowSceneNum, tParticleTexDesc);
+
 		}
 	}
 		break;
@@ -1307,6 +1327,7 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 		//0
 		{
+			//INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_23");
 			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_12");
 			m_vecTexInstDesc.push_back(tDesc);
 		}
@@ -1314,9 +1335,9 @@ HRESULT CChiedtian::Ready_ParticleDesc()
 		{
 
 			INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_9");
-			tDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-			tDesc.ParticleStartRandomPosMin = _float3(-1.f, 0, -1.f);
-			tDesc.ParticleStartRandomPosMax = _float3(1.f, 0.5f, 1.f);
+			//tDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+			//tDesc.ParticleStartRandomPosMin = _float3(-1.f, 0, -1.f);
+			//tDesc.ParticleStartRandomPosMax = _float3(1.f, 0.5f, 1.f);
 			m_vecTexInstDesc.push_back(tDesc);
 
 
@@ -2553,7 +2574,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					m_vecTexInstDesc[3].vFixedPosition = m_vecTexInstDesc[4].vFixedPosition =
 						m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
-
+					m_vecTexInstDesc[4].vFixedPosition.y = 35.9f;
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[3]);
 					GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[4]);
 
@@ -2722,12 +2743,16 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Loop.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
+
 				m_vecTexInstDesc[0].vFixedPosition = m_vecTexInstDesc[1].vFixedPosition
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.15f, 0, 0) +
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -1.f +
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.25f, 0, 0) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -1.5f +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.2f;
+				m_vecTexInstDesc[1].vFixedPosition.y = 35.9f;
+
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[0]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
+
 
 				++m_iAdjMovedIndex;
 			}
@@ -2745,9 +2770,10 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 				m_vecTexInstDesc[0].vFixedPosition = m_vecTexInstDesc[1].vFixedPosition 
-					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.15f, 0, 0) +
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.f+
-					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+					= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.25f, 0, 0) +
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.5f+
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.2f;
+				m_vecTexInstDesc[1].vFixedPosition.y = 35.9f;
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[0]);
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
 

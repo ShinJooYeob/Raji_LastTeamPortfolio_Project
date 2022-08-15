@@ -11,6 +11,7 @@ texture2D			g_CurlTexture;
 
 float				g_Alpha = 0.1f;
 float				g_UV_Y = 1.f;
+float				g_fAlphaTestValue = 0.1f;
 
 cbuffer RadialBlur
 {
@@ -691,7 +692,20 @@ PS_OUT_NOLIGHT PS_RadialBlur(PS_IN In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_FADE(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
 
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
+	Out.vDiffuse.a = Out.vDiffuse.r;
+
+	//if (Out.vDiffuse.a < g_fAlphaTestValue)
+	//	discard;
+
+	Out.vDiffuse *= g_vColor;
+
+	return Out;
+}
 
 
 technique11		DefaultTechnique
@@ -840,5 +854,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_RECT();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_RadialBlur();
+	}
+
+	pass FadeNHitEffect// 14
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_FADE();
 	}
 }

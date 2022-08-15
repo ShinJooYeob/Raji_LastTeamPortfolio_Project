@@ -8211,6 +8211,7 @@ void CPlayer::DebugingCode()
 	
 			CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 
+			pUtil->Set_HitEffect(0.3f, 0.5f,_float3(1,1,1));
 			//static bool IsOn = false;
 			//
 			//IsOn = !IsOn;
@@ -8225,7 +8226,7 @@ void CPlayer::DebugingCode()
 			//	pUtil->Set_IsRadialBlurFadeIn(IsOn);
 			//}
 
-			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR);
+			//m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR);
 			/*
 			INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_1");
 			tDesc.FollowingTarget = nullptr;
@@ -8310,31 +8311,30 @@ void CPlayer::DebugingCode()
 
 			*/
 
-			INSTPARTICLEDESC arrDesc[3];
+			////INSTPARTICLEDESC arrDesc[3];
 
-			_uint iNum = 0;
+			////_uint iNum = 0;
 
-			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
-			//arrDesc[iNum].FollowingTarget = nullptr;
-			//arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			//iNum++;
+			//////arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_4");
+			//////arrDesc[iNum].FollowingTarget = nullptr;
+			//////arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			//////iNum++;
 
-			//arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
-			//arrDesc[iNum].FollowingTarget = nullptr;
-			//arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
-			//iNum++;
+			//////arrDesc[iNum] = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_6");
+			//////arrDesc[iNum].FollowingTarget = nullptr;
+			//////arrDesc[iNum].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 2, 0, 0);
+			//////iNum++;
 
-			arrDesc[iNum] = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_23");
-			arrDesc[iNum].FollowingTarget = m_pTransformCom;
-			arrDesc[iNum].iFollowingDir = FollowingDir_Look;
-			arrDesc[iNum].TempBuffer_0.x = 1.f;
-			arrDesc[iNum].TempBuffer_1.w = 0.0f;
-			iNum++;
+			////arrDesc[iNum] = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_23");
+			////arrDesc[iNum].FollowingTarget = m_pTransformCom;
+			////arrDesc[iNum].iFollowingDir = FollowingDir_Look;
+			////arrDesc[iNum].m_fAlphaTestValue = 0.65f;
+			////iNum++;
 
-			for (auto& tDesc : arrDesc)
-			{
-				pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
-			}
+			////for (auto& tDesc : arrDesc)
+			////{
+			////	pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
+			////}
 			
 
 			m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));

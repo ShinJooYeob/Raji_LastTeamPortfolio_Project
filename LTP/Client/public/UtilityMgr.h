@@ -98,6 +98,9 @@ public:
 	void Set_IsRadialBlurFadeIn(_bool bBool, _float fZoomRadialSize = 0.25f, _float fZoomPower = 0.7f, _float TargetTimer = 1.f);
 
 
+	void Set_HitEffect(_float Intensive = 0.2f, _float HitTime = 0.5f, _float3 vColor = _float3(1,0,0));
+	
+
 public:
 	HRESULT Clear_RenderGroup_forSceneChange();
 	void Set_Renderer(CRenderer* pRenderer);
@@ -148,6 +151,7 @@ private:
 
 
 	class CRadialBlurUI*		m_pRadialUI = nullptr;
+	class CHitEffectUI*			m_pHitEffectUI = nullptr;
 
 	map<wstring, INSTPARTICLEDESC>				m_mapTextureParticles;
 	typedef map<wstring, INSTPARTICLEDESC>		TEXPARTICLES;

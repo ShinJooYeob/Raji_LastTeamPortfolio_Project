@@ -76,6 +76,8 @@ HRESULT CMahabalasura_SpearWave::Initialize_Clone(void * pArg)
 
 _int CMahabalasura_SpearWave::Update(_double fDeltaTime)
 {
+	if (m_bIsDead) return 0;
+
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
@@ -147,6 +149,8 @@ _int CMahabalasura_SpearWave::Update(_double fDeltaTime)
 
 _int CMahabalasura_SpearWave::LateUpdate(_double fDeltaTimer)
 {
+	if (m_bIsDead) return 0;
+
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
 	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
@@ -168,6 +172,9 @@ _int CMahabalasura_SpearWave::LateUpdate(_double fDeltaTimer)
 
 _int CMahabalasura_SpearWave::Render()
 {
+	if (m_bIsDead) return 0;
+
+
 	if (m_fCurTime_Duration >= m_fMaxTime_Duration)
 	{
 		if (m_tDesc.iDir == 3) return 0;

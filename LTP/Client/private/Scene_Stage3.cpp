@@ -239,7 +239,8 @@ HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Player), &_float3(195.6f, 26.76f, 66.721f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Player), &_float3(195.6f, 26.76f, 66.721f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Player),&_float3(183.298f, 93.7f, 85.434f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE3, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -477,6 +478,7 @@ HRESULT CScene_Stage3::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(160.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));
@@ -514,6 +516,7 @@ HRESULT CScene_Stage3::Ready_PostPorcessing()
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
 	pRenderer->Set_DofLength(160.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
 	pRenderer->Set_FogColor(_float3(0.01171875f, 0.140625f, 0.2265625f));

@@ -128,6 +128,7 @@ private:
 	ID3D11DepthStencilView*			m_DownScaledDepthStencil[5] = { nullptr };
 
 	_float						m_fDofLength = 30.f;
+	_float						m_fDofBlurIntensive = 2.f;
 	_float						m_fOverLuminece = 2.0f;
 	_float						m_fBloomBrightnessMul = 1.5f;
 	_float						m_fTexleSize = 2.f;
@@ -220,6 +221,11 @@ public:
 
 	_float Get_DofLength() { return m_fDofLength; };
 	void	Set_DofLength(_float vDofValue) { m_fDofLength = vDofValue; };
+
+	_float Get_DofBlurIntensive() { return m_fDofBlurIntensive; };
+	void	Set_DofBlurIntensive(_float vDofValue) { m_fDofBlurIntensive = vDofValue; };
+	
+
 	_float Get_ShadowIntensive() { return m_fShadowIntensive; };
 	void	Set_ShadowIntensive(_float vShadowIntensive) { m_fShadowIntensive = vShadowIntensive; };
 	_float Get_BloomOverLuminceValue() { return m_fOverLuminece * 0.5f; };

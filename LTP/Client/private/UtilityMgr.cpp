@@ -6,6 +6,7 @@
 #include "Camera_Main.h"
 #include "InstanceEffect.h"
 #include "RadialBlurUI.h"
+#include "HitEffectUI.h"
 
 IMPLEMENT_SINGLETON(CUtilityMgr);
 
@@ -52,6 +53,11 @@ HRESULT CUtilityMgr::Initialize_UtilityMgr(ID3D11Device * pDevice, ID3D11DeviceC
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect), L"Prototype_RadialBlurUI"));
 	m_pRadialUI = (CRadialBlurUI*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect));
 
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_Prototype(L"Prototype_HitEffectUI", CHitEffectUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect), L"Prototype_HitEffectUI"));
+	m_pHitEffectUI = (CHitEffectUI*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STATIC, TAG_LAY(Layer_ScreenEffect));
+	
 
 	// PathReLoad
 	GetSingle(CAssimpCreateMgr)->Save_To_Effect();
@@ -432,6 +438,12 @@ void CUtilityMgr::Set_IsRadialBlurFadeIn(_bool bBool, _float fZoomRadialSize, _f
 {
 	NULL_CHECK_BREAK(m_pRadialUI);
 	m_pRadialUI->Set_IsRadialIn(bBool,  fZoomRadialSize,  fZoomPower,  TargetTimer);
+}
+
+void CUtilityMgr::Set_HitEffect(_float Intensive, _float HitTime, _float3 vColor)
+{
+	NULL_CHECK_BREAK(m_pHitEffectUI);
+	m_pHitEffectUI->Set_HitEffect(Intensive , HitTime, vColor);
 }
 
 HRESULT CUtilityMgr::Clear_RenderGroup_forSceneChange()

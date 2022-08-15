@@ -174,6 +174,9 @@ typedef struct tagNonInstanceMeshEffect
 
 
 	_bool				m_bNotDead = false;
+	_bool				m_bReverseSizing = false;
+	_float				m_bReverseSizingTimer = 0;
+
 }NONINSTNESHEFTDESC;
 
 
