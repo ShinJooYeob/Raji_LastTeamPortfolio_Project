@@ -663,7 +663,7 @@ HRESULT CMonster_Mahinasura_Leader::Once_AnimMotion(_double dDeltaTime)
 	// #DEBUG PatternSET
 	// m_iOncePattern = 2;
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 10;
+		m_iOncePattern = 0;
 #endif // _DEBUG
 
 	switch (m_iOncePattern)
@@ -967,35 +967,51 @@ HRESULT CMonster_Mahinasura_Leader::Update_Particle(_double timer)
 		
 
 		{
-			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+			//	Prototype_Mesh_SM_Box_Basic,
 				Prototype_Mesh_SM_4E_IceShards_01,
 				0.01f,
 				0.8f,
-				_float4(1, 1, 1, 1),
-				_float4(1, 0, 0, 1),
-				3,
-				_float3(2),
-				_float3(5),
+			//	_float4(1,0,0,1),
+			//	_float4(1,0,0,1),
+				_float4(0.98f,0.49f,0.25f,0.0f),
+				_float4(0),
+				1,
+				_float3(10),
+				_float3(0.1f),
 				1);
 
-			testMesh.eParticleTypeID = InstanceEffect_Fountain;
-			testMesh.eInstanceCount = Prototype_ModelInstance_32;
-			//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+		//	testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_8;
+			testMesh.ePassID = MeshPass_MaskingNoising;
 
-			testMesh.Particle_Power = 8.0f;
-			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
-			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+			_float val = 3;
+			testMesh.ParticleStartRandomPosMin = _float3(-val, -1, -val);
+			testMesh.ParticleStartRandomPosMax = _float3(val, -1, val);
 
-			testMesh.iNoiseTextureIndex = 0;
-			testMesh.iMaskingTextureIndex = 0;
+			testMesh.TempBuffer_0.w = 278;
+			testMesh.TempBuffer_0.w = 276;
+
+			testMesh.iMaskingTextureIndex = NONNMASK;
+			testMesh.iMaskingTextureIndex = 122;
+			testMesh.iNoiseTextureIndex = 289;
+			testMesh.vEmissive_SBB = _float3(1.f, 0.0f,0.1f);
+			testMesh.Particle_Power = 20.0f;
+			
+			testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 3);
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+			
 
 
-			//testMesh.FollowingTarget = m_pTransformCom;
+			//testMesh.TempBuffer_0.x = 1;
+			//testMesh.TempBuffer_0.y = FollowingDir_Right;
+
+
+			
+
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 			_Vector pos = mat.r[3] + mat.r[2] * 3;
-			//	_Vector pos = mat.r[3];
 			testMesh.vFixedPosition = pos;
-
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
@@ -1808,8 +1824,9 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 					_float3(3.0f),
 					1);
 
-				 instanceDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				 instanceDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
 				 instanceDesc.FollowingTarget = m_pTransformCom;
+				 instanceDesc.vEmissive_SBB = _float3(1.0f, 1.f, 0.5f);
 
 				 instanceDesc.iTextureLayerIndex = 45;
 				GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
@@ -1841,34 +1858,84 @@ HRESULT CMonster_Mahinasura_Leader::Adjust_AnimMovedTransform(_double dDeltaTime
 
 			if (m_EffectAdjust == 3 && PlayRate >= 0.82)
 			{
-				INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
-					0,
-					1.0f,
-					_float4(1.0f, 0.18f, 0.02f, 1.0f),
-					_float4(0.96f, 0.18f, 0.11f, 0.5f),
-					2,
-					_float3(1, 3, 1).XMVector()*0.2f,
-					_float3(1 * 0.3f),
-				//	_float3(1, 3, 1).XMVector()*0.10f,
-					1);
-				testa.vEmissive_SBB = _float3(1, 1, 0);
+				{
+					INSTPARTICLEDESC testa = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Dust_2,
+						0,
+						1.0f,
+						_float4(1.0f, 0.18f, 0.02f, 1.0f),
+						_float4(0.96f, 0.18f, 0.11f, 0.5f),
+						2,
+						_float3(1, 3, 1).XMVector()*0.2f,
+						_float3(1 * 0.3f),
+						//	_float3(1, 3, 1).XMVector()*0.10f,
+						1);
+					testa.vEmissive_SBB = _float3(1, 1, 0);
 
-				testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-				testa.ePassID = InstancePass_OriginColor;
-				testa.ParticleStartRandomPosMin = _float3(-2, -0.5f, -2);
-				testa.ParticleStartRandomPosMax = _float3(2, 1, 2);
-				testa.Particle_Power = 3.5f;
-				testa.vPowerDirection = _float3(1, 2, 1);
+					testa.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testa.ePassID = InstancePass_OriginColor;
+					testa.ParticleStartRandomPosMin = _float3(-2, -0.5f, -2);
+					testa.ParticleStartRandomPosMax = _float3(2, 1, 2);
+					testa.Particle_Power = 3.5f;
+					testa.vPowerDirection = _float3(1, 2, 1);
 
-				_Matrix mat = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
-				_Vector pos = mat.r[3];
-				testa.vFixedPosition = pos;
-				GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					_Matrix mat = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+					_Vector pos = mat.r[3];
+					testa.vFixedPosition = pos;
+					GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+				}
 
-				//testa.ParticleSize = _float3(1*0.3f);
-				//testa.ParticleSize2 = _float3(1*0.3f);
+				{
+					// Fragment
+					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+						//	Prototype_Mesh_SM_Box_Basic,
+						Prototype_Mesh_SM_4E_IceShards_01,
+						0.01f,
+						0.8f,
+						//	_float4(1,0,0,1),
+						//	_float4(1,0,0,1),
+						_float4(0.98f, 0.49f, 0.25f, 0.0f),
+						_float4(0),
+						1,
+						_float3(10),
+						_float3(0.1f),
+						1);
 
-				//GETPARTICLE->Create_Texture_Effect_Desc(testa, m_eNowSceneNum);
+					//	testMesh.eParticleTypeID = InstanceEffect_Fountain;
+					testMesh.eInstanceCount = Prototype_ModelInstance_16;
+					testMesh.ePassID = MeshPass_MaskingNoising;
+
+					_float val = 1.5f;
+					testMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+					testMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+					testMesh.TempBuffer_0.w = 278;
+					testMesh.TempBuffer_0.w = 276;
+
+					testMesh.iMaskingTextureIndex = NONNMASK;
+					testMesh.iMaskingTextureIndex = 122;
+					testMesh.iNoiseTextureIndex = 289;
+					testMesh.vEmissive_SBB = _float3(1.f, 0.0f, 0.1f);
+					testMesh.Particle_Power = 20.0f;
+
+					testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+					testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+					//testMesh.TempBuffer_0.x = 1;
+					//testMesh.TempBuffer_0.y = FollowingDir_Right;
+
+					//_Matrix mat = m_pTextureParticleTransform_Tail->Get_WorldMatrix();
+					//_Vector pos = mat.r[3] + mat.r[2] * 3;
+					//testMesh.vFixedPosition = pos;
+
+					testMesh.FollowingTarget = m_pTextureParticleTransform_Tail;
+					testMesh.iFollowingDir = FollowingDir_Look;
+
+					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+				}
+
+
 
 				m_EffectAdjust++;
 			}

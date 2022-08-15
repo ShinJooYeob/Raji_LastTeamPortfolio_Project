@@ -549,6 +549,12 @@ HRESULT CPartilceCreateMgr::Ready_MeshInstanceEffect()
 	mVecMeshInstDesc[Um_Mesh_Sword1] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword1"));
 	mVecMeshInstDesc[Um_Mesh_Sword2] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_Sword2"));
 	mVecMeshInstDesc[Um_Mesh_MaskApper] = pUtil->Get_MeshParticleDesc(TEXT("Um_Mesh_MaskApper"));
+
+	mVecMeshInstDesc[Um_MeshBase4] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase4"));
+	mVecMeshInstDesc[Um_MeshBase4_NoOnetime] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase4_NoOnetime"));
+	mVecMeshInstDesc[Um_MeshBase4_TurnAuto] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase4_TurnAuto"));
+	mVecMeshInstDesc[Um_MeshBase4_TurnRight] = pUtil->Get_MeshParticleDesc(TEXT("Um_MeshBase4_TurnRight"));
+
 	
 
 	return S_OK;
@@ -3180,6 +3186,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
 		MeshDesc.vSize = _float3(3.5f);
 		MeshDesc.vSize = _float3(4,3,4);
+		MeshDesc.fAlphaTestValue = 0.8f;
 
 		//	MeshDesc.vSize = _float3(5,10,5);
 
@@ -3395,7 +3402,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
-		MeshDesc.vLimLight = _float4(0.31f, 0.29f, 0.29f, 1.f);
+		MeshDesc.vLimLight = _float4(0.31f, 0.29f, 0.29f, 0.0f);
 		MeshDesc.vEmissive = _float4(1.f, 1.f, 1.f, 1.f);
 
 		// Transform_Base
@@ -3403,6 +3410,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
 		MeshDesc.vSize = _float3(3.0f);
 		MeshDesc.vSize = _float3(3.0f, 2.0f, 3.0f).XMVector()*0.5f;
+		MeshDesc.fAlphaTestValue = 0.9f;
 
 
 		// Move
@@ -3436,9 +3444,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Shader
 	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
@@ -3465,14 +3473,16 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		// Color
 		MeshDesc.vLimLight = _float4(0.31f, 0.29f, 0.29f, 1.f);
+		MeshDesc.vLimLight = _float4(0);
 		MeshDesc.vEmissive = _float4(1.f, 1.f, 1.f, 1.f);
+		MeshDesc.vEmissive = _float4(1.0f,0.5f,0.0f,1.0f);
 
 		// Transform_Base
 		MeshDesc.vPosition = _float3(0.0f, 0.0f, 4.00f);
 		//	MeshDesc.vPosition = _float3(0.0f, 0, 1.5f);
 		MeshDesc.vSize = _float3(3.0f);
 		MeshDesc.vSize = _float3(3.0f, 2.0f, 3.0f).XMVector();
-
+		MeshDesc.fAlphaTestValue = 0.8f;
 
 		// Move
 		//MeshDesc.MoveDir = FollowingDir_Up;
@@ -3504,9 +3514,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		// Shader
 	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);

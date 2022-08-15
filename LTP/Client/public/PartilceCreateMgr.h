@@ -412,6 +412,10 @@ public:
 		Um_Mesh_Sword1,
 		Um_Mesh_Sword2,
 		Um_Mesh_MaskApper,
+		Um_MeshBase4,
+		Um_MeshBase4_NoOnetime,
+		Um_MeshBase4_TurnAuto,
+		Um_MeshBase4_TurnRight,
 
 
 		MESHINST_EFFECTJ_END,

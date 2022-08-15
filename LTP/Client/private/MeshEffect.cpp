@@ -145,7 +145,6 @@ _int CMeshEffect::Render()
 		FAILED_CHECK(m_pModelInstance->Render_By_float4x4(m_pShaderCom, m_tInstanceDesc.ePassID + 1, &m_vecWorld, 0, &m_vecLimLight, vecEmissive, vecTimer));
 	}
 
-	
 
 
 
@@ -279,6 +278,7 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 		
 	}
 
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &m_tInstanceDesc.TempBuffer_1.x, sizeof(_float)));
 
 	RELEASE_INSTANCE(CGameInstance);
 
