@@ -28,6 +28,8 @@ HRESULT CParticleCollider::Initialize_Clone(void * pArg)
 	}
 	Safe_AddRef(m_pColliderDesc.pTargetTransform);
 
+	m_fWaitingTime = m_pColliderDesc.fWaitingTime;
+
 	FAILED_CHECK(SetUp_Components());
 	return S_OK;
 }
@@ -47,7 +49,12 @@ _int CParticleCollider::Update(_double fDeltaTime)
 
 	m_pCollider->Update_Transform(0, Matrix);
 	m_pCollider->Update_ConflictPassedTime(1);
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+
+	if (m_fWaitingTime >= 0.f)
+		m_fWaitingTime -= (_float)fDeltaTime;
+
+	if (m_fWaitingTime <= 0.f)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 
 	return _int();
 }
@@ -85,7 +92,7 @@ void CParticleCollider::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
 		//_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedObj->Take_Damage(this, 1.f, XMVector3Normalize(pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector() - pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector()), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }

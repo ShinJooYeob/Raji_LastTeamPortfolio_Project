@@ -11,6 +11,7 @@ public:
 		COLLIDERTYPE	ColliderType = COLLIDERTYPE_END;
 		COLLIDERDESC	ColliderDesc;
 		CTransform*		pTargetTransform = nullptr;
+		_float			fWaitingTime = 0.f;
 	}SETTINGCOLLIDER;
 
 private:
@@ -31,10 +32,15 @@ public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+public:
+	void	Set_WaitingTime(_float Time) { m_fWaitingTime = Time; }
+
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CCollider*				m_pCollider = nullptr;
+
+	_float					m_fWaitingTime = 0.f;
 
 	SETTINGCOLLIDER			m_pColliderDesc;
 private:

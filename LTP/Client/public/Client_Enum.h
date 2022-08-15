@@ -416,6 +416,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_IngameUI,
 	Prototype_Object_LobbyUI,
 	Prototype_Object_ParticleCollider,
+	Prototype_Object_ParticleColliderInOut,
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
 	Prototype_Object_Map_Gear,
@@ -776,6 +777,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_ParticleCollider:
 		return TEXT("Prototype_Object_ParticleCollider");
+
+	case Prototype_Object_ParticleColliderInOut:
+		return TEXT("Prototype_Object_ParticleColliderInOut");
 		
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
@@ -993,6 +997,7 @@ enum LAYERID
 	Layer_Volcano,
 	Layer_FlameTerrain,
 	Layer_ParticleCollider,
+	Layer_ParticleColliderInOut,
 
 
 	Layer_InteractObject,
@@ -1196,6 +1201,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_ParticleCollider:
 		return TEXT("Layer_ParticleCollider");
+		break;
+
+	case Layer_ParticleColliderInOut:
+		return TEXT("Layer_ParticleColliderInOut");
 		break;
 		
 	case Layer_MapObject:

@@ -56,6 +56,7 @@
 
 //ParticleCollider
 #include "ParticleCollider.h"
+#include "Particle_ColliderInOut.h"
 
 //Dynamic_Map
 #include "FemaleStatue.h"
@@ -531,6 +532,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//JJB
 	//ParticleCollider
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_ParticleCollider), CParticleCollider::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_ParticleColliderInOut), CParticle_ColliderInOut::Create(m_pDevice, m_pDeviceContext)));
+
 
 #pragma endregion
 
