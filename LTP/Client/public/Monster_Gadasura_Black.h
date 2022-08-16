@@ -98,7 +98,7 @@ private://애니메이션 동작 및 이벤트
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;
-	_uint				m_iInfinityPattern = 0;
+	_uint				m_iInfinityPattern = 20;
 	_uint				m_iInfinityAnimNumber = 0;
 
 	//Anim Combo Pattern

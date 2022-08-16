@@ -332,7 +332,45 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		}
 		case VAYUSURA_LEADER_BULLET:
 		{
-			static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet(true);
+			// CreateEffect
+			GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash3, m_pTransformCom);
+
+
+			{
+				// Rain
+				INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::MESHINST_EFFECTJ_BOW_Q_ICE2,
+					Prototype_Mesh_SM_RainDrop,
+					3.f,
+					0.5f,
+					_float4(0.0f, 0.0f, 1.0f, 1),
+					_float4(1.0f, 1.0f, 1.0f, 1),
+					1,
+					//_float3(0.3f, 0.5f, 0.3f),
+					//_float3(0.3f, 0.5f, 0.3f),
+					_float3(0.15f, 0.4f, 0.15f),
+					_float3(0.15f, 0.4f, 0.15f),
+					1);
+
+				// testMesh.fDistortionNoisingPushPower = 0;
+				testMesh.Particle_Power = -20.0f;
+				// testMesh.ePassID = MeshPass_MaskingNoising;
+				// testMesh.eParticleTypeID = InstanceEffect_Fountain;
+				testMesh.eInstanceCount = Prototype_ModelInstance_64;
+				// _float randpower = GetSingle(CUtilityMgr)->RandomFloat(3, 8);
+				//
+				// testMesh.Particle_Power = randpower;
+				// testMesh.iNoiseTextureIndex = NONNOISE;
+				//
+				_float val = 10;
+				testMesh.ParticleStartRandomPosMin = _float3(-val, 10, -val);
+				testMesh.ParticleStartRandomPosMax = _float3(val, 10, val);
+				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+				_Vector pos = mat.r[3];
+				testMesh.vFixedPosition = pos;
+
+				GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum, 0.5f);
+			}
+
 			Set_IsDead();
 			break;
 		}
@@ -784,7 +822,8 @@ HRESULT CMonster_Bullet_Universal::Vayusura_Leader_Bullet(_double dDeltaTime)
 
 	if(true == Monster_Object->Get_AttackCanceOn() || fDistance <= 0.2)
 	{
-		static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet(false);
+		// Remove Effect
+		// static_cast<CMonster_Vayusura_Leader*>(m_Monster_Bullet_UniversalDesc.Object)->Set_Play_MeshEffect_Colbullet(false);
 
 		Set_IsDead();
 	}
@@ -1150,6 +1189,13 @@ HRESULT CMonster_Bullet_Universal::Ready_JYParticleDesc()
 	switch (m_Monster_Bullet_UniversalDesc.iBulletMeshNumber)
 	{
 	case Client::CMonster_Bullet_Universal::VAYUSURA_LEADER_BULLET:
+	{
+
+	// Sphere
+	GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_VL_Cash0, m_pTransformCom);
+
+	}
+
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_MINION_BULLET:
 	{

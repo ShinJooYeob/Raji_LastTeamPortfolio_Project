@@ -98,6 +98,8 @@ _int CMainApp::Update(_double fDeltaTime)
 		return E_FAIL;
 	}
 
+	GetSingle(CPartilceCreateMgr)->Update_EffectMgr(fDeltaTime);
+
 #pragma region PhysX_Update
 	if (FAILED(GetSingle(CPhysXMgr)->Update_PhysX(fDeltaTime * m_SlowTimes)))
 	{
@@ -247,6 +249,7 @@ HRESULT CMainApp::Ready_SingletonMgr()
 	FAILED_CHECK(GetSingle(CPhysXMgr)->Initialize_PhysX(m_pDevice, m_pDeviceContext));
 	FAILED_CHECK(GetSingle(CPartilceCreateMgr)->Initialize_ParticleMgr());
 
+	
 
 	return S_OK;
 }

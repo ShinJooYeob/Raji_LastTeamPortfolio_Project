@@ -42,15 +42,14 @@ HRESULT CMonster_Gadasura_Black::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	//////////////////testPosition
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
-	//////////////////////////////
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+//	//////////////////////////////
 #endif
 
 	// Particle
-	m_SpawnDealytime = 0.5f;
-	Play_SpawnEffect();
+	 Set_DealyDIssolveTime(0.8f);
 	return S_OK;
 }
 
@@ -124,6 +123,15 @@ _int CMonster_Gadasura_Black::LateUpdate(_double dDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_pHPUI != nullptr)
 		m_pHPUI->LateUpdate(dDeltaTime);
@@ -527,11 +535,14 @@ HRESULT CMonster_Gadasura_Black::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Gadasura_Black::Once_AnimMotion(_double dDeltaTime)
 {
+
+#ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 51;
+	// m_iOncePattern = 2;
+
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 3;
-
+#endif // _DEBUG
 
 	//_uint Once = m_iOncePattern;
 	//_uint Before = m_iAfterPattern;
@@ -708,6 +719,9 @@ HRESULT CMonster_Gadasura_Black::Infinity_AnimMotion(_double dDeltaTime)
 	case 6:
 		m_iInfinityAnimNumber = 24;
 		break;
+	case 24:
+		m_iInfinityAnimNumber = 0;
+		break;
 	default:
 		m_iInfinityAnimNumber = 0;
 		break;
@@ -819,17 +833,69 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_SKILLSMASH1, m_pTextureParticleTransform_Demo1);
 	//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
 
+		{
+			// Fragment
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+				//	Prototype_Mesh_SM_Box_Basic,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
+				//	_float4(1,0,0,1),
+				//	_float4(1,0,0,1),
+				_float4(0.98f, 0.49f, 0.25f, 0.0f),
+				_float4(0),
+				1,
+				_float3(10),
+				_float3(0.1f),
+				1);
+
+			//	testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_16;
+			testMesh.ePassID = MeshPass_MaskingNoising;
+
+			_float val = 1.5f;
+			testMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+			testMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+			testMesh.TempBuffer_0.w = 278;
+			testMesh.TempBuffer_0.w = 276;
+
+			testMesh.iMaskingTextureIndex = NONNMASK;
+			testMesh.iMaskingTextureIndex = 122;
+			testMesh.iNoiseTextureIndex = 289;
+			testMesh.vEmissive_SBB = _float3(1.f, 0.0f, 0.1f);
+			testMesh.Particle_Power = 20.0f;
+
+			testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+			testMesh.TempBuffer_0.z = 1;
+
+			//testMesh.TempBuffer_0.x = 1;
+			//testMesh.TempBuffer_0.y = FollowingDir_Right;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3] + mat.r[2] * 3;
+			testMesh.vFixedPosition = pos;
+
+			//	testMesh.FollowingTarget = m_pTransformCom;
+			//	testMesh.iFollowingDir = FollowingDir_Look;
+
+		//	GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+		}
 
 		{
 			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 				Prototype_Mesh_SM_4E_IceShards_01,
 				0.01f,
 				0.8f,
-				_float4(1, 1, 1, 1),
-				_float4(1, 0, 0, 1),
-				3,
-				_float3(2),
+				_float4(0.98f, 0.15f, 0.84f, 0.8f),
+				_float4(0, 0, 0, 0),
+				1,
 				_float3(5),
+				_float3(0.1f),
 				1);
 
 			//	SM_4E_IceShards_01
@@ -838,26 +904,29 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 
 			testMesh.eParticleTypeID = InstanceEffect_Fountain;
-			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			testMesh.eInstanceCount = Prototype_ModelInstance_16;
 			//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
 
-			testMesh.Particle_Power = 8.0f;
-			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
-			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+			testMesh.Particle_Power = 5.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-1, 0, -1);
+			testMesh.ParticleStartRandomPosMax = _float3(1, 0, 1);
 
-			testMesh.iNoiseTextureIndex = 0;
-			testMesh.iMaskingTextureIndex = 0;
-
+			testMesh.iNoiseTextureIndex = NONNOISE;
+			testMesh.iMaskingTextureIndex = NONNMASK;
+			testMesh.SubPowerRandomRange_RUL = _float3(1, 3, 1);
 
 			//testMesh.FollowingTarget = m_pTransformCom;
 			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 			_Vector pos = mat.r[3] + mat.r[2] * 3;
 			//	_Vector pos = mat.r[3];
 			testMesh.vFixedPosition = pos;
+			testMesh.TempBuffer_0.z = 1;
 
 
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
 		}
+
 		
 	}
 
@@ -955,33 +1024,39 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 		{
 			// Sunder
-			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
-				0,
-				1.f,
-				_float4(0.1f, 1, 0.76f, 1),
-				_float4(0.0f, 0.64f, 0.51f, 1),
-				1,
-				_float3(1,3,1).XMVector() * 1.0f,
-				_float3(1,3,1).XMVector() * 0.3f,
-				1);
-			testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
+				INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+					0.01f,
+					0.5f,
+					//_float4(0.71f, 0.29f, 0.98f, 1),
+					_float4(0.71f, 0.29f, 0.98f, 1),
+				//	_float4(0.29f, 0.56f, 0.98f, 1),
+					_float4(1),
+					6,
+					_float3(1, 3, 1).XMVector() * 0.6f,
+					_float3(1, 3, 1).XMVector() * 0.25f,
+					1);
+				testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
+
 
 				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-			//	testTex.ePassID = InstancePass_OriginColor;
+				testTex.ePassID = InstancePass_BrightColor;
 				testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
 				testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 				testTex.TempBuffer_0.z = 2000;
 				testTex.TempBuffer_0.w = FollowingDir_Up;
-				testTex.Particle_Power = 2.0f;
+				testTex.Particle_Power = 16;
 
-			testTex.iTextureLayerIndex = 106; 
-		//	testTex.m_fAlphaTestValue = 0.001f;
+				testTex.iTextureLayerIndex = 106;
+				testTex.TempBuffer_1.y = 1;
 
-			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
-			_Vector pos = mat.r[3] + mat.r[2]*4.0f;
-			testTex.vFixedPosition = pos;
+				//	testTex.m_fAlphaTestValue = 0.001f;
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+				_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
+				testTex.vFixedPosition = pos;
+
+
+				GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
 
 
@@ -1014,7 +1089,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 			testTex.vFixedPosition = pos;
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+			// GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
 
@@ -1095,7 +1170,7 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 				_float3(4.0f),
 				1);
 
-			GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.4f, 0), _float3(0, 0.4f, 0));
+			// GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.4f, 0), _float3(0, 0.4f, 0));
 
 			base.TempBuffer_0.z = 100;
 			base.TempBuffer_0.w = FollowingDir_Look;
@@ -1104,21 +1179,21 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			base.iFollowingDir = FollowingDir_Look;
 
 
-			GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+			//GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
 		}
 		{
 			// Sunder2
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
-				0.01f,
-				0.4f,
+				0.3f,
+				0.5f,
 				//	_float4(0.71f, 0.29f, 0.98f, 1),
 				_float4(0.98f, 0.15f, 0.84f, 1.0f),
 				_float4(1),
-				10,
+				1,
 				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
 				_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
 				1);
-			testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
+			testTex.vEmissive_SBB = _float3(1, 1, 1);
 
 			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
 			testTex.ePassID = InstancePass_OriginColor;
@@ -1126,8 +1201,16 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 			testTex.FollowingTarget = m_pTransformCom;
 			testTex.iFollowingDir = FollowingDir_Look;
 
-			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+			// _Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			// 
+			// _Vector pos = mat.r[3];
+			// testTex.vFixedPosition = pos;
+
+			//GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 		}
+
+
 
 
 	}
@@ -1141,89 +1224,62 @@ HRESULT CMonster_Gadasura_Black::Update_Particle(_double timer)
 
 HRESULT CMonster_Gadasura_Black::Play_SpawnEffect()
 {
+
+	if (m_SpawnEffectAdjust == 0)
 	{
-		// ring
-		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(
-			CPartilceCreateMgr::Um_Spawn2_Image,
-			//	CPartilceCreateMgr::Um_Spawn2_Image_powerdown,
-			0,
-			0.3f,
-			_float4(1.0f),
-			_float4(0),
-			1,
-			_float3(1.0f),
-			_float3(5.0f),
-			1);
-		testTex.iTextureLayerIndex = 8;
+		m_SpawnEffectAdjust++;
 
-		testTex.ParticleStartRandomPosMin = _float3(0, 0.2f, 0);
-		testTex.ParticleStartRandomPosMax = _float3(0, 1.5f, 0);
-		testTex.FollowingTarget = m_pTransformCom;
-		testTex.iFollowingDir = FollowingDir_Look;
-		testTex.vEmissive_SBB = _float3(1, 0.8f, 0.8f);
-		testTex.m_fAlphaTestValue = 0.2f;
+		{
+			// magic
+			INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
 
-		//	testTex.TempBuffer_0.z = 0;
-		//	testTex.TempBuffer_0.w = FollowingDir_Right;
-		//	testTex.iFollowingDir = FollowingDir_Up;
-		//	testTex.TempBuffer_1.x = 0.0f;
+				CPartilceCreateMgr::Um_Spawn3_Imagepng,
+				0.05f,
+				0,
+				_float4(0.98f, 0.15f, 0.84f, 0.8f),
+				_float4(0.98f, 0.45f, 0.94f, 0.3f),
+				1,
+				_float3(2.0f),
+				_float3(4.0f),
+				1);
 
-		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+			base.eInstanceCount = Prototype_VIBuffer_Point_Instance_1;
+
+
+			//	base.ParticleStartRandomPosMin = _float3(0,1,0);
+			//	base.ParticleStartRandomPosMax = _float3(0,1,0);
+
+			GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
+
+			base.FollowingTarget = m_pTransformCom;
+			base.iFollowingDir = FollowingDir_Right;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
+		}
+
+		{
+			// Sunder2
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
+				0,
+				0,
+				//	_float4(0.71f, 0.29f, 0.98f, 1),
+				_float4(0.98f, 0.15f, 0.84f, 1.0f),
+				_float4(1),
+				10,
+				_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
+				_float3(0.1f, 1, 0.1f).XMVector() * 4.0f,
+				1);
+			testTex.vEmissive_SBB = _float3(1, 0.1f, 0.1f);
+
+			//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			testTex.ePassID = InstancePass_BrightColor;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Look;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
 	}
-
-
-	{
-		// magic
-		INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(
-
-			CPartilceCreateMgr::Um_Spawn3_Imagepng,
-			0,
-			0,
-			_float4(0.98f, 0.15f, 0.84f, 1.0f),
-			_float4(0.98f, 0.45f, 0.94f, 1.0f),
-			0,
-			_float3(4.0f),
-			_float3(4.0f),
-			0);
-
-	//	base.ParticleStartRandomPosMin = _float3(0,1,0);
-	//	base.ParticleStartRandomPosMax = _float3(0,1,0);
-
-	//	GETPARTICLE->Set_CreatBound_Tex(base, _float3(0, 0.5f, 0), _float3(0, 0.7f, 0));
-
-
-		base.FollowingTarget = m_pTransformCom;
-		base.iFollowingDir = FollowingDir_Right;
-
-
-	//	GETPARTICLE->Create_Texture_Effect_Desc(base, m_eNowSceneNum);
-	}
-
-	//{
-	//	// Sunder2
-	//	INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Sunder_1,
-	//		0.01f,
-	//		0.4f,
-	//		//	_float4(0.71f, 0.29f, 0.98f, 1),
-	//		_float4(0.98f, 0.15f, 0.84f, 1.0f),
-	//		_float4(1),
-	//		10,
-	//		_float3(0.1f, 1, 0.1f).XMVector() * 5.0f,
-	//		_float3(0.1f, 1, 0.1f).XMVector() * 3.f,
-	//		1);
-	//	testTex.vEmissive_SBB = _float3(1, 0.5f, 1);
-
-	//	testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
-	//	testTex.ePassID = InstancePass_OriginColor;
-
-	//	testTex.FollowingTarget = m_pTransformCom;
-	//	testTex.iFollowingDir = FollowingDir_Look;
-
-	//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-	//}
-
-
-
 	return S_OK;
 }
 
@@ -1302,6 +1358,11 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 	{
 		switch (iNowAnimIndex)
 		{
+		case 0:
+		{
+			m_bLookAtOn = false;
+			break;
+		}
 		case 3:
 		{
 			if (PlayRate >= 0.28571 && PlayRate <= 0.571428)
@@ -1514,16 +1575,17 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
+
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
-						0.8f,
+						0.5f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
 						_float4(0.29f, 0.56f, 0.98f, 1),
-					//	_float4(0.19f, 0.46f, 0.98f, 1),
 						_float4(1),
 						6,
-						_float3(1, 3, 1).XMVector() * 0.7f,
+						_float3(1, 3, 1).XMVector() * 0.6f,
 						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
 					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
@@ -1535,12 +1597,14 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 4;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
-
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 					testTex.vFixedPosition = pos;
 
@@ -1612,15 +1676,15 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
-						0.8f,
+						0.5f,
 						//_float4(0.71f, 0.29f, 0.98f, 1),
 						_float4(0.29f, 0.56f, 0.98f, 1),
-						//	_float4(0.19f, 0.46f, 0.98f, 1),
 						_float4(1),
 						6,
-						_float3(1, 3, 1).XMVector() * 0.7f,
+						_float3(1, 3, 1).XMVector() * 0.6f,
 						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
 					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
@@ -1632,18 +1696,21 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 4;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
-
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 					testTex.vFixedPosition = pos;
 
 
 					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
+
 				m_EffectAdjust++;
 
 			}
@@ -1848,28 +1915,31 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			{
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
-						0,
-						0.8f,
+						0.01f,
+						0.5f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
-					//	_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						// _float4(0.29f, 0.56f, 0.98f, 1),
 						_float4(1),
-						1,
-						_float3(1, 3, 1).XMVector() * 0.8f,
-						_float3(1, 3, 1).XMVector() * 0.3f,
+						6,
+						_float3(1, 3, 1).XMVector() * 0.6f,
+						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
 					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 					testTex.ePassID = InstancePass_BrightColor;
 					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 5.0f;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
@@ -1879,6 +1949,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
+
 				m_EffectAdjust++;
 
 			}
@@ -1943,7 +2014,7 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 			}
 			if (m_EffectAdjust == 1 && PlayRate >= 0.4245)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
+			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GM_Cash3, m_pTransformCom);
 
 
 				{
@@ -1973,12 +2044,12 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
 						Prototype_Mesh_SM_4E_IceShards_01,
 						0.01f,
-						0.8f,
-						_float4(0.98f, 0.15f, 0.84f, 1.0f),
-						_float4(0,0,0,1),
+						1.0f,
+						_float4(0.98f, 0.15f, 0.84f, 0.8f),
+						_float4(0, 0, 0, 0),
 						1,
-						_float3(2),
-						_float3(5),
+						_float3(10),
+						_float3(1.0f),
 						1);
 
 					//	SM_4E_IceShards_01
@@ -1990,24 +2061,62 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					testMesh.eInstanceCount = Prototype_ModelInstance_32;
 					//	testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
 
-					testMesh.Particle_Power = 8.0f;
-					testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
-					testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+					testMesh.Particle_Power = 5.0f;
+					testMesh.ParticleStartRandomPosMin = _float3(-1, 0, -1);
+					testMesh.ParticleStartRandomPosMax = _float3(1, 0, 1);
 
-					testMesh.iNoiseTextureIndex = 0;
-					testMesh.iMaskingTextureIndex = 0;
-
+					testMesh.iNoiseTextureIndex = NONNOISE;
+					testMesh.iMaskingTextureIndex = NONNMASK;
+					testMesh.SubPowerRandomRange_RUL = _float3(1, 1,3);
 
 					//testMesh.FollowingTarget = m_pTransformCom;
 					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 3;
 					//	_Vector pos = mat.r[3];
 					testMesh.vFixedPosition = pos;
+					testMesh.TempBuffer_0.z = 1;
 
 
 					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 
 				}
+
+				{
+					// Sunder
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
+						0.01f,
+						0.5f,
+						_float4(0.71f, 0.29f, 0.98f, 1),
+						// _float4(0.29f, 0.56f, 0.98f, 1),
+						_float4(1),
+						6,
+						_float3(1, 3, 1).XMVector() * 0.8f,
+						_float3(1, 3, 1).XMVector() * 0.25f,
+						1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
+
+
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+					testTex.ePassID = InstancePass_BrightColor;
+					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
+					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
+					testTex.TempBuffer_0.z = 2000;
+					testTex.TempBuffer_0.w = FollowingDir_Up;
+					testTex.Particle_Power = 13;
+
+					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
+					//	testTex.m_fAlphaTestValue = 0.001f;
+
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
+					testTex.vFixedPosition = pos;
+
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+
 				
 
 				m_EffectAdjust++;
@@ -2137,38 +2246,41 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 				}
 
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
-						0.8f,
+						0.5f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
-						//	_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						// _float4(0.29f, 0.56f, 0.98f, 1),
 						_float4(1),
-						1,
-						_float3(1, 3, 1).XMVector() * 0.8f,
-						_float3(1, 3, 1).XMVector() * 0.3f,
+						6,
+						_float3(1, 3, 1).XMVector() * 0.6f,
+						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
-					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 					testTex.ePassID = InstancePass_BrightColor;
 					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 5.0f;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
-
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 					testTex.vFixedPosition = pos;
 
 
 					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 				}
-
+			
 				m_EffectAdjust++;
 
 			}
@@ -2207,32 +2319,35 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				}
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
-						0.8f,
+						0.5f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
-						//	_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						// _float4(0.29f, 0.56f, 0.98f, 1),
 						_float4(1),
-						1,
-						_float3(1, 3, 1).XMVector() * 0.8f,
-						_float3(1, 3, 1).XMVector() * 0.3f,
+						6,
+						_float3(1, 3, 1).XMVector() * 0.6f,
+						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
-					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 					testTex.ePassID = InstancePass_BrightColor;
 					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 5.0f;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
-
-					_Vector pos = mat.r[3] + mat.r[2] * 8.0f;
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 					testTex.vFixedPosition = pos;
 
 
@@ -2276,34 +2391,36 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
-
 				{
+					// Sunder
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_4,
 						0.01f,
-						0.8f,
+						0.5f,
 						_float4(0.71f, 0.29f, 0.98f, 1),
-						//	_float4(0.98f, 0.15f, 0.84f, 1.0f),
+						// _float4(0.29f, 0.56f, 0.98f, 1),
 						_float4(1),
-						1,
-						_float3(1, 3, 1).XMVector() * 0.8f,
-						_float3(1, 3, 1).XMVector() * 0.3f,
+						6,
+						_float3(1, 3, 1).XMVector() * 0.6f,
+						_float3(1, 3, 1).XMVector() * 0.25f,
 						1);
-					testTex.vEmissive_SBB = _float3(1, 0.3f, 1);
+					testTex.vEmissive_SBB = _float3(1, 0.01f, 1);
 
 
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 					testTex.ePassID = InstancePass_BrightColor;
 					testTex.ParticleStartRandomPosMin = _float3(-1, 0.1f, -1);
 					testTex.ParticleStartRandomPosMax = _float3(1, 0.1f, 1);
 					testTex.TempBuffer_0.z = 2000;
 					testTex.TempBuffer_0.w = FollowingDir_Up;
-					testTex.Particle_Power = 5.0f;
+					testTex.Particle_Power = 16;
 
 					testTex.iTextureLayerIndex = 106;
+					testTex.TempBuffer_1.y = 1;
+
 					//	testTex.m_fAlphaTestValue = 0.001f;
 
-
-					_Vector pos = mat.r[3] + mat.r[2] * 12.0f;
+					_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+					_Vector pos = mat.r[3] + mat.r[2] * 4.0f;
 					testTex.vFixedPosition = pos;
 
 
@@ -2418,8 +2535,6 @@ HRESULT CMonster_Gadasura_Black::Adjust_AnimMovedTransform(_double dDeltaTime)
 					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 				}
-
-
 
 				m_EffectAdjust++;
 			}

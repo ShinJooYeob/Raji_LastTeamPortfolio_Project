@@ -129,8 +129,9 @@ private://Dissolve
 private://Repel
 	_bool				m_bRepelOff = false;
 
-private:
-	HRESULT	Ready_ParticleDesc();
+private: // particle
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Play_SpawnEffect()override;
 	HRESULT	Update_ParticleTransform(_double fDeltaTime);
 	_float4 vTargetRimLightColor = _float4(0);
 	_float4 vOldRimLightColor = _float4(0);

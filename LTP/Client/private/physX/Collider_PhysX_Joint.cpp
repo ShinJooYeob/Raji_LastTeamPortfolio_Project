@@ -1126,8 +1126,7 @@ CComponent * CCollider_PhysX_Joint::Clone(void * pArg)
 void CCollider_PhysX_Joint::Free()
 {
 
-		__super::Free();
-
+	__super::Free();
 
 #ifdef _DEBUG
 	if (m_bIsClone == false)
@@ -1142,25 +1141,15 @@ void CCollider_PhysX_Joint::Free()
 
 	if (m_bIsClone)
 	{
-
 		auto scene = GetSingle(CPhysXMgr)->Get_PhysicsScene();
 		if (scene)
 		{
-
 			for (auto& ss : mVecActors)
 			{
 				PX_RELEASE(ss);
 			}
-			
 			PX_RELEASE(mBodyActor);
-
 		}
 	}
-
-
-
-
-	
-
 
 }

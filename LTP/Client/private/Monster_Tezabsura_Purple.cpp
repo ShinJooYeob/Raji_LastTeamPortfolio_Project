@@ -41,9 +41,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 #endif
 
@@ -55,6 +54,15 @@ _int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_fHP <= 0)
 	{
@@ -469,6 +477,14 @@ HRESULT CMonster_Tezabsura_Purple::CoolTime_Manager(_double dDeltaTime)
 
 HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 {
+#ifdef _DEBUG
+	// #DEBUG PatternSET
+	// m_iOncePattern = 2;
+
+	if (KEYPRESS(DIK_B))
+		m_iOncePattern = 0;
+#endif // _DEBUG
+
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -712,6 +728,60 @@ HRESULT CMonster_Tezabsura_Purple::Jumping(_double dDeltaTime)
 
 		fPosition.y = m_fJumpTempPos.y + fJumpY;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat3(&fPosition));
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Purple::Ready_ParticleDesc()
+{
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Purple::Play_SpawnEffect()
+{
+	if (m_SpawnEffectAdjust == 0)
+	{
+		// smoke
+		m_SpawnEffectAdjust++;
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				0.05f,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(0.5f),
+				_float3(0.3f),
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+			testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.ePassID = InstancePass_MaskingNoising;s
+			// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.3f);
+
+			_float val = 0.8f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+			testTex.Particle_Power = 5.0f;
+
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
+
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
+
+		//	testTex.m_fAlphaTestValue = 0.2f;
+
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
 	}
 
 	return S_OK;

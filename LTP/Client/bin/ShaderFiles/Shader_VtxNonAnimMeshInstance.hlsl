@@ -23,6 +23,8 @@ cbuffer ForNoise
 	float4	g_vColor = float4(0,0,0,0);
 	float	g_fAppearTimer = 1.f;
 	float g_fDistortionNoisingPushPower = 0.5f;
+	float g_fAlphaTestValue = 0;
+
 }
 
 
@@ -386,7 +388,13 @@ PS_OUT PS_MAIN_OriginColor(PS_IN In)
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	Out.vLimLight = In.vLimLightColor;
 
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
+		discard;
+
 	Out.vDiffuse = saturate(Out.vDiffuse);
+
+
+
 
 	return Out;
 }
@@ -446,8 +454,10 @@ PS_OUT PS_MAIN_BrightColor(PS_IN In)
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	Out.vLimLight = In.vLimLightColor;
 
-
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
+		discard;
 	Out.vDiffuse = saturate(Out.vDiffuse);
+
 
 	return Out;
 }
@@ -523,8 +533,11 @@ PS_OUT PS_MAIN_NoiseFireEffect(PS_Noise_IN In)
 
 	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
-	if (Out.vDiffuse.a < 0.1f)
+
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
+
+
 	Out.vDiffuse = saturate(Out.vDiffuse);
 
 	return Out;
@@ -603,10 +616,12 @@ PS_OUT PS_MAIN_NoiseFireEffect_Bright(PS_Noise_IN In)
 
 	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
-	if (Out.vDiffuse.a < 0.1f)
+
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
+
 
 	return Out;
 
@@ -707,7 +722,7 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear(PS_Noise_IN In)
 
 	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
-	if (Out.vDiffuse.a < 0.1f)
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
 
 	Out.vDiffuse = saturate(Out.vDiffuse);
@@ -811,9 +826,8 @@ PS_OUT PS_MAIN_NoiseFireEffect_Appear_Bright(PS_Noise_IN In)
 
 	//Out.vDiffuse.a = Out.vDiffuse.a * pow(saturate((fViewZ - In.vProjPos.w)), 1.5f);
 
-	if (Out.vDiffuse.a < 0.1f)
+	if (Out.vDiffuse.a < g_fAlphaTestValue)
 		discard;
-
 	Out.vDiffuse = saturate(Out.vDiffuse);
 
 	return Out;

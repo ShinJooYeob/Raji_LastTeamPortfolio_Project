@@ -41,6 +41,22 @@ typedef struct tag_EASINGDESC
 
 }MESHAEASING;
 
+typedef struct tag_DealyInstacneMesh
+{
+	INSTMESHDESC data;
+	_uint scene;
+	_double timer;
+
+}DELAYMESH;
+
+typedef struct tag_DealyTex
+{
+	INSTPARTICLEDESC data;
+	_uint scene;
+	_double timer;
+}DELAYTEX;
+
+
 
 class CPartilceCreateMgr final :public CBase
 {
@@ -392,6 +408,8 @@ public:
 		Um_Spawn3_Imagepng_Snow,
 		Um_Spawn3_Imagepng_Snow2,
 		Um_Spawn4_smoke,
+		Um_Spawn5_Png_Ring,
+
 
 		TEXTURE_EFFECTJ_END,
 
@@ -409,7 +427,11 @@ public:
 		Um_MeshBase_Cone,
 		Um_Mesh_Sword1,
 		Um_Mesh_Sword2,
-
+		Um_Mesh_MaskApper,
+		Um_MeshBase4,
+		Um_MeshBase4_NoOnetime,
+		Um_MeshBase4_TurnAuto,
+		Um_MeshBase4_TurnRight,
 
 
 		MESHINST_EFFECTJ_END,
@@ -448,7 +470,7 @@ public:
 
 
 public:
-	HRESULT Update_EffectMgr(_double Timer);
+	_int Update_EffectMgr(_double Timer);
 
 
 	//HRESULT ReadyParticleData_TextureInstacnce();
@@ -457,7 +479,7 @@ public:
 	// TextureEffect
 	HRESULT Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_Texture_Effect_World(E_TEXTURE_EFFECTJ type, _float3 worldPos);
-	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene);
+	HRESULT Create_Texture_Effect_Desc(INSTPARTICLEDESC desc, _uint scene, _double timer = 0);
 
 	INSTPARTICLEDESC Get_EffectSetting_Tex(E_TEXTURE_EFFECTJ e,
 		_float TotalTime, _float EachTime,
@@ -470,7 +492,7 @@ public:
 	// Meshinst
 	HRESULT Create_MeshInst_Effect(E_MESHINST_EFFECTJ type, CTransform * parentTransform);
 	HRESULT Create_MeshInst_Effect_World(E_MESHINST_EFFECTJ type, _float3 worldPos);
-	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene);
+	HRESULT Create_MeshInst_DESC(INSTMESHDESC desc, _uint scene, _double timer=0);
 
 	INSTMESHDESC Get_EffectSetting_Mesh(E_MESHINST_EFFECTJ e,
 		COMPONENTPROTOTYPEID meshType = COMPONENTPROTOTYPEID(0),
@@ -514,6 +536,12 @@ private:
 	vector<NONINSTNESHEFTDESC>	mVecMeshEffectDesc;
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
 	vector<INSTMESHDESC>		mVecMeshInstDesc;
+
+
+	list<DELAYTEX>				mListParticleDesc_Delay;
+	list<DELAYMESH>				mListMeshInstDesc_Delay;
+
+
 
 	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
 

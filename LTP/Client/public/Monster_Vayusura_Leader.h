@@ -49,17 +49,6 @@ private:
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
 	virtual HRESULT Play_SpawnEffect()override;
-
-
-	void	Set_Bullet(CGameObject* b)
-	{
-		Safe_Release(m_BulletObj);
-		m_BulletObj = b;
-		Safe_AddRef(m_BulletObj);
-	}
-
-public:
-	void Set_Play_MeshEffect_Colbullet(bool bParticle = true);
 	
 public: //ETC
 	_bool				Get_AttackCanceOn() { return m_bAttackCancelOn; }
@@ -96,7 +85,7 @@ private://애니메이션 동작 및 이벤트
 
 	//Anim Infinity Pattern
 	_double				m_dInfinity_CoolTime = 0;
-	_uint				m_iInfinityPattern = 0;
+	_uint				m_iInfinityPattern = 20;
 	_uint				m_iInfinityAnimNumber = 0;
 
 	//Anim Combo Pattern
@@ -134,15 +123,15 @@ private://Repel
 
 private: // particle	
 	CTransform*						m_pTextureParticleTransform_Demo1 = nullptr;
-	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
+//	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
 
-	CGameObject*					m_BulletObj = nullptr;
-	CGameObject*					m_BulletMeshEffect = nullptr;
+	//CGameObject*					m_BulletObj = nullptr;
+	//CGameObject*					m_BulletMeshEffect = nullptr;
 
-	_bool							m_dealyEffect_Rain = false;
-	_double							m_dealyEffect_Time = 0;
+	//_bool							m_dealyEffect_Rain = false;
+	//_double							m_dealyEffect_Time = 0;
 
 
 private:

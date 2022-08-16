@@ -16,6 +16,8 @@
 
 #include "Monster_Gadasura_Black.h"
 #include "Monster_Gadasura_Rage.h"
+
+
 #include "AssimpCreateMgr.h"
 #include "EnvMappedWater.h"
 
@@ -1969,6 +1971,7 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
 		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
 	}
+
 	if (ImGui::Button("Create_Prototype_Object_Monster_Ninjasura"))
 	{
 		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
@@ -1982,7 +1985,72 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 	}
 
 
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "SPAWN_MONSTER");
 
+	if (ImGui::Button("Create_Prototype_Object_Monster_Jalsura"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Jalsura), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+
+	}
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Tezabsura_Minion"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Tezabsura_Minion), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
+
+	
+	if (ImGui::Button("Create_Prototype_Object_Monster_Tezabsura_Landmine"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Tezabsura_Landmine), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "PARTICLE_MONSTER");
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Tezabsura_Purple"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Tezabsura_Purple), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
+
+	if (ImGui::Button("Create_Prototype_Object_Monster_Tezabsura_Bomber"))
+	{
+		CreatePos = GetSingle(CGameInstance)->Get_TargetPostion_float4(PLV_PLAYER);
+		CreatePos.x += 2;
+
+		CGameObject* monsterobj = (g_pGameInstance->Add_GameObject_GetObject
+		(g_pGameInstance->Get_NowSceneNum(), layer_Monster, TAG_OP(Prototype_Object_Monster_Tezabsura_Bomber), &CreatePos));
+
+		CTransform* transform = (CTransform*)static_cast<CMonster_Mahinasura_Minion*>(monsterobj)->Get_Component(TAG_COM(Com_Transform));
+		transform->Set_MatrixState(CTransform::STATE_POS, _float3(CreatePos));
+	}
 
 	// BOSS
 
@@ -2071,16 +2139,16 @@ _int CImguiMgr::Update_DebugWnd_EffectTest(_double fDeltaTime)
 		}
 	}
 
-	ImGui::SameLine();
-	if (ImGui::Button("Delete_Boss"))
-	{
-		auto vecDelete_Bos = g_pGameInstance->Get_ObjectList_from_Layer(g_pGameInstance->Get_NowSceneNum(), layer_Boss);
+	//ImGui::SameLine();
+	//if (ImGui::Button("Delete_Boss"))
+	//{
+	//	auto vecDelete_Bos = g_pGameInstance->Get_ObjectList_from_Layer(g_pGameInstance->Get_NowSceneNum(), layer_Boss);
 
-		for (auto obj : *vecDelete_Bos)
-		{
-			obj->Set_IsDead();
-		}
-	}
+	//	for (auto obj : *vecDelete_Bos)
+	//	{
+	//		obj->Set_IsDead();
+	//	}
+	//}
 
 	
 
