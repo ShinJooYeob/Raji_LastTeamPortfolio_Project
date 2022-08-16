@@ -232,6 +232,7 @@ enum SCENEID
 	SCENE_LABORATORY_JINO,
 
 	SCENE_MINIGAME1,
+	SCENE_MINIGAME_PM,
 
 	SCENE_EDIT,
 	SCENE_END
@@ -270,6 +271,9 @@ static const char* Tag_ScenenName(SCENEID eTag)
 		return "SCENE_LABORATORY_JINO";
 	case SCENE_MINIGAME1:
 		return "SCENE_MINIGAME1";
+	case SCENE_MINIGAME_PM:
+		return "SCENE_MINIGAME_PM";
+		
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
@@ -1356,8 +1360,8 @@ enum COMPONENTPROTOTYPEID
 		Prototype_Mesh_JY_Gazebo_Piece02,
 		Prototype_Mesh_JY_Gazebo_Piece03,
 		Prototype_Mesh_JY_Gazebo_Piece04,
+		Prototype_Mesh_Burger_Alphabet,
 		
-	
 	Prototype_Mesh_Wing,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 
@@ -3885,6 +3889,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Gazebo_Piece04.fbx");
 		break;
 
+	case Prototype_Mesh_Burger_Alphabet:
+		return TEXT("Burger_Alphabet.fbx");
+		break;
 		
 
 	case Prototype_Mesh_Plat_Wall:

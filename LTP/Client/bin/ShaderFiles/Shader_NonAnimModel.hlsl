@@ -913,7 +913,8 @@ PS_OUT PS_MAIN_LillyDiscard(PS_IN In)
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 
-	Out.vLimLight = g_vLimLight;
+	Out.vEmissive = float4(1.f, 0.5f, 1.f, 0.f);
+	Out.vLimLight = float4(vDiffuse.xyz, 0.5f);
 
 	return Out;
 }

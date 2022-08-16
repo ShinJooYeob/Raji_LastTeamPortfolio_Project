@@ -318,7 +318,8 @@ _int CRangda::LateUpdate(_double fDeltaTime)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SUBNONBLEND, this));
+
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_L_Collider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pHand_R_Collider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pScreamCollider));
@@ -333,31 +334,31 @@ _int CRangda::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	//Target_UpScaled_By3
+	FAILED_CHECK(m_pRendererCom->Copy_RenderTarget(L"Target_Depth"));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
+
+
+
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+	_float fVisualValue = 2.f;
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fVisualValue", &fVisualValue, sizeof(_float)));
+
+
+	FAILED_CHECK(m_pShaderCom->Set_Texture("g_DepthTexture", g_pGameInstance->Get_SRV(L"Target_UpScaled_By3")));
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolve->Render_SkipMtrl(3, &m_vecFinger));
+	FAILED_CHECK(m_pDissolve->Render_SkipMtrl(16, &m_vecFinger));
 
-	//_uint NumMaterial = m_pModel->Get_NumMaterial();
-
-	//for (_uint i = 0; i < NumMaterial; i++)
-	//{
-	//	//if(i == 10)continue;
-
-	//	for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-	//		FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-
-	//	if(i > 3 && i <= _uint(m_iMaterialCount) )
-	//		continue;
-
-	//	FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
-	//}
 
 	return _int();
 }
@@ -514,13 +515,14 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			INSTMESHDESC tDesc2 = pUtil->Get_MeshParticleDesc(L"JY_Mesh_3");
 			tDesc2.FollowingTarget = nullptr;
 			tDesc2.Particle_Power = 50.f;
-			tDesc2.eInstanceCount = Prototype_ModelInstance_32;
+			tDesc2.eInstanceCount = Prototype_ModelInstance_64;
+			tDesc1.SubPowerRandomRange_RUL = _float3(1, 1, 7.5f);
 
 
 			tDesc1.vFixedPosition = tDesc2.vFixedPosition = tParticleTexDesc.vFixedPosition;
 			tDesc2.vPowerDirection = XMVector3Normalize(g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA) - tDesc2.vFixedPosition.XMVector());
 
-			_uint iRandValue = rand() % 4;
+			_uint iRandValue = 3;
 			for (_uint i = 0; i < 4; i++)
 			{
 				wstring MeshTag = L"Gazebo_Piece0" + to_wstring(i + 1) + L".fbx";

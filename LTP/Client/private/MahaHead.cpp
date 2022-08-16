@@ -315,6 +315,19 @@ _int CMahaHead::Update(_double fDeltaTime)
 			m_iCurState = 15;
 
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.3f, 322.283f)));
+		
+			CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+			INSTPARTICLEDESC tParticleTexDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_23");
+			tParticleTexDesc.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+			tParticleTexDesc.vFixedPosition.y = 32.5f;
+			tParticleTexDesc.vPowerDirection = _float3(0, 0, 1);
+			tParticleTexDesc.TargetColor = _float4(_float3(1.5), tParticleTexDesc.TargetColor.w);
+			//tParticleTexDesc.vEmissive_SBB = _float3(0);
+			tParticleTexDesc.TempBuffer_0.x = 0.4f;
+			tParticleTexDesc.TempBuffer_1.w = 0.4f;
+			tParticleTexDesc.ParticleSize = _float3(15.f);
+			pUtil->Create_TextureInstance(m_eNowSceneNum, tParticleTexDesc);
 		}
 
 		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);

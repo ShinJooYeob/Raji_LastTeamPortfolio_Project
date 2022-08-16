@@ -23,6 +23,7 @@ HRESULT CGrovetender::Initialize_Prototype(void * pArg)
 
 HRESULT CGrovetender::Initialize_Clone(void * pArg)
 {
+
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
 	FAILED_CHECK(SetUp_Components());
@@ -186,27 +187,49 @@ HRESULT CGrovetender::Update_State_Idle(_double fDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(L"Jino_Golem_Clap.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 				
+				CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+
 				CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
 				tCameraShakeDirDesc.fTotalTime = 0.3f;
 				tCameraShakeDirDesc.fPower = 20.f;
 				tCameraShakeDirDesc.fChangeDirectioninterval = 0.01f;
-				_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-3.f, 3.f).XMVector();
+				_float3 fShakeDir = pUtil->RandomFloat3(-3.f, 3.f).XMVector();
 				fShakeDir.y = 0.f;
 				tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, false);
+				pUtil->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, false);
 
 				CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
 				tCameraShakeRotDesc.fTotalTime = 0.3f;
 				tCameraShakeRotDesc.fPower = 2.f;
 				tCameraShakeRotDesc.fChangeDirectioninterval = 0.05f;
-				tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
-				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+				tCameraShakeRotDesc.fShakingRotAxis = pUtil->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+				pUtil->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
 
 				m_bOnceSwitch = true;
+
+				INSTMESHDESC tDesc = pUtil->Get_MeshParticleDesc(L"JY_Mesh_8");
+				tDesc.FollowingTarget = nullptr;
+				tDesc.ParticleSize2 = _float3(0.001f, 5, 0.001f);
+				tDesc.ParticleSize2 = _float3(5, 5, 5);
+				tDesc.vFixedPosition =
+					m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + 
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.25f + 
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 3.f +
+				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 2.5f ;
+
+				tDesc.vPowerDirection = 
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * 0.85f + 
+					m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK)* 0.15f;
+				pUtil->Create_MeshInstance(m_eNowSceneNum, tDesc);
+
+
 			}
 			else if (0.98f <= fAnimRate)
 			{
 				m_bOnceSwitch = false;
+				//m_pModel->Change_AnimIndex_ReturnTo_Must(17, 17, 0);
+
 				m_pModel->Change_AnimIndex(ANIM_MOVE);
 				m_eCurState = STATE_MOVE;
 				g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(0.f, -150.f, 93.197f));
@@ -253,6 +276,22 @@ HRESULT CGrovetender::Update_State_Move(_double fDeltaTime)
 	{
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 0.8f, 0.2f, false);
 		g_pGameInstance->Play3D_Sound(L"Jino_Golem_FootStep_L.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+		
+		INSTPARTICLEDESC tPtDesc;
+
+		tPtDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_9");
+
+		tPtDesc.FollowingTarget = nullptr;
+		tPtDesc.vFixedPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.8f +
+			//m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 3.f +
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+
+		tPtDesc.Particle_Power = 10.f;
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tPtDesc);
+		
 		m_bOncePlaySound = true;
 	}
 	else if (0.89f <= fAnimRate && 0.92f >= fAnimRate && true == m_bOncePlaySound)
@@ -260,6 +299,21 @@ HRESULT CGrovetender::Update_State_Move(_double fDeltaTime)
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 0.8f, 0.2f, false);
 		g_pGameInstance->Play3D_Sound(L"Jino_Golem_FootStep_R.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 		m_bOncePlaySound = false;
+
+		INSTPARTICLEDESC tPtDesc;
+
+		tPtDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(L"JY_TextureEft_9");
+
+		tPtDesc.FollowingTarget = nullptr;
+		tPtDesc.vFixedPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.8f +
+			//m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 3.f +
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f;
+
+		tPtDesc.Particle_Power = 10.f;
+
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, tPtDesc);
 	}
 
 	_Vector vLookDir = XMVector3Normalize(vPlayerPos - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));

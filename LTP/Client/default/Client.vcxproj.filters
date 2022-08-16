@@ -538,6 +538,9 @@
     <Filter Include="01.GameObject\99.UI\HitEffectUI">
       <UniqueIdentifier>{3c9144ca-45da-4052-bbc7-7157f87ddc8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_Minigame_PM">
+      <UniqueIdentifier>{bd2afff5-4dbd-4dd7-ab51-338d1aebe716}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1154,6 +1157,9 @@
     <ClInclude Include="..\public\HitEffectUI.h">
       <Filter>01.GameObject\99.UI\HitEffectUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Scene_Minigame_PM.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_Minigame_PM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1749,6 +1755,9 @@
     </ClCompile>
     <ClCompile Include="..\private\HitEffectUI.cpp">
       <Filter>01.GameObject\99.UI\HitEffectUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_Minigame_PM.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_Minigame_PM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

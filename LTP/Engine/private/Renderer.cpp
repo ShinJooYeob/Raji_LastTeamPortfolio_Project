@@ -553,8 +553,6 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 
 
 	FAILED_CHECK(Render_EmissiveBlur());
-	if (m_PostProcessingOn[POSTPROCESSING_CAMMOTIONBLUR])
-		FAILED_CHECK(Render_CameraMotionBlur());
 	if (m_PostProcessingOn[POSTPROCESSING_SHADOW] && m_PostProcessingOn[POSTPROCESSING_GODRAY])
 		FAILED_CHECK(Render_GodRay());
 	if (m_PostProcessingOn[POSTPROCESSING_DOF])
@@ -564,6 +562,8 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	if (m_PostProcessingOn[POSTPROCESSING_DDFOG])
 		FAILED_CHECK(Render_DDFog());
 
+	if (m_PostProcessingOn[POSTPROCESSING_CAMMOTIONBLUR])
+		FAILED_CHECK(Render_CameraMotionBlur());
 	
 	if (m_PostProcessingOn[POSTPROCESSING_BLOOM])
 		FAILED_CHECK(Render_Bloom());
@@ -1543,6 +1543,23 @@ HRESULT CRenderer::Copy_NowWorld2OldWorld()
 
 	m_OldViewMat = pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW);
 	m_OldProjMat = pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ);
+	return S_OK;
+}
+
+HRESULT CRenderer::Copy_RenderTarget(const _tchar * szCopyTag)
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_UpScaled_By3")));
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_UpScaled_By3")));
+	
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(szCopyTag)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 0));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_UpScaled_By3")));
 	return S_OK;
 }
 

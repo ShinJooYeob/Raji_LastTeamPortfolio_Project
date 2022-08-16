@@ -138,7 +138,6 @@ SrcBlend = Src_Alpha;
 DestBlend = Inv_Src_Alpha;
 };
 
-
 BlendState	NonBlending
 {
 	BlendEnable[0] = false;

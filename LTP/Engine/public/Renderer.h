@@ -75,6 +75,7 @@ public:
 	HRESULT Render_RenderGroup(_double fDeltaTime);
 	HRESULT Clear_RenderGroup_forSceneChaging();
 
+	HRESULT Copy_RenderTarget(const _tchar* szCopyTag);
 	HRESULT Copy_BluredMtrlDiffuse(_float TexelSize = 2.f);
 	HRESULT Make_BluredDeffered(_float TexelSize = 2.f);
 	HRESULT Make_BluredRenderTarget(const _tchar* szCopyTag, _float TexelSize = 2.f);

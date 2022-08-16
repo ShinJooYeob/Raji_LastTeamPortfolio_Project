@@ -160,6 +160,11 @@
 #include "Golu_Bullet.h"
 ////////////////////////////////////////////////////////////////////////////////
 
+/////////MiniGame PACKMAN///////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////////
 #include "TestNonAnimInstancing.h"
 //////////////////////////////////////////////////////////////////////////
@@ -223,8 +228,12 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 	case SCENEID::SCENE_MINIGAME1:
 		pLoader->Load_Scene_Minigame1(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
-	case SCENEID::SCENE_EDIT:
 
+	case SCENEID::SCENE_MINIGAME_PM:
+		pLoader->Load_Scene_Minigame_PM(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
+	case SCENEID::SCENE_EDIT:
 		pLoader->Load_Scene_Edit(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
 
@@ -1828,6 +1837,80 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 	return S_OK;
 }
 
+HRESULT CLoader::Load_Scene_Minigame_PM(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+#pragma  region Static_Mesh
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
+
+#pragma  endregion
+#pragma region PROTOTYPE_COMPONENT
+
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME1, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_MiniGame_JY.dat")))))
+		return E_FAIL;
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
+
+
+
+	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME_PM));
+
+
+#pragma endregion
+
+#pragma region EH
+	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Texture_Monster_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+
+	/* For.Prototype_Component_Prototype_Golu_Bullet */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Golu_Bullet),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Golu_Bullet.txt")));
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Golu), CMiniGame_Golu::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Golu_Bullet), CGolu_Bullet::Create(m_pDevice, m_pDeviceContext)));
+#pragma endregion
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	EnterCriticalSection(_CriSec);
+	m_iLoadingMaxCount = 1;
+	m_iLoadingProgressCount = 0;
+	LeaveCriticalSection(_CriSec);
+
+	for (int i = 0; i < m_iLoadingMaxCount; ++i)
+	{
+		EnterCriticalSection(_CriSec);
+		m_iLoadingProgressCount = i;
+		LeaveCriticalSection(_CriSec);
+	}
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	return S_OK;
+}
+
 HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -1857,19 +1940,19 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(COMPONENTPROTOTYPEID(i)), TransformMatrix);
 	}
 
-
-	////// MERGE //
-//	FAILED_CHECK(Load_AllMonster());
-//	FAILED_CHECK(Load_AllBoss());
-//	FAILED_CHECK(Load_AllDynamicMapObject());
-
-	//Map Make
-	// for (_uint i = 0; i < SCENE_END; i++)
-	// 	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
-
-
 	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_Z_Plane);
+
+	////// MERGE //
+	FAILED_CHECK(Load_AllMonster());
+	FAILED_CHECK(Load_AllBoss());
+	FAILED_CHECK(Load_AllDynamicMapObject());
+
+	//Map Make
+		for (_uint i = 0; i < SCENE_END; i++)
+			FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+
+
 	
 #pragma endregion
 
@@ -3878,6 +3961,25 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+
+#pragma endregion
+
+	}
+	break;
+
+	case SCENE_MINIGAME_PM:
+	{
+		static _bool bBool = false;
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Burger_Alphabet.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_09E.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+
+		if (bBool) return S_FALSE;
+		bBool = true;
+
+#pragma  region Static_Mesh
 
 #pragma endregion
 

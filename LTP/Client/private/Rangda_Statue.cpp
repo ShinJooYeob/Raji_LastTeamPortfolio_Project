@@ -45,7 +45,6 @@ HRESULT CRangda_Statue::Initialize_Prototype(void * pArg)
 	m_tTexDesc.ParticleSize = _float3(0.5f, 1.f, 0.5f);
 
 
-
 	return S_OK;
 }
 HRESULT CRangda_Statue::Initialize_Clone(void * pArg)
@@ -81,6 +80,7 @@ _int CRangda_Statue::Update(_double fDeltaTime)
 		return -1;
 
 
+	m_pTransformCom->Scaled_All(_float3(0.05f, 0.025f, 0.05f).XMVector() * 0.35f);
 
 	m_pDissolveCom->Update_Dissolving(fDeltaTime);
 
@@ -90,9 +90,15 @@ _int CRangda_Statue::Update(_double fDeltaTime)
 	if (!m_bIsDissolveStart && m_fAliveTime <= 3 && m_fAliveTime >= 1)
 	{
 
+		_float TargetValue = min(g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0, 5, 3.f - m_fAliveTime, 2.f),1.f);
+		Set_LimLight_N_Emissive(_float4(0.0171875f, 0.010546875f, 0.000390625f, 0).XMVector()*TargetValue, _float4(TargetValue, TargetValue * 0.5f, TargetValue, 0));
 		m_pTransformCom->Set_TurnSpeed(XMConvertToRadians((1.f - fabs(2.f - m_fAliveTime)) * 180.f));
 
 		m_pTransformCom->Turn_CCW(XMVectorSet(0, 1.f, 0, 0), fDeltaTime);
+	}
+	else
+	{
+		Set_LimLight_N_Emissive(_float4(0), _float4(0));
 	}
 
 	if (m_fAliveTime <= 0 && m_bIsDissolveStart == false)

@@ -297,6 +297,7 @@
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
+    <ClInclude Include="..\public\Scene_Minigame_PM.h" />
     <ClInclude Include="..\public\Scene_Minigame1.h" />
     <ClInclude Include="..\public\Scene_Stage1.h" />
     <ClInclude Include="..\public\Scene_Stage2.h" />
@@ -455,6 +456,7 @@
     <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
+    <ClCompile Include="..\private\Scene_Minigame_PM.cpp" />
     <ClCompile Include="..\private\Scene_Minigame1.cpp" />
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />
