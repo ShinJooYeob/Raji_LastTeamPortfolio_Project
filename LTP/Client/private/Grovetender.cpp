@@ -140,13 +140,13 @@ HRESULT CGrovetender::Update_State_Spawn(_double fDeltaTime)
 	{
 		Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, m_fEmissiveValue * 0.6f), _float4(m_fEmissiveValue, 1.f, m_fEmissiveValue, 0.f));
 		m_fAnimSpeed = 0.5f;
-		m_fEmissiveValue += (_float)fDeltaTime * 0.5f;
+		m_fEmissiveValue += (_float)fDeltaTime * 0.4f;
 		if (m_fEmissiveValue > 1.f)
 		{
 			m_fEmissiveValue = 1.f;
 		}
 	}
-	else if (0.257f <= fAnimRate)
+	else if (0.33f <= fAnimRate) 
 	{
 		if (false == m_bOncePlaySound)
 		{
@@ -233,6 +233,9 @@ HRESULT CGrovetender::Update_State_Idle(_double fDeltaTime)
 				m_pModel->Change_AnimIndex(ANIM_MOVE);
 				m_eCurState = STATE_MOVE;
 				g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Snake), &_float3(0.f, -150.f, 93.197f));
+
+				_Vector vSoundPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA) + XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
+				g_pGameInstance->Play3D_Sound(L"Jino_Golem_Grow.wav", vSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
 			}
 
 			m_fAnimSpeed = 0.5f;

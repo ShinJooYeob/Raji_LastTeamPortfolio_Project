@@ -87,8 +87,6 @@ HRESULT CScene_Edit::Initialize()
 #endif // _DEBUG
 
 
-
-
 #endif // USE_IMGUI
 	return S_OK;
 }

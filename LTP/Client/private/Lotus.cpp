@@ -159,6 +159,7 @@ CLotus * CLotus::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceCon
 		MSGBOX("Failed to Created CLotus");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
@@ -171,6 +172,7 @@ CGameObject * CLotus::Clone(void * pArg)
 		MSGBOX("Failed to Created CLotus");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

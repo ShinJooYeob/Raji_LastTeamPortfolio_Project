@@ -233,6 +233,8 @@ enum SCENEID
 
 	SCENE_MINIGAME1,
 	SCENE_MINIGAME_PM,
+	SCENE_MINIGAME_Jino,
+
 
 	SCENE_EDIT,
 	SCENE_END
@@ -274,6 +276,8 @@ static const char* Tag_ScenenName(SCENEID eTag)
 	case SCENE_MINIGAME_PM:
 		return "SCENE_MINIGAME_PM";
 		
+	case SCENE_MINIGAME_Jino:
+		return "SCENE_MINIGAME_Jino";
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
@@ -447,6 +451,12 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGameBuilding,
 
 	Prototype_Object_MiniGame_Golu,
+	Prototype_Object_MiniGame_Jino_Player,
+	Prototype_Object_MiniGame_Jino_Rope,
+	Prototype_Object_MiniGame_GoalTrigger,
+	Prototype_Object_MiniGame_NormalMonkey,
+	Prototype_Object_MiniGame_JumpingMonkey,
+	Prototype_Object_MiniGame_BeachBall,
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
@@ -837,6 +847,24 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_MiniGame_Golu:
 		return TEXT("Prototype_Object_MiniGame_Golu");
+	
+	case Prototype_Object_MiniGame_Jino_Player:
+		return TEXT("Prototype_Object_MiniGame_Jino_Player");
+
+	case Prototype_Object_MiniGame_Jino_Rope:
+		return TEXT("Prototype_Object_MiniGame_Jino_Rope");
+
+	case Prototype_Object_MiniGame_GoalTrigger:
+		return TEXT("Prototype_Object_MiniGame_GoalTrigger");
+		
+	case Prototype_Object_MiniGame_NormalMonkey:
+		return TEXT("Prototype_Object_MiniGame_NormalMonkey");
+	
+	case Prototype_Object_MiniGame_JumpingMonkey:
+		return TEXT("Prototype_Object_MiniGame_JumpingMonkey");
+
+	case Prototype_Object_MiniGame_BeachBall:
+		return TEXT("Prototype_Object_MiniGame_BeachBall");
 		
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -3423,6 +3451,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerWeapon_Arrow,
 	Prototype_Mesh_PlayerEffect_ShellingParabola,
 	Prototype_Mesh_Golu,
+	Prototype_Mesh_MiniGame_Jino_Player,
 
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
@@ -3479,6 +3508,8 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_InteractObj_LilyPad,
 	Prototype_Mesh_InteractObj_Lotus,
 	Prototype_Mesh_Golem,
+	Prototype_Mesh_Rope,
+	Prototype_Mesh_BeachBall,
 
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
@@ -9798,6 +9829,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Golu.fbx");
 		break;
 
+	case Prototype_Mesh_MiniGame_Jino_Player:
+		return TEXT("MiniGameJino_Player.fbx");
+		break;
+		
 	case Prototype_Mesh_DemonTree_Seg01:
 		return TEXT("DemonTree_Seg01.fbx");
 
@@ -10133,6 +10168,14 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Golem.fbx");
 		break;
 
+	case Prototype_Mesh_Rope:
+		return TEXT("CircusRope.fbx");
+		break;
+	
+	case Prototype_Mesh_BeachBall:
+		return TEXT("BeachBall.fbx");
+		break;
+		
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;

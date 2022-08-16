@@ -112,6 +112,12 @@
 #include "PathArrow.h"
 #include "MahaHead.h"
 #include "Grovetender.h"
+#include "MiniGame_Jino_Player.h"
+#include "Rope.h"
+#include "GoalTrigger.h"
+#include "NormalMonkey.h"
+#include "BeachBall.h"
+#include "JumpingMonkey.h"
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -231,6 +237,10 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 
 	case SCENEID::SCENE_MINIGAME_PM:
 		pLoader->Load_Scene_Minigame_PM(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
+	case SCENEID::SCENE_MINIGAME_Jino:
+		pLoader->Load_Scene_Minigame_Jino(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
 
 	case SCENEID::SCENE_EDIT:
@@ -1911,6 +1921,70 @@ HRESULT CLoader::Load_Scene_Minigame_PM(_bool * _IsClientQuit, CRITICAL_SECTION 
 	return S_OK;
 }
 
+HRESULT CLoader::Load_Scene_Minigame_Jino(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+	//MiniGameJino_Player
+#pragma  region Static_Mesh
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_MiniGame_Jino_Player), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_SM_ENV_F_Bow_Platform_03), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Rope), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Mahinasura_Minion), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Tezabsura_Minion), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_BeachBall), TransformMatrix);
+
+#pragma  endregion
+#pragma region PROTOTYPE_COMPONENT
+	FAILED_CHECK(Load_AllMonster());
+
+#pragma endregion
+
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Jino_Player), CMiniGame_Jino_Player::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Jino_Rope), CRope::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_GoalTrigger), CGoalTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_NormalMonkey), CNormalMonkey::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), CJumpingMonkey::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_BeachBall), CBeachBall::Create(m_pDevice, m_pDeviceContext)));
+#pragma endregion
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	EnterCriticalSection(_CriSec);
+	m_iLoadingMaxCount = 1;
+	m_iLoadingProgressCount = 0;
+	LeaveCriticalSection(_CriSec);
+
+	for (int i = 0; i < m_iLoadingMaxCount; ++i)
+	{
+		EnterCriticalSection(_CriSec);
+		m_iLoadingProgressCount = i;
+		LeaveCriticalSection(_CriSec);
+	}
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	return S_OK;
+}
+
 HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -1951,7 +2025,6 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	//Map Make
 		for (_uint i = 0; i < SCENE_END; i++)
 			FAILED_CHECK(Load_MapMesh(SCENEID(i)));
-
 
 	
 #pragma endregion

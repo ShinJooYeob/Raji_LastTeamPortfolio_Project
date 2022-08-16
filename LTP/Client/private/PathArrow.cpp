@@ -37,6 +37,7 @@ _int CPathArrow::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0)	return -1;
 
+	
 	_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_Vector vGoluPos = m_pGoluTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	
@@ -142,7 +143,7 @@ HRESULT CPathArrow::SetUp_Etc()
 
 	m_pDissolveCom->Set_DissolveOn(false, 0.f);
 
-	m_fMovDir = 0.05f;
+	m_fMovDir = 0.02f;
 	return S_OK;
 }
 

@@ -15,6 +15,7 @@
 #include "Scene_Laboratory_Jino.h"
 #include "Scene_Minigame1.h"
 #include "Scene_Minigame_PM.h"
+#include "Scene_MiniGame_Jino.h"
 //#include "Scene_Ending.h"
 
 
@@ -136,6 +137,10 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 
 		case SCENEID::SCENE_MINIGAME_PM:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Minigame_PM::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
+			
+		case SCENEID::SCENE_MINIGAME_Jino:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_MiniGame_Jino::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
 
 //		case SCENEID::SCENE_ENDING:

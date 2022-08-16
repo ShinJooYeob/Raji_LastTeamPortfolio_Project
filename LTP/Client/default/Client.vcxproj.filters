@@ -94,9 +94,6 @@
     <Filter Include="02.Scene\99.Scene_Editor">
       <UniqueIdentifier>{73c695e4-a782-4f00-8d05-3c94e0320868}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Scene\05.Scene_Boss">
-      <UniqueIdentifier>{f59a6bb4-3924-4375-ae48-b96d9deb0064}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Manager\02.ImguiMgr\00.Manager">
       <UniqueIdentifier>{f3eee5d0-86b2-4d6e-a6c8-91d377b99850}</UniqueIdentifier>
     </Filter>
@@ -540,6 +537,33 @@
     </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\09.Scene_Minigame_PM">
       <UniqueIdentifier>{bd2afff5-4dbd-4dd7-ab51-338d1aebe716}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\05.Scene_Boss">
+      <UniqueIdentifier>{f59a6bb4-3924-4375-ae48-b96d9deb0064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino">
+      <UniqueIdentifier>{e9900966-bf25-44af-9114-4e155419d57c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player">
+      <UniqueIdentifier>{ba16e686-b0ee-49f9-9f0e-fea282398e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\01. Rope">
+      <UniqueIdentifier>{21ba5399-60a1-4760-8a4b-da25c9c88fc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\02. GoalTrigger">
+      <UniqueIdentifier>{d2db6b52-b889-431a-a10a-afd9fab845de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster">
+      <UniqueIdentifier>{60ecc5f0-2e0b-4cd8-bf83-3fa974cc2cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\00. NormalMonkey">
+      <UniqueIdentifier>{3f0548c3-4793-4270-af7e-0f7c3c1ab7af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player\00. BeachBall">
+      <UniqueIdentifier>{171cbfcc-c740-47f2-abcd-b398efafe443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey">
+      <UniqueIdentifier>{56f867f9-dab4-45bd-91a5-df809866995f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1160,6 +1184,30 @@
     <ClInclude Include="..\public\Scene_Minigame_PM.h">
       <Filter>02.Scene\04.Scene_InGame\09.Scene_Minigame_PM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Scene_MiniGame_Jino.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_Jino_Player.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rope.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\01. Rope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GoalTrigger.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\02. GoalTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NormalMonkey.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\00. NormalMonkey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeachBall.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player\00. BeachBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_Jino_Monster.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JumpingMonkey.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1758,6 +1806,30 @@
     </ClCompile>
     <ClCompile Include="..\private\Scene_Minigame_PM.cpp">
       <Filter>02.Scene\04.Scene_InGame\09.Scene_Minigame_PM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_MiniGame_Jino.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_Jino_Player.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rope.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\01. Rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GoalTrigger.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\02. GoalTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NormalMonkey.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\00. NormalMonkey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeachBall.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\00. Player\00. BeachBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_Jino_Monster.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JumpingMonkey.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
