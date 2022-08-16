@@ -276,9 +276,6 @@
     <ClInclude Include="..\public\ComponentMgr.h">
       <Filter>01.Utillity\01.ComponentMgr\00.Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera.h">
-      <Filter>01.Utillity\02.ObjectMgr\01.GameObject\01.Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\GameObject.h">
       <Filter>01.Utillity\02.ObjectMgr\01.GameObject</Filter>
     </ClInclude>
@@ -387,6 +384,9 @@
     <ClInclude Include="..\public\VIBuffer_Plat.h">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\06.Plat</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01.Utillity\02.ObjectMgr\01.GameObject\01.Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -451,9 +451,6 @@
     </ClCompile>
     <ClCompile Include="..\private\ComponentMgr.cpp">
       <Filter>01.Utillity\01.ComponentMgr\00.Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Camera.cpp">
-      <Filter>01.Utillity\02.ObjectMgr\01.GameObject\01.Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameObject.cpp">
       <Filter>01.Utillity\02.ObjectMgr\01.GameObject</Filter>
@@ -559,6 +556,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Plat.cpp">
       <Filter>01.Utillity\01.ComponentMgr\01.Components\03.Model\02.VIBuffer\06.Plat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utillity\02.ObjectMgr\01.GameObject\01.Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

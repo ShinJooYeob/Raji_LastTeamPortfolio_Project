@@ -96,7 +96,7 @@ _int CPlayer::Update(_double fDeltaTime)
 		{
 			Check_CurNaviCellOption();
 		}
-
+		
 
 		// Check Player Key Input
 		Check_PlayerKeyInput(fDeltaTime);
@@ -8198,7 +8198,7 @@ void CPlayer::DebugingCode()
 {
 	// TEST CODE
 	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
-//	_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	//_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 	//
 

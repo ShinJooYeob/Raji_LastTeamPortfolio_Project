@@ -162,7 +162,7 @@ HRESULT CScene_Stage2::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 5.f, -10.f);
+	CameraDesc.vEye = _float3(454.786407f, 26.5532188f, 77.2386169f);//_float3(0, 5.f, -10.f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -195,7 +195,7 @@ HRESULT CScene_Stage2::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE2);
 	}
 	
-	m_pMainCam->Set_TargetArmLength(3.f);
+	m_pMainCam->Set_TargetArmLength(10.f);
 	return S_OK;
 }
 
@@ -260,11 +260,9 @@ HRESULT CScene_Stage2::Ready_Layer_UI(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(490.031494f, 10.4521713f, 104.211227f, 1.f), XMVectorSet(-0.0104847737f, -0.617018461f, 0.786878705f, 0.f));
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f /*397.633f, 4.4f, 226.405f*//*570.248f, 21.9f, 399.576f*/)));
+	// 456.433228f, 26.8234997f, 77.9790649f			Maybe DemonTree Pos
+	// 490.f, 7.100010f, 108.571f						Pre Start Pos
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(454.681f, 18.931f, 87.145f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);	
 	
@@ -273,13 +271,19 @@ HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	pPlayer->Update_AttachCamPos();
+
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(454.786407f, 26.5532188f, 77.2386169f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(454.786407f, 26.5532188f, 77.2386169f, 1.f), XMVectorSet(-0.0105281984f, -0.613456666f, 0.789658368f, 0.f));
+	pPlayer->Update(g_fDeltaTime);
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(454.786407f, 26.5532188f, 77.2386169f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(454.786407f, 26.5532188f, 77.2386169f, 1.f), XMVectorSet(-0.0105281984f, -0.613456666f, 0.789658368f, 0.f));
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(490.031494f, 10.4521713f, 104.211227f, 1.f), XMVectorSet(-0.0104847737f, -0.617018461f, 0.786878705f, 0.f));
-	pPlayer->Update_AttachCamPos();
-
+	m_pMainCam->Set_CameraInitState(XMVectorSet(454.786407f, 26.5532188f, 77.2386169f, 1.f), XMVectorSet(-0.0105281984f, -0.613456666f, 0.789658368f, 0.f));
 
 	return S_OK;
 

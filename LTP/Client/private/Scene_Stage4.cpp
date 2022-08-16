@@ -167,7 +167,7 @@ HRESULT CScene_Stage4::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0, 2.f, -4.f);
+	CameraDesc.vEye = _float3(25.6070156f, 7.13000584f, -15.7300081f);
 	CameraDesc.vAt = _float3(0, 0.f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
@@ -303,10 +303,6 @@ HRESULT CScene_Stage4::Ready_Layer_MapObject(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 6.90001299f, -15.7938332f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
-
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player), &_float3(20.95f, 3.3f, -1.16f)));
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, pLayerTag, TAG_OP(Prototype_Player), &_float3(21.607f, 2.130f, -0.730f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE4, TAG_LAY(Layer_Player)));
@@ -317,16 +313,15 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	m_pMainCam->Lock_CamLook(true);
 	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(4.f, 5.f, -10.f));
-	static_cast<CPlayer*>(pPlayer)->Update_AttachCamPos();
+	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(25.6070156f, 7.13000584f, -15.7300081f));
 
-
+	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+	m_pMainCam->Lock_CamLook(true);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 6.90001299f, -15.7938332f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
-	pPlayer->Update_AttachCamPos();
-	
+	m_pMainCam->Set_CameraInitState(XMVectorSet(25.6070156f, 7.13000584f, -15.7300081f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 
 	/*

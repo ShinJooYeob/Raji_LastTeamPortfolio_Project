@@ -489,7 +489,7 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		{
 			m_pModel->Change_AnimIndex(0);
 			m_iCurCutSceneState = 2;
-			m_fDelayTime = 7.f;
+			m_fDelayTime = 6.f;
 		}
 		else if (0.7f <= fAnimPlayRate)
 		{
@@ -501,8 +501,9 @@ void CSnake::Update_Direction(_double fDeltaTime)
 			m_bOnceSwitch = true;
 			g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor))->Set_IsDead();
 			_float4 fSoundPos = g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA);
-			fSoundPos.x += 1.f;
-			fSoundPos.y += 1.f;
+			_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+			fSoundPos.x += 5.f;
+			fSoundPos.z += 5.f;
 			g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), fSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
 			g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), fSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
 
@@ -545,8 +546,13 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		if (0.2875f <= fAnimPlayRate && false == m_bOnceSwitch)
 		{
 			m_bOnceSwitch = true;
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 3.f, 2.f, false);
-		}
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 3.f, 1.5f, false); 
+
+			_float4 fSoundPos = g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA);
+			_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+			fSoundPos = fSoundPos.XMVector() + vLook * -2.f;
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Snake_Growl.wav"), fSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
+		} 
 		else if (0.98f <= fAnimPlayRate)
 		{
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);

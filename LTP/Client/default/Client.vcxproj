@@ -179,6 +179,7 @@
     <ClInclude Include="..\..\Reference\Inc\imstb_truetype.h" />
     <ClInclude Include="..\bin\ShaderFiles\Shader_Define.hpp" />
     <ClInclude Include="..\public\AssimpCreateMgr.h" />
+    <ClInclude Include="..\public\BeachBall.h" />
     <ClInclude Include="..\public\BlockZone.h" />
     <ClInclude Include="..\public\Boss.h" />
     <ClInclude Include="..\public\BossCreateTrigger.h" />
@@ -194,9 +195,11 @@
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
+    <ClInclude Include="..\public\GoalTrigger.h" />
     <ClInclude Include="..\public\Golu_Bullet.h" />
     <ClInclude Include="..\public\Grovetender.h" />
     <ClInclude Include="..\public\GrovetenderDeadZone.h" />
+    <ClInclude Include="..\public\JumpingMonkey.h" />
     <ClInclude Include="..\public\MahaHead.h" />
     <ClInclude Include="..\public\MiniGameBuilding.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
@@ -221,6 +224,8 @@
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\MiniGame_Golu.h" />
+    <ClInclude Include="..\public\MiniGame_Jino_Monster.h" />
+    <ClInclude Include="..\public\MiniGame_Jino_Player.h" />
     <ClInclude Include="..\public\Monster_Gadasura_Rage.h" />
     <ClInclude Include="..\public\Monster_Ninjasura.h" />
     <ClInclude Include="..\public\Monster_Ninjasura_Minion.h" />
@@ -231,6 +236,7 @@
     <ClInclude Include="..\public\Monster_Wolf.h" />
     <ClInclude Include="..\public\Monster_Wormgrub.h" />
     <ClInclude Include="..\public\Monster_Plat_Bullet.h" />
+    <ClInclude Include="..\public\NormalMonkey.h" />
     <ClInclude Include="..\public\ParticleCollider.h" />
     <ClInclude Include="..\public\ParticleCreater.h" />
     <ClInclude Include="..\public\Particle_ColliderInOut.h" />
@@ -291,12 +297,14 @@
     <ClInclude Include="..\public\Rangda_MagicCircle.h" />
     <ClInclude Include="..\public\RepelWall.h" />
     <ClInclude Include="..\public\ResurrectionTrigger.h" />
+    <ClInclude Include="..\public\Rope.h" />
     <ClInclude Include="..\public\SceneChangeTrigger.h" />
     <ClInclude Include="..\public\Scene_Edit.h" />
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
     <ClInclude Include="..\public\Scene_Minigame1.h" />
+    <ClInclude Include="..\public\Scene_MiniGame_Jino.h" />
     <ClInclude Include="..\public\Scene_Stage1.h" />
     <ClInclude Include="..\public\Scene_Stage2.h" />
     <ClInclude Include="..\public\Scene_Boss.h" />
@@ -345,6 +353,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\AssimpCreateMgr.cpp" />
+    <ClCompile Include="..\private\BeachBall.cpp" />
     <ClCompile Include="..\private\BlockZone.cpp" />
     <ClCompile Include="..\private\Boss.cpp" />
     <ClCompile Include="..\private\BossCreateTrigger.cpp" />
@@ -359,9 +368,11 @@
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
+    <ClCompile Include="..\private\GoalTrigger.cpp" />
     <ClCompile Include="..\private\Golu_Bullet.cpp" />
     <ClCompile Include="..\private\Grovetender.cpp" />
     <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
+    <ClCompile Include="..\private\JumpingMonkey.cpp" />
     <ClCompile Include="..\private\MahaHead.cpp" />
     <ClCompile Include="..\private\MiniGameBuilding.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
@@ -383,6 +394,8 @@
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
     <ClCompile Include="..\private\MiniGame_Golu.cpp" />
+    <ClCompile Include="..\private\MiniGame_Jino_Monster.cpp" />
+    <ClCompile Include="..\private\MiniGame_Jino_Player.cpp" />
     <ClCompile Include="..\private\Monster_Bullet_Universal.cpp" />
     <ClCompile Include="..\private\Gadasura_Rage_Hollogram.cpp" />
     <ClCompile Include="..\private\InstanceEffect.cpp" />
@@ -397,6 +410,7 @@
     <ClCompile Include="..\private\Monster_Wolf.cpp" />
     <ClCompile Include="..\private\Monster_Wormgrub.cpp" />
     <ClCompile Include="..\private\Monster_Plat_Bullet.cpp" />
+    <ClCompile Include="..\private\NormalMonkey.cpp" />
     <ClCompile Include="..\private\ParticleCollider.cpp" />
     <ClCompile Include="..\private\ParticleCreater.cpp" />
     <ClCompile Include="..\private\Particle_ColliderInOut.cpp" />
@@ -451,9 +465,11 @@
     <ClCompile Include="..\private\Rangda_MagicCircle.cpp" />
     <ClCompile Include="..\private\RepelWall.cpp" />
     <ClCompile Include="..\private\ResurrectionTrigger.cpp" />
+    <ClCompile Include="..\private\Rope.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
     <ClCompile Include="..\private\Scene_Minigame1.cpp" />
+    <ClCompile Include="..\private\Scene_MiniGame_Jino.cpp" />
     <ClCompile Include="..\private\ShellingArrow.cpp" />
     <ClCompile Include="..\private\ShellingSkillAttackPoint.cpp" />
     <ClCompile Include="..\private\ShellingSkillRange.cpp" />
