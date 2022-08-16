@@ -42,9 +42,9 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	//////////////////testPosition
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
 	return S_OK;
@@ -54,6 +54,15 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_fHP <= 0)
 	{
@@ -83,25 +92,6 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
 
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
@@ -792,6 +782,11 @@ HRESULT CMonster_Tezabsura_Minion::Ready_ParticleDesc()
 	m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
 #pragma endregion
 	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Minion::Play_SpawnEffect()
+{
+	return E_NOTIMPL;
 }
 
 HRESULT CMonster_Tezabsura_Minion::Update_ParticleTransform(_double fDeltaTime)

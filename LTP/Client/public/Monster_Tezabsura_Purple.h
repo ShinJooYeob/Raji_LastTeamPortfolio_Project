@@ -129,6 +129,10 @@ private://Dissolve
 private://Repel
 	_bool				m_bRepelOff = false;
 
+private:// Particle
+	virtual HRESULT Ready_ParticleDesc() override;
+	virtual HRESULT Play_SpawnEffect()override;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);

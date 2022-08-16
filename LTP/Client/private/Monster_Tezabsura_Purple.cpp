@@ -41,9 +41,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 #endif
 
@@ -55,6 +54,15 @@ _int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_fHP <= 0)
 	{
@@ -714,6 +722,16 @@ HRESULT CMonster_Tezabsura_Purple::Jumping(_double dDeltaTime)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat3(&fPosition));
 	}
 
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Purple::Ready_ParticleDesc()
+{
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Purple::Play_SpawnEffect()
+{
 	return S_OK;
 }
 

@@ -44,8 +44,8 @@ HRESULT CMonster_Tezabsura_Landmine::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	//////////////////testPosition
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
 	return S_OK;
@@ -56,6 +56,15 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
+	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
+
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
+	}
 
 	if (m_fHP <= 0)
 	{
@@ -914,6 +923,11 @@ HRESULT CMonster_Tezabsura_Landmine::Ready_ParticleDesc()
 		m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
 	}
 	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Landmine::Play_SpawnEffect()
+{
+	return E_NOTIMPL;
 }
 
 HRESULT CMonster_Tezabsura_Landmine::Update_ParticleTransform(_double fDeltaTime)

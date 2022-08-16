@@ -40,13 +40,12 @@ HRESULT CMonster_Jalsura::Initialize_Clone(void * pArg)
 #ifdef _DEBUG
 	//////////////////testPosition
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
-
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
+//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
 	// Partilce
-	Set_DealyDIssolveTime(0.5f);
+	Set_DealyDIssolveTime(0.5f,1.0f);
 
 
 	return S_OK;
@@ -56,10 +55,17 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_X)&DIS_Down)
+
+	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
 	{
+		m_pDissolve->Set_DissolveOn(true, m_SpawnDissolveTime);
+		m_pDissolve->Update_Dissolving(dDeltaTime);
 
+		if (m_pDissolve->Get_IsDissolving() == false)
+			m_bIsSpawnDissolove = true;
 	}
 
 	if (m_fHP <= 0)
@@ -115,7 +121,8 @@ _int CMonster_Jalsura::Update(_double dDeltaTime)
 _int CMonster_Jalsura::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -143,6 +150,8 @@ _int CMonster_Jalsura::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -173,7 +182,8 @@ _int CMonster_Jalsura::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
-
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	return _int();
 }
 
@@ -532,6 +542,101 @@ HRESULT CMonster_Jalsura::Ready_ParticleDesc()
 		tNIMEDesc.vSize = _float3(0.75f, -0.075f, 0.75f);
 
 		m_vecNonMeshParticleDesc.push_back(tNIMEDesc);
+
+	return S_OK;
+}
+
+HRESULT CMonster_Jalsura::Play_SpawnEffect()
+{
+
+	if (m_SpawnEffectAdjust == 0)
+	{
+		m_SpawnEffectAdjust++;
+
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
+				0.8f,
+				0.4f,
+				_float4(1),
+				_float4(1, 1, 1, 0.0f),
+				1,
+				_float3(0.05f, 1.2f, 0.05f),
+				_float3(0.05f, 1.5f, 0.05f),
+				1);
+			//	testTex.eParticleTypeID = InstanceEffect_Ball;
+			//	testTex.ePassID = InstancePass_OriginColor;
+			//	testTex.ePassID = InstancePass_BrightColor;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+
+			testTex.vEmissive_SBB = _float3(1, 1.f, 0.5f);
+
+			testTex.Particle_Power = 2.f;
+
+			_float val = 0.7f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0.0f, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 2.f, val);
+
+			testTex.vPowerDirection = _float3(1, 1, 1);
+			testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+			testTex.iTextureLayerIndex = 3;
+			testTex.TempBuffer_1.y = 0.0f;
+
+			testTex.FollowingTarget = m_pTransformCom;
+
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+		}
+
+	}
+
+
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.0f)
+	{
+		m_SpawnEffectAdjust++;
+
+		// smoke
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				0.05f,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(0.5f),
+				_float3(0.3f),
+				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+			testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.ePassID = InstancePass_MaskingNoising;s
+			// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+			testTex.vEmissive_SBB = _float3(1, 0.5f, 0.3f);
+
+			_float val = 0.8f;
+			testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+			testTex.Particle_Power = 5.0f;
+
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
+
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
+
+		//	testTex.m_fAlphaTestValue = 0.2f;
+
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+	}
+
 
 	return S_OK;
 }
