@@ -506,6 +506,11 @@ HRESULT CMonster_Wasp::Update_Collider(_double dDeltaTime)
 		m_vecInstancedTransform[i].pCollider->Update_Transform(0, m_vecInstancedTransform[i].pTransform->Get_WorldMatrix());
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_vecInstancedTransform[i].pCollider));
 
+		////test Delete OK~
+		//_float3 test;
+		//test = m_vecInstancedTransform[i].pTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+		//int a = 10;
+
 	}
 
 
@@ -633,7 +638,7 @@ HRESULT CMonster_Wasp::SetUp_Components()
 	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
 	AttackColliderDesc.vScale = _float3(30.f);
 	AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
+	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
 
 	SetUp_Info();

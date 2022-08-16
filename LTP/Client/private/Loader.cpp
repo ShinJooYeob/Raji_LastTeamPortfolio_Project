@@ -164,6 +164,7 @@
 #include "WorldTexture_Universal.h"
 #include "MiniGame_Golu.h"
 #include "Golu_Bullet.h"
+#include "UI_Texture_Universal.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 /////////MiniGame PACKMAN///////////////////////////////////////////////////////////////////////
@@ -1814,6 +1815,10 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Golu_Bullet),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Golu_Bullet.txt")));
 
+	/* For.Prototype_Component_Prototype_UI_Texture_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_UI_Texture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Texture_Universal.txt")));
+
 #pragma endregion
 
 #pragma endregion
@@ -1822,6 +1827,8 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Golu), CMiniGame_Golu::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Golu_Bullet), CGolu_Bullet::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_Texture_Universal), CUI_Texture_Universal::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 
@@ -2018,13 +2025,13 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_Z_Plane);
 
 	////// MERGE //
-	FAILED_CHECK(Load_AllMonster());
-	FAILED_CHECK(Load_AllBoss());
-	FAILED_CHECK(Load_AllDynamicMapObject());
+	//FAILED_CHECK(Load_AllMonster());
+//	FAILED_CHECK(Load_AllBoss());
+//	FAILED_CHECK(Load_AllDynamicMapObject());
 
 	//Map Make
-		for (_uint i = 0; i < SCENE_END; i++)
-			FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//	for (_uint i = 0; i < SCENE_END; i++)
+	//		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 	
 #pragma endregion
@@ -4034,6 +4041,10 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_FloatingWall_Trim_07.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose02.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose03.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_StatueFemale_Pose04.fbx", TransformMatrix);
 
 #pragma endregion
 

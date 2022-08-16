@@ -4,6 +4,7 @@
 #include "Camera_Main.h"
 #include "Golu_Bullet.h"
 #include "InstanceMonsterBatchTrigger.h"
+#include "UI_Texture_Universal.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -53,18 +54,15 @@ HRESULT CMiniGame_Golu::Initialize_Clone(void * pArg)
 
 	//네비메쉬 47 이후 인덱스부터 아무거나 쓰면 되겠끔 만들자
 
+
+	//SetUp_UI();
+
 	return S_OK;
 }
 
 _int CMiniGame_Golu::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
-
-
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-
-
-	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	if (m_fHP <= 0)
 	{
@@ -162,8 +160,8 @@ void CMiniGame_Golu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 
 _float CMiniGame_Golu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	m_fHP += -fDamageAmount;
+	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	//m_fHP += -fDamageAmount;
 
 
 	if (0 >= m_fHP)
@@ -304,9 +302,33 @@ HRESULT CMiniGame_Golu::SetUp_Info()
 	return S_OK;
 }
 
+HRESULT CMiniGame_Golu::SetUp_UI()
+{
+	CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+	UI_Texture_UniversalDesc.iUI_TextureType = 0;
+	UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+	UI_Texture_UniversalDesc.fSizeX = 200.f;
+	UI_Texture_UniversalDesc.fSizeY = 200.f;
+	UI_Texture_UniversalDesc.fX = 640.f;
+	UI_Texture_UniversalDesc.fY = 360.f;
+	UI_Texture_UniversalDesc.fDepth = 10.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+
+	return S_OK;
+}
+
 HRESULT CMiniGame_Golu::Play_MiniGame(_double dDeltaTime)
 {
 	Keyboard_Input(dDeltaTime);
+
+
+
+	Ready_Round();
+
 	return S_OK;
 }
 
@@ -341,8 +363,7 @@ HRESULT CMiniGame_Golu::Keyboard_Input(_double dDeltatime)
 	RELEASE_INSTANCE(CGameInstance);
 
 
-	SkillNumber_Input(dDeltatime);
-	Mouse_Input(dDeltatime);
+	Skill_Input(dDeltatime);
 
 
 
@@ -356,13 +377,14 @@ HRESULT CMiniGame_Golu::SkillNumber_Input(_double dDeltatime)
 
 	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down)
 	{
-		m_dSkillNumber = 1;
+		m_iSkillNumber = 1;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_2) & DIS_Down)
 	{
-		m_dSkillNumber = 2;
+		m_iSkillNumber = 2;
 	}
+
 
 
 
@@ -371,19 +393,138 @@ HRESULT CMiniGame_Golu::SkillNumber_Input(_double dDeltatime)
 	return S_OK;
 }
 
-HRESULT CMiniGame_Golu::Mouse_Input(_double dDeltatime)
+HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 {
+	SkillNumber_Input(dDeltatime);
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	m_dBlackHoleCoolTime += dDeltatime;
 	if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
 	{
+		switch (m_iSkillNumber)
+		{
+		case 1:
+		{
+			CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
+
+			Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::FIREBALL;
+			Golu_BulletDesc.iTextureIndex = 0;
+			Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+			Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 0.f);
+			Golu_BulletDesc.fSpeed = 5.f;
+			Golu_BulletDesc.dDuration = 5;
+			Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
+			Golu_BulletDesc.bColiiderOn = true;
+
+			Golu_BulletDesc.pObject = this;
+
+			_float3 MousePickingPos;
+			MousePickingPos = Check_MousePicking();
+			MousePickingPos.y += 0.3f;
+			Golu_BulletDesc.fDestinationPos = MousePickingPos;
+
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+			break;
+		}
+		case 2:
+		{
+			if (m_dBlackHoleCoolTime >= 7.5)
+			{
+				CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
+
+				Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BLACKHOLE;
+				Golu_BulletDesc.iTextureIndex = 0;
+				Golu_BulletDesc.fScale = _float3(5.5f, 5.5f, 5.5f);
+				Golu_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+				Golu_BulletDesc.fSpeed = 5.f;
+				Golu_BulletDesc.dDuration = 2.5;
+				Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
+				Golu_BulletDesc.bColiiderOn = true;
+
+				Golu_BulletDesc.pObject = this;
+
+				_float3 MousePickingPos;
+				MousePickingPos = Check_MousePicking();
+				MousePickingPos.y += 3.5f;
+				Golu_BulletDesc.fDestinationPos = MousePickingPos;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+				Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::NONTEXTURE;
+				MousePickingPos.y -= 2.f;
+				MousePickingPos.z += 1.f;
+				Golu_BulletDesc.fDestinationPos = MousePickingPos;
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+			
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	m_dBarrierCoolTime += dDeltatime;
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down && m_dBarrierCoolTime >= 1.5)
+	{
+		//CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
+
+		//Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BARRIERBULLET;
+		//Golu_BulletDesc.iTextureIndex = 0;
+
+		//Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
+
+		//Golu_BulletDesc.fPositioning = _float3(1.5f, 0.3f, 0.f);
+		//Golu_BulletDesc.fSpeed = 5.f;
+		//Golu_BulletDesc.dDuration = 5;
+
+		//Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
+		//Golu_BulletDesc.bColiiderOn = true;
+
+		//Golu_BulletDesc.pObject = this;
+
+		//_float3 MousePickingPos;
+		//MousePickingPos = Check_MousePicking();
+		//MousePickingPos.y += 0.3f;
+		//Golu_BulletDesc.fDestinationPos = MousePickingPos;
+
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		//Golu_BulletDesc.iTextureIndex = 1;
+		//Golu_BulletDesc.fPositioning = _float3(-1.5f, 0.3f, 0.f);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		//Golu_BulletDesc.iTextureIndex = 2;
+		//Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 1.5f);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		//Golu_BulletDesc.iTextureIndex = 3;
+		//Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, -1.5f);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
 		CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
 
-		Golu_BulletDesc.iGoluBulletNumber = CGolu_Bullet::FIREBALL;
+		Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BARRIERBULLET;
+		Golu_BulletDesc.iTextureIndex = 0;
+
 		Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
-		Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 0.f);
+
+		_float3 fDir;
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.5f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
 		Golu_BulletDesc.fSpeed = 5.f;
-		Golu_BulletDesc.dDuration = 100;
+		Golu_BulletDesc.dDuration = 5;
+
+		Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
+		Golu_BulletDesc.bColiiderOn = true;
 
 		Golu_BulletDesc.pObject = this;
 
@@ -393,13 +534,63 @@ HRESULT CMiniGame_Golu::Mouse_Input(_double dDeltatime)
 		Golu_BulletDesc.fDestinationPos = MousePickingPos;
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.5f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.5f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 1;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -0.5f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.5f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 2;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -0.5f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -0.5f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 3;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+		
+
+		////////////
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * -1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 4;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 0.f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 5;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * 1.f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 6;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+		XMStoreFloat3(&fDir, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 0.f + m_pTransformCom->Get_MatrixState(CTransform::STATE_RIGHT) * -1.f) * 2.f);
+		fDir.y += 0.3f;
+		Golu_BulletDesc.fPositioning = fDir;
+		Golu_BulletDesc.iTextureIndex = 7;
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+		
+		
+		m_dBarrierCoolTime = 0;
 	}
 
-
-
-
-
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -458,28 +649,34 @@ _float3 CMiniGame_Golu::Check_MousePicking()
 		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
 		0, 1.f);
 
-	_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
+	//_Matrix InvProjMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_PROJ));
 
-	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+	//_Vector vRayDir = XMVectorSetW(XMVector4Transform(vCursorPos, InvProjMat), 0);// - XMVectorSet(0, 0, 0, 1);
 
-	_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
-	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
-
-
-	CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
-	_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+	//_Matrix InvViewMat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	//vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
 
 
-	_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
+	//CCamera_Main* pMainCam = ((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))));
+	//_Vector vCamPos = pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
 
-	_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
 
-	fPickingPos.x = vTargetPos.x;
-	fPickingPos.y = fPos_Y + 0.001f;
-	fPickingPos.z = vTargetPos.z;
+	//_float fPos_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	//_float Scale = (XMVectorGetY(vCamPos) - fPos_Y) / -(XMVectorGetY(vRayDir));
 
-	return fPickingPos;
+	//_float3 vTargetPos = vCamPos + (Scale)* vRayDir;
+
+	
+	_float3 vPlayerPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	_float3 vTargetPos = _float3(vPlayerPos.x + XMVectorGetX(vCursorPos)* ORTHOGONAL_CAMERA_Y *g_iWinCX / g_iWinCY * 0.5f, vPlayerPos.y, vPlayerPos.z + XMVectorGetY(vCursorPos)* ORTHOGONAL_CAMERA_Y * 0.5f);
+	
+
+	//fPickingPos.x = vTargetPos.x;
+	//fPickingPos.y = fPos_Y + 0.001f;
+	//fPickingPos.z = vTargetPos.z;
+
+	return vTargetPos;
 }
 
 HRESULT CMiniGame_Golu::SetUp_Collider()
@@ -605,13 +802,117 @@ HRESULT CMiniGame_Golu::Ready_TriggerObject(const _tchar * szTriggerDataName, SC
 
 
 	return S_OK;
-
-	return S_OK;
 }
 
 HRESULT CMiniGame_Golu::Ready_Round()
 {
+	m_iNextRoundNumber = 1;
+	if (m_bNextRoundOn == true)
+	{
+		switch (m_iNextRoundNumber)
+		{
+		case 1:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 2:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger2.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 3:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger3.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 4:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger4.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 5:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger5.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 6:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger6.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 7:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger7.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 8:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger8.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 9:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger9.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 10:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger10.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 11:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger11.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++;
+			break;
+		}
+		case 12:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger12.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber = 12; //End Round
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	CInstanceMonsterBatchTrigger* TriggerObject = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+
+	if (TriggerObject == nullptr)
+	{
+		m_bNextRoundOn = true;
+	}
+	//if (TriggerObject->Get_MonsterAllDie() == true)
+	//{
+	//	m_bNextRoundOn = true;
+	//}
+
 	return S_OK;
+
 }
 
 HRESULT CMiniGame_Golu::Camera_Walking(_double dDeltaTime)

@@ -60,6 +60,7 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 
 	g_pGameInstance->Stop_AllChannel();
 
+
 	return S_OK;
 }
 

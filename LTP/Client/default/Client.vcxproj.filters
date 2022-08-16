@@ -499,9 +499,6 @@
     <Filter Include="01.GameObject\99.UI\RadialBlurUI">
       <UniqueIdentifier>{af283745-5230-425c-8d53-0ebf947de831}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\11.WorldTexture_Universal">
-      <UniqueIdentifier>{d93fffe1-4e9b-466a-9440-5e42c7fd2ed0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\08.Scene_Minigame1">
       <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
     </Filter>
@@ -564,6 +561,15 @@
     </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey">
       <UniqueIdentifier>{56f867f9-dab4-45bd-91a5-df809866995f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Texture_Universal">
+      <UniqueIdentifier>{d93fffe1-4e9b-466a-9440-5e42c7fd2ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Texture_Universal\0.WorldTexture_Universal">
+      <UniqueIdentifier>{a0454d0e-a538-4a73-b00c-060de02af964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\11.Texture_Universal\1.UI_Texture_Universal">
+      <UniqueIdentifier>{c9259ca3-d28d-473b-a94a-ba483056aebc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1147,9 +1153,6 @@
     <ClInclude Include="..\public\RadialBlurUI.h">
       <Filter>01.GameObject\99.UI\RadialBlurUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\WorldTexture_Universal.h">
-      <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Scene_Minigame1.h">
       <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
     </ClInclude>
@@ -1207,6 +1210,12 @@
     </ClInclude>
     <ClInclude Include="..\public\JumpingMonkey.h">
       <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WorldTexture_Universal.h">
+      <Filter>01.GameObject\11.Texture_Universal\0.WorldTexture_Universal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Texture_Universal.h">
+      <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1773,9 +1782,6 @@
     <ClCompile Include="..\private\RadialBlurUI.cpp">
       <Filter>01.GameObject\99.UI\RadialBlurUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\WorldTexture_Universal.cpp">
-      <Filter>01.GameObject\11.WorldTexture_Universal</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Scene_Minigame1.cpp">
       <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
     </ClCompile>
@@ -1830,6 +1836,12 @@
     </ClCompile>
     <ClCompile Include="..\private\JumpingMonkey.cpp">
       <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\01. JumpingMonkey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WorldTexture_Universal.cpp">
+      <Filter>01.GameObject\11.Texture_Universal\0.WorldTexture_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Texture_Universal.cpp">
+      <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

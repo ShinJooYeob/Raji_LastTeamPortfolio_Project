@@ -68,6 +68,8 @@ public:
 	_bool				CamActionStart(CAMERAACTION Act);
 	void				Lock_CamLook(_bool bCamLock, _fVector vFixDir = {0.f, 0.f, 1.f, 0.f});
 
+public:
+	void				Ortho_OnOff(_bool bBool, _float fScreenYPixel = 20.f);
 
 
 	

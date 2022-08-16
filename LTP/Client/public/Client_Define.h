@@ -28,6 +28,7 @@ extern _bool g_bShowMouse;
 #define  UPDATE_ERROR	-1
 #define  UPDATE_NONE	0
 
+#define ORTHOGONAL_CAMERA_Y 15.f
 
 namespace Client {};
 using namespace Client;

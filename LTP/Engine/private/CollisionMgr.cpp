@@ -102,6 +102,7 @@ HRESULT CCollisionMgr::Add_RepelGroup(CTransform * pTransform, _float fRadious, 
 	return S_OK;
 }
 
+
 HRESULT CCollisionMgr::Inspect_Collision()
 {
 	Start_InspectRepelCollision();
@@ -296,11 +297,11 @@ HRESULT CCollisionMgr::Processing_MainCollision(_bool * _IsClientQuit, CRITICAL_
 						Safe_Release(ColideElements.pCollisionObject);
 					}
 					m_CollisionGroupList[i].clear();
-
-					EnterCriticalSection(_CriSec);
-					m_eCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
-					LeaveCriticalSection(_CriSec);
 				}
+
+				EnterCriticalSection(_CriSec);
+				m_eCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
+				LeaveCriticalSection(_CriSec);
 
 				continue;
 			}
@@ -369,10 +370,11 @@ HRESULT CCollisionMgr::Processing_RepelCollision(_bool * _IsClientQuit, CRITICAL
 					}
 					m_RepelObjectList.clear();
 
-					EnterCriticalSection(_CriSec);
-					m_eRepelCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
-					LeaveCriticalSection(_CriSec);
 				}
+
+				EnterCriticalSection(_CriSec);
+				m_eRepelCollisionThreadState = CCollisionMgr::CTS_SCENECHANGINGCLEARFINISHED;
+				LeaveCriticalSection(_CriSec);
 
 				continue;
 			}
