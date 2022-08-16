@@ -46,7 +46,7 @@ HRESULT CUI_Texture_Universal::Initialize_Clone(void * pArg)
 	m_fY = m_UI_UniversalDesc.fY;	//(g_iWinCY * 0.5f + 250) = 610;
 
 
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f)));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH((_float)g_iWinCX, (_float)g_iWinCY, 0.f, 1.f)));
 
 
 	m_fRenderSortValue = m_UI_UniversalDesc.fDepth;
