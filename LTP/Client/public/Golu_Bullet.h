@@ -10,12 +10,15 @@ class CGolu_Bullet final : public CGameObject
 public:
 	enum Golu_BulletType{
 		FIREBALL,
+		BARRIERBULLET,
+		BLACKHOLE,
 		NONTEXTURE,
 		GOLU_BULLET_END
 	};
 public:
 	typedef struct tagGolu_BulletDesc {
-		_uint		iGoluBulletNumber;
+		_uint		iGoluBulletType;
+		_uint		iTextureIndex;
 
 		_float3		fScale;
 		_float3		fPositioning;
@@ -24,6 +27,9 @@ public:
 		_double		dDuration;
 
 		_float3		fDestinationPos;
+
+		_float3		fColliderScale;
+		_bool		bColiiderOn;
 
 		void*		pObject = nullptr;
 	}GOLU_BULLETDESC;
@@ -41,6 +47,13 @@ public:
 	virtual _int LateUpdate(_double dDeltaTime)override;
 	virtual _int Render()override;
 	virtual _int LateRender()override;
+
+public:
+	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
+		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
+
+	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	SetUp_Info();
@@ -57,7 +70,12 @@ private: // ETC function
 	HRESULT CreateDestPos();
 
 private:
+	HRESULT Initialize_Bullet();
+
 	HRESULT FireBall(_double dDeltaTime);
+	HRESULT	BarrierBullet(_double dDeltaTime);
+	HRESULT BlackHole(_double dDeltaTime);
+	HRESULT	FireRing(_double dDeltaTime);
 
 
 private:
@@ -72,6 +90,8 @@ private:
 	CTransform*			m_pCameraTransform = nullptr;
 	CTransform*			m_pObjectTransform = nullptr;
 
+
+
 private:
 	GOLU_BULLETDESC		m_Golu_BulletDesc;
 
@@ -79,7 +99,7 @@ private:
 
 
 	_float				m_fAngle = 0;
-
+	_float3				m_vDefaultPos  ;
 
 public:
 	static CGolu_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

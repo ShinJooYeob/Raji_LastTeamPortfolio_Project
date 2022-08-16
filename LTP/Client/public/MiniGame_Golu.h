@@ -32,10 +32,11 @@ public:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
-	HRESULT	SetUp_Info();
-
 	HRESULT	SetUp_Collider();
 	HRESULT	Update_Collider(_double dDeltaTime);
+
+	HRESULT	SetUp_Info();
+	HRESULT SetUp_UI();
 
 	HRESULT	Camera_Walking(_double dDeltaTime);
 
@@ -45,7 +46,7 @@ public:
 //Input
 	HRESULT	Keyboard_Input(_double dDeltatime);
 	HRESULT	SkillNumber_Input(_double dDeltatime);
-	HRESULT	Mouse_Input(_double dDeltatime);
+	HRESULT	Skill_Input(_double dDeltatime);
 
 private:
 	HRESULT	LookAt_MousePos(_float fWeight); //차크라의 회전할 때 사용되는것
@@ -85,8 +86,9 @@ private://Anim Speed
 
 //Attack
 private:
-	_double				m_dSkillNumber = 1;
-
+	_int				m_iSkillNumber = 1;
+	_double				m_dBarrierCoolTime = 10;
+	_double				m_dBlackHoleCoolTime = 10;
 
 private://Round
 	_bool				m_bNextRoundOn = true;

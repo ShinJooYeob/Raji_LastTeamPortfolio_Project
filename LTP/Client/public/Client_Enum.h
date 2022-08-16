@@ -429,6 +429,7 @@ enum OBJECTPROTOTYPEID
 	//EH_Texture
 	Prototype_Object_WorldTexture_Universal,
 	Prototype_Object_Golu_Bullet,
+	Prototype_Object_UI_Texture_Universal,
 
 	//Interact OBJ
 	Prototype_Object_InteractObj_Elevator,
@@ -800,6 +801,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Golu_Bullet:
 		return TEXT("Prototype_Object_Golu_Bullet");
 
+	case Prototype_Object_UI_Texture_Universal:
+		return TEXT("Prototype_Object_UI_Texture_Universal");
+
 	case Prototype_Object_InteractObj_Elevator:
 		return TEXT("Prototype_Object_InteractObj_Elevator");
 
@@ -1001,7 +1005,8 @@ enum LAYERID
 
 	//EH
 	Layer_WorldTexture_Universal,
-	Layer_Golu_Bullet
+	Layer_Golu_Bullet,
+	Layer_UI_Texture_Universal
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1225,6 +1230,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_Golu_Bullet:
 		return TEXT("Layer_Golu_Bullet");
+		break;
+
+	case Layer_UI_Texture_Universal:
+		return TEXT("Layer_UI_Texture_Universal");
 		break;
 		
 	default:
@@ -3489,6 +3498,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_Monster_Bullet,
 	Prototype_WorldTexture_Universal,
 	Prototype_Golu_Bullet,
+	Prototype_UI_Texture_Universal,
 	Prototype_Texture_ShellingRange,
 	Prototype_Texture_ShellingPoint,
 	Prototype_Texture_EnvMappedWater,
@@ -10159,6 +10169,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Golu_Bullet:
 		return TEXT("Prototype_Golu_Bullet");
+		break;
+
+	case Prototype_UI_Texture_Universal:
+		return TEXT("Prototype_UI_Texture_Universal");
 		break;
 
 	case Prototype_Texture_ShellingRange:

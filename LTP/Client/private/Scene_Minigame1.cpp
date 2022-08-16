@@ -209,7 +209,7 @@ HRESULT CScene_Minigame1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Set_TargetArmLength(40.f); //Camera Length
 	m_pMainCam->Set_MaxTargetArmLength(10.f);
 	m_pMainCam->Set_MinTargetArmLength(1.f);
-	m_pMainCam->Ortho_OnOff(true, ORTHOGONAL_CAMERA_Y);
+	m_pMainCam->Ortho_OnOff(false, ORTHOGONAL_CAMERA_Y);
 	return S_OK;
 }
 

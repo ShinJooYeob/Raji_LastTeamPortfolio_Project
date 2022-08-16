@@ -4,6 +4,8 @@
 const _tchar* m_pGolu_BulletTag[CGolu_Bullet::GOLU_BULLET_END]
 {
 	L"FireBall",
+	L"BarrierBullet",
+	L"BlackHole",
 	L"NonTexture"
 };
 
@@ -43,6 +45,9 @@ HRESULT CGolu_Bullet::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 
+
+	Initialize_Bullet();
+
 	return S_OK;
 }
 
@@ -57,11 +62,11 @@ _int CGolu_Bullet::Update(_double dDeltaTime)
 		Set_IsDead();
 	}
 
-	Billboard();
-
+	//Billboard 순서 중요함
 	PlayOn(dDeltaTime);
 
-	Update_Collider(dDeltaTime);
+	if(m_Golu_BulletDesc.bColiiderOn == true)
+		Update_Collider(dDeltaTime);
 
 	return _int();
 }
@@ -93,7 +98,7 @@ _int CGolu_Bullet::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
-	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
+	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_Golu_BulletDesc.iTextureIndex)))
 		return E_FAIL;
 
 	m_pVIBufferCom->Render(m_pShaderCom, 0);
@@ -110,6 +115,26 @@ _int CGolu_Bullet::LateRender()
 	return _int();
 }
 
+void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	switch (m_Golu_BulletDesc.iGoluBulletType)
+	{
+	case FIREBALL:
+		Set_IsDead();
+		break;
+	case BARRIERBULLET:
+		Set_IsDead();
+		break;
+	default:
+		break;
+	}
+}
+
+_float CGolu_Bullet::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
+}
+
 HRESULT CGolu_Bullet::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
@@ -120,7 +145,7 @@ HRESULT CGolu_Bullet::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Golu_Bullet), TAG_COM(Com_Texture), (CComponent**)&m_pTextureCom));
 
-	m_pTextureCom->Change_TextureLayer(m_pGolu_BulletTag[m_Golu_BulletDesc.iGoluBulletNumber]);
+	m_pTextureCom->Change_TextureLayer(m_pGolu_BulletTag[m_Golu_BulletDesc.iGoluBulletType]);
 
 	CTransform::TRANSFORMDESC tDesc = {};
 
@@ -145,10 +170,15 @@ HRESULT CGolu_Bullet::SetUp_Info()
 	{
 		CGameObject* pObject = static_cast<CGameObject*>(m_Golu_BulletDesc.pObject);
 		m_pObjectTransform = static_cast<CTransform*>(pObject->Get_Component(TAG_COM(Com_Transform)));
-
 		m_pTransformCom->Scaled_All(m_Golu_BulletDesc.fScale);
 
 		_Vector vPosition = m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS);
+
+		m_vDefaultPos = XMVectorSet(0,0,0,0) + 	XMVector3Normalize(m_pObjectTransform->Get_MatrixState(CTransform::STATE_RIGHT)) *m_Golu_BulletDesc.fPositioning.x
+		+XMVector3Normalize(m_pObjectTransform->Get_MatrixState(CTransform::STATE_UP)) * m_Golu_BulletDesc.fPositioning.y
+		+XMVector3Normalize(m_pObjectTransform->Get_MatrixState(CTransform::STATE_LOOK)) * m_Golu_BulletDesc.fPositioning.z;
+
+
 
 		vPosition += XMVector3Normalize(m_pObjectTransform->Get_MatrixState(CTransform::STATE_RIGHT)) *m_Golu_BulletDesc.fPositioning.x;
 		vPosition += XMVector3Normalize(m_pObjectTransform->Get_MatrixState(CTransform::STATE_UP)) * m_Golu_BulletDesc.fPositioning.y;
@@ -175,7 +205,7 @@ HRESULT CGolu_Bullet::SetUp_Collider()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
 
 
-	switch (m_Golu_BulletDesc.iGoluBulletNumber)
+	switch (m_Golu_BulletDesc.iGoluBulletType)
 	{
 	case 10:
 		break;
@@ -184,7 +214,7 @@ HRESULT CGolu_Bullet::SetUp_Collider()
 	{
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+		ColliderDesc.vScale = _float3(1.f,1.f,1.f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -202,7 +232,7 @@ HRESULT CGolu_Bullet::Update_Collider(_double dDeltaTime)
 
 	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
 
-	switch (m_Golu_BulletDesc.iGoluBulletNumber)
+	switch (m_Golu_BulletDesc.iGoluBulletType)
 	{
 
 	case 10:
@@ -282,11 +312,32 @@ HRESULT CGolu_Bullet::CreateDestPos()
 
 HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 {
-	switch (m_Golu_BulletDesc.iGoluBulletNumber)
+	switch (m_Golu_BulletDesc.iGoluBulletType)
 	{
 	case CGolu_Bullet::FIREBALL:
 	{
+		Billboard();
 		FireBall(dDeltaTime);
+		break;
+	}
+	case CGolu_Bullet::BARRIERBULLET:
+	{
+		//_Vector vLookDir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS);
+		//m_pTransformCom->LookDir(vLookDir);
+
+		BarrierBullet(dDeltaTime);
+
+		//m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(90.f));
+		//m_pTransformCom->Turn_Revolution_CCW(m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS), 1.f, dDeltaTime);
+		//_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSetY(vPos, XMVectorGetY(m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS))));
+		Billboard();
+		break;
+	}
+	case CGolu_Bullet::BLACKHOLE:
+	{
+		Billboard();
+		BlackHole(dDeltaTime);
 		break;
 	}
 	case CGolu_Bullet::NONTEXTURE:
@@ -299,6 +350,28 @@ HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 	return S_OK;
 }
 
+HRESULT CGolu_Bullet::Initialize_Bullet()
+{
+
+	switch (m_Golu_BulletDesc.iGoluBulletType)
+	{
+	case BLACKHOLE:
+	{
+		CreateDestPos();
+		break;
+	}
+	case NONTEXTURE:
+	{
+		CreateDestPos();
+		break;
+	}
+	default:
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 {
 	m_fAngle += 360.f;
@@ -307,6 +380,71 @@ HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 	//m_pTransformCom->Rotation_CCW(XMVE, XMConvertToRadians(m_fAngle));
 	m_pTransformCom->Set_TurnSpeed(1);
 	m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK),XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
+	
+	if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
+		Set_IsDead();
+
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::BarrierBullet(_double dDeltaTime)
+{
+	//_Vector vPosition;
+
+	//_Vector vLook, vRight;
+	//_Vector vObjectPos, vMyPos;
+
+	//vObjectPos = m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS);
+	//vMyPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+	//vObjectPos = XMVectorSetY(vObjectPos, XMVectorGetY(vMyPos));
+
+	//vLook = vObjectPos - vMyPos;
+	//vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), vLook);
+
+	//vPosition = m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS) + (XMVector3Normalize(-vLook)* 1.2f);
+
+	//vPosition += XMVector3Normalize(vRight) * (m_pObjectTransform->Get_MoveSpeed() * 2) * dDeltaTime;
+
+	//_float3 fPosition; //w에 1이 채워져있는듯
+	//XMStoreFloat3(&fPosition, vPosition);
+	//fPosition.y += 0.3f;
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fPosition);
+
+	_float3 PlayerPos = m_pObjectTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	m_fAngle += 360.f*(_float)dDeltaTime;
+
+	//스자이공부에서 자전이 필요없기 때문에 스이공부만 넣은것
+	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_Golu_BulletDesc.fScale.x, m_Golu_BulletDesc.fScale.y, m_Golu_BulletDesc.fScale.z) *
+		XMMatrixTranslation(m_vDefaultPos.x, m_vDefaultPos.y, m_vDefaultPos.z)*
+		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_fAngle)) *
+		XMMatrixTranslation(PlayerPos.x, PlayerPos.y, PlayerPos.z));
+
+
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::BlackHole(_double dDeltaTime)
+{
+	m_fAngle += 50.f;
+	//로테이션이 초기 상태를 기준으로 돌림
+	//턴이 현재 상태를 기준으로 돌림
+	//m_pTransformCom->Rotation_CCW(XMVE, XMConvertToRadians(m_fAngle));
+	m_pTransformCom->Set_TurnSpeed(1);
+	m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
+
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::FireRing(_double dDeltaTime)
+{
+	m_fAngle += 360.f;
+	//로테이션이 초기 상태를 기준으로 돌림
+	//턴이 현재 상태를 기준으로 돌림
+	//m_pTransformCom->Rotation_CCW(XMVE, XMConvertToRadians(m_fAngle));
+	m_pTransformCom->Set_TurnSpeed(1);
+	m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
 
 	if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
 		Set_IsDead();

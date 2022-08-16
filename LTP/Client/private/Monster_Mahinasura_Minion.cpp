@@ -786,22 +786,22 @@ HRESULT CMonster_Mahinasura_Minion::SetUp_Fight(_double dDeltaTime)
 	m_fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
 
-	if (m_fDistance < 1)
-	{
-		switch (m_iInfinityAnimNumber)
-		{
-		case 1:
-			m_pTransformCom->Move_Backward(dDeltaTime * 0.6,m_pNavigationCom);
-			break;
-		case 21:
-			m_pTransformCom->Move_Backward(dDeltaTime * 1.2, m_pNavigationCom);
-			break;
-		default:
-			m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
-			break;
+	//if (m_fDistance < 1)
+	//{
+	//	switch (m_iInfinityAnimNumber)
+	//	{
+	//	case 1:
+	//		m_pTransformCom->Move_Backward(dDeltaTime * 0.6,m_pNavigationCom);
+	//		break;
+	//	case 21:
+	//		m_pTransformCom->Move_Backward(dDeltaTime * 1.2, m_pNavigationCom);
+	//		break;
+	//	default:
+	//		m_pTransformCom->Move_Backward(dDeltaTime, m_pNavigationCom);
+	//		break;
 
-		}
-	}
+	//	}
+	//}
 
 	if (m_bLookAtOn)
 	{

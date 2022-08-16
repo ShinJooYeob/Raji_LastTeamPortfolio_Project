@@ -332,6 +332,7 @@
     <ClInclude Include="..\public\Trigger_ChangeCameraView.h" />
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\public\PartilceCreateMgr.h" />
+    <ClInclude Include="..\public\UI_Texture_Universal.h" />
     <ClInclude Include="..\public\UtilityMgr.h" />
     <ClInclude Include="..\public\Volcano.h" />
     <ClInclude Include="..\public\WallRunTrigger.h" />
@@ -493,6 +494,7 @@
     <ClCompile Include="..\private\Trigger_ChangeCameraView.cpp" />
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\private\PartilceCreateMgr.cpp" />
+    <ClCompile Include="..\private\UI_Texture_Universal.cpp" />
     <ClCompile Include="..\private\UtilityMgr.cpp" />
     <ClCompile Include="..\private\Volcano.cpp" />
     <ClCompile Include="..\private\WallRunTrigger.cpp" />
