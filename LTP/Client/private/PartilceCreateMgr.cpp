@@ -1457,6 +1457,84 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	}
 
+	if (type == MESHEFFECT_MONSTER_CREATE3)
+	{
+
+		// Plane
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_MS_Shot_Cylinder_00;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 0.7f;
+		MeshDesc.fAppearTime = 0.4f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = bRandomVal ? 375 : 365;
+
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 13;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+		MeshDesc.NoiseTextureIndex = 54;
+		MeshDesc.NoiseTextureIndex = 383;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 0.3f);
+		MeshDesc.vEmissive = _float4(1);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
+
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0.0f, 1.5f, 0);
+		MeshDesc.vSize = _float3(6.0f);
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
+
+		// RotS
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.LookRotSpeed = 0;
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 30;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+		MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+	}
+
+
+
+
 #pragma endregion CREATE
 
 #pragma region MONSTER_MM
