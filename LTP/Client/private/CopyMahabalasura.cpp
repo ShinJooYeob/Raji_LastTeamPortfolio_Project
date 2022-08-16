@@ -2,6 +2,7 @@
 #include "..\public\CopyMahabalasura.h"
 #include "Mahabalasura.h"
 #include "Mahabalasura_SpearWave.h"
+#include "ParticleCollider.h"
 
 #define InstanceCount 64
 #define LimLightColor _float3(0.375f,0.25f,1.f)
@@ -42,9 +43,9 @@ HRESULT CCopyMahabalasura::Initialize_Clone(void * pArg)
 
 	m_iRandomIndex = rand() % InstanceCount;
 
-	CTransform* pPlayerPosition = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
-	_float3 PlayerPos = pPlayerPosition->Get_MatrixState(CTransform::STATE_POS);
-	m_startPos = PlayerPos;
+	//CTransform* pPlayerPosition = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
+	//_float3 PlayerPos = pPlayerPosition->Get_MatrixState(CTransform::STATE_POS);
+	m_startPos = _float3(101.721f, 34.260f, 323.105f);
 
 
 
@@ -262,6 +263,41 @@ _int CCopyMahabalasura::Update(_double fDeltaTime)
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
 
+	if (m_fSwing_1CollisionTime > 0.f && m_bIsSwing_1ParticleColliderOn)
+		m_fSwing_1CollisionTime -= (_float)fDeltaTime;
+
+	if (m_fSwing_2CollisionTime > 0.f && m_bIsSwing_2ParticleColliderOn)
+		m_fSwing_2CollisionTime -= (_float)fDeltaTime;
+
+
+	if (m_fSwing_1CollisionTime <= 0)
+	{
+		m_bIsSwing_1ParticleColliderOn = false;
+		m_fSwing_1CollisionTime = 1.5f;
+	}
+	if (m_fSwing_2CollisionTime <= 0)
+	{
+		m_bIsSwing_2ParticleColliderOn = false;
+		m_fSwing_2CollisionTime = 1.5f;
+	}
+
+
+	if (m_bIsSwing_1ParticleColliderOn)
+	{
+		for (auto& Collider : m_pSwing_1ParticleColliders)
+		{
+			Collider->Update(fDeltaTime);
+		}
+	}
+
+	if (m_bIsSwing_2ParticleColliderOn)
+	{
+		for (auto& Collider : m_pSwing_2ParticleColliders)
+		{
+			Collider->Update(fDeltaTime);
+		}
+	}
+
 	return _int();
 }
 
@@ -338,6 +374,22 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 	}
 
 
+	if (m_bIsSwing_1ParticleColliderOn)
+	{
+		for (auto& Collider : m_pSwing_1ParticleColliders)
+		{
+			Collider->LateUpdate(fDeltaTime);
+		}
+	}
+
+	if (m_bIsSwing_2ParticleColliderOn)
+	{
+		for (auto& Collider : m_pSwing_2ParticleColliders)
+		{
+			Collider->LateUpdate(fDeltaTime);
+		}
+	}
+
 
 	//FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel));
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SUBDISTORTION, this));
@@ -345,6 +397,8 @@ _int CCopyMahabalasura::LateUpdate(_double fDeltaTime)
 	//g_pGameInstance->Set_TargetPostion(PLV_PLAYER, m_vOldPos);
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackCollider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
+
+
 
 	return _int();
 }
@@ -407,6 +461,7 @@ _int CCopyMahabalasura::Render()
 _int CCopyMahabalasura::LateRender()
 {
 	if (__super::LateRender() < 0)		return -1;
+
 
 	return _int();
 }
@@ -685,6 +740,20 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
 			tDesc.vecEffect.push_back(pNonEffect);
 
+			CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+			ColliderDesc.ColliderType = COLLIDER_OBB;
+			ColliderDesc.ColliderDesc.vScale = _float3(20.5f, 20.5f, 450.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 90.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			CParticleCollider* pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_1ParticleColliders.push_back(pParticleCollider);
+
 
 			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]));
 			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
@@ -696,6 +765,19 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
 			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
 			tDesc.vecEffect.push_back(pNonEffect);
+
+			Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			ColliderDesc.ColliderType = COLLIDER_SPHERE;
+			ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_2ParticleColliders.push_back(pParticleCollider);
 			
 
 			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead),	TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc));
@@ -810,6 +892,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 				}
+					m_bIsSwing_1ParticleColliderOn = true;
 
 				m_iEffectAdjustIndex++;
 			}
@@ -852,6 +935,7 @@ HRESULT CCopyMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 					m_vecInstancedTransform[i].vecEffect[3]->ReInitialize(m_vecNonInstMeshDesc[2].vPosition, m_vecNonInstMeshDesc[2].vLookDir);
 
 				}
+				m_bIsSwing_2ParticleColliderOn = true;
 
 				++m_iAdjMovedIndex;
 			}
@@ -957,5 +1041,14 @@ void CCopyMahabalasura::Free()
 
 	for (auto& pTransform : m_vecInstancedTransform)
 		Safe_Release(pTransform.pTransform);
+
+	for (auto& Collider : m_pSwing_1ParticleColliders)
+		Safe_Release(Collider);
+
+	for (auto& Collider : m_pSwing_2ParticleColliders)
+		Safe_Release(Collider);
+
 	m_vecInstancedTransform.clear();
+	m_pSwing_1ParticleColliders.clear();
+	m_pSwing_2ParticleColliders.clear();
 }

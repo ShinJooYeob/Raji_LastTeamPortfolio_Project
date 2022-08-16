@@ -257,7 +257,7 @@ _int CMahabalasura_SpearWave::LateRender()
 
 void CMahabalasura_SpearWave::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
