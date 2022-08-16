@@ -478,7 +478,6 @@ _int CChiedtian::Update(_double fDeltaTime)
 			_int iRandom = (_int)(GetSingle(CUtilityMgr)->RandomFloat(0.f, 299.f) * 0.01f);
 			m_bIsAttack = true;
 			m_bISkill = true;
-			m_iTest = 0;
 
 			switch (m_iTest)
 			{
@@ -506,10 +505,10 @@ _int CChiedtian::Update(_double fDeltaTime)
 			break;
 
 			}
-			//++m_iTest;
+			++m_iTest;
 
-			//if (m_iTest > 2)
-			//	m_iTest = 0;
+			if (m_iTest > 2)
+				m_iTest = 0;
 		}
 
 	}
@@ -673,7 +672,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 			m_bISkill = true;
 			//특정 스킬 다시하기
-			iRandom = 0;
+			//iRandom = 0;
 
 			switch (iRandom)
 			{

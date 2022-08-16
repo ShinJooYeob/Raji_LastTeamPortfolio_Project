@@ -109,7 +109,7 @@ void CHitEffectUI::Set_HitEffect(_float Intensive, _float EffectTime,_float3 vCo
 	m_TotalTime = EffectTime;
 	m_PassedTime = 0;
 	m_bNeedToDraw = true;
-	m_iTextureLayerIndex = rand() % 7 + 1;
+	m_iTextureLayerIndex = rand() % 6 + 1;
 	m_vColor = _float4(vColor, 0);
 	m_vTargetColor.w = Intensive;
 }

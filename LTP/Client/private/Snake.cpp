@@ -644,12 +644,12 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		else if (0.98f <= fAnimPlayRate)
 		{
 			iAnimCounter = 0;
-			//GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
-			//static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
-			//m_iCurCutSceneState = 4;
-			//m_fDelayTime = 4;
-			//m_pModel->Change_AnimIndex(1);
-			//GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			m_iCurCutSceneState = 4;
+			m_fDelayTime = 4;
+			m_pModel->Change_AnimIndex(1);
+			GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 		}
 	} 
 	else if (4 == m_iCurCutSceneState)

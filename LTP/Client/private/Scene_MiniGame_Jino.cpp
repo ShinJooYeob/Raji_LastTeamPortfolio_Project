@@ -57,10 +57,14 @@ _int CScene_MiniGame_Jino::Update(_double fDeltaTime)
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
+
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
+		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
 		return 0;
 	}
+
 	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	_Vector vDir = XMVector3Normalize(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), 10) - XMVectorSet(128.f, -64.f, 256.f, 0));
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, XMVectorSet(128.f, -64.f, 256.f, 0) + vDir * 330.f);
@@ -500,22 +504,22 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 
 HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_NormalMonkey()
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(10.f, 0.f, 0.f)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(10.f, 0.f, 0.f)));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
-	//m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
+	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
-	//m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
+	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
-	//m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
+	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
-	//m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
+	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
-	//m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
+	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
 	return S_OK;
 }
