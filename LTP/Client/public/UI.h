@@ -133,6 +133,11 @@ private:
 
 	_float		m_PassedTimer = 0;	
 
+	//µðÁ¹ºê
+	_float				m_fTotalTargetTime = 7.f;
+	_float				m_fApearTime = 0.35f;
+	_float				m_fDisApearTime = 1.5f;
+
 private:
 	HRESULT SetUp_Components();
 

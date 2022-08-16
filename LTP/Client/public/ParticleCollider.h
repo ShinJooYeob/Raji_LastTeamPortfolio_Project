@@ -12,6 +12,7 @@ public:
 		COLLIDERDESC	ColliderDesc;
 		CTransform*		pTargetTransform = nullptr;
 		_float			fWaitingTime = 0.f;
+		_bool			m_bIsCollisionOn = true;
 	}SETTINGCOLLIDER;
 
 private:

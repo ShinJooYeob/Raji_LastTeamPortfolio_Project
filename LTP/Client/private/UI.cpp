@@ -226,13 +226,16 @@ HRESULT CUI::SettingTexture()
 	//m_fUV_Y = 0.2f;
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float)));
 
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
 	_float4 g_vColor = m_vColor;
 	_float2 noisingdir = _float2(0.0f, 0.25f);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &g_vColor, sizeof(_float4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
 
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &(m_fTotalTargetTime), sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fPaperCurlIntensive", &(m_fApearTime), sizeof(_float)));
 
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &(m_fDisApearTime), sizeof(_float)));
 
 
 

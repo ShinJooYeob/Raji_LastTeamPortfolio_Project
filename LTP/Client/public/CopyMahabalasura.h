@@ -89,6 +89,13 @@ private:
 	class CNonInstanceMeshEffect*									m_EffectWall = nullptr;
 
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
+
+	_bool				m_bIsSwing_1ParticleColliderOn = false;
+	_bool				m_bIsSwing_2ParticleColliderOn = false;
+	_float				m_fSwing_1CollisionTime = 1.5f;
+	_float				m_fSwing_2CollisionTime = 1.5f;
+	vector<class CParticleCollider*>						m_pSwing_1ParticleColliders;
+	vector<class CParticleCollider*>						m_pSwing_2ParticleColliders;
 	
 private:
 	HRESULT SetUp_Components();

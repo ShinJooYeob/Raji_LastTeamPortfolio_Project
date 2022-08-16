@@ -608,11 +608,6 @@ PS_OUT_MTRL PS_ChiedFlame(PS_IN_EMW_Noise In)
 
 	}
 
-
-
-
-
-
 	return Out;
 }
 
@@ -865,5 +860,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_RECT();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_FADE();
+	}
+
+	pass UIDissolve		//15
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_EnvMappedWater_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_ChiedFlame();
 	}
 }

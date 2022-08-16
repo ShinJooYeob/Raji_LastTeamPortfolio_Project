@@ -140,8 +140,6 @@ _int CflameTerrain::Render()
 
 
 
-
-
 	m_pVIBufferCom->Render(m_pShaderCom, 9);
 
 	return _int();

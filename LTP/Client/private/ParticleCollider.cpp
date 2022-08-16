@@ -53,7 +53,7 @@ _int CParticleCollider::Update(_double fDeltaTime)
 	if (m_fWaitingTime >= 0.f)
 		m_fWaitingTime -= (_float)fDeltaTime;
 
-	if (m_fWaitingTime <= 0.f)
+	if (m_fWaitingTime <= 0.f && m_pColliderDesc.m_bIsCollisionOn)
 		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
 
 	return _int();

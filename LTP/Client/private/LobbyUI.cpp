@@ -115,7 +115,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		NULL_CHECK_RETURN(m_pBackGround, E_FAIL);
 	}
 	{
-
+		 
 		CUI* UI = nullptr;
 		CUI::SETTING_UI SettingUI;
 		ZeroMemory(&SettingUI, sizeof(SettingUI));
@@ -136,6 +136,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 
 		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_RajiText), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
 		NULL_CHECK_RETURN(m_RajiText, E_FAIL);
+		m_RajiText->Set_PassIndex(15);
 	}
 	//m_pBackGround = nullptr;
 
