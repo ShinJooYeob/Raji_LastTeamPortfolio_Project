@@ -64,7 +64,8 @@ private:
 
 
 private:
-	HRESULT LoadSoundFile();
+	HRESULT LoadSoundFile_3D();
+	HRESULT LoadSoundFile_2D();
 
 private:
 	// 사운드 리소스 정보를 갖는 객체 
