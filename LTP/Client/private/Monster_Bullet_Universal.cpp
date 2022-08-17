@@ -1212,18 +1212,21 @@ HRESULT CMonster_Bullet_Universal::Ready_JYParticleDesc()
 		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
 			3.f,
 			0.5f,
-			_float4(1),
-			_float4(1, 1, 1, 0.5f),
-			0,
+			_float4(0.50f, 0.0f, 0.40f,0.8f),
+			_float4(0.50f, 0.0f, 0.40f, 0.3f),
+			10,
 			_float3(1.0f),
 			_float3(0.3f),
 			0);
-		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 		testTex.ePassID = InstancePass_BrightColor;
 
-		testTex.ParticleStartRandomPosMin = _float3(-1, 0, -1);
-		testTex.ParticleStartRandomPosMax = _float3(1, 0, 1);
+		_float val = 0.5f;
+		testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+		testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
 		testTex.Particle_Power = 5.0f;
+
+		testTex.vEmissive_SBB = _float3(1,0.5f,0.5f);
 
 		testTex.FollowingTarget = m_pTransformCom;
 		testTex.iFollowingDir = FollowingDir_Up;
@@ -1234,6 +1237,32 @@ HRESULT CMonster_Bullet_Universal::Ready_JYParticleDesc()
 
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_PRIMARY_BULLET:
+	{
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+			3.f,
+			0.5f,
+			_float4(1.00f, 0.62f, 0.93f, 0.8f),
+			_float4(0.50f, 0.0f, 0.40f, 1.0f),
+			10,
+			_float3(1.0f),
+			_float3(0.3f),
+			0);
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+		testTex.ePassID = InstancePass_OriginColor;
+
+		_float val = 0.2f;
+		testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+		testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+		testTex.Particle_Power = 5.0f;
+
+		testTex.vEmissive_SBB = _float3(1, 0.2f, 0.0f);
+
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Up;
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+	}
+
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET:
 		break;

@@ -1922,10 +1922,6 @@ HRESULT CMonster_Gadasura_Rage::Adjust_AnimMovedTransform(_double dDeltaTime)
 			// Routin
 			if (m_EffectAdjust == 0 && PlayRate >= 0)
 			{
-
-
-
-
 				m_EffectAdjust++;
 			}
 
