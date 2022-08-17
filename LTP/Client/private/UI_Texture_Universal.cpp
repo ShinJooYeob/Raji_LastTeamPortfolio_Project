@@ -213,7 +213,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	{
 	case 0:
 	{
-		if (m_AccumulationTime <= 2)
+		if (m_AccumulationTime <= 1)
 		{
 
 			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
@@ -223,7 +223,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
 		}
 
-		if (m_AccumulationTime > 2.5)
+		if (m_AccumulationTime > 1.5)
 		{
 			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -246,7 +246,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 1:
 	{
-		if (m_AccumulationTime <= 2)
+		if (m_AccumulationTime <= 1)
 		{
 
 			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
@@ -256,7 +256,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
 		}
 
-		if (m_AccumulationTime > 2.5)
+		if (m_AccumulationTime > 1.5)
 		{
 			CMiniGame_Golu* Golu = static_cast<CMiniGame_Golu*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 
@@ -268,7 +268,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 2:
 	{
-		if (m_AccumulationTime <= 2)
+		if (m_AccumulationTime <= 1)
 		{
 
 			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
@@ -278,7 +278,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
 		}
 
-		if (m_AccumulationTime > 2.5)
+		if (m_AccumulationTime > 1.5)
 		{
 			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -299,7 +299,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 3:
 	{
-		if (m_AccumulationTime <= 2)
+		if (m_AccumulationTime <= 1)
 		{
 
 			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
@@ -309,7 +309,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
 		}
 
-		if (m_AccumulationTime > 2.5)
+		if (m_AccumulationTime > 1.5)
 		{
 			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
 		}

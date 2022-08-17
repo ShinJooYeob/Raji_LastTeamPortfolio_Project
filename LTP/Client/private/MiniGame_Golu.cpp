@@ -6,6 +6,7 @@
 #include "InstanceMonsterBatchTrigger.h"
 #include "UI_Texture_Universal.h"
 #include "Scene.h"
+#include "PartilceCreateMgr.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -87,9 +88,9 @@ _int CMiniGame_Golu::Update(_double dDeltaTime)
 	Camera_Walking(dDeltaTime);
 	Play_MiniGame(dDeltaTime);
 
-	m_pModel->Change_AnimIndex(1/*여기에 애니메이션 인덱스 ㄱㄱㄱ*/, 0.f);
 
-
+	SimpleAnim(dDeltaTime);
+	m_pModel->Change_AnimIndex(m_iAnimNumber, 0.f);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -414,6 +415,27 @@ HRESULT CMiniGame_Golu::SetUp_UI()
 	return S_OK;
 }
 
+HRESULT CMiniGame_Golu::SimpleAnim(_double dDeltaTime)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press ||
+		pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press ||
+		pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press ||
+		pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+	{
+		m_iAnimNumber = 1;
+	}
+	else {
+		m_iAnimNumber = 0;
+	}
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CMiniGame_Golu::Play_MiniGame(_double dDeltaTime)
 {
 	Keyboard_Input(dDeltaTime);
@@ -432,21 +454,25 @@ HRESULT CMiniGame_Golu::Keyboard_Input(_double dDeltatime)
 	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(0.f, 0.f, 1.f, 0.f), 0.9f);
 		//m_pTransformCom->Move_Forward(dDeltatime, m_pNavigationCom);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(0.f, 0.f, -1.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(0.f, 0.f, -1.f, 0.f), 0.9f);
 		//m_pTransformCom->Move_Backward(dDeltatime, m_pNavigationCom);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.9f);
 		//m_pTransformCom->Move_Left(dDeltatime, m_pNavigationCom);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.9f);
 		//m_pTransformCom->Move_Right(dDeltatime, m_pNavigationCom);
 	}
 
@@ -545,10 +571,10 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 
 				Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BLACKHOLE;
 				Golu_BulletDesc.iTextureIndex = 0;
-				Golu_BulletDesc.fScale = _float3(5.5f, 5.5f, 5.5f);
+				Golu_BulletDesc.fScale = _float3(7.5f, 7.5f, 7.5f);
 				Golu_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
 				Golu_BulletDesc.fSpeed = 5.f;
-				Golu_BulletDesc.dDuration = 2.5;
+				Golu_BulletDesc.dDuration = 0.75;
 				Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
 				Golu_BulletDesc.bColiiderOn = true;
 
@@ -597,7 +623,7 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 	}
 
 	m_dBarrierCoolTime += dDeltatime;
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down && m_dBarrierCoolTime >= 1.5)
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down && m_dBarrierCoolTime >= 3.5)
 	{
 		CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
 
@@ -611,7 +637,7 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 		fDir.y += 0.3f;
 		Golu_BulletDesc.fPositioning = fDir;
 		Golu_BulletDesc.fSpeed = 5.f;
-		Golu_BulletDesc.dDuration = 5;
+		Golu_BulletDesc.dDuration = 3;
 
 		Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
 		Golu_BulletDesc.bColiiderOn = true;
@@ -686,7 +712,7 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 		UI_Texture_UniversalDesc.fX = 1200.f;
 		UI_Texture_UniversalDesc.fY = 650.f;
 		UI_Texture_UniversalDesc.fDepth = 5.f;
-		UI_Texture_UniversalDesc.dDuration = 1.5;
+		UI_Texture_UniversalDesc.dDuration = 3.5;
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
 		
@@ -694,6 +720,57 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 	}
 
 
+	if (pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+
+		// Fragment
+		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+			Prototype_Mesh_SM_4E_IceShards_01, //FBX
+			0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+			0.8f, //파티클 지속시간
+			_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+			_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+			1, //여기에 1을 넣으면 됨
+			_float3(1), //사이즈
+			_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+			1);
+		// testMesh.eParticleTypeID = InstanceEffect_Ball; 퍼지는 타입
+		testMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+		testMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+		//범위
+		_float val = 1.5f;
+		testMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+		testMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+		//디퓨즈 텍스쳐
+		testMesh.TempBuffer_0.w = 300;
+		testMesh.TempBuffer_0.w = 300;
+
+		testMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+		testMesh.iMaskingTextureIndex = 122;
+		testMesh.iNoiseTextureIndex = 289;
+		testMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+		testMesh.Particle_Power = 20.0f;
+
+		testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+		testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+		testMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+		//위치지정
+		//_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		//_Vector pos = mat.r[3] + mat.r[2] * 3;
+		//testMesh.vFixedPosition = pos;
+
+		//위치지정
+		testMesh.FollowingTarget = m_pTransformCom;
+		testMesh.iFollowingDir = FollowingDir_Up;
+
+		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+	}
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -1001,7 +1078,7 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 
 
 	m_dStartTime += dDeltaTime;
-	if (m_bStart == false && m_dStartTime > 10)
+	if (m_bStart == false && m_dStartTime > 7)
 	{
 		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 

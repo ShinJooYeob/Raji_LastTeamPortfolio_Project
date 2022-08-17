@@ -40,6 +40,8 @@ public:
 	HRESULT	SetUp_Info();
 	HRESULT SetUp_UI();
 
+	HRESULT	SimpleAnim(_double dDeltaTime);
+
 	HRESULT	Camera_Walking(_double dDeltaTime);
 
 //InGame
@@ -105,6 +107,10 @@ private://Round
 	_bool				m_bNextRoundOn = false;
 	_bool				m_bStart = false;
 	_bool				m_bTextOn = false;
+
+
+private:
+	_uint				m_iAnimNumber = 0;
 
 public:
 	static CMiniGame_Golu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

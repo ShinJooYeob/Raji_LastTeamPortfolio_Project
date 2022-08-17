@@ -107,6 +107,7 @@ private:
 	_bool				m_bOnceSwitch = false;
 
 
+	_double				m_dParticleTime = 0;
 
 	//Effect
 private:

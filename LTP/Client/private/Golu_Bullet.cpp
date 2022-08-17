@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Golu_Bullet.h"
+#include "PartilceCreateMgr.h"
 
 const _tchar* m_pGolu_BulletTag[CGolu_Bullet::GOLU_BULLET_END]
 {
@@ -56,6 +57,7 @@ _int CGolu_Bullet::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
 	m_dDurationTime += dDeltaTime;
+	m_dParticleTime += dDeltaTime;
 
 	if (m_dDurationTime >= m_Golu_BulletDesc.dDuration)
 	{
@@ -123,7 +125,453 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 		Set_IsDead();
 		break;
 	case BARRIERBULLET:
-		//Set_IsDead();
+	{
+		switch (m_Golu_BulletDesc.iTextureIndex)
+		{
+		case 0:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+														 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 301;
+				ParticleMesh.TempBuffer_0.w = 301;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+											 //위치지정
+											 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+											 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+											 //testMesh.vFixedPosition = pos;
+
+											 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 1:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 300;
+				ParticleMesh.TempBuffer_0.w = 300;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 2:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 271;
+				ParticleMesh.TempBuffer_0.w = 271;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 3:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 305;
+				ParticleMesh.TempBuffer_0.w = 305;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 4:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 309;
+				ParticleMesh.TempBuffer_0.w = 309;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 5:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 391;
+				ParticleMesh.TempBuffer_0.w = 391;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 6:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 198;
+				ParticleMesh.TempBuffer_0.w = 198;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		case 7:
+		{
+			if (m_dParticleTime > 0.3)
+			{
+				// Fragment
+				INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+					Prototype_Mesh_SM_4E_IceShards_01, //FBX
+					0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+					0.8f, //파티클 지속시간
+					_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+					_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+					1, //여기에 1을 넣으면 됨
+					_float3(2), //사이즈
+					_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+					1);
+				ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+				ParticleMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+				ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+															 //범위
+				_float val = 1.5f;
+				ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+
+				//디퓨즈 텍스쳐
+				ParticleMesh.TempBuffer_0.w = 267;
+				ParticleMesh.TempBuffer_0.w = 267;
+
+				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+				ParticleMesh.iMaskingTextureIndex = 122;
+				ParticleMesh.iNoiseTextureIndex = 289;
+				ParticleMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+				ParticleMesh.Particle_Power = 20.0f;
+
+				ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+				ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+				ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+												 //위치지정
+												 //_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+												 //_Vector pos = mat.r[3] + mat.r[2] * 3;
+												 //testMesh.vFixedPosition = pos;
+
+												 //위치지정
+				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+				m_dParticleTime = 0;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
 		break;
 	default:
 		break;
@@ -470,7 +918,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 			NONINSTNESHEFTDESC tNIMEDesc;
 
 			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado;
-			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fAppearTime = 0.5f;
 			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
 			tNIMEDesc.vLookDir = _float3(1, 0, 0);
 			tNIMEDesc.noisingdir = _float2(0, 1);
@@ -478,7 +926,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
 			tNIMEDesc.NoiseTextureIndex = 6;
 			tNIMEDesc.MaskTextureIndex = 81;
-			tNIMEDesc.iDiffuseTextureIndex = 278;
+			tNIMEDesc.iDiffuseTextureIndex = 365;
 			tNIMEDesc.m_iPassIndex = 19;
 			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
 			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
@@ -499,7 +947,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 			NONINSTNESHEFTDESC tNIMEDesc;
 
 			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
-			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fAppearTime = 0.5f;
 			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
 			tNIMEDesc.vLookDir = _float3(1, 0, 0);
 
@@ -508,7 +956,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
 			tNIMEDesc.NoiseTextureIndex = 6;
 			tNIMEDesc.MaskTextureIndex = 81;
-			tNIMEDesc.iDiffuseTextureIndex = 278;
+			tNIMEDesc.iDiffuseTextureIndex = 365;
 			tNIMEDesc.m_iPassIndex = 19;
 			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
 			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
