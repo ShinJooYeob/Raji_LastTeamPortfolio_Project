@@ -45,7 +45,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 //	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 #endif
-
+		// Partilce
+	Set_DealyDIssolveTime(3.0f, 0.5f);
 	return S_OK;
 }
 
@@ -54,6 +55,8 @@ _int CMonster_Tezabsura_Purple::Update(_double dDeltaTime)
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
 	{
@@ -117,6 +120,10 @@ _int CMonster_Tezabsura_Purple::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
+
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -148,6 +155,10 @@ _int CMonster_Tezabsura_Purple::Render()
 	if (__super::Render() < 0)
 		return -1;
 
+
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -177,6 +188,10 @@ _int CMonster_Tezabsura_Purple::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
+
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
+
 
 	return _int();
 }
@@ -777,18 +792,14 @@ HRESULT CMonster_Tezabsura_Purple::Update_Particle(_double timer)
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
-
-
 	}
 
 	if (KEYDOWN(DIK_V))
 	{
-		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Test, m_pTextureParticleTransform_Demo1);
-		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash2, m_pTextureParticleTransform_Demo2);
-		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NL_Cash4, m_pPlayerTransform);
-
-		//	_float4(0.25f, 0.18f, 1, 1),
-		//	_float4(0.15f, 0.38f, 1, 1),
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TM, m_pTransformCom);
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TL, m_pTransformCom);
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TP, m_pTransformCom);
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TB, m_pTransformCom);
 
 		{
 			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
@@ -864,7 +875,7 @@ HRESULT CMonster_Tezabsura_Purple::Update_Particle(_double timer)
 			testMesh.FollowingTarget = m_pPlayerTransform;
 			testMesh.iFollowingDir = FollowingDir_Right;
 
-			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		//	GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
 
 	}
@@ -1054,8 +1065,17 @@ HRESULT CMonster_Tezabsura_Purple::Play_SpawnEffect()
 {
 	if (m_SpawnEffectAdjust == 0)
 	{
-		// smoke
 		m_SpawnEffectAdjust++;
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TM, m_pTransformCom);
+
+
+	}
+
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 0.5f)
+	{
+		m_SpawnEffectAdjust++;
+
+		// smoke
 		{
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
 				0.05f,
@@ -1094,6 +1114,7 @@ HRESULT CMonster_Tezabsura_Purple::Play_SpawnEffect()
 			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
 
 		}
+
 	}
 
 	return S_OK;

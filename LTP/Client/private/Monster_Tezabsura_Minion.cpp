@@ -47,6 +47,9 @@ HRESULT CMonster_Tezabsura_Minion::Initialize_Clone(void * pArg)
 //	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
+	// Partilce
+	Set_DealyDIssolveTime(0.5f, 0.5f);
+
 	return S_OK;
 }
 
@@ -54,6 +57,9 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
 	{
@@ -135,7 +141,8 @@ _int CMonster_Tezabsura_Minion::Update(_double dDeltaTime)
 _int CMonster_Tezabsura_Minion::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	///////////
 	if (m_bIsOnScreen)
 	{
@@ -165,7 +172,8 @@ _int CMonster_Tezabsura_Minion::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -195,7 +203,8 @@ _int CMonster_Tezabsura_Minion::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
-
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	return _int();
 }
 

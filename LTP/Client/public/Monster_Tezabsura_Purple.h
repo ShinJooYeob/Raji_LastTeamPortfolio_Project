@@ -133,7 +133,6 @@ private:// Particle
 	virtual HRESULT Ready_ParticleDesc() override;
 	virtual HRESULT Update_Particle(_double timer)override;
 	virtual HRESULT Play_SpawnEffect()override;
-	_bool m_bIsInitParticle = false;
 
 private:
 	HRESULT SetUp_Components();

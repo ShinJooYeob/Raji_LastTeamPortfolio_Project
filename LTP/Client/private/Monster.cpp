@@ -32,7 +32,8 @@ HRESULT CMonster::Initialize_Clone(void * pArg)
 
 	m_bisSpawnParticle = false;
 	m_bIsSpawnPartilceOne = false;
-	
+	m_bIsInitParticle = false;
+
 	m_SpawnEffectAdjust = 0;
 
 

@@ -61,6 +61,9 @@ protected:
 	_double							m_SpawnDealytime = 0;
 	_double							m_SpawnDissolveTime= 0.5f;
 
+	// BaseParticle
+	_bool							m_bIsInitParticle = false;
+
 	//	CModelInstance*					m_pModelInstance = nullptr;
 //	vector<CTransform*>				m_vecInstancedTransform;
 
