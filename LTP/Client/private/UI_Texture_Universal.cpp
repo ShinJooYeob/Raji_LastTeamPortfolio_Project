@@ -1,9 +1,16 @@
 #include "stdafx.h"
 #include "..\public\UI_Texture_Universal.h"
+#include "MiniGame_Golu.h"
+#include "Scene.h"
 
 const _tchar* m_pUI_Texture_Universal_Tag[CUI_Texture_Universal::UI_END]
 {
-	L"UI_Skill_FireBall"
+	L"UI_Skill_FireBall",
+	L"UI_Skill_BarrierBullet",
+	L"UI_Skill_BlackHole",
+	L"UI_Key",
+	L"UI_Skill_CoolTime",
+	L"UI_Text"
 };
 
 CUI_Texture_Universal::CUI_Texture_Universal(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -68,7 +75,17 @@ _int CUI_Texture_Universal::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
-	Set_UI_Transform();
+	switch (m_UI_UniversalDesc.iUI_TextureType)
+	{
+	case UI_TEXT:
+		break;
+	case 1111:
+		__debugbreak();
+		break;
+	default:
+		Set_UI_Transform();
+		break;
+	}
 
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
@@ -90,7 +107,7 @@ _int CUI_Texture_Universal::Render()
 	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_UI_UniversalDesc.iTextureIndex)))
 		return E_FAIL;
 
-	m_pVIBufferCom->Render(m_pShaderCom, 0);
+	m_pVIBufferCom->Render(m_pShaderCom, 1);
 
 	return _int();
 }
@@ -136,11 +153,172 @@ HRESULT CUI_Texture_Universal::Set_UI_Transform()
 
 HRESULT CUI_Texture_Universal::Play_UI(_double dDeltaTime)
 {
+	switch (m_UI_UniversalDesc.iUI_TextureType)
+	{
+	case UI_SKILL_COOLTIME:
+	{
+		UI_Skill_CoolTime(dDeltaTime);
+		break;
+	}
+	case UI_TEXT:
+	{
+		UI_Text(dDeltaTime);
+		break;
+	}
+	default:
+		break;
+	}
+
 	return S_OK;
 }
 
 HRESULT CUI_Texture_Universal::Frame_Speed(_double dDeltaTime)
 {
+	return S_OK;
+}
+
+HRESULT CUI_Texture_Universal::UI_Skill_CoolTime(_double dDeltaTime)
+{
+	m_dDurationTime += dDeltaTime;
+	if (m_dDurationTime >= m_UI_UniversalDesc.dDuration)
+	{
+		Set_IsDead();
+	}
+	else {
+		m_fSizeY -= (_float)(m_UI_UniversalDesc.fSizeY / m_UI_UniversalDesc.dDuration * dDeltaTime);
+		m_fSizeX -= (_float)(m_UI_UniversalDesc.fSizeX / m_UI_UniversalDesc.dDuration * dDeltaTime);
+	}
+	return S_OK;
+}
+
+HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
+{
+	//_Vector TempPos;
+
+	//TempPos = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, XMVectorSet(0.f, 500.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), m_dEasingTime, 2.0f);
+	//if (m_dEasingTime >= 2)
+	//{
+	//	TempPos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	//}
+	//m_pTransform->Scaled(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
+	//m_pTransform->Set_State(CTransform::STATE_POSITION, TempPos);
+
+	_float	fTempScaleX;
+	_float	fTempScaleY;
+
+	m_AccumulationTime += dDeltaTime;
+	m_dEasingTime += dDeltaTime;
+
+	switch (m_UI_UniversalDesc.iTextureIndex)
+	{
+	case 0:
+	{
+		if (m_AccumulationTime <= 2)
+		{
+
+			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
+			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
+
+			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
+			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+		}
+
+		if (m_AccumulationTime > 2.5)
+		{
+			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+			UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+			UI_Texture_UniversalDesc.iTextureIndex = 1;
+
+			UI_Texture_UniversalDesc.fSizeX = 700.f;
+			UI_Texture_UniversalDesc.fSizeY = 500.f;
+			UI_Texture_UniversalDesc.fX = 640.f;
+			UI_Texture_UniversalDesc.fY = 360.f;
+			UI_Texture_UniversalDesc.fDepth = 10.f;
+
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+
+
+			Set_IsDead();
+		}
+		break;
+	}
+	case 1:
+	{
+		if (m_AccumulationTime <= 2)
+		{
+
+			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
+			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
+
+			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
+			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+		}
+
+		if (m_AccumulationTime > 2.5)
+		{
+			CMiniGame_Golu* Golu = static_cast<CMiniGame_Golu*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+
+			Golu->Set_NextRoundOn(true);
+
+			Set_IsDead();
+		}
+		break;
+	}
+	case 2:
+	{
+		if (m_AccumulationTime <= 2)
+		{
+
+			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
+			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
+
+			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
+			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+		}
+
+		if (m_AccumulationTime > 2.5)
+		{
+			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+			UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+			UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+			UI_Texture_UniversalDesc.fSizeX = 700.f;
+			UI_Texture_UniversalDesc.fSizeY = 500.f;
+			UI_Texture_UniversalDesc.fX = 640.f;
+			UI_Texture_UniversalDesc.fY = 360.f;
+			UI_Texture_UniversalDesc.fDepth = 10.f;
+
+			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+			Set_IsDead();
+		}
+		break;
+	}
+	case 3:
+	{
+		if (m_AccumulationTime <= 2)
+		{
+
+			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
+			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
+
+			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
+			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+		}
+
+		if (m_AccumulationTime > 2.5)
+		{
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
 	return S_OK;
 }
 

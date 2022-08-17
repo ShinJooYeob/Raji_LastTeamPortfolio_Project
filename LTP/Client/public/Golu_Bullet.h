@@ -67,6 +67,7 @@ private: // ETC function
 	HRESULT	Billboard();
 	HRESULT Magnet();
 	_bool	SrcPosToDestPos(_double dDeltaTime, _float fSpeed);
+	HRESULT PickingPosDir(_double dDeltaTime, _float fSpeed);
 	HRESULT CreateDestPos();
 
 private:
@@ -75,6 +76,7 @@ private:
 	HRESULT FireBall(_double dDeltaTime);
 	HRESULT	BarrierBullet(_double dDeltaTime);
 	HRESULT BlackHole(_double dDeltaTime);
+	HRESULT Tornado(_double dDeltaTime);
 	HRESULT	FireRing(_double dDeltaTime);
 
 
@@ -99,7 +101,20 @@ private:
 
 
 	_float				m_fAngle = 0;
-	_float3				m_vDefaultPos  ;
+	_float3				m_vDefaultPos;
+	_float3				m_fDir;
+
+	_bool				m_bOnceSwitch = false;
+
+
+
+	//Effect
+private:
+	vector<INSTPARTICLEDESC>								m_vecJYTextureParticleDesc;
+	vector<NONINSTNESHEFTDESC>								m_vecJYNonMeshParticleDesc;
+
+
+	_float4 vOldRimLightColor = _float4(0);
 
 public:
 	static CGolu_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

@@ -123,7 +123,7 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 		Set_IsDead();
 		break;
 	case BARRIERBULLET:
-		Set_IsDead();
+		//Set_IsDead();
 		break;
 	default:
 		break;
@@ -304,6 +304,25 @@ _bool CGolu_Bullet::SrcPosToDestPos(_double dDeltaTime, _float fSpeed)
 
 }
 
+HRESULT CGolu_Bullet::PickingPosDir(_double dDeltaTime, _float fSpeed)
+{
+	if (m_bOnceSwitch == false)
+	{
+		_Vector vWorldMousePos, vDir;
+
+		vWorldMousePos = XMLoadFloat3(&m_Golu_BulletDesc.fDestinationPos);
+
+		vDir = XMVector3Normalize(vWorldMousePos - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+		XMStoreFloat3(&m_fDir, vDir);
+		m_bOnceSwitch = true;
+	}
+
+	m_pTransformCom->MovetoDir_bySpeed(XMLoadFloat3(&m_fDir), fSpeed, dDeltaTime);
+
+	return S_OK;
+}
+
 HRESULT CGolu_Bullet::CreateDestPos()
 {
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_Golu_BulletDesc.fDestinationPos);
@@ -337,7 +356,8 @@ HRESULT CGolu_Bullet::PlayOn(_double dDeltaTime)
 	case CGolu_Bullet::BLACKHOLE:
 	{
 		Billboard();
-		BlackHole(dDeltaTime);
+		//BlackHole(dDeltaTime);
+		Tornado(dDeltaTime);
 		break;
 	}
 	case CGolu_Bullet::NONTEXTURE:
@@ -381,8 +401,10 @@ HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 	m_pTransformCom->Set_TurnSpeed(1);
 	m_pTransformCom->Turn_CCW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK),XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
 	
-	if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
-		Set_IsDead();
+	PickingPosDir(dDeltaTime, m_Golu_BulletDesc.fSpeed);
+
+	//if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
+	//	Set_IsDead();
 
 	return S_OK;
 }
@@ -434,6 +456,87 @@ HRESULT CGolu_Bullet::BlackHole(_double dDeltaTime)
 	m_pTransformCom->Set_TurnSpeed(1);
 	m_pTransformCom->Turn_CW(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), XMConvertToRadians(m_fAngle* (_float)dDeltaTime));
 
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
+{
+	if (m_bOnceSwitch == false)
+	{
+#pragma region Mesh
+
+
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado;
+			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+			tNIMEDesc.noisingdir = _float2(0, 1);
+
+			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+			tNIMEDesc.NoiseTextureIndex = 6;
+			tNIMEDesc.MaskTextureIndex = 81;
+			tNIMEDesc.iDiffuseTextureIndex = 278;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = -1080.f;
+			tNIMEDesc.vSize = _float3(2.f, 1.5f, 2.f);
+			tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+
+			m_vecJYNonMeshParticleDesc.push_back(tNIMEDesc);
+		}
+		{
+			NONINSTNESHEFTDESC tNIMEDesc;
+
+			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
+			tNIMEDesc.fAppearTime = 0.25f;
+			tNIMEDesc.fMaxTime_Duration = tNIMEDesc.fAppearTime*2.f;
+			tNIMEDesc.vLookDir = _float3(1, 0, 0);
+
+			tNIMEDesc.noisingdir = _float2(-1, 0);
+
+			tNIMEDesc.fDistortionNoisingPushPower = 20.f;
+			tNIMEDesc.NoiseTextureIndex = 6;
+			tNIMEDesc.MaskTextureIndex = 81;
+			tNIMEDesc.iDiffuseTextureIndex = 278;
+			tNIMEDesc.m_iPassIndex = 19;
+			tNIMEDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+			tNIMEDesc.vLimLight = _float4(0.35f, 0.85f, 0.35f, 1);
+			tNIMEDesc.NoiseTextureIndex = 381;
+			tNIMEDesc.vColor = _float4(1, 1, 1, 1);
+
+			tNIMEDesc.RotAxis = FollowingDir_Up;
+			tNIMEDesc.RotationSpeedPerSec = -1080.f;
+			tNIMEDesc.vSize = _float3(2.f, 1.5f, 2.f);
+			tNIMEDesc.vLimLight = _float4(_float3(vOldRimLightColor), 1);
+
+			tNIMEDesc.MoveDir = FollowingDir_Look;
+			tNIMEDesc.MoveSpeed = 0.f;
+			m_vecJYNonMeshParticleDesc.push_back(tNIMEDesc);
+		}
+#pragma endregion
+
+
+		m_vecJYNonMeshParticleDesc[1].vPosition = m_vecJYNonMeshParticleDesc[0].vPosition
+			= m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[0]);
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYNonMeshParticleDesc[1]);
+
+
+		m_bOnceSwitch = true;
+	}
 	return S_OK;
 }
 

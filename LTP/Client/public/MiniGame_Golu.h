@@ -20,6 +20,8 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	virtual void Set_IsDead();
+
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
@@ -55,7 +57,11 @@ private:
 
 private:
 	HRESULT Ready_TriggerObject(const _tchar* szTriggerDataName, SCENEID eSceneID, const _tchar* pLayerTag);
-	HRESULT	Ready_Round();
+	HRESULT	Ready_Round(_double dDeltaTime);
+
+public:
+	void				Set_NextRoundOn(_bool bRound);
+	_bool				Get_NextRoundOn() { return m_bNextRoundOn; }
 
 
 private:
@@ -83,6 +89,9 @@ private://Dissolve
 private://Anim Speed
 	_double				m_dAcceleration = 1;
 
+private:
+	_bool				m_bMonsterCreateOn = true;
+
 
 //Attack
 private:
@@ -91,8 +100,11 @@ private:
 	_double				m_dBlackHoleCoolTime = 10;
 
 private://Round
-	_bool				m_bNextRoundOn = true;
+	_double				m_dStartTime = 0;
 	_uint				m_iNextRoundNumber = 1;
+	_bool				m_bNextRoundOn = false;
+	_bool				m_bStart = false;
+	_bool				m_bTextOn = false;
 
 public:
 	static CMiniGame_Golu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

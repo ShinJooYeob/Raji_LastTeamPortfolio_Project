@@ -5,6 +5,7 @@
 #include "Golu_Bullet.h"
 #include "InstanceMonsterBatchTrigger.h"
 #include "UI_Texture_Universal.h"
+#include "Scene.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -55,7 +56,7 @@ HRESULT CMiniGame_Golu::Initialize_Clone(void * pArg)
 	//네비메쉬 47 이후 인덱스부터 아무거나 쓰면 되겠끔 만들자
 
 
-	//SetUp_UI();
+	SetUp_UI();
 
 	return S_OK;
 }
@@ -86,7 +87,7 @@ _int CMiniGame_Golu::Update(_double dDeltaTime)
 	Camera_Walking(dDeltaTime);
 	Play_MiniGame(dDeltaTime);
 
-	m_pModel->Change_AnimIndex(0/*여기에 애니메이션 인덱스 ㄱㄱㄱ*/, 0.f);
+	m_pModel->Change_AnimIndex(1/*여기에 애니메이션 인덱스 ㄱㄱㄱ*/, 0.f);
 
 
 
@@ -154,14 +155,34 @@ _int CMiniGame_Golu::LateRender()
 	return _int();
 }
 
+void CMiniGame_Golu::Set_IsDead()
+{
+	__super::Set_IsDead();
+
+
+	CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+	UI_Texture_UniversalDesc.iTextureIndex = 3;
+
+	UI_Texture_UniversalDesc.fSizeX = 700.f;
+	UI_Texture_UniversalDesc.fSizeY = 500.f;
+	UI_Texture_UniversalDesc.fX = 640.f;
+	UI_Texture_UniversalDesc.fY = 360.f;
+	UI_Texture_UniversalDesc.fDepth = 10.f;
+
+	g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc);
+
+}
+
 void CMiniGame_Golu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 }
 
 _float CMiniGame_Golu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	//m_fHP += -fDamageAmount;
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
 
 
 	if (0 >= m_fHP)
@@ -304,18 +325,90 @@ HRESULT CMiniGame_Golu::SetUp_Info()
 
 HRESULT CMiniGame_Golu::SetUp_UI()
 {
+	//UI_Skill_FireBall
+	//////////////////////////////////////////
 	CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
-	UI_Texture_UniversalDesc.iUI_TextureType = 0;
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_FIREBALL;
 	UI_Texture_UniversalDesc.iTextureIndex = 0;
 
-	UI_Texture_UniversalDesc.fSizeX = 200.f;
-	UI_Texture_UniversalDesc.fSizeY = 200.f;
-	UI_Texture_UniversalDesc.fX = 640.f;
-	UI_Texture_UniversalDesc.fY = 360.f;
+	UI_Texture_UniversalDesc.fSizeX = 70.f;
+	UI_Texture_UniversalDesc.fSizeY = 70.f;
+	UI_Texture_UniversalDesc.fX = 1000.f;
+	UI_Texture_UniversalDesc.fY = 650.f;
 	UI_Texture_UniversalDesc.fDepth = 10.f;
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_Key;
+	UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+	UI_Texture_UniversalDesc.fSizeX = 20.f;
+	UI_Texture_UniversalDesc.fSizeY = 20.f;
+	UI_Texture_UniversalDesc.fX = 1030.f;
+	UI_Texture_UniversalDesc.fY = 680.f;
+	UI_Texture_UniversalDesc.fDepth = 12.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+	//////////////////////////////////////////
+
+
+	//UI_Skill_BarrierBullet
+	//////////////////////////////////////////
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_BLACKHOLE;
+	UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+	UI_Texture_UniversalDesc.fSizeX = 70.f;
+	UI_Texture_UniversalDesc.fSizeY = 70.f;
+	UI_Texture_UniversalDesc.fX = 1100.f;
+	UI_Texture_UniversalDesc.fY = 650.f;
+	UI_Texture_UniversalDesc.fDepth = 10.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_Key;
+	UI_Texture_UniversalDesc.iTextureIndex = 1;
+
+	UI_Texture_UniversalDesc.fSizeX = 20.f;
+	UI_Texture_UniversalDesc.fSizeY = 20.f;
+	UI_Texture_UniversalDesc.fX = 1130.f;
+	UI_Texture_UniversalDesc.fY = 680.f;
+	UI_Texture_UniversalDesc.fDepth = 12.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+	//////////////////////////////////////////
+
+
+	//UI_SKill_BlackHole
+	//////////////////////////////////////////
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_BARRIERBULLET;
+	UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+	UI_Texture_UniversalDesc.fSizeX = 70.f;
+	UI_Texture_UniversalDesc.fSizeY = 70.f;
+	UI_Texture_UniversalDesc.fX = 1200.f;
+	UI_Texture_UniversalDesc.fY = 650.f;
+	UI_Texture_UniversalDesc.fDepth = 10.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+
+
+	UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_Key;
+	UI_Texture_UniversalDesc.iTextureIndex = 2;
+
+	UI_Texture_UniversalDesc.fSizeX = 30.f;
+	UI_Texture_UniversalDesc.fSizeY = 25.f;
+	UI_Texture_UniversalDesc.fX = 1240.f;
+	UI_Texture_UniversalDesc.fY = 680.f;
+	UI_Texture_UniversalDesc.fDepth = 12.f;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+	//////////////////////////////////////////
+
 
 
 	return S_OK;
@@ -327,7 +420,7 @@ HRESULT CMiniGame_Golu::Play_MiniGame(_double dDeltaTime)
 
 
 
-	Ready_Round();
+	Ready_Round(dDeltaTime);
 
 	return S_OK;
 }
@@ -426,6 +519,22 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
 
+
+			//CoolTime
+			//CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+			//UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_COOLTIME;
+			//UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+			//UI_Texture_UniversalDesc.fSizeX = 70.f;
+			//UI_Texture_UniversalDesc.fSizeY = 70.f;
+			//UI_Texture_UniversalDesc.fX = 1000.f;
+			//UI_Texture_UniversalDesc.fY = 650.f;
+			//UI_Texture_UniversalDesc.fDepth = 5.f;
+			//UI_Texture_UniversalDesc.dDuration = 0;
+
+			//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
 			break;
 		}
 		case 2:
@@ -458,6 +567,26 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 				MousePickingPos.z += 1.f;
 				Golu_BulletDesc.fDestinationPos = MousePickingPos;
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
+
+
+
+
+				//CoolTime
+				CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+				UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_COOLTIME;
+				UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+				UI_Texture_UniversalDesc.fSizeX = 70.f;
+				UI_Texture_UniversalDesc.fSizeY = 70.f;
+				UI_Texture_UniversalDesc.fX = 1100.f;
+				UI_Texture_UniversalDesc.fY = 650.f;
+				UI_Texture_UniversalDesc.fDepth = 5.f;
+				UI_Texture_UniversalDesc.dDuration = 7.5;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+				m_dBlackHoleCoolTime = 0;
 			
 			}
 			break;
@@ -470,45 +599,6 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 	m_dBarrierCoolTime += dDeltatime;
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down && m_dBarrierCoolTime >= 1.5)
 	{
-		//CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
-
-		//Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BARRIERBULLET;
-		//Golu_BulletDesc.iTextureIndex = 0;
-
-		//Golu_BulletDesc.fScale = _float3(1.f, 1.f, 1.f);
-
-		//Golu_BulletDesc.fPositioning = _float3(1.5f, 0.3f, 0.f);
-		//Golu_BulletDesc.fSpeed = 5.f;
-		//Golu_BulletDesc.dDuration = 5;
-
-		//Golu_BulletDesc.fColliderScale = _float3(1.f, 1.f, 1.f);
-		//Golu_BulletDesc.bColiiderOn = true;
-
-		//Golu_BulletDesc.pObject = this;
-
-		//_float3 MousePickingPos;
-		//MousePickingPos = Check_MousePicking();
-		//MousePickingPos.y += 0.3f;
-		//Golu_BulletDesc.fDestinationPos = MousePickingPos;
-
-		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
-
-
-		//Golu_BulletDesc.iTextureIndex = 1;
-		//Golu_BulletDesc.fPositioning = _float3(-1.5f, 0.3f, 0.f);
-		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
-
-
-		//Golu_BulletDesc.iTextureIndex = 2;
-		//Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, 1.5f);
-		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
-
-
-		//Golu_BulletDesc.iTextureIndex = 3;
-		//Golu_BulletDesc.fPositioning = _float3(0.f, 0.3f, -1.5f);
-		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
-
-
 		CGolu_Bullet::GOLU_BULLETDESC Golu_BulletDesc;
 
 		Golu_BulletDesc.iGoluBulletType = CGolu_Bullet::BARRIERBULLET;
@@ -585,9 +675,24 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
 
 		
+		//CoolTime
+		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+		UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_SKILL_COOLTIME;
+		UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+		UI_Texture_UniversalDesc.fSizeX = 70.f;
+		UI_Texture_UniversalDesc.fSizeY = 70.f;
+		UI_Texture_UniversalDesc.fX = 1200.f;
+		UI_Texture_UniversalDesc.fY = 650.f;
+		UI_Texture_UniversalDesc.fDepth = 5.f;
+		UI_Texture_UniversalDesc.dDuration = 1.5;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
 		
 		m_dBarrierCoolTime = 0;
 	}
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -804,9 +909,11 @@ HRESULT CMiniGame_Golu::Ready_TriggerObject(const _tchar * szTriggerDataName, SC
 	return S_OK;
 }
 
-HRESULT CMiniGame_Golu::Ready_Round()
+HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 {
-	m_iNextRoundNumber = 1;
+	if (m_bNextRoundOn == true)
+		m_bTextOn = true;
+
 	if (m_bNextRoundOn == true)
 	{
 		switch (m_iNextRoundNumber)
@@ -864,35 +971,7 @@ HRESULT CMiniGame_Golu::Ready_Round()
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger8.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 9:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger9.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 10:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger10.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 11:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger11.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 12:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger12.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber = 12; //End Round
+			m_iNextRoundNumber = 5; //End Round
 			break;
 		}
 		default:
@@ -902,22 +981,58 @@ HRESULT CMiniGame_Golu::Ready_Round()
 
 	CInstanceMonsterBatchTrigger* TriggerObject = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 
-	if (TriggerObject == nullptr)
+	if (m_bTextOn == true && TriggerObject == nullptr)
 	{
-		m_bNextRoundOn = true;
+		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+		UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+		UI_Texture_UniversalDesc.iTextureIndex = 2;
+
+		UI_Texture_UniversalDesc.fSizeX = 700.f;
+		UI_Texture_UniversalDesc.fSizeY = 500.f;
+		UI_Texture_UniversalDesc.fX = 640.f;
+		UI_Texture_UniversalDesc.fY = 360.f;
+		UI_Texture_UniversalDesc.fDepth = 10.f;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+		m_bTextOn = false;
 	}
-	//if (TriggerObject->Get_MonsterAllDie() == true)
-	//{
-	//	m_bNextRoundOn = true;
-	//}
+
+
+	m_dStartTime += dDeltaTime;
+	if (m_bStart == false && m_dStartTime > 10)
+	{
+		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+		UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+		UI_Texture_UniversalDesc.iTextureIndex = 0;
+
+		UI_Texture_UniversalDesc.fSizeX = 700.f;
+		UI_Texture_UniversalDesc.fSizeY = 500.f;
+		UI_Texture_UniversalDesc.fX = 640.f;
+		UI_Texture_UniversalDesc.fY = 360.f;
+		UI_Texture_UniversalDesc.fDepth = 10.f;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
+		m_bStart = true;
+	}
+
 
 	return S_OK;
 
 }
 
+void CMiniGame_Golu::Set_NextRoundOn(_bool bRound)
+{
+	m_bNextRoundOn = bRound;
+}
+
 HRESULT CMiniGame_Golu::Camera_Walking(_double dDeltaTime)
 {
 	Update_AttachCamPos();
+
 	return S_OK;
 }
 
