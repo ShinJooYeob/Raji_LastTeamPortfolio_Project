@@ -109,6 +109,10 @@ public:
 		MESHEFFECT_MONSTER_SPAWN_TP,
 		MESHEFFECT_MONSTER_SPAWN_TB,
 
+
+
+
+
 		// M 일반 L 리더
 		// ========================================
 
@@ -165,7 +169,7 @@ public:
 		MESHEFFECT_MONSTER_GM_Cash3,
 		MESHEFFECT_MONSTER_GM_Cash4,
 
-		
+
 
 
 		// ===========================================
@@ -191,8 +195,8 @@ public:
 
 		MESHEFFECT_MONSTER_GL_Cash0,
 		MESHEFFECT_MONSTER_GL_Cash1,
-			MESHEFFECT_MONSTER_GL_Cash2,
-			MESHEFFECT_MONSTER_GL_Cash3,
+		MESHEFFECT_MONSTER_GL_Cash2,
+		MESHEFFECT_MONSTER_GL_Cash3,
 
 
 		// ===========================================
@@ -251,10 +255,16 @@ public:
 		MESHEFFECT_MONSTER_NL_Cash9,
 		MESHEFFECT_MONSTER_NL_Cash10,
 
+		// ===========================================
+		// Tezabsura
+		MESHEFFECT_MONSTER_Tezabsura_Cash0,
+		MESHEFFECT_MONSTER_Tezabsura_Cash1,
+		MESHEFFECT_MONSTER_Tezabsura_Cash2,
+		MESHEFFECT_MONSTER_Tezabsura_Cash3,
+		MESHEFFECT_MONSTER_Tezabsura_Cash4,
+		MESHEFFECT_MONSTER_Tezabsura_Cash5,
 
-
-		//	MESHEFFECT_MONSTER_NM_ATT,
-		//	MESHEFFECT_MONSTER_NL_ATT,
+		// ==============================================
 
 #pragma endregion MONSTER
 

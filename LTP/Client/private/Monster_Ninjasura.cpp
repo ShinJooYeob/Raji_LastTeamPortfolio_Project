@@ -722,7 +722,6 @@ HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 	{
 		m_SpawnEffectAdjust++;
 
-
 		{
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
 				0.8f,
