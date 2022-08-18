@@ -1992,7 +1992,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		AddDesc.bAfterApperTime = true;
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 411;
+		MeshDesc.iDiffuseTextureIndex = 423;
 		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.MaskTextureIndex = 185;
 		MeshDesc.NoiseTextureIndex = NONNOISE;

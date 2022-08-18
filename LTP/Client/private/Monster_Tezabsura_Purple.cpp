@@ -1295,6 +1295,7 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (m_EffectAdjust == 0 && PlayRate >= 0.5882)
 			{
 				m_EffectAdjust++;
+
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash1, m_pTransformCom);
 
 				{
@@ -1366,6 +1367,8 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				m_EffectAdjust++;
 
+
+				// Fast Particle
 				{
 					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
 						0.05f,
