@@ -233,9 +233,12 @@ HRESULT CScene_Stage1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	else 
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE1);
+		m_pMainCam->Set_CameraDesc(CameraDesc);
 	}
 	
+	m_pMainCam->Set_MaxTargetArmLength(10.f);
 	m_pMainCam->Set_TargetArmLength(8.f);
+	m_pMainCam->Set_MinTargetArmLength(5.f);
 	m_pMainCam->Ortho_OnOff(false);
 
 	return S_OK;

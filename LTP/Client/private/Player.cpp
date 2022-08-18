@@ -79,6 +79,7 @@ _int CPlayer::Update(_double fDeltaTime)
 	//Set_State_IdleStart(fDeltaTime);
 
 
+
 	// For Debuging
 	DebugingCode();
 
@@ -690,12 +691,14 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	if (WEAPON_CHAKRA == m_eCurWeapon || WEAPON_NONE == m_eCurWeapon)
 		return;
 
-	Set_PlayerState(STATE_ULTIMATESKILL);
 
 	switch (m_eCurWeapon)
 	{
 	case WEAPON_SPEAR:
 	{
+		/*if (100.f > GetSingle(CUtilityMgr)->Get_SpearSkillPersent())
+			return;*/
+
 		m_pModel->Change_AnimIndex(SPEAR_ANIM_ULTIMATE, 0.1f, true);
 
 		GetSingle(CUtilityMgr)->ResetSpearPersent();
@@ -712,11 +715,19 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	}
 		break;
 	case WEAPON_BOW:
+	{
+		if (100.f > GetSingle(CUtilityMgr)->Get_BowSkillPersent())
+			return;
+
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
 		GetSingle(CUtilityMgr)->ResetBowPersent();
+	}
 		break;
 	case WEAPON_SWORD:
 	{
+		if (100.f > GetSingle(CUtilityMgr)->Get_SwordshieldSkillPersent())
+			return;
+
 		GetSingle(CUtilityMgr)->ResetSwordshieldPersent();
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
 
@@ -727,6 +738,7 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	}
 		break;
 	}
+	Set_PlayerState(STATE_ULTIMATESKILL);
 }
 
 void CPlayer::Set_State_TurnBackStart(_double fDeltaTime)

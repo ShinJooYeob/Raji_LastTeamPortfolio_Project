@@ -78,6 +78,8 @@ private:
 
 	HRESULT	Inspect_PlayerParkur_To_ParkurObj();
 
+	HRESULT	Inspect_MiniGame_Jino();
+
 private:
 	list<COLLIDERELEMENTS>		m_CollisionGroupList[CollisionType_END];
 	list<REPELELEMENT>		m_RepelObjectList;

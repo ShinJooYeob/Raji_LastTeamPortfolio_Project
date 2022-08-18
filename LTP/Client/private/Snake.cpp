@@ -492,16 +492,18 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		{
 			m_pModel->Change_AnimIndex(0);
 			m_iCurCutSceneState = 2;
-			m_fDelayTime = 6.f;
+			m_fDelayTime = 5.5f;
 			iAnimCounter = 0;
 		}
 		else if (0.7f <= fAnimPlayRate)
 		{
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.f, -150.f, 93.197f));
 			m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-90.f));
+			m_fAnimmultiple = 1.f;
 		}
 		else if (0.3214f <= fAnimPlayRate && false == m_bOnceSwitch)
 		{
+
 			m_bOnceSwitch = true;
 
 			CGameObject* pGolemObj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor));
@@ -584,7 +586,14 @@ void CSnake::Update_Direction(_double fDeltaTime)
 				}
 
 			}
-
+		}
+		else if (0.51f <= fAnimPlayRate)
+		{
+			m_fAnimmultiple = 1.f;
+		}
+		else if (0.375f <= fAnimPlayRate)
+		{
+			m_fAnimmultiple = 0.2f;
 		}
 	}
 	else if(2 == m_iCurCutSceneState)

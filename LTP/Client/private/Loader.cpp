@@ -118,6 +118,8 @@
 #include "NormalMonkey.h"
 #include "BeachBall.h"
 #include "JumpingMonkey.h"
+#include "FireRing.h"
+#include "CircusBackground.h"
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -1965,6 +1967,12 @@ HRESULT CLoader::Load_Scene_Minigame_Jino(_bool * _IsClientQuit, CRITICAL_SECTIO
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_BeachBall), TransformMatrix);
 
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_FireRing), TransformMatrix);
+
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_MiniGameJino_Background),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"MiniGame_Jino.txt")));
+
 #pragma  endregion
 #pragma region PROTOTYPE_COMPONENT
 	FAILED_CHECK(Load_AllMonster());
@@ -1979,6 +1987,8 @@ HRESULT CLoader::Load_Scene_Minigame_Jino(_bool * _IsClientQuit, CRITICAL_SECTIO
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_NormalMonkey), CNormalMonkey::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), CJumpingMonkey::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_BeachBall), CBeachBall::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_FireRing), CFireRing::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_CircusBackground), CCircusBackground::Create(m_pDevice, m_pDeviceContext)));
 #pragma endregion
 
 

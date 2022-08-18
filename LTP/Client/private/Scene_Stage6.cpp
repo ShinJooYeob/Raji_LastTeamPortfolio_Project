@@ -334,11 +334,12 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	else 
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_STAGE6);
+		m_pMainCam->Set_CameraDesc(CameraDesc);
 	}
 	
 	m_pMainCam->Set_MaxTargetArmLength(12.f);
-	m_pMainCam->Set_MinTargetArmLength(6.f);
 	m_pMainCam->Set_TargetArmLength(10.f);
+	m_pMainCam->Set_MinTargetArmLength(6.f);
 	m_pMainCam->Ortho_OnOff(false);
 	return S_OK;
 }
@@ -658,7 +659,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
-	tElevatorDesc.fColliderScale = 0.3f;
+	tElevatorDesc.fColliderScale = 0.5f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -669,7 +670,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.05f, 1.05f, 1.05f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
-	tElevatorDesc.fColliderScale = 0.3f;
+	tElevatorDesc.fColliderScale = 0.5f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 
@@ -680,7 +681,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 	tElevatorDesc.fScale = _float3(1.0f, 1.0f, 1.0f);
 	tElevatorDesc.fMoveSpeed = 5.f;
 	tElevatorDesc.fColliderOffset_Y = -3.2f;
-	tElevatorDesc.fColliderScale = 0.4f;
+	tElevatorDesc.fColliderScale = 0.5f;
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_InteractObj_Elevator), &tElevatorDesc));
 
 

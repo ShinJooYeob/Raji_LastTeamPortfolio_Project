@@ -219,6 +219,46 @@ HRESULT CCollisionMgr::Inspect_PlayerParkur_To_ParkurObj()
 	return S_OK;
 }
 
+HRESULT CCollisionMgr::Inspect_MiniGame_Jino()
+{
+	_uint2 ConflictedIndex;
+
+	for (auto& SrcElement : m_CollisionGroupList[CollisionType_MiniGame_BALL_2])
+	{
+		for (auto& DestElemet : m_CollisionGroupList[CollisionType_MiniGame_BALL_1])
+		{
+			if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
+
+			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
+			{
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_MiniGame_BALL_1);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_MiniGame_BALL_2);
+			}
+
+		}
+	}
+
+	for (auto& SrcElement : m_CollisionGroupList[CollisionType_MiniGame_RideArea])
+	{
+		for (auto& DestElemet : m_CollisionGroupList[CollisionType_Player])
+		{
+			if (SrcElement.pCollisionObject->Get_IsOwerDead() || DestElemet.pCollisionObject->Get_IsOwerDead())
+				continue;
+
+			if (SrcElement.pCollider->Inspect_Collision(DestElemet.pCollider, 0, 0, &ConflictedIndex))
+			{
+				SrcElement.pCollisionObject->CollisionTriger(SrcElement.pCollider, ConflictedIndex.x, DestElemet.pCollisionObject, DestElemet.pCollider, ConflictedIndex.y, CollisionType_Player);
+				DestElemet.pCollisionObject->CollisionTriger(DestElemet.pCollider, ConflictedIndex.y, SrcElement.pCollisionObject, SrcElement.pCollider, ConflictedIndex.x, CollisionType_MiniGame_RideArea);
+			}
+
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CCollisionMgr::Add_NaviPointCollider(EDITPOINTCOLLIDER Collider)
 {
 	m_EditPointCollider.push_back(Collider);
@@ -414,6 +454,8 @@ HRESULT CCollisionMgr::Inspect_MainCollision()
 	FAILED_CHECK(Inspect_Terrain_To_All());
 	//
 	FAILED_CHECK(Inspect_PlayerParkur_To_ParkurObj());
+
+	FAILED_CHECK(Inspect_MiniGame_Jino());
 	//
 
 	for (_uint i = 0; i < CollisionType_END; i++)

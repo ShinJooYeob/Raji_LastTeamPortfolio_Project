@@ -40,7 +40,8 @@ public:
 	virtual HRESULT Set_ViewMatrix();
 	HRESULT Set_ProjectMatrix(_bool bIsOrtho = false);
 	void CCamera::Set_OrthoScreenSize(_float fSize);
-		
+	void Set_CameraDesc(CAMERADESC eCameraDesc);
+
 protected:
 	_bool						m_bIsOrtho = true;
 	_float						m_fIsOrthoScreenSize = 30.f;

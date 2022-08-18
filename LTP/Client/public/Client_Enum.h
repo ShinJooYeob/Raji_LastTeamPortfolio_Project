@@ -458,6 +458,8 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_NormalMonkey,
 	Prototype_Object_MiniGame_JumpingMonkey,
 	Prototype_Object_MiniGame_BeachBall,
+	Prototype_Object_MiniGame_FireRing,
+	Prototype_Object_MiniGame_CircusBackground,
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
@@ -876,7 +878,6 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_MiniGame_BeachBall:
 		return TEXT("Prototype_Object_MiniGame_BeachBall");
 
-
 	case Prototype_Object_PM_Player:
 		return TEXT("Prototype_Object_PM_Player");
 
@@ -886,6 +887,11 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_PM_Monster:
 		return TEXT("Prototype_Object_PM_Monster");
 
+	case Prototype_Object_MiniGame_FireRing:
+		return TEXT("Prototype_Object_MiniGame_FireRing");
+	
+	case Prototype_Object_MiniGame_CircusBackground:
+		return TEXT("Prototype_Object_MiniGame_CircusBackground");
 
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -3542,6 +3548,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Golem,
 	Prototype_Mesh_Rope,
 	Prototype_Mesh_BeachBall,
+	Prototype_Mesh_FireRing,
 
 	/////////텍스쳐/////////////////////////////////////////////////////////////////
 
@@ -3575,6 +3582,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_EnvMappedWater,
 	Prototype_Texture_PathArrow,
 	Prototype_Texture_MingameBuildingTex,
+	Prototype_Texture_MiniGameJino_Background,
 
 	Prototype_VIBuffer_Plat,
 		Prototype_VIBuffer_Terrain_0,
@@ -3583,8 +3591,6 @@ enum COMPONENTPROTOTYPEID
 		Prototype_VIBuffer_Terrain_3,
 		Prototype_VIBuffer_Terrain_4,
 		Prototype_VIBuffer_Terrain_5,
-
-
 };
 
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
@@ -10210,7 +10216,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_BeachBall:
 		return TEXT("BeachBall.fbx");
 		break;
-		
+	
+	case Prototype_Mesh_FireRing:
+		return TEXT("FireRing.fbx");
+		break;
+
 	case Prototype_Mesh_SkyBox:
 		return TEXT("Prototype_Mesh_SkyBox");
 		break;
@@ -10284,6 +10294,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("Prototype_Texture_MingameBuildingTex");
 		break;
 
+	case Prototype_Texture_MiniGameJino_Background:
+		return TEXT("Prototype_Texture_MiniGameJino_Background");
+		break;
 		
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");

@@ -39,28 +39,23 @@ HRESULT CJumpingMonkey::Initialize_Clone(void * pArg)
 
 _int CJumpingMonkey::Update(_double fDeltaTime)
 {
-	m_bActive = true;
 	if (false == m_bActive)
 		return 0;
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	m_pTransformCom->LookDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f));
-	m_fAnimSpeed = 1.f;
-	m_pModel->Change_AnimIndex(1);
 
-	m_pTransformCom->Scaled_All(_float3(0.7f));
-
-	//switch (m_eCurState)
-	//{
-	//case ANIM_MOVE:
-	//	Update_Move(fDeltaTime);
-	//	break;
-	//case ANIM_JUMP:
-	//	Update_Jump(fDeltaTime);
-	//	break;
-	//}
-	//
+	switch (m_eCurState)
+	{
+	case ANIM_MOVE:
+		Update_Move(fDeltaTime);
+		break;
+	case ANIM_JUMP:
+		Update_Jump(fDeltaTime);
+		break;
+	}
+	
 	Update_Collider(fDeltaTime);
 	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, m_bIsOnScreen));
 
@@ -69,7 +64,6 @@ _int CJumpingMonkey::Update(_double fDeltaTime)
 
 _int CJumpingMonkey::LateUpdate(_double fDeltaTime)
 {
-	m_bActive = true;
 	if (false == m_bActive)
 		return 0;
 
@@ -121,8 +115,9 @@ _float CJumpingMonkey::Take_Damage(CGameObject * pTargetObject, _float fDamageAm
 
 void CJumpingMonkey::Dead()
 {
+	m_fCoolTimeJump = 0.f;
 	m_bActive = false;
-	//static_cast<CScene_MiniGame_Jino*>(g_pGameInstance->Get_NowScene())->Push_NormalMonkey(this);
+	static_cast<CScene_MiniGame_Jino*>(g_pGameInstance->Get_NowScene())->Push_JumpingMonkey(this);
 }
 
 void CJumpingMonkey::SetUp_MonsterType(EMONSTER_TYPE eMonsterType)
@@ -130,14 +125,14 @@ void CJumpingMonkey::SetUp_MonsterType(EMONSTER_TYPE eMonsterType)
 	switch (eMonsterType)
 	{
 	case EMONSTER_TYPE::TYPE_WALKER:
-		m_fAnimSpeed = 2.f;
+		m_fAnimSpeed = 1.3f;
 		m_pModel->Change_AnimIndex(1);
-		m_pTransformCom->Set_MoveSpeed(2.f);
+		m_pTransformCom->Set_MoveSpeed(1.9f);
 		break;
 	case EMONSTER_TYPE::TYPE_RUNNER:
-		m_fAnimSpeed = 1.f;
+		m_fAnimSpeed = 2.5f;
 		m_pModel->Change_AnimIndex(1);
-		m_pTransformCom->Set_MoveSpeed(7.f);
+		m_pTransformCom->Set_MoveSpeed(5.f);
 		break;
 	default:
 		MSGBOX("eMonster Type is Unknown Monster Type ");
@@ -310,7 +305,8 @@ HRESULT CJumpingMonkey::SetUp_Etc()
 {
 	m_pPlayerTransform = static_cast<CTransform*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_Player))->Get_Component(Tag_Component(Com_Transform)));
 	m_bActive = false;
-	m_pTransformCom->Scaled_All(_float3(1.5f));
+	m_pTransformCom->Scaled_All(_float3(0.7f));
+	Set_State_Move();
 	return S_OK;
 }
 
@@ -324,7 +320,14 @@ void CJumpingMonkey::Update_Move(_double fDeltaTime)
 	{
 		Dead();
 	}
-
+	else if (3.f >= fDist)
+	{
+		m_fCoolTimeJump -= (_float)fDeltaTime;
+		if (0.f >= m_fCoolTimeJump)
+		{
+			Set_State_JumpStart();
+		}
+	}
 }
 
 void CJumpingMonkey::Update_Jump(_double fDeltaTime)
@@ -337,6 +340,7 @@ void CJumpingMonkey::Update_Jump(_double fDeltaTime)
 	{
 		Set_State_Move();
 		vMyPos = XMVectorSetY(vMyPos, 0.f);
+		m_fCoolTimeJump = 3.f;
 	}
 	else
 	{

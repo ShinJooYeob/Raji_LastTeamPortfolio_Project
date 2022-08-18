@@ -270,6 +270,7 @@ HRESULT CScene_Laboratory_Jino::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	else
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_LABORATORY_JINO);
+		m_pMainCam->Set_CameraDesc(CameraDesc);
 	}
 
 	m_pMainCam->Set_TargetArmLength(15.f);
