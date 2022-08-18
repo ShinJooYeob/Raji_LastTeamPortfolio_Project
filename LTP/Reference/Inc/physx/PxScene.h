@@ -355,7 +355,7 @@ class PxScene
 
 	\note If the actor is not part of this scene (see #PxActor::getScene), the call is ignored and an error is issued.
 
-	\note You can not remove individual articulation links (see #PxArticulationLink) from the scene. Use #removeArticulation() instead.
+	\note You can not remove individual articulation links (see #PxArticulationLink) from the scene. Use removeArticulation() instead.
 
 	\note If the actor is a PxRigidActor then all assigned PxConstraint objects will get removed from the scene automatically.
 
@@ -373,7 +373,7 @@ class PxScene
 
 	\note If some actor is not part of this scene (see #PxActor::getScene), the actor remove is ignored and an error is issued.
 
-	\note You can not remove individual articulation links (see #PxArticulationLink) from the scene. Use #removeArticulation() instead.
+	\note You can not remove individual articulation links (see #PxArticulationLink) from the scene. Use removeArticulation() instead.
 
 	\note If the actor is a PxRigidActor then all assigned PxConstraint objects will get removed from the scene automatically.
 

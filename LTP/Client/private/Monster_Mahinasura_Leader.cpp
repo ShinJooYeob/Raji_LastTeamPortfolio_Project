@@ -37,7 +37,6 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 	SetUp_Info();
 
 
-	//#BUG NAVIONPLEASE
 
 	/////////////////test
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 185.583f));

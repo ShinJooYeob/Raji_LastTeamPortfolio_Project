@@ -543,7 +543,6 @@ HRESULT CCollider_PhysX_Joint::Update_AfterSimulation()
 	//mPxTransform = PxTransform(MAT4X4TOPXMAT(mat));
 
 	// Pos
-	// #BUG 업데이트해도 같은 값이 나옴
 	//PxVec3 pxpos = mMain_Actor->getGlobalPose().p;
 	//
 	//mPxMainTransform = mMain_Actor->getGlobalPose();

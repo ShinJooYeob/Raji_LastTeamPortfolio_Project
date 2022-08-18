@@ -479,7 +479,7 @@ HRESULT CPartilceCreateMgr::Ready_MeshEffect()
 
 HRESULT CPartilceCreateMgr::Ready_TextureEffect()
 {
-	// #TEXTUREPARTILCEINIT
+	// #EFFECT
 
 	/*
 	// 텍스처 파티클 생성 예제코드

@@ -653,6 +653,20 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 		if (m_bMehsArrow == false)
 		{
 			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
+			
+			// #EFFECT EffectCreater
+			// Mesh Effect
+			GETPARTICLE->Create_MeshEffectDesc_Hard();
+
+			// Texture Particle Effect
+			GETPARTICLE->Get_EffectSetting_Tex();
+			GETPARTICLE->Create_Texture_Effect_Desc();
+
+			// Mesh Particle Effect
+			GETPARTICLE->Get_EffectSetting_Mesh();
+			GETPARTICLE->Create_MeshInst_DESC();
+
+
 
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
