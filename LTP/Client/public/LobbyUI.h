@@ -22,10 +22,21 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	void	SetStageOnOff(_bool State) { m_bIsStageOn = State; }
+
 private:
 	class CUI*	m_pBackGround = nullptr;
+	class CUI*	m_pBackGround2 = nullptr;
 	class CUI*	m_RajiText = nullptr;
-	class CUI*	m_pPressEnter = nullptr;
+
+	vector<CUI*> m_vecLobbyBtns;
+
+	vector<CUI*> m_vec3DStageUI;
+
+private:
+	_bool			m_bIsStageOn = false;
+	_bool			m_bIsStageOnStart = false;
 
 private:
 	HRESULT Ready_Layer_UI();

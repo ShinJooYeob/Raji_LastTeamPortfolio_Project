@@ -571,6 +571,9 @@
     <Filter Include="01.GameObject\11.Texture_Universal\1.UI_Texture_Universal">
       <UniqueIdentifier>{c9259ca3-d28d-473b-a94a-ba483056aebc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\3DUI">
+      <UniqueIdentifier>{178f8e87-57c8-4177-adc1-d615e40320e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1217,6 +1220,9 @@
     <ClInclude Include="..\public\UI_Texture_Universal.h">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\C3DUI.h">
+      <Filter>01.GameObject\99.UI\3DUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1842,6 +1848,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Texture_Universal.cpp">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\C3DUI.cpp">
+      <Filter>01.GameObject\99.UI\3DUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

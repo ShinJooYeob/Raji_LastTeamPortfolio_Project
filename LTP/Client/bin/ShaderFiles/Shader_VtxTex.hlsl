@@ -348,6 +348,49 @@ PS_OUT_NOLIGHT PS_GAUGE_RECT(PS_IN_Noise In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_LOBBYNOISE_RECT(PS_IN_Noise In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
+	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
+	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
+
+	noise1 = (noise1 - 0.5f) * 2.0f;
+	noise2 = (noise2 - 0.5f) * 2.0f;
+	noise3 = (noise3 - 0.5f) * 2.0f;
+
+	noise1.xy = noise1.xy * distortion1.xy;
+	noise2.xy = noise2.xy * distortion2.xy;
+	noise3.xy = noise3.xy * distortion3.xy;
+
+	vector finalNoise = noise1 + noise2 + noise3;
+	//float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale));
+	float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale * 0.01f) + (distortionBias *0.35f));
+	float2 noiseCoords = saturate((finalNoise.xy * perturb) + In.vTexUV.xy);
+
+
+
+	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, noiseCoords.xy);
+	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
+
+
+	if (fireColor.a < 0.1f)discard;
+
+	if (g_UV_Y > noiseCoords.y)
+		alphaColor = 0;
+
+
+	fireColor *= g_vColor;
+	fireColor = pow(fireColor, 1. / 1.86181f);
+	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	Out.vDiffuse = saturate(fireColor);
+
+
+
+	return Out;
+}
+
 PS_OUT_NOLIGHT PS_MAIN_Default(PS_IN In)
 {
 	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
@@ -871,5 +914,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_EnvMappedWater_Noise();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_ChiedFlame();
+	}
+
+	pass UI_LoobyNoise		//16
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Rect_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_LOBBYNOISE_RECT();
 	}
 }

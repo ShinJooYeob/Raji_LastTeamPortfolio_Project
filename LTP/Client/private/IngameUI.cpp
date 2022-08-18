@@ -203,7 +203,7 @@ HRESULT CIngameUI::Ready_Layer_UI()
 	SettingUI.iTextureIndex = 140;
 	SettingUI.bSettingOtherTexture = true;
 	SettingUI.iNoiseTextureIndex = 319;
-	SettingUI.iMaskTextureIndex = 214;
+	SettingUI.iMaskTextureIndex = 53;
 
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeaponMidleUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);

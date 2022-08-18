@@ -558,8 +558,8 @@ PS_OUT_EnvMapped PS_EnvMappedWater_Noise_N_Distort(PS_IN_EMW_Noise In)
 		///////////////////////////////////
 
 		//EMWUNROLL
-		[unroll(128)]
-		//[unroll(1)]
+		//[unroll(128)]
+		[unroll(1)]
 		//////////////////////////////////
 		for (int nCurStep = 0; nCurStep < nNumSteps; nCurStep += 10)
 		{
