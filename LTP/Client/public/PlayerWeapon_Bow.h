@@ -60,10 +60,6 @@ public:
 	}
 
 
-	/* Particle */
-	virtual HRESULT Ready_ParticleDesc();
-	virtual HRESULT Update_Particle(_double timer);
-
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -94,10 +90,15 @@ private:
 
 
 private:/*For Particle*/
+
+	/* Particle */
+	HRESULT Ready_ParticleDesc();
+	HRESULT Update_Particle(_double timer);
+	// HRESULT PlayParticle(_uint index);
+
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
-//	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
 	
 
 
