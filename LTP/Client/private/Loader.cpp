@@ -2025,7 +2025,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_Z_Plane);
 
 	////// MERGE //
-	//FAILED_CHECK(Load_AllMonster());
+//	FAILED_CHECK(Load_AllMonster());
 //	FAILED_CHECK(Load_AllBoss());
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 
