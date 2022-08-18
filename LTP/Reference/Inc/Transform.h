@@ -92,6 +92,7 @@ public:
 	void Turn_Revolution_CW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);			// Made_By Jino
 	void Turn_Revolution_CCW(_fVector vCenterPos, _float fDistance, _double fDeltaTime);		// Made_By Jino
 
+
 	//로컬 좌표 기준으로 회전을 시켜주고 싶을 떄
 	void Rotation_CW(_fVector vAxis, _float fRadian);
 	void Rotation_CCW(_fVector vAxis, _float fRadian);

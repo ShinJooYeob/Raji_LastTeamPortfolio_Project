@@ -33,13 +33,21 @@ HRESULT CUI::Initialize_Clone(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH((_float)g_iWinCX, (_float)g_iWinCY, 0.f, 1.f)));
+	if (m_SettingUIDesc.eUIType == UI_2D)
+	{
+		XMStoreFloat4x4(&m_ProjMatrix, XMMatrixTranspose(XMMatrixOrthographicLH((_float)g_iWinCX, (_float)g_iWinCY, 0.f, 1.f)));
 
-	m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(m_fAngle));
-	m_pTransformCom->Scaled_All(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(m_fX - ((_float)g_iWinCX * 0.5f), -m_fY + ((_float)g_iWinCY * 0.5f), 0.f, 1.f));
-
-	m_fAliveTime = 1.5f;
+		m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(m_fAngle));
+		m_pTransformCom->Scaled_All(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(m_fX - ((_float)g_iWinCX * 0.5f), -m_fY + ((_float)g_iWinCY * 0.5f), 0.f, 1.f));
+	}
+	else
+	{
+		//m_pTransformCom->Rotation_CW(XMVectorSet(0, 0, 1.f, 0), XMConvertToRadians(m_fAngle));
+		m_pTransformCom->Rotation_CCW(XMVectorSet(0, 1.f, 0.f, 0), XMConvertToRadians(m_fAngle));
+		m_pTransformCom->Scaled_All(m_SettingUIDesc.v3DUIScaled);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_SettingUIDesc.v3DUIPosition);
+	}
 
 	return S_OK;
 }
@@ -56,9 +64,29 @@ _int CUI::Update(_double fDeltaTime)
 		EsingUV_Y(fDeltaTime);
 	}
 
+	if (m_SettingUIDesc.pUI_Name == TEXT("Lobby_Stage_Btn"))
+	{
+		//m_SettingUIDesc.v3DUIPosition = _float3(-3.f, 1.3f, 5.f);
+		//m_SettingUIDesc.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
+		//m_SettingUIDesc.fAngle = 40.f;
+		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+	}
+
+	if (m_bIsRevolutionCCW)
+	{
+		UI_RevolutionCCW(fDeltaTime);
+		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+	}
+	if (m_bIsRevolutionCW)
+	{
+		UI_RevolutionCW(fDeltaTime);
+	}
 
 
-	Update_Rect();
+	if (m_SettingUIDesc.eUIType == UI_2D)
+		Update_Rect();
+	else
+		Update_Rect3D();
 
 	return _int();
 }
@@ -71,12 +99,13 @@ _int CUI::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
 
 
-
 	return _int();
 }
 
 _int CUI::Render()
 {
+	if (__super::Render() < 0)return -1;
+
 	if (!m_bDraw)
 		return S_OK;
 
@@ -87,8 +116,18 @@ _int CUI::Render()
 	//	_int a = 0;
 
 	m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix");
-	m_pShaderCom->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4));
-	m_pShaderCom->Set_RawValue("g_ProjMatrix", &m_ProjMatrix, sizeof(_float4x4));
+
+	if (m_SettingUIDesc.eUIType == UITYPE::UI_3D)
+	{
+		CGameInstance* pInstance = GetSingle(CGameInstance);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
+	}
+	else
+	{
+		m_pShaderCom->Set_RawValue("g_ViewMatrix", &XMMatrixIdentity(), sizeof(_float4x4));
+		m_pShaderCom->Set_RawValue("g_ProjMatrix", &m_ProjMatrix, sizeof(_float4x4));
+	}
 
 	m_pShaderCom->Set_RawValue("g_Alpha", &m_SettingUIDesc.fAlpha, sizeof(_float));
 
@@ -132,6 +171,7 @@ _int CUI::Render()
 
 _int CUI::LateRender()
 {
+	if (__super::LateRender() < 0)return -1;
 
 	return _int();
 }
@@ -163,7 +203,15 @@ HRESULT CUI::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_VIBuffer_Rect), TAG_COM(Com_VIBuffer), (CComponent**)&m_pVIBufferCom));
 
-	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom));
+
+	CTransform::TRANSFORMDESC tDesc = {};
+
+	tDesc.fMovePerSec = 5;
+	tDesc.fRotationPerSec = 1.f;
+	tDesc.vPivot = _float3(0, 0, 0);
+	tDesc.fScalingPerSec = 1;
+
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
 	/* For.Com_Texture */
 	if (FAILED(__super::Add_Component(SCENE_STATIC, TAG_CP(Prototype_Texture_UI), TAG_COM(Com_UI), (CComponent**)&m_pTextureCom)))
@@ -184,6 +232,55 @@ HRESULT CUI::SetUp_Components()
 	}
 
 	return S_OK;
+}
+
+void CUI::UI_RevolutionCCW(_double fDeltaTime)
+{
+	//m_fRevolutionAngle += (_float)fDeltaTime;
+
+	m_fRevolutionAngle += 3.f;
+
+	if (m_fRevolutionAngle > m_fRevolutionGoalAngle)
+	{
+		m_bIsRevolutionCCW = false;
+		m_fRevolutionAngle = 0.f;
+		return;
+	}
+
+	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	//m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
+	//	XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
+	//	XMMatrixRotationAxis(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(m_fRevolutionAngle)) *
+	//	XMMatrixTranslation(0, Pos.y, -0.8f));
+
+	m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
+}
+
+void CUI::UI_RevolutionCW(_double fDeltaTime)
+{
+	m_fRevolutionAngle += 3.f;
+
+	if (m_fRevolutionAngle > m_fRevolutionGoalAngle)
+	{
+		m_bIsRevolutionCW = false;
+		m_fRevolutionAngle = 0.f;
+		return;
+	}
+
+	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
+}
+
+void CUI::UI_RevolutionCCWInitialization(_float Angle)
+{
+	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));
+}
+
+void CUI::UI_RevolutionCWInitialization(_float Angle)
+{
+	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));
 }
 
 void CUI::SetUp_UIInfo(SETTING_UI & pStruct)
@@ -214,13 +311,20 @@ void CUI::Update_Rect()
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(m_fX - (g_iWinCX * 0.5f), -m_fY + (g_iWinCY * 0.5f), 0.f, 1.f));
 }
 
+void CUI::Update_Rect3D()
+{
+	m_pTransformCom->Scaled_All(m_SettingUIDesc.v3DUIScaled);
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_SettingUIDesc.v3DUIPosition);
+	//m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0), XMConvertToRadians(m_SettingUIDesc.fAngle));
+}
+
 HRESULT CUI::SettingTexture()
 {
 	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
 
 	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_SettingUIDesc.iNoiseTextureIndex));
-	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 53));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_SettingUIDesc.iMaskTextureIndex));
 
 
 	//m_fUV_Y = 0.2f;

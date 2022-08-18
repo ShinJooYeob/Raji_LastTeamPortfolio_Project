@@ -15,7 +15,8 @@ BEGIN(Client)
 
 class CUI : public CGameObject
 {
-
+public:
+	enum UITYPE {UI_2D, UI_3D, UI_END};
 public:
 	enum UIID
 	{
@@ -39,10 +40,17 @@ public:
 		_bool		bClick = false;
 		
 		_uint		eUIKindsID = UIID_JB;
+		_uint		eUIType = UI_2D;
 		_bool		bSettingOtherTexture = false;
 		_float		fAlpha = 1.f;
 		_uint		iNoiseTextureIndex = 0;
 		_uint		iMaskTextureIndex = 0;
+
+		//3D
+		_float3		v3DUIPosition = _float3(0);
+		_float3		v3DUIScaled = _float3(0);
+
+
 	}SETTING_UI;
 
 private:
@@ -80,11 +88,21 @@ public:
 	void			Set_Alpha(_float fAlpha) { m_SettingUIDesc.fAlpha = fAlpha; }
 
 	void			Set_IsDraw(_bool Draw) { m_bDraw = Draw; }
-	void			Set_IsPushed(_bool Pushed) { m_bPushed = m_bPushed; }
+	void			Set_IsPushed(_bool Pushed) { m_bPushed = Pushed; }
 
 	void			Set_UV_Y(_float fY);
 
 	void			Set_Color(_float4 Color) { m_vColor = Color; }
+
+	void			Set_IsRevolutionCCW(_bool State) { m_bIsRevolutionCCW = State; }
+	void			Set_IsRevolutionCW(_bool State) { m_bIsRevolutionCW = State; }
+
+public:
+	_float3			Get_3DPos() { return  m_SettingUIDesc.v3DUIPosition; }
+	_float3			Get_3DScaled() { return  m_SettingUIDesc.v3DUIScaled; }
+
+	void			Set_3DScaled(_float3 Scaled) { m_SettingUIDesc.v3DUIScaled = Scaled; }
+	void			Set_3DPosition(_float3 Pos) { m_SettingUIDesc.v3DUIPosition = Pos; }
 
 	HRESULT			Set_ChangeTextureLayer(_tchar* LayerName);
 
@@ -92,6 +110,9 @@ public:
 		m_fRenderSortValue = Valuew;
 	}
 
+	void			Set_RevolutionGoalAngle(_float Angle) { m_fRevolutionGoalAngle = Angle; }
+	void			UI_RevolutionCCWInitialization(_float Angle);
+	void			UI_RevolutionCWInitialization(_float Angle);
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -119,7 +140,6 @@ private:
 	_int		m_iTextureIndex = 0;
 	_int		m_iPassIndex = 1;
 
-	_float		m_fAliveTime = 1.5f;			//데미지UI일때 보여지는 시간
 	_float		m_fFadeTime = 0.f;
 	_bool		m_bFadeState = false;
 	_float		m_fAngle = 0.f;
@@ -138,12 +158,21 @@ private:
 	_float				m_fApearTime = 0.35f;
 	_float				m_fDisApearTime = 1.5f;
 
+	//공전
+	_bool				m_bIsRevolutionCCW = false;
+	_bool				m_bIsRevolutionCW = false;
+	_float				m_fRevolutionAngle = 0.f;
+	_float				m_fRevolutionGoalAngle = 0.f;
+
 private:
 	HRESULT SetUp_Components();
+	void	UI_RevolutionCCW(_double fDeltaTime);
+	void	UI_RevolutionCW(_double fDeltaTime);
 
 private:
 	void SetUp_UIInfo(SETTING_UI& pStruct);			// 얻어온 구조체 값으로 멤버변수 채우기
 	void Update_Rect();								// 위치 바꿨을 때 렉트 위치 갱신하기 위해 호출
+	void Update_Rect3D();
 	HRESULT SettingTexture();							//마스크,노이즈 텍스처
 	void EsingUV_Y(_double fDeltaTime);
 

@@ -304,6 +304,9 @@ _int CHpUI::Render()
 
 _int CHpUI::LateRender()
 {
+	if (__super::LateRender() < 0)		return -1;
+
+
 	return _int();
 }
 

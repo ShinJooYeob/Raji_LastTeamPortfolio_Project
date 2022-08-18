@@ -135,28 +135,28 @@ void CTransform::Move_Forward(_double fDeltaTime, CNavigation* pNavigation, _boo
 			Set_MatrixState(CTransform::STATE_POS, vPos);
 		}
 	}
-	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-	{
-		if (true == bOnBlockZone)
-		{
-			Set_MatrixState(CTransform::STATE_POS, vPos);
-		}
-		else
-		{
-			vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
-			vPrevPos = XMVectorSetW(vPrevPos, 1);
+	//else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
+	//{
+	//	if (true == bOnBlockZone)
+	//	{
+	//		Set_MatrixState(CTransform::STATE_POS, vPos);
+	//	}
+	//	else
+	//	{
+	//		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//		vPrevPos = XMVectorSetW(vPrevPos, 1);
 
-			if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
-			{
-				Set_MatrixState(CTransform::STATE_POS, vPrevPos);
-			}
+	//		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+	//		{
+	//			Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+	//		}
 
-			/*_float3 vNewPos;
-			XMStoreFloat3(&vNewPos, vPrevPos);
-			memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
-			m_WorldMatrix._44 = 1;*/
-		}
-	}
+	//		/*_float3 vNewPos;
+	//		XMStoreFloat3(&vNewPos, vPrevPos);
+	//		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+	//		m_WorldMatrix._44 = 1;*/
+	//	}
+	//}
 
 }
 
@@ -204,22 +204,22 @@ void CTransform::Move_Right(_double fDeltaTime, CNavigation* pNavigation, _bool 
 			Set_MatrixState(CTransform::STATE_POS, vPos);
 		}
 	}
-	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-	{
-		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
-		vPrevPos = XMVectorSetW(vPrevPos, 1);
+	//else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
+	//{
+	//	vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//	vPrevPos = XMVectorSetW(vPrevPos, 1);
 
-		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
-		{
-			XMStoreFloat3((_float3*)(&m_WorldMatrix.m[STATE_POS][0]), vPrevPos);
-			//Set_MatrixState(CTransform::STATE_POS, vPrevPos);
-		}
+	//	if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+	//	{
+	//		XMStoreFloat3((_float3*)(&m_WorldMatrix.m[STATE_POS][0]), vPrevPos);
+	//		//Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+	//	}
 
-		/*_float3 vNewPos;
-		XMStoreFloat3(&vNewPos, vPrevPos);
-		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
-		m_WorldMatrix._44 = 1;*/
-	}
+	//	/*_float3 vNewPos;
+	//	XMStoreFloat3(&vNewPos, vPrevPos);
+	//	memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+	//	m_WorldMatrix._44 = 1;*/
+	//}
 
 	//vPos += Get_MatrixState_Normalized(CTransform::STATE_RIGHT) * m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
@@ -284,21 +284,21 @@ void CTransform::MovetoDir(_fVector vDir, _double fDeltaTime, CNavigation* pNavi
 			Set_MatrixState(CTransform::STATE_POS, vPos);
 		}
 	}
-	else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
-	{
-		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
-		vPrevPos = XMVectorSetW(vPrevPos, 1);
+	//else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
+	//{
+	//	vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//	vPrevPos = XMVectorSetW(vPrevPos, 1);
 
-		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
-		{
-			Set_MatrixState(CTransform::STATE_POS, vPrevPos);
-		}
+	//	if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+	//	{
+	//		Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+	//	}
 
-		/*_float3 vNewPos;
-		XMStoreFloat3(&vNewPos, vPrevPos);
-		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
-		m_WorldMatrix._44 = 1;*/
-	}
+	//	/*_float3 vNewPos;
+	//	XMStoreFloat3(&vNewPos, vPrevPos);
+	//	memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+	//	m_WorldMatrix._44 = 1;*/
+	//}
 
 	//vPos += XMVector3Normalize(vDir)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
@@ -344,21 +344,21 @@ void CTransform::MovetoDir_bySpeed(_fVector vDir, _float fSpeed, _double fDeltaT
 			Set_MatrixState(CTransform::STATE_POS, vPos);
 		}
 	}
-	else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
-	{
-		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
-		vPrevPos = XMVectorSetW(vPrevPos, 1);
+	//else if (false == pNavigation->Move_OnNavigation(vPos, Dir, &vSlidingVec))
+	//{
+	//	vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//	vPrevPos = XMVectorSetW(vPrevPos, 1);
 
-		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
-		{
-			Set_MatrixState(CTransform::STATE_POS, vPrevPos);
-		}
+	//	if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+	//	{
+	//		Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+	//	}
 
-		/*_float3 vNewPos;
-		XMStoreFloat3(&vNewPos, vPrevPos);
-		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
-		m_WorldMatrix._44 = 1;*/
-	}
+	//	/*_float3 vNewPos;
+	//	XMStoreFloat3(&vNewPos, vPrevPos);
+	//	memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+	//	m_WorldMatrix._44 = 1;*/
+	//}
 
 	/*vPos += XMVector3Normalize(vDir)* fSpeed *(_float)fDeltaTime;
 
@@ -405,21 +405,21 @@ void CTransform::MovetoTarget(_fVector vTarget, _double fDeltaTime, CNavigation*
 			Set_MatrixState(CTransform::STATE_POS, vPos);
 		}
 	}
-	else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
-	{
-		vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
-		vPrevPos = XMVectorSetW(vPrevPos, 1);
+	//else if (false == pNavigation->Move_OnNavigation(vPos, vDir, &vSlidingVec))
+	//{
+	//	vPrevPos += vSlidingVec * m_TransformDesc.fMovePerSec * (_float)fDeltaTime;
+	//	vPrevPos = XMVectorSetW(vPrevPos, 1);
 
-		if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
-		{
-			Set_MatrixState(CTransform::STATE_POS, vPrevPos);
-		}
+	//	if (true == pNavigation->Move_OnNavigation(vPrevPos, vSlidingVec, &vSlidingVec))
+	//	{
+	//		Set_MatrixState(CTransform::STATE_POS, vPrevPos);
+	//	}
 
-		/*_float3 vNewPos;
-		XMStoreFloat3(&vNewPos, vPrevPos);
-		memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
-		m_WorldMatrix._44 = 1;*/
-	}
+	//	/*_float3 vNewPos;
+	//	XMStoreFloat3(&vNewPos, vPrevPos);
+	//	memcpy(&(m_WorldMatrix.m[3]),&vNewPos,sizeof(_float3));
+	//	m_WorldMatrix._44 = 1;*/
+	//}
 
 	/*vPos += XMVector3Normalize(vTarget - vPos)* m_TransformDesc.fMovePerSec *(_float)fDeltaTime;
 
