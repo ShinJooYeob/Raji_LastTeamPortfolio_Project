@@ -461,6 +461,12 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
+
+		Prototype_Object_PM_Player,
+		Prototype_Object_PM_Food,
+		Prototype_Object_PM_Monster,
+
+
 	Object_Prototype_End
 };
 
@@ -869,7 +875,18 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_MiniGame_BeachBall:
 		return TEXT("Prototype_Object_MiniGame_BeachBall");
-		
+
+
+	case Prototype_Object_PM_Player:
+		return TEXT("Prototype_Object_PM_Player");
+
+	case Prototype_Object_PM_Food:
+		return TEXT("Prototype_Object_PM_Food");
+
+	case Prototype_Object_PM_Monster:
+		return TEXT("Prototype_Object_PM_Monster");
+
+
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
 		return TEXT("Prototype_Object_Static_PhysX");
@@ -1400,6 +1417,12 @@ enum COMPONENTPROTOTYPEID
 		Prototype_Mesh_Burger_Alphabet,
 		
 	Prototype_Mesh_Wing,
+
+
+		Prototype_Mesh_PackMen,
+		Prototype_Mesh_PMMonster,
+		Prototype_Mesh_PM_PowerUpFood,
+		Prototype_Mesh_PM_Food,
 	///////JYMesh///////////////////////////////////////////////////////////////////
 
 #pragma region BossMesh
@@ -3560,6 +3583,8 @@ enum COMPONENTPROTOTYPEID
 		Prototype_VIBuffer_Terrain_3,
 		Prototype_VIBuffer_Terrain_4,
 		Prototype_VIBuffer_Terrain_5,
+
+
 };
 
 static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
@@ -10328,6 +10353,24 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 			break;
 
 
+
+		case 	Prototype_Mesh_PackMen:
+			return TEXT("Packmen.fbx");
+			break;
+
+		case 	Prototype_Mesh_PMMonster:
+			return TEXT("PM_Monster.fbx");
+			break;
+
+			
+		case 	Prototype_Mesh_PM_Food:
+			return TEXT("cola_can.fbx");
+			break;
+
+		case 	Prototype_Mesh_PM_PowerUpFood:
+			return TEXT("BurgerMesh.fbx");
+			break;
+			
 
 			//////////////////////////////////////////////////////////////////////////
 		default:

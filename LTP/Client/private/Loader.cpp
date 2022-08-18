@@ -167,8 +167,10 @@
 #include "UI_Texture_Universal.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-/////////MiniGame PACKMAN///////////////////////////////////////////////////////////////////////
-
+/////////MiniGame PACKMEN///////////////////////////////////////////////////////////////////////
+#include "PackMen.h"
+#include "PM_Monster.h"
+#include "PM_Food.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1867,15 +1869,21 @@ HRESULT CLoader::Load_Scene_Minigame_PM(_bool * _IsClientQuit, CRITICAL_SECTION 
 #pragma  endregion
 #pragma region PROTOTYPE_COMPONENT
 
-	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME1, TEXT("Prototype_Component_Navigation"),
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME_PM, TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_MiniGame_JY.dat")))))
 		return E_FAIL;
 
-	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Mesh_SkyBox),
-		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
+	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME_PM, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "MiniGame_PM", "BurgerMesh.FBX", TransformMatrix)));
 
 
+	TransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) *
+		XMMatrixRotationY(XMConvertToRadians(180.0f)) *
+		XMMatrixRotationX(XMConvertToRadians(270.f))*
+		XMMatrixTranslation(0.f,0.7f, 0.f);
+
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PMMonster), TransformMatrix);
 
 	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME_PM));
 
@@ -1883,26 +1891,30 @@ HRESULT CLoader::Load_Scene_Minigame_PM(_bool * _IsClientQuit, CRITICAL_SECTION 
 #pragma endregion
 
 #pragma region EH
-	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Texture_Monster_Bullet),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
+	/////////////* For.Prototype_Component_Texture_Monster_Texture_Bullet */
+	////////////FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Texture_Monster_Bullet),
+	////////////	CTexture::Create(m_pDevice, m_pDeviceContext, L"Monster_Texture_Bullet.txt")));
 
-	/* For.Prototype_Component_WorldTexutre_Universal */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_WorldTexture_Universal),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+	/////////////* For.Prototype_Component_WorldTexutre_Universal */
+	////////////FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_WorldTexture_Universal),
+	////////////	CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
 
-	/* For.Prototype_Component_Prototype_Golu_Bullet */
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Golu_Bullet),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"Golu_Bullet.txt")));
-
-#pragma endregion
+	/////////////* For.Prototype_Component_Prototype_Golu_Bullet */
+	////////////FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Golu_Bullet),
+	////////////	CTexture::Create(m_pDevice, m_pDeviceContext, L"Golu_Bullet.txt")));
 
 #pragma endregion
 
+#pragma endregion
+
+	//Prototype_Object_PM_Player,
+	//	Prototype_Object_PM_Food,
+	//	Prototype_Object_PM_Monster,
 #pragma  region PROTOTYPE_GAMEOBJECT
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_Golu), CMiniGame_Golu::Create(m_pDevice, m_pDeviceContext)));
-
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Golu_Bullet), CGolu_Bullet::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PM_Player), CPackMen::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PM_Monster), CPM_Monster::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PM_Food), CPM_Food::Create(m_pDevice, m_pDeviceContext)));
+	
 #pragma endregion
 
 
@@ -4053,20 +4065,34 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 
 	case SCENE_MINIGAME_PM:
 	{
+
+#pragma  region Static_Mesh
 		static _bool bBool = false;
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Burger_Alphabet.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_09E.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+#pragma endregion
+
+
+		//Prototype_Mesh_PackMen,
+		//	Prototype_Mesh_PM_PowerUpFood,
+		//	Prototype_Mesh_PM_Food,
+		TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PackMen), TransformMatrix);
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PM_PowerUpFood), TransformMatrix);
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f))*
+			XMMatrixRotationX(XMConvertToRadians(270.f));
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PM_Food), TransformMatrix);
+
+
+
+
 
 		if (bBool) return S_FALSE;
 		bBool = true;
-
-#pragma  region Static_Mesh
-
-#pragma endregion
-
 	}
 	break;
 	case SCENE_END:

@@ -571,6 +571,18 @@
     <Filter Include="01.GameObject\11.Texture_Universal\1.UI_Texture_Universal">
       <UniqueIdentifier>{c9259ca3-d28d-473b-a94a-ba483056aebc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.PackMen">
+      <UniqueIdentifier>{59eb29ce-0a65-4201-9b44-c9bae6825bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.PackMen\PackMen">
+      <UniqueIdentifier>{0da29318-7df7-42b7-a8cc-3eec206a975d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.PackMen\Food">
+      <UniqueIdentifier>{5f8a7875-f9ae-4d23-b07f-06f48f99f5a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.PackMen\Monster">
+      <UniqueIdentifier>{38fe2ac4-22a9-4853-bca5-ade22fdbaccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1217,6 +1229,15 @@
     <ClInclude Include="..\public\UI_Texture_Universal.h">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PackMen.h">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\PackMen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PM_Monster.h">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PM_Food.h">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\Food</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1842,6 +1863,15 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Texture_Universal.cpp">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PackMen.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\PackMen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PM_Monster.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PM_Food.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.PackMen\Food</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

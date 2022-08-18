@@ -4,6 +4,9 @@
 #include "Camera_Main.h"
 #include "TriggerObject.h"
 #include "StaticInstanceMapObject.h"
+#include "PackMen.h"
+#include "PM_Monster.h"
+#include "PM_Food.h"
 
 CScene_Minigame_PM::CScene_Minigame_PM(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -25,18 +28,26 @@ HRESULT CScene_Minigame_PM::Initialize()
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
+	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
+	FAILED_CHECK(Ready_Layer_Food(TAG_LAY(Layer_JumpPad)));
+	FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_JY.dat", SCENE_MINIGAME_PM, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
+	
 
 
-	FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_JY.dat", SCENE_MINIGAME1, TAG_LAY(Layer_StaticMapObj)));
+	FAILED_CHECK(Ready_PostPorcessing());
 
-
-	//FAILED_CHECK(Ready_PostPorcessing());
+	m_pMainCam->Ortho_OnOff(true, 30.f);
+	g_pGameInstance->PlayBGM(TEXT("PM_BGM.wav"), 0,  1.f);
 
 	return S_OK;
 }
 
 _int CScene_Minigame_PM::Update(_double fDeltaTime)
 {
+
+	m_pMainCam->Ortho_OnOff(true, 30.f);
+	//m_pMainCam->Ortho_OnOff(false);
 	//m_pPlayerTransform
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
@@ -47,7 +58,7 @@ _int CScene_Minigame_PM::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE4), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
@@ -186,11 +197,27 @@ HRESULT CScene_Minigame_PM::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Get_Camera_Transform()->Set_MatrixState(CTransform::STATE_POS, _float3(0, 10.f, 0.f));
 	m_pMainCam->Get_Camera_Transform()->LookAt(_float3(0, 0.f, 0.000000001f).XMVector());
 
+
+	m_pMainCam->Ortho_OnOff(true, 30.f);
+
+	return S_OK;
+}
+HRESULT CScene_Minigame_PM::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Player), &_float3(0,1,0)));
+	CGameObject* pPlayer = (CPackMen*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME_PM, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pPlayer, E_FAIL);
+
+
+
+
+
+	//
 	return S_OK;
 }
 HRESULT CScene_Minigame_PM::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
@@ -200,6 +227,102 @@ HRESULT CScene_Minigame_PM::Ready_Layer_Terrain(const _tchar * pLayerTag)
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Terrain)));
 
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Minigame_PM::Ready_Layer_Monster(const _tchar * pLayerTag)
+{
+	CPM_Monster::PMMONDESC tDesc;
+
+	tDesc.iIndex = 1;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster), &tDesc));
+	tDesc.iIndex = 19;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster),&tDesc));
+	tDesc.iIndex = 12;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster),&tDesc));
+
+
+	tDesc.iIndex = 17;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster), &tDesc));
+	tDesc.iIndex = 10;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster), &tDesc));
+	tDesc.iIndex = 28;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Monster),&tDesc));
+	//CGameObject* pMonster = (CPackMen*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME_PM, TAG_LAY(Layer_Monster)));
+	//NULL_CHECK_RETURN(pMonster, E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CScene_Minigame_PM::Ready_Layer_Food(const _tchar * pLayerTag)
+{
+	CPM_Food::PMFOODDESC tDesc;
+	tDesc.iKinds = CPM_Food::FOOD_CANCOLA;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Food), &tDesc));
+	CPM_Food* pCola =(CPM_Food*)( g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_PM, pLayerTag));
+
+
+	//Ready_HorizFood
+	pCola->Ready_HorizFood(pLayerTag, 0, 3);
+	pCola->Ready_HorizFood(pLayerTag, 4, 7);
+	pCola->Ready_HorizFood(pLayerTag, 8, 11);
+	//
+	pCola->Ready_HorizFood(pLayerTag, 12, 13, 2);
+	pCola->Ready_HorizFood(pLayerTag, 14, 15, 2);
+	pCola->Ready_HorizFood(pLayerTag, 16, 17, 2);
+
+
+	pCola->Ready_HorizFood(pLayerTag, 18, 21);
+	pCola->Ready_HorizFood(pLayerTag, 22, 25);
+	pCola->Ready_HorizFood(pLayerTag, 26, 29);
+
+	//Ready_VerticFood
+
+	pCola->Ready_VerticFood(pLayerTag, 0, 18);
+	pCola->Ready_VerticFood(pLayerTag, 1, 19);
+	pCola->Ready_VerticFood(pLayerTag, 2, 20);
+	pCola->Ready_VerticFood(pLayerTag, 3, 21);
+
+
+	pCola->Ready_VerticFood(pLayerTag, 4, 22);
+	pCola->Ready_VerticFood(pLayerTag, 5, 23);
+	pCola->Ready_VerticFood(pLayerTag, 6, 24);
+	pCola->Ready_VerticFood(pLayerTag, 7, 25);
+
+
+	pCola->Ready_VerticFood(pLayerTag, 8, 26);
+	pCola->Ready_VerticFood(pLayerTag, 9, 27);
+	pCola->Ready_VerticFood(pLayerTag, 10, 28);
+	pCola->Ready_VerticFood(pLayerTag, 11, 29);
+
+
+
+	tDesc = CPM_Food::PMFOODDESC();
+	tDesc.iKinds = CPM_Food::FOOD_BURGER;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Food), &tDesc));
+	CPM_Food* pBurger = (CPM_Food*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_PM, pLayerTag));
+	pBurger->Ready_AtIndexFood(pLayerTag, 0);
+	pBurger->Ready_AtIndexFood(pLayerTag, 3);
+	pBurger->Ready_AtIndexFood(pLayerTag, 4);
+	pBurger->Ready_AtIndexFood(pLayerTag, 7);
+	pBurger->Ready_AtIndexFood(pLayerTag, 8);
+	pBurger->Ready_AtIndexFood(pLayerTag, 11);
+	pBurger->Ready_AtIndexFood(pLayerTag, 18);
+	pBurger->Ready_AtIndexFood(pLayerTag, 21);
+	pBurger->Ready_AtIndexFood(pLayerTag, 22);
+	pBurger->Ready_AtIndexFood(pLayerTag, 25);
+	pBurger->Ready_AtIndexFood(pLayerTag, 26);
+	pBurger->Ready_AtIndexFood(pLayerTag, 29);
+
+
+	tDesc = CPM_Food::PMFOODDESC();
+	tDesc.iKinds = CPM_Food::FOOD_BIGBURGER;
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PM_Food), &tDesc));
+	CPM_Food* pBigBurger = (CPM_Food*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_PM, pLayerTag));
+	pBigBurger->Ready_AtPosFood(pLayerTag, _float3(0, -100, 0));
 
 	return S_OK;
 }
@@ -393,11 +516,10 @@ HRESULT CScene_Minigame_PM::Ready_PostPorcessing()
 #ifdef DEBUGONSHADERSETTING
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
+	pLightDesc->vVector = _float4(0, 64.f, -64.f, 1);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(0, -64.f, 64.f));
 	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	//pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	//pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -407,23 +529,23 @@ HRESULT CScene_Minigame_PM::Ready_PostPorcessing()
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.3f);
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	//pRenderer->Set_ShadowIntensive(0.3f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
-	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5f);
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	//pRenderer->Set_BloomOverLuminceValue(1.0f);
+	//pRenderer->Set_BloomBrightnessMul(1.5f);
 
-	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	//pRenderer->Set_DofLength(30.f);
-	//pRenderer->Set_DofBlurIntensive(1.f);
+	////pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	////pRenderer->Set_DofLength(30.f);
+	////pRenderer->Set_DofBlurIntensive(1.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogColor(_float3{ 0.234375f });
-	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
-	pRenderer->Set_FogStartDist(5.f);
-	pRenderer->Set_FogGlobalDensity(0.1f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	//pRenderer->Set_FogColor(_float3{ 0.234375f });
+	//pRenderer->Set_FogHighlightColor(_float3{ 1.f });
+	//pRenderer->Set_FogStartDist(5.f);
+	//pRenderer->Set_FogGlobalDensity(0.1f);
+	//pRenderer->Set_FogHeightFalloff(0.1f);
 #endif
 
 #endif // !_DEBUGee
@@ -432,9 +554,10 @@ HRESULT CScene_Minigame_PM::Ready_PostPorcessing()
 
 HRESULT CScene_Minigame_PM::Ready_Layer_UI(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_PM, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
+
 
 
 

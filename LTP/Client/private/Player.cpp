@@ -79,10 +79,6 @@ _int CPlayer::Update(_double fDeltaTime)
 	//Set_State_IdleStart(fDeltaTime);
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_T) & DIS_Up)
-	{
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE7, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Chiedtian), &_float3(0.967f, 35.900f, 310.637f)));
-	}
 	// For Debuging
 	DebugingCode();
 

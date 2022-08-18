@@ -223,6 +223,9 @@
     <ClInclude Include="..\public\MandalaPuzzle.h" />
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
+    <ClInclude Include="..\public\PM_Food.h" />
+    <ClInclude Include="..\public\PM_Monster.h" />
+    <ClInclude Include="..\public\PackMen.h" />
     <ClInclude Include="..\public\MiniGame_Golu.h" />
     <ClInclude Include="..\public\MiniGame_Jino_Monster.h" />
     <ClInclude Include="..\public\MiniGame_Jino_Player.h" />
@@ -396,6 +399,9 @@
     <ClCompile Include="..\private\MandalaMesh.cpp" />
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\PM_Food.cpp" />
+    <ClCompile Include="..\private\PM_Monster.cpp" />
+    <ClCompile Include="..\private\PackMen.cpp" />
     <ClCompile Include="..\private\MiniGame_Golu.cpp" />
     <ClCompile Include="..\private\MiniGame_Jino_Monster.cpp" />
     <ClCompile Include="..\private\MiniGame_Jino_Player.cpp" />

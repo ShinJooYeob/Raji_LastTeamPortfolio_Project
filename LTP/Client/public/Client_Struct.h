@@ -472,6 +472,15 @@ typedef struct tagMiniGameBulidingRenderTarget
 }MGBTARGET;
 
 
+typedef struct tagTurningPoint
+{
+
+	_float3 vPosition = _float3(0);
+	_uint	iNeighborIndexArr[4] = {0,0,0,0};
+
+}PMTP;
+
+
 // 전역화함
 
 static bool GetRandomBool()

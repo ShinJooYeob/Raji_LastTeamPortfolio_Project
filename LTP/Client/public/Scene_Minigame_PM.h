@@ -24,15 +24,17 @@ public:
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Layer_MainCamera(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Player(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_SkyBox(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Terrain(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Monster(const _tchar * pLayerTag);
+	HRESULT Ready_Layer_Food(const _tchar * pLayerTag);
+
 
 	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
 	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
-	HRESULT	Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 
-	HRESULT Ready_MiniGameBuilding(const _tchar* pLayerTag);
 
 
 	HRESULT Ready_PostPorcessing();
@@ -42,6 +44,8 @@ private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 	CUtilityMgr*					m_pUtilMgr = nullptr;
 	CTransform*						m_pGoluTransform = nullptr;
+
+
 
 public:
 	static CScene_Minigame_PM* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);

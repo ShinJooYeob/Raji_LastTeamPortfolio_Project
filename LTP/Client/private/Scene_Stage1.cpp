@@ -1,4 +1,4 @@
-#include "stdafx.h"
+	#include "stdafx.h"
 #include "..\Public\Scene_Stage1.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
