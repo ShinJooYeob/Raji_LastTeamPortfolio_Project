@@ -266,6 +266,16 @@ void CMonster_Bullet_Universal::Set_IsDead()
 		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
+	case TEZABSURA_PURPLE_DEFAULT_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1435.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		break;
+	}
+	case TEZABSURA_PURPLE_PRIMARY_BULLET:
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1435.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+		break;
+	}
 	case TEZABSURA_LANDMINE_DEFAULT_BULLET:
 	{
 		g_pGameInstance->Play3D_Sound(TEXT("EH_Tezaabsura_Tezaab_Hit_02.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
@@ -335,11 +345,15 @@ void CMonster_Bullet_Universal::Set_IsDead()
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
 
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_733.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+
+		break;
 	}
-	break;
 
 	case TEZABSURA_BOMBER_DEFAULT_BULLET:
 	{
+
+
 		{
 			// Fragment
 			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
@@ -391,13 +405,16 @@ void CMonster_Bullet_Universal::Set_IsDead()
 			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
 		}
 
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_733.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
+
+		break;
 	}
-	
 	default:
 		break;
 	}
 
 	m_bIsDead = true;
+
 }
 
 void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -415,6 +432,24 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 		{
 			m_vecJYTextureParticleDesc[1].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecJYTextureParticleDesc[1]);
+			Set_IsDead();
+			break;
+		}
+		case TEZABSURA_PURPLE_DEFAULT_BULLET:
+		{
+			Set_IsDead();
+		}
+		case TEZABSURA_PURPLE_PRIMARY_BULLET:
+		{
+			Set_IsDead();
+		}
+		case TEZABSURA_BOMBER_DEFAULT_BULLET:
+		{
+			Set_IsDead();
+			break;
+		}
+		case TEZABSURA_BOMBER_HOWITZER_BULLET:
+		{
 			Set_IsDead();
 			break;
 		}
@@ -846,13 +881,29 @@ HRESULT CMonster_Bullet_Universal::Update_Collider(_double dDeltaTime)
 	return S_OK;
 }
 
-_Vector CMonster_Bullet_Universal::Bezier(_Vector StartPoint, _Vector LastPoint, _double dDeltaTime)
+_Vector CMonster_Bullet_Universal::Bomber_Bezier(_Vector StartPoint, _Vector LastPoint, _double dDeltaTime)
 {
 	if (m_dBezierTime <= 1)
 	{
 		m_dBezierTime += dDeltaTime;
 	}
 	else {
+		CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+		Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+		Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+		Monster_Texture_BulletDesc.fScale = _float3(5.f, 5.f, 5.f);
+
+		Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+		Monster_Texture_BulletDesc.Object = this;
+
+		Monster_Texture_BulletDesc.dDuration = 0.1;
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc);
+
 		Set_IsDead();
 	}
 
@@ -1071,12 +1122,32 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Default_Bullet(_double dDelt
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPosition);
 
+	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS).y)
+	{
+		CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+		Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+		Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+		Monster_Texture_BulletDesc.fScale = _float3(4.f, 4.f, 4.f);
+
+		Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+		Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+		Monster_Texture_BulletDesc.Object = this;
+
+		Monster_Texture_BulletDesc.dDuration = 0.1;
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc);
+
+		Set_IsDead();
+	}
 	return S_OK;
 }
 
 HRESULT CMonster_Bullet_Universal::Tezabsura_Bomber_Howitzer_Bullet(_double dDeltaTime)
 {
-	Bezier(XMLoadFloat4(&m_fTempPos), XMLoadFloat4(&m_fTempPlayerPos), dDeltaTime);
+	Bomber_Bezier(XMLoadFloat4(&m_fTempPos), XMLoadFloat4(&m_fTempPlayerPos), dDeltaTime);
 	//_Vector vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	//_Vector vLook = XMLoadFloat3(&m_fTempLook);
 
@@ -1142,7 +1213,9 @@ HRESULT CMonster_Bullet_Universal::Tezabsura_Landmine_Default_Bullet(_double dDe
 		Monster_Texture_BulletDesc.dDuration = 0.2;
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
 		///////////////////////////////////
+
 		Set_IsDead();
 	}
 

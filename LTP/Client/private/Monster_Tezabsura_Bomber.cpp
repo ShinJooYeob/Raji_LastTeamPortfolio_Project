@@ -2,6 +2,7 @@
 #include "..\public\Monster_Tezabsura_Bomber.h"
 #include "Monster_Bullet_Universal.h"
 #include "HpUI.h"
+#include "Monster_Texture_Bullet.h"
 
 CMonster_Tezabsura_Bomber::CMonster_Tezabsura_Bomber(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -1522,6 +1523,23 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 			if (PlayRate >= 0.92)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1037.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
+
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::NONTEXTURE_SPHERE;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 0;
+				Monster_Texture_BulletDesc.fScale = _float3(6.2f, 6.2f, 6.2f);
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 0.f, 0.f);
+
+
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.1;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
 				Set_IsDead();
 			}
 
