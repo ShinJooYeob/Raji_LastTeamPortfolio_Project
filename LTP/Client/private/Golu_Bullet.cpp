@@ -122,7 +122,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 	switch (m_Golu_BulletDesc.iGoluBulletType)
 	{
 	case FIREBALL:
-		Set_IsDead();
 		break;
 	case BARRIERBULLET:
 	{
@@ -859,35 +858,13 @@ HRESULT CGolu_Bullet::FireBall(_double dDeltaTime)
 
 HRESULT CGolu_Bullet::BarrierBullet(_double dDeltaTime)
 {
-	//_Vector vPosition;
-
-	//_Vector vLook, vRight;
-	//_Vector vObjectPos, vMyPos;
-
-	//vObjectPos = m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS);
-	//vMyPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
-	//vObjectPos = XMVectorSetY(vObjectPos, XMVectorGetY(vMyPos));
-
-	//vLook = vObjectPos - vMyPos;
-	//vRight = XMVector3Cross(XMLoadFloat3(&_float3(0.f, 1.f, 0.f)), vLook);
-
-	//vPosition = m_pObjectTransform->Get_MatrixState(CTransform::STATE_POS) + (XMVector3Normalize(-vLook)* 1.2f);
-
-	//vPosition += XMVector3Normalize(vRight) * (m_pObjectTransform->Get_MoveSpeed() * 2) * dDeltaTime;
-
-	//_float3 fPosition; //w에 1이 채워져있는듯
-	//XMStoreFloat3(&fPosition, vPosition);
-	//fPosition.y += 0.3f;
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, fPosition);
-
 	_float3 PlayerPos = m_pObjectTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
 
 	m_fAngle += 360.f*(_float)dDeltaTime;
 
 	//스자이공부에서 자전이 필요없기 때문에 스이공부만 넣은것
 	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_Golu_BulletDesc.fScale.x, m_Golu_BulletDesc.fScale.y, m_Golu_BulletDesc.fScale.z) *
-		XMMatrixTranslation(m_vDefaultPos.x, m_vDefaultPos.y, m_vDefaultPos.z)*
+		XMMatrixTranslation(m_vDefaultPos.x, m_vDefaultPos.y, m_vDefaultPos.z) *
 		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_fAngle)) *
 		XMMatrixTranslation(PlayerPos.x, PlayerPos.y, PlayerPos.z));
 

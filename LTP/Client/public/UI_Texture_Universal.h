@@ -83,6 +83,8 @@ private:
 
 	//Easing
 	_double				m_dEasingTime = 0;
+	_uint				m_iEasingIndex = 0;
+	_bool				m_bCreateText = false;
 
 	_double				m_AccumulationTime = 0;
 

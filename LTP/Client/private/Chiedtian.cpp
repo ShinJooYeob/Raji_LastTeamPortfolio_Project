@@ -9,6 +9,8 @@
 #include "ParticleCollider.h"
 #include "Particle_ColliderInOut.h"
 
+#include "InstanceMonsterBatchTrigger.h"
+
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -232,6 +234,12 @@ _int CChiedtian::Update(_double fDeltaTime)
 		/*static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();*/
 		//
 
+		if (m_bInstanceMonsterDieSwitch == false)
+		{
+			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
+			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			m_bInstanceMonsterDieSwitch = true;
+		}
 
 	}
 

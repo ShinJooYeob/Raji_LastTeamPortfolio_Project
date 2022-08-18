@@ -77,8 +77,8 @@ _int CUI_Texture_Universal::LateUpdate(_double dDeltaTime)
 
 	switch (m_UI_UniversalDesc.iUI_TextureType)
 	{
-	case UI_TEXT:
-		break;
+	//case UI_TEXT:
+	//	break;
 	case 1111:
 		__debugbreak();
 		break;
@@ -193,18 +193,7 @@ HRESULT CUI_Texture_Universal::UI_Skill_CoolTime(_double dDeltaTime)
 
 HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 {
-	//_Vector TempPos;
-
-	//TempPos = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, XMVectorSet(0.f, 500.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), m_dEasingTime, 2.0f);
-	//if (m_dEasingTime >= 2)
-	//{
-	//	TempPos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	//}
-	//m_pTransform->Scaled(XMVectorSet(m_fSizeX, m_fSizeY, 1.f, 0.0f));
-	//m_pTransform->Set_State(CTransform::STATE_POSITION, TempPos);
-
-	_float	fTempScaleX;
-	_float	fTempScaleY;
+	_float	fPosX;
 
 	m_AccumulationTime += dDeltaTime;
 	m_dEasingTime += dDeltaTime;
@@ -213,17 +202,13 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	{
 	case 0:
 	{
-		if (m_AccumulationTime <= 1)
+		if (m_AccumulationTime <= 2 && m_iEasingIndex == 0)
 		{
 
-			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
-			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
-
-			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
-			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+			fPosX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 1500.f, 640.f, (_float)m_dEasingTime, 2.f);
+			m_fX = fPosX;
 		}
-
-		if (m_AccumulationTime > 1.5)
+		if (m_AccumulationTime > 2.5)
 		{
 			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -246,17 +231,14 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 1:
 	{
-		if (m_AccumulationTime <= 1)
+		if (m_AccumulationTime <= 2)
 		{
 
-			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
-			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
-
-			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
-			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+			fPosX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 1500.f, 640.f, (_float)m_dEasingTime, 2.f);
+			m_fX = fPosX;
 		}
 
-		if (m_AccumulationTime > 1.5)
+		if (m_AccumulationTime > 2.5)
 		{
 			CMiniGame_Golu* Golu = static_cast<CMiniGame_Golu*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 
@@ -268,17 +250,14 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 2:
 	{
-		if (m_AccumulationTime <= 1)
+		if (m_AccumulationTime <= 2)
 		{
 
-			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
-			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_Linear, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
-
-			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
-			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+			fPosX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 1400.f, 640.f, (_float)m_dEasingTime, 2.f);
+			m_fX = fPosX;
 		}
 
-		if (m_AccumulationTime > 1.5)
+		if (m_AccumulationTime > 2.5)
 		{
 			CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -299,17 +278,48 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 	}
 	case 3:
 	{
-		if (m_AccumulationTime <= 1)
+		if (m_AccumulationTime <= 2)
 		{
+			//포지션 이동
+			//fPosX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 1400.f, 640.f, (_float)m_dEasingTime, 2.f);
+			//m_fX = fPosX;
+
+			//스케일 변동
+			_float fTempScaleX, fTempScaleY;
+
+			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
+			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 300.f, (_float)m_dEasingTime, 2.f);
+
+			m_fSizeX = fTempScaleX;
+			m_fSizeY = fTempScaleY;
+
+		}
+
+		if (m_AccumulationTime > 2.5)
+		{
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+		}
+		break;
+	}
+	case 4:
+	{
+		if (m_AccumulationTime <= 2)
+		{
+			//포지션 이동
+			//fPosX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 1400.f, 640.f, (_float)m_dEasingTime, 2.f);
+			//m_fX = fPosX;
+
+			//스케일 변동
+			_float fTempScaleX, fTempScaleY;
 
 			fTempScaleX = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 700.f, (_float)m_dEasingTime, 2.f);
 			fTempScaleY = GetSingle(CGameInstance)->Easing(TYPE_BounceOut, 0.f, 500.f, (_float)m_dEasingTime, 2.f);
 
-			m_pTransformCom->Scaled(CTransform::STATE_RIGHT, fTempScaleX);
-			m_pTransformCom->Scaled(CTransform::STATE_UP, fTempScaleY);
+			m_fSizeX = fTempScaleX;
+			m_fSizeY = fTempScaleY;
 		}
 
-		if (m_AccumulationTime > 1.5)
+		if (m_AccumulationTime > 2.5)
 		{
 			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
 		}

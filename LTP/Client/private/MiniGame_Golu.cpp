@@ -182,8 +182,8 @@ void CMiniGame_Golu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 
 _float CMiniGame_Golu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	m_fHP += -fDamageAmount;
+	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	//m_fHP += -fDamageAmount;
 
 
 	if (0 >= m_fHP)
@@ -722,53 +722,66 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 
 	if (pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
+		//// Fragment
+		//INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+		//	Prototype_Mesh_SM_4E_IceShards_01, //FBX
+		//	0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+		//	0.8f, //파티클 지속시간
+		//	_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
+		//	_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+		//	1, //여기에 1을 넣으면 됨
+		//	_float3(1), //사이즈
+		//	_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
+		//	1);
+		//// testMesh.eParticleTypeID = InstanceEffect_Ball; 퍼지는 타입
+		//testMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
+		//testMesh.ePassID = MeshPass_BrightColor; //노이즈
 
-		// Fragment
-		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
-			Prototype_Mesh_SM_4E_IceShards_01, //FBX
-			0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
-			0.8f, //파티클 지속시간
-			_float4(0.28f, 0.29f, 0.95f, 0.0f), //색깔1
-			_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
-			1, //여기에 1을 넣으면 됨
-			_float3(1), //사이즈
-			_float3(0.1f), //사이즈2 이것도 위에랑 마찬가지
-			1);
-		// testMesh.eParticleTypeID = InstanceEffect_Ball; 퍼지는 타입
-		testMesh.eInstanceCount = Prototype_ModelInstance_16; //인스턴스 갯수
-		testMesh.ePassID = MeshPass_BrightColor; //노이즈
+		////범위
+		//_float val = 1.5f;
+		//testMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
+		//testMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
 
-		//범위
-		_float val = 1.5f;
-		testMesh.ParticleStartRandomPosMin = _float3(-val, -0.5f, -val);
-		testMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
+		////디퓨즈 텍스쳐
+		//testMesh.TempBuffer_0.w = 300;
+		//testMesh.TempBuffer_0.w = 300;
 
-		//디퓨즈 텍스쳐
-		testMesh.TempBuffer_0.w = 300;
-		testMesh.TempBuffer_0.w = 300;
+		//testMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+		//testMesh.iMaskingTextureIndex = 122;
+		//testMesh.iNoiseTextureIndex = 289;
+		//testMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
+		//testMesh.Particle_Power = 20.0f;
 
-		testMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
-		testMesh.iMaskingTextureIndex = 122;
-		testMesh.iNoiseTextureIndex = 289;
-		testMesh.vEmissive_SBB = _float3(1.f, 1.0f, 1.f);
-		testMesh.Particle_Power = 20.0f;
-
-		testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
-		testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+		//testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+		//testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
 
 
-		testMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+		//testMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
 
-		//위치지정
-		//_Matrix mat = m_pTransformCom->Get_WorldMatrix();
-		//_Vector pos = mat.r[3] + mat.r[2] * 3;
-		//testMesh.vFixedPosition = pos;
+		////위치지정
+		////_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+		////_Vector pos = mat.r[3] + mat.r[2] * 3;
+		////testMesh.vFixedPosition = pos;
 
-		//위치지정
-		testMesh.FollowingTarget = m_pTransformCom;
-		testMesh.iFollowingDir = FollowingDir_Up;
+		////위치지정
+		//testMesh.FollowingTarget = m_pTransformCom;
+		//testMesh.iFollowingDir = FollowingDir_Up;
 
-		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		//GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+		UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+		UI_Texture_UniversalDesc.iTextureIndex = 4;
+
+		UI_Texture_UniversalDesc.fSizeX = 700.f;
+		UI_Texture_UniversalDesc.fSizeY = 500.f;
+		UI_Texture_UniversalDesc.fX = 640.f;
+		UI_Texture_UniversalDesc.fY = 360.f;
+		UI_Texture_UniversalDesc.fDepth = 10.f;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+
 
 	}
 	RELEASE_INSTANCE(CGameInstance);
@@ -1048,7 +1061,14 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger8.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
-			m_iNextRoundNumber = 5; //End Round
+			m_iNextRoundNumber ++; //End Round
+			break;
+		}
+		case 9:
+		{
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger9.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			m_bNextRoundOn = false;
+			m_iNextRoundNumber++; //End Round
 			break;
 		}
 		default:
@@ -1058,7 +1078,7 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 
 	CInstanceMonsterBatchTrigger* TriggerObject = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 
-	if (m_bTextOn == true && TriggerObject == nullptr)
+	if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber != 10)
 	{
 		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -1075,10 +1095,26 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 
 		m_bTextOn = false;
 	}
+	else if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber == 10)
+	{
+		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
+
+		UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
+		UI_Texture_UniversalDesc.iTextureIndex = 4;
+
+		UI_Texture_UniversalDesc.fSizeX = 700.f;
+		UI_Texture_UniversalDesc.fSizeY = 500.f;
+		UI_Texture_UniversalDesc.fX = 640.f;
+		UI_Texture_UniversalDesc.fY = 360.f;
+		UI_Texture_UniversalDesc.fDepth = 10.f;
+
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
+		m_bTextOn = false;
+	}
 
 
 	m_dStartTime += dDeltaTime;
-	if (m_bStart == false && m_dStartTime > 7)
+	if (m_bStart == false && m_dStartTime > 6)
 	{
 		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 

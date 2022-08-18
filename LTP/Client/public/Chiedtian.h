@@ -144,6 +144,10 @@ private:
 	_bool				m_bReady = true;
 	//
 
+private://EH
+	_bool				m_bInstanceMonsterDieSwitch = false;
+
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT Ready_ParticleDesc();
