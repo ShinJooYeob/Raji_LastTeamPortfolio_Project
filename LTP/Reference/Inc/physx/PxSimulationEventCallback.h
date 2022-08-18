@@ -617,7 +617,7 @@ struct PxContactPair
 	to buffer the contact stream information such that it can get accessed at a later stage.
 
 	\param[out] newPair The contact pair info will get copied to this instance. The contact data stream pointer of the copy will be redirected to the provided user buffer. Use NULL to skip the contact pair copy operation.
-	\param[out] bufferMemory Memory block to store the contact data stream to. At most #requiredBufferSize bytes will get written to the buffer.
+	\param[out] bufferMemory Memory block to store the contact data stream to. At most requiredBufferSize bytes will get written to the buffer.
 	*/
 	PX_INLINE void				bufferContacts(PxContactPair* newPair, PxU8* bufferMemory) const;
 

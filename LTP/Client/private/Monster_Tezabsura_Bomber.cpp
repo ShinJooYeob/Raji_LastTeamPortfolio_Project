@@ -45,8 +45,13 @@ HRESULT CMonster_Tezabsura_Bomber::Initialize_Clone(void * pArg)
 //	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 #endif
 
-
 	m_fFrustumRadius = 3.5;
+
+	// Partilce
+	Set_DealyDIssolveTime(3.0f, 0.5f);
+
+
+
 	return S_OK;
 }
 
@@ -54,6 +59,9 @@ _int CMonster_Tezabsura_Bomber::Update(_double dDeltaTime)
 {
 
 	if (__super::Update(dDeltaTime) < 0)return -1;
+
+	if (__super::Update(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	if (m_SpawnDealytime <= 0 && m_bIsSpawnDissolove == false)
 	{
@@ -116,7 +124,8 @@ _int CMonster_Tezabsura_Bomber::Update(_double dDeltaTime)
 _int CMonster_Tezabsura_Bomber::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
+	if (__super::LateUpdate(dDeltaTime) == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	//////////
 	if (m_bIsOnScreen)
 	{
@@ -148,6 +157,8 @@ _int CMonster_Tezabsura_Bomber::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+	if (__super::Render() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -178,7 +189,8 @@ _int CMonster_Tezabsura_Bomber::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
-
+	if (__super::LateRender() == UPDATE_SKIP)
+		return UPDATE_SKIP;
 	return _int();
 }
 
@@ -239,6 +251,110 @@ _float CMonster_Tezabsura_Bomber::Take_Damage(CGameObject * pTargetObject, _floa
 	}
 
 	return _float();
+}
+
+void CMonster_Tezabsura_Bomber::Set_IsDead()
+{
+
+	{
+
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+			0.05f,
+			0.6f,
+			_float4(1),
+			_float4(1, 1, 1, 1.0F),
+			1,
+			_float3(1.6f),
+			_float3(0.1f),
+			1);
+
+		testTex.eParticleTypeID = InstanceEffect_Fountain;
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+		//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+		testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+		_float Val = 2.0f;
+		testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+		testTex.ParticleStartRandomPosMax = _float3(Val, 2.0f, Val);
+		testTex.Particle_Power = 5.0f;
+
+		testTex.iTextureLayerIndex = 46;
+		testTex.iMaskingTextureIndex = 100;
+		testTex.iMaskingTextureIndex = 187;
+		testTex.iNoiseTextureIndex = 285;
+
+		testTex.vEmissive_SBB = _float3(1, 0.8f, 0.1f);
+		//testTex.TempBuffer_1.y = 0;
+		testTex.TempBuffer_1.y = 1;
+
+		//	testTex.m_fAlphaTestValue = 0.5f;
+
+		testTex.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+		testTex.vPowerDirection = _float3(1, 5, 1);
+		testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+	}
+	{
+		// Stones
+		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+			Prototype_Mesh_SM_Reorgeaskil04_stone1_7,
+			0.01f,
+			0.5f,
+			_float4(0.98f, 0.1f, 0.0f, 0),
+			_float4(0.96f, 0.05f, 0.0f, 0),
+			4,
+			_float3(10.0f),
+			_float3(1.0f),
+			1);
+
+		testMesh.eParticleTypeID = InstanceEffect_Fountain;
+		testMesh.eInstanceCount = Prototype_ModelInstance_16;
+		testMesh.ePassID = MeshPass_BrightColor;
+
+
+		testMesh.Particle_Power = 10.0f;
+		testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+		testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+		testMesh.vEmissive_SBB = _float3(0.1f, 0.6f, 0.1f);
+		testMesh.SubPowerRandomRange_RUL = _float3(1,1,3);
+		testMesh.iMaskingTextureIndex = 214;
+		testMesh.iNoiseTextureIndex = 375;
+		testMesh.iNoiseTextureIndex = 337;
+
+		testMesh.TempBuffer_0.w = 404;
+
+		testMesh.TempBuffer_1.x = 1.0f;
+		testMesh.TempBuffer_0.z = 1;
+
+		testMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+		// testMesh.FollowingTarget = m_pTransformCom;
+		// testMesh.iFollowingDir = FollowingDir_Up;
+
+		testMesh.bAutoTurn = true;
+		testMesh.fRotSpeed_Radian = XMConvertToRadians(720);
+
+		testMesh.TempBuffer_0.w = 428;
+		lstrcpy(testMesh.szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_SM_4E_IceShards_01));
+		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+		lstrcpy(testMesh.szModelMeshProtoTypeTag, TAG_CP(Prototype_Mesh_SM_4E_IceShards_03));
+		testMesh.TempBuffer_0.w = 405;
+		testMesh.TempBuffer_0.w = 422;
+		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+
+
+	}
+
+
+
+	__super::Set_IsDead();
+	
+	
+
 }
 
 HRESULT CMonster_Tezabsura_Bomber::SetUp_Info()
@@ -477,10 +593,14 @@ HRESULT CMonster_Tezabsura_Bomber::Once_AnimMotion(_double dDeltaTime)
 
 #ifdef _DEBUG
 	// #DEBUG PatternSET
-	// m_iOncePattern = 2;
+//	m_iOncePattern = 4;
 
 	if (KEYPRESS(DIK_B))
-		m_iOncePattern = 1;
+	{
+		m_iOncePattern = 2;
+	}
+
+
 #endif // _DEBUG
 	switch (m_iOncePattern)
 	{
@@ -726,22 +846,353 @@ HRESULT CMonster_Tezabsura_Bomber::Ready_ParticleDesc()
 	return S_OK;
 }
 
-HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
+HRESULT CMonster_Tezabsura_Bomber::Update_Particle(_double timer)
 {
-	if (m_SpawnEffectAdjust == 0)
+	if (!m_bIsInitParticle)
 	{
-		// smoke
-		m_SpawnEffectAdjust++;
+		m_bIsInitParticle = true;
+
 		{
-			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
-				0.05f,
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Spawn3_Imagepng_Snow2,
+				9999,
+				0,
+				_float4(1.00f, 0.49f, 0.65f, 0.8f),
+				_float4(1.00f, 0.49f, 0.65f, 0.2f),
+				1,
+				_float3(0.8f),
+				_float3(0.1f),
+				1);
+
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
+			_float Val = 1.0f;
+			testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+			testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+			testTex.Particle_Power = 3;
+
+			testTex.iTextureLayerIndex = 6;
+			testTex.iTextureLayerIndex = 102;
+			testTex.iTextureLayerIndex = 93;
+			testTex.TempBuffer_0.w = FollowingDir_Look;
+			testTex.TempBuffer_0.z = 720;
+			testTex.m_fAlphaTestValue = 0.3f;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+	}
+
+	if (KEYDOWN(DIK_V))
+	{
+		//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash0, m_pTransformCom);
+		// Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash1, m_pTransformCom);
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash3, m_pTransformCom);
+
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				//	Prototype_Mesh_SM_ControlPointMatch_Square_02,
+				Prototype_Mesh_SM_Box_Basic,
+				0.01f,
 				0.5f,
+				//	_float4(0.15f, 0.38f, 1, 1),
+				//	_float4(0.25f, 0.18f, 1, 1),
+				_float4(0),
+				_float4(0),
+				1,
+				_float3(1.5f),
+				_float3(0.5f),
+				1);
+
+			testMesh.vPowerDirection = _float3(0, 1, 0);
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			testMesh.TempBuffer_0.w = 270;
+			testMesh.iMaskingTextureIndex = 101;
+			testMesh.iNoiseTextureIndex = NONNOISE;
+
+			testMesh.vEmissive_SBB = _float3(1, 0, 0);
+			testMesh.fDistortionNoisingPushPower = 10.0f;
+
+			testMesh.ParticleStartRandomPosMin = _float3(0);
+			testMesh.ParticleStartRandomPosMax = _float3(0);
+			testMesh.Particle_Power = 3;
+
+
+
+
+			//	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Matrix mat = m_pPlayerTransform->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+			//	testMesh.FollowingTarget = m_pTextureParticleTransform_Hand;
+
+			//	GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+
+		{
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_Mesh_MaskApper,
+				Prototype_Mesh_SM_Ninjasura_Knife,
+				0.5f,
+				0,
+				//	_float4(0.15f, 0.38f, 1, 1),
+				//	_float4(0.25f, 0.18f, 1, 1),
+				_float4(0),
+				_float4(0),
+				0,
+				_float3(3.0f),
+				_float3(3.0f),
+				1);
+
+			//testMesh.vPowerDirection = _float3(0, 1, 0);
+			//testMesh.eParticleTypeID = InstanceEffect_Suck;
+			testMesh.eInstanceCount = Prototype_ModelInstance_4;
+			//testMesh.TempBuffer_0.w = 270;
+			//testMesh.iMaskingTextureIndex = 101;
+			//testMesh.iNoiseTextureIndex = NONNOISE;
+
+			//testMesh.vEmissive_SBB = _float3(1, 0, 0);
+			//testMesh.fDistortionNoisingPushPower = 10.0f;
+
+			_float Val = 1.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-Val, -1.f, -Val);
+			testMesh.ParticleStartRandomPosMax = _float3(Val, 1.0f, Val);
+			//testMesh.Particle_Power = 3;
+
+			testMesh.FollowingTarget = m_pPlayerTransform;
+			testMesh.iFollowingDir = FollowingDir_Right;
+
+			//	GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+	}
+
+	if (KEYDOWN(DIK_C))
+	{
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+				0.05f,
+				0.4f,
 				_float4(1),
 				_float4(1, 1, 1, 0.5f),
 				0,
 				_float3(0.5f),
+				_float3(0.1f),
+				0);
+			testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+			testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+			_float Val = 1.0f;
+			testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+			testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+			testTex.Particle_Power = 3;
+
+			testTex.iTextureLayerIndex = 3;
+			testTex.iMaskingTextureIndex = 100;
+
+			//testTex.TempBuffer_1.y = 0;
+			testTex.TempBuffer_1.y = 1;
+
+			//	testTex.m_fAlphaTestValue = 0.5f;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			testTex.vPowerDirection = _float3(0, 1, 0);
+			testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Spawn3_Imagepng_Snow2,
+				0,
+				0,
+				_float4(1.00f, 0.49f, 0.65f, 0.8f),
+				_float4(1.00f, 0.49f, 0.65f, 0.2f),
+				1,
+				_float3(0.8f),
+				_float3(0.1f),
+				1);
+
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_8;
+			_float Val = 1.0f;
+			testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+			testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+			testTex.Particle_Power = 3;
+
+			testTex.iTextureLayerIndex = 6;
+			testTex.iTextureLayerIndex = 102;
+			testTex.iTextureLayerIndex = 93;
+			testTex.TempBuffer_0.w = FollowingDir_Look;
+			testTex.TempBuffer_0.z = 720;
+			testTex.m_fAlphaTestValue = 0.3f;
+
+			testTex.FollowingTarget = m_pPlayerTransform;
+			testTex.iFollowingDir = FollowingDir_Up;
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				3.f,
+				0.5f,
+				_float4(1),
+				_float4(1, 1, 1, 0.5f),
+				0,
+				_float3(1.0f),
 				_float3(0.3f),
 				0);
+			//	testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+			testTex.ePassID = InstancePass_BrightColor;
+			//	testTex.ePassID = InstancePass_MaskingNoising;s
+			// testTex.vEmissive_SBB = _float3(1, 1, 0.3f);
+
+
+			testTex.ParticleStartRandomPosMin = _float3(-1, 0, -1);
+			testTex.ParticleStartRandomPosMax = _float3(1, 0, 1);
+			testTex.Particle_Power = 5.0f;
+
+			//testTex.iTextureLayerIndex = 20;
+			//testTex.iMaskingTextureIndex = 74;
+			//testTex.iMaskingTextureIndex = 68;
+			//testTex.iNoiseTextureIndex = 350;
+
+			//testTex.TempBuffer_1.y = 0;
+			//testTex.TempBuffer_1.x = 0;
+
+		//	testTex.m_fAlphaTestValue = 0.2f;
+
+
+			testTex.FollowingTarget = m_pPlayerTransform;
+			testTex.iFollowingDir = FollowingDir_Up;
+			//	GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+		{
+			// jump smoke Test
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+				2.0f,
+				0.6f,
+				_float4(1),
+				_float4(1, 1, 1, 0.3f),
+				1,
+				_float3(0.5f),
+				_float3(0.1f),
+				0);
+			testTex.eParticleTypeID = InstanceEffect_Straight;
+			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+			testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+			_float Val = 1.5f;
+			testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+			testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+			testTex.Particle_Power = 1.5f;
+
+			testTex.iTextureLayerIndex = 36;
+			testTex.iMaskingTextureIndex = 100;
+			testTex.iMaskingTextureIndex = 187;
+			testTex.iNoiseTextureIndex = 6;
+
+			testTex.vEmissive_SBB = _float3(1,1,0.5f);
+			//testTex.TempBuffer_1.y = 0;
+			testTex.TempBuffer_1.y = 1;
+
+			//	testTex.m_fAlphaTestValue = 0.5f;
+
+			testTex.FollowingTarget = m_pTransformCom;
+			testTex.iFollowingDir = FollowingDir_Up;
+			testTex.vPowerDirection = _float3(0, 1, 0);
+			testTex.SubPowerRandomRange_RUL = _float3(1, 3, 1);
+			GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
+{
+
+	if (m_SpawnEffectAdjust == 0)
+	{
+		m_SpawnEffectAdjust++;
+		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TB, m_pTransformCom);
+	}
+
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.3f)
+	{
+		m_SpawnEffectAdjust++;
+
+		{
+			// Stones
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+				Prototype_Mesh_SM_Reorgeaskil04_stone1_7,
+				0.01f,
+				0.5f,
+				_float4(0.98f, 0.1f, 0.0f, 0),
+				_float4(0.96f, 0.05f, 0.0f,0),
+				4,
+				_float3(5.0f, 12.f, 5.f).XMVector()*0.4f,
+				_float3(3.0f).XMVector() * 0.1f,
+				1);
+
+			testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_32;
+			testMesh.ePassID = MeshPass_MaskingNoising_Bright;
+
+
+			testMesh.Particle_Power = 10.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-2, 0, -2);
+			testMesh.ParticleStartRandomPosMax = _float3(2, 0, 2);
+			testMesh.vEmissive_SBB = _float3(0.65f, 0.1f, 0.1f);
+
+			testMesh.iMaskingTextureIndex = 57;
+			testMesh.iNoiseTextureIndex = 337;
+
+			testMesh.TempBuffer_0.w = 427;
+
+			testMesh.TempBuffer_1.x = 1.0f;
+			testMesh.TempBuffer_0.z = 1;
+
+			testMesh.FollowingTarget = m_pTransformCom;
+			testMesh.iFollowingDir = FollowingDir_Up;
+
+			testMesh.bAutoTurn = true;
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(720);
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+	}
+
+	if (m_SpawnEffectAdjust == 2 && m_SpawnDealytime <= 0.5f)
+	{
+		m_SpawnEffectAdjust++;
+
+		// smoke
+		{
+			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+				0.05f,
+				0.5f,
+				_float4(0.27f, 0.45f, 0.0f, 1),
+				_float4(0.54f, 0.90f, 0.0f, 1),
+				1,
+				_float3(1.0f),
+				_float3(0.5f),
+				1);
 			//	testTex.eParticleTypeID = InstanceEffect_Straight;
 			testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
 			testTex.ePassID = InstancePass_BrightColor;
@@ -752,7 +1203,7 @@ HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
 			_float val = 0.8f;
 			testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
 			testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
-			testTex.Particle_Power = 5.0f;
+			testTex.Particle_Power = 8.0f;
 
 			//testTex.iTextureLayerIndex = 20;
 			//testTex.iMaskingTextureIndex = 74;
@@ -771,6 +1222,8 @@ HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
 
 		}
 	}
+
+
 
 	return S_OK;
 }
@@ -831,6 +1284,7 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 		m_dAcceleration = 1;
 
 		m_iSoundIndex = 0;
+		m_EffectAdjust = 0;
 
 		if (iNowAnimIndex < 8 || iNowAnimIndex >10)
 			m_bJumpingOn = false;
@@ -917,6 +1371,53 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Get_Hit_01.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
 				m_iSoundIndex++;
 			}
+
+			if (m_EffectAdjust == 0 && PlayRate >= 0.5882)
+			{
+				m_EffectAdjust++;
+				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash1, m_pTransformCom);
+
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+						0.05f,
+						0.63f,
+						_float4(1),
+						_float4(1, 1, 1, 0.5f),
+						0,
+						_float3(0.6f),
+						_float3(0.1f),
+						1);
+					testTex.eParticleTypeID = InstanceEffect_Fountain;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+					testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+					_float Val = 0.3f;
+					testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+					testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+					testTex.Particle_Power = 3;
+
+					testTex.iTextureLayerIndex = 36;
+
+					testTex.iMaskingTextureIndex = 101;
+
+					//testTex.TempBuffer_1.y = 0;
+					testTex.TempBuffer_1.y = 1;
+
+					//	testTex.m_fAlphaTestValue = 0.5f;
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					testTex.vPowerDirection = _float3(0, 1, 0);
+					testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
+
+			}
+
+
 			break;
 		}
 		case 9:
@@ -927,10 +1428,11 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bJumpingOn = true;
 				m_iAdjMovedIndex++;
 			}
+
 			break;
 		}
 		case 10:
-		{
+		{ 
 			if (m_iAdjMovedIndex == 0)
 			{
 				//m_dAcceleration = 1.6452f;
@@ -941,7 +1443,60 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("EH_fleshjump04.ogg"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
 				m_iSoundIndex++;
+
+
+				// Fast Particle
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+						0.05f,
+						0.63f,
+						_float4(1, 1, 1, 0.6f),
+						_float4(1, 1, 1, 0.2f),
+						1,
+						_float3(0.5f),
+						_float3(0.1f),
+						1);
+					testTex.eParticleTypeID = InstanceEffect_Fountain;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+					//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+					testTex.ePassID = InstancePass_MaskingNoising_Bright;
+					testTex.vEmissive_SBB = _float3(0.8f,0.5f,0);
+
+					_float Val = 1.5f;
+					testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+					testTex.ParticleStartRandomPosMax = _float3(Val, 0, Val);
+					testTex.Particle_Power = 3;
+
+					testTex.iTextureLayerIndex = 36;
+					testTex.iMaskingTextureIndex = 189;
+					testTex.iNoiseTextureIndex = 271;
+					//testTex.TempBuffer_1.y = 0;
+					testTex.TempBuffer_1.y = 1;
+
+					//	testTex.m_fAlphaTestValue = 0.5f;
+					testTex.m_fAlphaTestValue = 0.2f;
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					testTex.vPowerDirection = _float3(0, 1, 0);
+					testTex.SubPowerRandomRange_RUL = _float3(1, 1, 3);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+					testTex.iTextureLayerIndex = 51;
+					testTex.vEmissive_SBB = _float3(1.0f, 0.5f, 0.5f);
+
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				}
 			}
+
+			if (m_EffectAdjust == 0 )
+			{
+				m_EffectAdjust++;
+
+			}
+
+
 			break;
 		}
 		case 11:
@@ -969,6 +1524,53 @@ HRESULT CMonster_Tezabsura_Bomber::Adjust_AnimMovedTransform(_double dDeltaTime)
 				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1037.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
 				Set_IsDead();
 			}
+
+			if (m_EffectAdjust == 0)
+			{
+				m_EffectAdjust++;
+				{
+					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+						2.5F,
+						0.5F,
+						_float4(1),
+						_float4(1, 1, 1, 1.0F),
+						1,
+						_float3(1.6f),
+						_float3(1.0F),
+						1);
+
+					testTex.eParticleTypeID = InstanceEffect_Straight;
+					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+					//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+					testTex.ePassID = InstancePass_MaskingNoising;
+					testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+					_float Val = 1.5f;
+					testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+					testTex.ParticleStartRandomPosMax = _float3(Val, 0.5F, Val);
+					testTex.Particle_Power = 2.0F;
+
+					testTex.iTextureLayerIndex = 39;
+					testTex.iMaskingTextureIndex = 100;
+					testTex.iMaskingTextureIndex = 187;
+					testTex.iNoiseTextureIndex = 285;
+
+					testTex.vEmissive_SBB = _float3(1, 0.2f, 0.1f);
+					//testTex.TempBuffer_1.y = 0;
+					testTex.TempBuffer_1.y = 1;
+
+					//	testTex.m_fAlphaTestValue = 0.5f;
+
+					testTex.FollowingTarget = m_pTransformCom;
+					testTex.iFollowingDir = FollowingDir_Up;
+					testTex.vPowerDirection = _float3(0, 1, 0);
+					testTex.SubPowerRandomRange_RUL = _float3(1, 3, 1);
+					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+				}
+		}
+
+
 			break;
 		}
 		case 13:

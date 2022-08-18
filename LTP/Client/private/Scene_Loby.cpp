@@ -25,8 +25,6 @@ HRESULT CScene_Loby::Initialize()
 	
 
 
-	// #SOUND Test
-	// GetSingle(CGameInstance)->PlayBGM(L"The End.mp3", 0, 1.f);
 		
 
 

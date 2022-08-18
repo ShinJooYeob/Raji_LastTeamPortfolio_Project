@@ -315,13 +315,14 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		m_pModel->Change_AnimIndex_ReturnTo(5, 0);
 	}
 	
-	// #DEBUG
+#ifdef _DEBUG
 	if (KEYDOWN(DIK_B))
 	{
 		mOnlyPattern++;
 		if (mOnlyPattern >= 4)
 			mOnlyPattern = 0;
 	}
+#endif // _DEBUG
 
 
 	/////////스킬공격

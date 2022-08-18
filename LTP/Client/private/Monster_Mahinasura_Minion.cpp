@@ -36,7 +36,6 @@ HRESULT CMonster_Mahinasura_Minion::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
-	//#BUG NAVIONPLEASE
 
 #ifdef _DEBUG
 	///////////////test
@@ -89,7 +88,7 @@ _int CMonster_Mahinasura_Minion::Update(_double dDeltaTime)
 		}
 	}
 
-	// #TEXT ANIFUNC
+	// ANIFUNC
 	//마지막 인자의 bBlockAnimUntilReturnChange에는 true로 시작해서 정상작동이 된다면 false가 된다.
 	//m_pModel->Change_AnimIndex();
 	//m_pModel->Change_AnimIndex_ReturnTo(); //어떤 애니메이션을 돌리고 특정 애니메이션으로 보냄

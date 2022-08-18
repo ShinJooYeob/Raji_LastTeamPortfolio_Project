@@ -157,8 +157,7 @@ _int CRangda::Update(_double fDeltaTime)
 	if (m_iMaterialCount == 7)
 		m_bIsHalf = true;
 
-
-	// #DEBUG
+#ifdef _DEBUG
 	if (KEYDOWN(DIK_B))
 	{
 	
@@ -186,6 +185,7 @@ _int CRangda::Update(_double fDeltaTime)
 
 		m_bIsHalf = true;
 	}
+#endif // _DEBUG
 
 
 	//맞았을때

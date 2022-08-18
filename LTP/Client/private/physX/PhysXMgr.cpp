@@ -596,7 +596,6 @@ HRESULT CPhysXMgr::Call_CollisionFunc_Contect()
 		return S_OK;
 
 	// 정적 오브젝트 / 동적 오브젝트 충돌 판단
-	// #TODO: 동적 오브젝트 충돌처리
 
 	while (mListContactPair.empty() == false)
 	{

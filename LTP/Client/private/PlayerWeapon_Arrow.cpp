@@ -90,7 +90,8 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 	{
 		if (!m_bEffect_Head)
 		{
-			Set_Play_MeshParticle(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom, &m_bEffect_Head);
+			GETPARTICLE->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom);
+			m_bEffect_Head = true;
 		}
 
 	
@@ -354,7 +355,9 @@ _int CPlayerWeapon_Arrow::UpdateState_NormalShot(_double fDeltaTime)
 		m_pTransformCom->Move_Forward(fDeltaTime);
 		m_pTimer_Destroy->Get_DeltaTime();
 		m_bFired = true;
-		FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
+
+		// #EFFECT BUG
+		// FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
 
 	}
 	else
@@ -493,9 +496,6 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 
 HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 {
-
-	FAILED_CHECK(__super::Ready_ParticleDesc());
-
 	// Transform 
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_BREAK(m_pTextureParticleTransform);
@@ -506,25 +506,25 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	// Particle
 
 	// 0
-	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_ArrowHead);
-	instanceDesc.FollowingTarget = nullptr;
-	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
-	m_vecTextureParticleDesc.push_back(instanceDesc);
+	//auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_ArrowHead);
+	//instanceDesc.FollowingTarget = nullptr;
+	//GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	// 1
-	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail);
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	m_vecTextureParticleDesc.push_back(instanceDesc);
+	//// 1
+	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail);
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	// 2
-	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit);
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	m_vecTextureParticleDesc.push_back(instanceDesc);
+	//// 2
+	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit);
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	// 3
-	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
-	instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
-	m_vecTextureParticleDesc.push_back(instanceDesc);
+	//// 3
+	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
+	//m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
 
@@ -534,7 +534,6 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 
 HRESULT CPlayerWeapon_Arrow::Update_Particle(_double fDeltaTime)
 {
-	FAILED_CHECK(__super::Update_Particle(fDeltaTime));
 
 //	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 
@@ -578,7 +577,8 @@ void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 	{
 	case EArrowState::Arrow_State_NormalReady:
 		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
-		FAILED_CHECK_NONERETURN(Set_Play_Particle(0, (*pMat).r[3] + (*pMat).r[2] * 0.75f));
+		// #EFFECT BUG
+		// FAILED_CHECK_NONERETURN(Set_Play_Particle(0, (*pMat).r[3] + (*pMat).r[2] * 0.75f));
 		break;
 	case EArrowState::Arrow_State_NormalShot:
 	case EArrowState::Arrow_State_PowerShot_Combo_0:
@@ -723,7 +723,9 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Arrow_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 
-			FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
+
+			// #EFFECT BUG
+			// FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
 
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
 		}

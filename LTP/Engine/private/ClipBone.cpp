@@ -43,7 +43,6 @@ HRESULT CClipBone::Initialize_ClipBone(ANIBONES * bone)
 	m_iNumKeyFrames = bone->mNumKeyFrames;
 
 	
-	// #BUG
 	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 	{
 		KEYFRAME*	KeyFrames = NEW KEYFRAME;

@@ -1842,7 +1842,7 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 		GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
 
-		// #3DSOUND
+		// 3DSOUND
 
 		if (ImGui::Button("StartSound"))
 		{

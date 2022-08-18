@@ -41,8 +41,9 @@ HRESULT CSoundMgr::Initialize_FMOD()
 	ZeroMemory(m_fPassedTimeArr, sizeof(_float) * MaxChannelCount);
 
 	// FMOD_System_SetUserData(m_pSystem, );
-
-	return LoadSoundFile();
+	FAILED_CHECK(LoadSoundFile_3D());
+	FAILED_CHECK(LoadSoundFile_2D());
+	return S_OK;
 }
 
 HRESULT CSoundMgr::Update_FMOD(_float fTimeDelta)
@@ -525,10 +526,11 @@ _bool CSoundMgr::Get_Channel_IsPaused(CHANNELID eID)
 	return m_PauseArr[eID];
 }
 
-HRESULT CSoundMgr::LoadSoundFile()
+HRESULT CSoundMgr::LoadSoundFile_3D()
 {
 	_tfinddata64_t fd;
 	__int64 handle = _tfindfirst64(L"../Bin/Resources/SoundFiles/*.*", &fd);
+	
 	if (handle == -1 || handle == 0)
 	{
 		__debugbreak();
@@ -570,6 +572,48 @@ HRESULT CSoundMgr::LoadSoundFile()
 	}
 	
 
+	return S_OK;
+}
+
+HRESULT CSoundMgr::LoadSoundFile_2D()
+{
+	_tfinddata64_t fd;
+	__int64 handle = _tfindfirst64(L"../Bin/Resources/SoundFiles_2D/*.*", &fd);
+
+	if (handle == -1 || handle == 0)
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	_int iResult = 0;
+
+	char szCurPath[128] = "../Bin/Resources/SoundFiles_2D/";
+	char szFullPath[128] = "";
+	char szFilename[MAX_PATH];
+	while (iResult != -1)
+	{
+		WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		strcpy_s(szFullPath, szCurPath);
+		strcat_s(szFullPath, szFilename);
+		FMOD_SOUND* pSound = nullptr;
+
+		FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_DEFAULT, 0, &pSound);
+		// FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_3D | FMOD_3D_LINEARROLLOFF, 0, &pSound);
+		if (eRes == FMOD_OK)
+		{
+			_uint iLength = _uint(strlen(szFilename) + 1);
+
+			TCHAR* pSoundKey = new TCHAR[iLength];
+			ZeroMemory(pSoundKey, sizeof(TCHAR) * iLength);
+			MultiByteToWideChar(CP_ACP, 0, szFilename, iLength, pSoundKey, iLength);
+
+			m_mapSound.emplace(pSoundKey, pSound);
+		}
+		iResult = _tfindnext64(handle, &fd);
+	}
+	//	FMOD_System_Update(m_pSystem);
+	_findclose(handle);
 	return S_OK;
 }
 

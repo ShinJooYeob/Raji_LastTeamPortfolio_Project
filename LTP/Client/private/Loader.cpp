@@ -384,7 +384,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		/////////////////////////////////////
 
 
-		// #MESHEFFECT LOAD 
+		// #MESHEFFECT MeshLoad 
 		// when Merge Off
 //		for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)
 //		{
@@ -2037,7 +2037,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Switching_L_Z_Plane);
 
 	////// MERGE //
-	//FAILED_CHECK(Load_AllMonster());
+//	FAILED_CHECK(Load_AllMonster());
 //	FAILED_CHECK(Load_AllBoss());
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 

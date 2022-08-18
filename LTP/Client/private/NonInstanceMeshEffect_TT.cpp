@@ -304,7 +304,6 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 
 	// ROT
 
-	// #BUG 로테이션 버그 발생시 플러그 나눔
 	if (mAddDesc.FixFlag_Rot == true)
 	{
 

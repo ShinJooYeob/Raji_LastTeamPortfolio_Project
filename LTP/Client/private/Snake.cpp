@@ -172,12 +172,7 @@ _int CSnake::Update(_double fDeltaTime)
 	_float3 TargetDir = XMVector3Normalize(XMLoadFloat3(&PlayerPos) - m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_vAngle = XMVector3Dot(XMLoadFloat3(&TargetDir), XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)));
 
-	// #DEBUG
-	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
-		m_bTestHodeing = !m_bTestHodeing;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
-		m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 	if (m_bIsAttack && m_bIsLookAt)
 	{
@@ -188,6 +183,12 @@ _int CSnake::Update(_double fDeltaTime)
 		Dir = XMVector3Normalize(PlayerPos.XMVector() - XMVectorSetY(Dir, PlayerPos.y));
 		m_pTransformCom->Turn_Dir(Dir, 0.90f);
 	}
+#ifdef _DEBUG
+	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)
+		m_bTestHodeing = !m_bTestHodeing;
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_N)& DIS_Down)
+		m_pModel->Change_AnimIndex_ReturnTo(5, 1);
 
 	if (KEYDOWN(DIK_B))
 	{
@@ -196,6 +197,7 @@ _int CSnake::Update(_double fDeltaTime)
 		m_bHiding = false;
 		m_bTestHodeing = false;
 	}
+#endif // _DEBUG
 
 	if (XMVectorGetX(m_vAngle) > 0.99f && !m_bIsAttack && m_fAttackCoolTime <= 0.f)
 	{ 

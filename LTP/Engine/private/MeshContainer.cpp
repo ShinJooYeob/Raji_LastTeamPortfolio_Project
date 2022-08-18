@@ -151,7 +151,6 @@ HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader* pShader, _fMatrix&
 	}
 	else
 	{
-		//#BUG asiimp와 UpdatedMatrix 값이 위치가 다름 
 		for (auto& iHierarchyIndex : m_vecAffectingBoneIndex)
 		{
 			_Matrix UpdatedMatrix = ((*pVecHierarchyNodes)[iHierarchyIndex])->Get_UpdatedMatrix();
@@ -198,7 +197,6 @@ HRESULT CMeshContainer::Bind_AffectingBones_OnShader(CShader * pShader, _fMatrix
 	}
 	else
 	{
-		//#BUG asiimp와 UpdatedMatrix 값이 위치가 다름 
 		for (auto& iHierarchyIndex : m_vecAffectingBoneIndex)
 		{
 			_Matrix UpdatedMatrix = ((*pUpdateMatrix)[iHierarchyIndex]).XMatrix();

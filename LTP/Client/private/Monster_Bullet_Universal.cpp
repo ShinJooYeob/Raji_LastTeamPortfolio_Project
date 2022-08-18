@@ -281,6 +281,118 @@ void CMonster_Bullet_Universal::Set_IsDead()
 		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_508.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.5f);
 		break;
 	}
+	case TEZABSURA_BOMBER_HOWITZER_BULLET:
+	{
+
+		{
+			// Fragment
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+				//	Prototype_Mesh_SM_Box_Basic,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
+				//	_float4(1,0,0,1),
+				//	_float4(1,0,0,1),
+				_float4(0.98f, 0.49f, 0.25f, 0.0f),
+				_float4(0),
+				1,
+				_float3(10),
+				_float3(0.1f),
+				1);
+
+			//	testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_16;
+			testMesh.ePassID = MeshPass_MaskingNoising;
+
+			_float val = 0.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-val, -1.0f, -val);
+			testMesh.ParticleStartRandomPosMax = _float3(val, -1.0f, val);
+
+			testMesh.TempBuffer_0.w = 276;
+			testMesh.TempBuffer_0.w = 372;
+
+			testMesh.iMaskingTextureIndex = NONNMASK;
+			testMesh.iMaskingTextureIndex = 122;
+			testMesh.iNoiseTextureIndex = 289;
+			testMesh.vEmissive_SBB = _float3(1.f, 0.0f, 0.1f);
+			testMesh.Particle_Power = 30.0f;
+
+			testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 2);
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+			testMesh.TempBuffer_0.z = 1;
+
+			//testMesh.TempBuffer_0.x = 1;
+			//testMesh.TempBuffer_0.y = FollowingDir_Right;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+			//	testMesh.FollowingTarget = m_pTransformCom;
+			//	testMesh.iFollowingDir = FollowingDir_Look;
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+	}
+	break;
+
+	case TEZABSURA_BOMBER_DEFAULT_BULLET:
+	{
+		{
+			// Fragment
+			INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+				//	Prototype_Mesh_SM_Box_Basic,
+				Prototype_Mesh_SM_4E_IceShards_01,
+				0.01f,
+				0.8f,
+				//	_float4(1,0,0,1),
+				//	_float4(1,0,0,1),
+				_float4(0.98f, 0.49f, 0.25f, 0.0f),
+				_float4(0),
+				1,
+				_float3(10),
+				_float3(0.1f),
+				1);
+
+			//	testMesh.eParticleTypeID = InstanceEffect_Fountain;
+			testMesh.eInstanceCount = Prototype_ModelInstance_16;
+			testMesh.ePassID = MeshPass_MaskingNoising;
+
+			_float val = 0.0f;
+			testMesh.ParticleStartRandomPosMin = _float3(-val, -1.0f, -val);
+			testMesh.ParticleStartRandomPosMax = _float3(val, -1.0f, val);
+
+			testMesh.TempBuffer_0.w = 276;
+			testMesh.TempBuffer_0.w = 372;
+
+			testMesh.iMaskingTextureIndex = NONNMASK;
+			testMesh.iMaskingTextureIndex = 122;
+			testMesh.iNoiseTextureIndex = 289;
+			testMesh.vEmissive_SBB = _float3(1.f, 0.0f, 0.1f);
+			testMesh.Particle_Power = 30.0f;
+
+			testMesh.SubPowerRandomRange_RUL = _float3(1, 1, 2);
+			testMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+			testMesh.TempBuffer_0.z = 1;
+
+			//testMesh.TempBuffer_0.x = 1;
+			//testMesh.TempBuffer_0.y = FollowingDir_Right;
+
+			_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+			_Vector pos = mat.r[3];
+			testMesh.vFixedPosition = pos;
+
+			//	testMesh.FollowingTarget = m_pTransformCom;
+			//	testMesh.iFollowingDir = FollowingDir_Look;
+
+			GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+		}
+
+	}
+	
 	default:
 		break;
 	}
@@ -330,6 +442,7 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 			Set_IsDead();
 			break;
 		}
+
 		case VAYUSURA_LEADER_BULLET:
 		{
 			// CreateEffect
@@ -380,6 +493,12 @@ void CMonster_Bullet_Universal::CollisionTriger(CCollider * pMyCollider, _uint i
 			Set_IsDead();
 			break;
 		}
+		
+
+
+
+		break;
+
 		default:
 			break;
 		}
@@ -1207,12 +1326,73 @@ HRESULT CMonster_Bullet_Universal::Ready_JYParticleDesc()
 	}
 	break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_DEFAULT_BULLET:
+
+	{
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+			3.f,
+			0.5f,
+			_float4(0.50f, 0.0f, 0.40f,0.8f),
+			_float4(0.50f, 0.0f, 0.40f, 0.3f),
+			10,
+			_float3(1.0f),
+			_float3(0.3f),
+			0);
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
+		testTex.ePassID = InstancePass_BrightColor;
+
+		_float val = 0.5f;
+		testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+		testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+		testTex.Particle_Power = 5.0f;
+
+		testTex.vEmissive_SBB = _float3(1,0.5f,0.5f);
+
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Up;
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+	}
+
+
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_PURPLE_PRIMARY_BULLET:
+	{
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_2_png,
+			3.f,
+			0.5f,
+			_float4(1.00f, 0.62f, 0.93f, 0.8f),
+			_float4(0.50f, 0.0f, 0.40f, 1.0f),
+			10,
+			_float3(1.0f),
+			_float3(0.3f),
+			0);
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+		testTex.ePassID = InstancePass_OriginColor;
+
+		_float val = 0.2f;
+		testTex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+		testTex.ParticleStartRandomPosMax = _float3(val, 0, val);
+		testTex.Particle_Power = 5.0f;
+
+		testTex.vEmissive_SBB = _float3(1, 0.2f, 0.0f);
+
+		testTex.FollowingTarget = m_pTransformCom;
+		testTex.iFollowingDir = FollowingDir_Up;
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+	}
+
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_DEFAULT_BULLET:
+	{
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash2, m_pTransformCom);
+	}
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_BOMBER_HOWITZER_BULLET:
+	{
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash2, m_pTransformCom);
+	}
+
 		break;
 	case Client::CMonster_Bullet_Universal::TEZABSURA_LANDMINE_DEFAULT_BULLET:
 		m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(180));
@@ -1309,6 +1489,7 @@ void CMonster_Bullet_Universal::Free()
 {
 
 	__super::Free();
+	
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
