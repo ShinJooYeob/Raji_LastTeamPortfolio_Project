@@ -571,6 +571,12 @@
     <Filter Include="01.GameObject\11.Texture_Universal\1.UI_Texture_Universal">
       <UniqueIdentifier>{c9259ca3-d28d-473b-a94a-ba483056aebc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\02. FireRing">
+      <UniqueIdentifier>{7dda98a5-bac9-41db-b00a-2b67cd9ee6d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\04. CircusBackground">
+      <UniqueIdentifier>{e0ff6c7f-4152-421c-acb1-c6262600e545}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1217,6 +1223,12 @@
     <ClInclude Include="..\public\UI_Texture_Universal.h">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FireRing.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\02. FireRing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CircusBackground.h">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\04. CircusBackground</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1842,6 +1854,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Texture_Universal.cpp">
       <Filter>01.GameObject\11.Texture_Universal\1.UI_Texture_Universal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireRing.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\03. Monster\02. FireRing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CircusBackground.cpp">
+      <Filter>02.Scene\04.Scene_InGame\09.Scene_MiniGame_Jino\04. CircusBackground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

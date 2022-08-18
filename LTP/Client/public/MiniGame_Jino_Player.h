@@ -4,12 +4,12 @@
 
 BEGIN(Client)
 class CCamera_Main;
-
+class CBeachBall;
 class CMiniGame_Jino_Player  final : public CGameObject
 {
 public:
 	enum EPLAYER_STATE {
-		STATE_IDLE, STATE_MOV, STATE_JUMP, STATE_DEAD, STATE_END
+		STATE_IDLE, STATE_MOV, STATE_JUMP, STATE_LOSE_BEACHBALL, STATE_THROWAWAY_BEACHBALL_JUMP, STATE_DEAD, STATE_END
 	};
 
 	enum EPLAYER_ANIM {
@@ -50,6 +50,15 @@ public:
 	// Jump
 	void						Set_State_JumpStart();
 
+	// Lose BeachBall
+	void						Set_State_LoseBeachBall();
+
+	// Conflict BeachBall
+	void						Set_State_ConflictBeachBall();
+
+	// Throw Away BeachBall
+	void						Set_State_ThrowAwayBeachBall_Jump();
+
 	// Dead
 	void						Set_State_DeadStart();
 
@@ -58,12 +67,16 @@ public:
 	void						Set_GameOver();
 
 public:
-	void						Set_BeachBallTransform(CTransform* pTransformCom);
+	void						Set_BeachBall(CBeachBall* pBeachBall);
+	EPLAYER_STATE				Get_PlayerState();
+	_bool						Is_Falling();
 
 private:
 	HRESULT						Update_State_Idle(_double fDeltaTime);
 	HRESULT						Update_State_Move(_double fDeltaTime);
 	HRESULT						Update_State_Jump(_double fDeltaTime);
+	HRESULT						Update_State_LostBeachBall(_double fDeltaTime);
+	HRESULT						Update_State_ThrowAwayBeachBall(_double fDeltaTime);
 	HRESULT						Update_State_Dead(_double fDeltaTime);
 
 	HRESULT						Update_Collider(_double fDeltaTime);
@@ -88,7 +101,7 @@ private:
 	_float							m_fAnimSpeed = 1.f;
 
 	_float							m_fJumpStart_Y = 0.f;
-	_float							m_fFallingStart_Y = 0.f;
+	_float							m_fJumpEnd_Y = 0.f;
 	_float							m_fFallingAcc = 0.f;
 	_float							m_fJumpPower = 0.f;
 
@@ -96,7 +109,17 @@ private:
 
 	_bool							m_bGameStart = false;
 	_bool							m_bGameOver = false;
+
+	CBeachBall*						m_pBeachBall = nullptr;
 	CTransform*						m_pBeachBallTransform = nullptr;
+
+	_float							m_fDurTime_Invincibility = 0.f;
+
+	_bool							m_bIsFalling = false;
+
+	_bool							m_bRimLightArrow = false;
+	_float							m_fRimLightValue = 0.f;
+	_bool							m_bOnRimLight = false;
 
 private:
 	CShader*						m_pShaderCom = nullptr;

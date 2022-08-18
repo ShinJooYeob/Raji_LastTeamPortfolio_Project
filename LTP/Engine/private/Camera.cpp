@@ -123,6 +123,11 @@ void CCamera::Set_OrthoScreenSize(_float fSize)
 	m_fIsOrthoScreenSize = fSize;
 }
 
+void CCamera::Set_CameraDesc(CAMERADESC eCameraDesc)
+{
+	m_CameraDesc = eCameraDesc;
+}
+
 
 
 

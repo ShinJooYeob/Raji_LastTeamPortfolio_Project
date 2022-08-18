@@ -60,6 +60,8 @@ private:
 	_float					m_fFallingAcc;
 	_float					m_fJumpPower;
 
+	_float					m_fCoolTimeJump = 0.f;
+
 private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;

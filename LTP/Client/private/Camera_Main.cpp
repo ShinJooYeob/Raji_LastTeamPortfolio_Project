@@ -275,12 +275,6 @@ void CCamera_Main::ChaseTarget_NormalMode(_double fDeltaTime)
 		return;
 	}
 	 
-	
-	_Vector vtestpos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_Vector vLook = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_LOOK);
-
-	_float a = m_fTargetArmLength;
-
 	_float3 fMyPos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	_float3 fTargetPos = m_pFocusTarget->Get_AttachCamPos();
 	if (fMyPos != fTargetPos)

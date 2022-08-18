@@ -11,6 +11,8 @@
 #include "BeachBall.h"
 #include "MiniGame_Jino_Monster.h"
 #include "JumpingMonkey.h"
+#include "FireRing.h"
+#include "CircusBackground.h"
 
 CScene_MiniGame_Jino::CScene_MiniGame_Jino(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -32,8 +34,14 @@ HRESULT CScene_MiniGame_Jino::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	Ready_ObjectPool_NormalMonkey();
+	Ready_ObjectPool_JumpingMonkey();
+	Ready_ObjectPool_FireRing();
+	Ready_ObjectPool_BeachBall();
 
 	m_fDelayTime_Spawn = 3.f;
+	m_fDelayTime_Spawn_BeachBall = 4.f;
+	
+	g_pGameInstance->PlayBGM(TEXT("Jino_MiniGame_BGM.mp3"));
 	return S_OK;
 }
 
@@ -42,14 +50,22 @@ _int CScene_MiniGame_Jino::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	m_pMainCam->Set_ProjectMatrix(true);
-	m_pMainCam->Set_OrthoScreenSize(10.f);
+	m_pMainCam->Ortho_OnOff(true, 10.f);
 
-	
 	auto iMonsterAmount = g_pGameInstance->Get_ObjectList_from_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))->size();
-	if (iMonsterAmount == m_ObjectPool_NormalMonkey.size())
+	if (iMonsterAmount == (m_ObjectPool_NormalMonkey.size() + m_ObjectPool_JumpingMonkey.size()))
 	{
 		Spawn_Monster();
+	}
+
+	if (30.f < XMVectorGetX(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS)))
+	{
+		m_fDelayTime_Spawn_BeachBall -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime_Spawn_BeachBall)
+		{
+			m_fDelayTime_Spawn_BeachBall = 5.f;
+			Spawn_BeachBall();
+		}
 	}
 
 	if (m_iSceneStartChecker <= 2)
@@ -106,10 +122,15 @@ void CScene_MiniGame_Jino::Spawn_Monster()
 {
 	_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
 
-	if (XMVectorGetX(vPlayerPos) >= 35.f)
+	if (XMVectorGetX(vPlayerPos) >= 90.f)
 	{
+		m_eSpawnPhase = PHASE_4;
 	}
-	else if(XMVectorGetX(vPlayerPos) >= 10.f)
+	else if(XMVectorGetX(vPlayerPos) >= 60.f)
+	{
+		m_eSpawnPhase = PHASE_3;
+	}
+	else if(XMVectorGetX(vPlayerPos) >= 30.f)
 	{ 
 		m_eSpawnPhase = PHASE_2;
 	}
@@ -121,17 +142,98 @@ void CScene_MiniGame_Jino::Spawn_Monster()
 
 	switch (m_eSpawnPhase)
 	{
+	case PHASE_4:
+	{
+		_int iSelected = rand() % 3;
+
+		if (0 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
+		}
+		else if (1 == iSelected)
+		{
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+		}
+		else if (2 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 16.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 24.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
+		}
+		break;
+	}
 	case PHASE_3:
 	{
+		_int iSelected = rand() % 3;
 
+		if (0 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
+		}
+		else if (1 == iSelected)
+		{
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+		}
+		else if (2 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 17.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 19.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 22.f, 0.f, 0.f));
+			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 24.f, 0.f, 0.f));
+		}
+		break;
 	}
 	case PHASE_2:
 	{
-		Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 16.f, 0.f, 0.f));
+		_int iSelected = rand() % 4;
+
+		if (0 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
+		}
+		else if (1 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+		}
+		else if (2 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 22.5f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 30.f, 0.f, 0.f));
+		}
+		else if (3 == iSelected)
+		{
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 18.f, 0.f, 0.f));
+
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 21.f, 0.f, 0.f));
+			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 24.f, 0.f, 0.f));
+		}
+		break;
 	}
 	case PHASE_1:
 	{
-		_int iSelected = rand() % 3;
+		_int iSelected = rand() % 2;
 
 		if (0 == iSelected)
 		{
@@ -144,19 +246,30 @@ void CScene_MiniGame_Jino::Spawn_Monster()
 			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
 			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
 		}
-		else if (2 == iSelected)
-		{
-			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
-			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 16.f, 0.f, 0.f));
-
-			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 22.f, 0.f, 0.f));
-			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 23.f, 0.f, 0.f));
-		}
 	}
 		break;
 
 	}
 
+}
+
+void CScene_MiniGame_Jino::Spawn_BeachBall()
+{
+	_Vector vPlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+	_int iSelected = rand() % 3;
+
+	if (0 == iSelected)
+	{
+		Pop_BeachBall(_float3(XMVectorGetX(vPlayerPos) + 15.f, 0.4f, 0.f));
+		Pop_BeachBall(_float3(XMVectorGetX(vPlayerPos) + 20.f, 0.4f, 0.f));
+	}
+	else if (1 == iSelected)
+	{
+		Pop_BeachBall(_float3(XMVectorGetX(vPlayerPos) + 15.f, 0.4f, 0.f));
+		Pop_BeachBall(_float3(XMVectorGetX(vPlayerPos) + 20.f, 0.4f, 0.f));
+		Pop_BeachBall(_float3(XMVectorGetX(vPlayerPos) + 25.f, 0.4f, 0.f));
+	}
 }
 
 void CScene_MiniGame_Jino::GameClear()
@@ -170,9 +283,9 @@ void CScene_MiniGame_Jino::GameOver()
 
 	for (auto& iter : *MonsterList)
 	{
-		if (true == static_cast<CNormalMonkey*>(iter)->Get_Active())
+		if (true == static_cast<CMiniGame_Jino_Monster*>(iter)->Get_Active())
 		{
-			static_cast<CNormalMonkey*>(iter)->Dead();
+			static_cast<CMiniGame_Jino_Monster*>(iter)->Dead();
 		}
 	}
 }
@@ -199,6 +312,59 @@ void CScene_MiniGame_Jino::Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYP
 		pNormalMonkey->Set_Active(true);
 		pNormalMonkey->Set_Position(vSpawnPos);
 		m_ObjectPool_NormalMonkey.pop_front();
+	}
+}
+
+void CScene_MiniGame_Jino::Push_JumpingMonkey(CJumpingMonkey * pJumpingMonkey)
+{
+	m_ObjectPool_JumpingMonkey.push_back(pJumpingMonkey);
+}
+
+void CScene_MiniGame_Jino::Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE eMonkeyType, _float3 vSpawnPos)
+{
+	if (0 >= m_ObjectPool_JumpingMonkey.size())
+	{
+		g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &vSpawnPos);
+		CJumpingMonkey* pJumpingMonkey = static_cast<CJumpingMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster)));
+		pJumpingMonkey->SetUp_MonsterType(eMonkeyType);
+		pJumpingMonkey->Set_Active(true);
+		pJumpingMonkey->Set_Position(vSpawnPos);
+	}
+	else
+	{
+		CJumpingMonkey* pJumpingMonkey = m_ObjectPool_JumpingMonkey.front();
+		pJumpingMonkey->SetUp_MonsterType(eMonkeyType);
+		pJumpingMonkey->Set_Active(true);
+		pJumpingMonkey->Set_Position(vSpawnPos);
+		m_ObjectPool_JumpingMonkey.pop_front();
+	}
+}
+
+void CScene_MiniGame_Jino::Push_BeachBall(CBeachBall * pBeachBall)
+{
+	m_ObjectPool_BeachBall.push_back(pBeachBall);
+}
+
+CBeachBall* CScene_MiniGame_Jino::Pop_BeachBall(_float3 vSpawnPos)
+{
+	if (0 >= m_ObjectPool_BeachBall.size())
+	{
+		g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_PlayerWeapon), TAG_OP(Prototype_Object_MiniGame_BeachBall), &vSpawnPos);
+		CBeachBall* pBeachBall = static_cast<CBeachBall*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_PlayerWeapon)));
+		pBeachBall->Set_State_Spawn();
+		pBeachBall->Set_Active(true);
+		pBeachBall->Set_Position(vSpawnPos);
+		pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
+		return pBeachBall;
+	}
+	else
+	{
+		CBeachBall* pBeachBall = m_ObjectPool_BeachBall.front();
+		pBeachBall->Set_State_Spawn();
+		pBeachBall->Set_Active(true);
+		pBeachBall->Set_Position(vSpawnPos);
+		m_ObjectPool_BeachBall.pop_front();
+		return pBeachBall;
 	}
 }
 
@@ -279,7 +445,7 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Jino_Player), &_float3(0.f, 0.83f, 0.f)));
 	m_pPlayer = (CMiniGame_Jino_Player*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME_Jino, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(m_pPlayer, E_FAIL);
-	m_pPlayer->Set_BeachBallTransform(static_cast<CTransform*>(pBeachBall->Get_Component(Tag_Component(Com_Transform))));
+	m_pPlayer->Set_BeachBall(pBeachBall);
 
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(Tag_Component(Com_Transform)));
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
@@ -287,6 +453,9 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(m_pPlayer);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+
+	pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
+	pBeachBall->Set_State_Ride();
 
 	return S_OK;
 }
@@ -316,6 +485,17 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_Objects(const _tchar * pLayerTag)
 	
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_GoalTrigger), &_float3(174.f, 0.657f, 0.f)));
 
+	//==============================================================================================================//
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(4.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(24.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(44.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(64.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(84.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(104.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(124.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(144.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(164.6f, -0.94f, 7.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, pLayerTag, TAG_OP(Prototype_Object_MiniGame_CircusBackground), &_float3(184.6f, -0.94f, 7.f)));
 	return S_OK;
 }
 
@@ -468,7 +648,7 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
 	pRenderer->Set_ShadowIntensive(0.35f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, false);
 	pRenderer->Set_SunSize(0.5f);
 	pRenderer->Set_GodrayLength(64.f);
 	pRenderer->Set_GodrayIntensity(0.1f);
@@ -476,20 +656,20 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 	pRenderer->Set_DistDecay(1.6f);
 	pRenderer->Set_MaxDeltaLen(0.006f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, false);
 	_float Value = (1 - 0.98f) * 344.f + 16.f;
 	pRenderer->Set_LensfalreSupportSunSize(Value);
 	pRenderer->Set_LensefalreNoiseTexIndex(245);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(2.5f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, false);
 	pRenderer->Set_DofLength(45.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
 	pRenderer->Set_FogStartDist(0.1f);
 	pRenderer->Set_FogGlobalDensity(0.06f);
@@ -504,8 +684,6 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 
 HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_NormalMonkey()
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(10.f, 0.f, 0.f)));
-
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
 	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
 
@@ -520,6 +698,62 @@ HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_NormalMonkey()
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_NormalMonkey), &_float3(0)));
 	m_ObjectPool_NormalMonkey.push_back(static_cast<CNormalMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+
+	return S_OK;
+}
+
+HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_JumpingMonkey()
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(0.f)));
+	m_ObjectPool_JumpingMonkey.push_back(static_cast<CJumpingMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(0.f)));
+	m_ObjectPool_JumpingMonkey.push_back(static_cast<CJumpingMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster), TAG_OP(Prototype_Object_MiniGame_JumpingMonkey), &_float3(0.f)));
+	m_ObjectPool_JumpingMonkey.push_back(static_cast<CJumpingMonkey*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_Monster))));
+
+	return S_OK;
+}
+
+HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_FireRing()
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(10.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(25.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(28.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(45.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(50.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(55.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(72.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(80.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(110.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(115.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(120.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(150.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(155.f, 3.8f, 0.f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MiniGame_FireRing), &_float3(160.f, 3.8f, 0.f)));
+	return S_OK;
+}
+
+HRESULT CScene_MiniGame_Jino::Ready_ObjectPool_BeachBall()
+{
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_PlayerWeapon), TAG_OP(Prototype_Object_MiniGame_BeachBall), &_float3(0)));
+	CBeachBall* pBeachBall = (CBeachBall*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME_Jino, TAG_LAY(Layer_PlayerWeapon)));
+	pBeachBall->Set_Active(false);
+	pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
+	m_ObjectPool_BeachBall.push_back(pBeachBall);
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_PlayerWeapon), TAG_OP(Prototype_Object_MiniGame_BeachBall), &_float3(0)));
+	pBeachBall = (CBeachBall*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME_Jino, TAG_LAY(Layer_PlayerWeapon)));
+	pBeachBall->Set_Active(false);
+	pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
+	m_ObjectPool_BeachBall.push_back(pBeachBall);
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_Jino, Tag_Layer(Layer_PlayerWeapon), TAG_OP(Prototype_Object_MiniGame_BeachBall), &_float3(0)));
+	pBeachBall = (CBeachBall*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME_Jino, TAG_LAY(Layer_PlayerWeapon)));
+	pBeachBall->Set_Active(false);
+	pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
+	m_ObjectPool_BeachBall.push_back(pBeachBall);
 
 	return S_OK;
 }

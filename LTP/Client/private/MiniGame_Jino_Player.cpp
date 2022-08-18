@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MiniGame_Jino_Player.h"
 #include "physx\Collider_PhysX_Joint.h"
+#include "BeachBall.h"
+#include "Scene_MiniGame_Jino.h"
 
 CMiniGame_Jino_Player::CMiniGame_Jino_Player(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
@@ -47,6 +49,42 @@ _int CMiniGame_Jino_Player::Update(_double fDeltaTime)
 		Set_State_DeadStart();
 	}
 
+	if (0.f < m_fDurTime_Invincibility || true == m_bOnRimLight)
+	{
+		m_fDurTime_Invincibility -= (_float)fDeltaTime;
+
+		if (false == m_bRimLightArrow)
+		{
+			m_fRimLightValue += 0.1f;
+			if (1.f <= m_fRimLightValue)
+			{
+				m_bRimLightArrow = true;
+			}
+		}
+		else
+		{
+			m_fRimLightValue -= 0.1f;
+			if (0.f >= m_fRimLightValue)
+			{
+				m_bRimLightArrow = false;
+			}
+		}
+		Set_LimLight_N_Emissive(_float4(m_fRimLightValue, 0.f, 0.f, 1.f), _float4(1.f, 0.5f, 1.f, 0.f));
+
+		if (m_fDurTime_Invincibility <= 0.f)
+		{
+			m_bOnRimLight = false;
+		}
+	}
+	else
+	{
+		Set_LimLight_N_Emissive(_float4(0.f), _float4(0.f));
+		m_fRimLightValue = 0.f;
+		m_bRimLightArrow = true;
+		m_bOnRimLight = false;
+		/*Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1.f, 0.5f, 1.f, 0.f));*/
+	}
+
 	Check_PlayerInput();
 	Check_Move_OutOfStage();
 
@@ -61,6 +99,12 @@ _int CMiniGame_Jino_Player::Update(_double fDeltaTime)
 	case CMiniGame_Jino_Player::STATE_JUMP:
 		Update_State_Jump(fDeltaTime);
 		break;
+	case CMiniGame_Jino_Player::STATE_LOSE_BEACHBALL:
+		Update_State_LostBeachBall(fDeltaTime);
+		break;
+	case CMiniGame_Jino_Player::STATE_THROWAWAY_BEACHBALL_JUMP:
+		Update_State_ThrowAwayBeachBall(fDeltaTime);
+		break;
 	case CMiniGame_Jino_Player::STATE_DEAD:
 		Update_State_Dead(fDeltaTime);
 		break;
@@ -69,7 +113,10 @@ _int CMiniGame_Jino_Player::Update(_double fDeltaTime)
 		break;
 	}
 
-	Update_BeachBallPos();
+	if (CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState())
+	{
+		Update_BeachBallPos();
+	}
 
 	Update_Collider(fDeltaTime);
 
@@ -133,33 +180,99 @@ void CMiniGame_Jino_Player::Set_State_IdleStart()
 {
 	m_pModel->Change_AnimIndex(EPLAYER_ANIM::ANIM_IDLE);
 	m_eCurState = STATE_IDLE;
+	m_bIsFalling = false;
 }
 
 void CMiniGame_Jino_Player::Set_State_MoveStart()
 {
 	m_eCurState = STATE_MOV;
+	m_bIsFalling = false;
 }
 
 void CMiniGame_Jino_Player::Set_State_JumpStart()
 {
 	m_eCurState = STATE_JUMP;
+	m_bIsFalling = false;
 
-	m_fJumpStart_Y = 0.83f;
-	m_fFallingStart_Y = 0.f;
+	if (CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState())
+	{
+		m_fJumpStart_Y = 0.83f;
+	}
+	else
+	{
+		m_fJumpStart_Y = 0.f;
+	}
+	m_fJumpEnd_Y = m_fJumpStart_Y;
 	m_fFallingAcc = 0.f;
 	m_fJumpPower = 7.f;
 
 	m_pTransformCom->Set_MoveSpeed(4.f);
+
+	g_pGameInstance->Play3D_Sound(TEXT("Jino_MiniGame_Jump.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER);
+}
+
+void CMiniGame_Jino_Player::Set_State_LoseBeachBall()
+{ 
+	m_bIsFalling = false;
+	m_eCurState = STATE_LOSE_BEACHBALL;
+	m_pModel->Change_AnimIndex(ANIM_JUMP);
+	m_fFallingAcc = 0.f;
+	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_fJumpEnd_Y = 0.f;
+	m_fJumpPower = 3.f;
+
+	m_pBeachBall->Set_State_Lose();
+	g_pGameInstance->Play3D_Sound(TEXT("Jino_MiniGame_FallBall.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER);
+}
+
+void CMiniGame_Jino_Player::Set_State_ConflictBeachBall()
+{
+	m_bIsFalling = false;
+	m_eCurState = STATE_LOSE_BEACHBALL;
+	m_pModel->Change_AnimIndex(ANIM_JUMP);
+	m_fFallingAcc = 0.f;
+	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_fJumpEnd_Y = 0.f;
+	m_fJumpPower = 3.f;
+
+	m_pBeachBall = nullptr;
+	g_pGameInstance->Play3D_Sound(TEXT("Jino_MiniGame_FallBall.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER);
+}
+
+void CMiniGame_Jino_Player::Set_State_ThrowAwayBeachBall_Jump()
+{
+	m_bIsFalling = false;
+	m_eCurState = STATE_THROWAWAY_BEACHBALL_JUMP;
+	m_fJumpStart_Y = 0.83f;
+	m_fJumpEnd_Y = 0.f;
+	m_fFallingAcc = 0.f;
+	m_fJumpPower = 7.f;
+	m_pTransformCom->Set_MoveSpeed(4.f);
+
+	m_pBeachBall->Set_State_Lose();
+	g_pGameInstance->Play3D_Sound(TEXT("Jino_MiniGame_Jump.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER);
 }
 
 void CMiniGame_Jino_Player::Set_State_DeadStart()
 {
-	if (STATE_DEAD != m_eCurState)
+	if (STATE_DEAD == m_eCurState || STATE_LOSE_BEACHBALL == m_eCurState || 0.f < m_fDurTime_Invincibility)
+	{
+		return;
+	}
+
+	if (CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState())
+	{
+		Set_State_LoseBeachBall();
+		m_bOnRimLight = true;
+		m_fDurTime_Invincibility = 1.f;
+	}
+	else
 	{
 		m_eCurState = STATE_DEAD;
 		m_pModel->Change_AnimIndex(ANIM_JUMP);
 		m_fFallingAcc = 0.f;
 		m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		g_pGameInstance->Play3D_Sound(TEXT("Jino_MiniGame_Dead.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER);
 	}
 }
 
@@ -171,9 +284,27 @@ void CMiniGame_Jino_Player::Set_GameOver()
 {
 }
 
-void CMiniGame_Jino_Player::Set_BeachBallTransform(CTransform* pTransformCom)
+void CMiniGame_Jino_Player::Set_BeachBall(CBeachBall * pBeachBall)
 {
-	m_pBeachBallTransform = pTransformCom;
+	m_pBeachBall = pBeachBall;
+	m_pBeachBallTransform = static_cast<CTransform*>(m_pBeachBall->Get_Component(Tag_Component(Com_Transform)));
+	Set_State_IdleStart();
+
+	_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	vPos = XMVectorSetY(vPos, 0.83f);
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, vPos);
+
+	m_bIsFalling = false;
+}
+
+CMiniGame_Jino_Player::EPLAYER_STATE CMiniGame_Jino_Player::Get_PlayerState()
+{
+	return m_eCurState;
+}
+
+_bool CMiniGame_Jino_Player::Is_Falling()
+{
+	return m_bIsFalling;
 }
 
 HRESULT CMiniGame_Jino_Player::Update_State_Idle(_double fDeltaTime)
@@ -192,10 +323,16 @@ HRESULT CMiniGame_Jino_Player::Update_State_Jump(_double fDeltaTime)
 	m_fFallingAcc += 0.035f;
 	 
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	if (fPos_y < 0.83f)
+
+	if (XMVectorGetY(vMyPos) > fPos_y)
+	{
+		m_bIsFalling = true;
+	}
+
+	if (fPos_y < m_fJumpEnd_Y)
 	{
 		Set_State_IdleStart();
-		vMyPos = XMVectorSetY(vMyPos, 0.83f);
+		vMyPos = XMVectorSetY(vMyPos, m_fJumpStart_Y);
 		m_pTransformCom->Set_MoveSpeed(5.f);
 	}
 	else
@@ -205,6 +342,56 @@ HRESULT CMiniGame_Jino_Player::Update_State_Jump(_double fDeltaTime)
 
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 
+	return S_OK;
+}
+
+HRESULT CMiniGame_Jino_Player::Update_State_LostBeachBall(_double fDeltaTime)
+{
+	_float fPos_y = m_fJumpStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	m_fFallingAcc += 0.035f;
+
+	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	if (fPos_y <= 0.f)
+	{
+		Set_State_IdleStart();
+		vMyPos = XMVectorSetY(vMyPos, 0.f);
+		m_pTransformCom->Set_MoveSpeed(5.f);
+		m_fDurTime_Invincibility = 1.f;
+	}
+	else
+	{
+		vMyPos = XMVectorSetY(vMyPos, fPos_y);
+	}
+
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_Jino_Player::Update_State_ThrowAwayBeachBall(_double fDeltaTime)
+{
+	_float fPos_y = m_fJumpStart_Y + (m_fJumpPower * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
+	m_fFallingAcc += 0.035f;
+
+	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+
+	if (XMVectorGetY(vMyPos) > fPos_y)
+	{
+		m_bIsFalling = true; 
+	}
+
+	if (fPos_y <= m_fJumpEnd_Y)
+	{
+		Set_State_IdleStart();
+		vMyPos = XMVectorSetY(vMyPos, 0.f);
+		m_pTransformCom->Set_MoveSpeed(5.f);
+	}
+	else
+	{
+		vMyPos = XMVectorSetY(vMyPos, fPos_y);
+	}
+
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
 	return S_OK;
 }
 
@@ -221,6 +408,11 @@ HRESULT CMiniGame_Jino_Player::Update_State_Dead(_double fDeltaTime)
 		Set_State_IdleStart();
 		m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, XMVectorSet(0.f, 0.83f, 0.f, 0.f));
 		m_pTransformCom->Set_MoveSpeed(5.f);
+
+		m_pBeachBall = static_cast<CScene_MiniGame_Jino*>(g_pGameInstance->Get_NowScene())->Pop_BeachBall(XMVectorSet(0.f, 0.4f, 0.f, 0.f));
+		m_pBeachBallTransform = m_pBeachBall->Get_TransformCom();
+		m_pBeachBall->Set_State_Ride();
+		m_pBeachBall->Set_Active(true);
 		return S_OK;
 	}
 	else
@@ -253,12 +445,19 @@ HRESULT CMiniGame_Jino_Player::Update_BeachBallPos()
 
 void CMiniGame_Jino_Player::Check_PlayerInput()
 {
-	if (STATE_DEAD == m_eCurState/* || STATE_JUMP == m_eCurState*/)
+	if (STATE_DEAD == m_eCurState || STATE_LOSE_BEACHBALL == m_eCurState)
 	{
 		return;
 	}
 
-	if (STATE_JUMP != m_eCurState)
+	if (g_pGameInstance->Get_DIKeyState(DIK_LSHIFT) & DIS_Down && CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState() && STATE_JUMP != m_eCurState)
+	{
+		m_fAnimSpeed = 1.f;
+		Set_State_ThrowAwayBeachBall_Jump();
+		m_pModel->Change_AnimIndex(ANIM_JUMP, 0.05f);
+	}
+
+	if (STATE_JUMP != m_eCurState && STATE_THROWAWAY_BEACHBALL_JUMP != m_eCurState)
 	{
 		if (g_pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
 		{
@@ -272,8 +471,13 @@ void CMiniGame_Jino_Player::Check_PlayerInput()
 	{
 		m_fAnimSpeed = 1.f;
 		m_pTransformCom->Move_Backward(g_fDeltaTime);
-		m_pBeachBallTransform->Turn_CCW(XMVectorSet(0.f, 0.f, 1.f, 0.f), g_fDeltaTime);
-		if (STATE_JUMP != m_eCurState)
+
+		if (CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState())
+		{
+			m_pBeachBallTransform->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), g_fDeltaTime);
+		}
+
+		if (STATE_JUMP != m_eCurState && STATE_THROWAWAY_BEACHBALL_JUMP != m_eCurState)
 		{
 			Set_State_MoveStart();
 			m_pModel->Change_AnimIndex(ANIM_MOV_B, 0.05f);
@@ -283,8 +487,13 @@ void CMiniGame_Jino_Player::Check_PlayerInput()
 	{
 		m_fAnimSpeed = 1.f;
 		m_pTransformCom->Move_Forward(g_fDeltaTime);
-		m_pBeachBallTransform->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), g_fDeltaTime);
-		if (STATE_JUMP != m_eCurState)
+
+		if (CBeachBall::EBeachBallState::STATE_RIDE == m_pBeachBall->Get_CurState())
+		{
+			m_pBeachBallTransform->Turn_CCW(XMVectorSet(0.f, 0.f, 1.f, 0.f), g_fDeltaTime);
+		}
+
+		if (STATE_JUMP != m_eCurState && STATE_THROWAWAY_BEACHBALL_JUMP != m_eCurState)
 		{
 			Set_State_MoveStart();
 			m_pModel->Change_AnimIndex(ANIM_MOV_F, 0.05f);
@@ -294,7 +503,7 @@ void CMiniGame_Jino_Player::Check_PlayerInput()
 	{
 		m_fAnimSpeed = 1.f;
 
-		if (STATE_JUMP != m_eCurState)
+		if (STATE_JUMP != m_eCurState && STATE_THROWAWAY_BEACHBALL_JUMP != m_eCurState)
 		{
 			Set_State_IdleStart();
 		}
@@ -512,6 +721,8 @@ HRESULT CMiniGame_Jino_Player::SetUp_Colliders()
 
 HRESULT CMiniGame_Jino_Player::SetUp_EtcInfo()
 {
+	m_fJumpStart_Y = 0.83f;
+	m_fDurTime_Invincibility = 0.f;
 	return S_OK;
 }
 

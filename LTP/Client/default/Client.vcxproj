@@ -188,6 +188,7 @@
     <ClInclude Include="..\public\ChangeNavIndexTrigger.h" />
     <ClInclude Include="..\public\Chiedtuan_2Page_Weapon.h" />
     <ClInclude Include="..\public\CinematicTrigger.h" />
+    <ClInclude Include="..\public\CircusBackground.h" />
     <ClInclude Include="..\public\CurtainTrigger.h" />
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
+    <ClInclude Include="..\public\FireRing.h" />
     <ClInclude Include="..\public\GoalTrigger.h" />
     <ClInclude Include="..\public\Golu_Bullet.h" />
     <ClInclude Include="..\public\Grovetender.h" />
@@ -364,6 +366,7 @@
     <ClCompile Include="..\private\ChangeNavIndexTrigger.cpp" />
     <ClCompile Include="..\private\Chiedtuan_2Page_Weapon.cpp" />
     <ClCompile Include="..\private\CinematicTrigger.cpp" />
+    <ClCompile Include="..\private\CircusBackground.cpp" />
     <ClCompile Include="..\private\CurtainTrigger.cpp" />
     <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
@@ -371,6 +374,7 @@
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
+    <ClCompile Include="..\private\FireRing.cpp" />
     <ClCompile Include="..\private\GoalTrigger.cpp" />
     <ClCompile Include="..\private\Golu_Bullet.cpp" />
     <ClCompile Include="..\private\Grovetender.cpp" />
