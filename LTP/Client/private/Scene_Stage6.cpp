@@ -346,7 +346,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STATIC, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }

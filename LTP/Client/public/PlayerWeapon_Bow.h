@@ -14,6 +14,26 @@ public:
 		BOW_ANIM_UTILITY_LOOP, BOW_ANIM_UTILITY_READY, BOW_ANIM_UTILITY_SHOT, BOW_ANIM_END
 	};
 
+	enum E_EFFECT_BOW_TEX
+	{
+		EFFECTJ_Bow_Default,
+		EFFECTJ_Bow_Charze_Circle,
+		EFFECTJ_Bow_Charze_Suck,
+		EFFECTJ_Bow_Charze_Dash,
+		EFFECTJ_Bow_R_FlyBall,
+		EFFECTJ_Bow_R_FlyFire,
+		EFFECTJ_Bow_Q_Ball,
+
+		EFFECT_BOW_TEX_END
+	};
+
+	enum E_EFFECT_BOW_MESH
+	{
+
+		EFFECT_BOW_MESH_END
+	};
+
+
 private:
 	CPlayerWeapon_Bow(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CPlayerWeapon_Bow(const CPlayerWeapon_Bow& rhs);
@@ -100,6 +120,9 @@ private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
 	
+	vector<INSTPARTICLEDESC>		m_vecParticleDesc;
+	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
+	CGameObject*					mEffectObj = nullptr;
 
 
 private:
