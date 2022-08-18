@@ -8,6 +8,11 @@ class CUI_Texture_Universal final : public CGameObject
 public:
 	enum UI_TextureType{
 		UI_SKILL_FIREBALL,
+		UI_SKILL_BARRIERBULLET,
+		UI_SKILL_BLACKHOLE,
+		UI_Key,
+		UI_SKILL_COOLTIME,
+		UI_TEXT,
 		UI_END
 	};
 public:
@@ -20,7 +25,7 @@ public:
 		_float		fSizeY;
 		_float		fX;
 		_float		fY;
-		_float		fDepth;
+		_float		fDepth; //숫자가 큰 게 앞으로
 		_double		dDuration;
 		void*		pGameObject = nullptr;
 	}UI_TEXTURE_UNIVERSALDESC;
@@ -47,10 +52,14 @@ private:
 	HRESULT				Set_UI_Transform();
 
 private:
-	HRESULT				Play_UI(_double dDeltaTime);
+	HRESULT				Play_UI(_double dDeltaTime);	
 
 private:
 	HRESULT				Frame_Speed(_double dDeltaTime);
+
+private:
+	HRESULT				UI_Skill_CoolTime(_double dDeltaTime);
+	HRESULT				UI_Text(_double dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -69,16 +78,15 @@ private:
 	_float				m_fMaxSizeX;
 	_float				m_fMaxSizeY;
 
-	_float				m_fTemp;
-
 
 	_double				m_dDurationTime = 0;
-	_double				m_AccumulationTime = 0;
 
 	//Easing
 	_double				m_dEasingTime = 0;
+	_uint				m_iEasingIndex = 0;
+	_bool				m_bCreateText = false;
 
-	_bool				m_bLevelChangeOn = false;
+	_double				m_AccumulationTime = 0;
 
 
 public:

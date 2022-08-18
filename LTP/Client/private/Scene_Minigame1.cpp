@@ -209,7 +209,7 @@ HRESULT CScene_Minigame1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	m_pMainCam->Set_TargetArmLength(40.f); //Camera Length
 	m_pMainCam->Set_MaxTargetArmLength(10.f);
 	m_pMainCam->Set_MinTargetArmLength(1.f);
-	m_pMainCam->Ortho_OnOff(false, ORTHOGONAL_CAMERA_Y);
+	m_pMainCam->Ortho_OnOff(true, ORTHOGONAL_CAMERA_Y);
 	return S_OK;
 }
 
@@ -254,7 +254,7 @@ HRESULT CScene_Minigame1::Ready_Layer_MiniGame_Golu(const _tchar * pLayerTag)
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636597f, 56.5242004f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f,1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Golu), &_float3(40.f, 40.f, 40.f)));
 	CGameObject* pGolu = (CMiniGame_Golu*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME1, TAG_LAY(Layer_Player)));
@@ -269,7 +269,7 @@ HRESULT CScene_Minigame1::Ready_Layer_MiniGame_Golu(const _tchar * pLayerTag)
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pGolu);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636597f, 56.5242004f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 	pGolu->Update_AttachCamPos();
 
 
