@@ -58,11 +58,13 @@ _int CGolu_Bullet::Update(_double dDeltaTime)
 
 	m_dDurationTime += dDeltaTime;
 	m_dParticleTime += dDeltaTime;
+	m_SoundTime += dDeltaTime;
 
 	if (m_dDurationTime >= m_Golu_BulletDesc.dDuration)
 	{
 		Set_IsDead();
 	}
+	Distance();
 
 	//Billboard 순서 중요함
 	PlayOn(dDeltaTime);
@@ -122,9 +124,24 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 	switch (m_Golu_BulletDesc.iGoluBulletType)
 	{
 	case FIREBALL:
+		if (m_fDistance < 12)
+		{
+			if (m_SoundTime > 0.5)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1179.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+
+				m_SoundTime = 0;
+			}
+		}
 		break;
 	case BARRIERBULLET:
 	{
+		if (m_SoundTime > 0.5)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_2576.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+
+			m_SoundTime = 0;
+		}
 		switch (m_Golu_BulletDesc.iTextureIndex)
 		{
 		case 0:
@@ -565,6 +582,7 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 
 				m_dParticleTime = 0;
 			}
+
 			break;
 		}
 		default:
@@ -868,7 +886,6 @@ HRESULT CGolu_Bullet::BarrierBullet(_double dDeltaTime)
 		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_fAngle)) *
 		XMMatrixTranslation(PlayerPos.x, PlayerPos.y, PlayerPos.z));
 
-
 	return S_OK;
 }
 
@@ -976,6 +993,13 @@ HRESULT CGolu_Bullet::FireRing(_double dDeltaTime)
 
 	if (SrcPosToDestPos(dDeltaTime, m_Golu_BulletDesc.fSpeed) == false)
 		Set_IsDead();
+
+	return S_OK;
+}
+
+HRESULT CGolu_Bullet::Distance()
+{
+	m_fDistance = m_pObjectTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 	return S_OK;
 }

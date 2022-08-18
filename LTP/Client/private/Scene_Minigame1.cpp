@@ -39,6 +39,8 @@ HRESULT CScene_Minigame1::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
+
+	g_pGameInstance->PlayBGM(TEXT("EH_53 One Hell Of A Time.mp3"),0,0.2f);
 	return S_OK;
 }
 

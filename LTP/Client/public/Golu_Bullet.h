@@ -78,6 +78,7 @@ private:
 	HRESULT BlackHole(_double dDeltaTime);
 	HRESULT Tornado(_double dDeltaTime);
 	HRESULT	FireRing(_double dDeltaTime);
+	HRESULT	Distance();
 
 
 private:
@@ -92,13 +93,12 @@ private:
 	CTransform*			m_pCameraTransform = nullptr;
 	CTransform*			m_pObjectTransform = nullptr;
 
-
-
 private:
 	GOLU_BULLETDESC		m_Golu_BulletDesc;
 
 	_double				m_dDurationTime = 0;
 
+	_float				m_fDistance = 0;
 
 	_float				m_fAngle = 0;
 	_float3				m_vDefaultPos;
@@ -108,6 +108,9 @@ private:
 
 
 	_double				m_dParticleTime = 0;
+
+private:
+	_double				m_SoundTime = 0;
 
 	//Effect
 private:
