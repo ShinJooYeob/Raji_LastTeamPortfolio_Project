@@ -15,37 +15,6 @@ public:
 		BOW_ANIM_UTILITY_LOOP, BOW_ANIM_UTILITY_READY, BOW_ANIM_UTILITY_SHOT, BOW_ANIM_END
 	};
 
-	enum E_EFFECT_BOW_TEX
-	{
-		// Bow
-		EFFECTJ_Bow_Default_1,
-		EFFECTJ_Bow_Default_2,
-		EFFECTJ_Bow_Charze_Circle,
-		EFFECTJ_Bow_Charze_Suck,
-		EFFECTJ_Bow_Charze_Dash,
-		EFFECTJ_Bow_R_FlyBall,
-		EFFECTJ_Bow_R_FlyFire,
-		EFFECTJ_Bow_Q_Ball,
-
-		
-		// arrow
-		EFFECTJ_Bow_Charze_ArrowHead,
-		EFFECTJ_Bow_Bow_ArrowTrail,
-		EFFECTJ_Bow_ArrowHit,
-		EFFECTJ_Bow_Charze_Long,
-
-		EFFECT_BOW_TEX_END
-	};
-
-	enum E_EFFECT_BOW_MESH
-	{
-		EFFECTJ_BOW_Q_ICE,
-		EFFECTJ_BOW_Q_ICE2,
-		EFFECTJ_BOW_Q_PLANE,
-		EFFECT_BOW_MESH_END
-	};
-
-
 private:
 	CPlayerWeapon_Bow(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	CPlayerWeapon_Bow(const CPlayerWeapon_Bow& rhs);
@@ -92,6 +61,10 @@ public:
 	}
 
 
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc();
+	virtual HRESULT Update_Particle(_double timer);
+
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -122,35 +95,11 @@ private:
 
 
 private:/*For Particle*/
-
-	/* Particle */
-	HRESULT Ready_ParticleDesc();
-	HRESULT Update_Particle(_double timer);
-public:
-	HRESULT Set_Dead_Transform(_uint index)
-	{
-		if (index == 0)
-			m_pTextureParticleTransform_BowUp->Set_IsOwnerDead();
-		if (index == 1)
-			m_pTextureParticleTransform_BowBack->Set_IsOwnerDead();
-		return S_OK;
-	}
-	HRESULT Set_Play_ParticleTex(E_EFFECT_BOW_TEX index, _double dealytimer = 0);
-	HRESULT Set_Play_ParticleMeshInst(E_EFFECT_BOW_MESH index, _double dealytimer = 0);
-
-
-private:
-
-
-	// HRESULT PlayParticle(_uint index);
-
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
+	//	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
 
-	vector<INSTPARTICLEDESC>		m_vecParticleDesc;
-	vector<INSTMESHDESC>			m_vecMeshParticleDesc;
-	CGameObject*					mEffectObj = nullptr;
 
 
 private:
