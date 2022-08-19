@@ -756,21 +756,29 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 		}
 		if (PlayRate <= 0.95)
 		{
-			if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+			for (_int j = 0; j < m_vecInstancedTransform.size(); j++)
 			{
-				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
-				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
-					m_iSoundIndex[i]++;
-				}
-				else if (m_iSoundIndex[i] == 1 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.5121)
-				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
-					m_iSoundIndex[i]++;
-				}
+				_float fDistance = m_vecInstancedTransform[j].pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-
+				if (fDistance > 6 && m_vecInstancedTransform[j].iHp <= 0)
+					continue;
+				if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+				{
+					if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+						m_iSoundIndex[i]++;
+						break;
+					}
+					else if (m_iSoundIndex[i] == 1 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.5121)
+					{
+						g_pGameInstance->Play3D_Sound(TEXT("EH_M1_205.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+						m_iSoundIndex[i]++;
+						break;
+					}
+				}
 			}
+
 			if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 			{
 				//if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571) 이게 속도상 맞지만 사운드가 계속 재생되기 때문에 플레이레이트를 조절함
@@ -780,7 +788,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 				//}
 				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.2571)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1563.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.2f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1563.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
 					m_iSoundIndex[i]++;
 				}
 			}
