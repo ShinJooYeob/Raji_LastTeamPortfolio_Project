@@ -499,9 +499,6 @@
     <Filter Include="01.GameObject\99.UI\RadialBlurUI">
       <UniqueIdentifier>{af283745-5230-425c-8d53-0ebf947de831}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Scene\04.Scene_InGame\08.Scene_Minigame1">
-      <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\12.MiniGame">
       <UniqueIdentifier>{4347594b-2519-4ce1-92c3-a9baff0781ad}</UniqueIdentifier>
     </Filter>
@@ -573,6 +570,24 @@
     </Filter>
     <Filter Include="01.GameObject\99.UI\3DUI">
       <UniqueIdentifier>{178f8e87-57c8-4177-adc1-d615e40320e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong">
+      <UniqueIdentifier>{efa95b74-925f-44fd-8f01-587aaa13c873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong">
+      <UniqueIdentifier>{0bbdaf5b-45de-4071-a01f-736cf913e21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object">
+      <UniqueIdentifier>{295574bd-6ad1-4896-8d61-52dd87e40b47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_DonkeyKong">
+      <UniqueIdentifier>{d0227e83-416c-46e4-b5f3-486cde110faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_KongRaji">
+      <UniqueIdentifier>{8cb7976b-5d72-4f92-86c6-a2e0431b5efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\08.Scene_MiniGame_GoluSurvivors">
+      <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1157,7 +1172,7 @@
       <Filter>01.GameObject\99.UI\RadialBlurUI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Scene_Minigame1.h">
-      <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
+      <Filter>02.Scene\04.Scene_InGame\08.Scene_MiniGame_GoluSurvivors</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster_Tezabsura_Minion.h">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
@@ -1222,6 +1237,20 @@
     </ClInclude>
     <ClInclude Include="..\public\C3DUI.h">
       <Filter>01.GameObject\99.UI\3DUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CircusBackground.h" />
+    <ClInclude Include="..\public\FireRing.h" />
+    <ClInclude Include="..\public\PM_Food.h" />
+    <ClInclude Include="..\public\PM_Monster.h" />
+    <ClInclude Include="..\public\PackMen.h" />
+    <ClInclude Include="..\public\Scene_MiniGame_DonkeyKong.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_DonkeyKong.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_DonkeyKong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_KongRaji.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_KongRaji</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1789,7 +1818,7 @@
       <Filter>01.GameObject\99.UI\RadialBlurUI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Scene_Minigame1.cpp">
-      <Filter>02.Scene\04.Scene_InGame\08.Scene_Minigame1</Filter>
+      <Filter>02.Scene\04.Scene_InGame\08.Scene_MiniGame_GoluSurvivors</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster_Tezabsura_Minion.cpp">
       <Filter>01.GameObject\02.Monster\Monster\Monster_Tezabsura_Minion</Filter>
@@ -1851,6 +1880,20 @@
     </ClCompile>
     <ClCompile Include="..\private\C3DUI.cpp">
       <Filter>01.GameObject\99.UI\3DUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CircusBackground.cpp" />
+    <ClCompile Include="..\private\FireRing.cpp" />
+    <ClCompile Include="..\private\PM_Food.cpp" />
+    <ClCompile Include="..\private\PM_Monster.cpp" />
+    <ClCompile Include="..\private\PackMen.cpp" />
+    <ClCompile Include="..\private\Scene_MiniGame_DonkeyKong.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_DonkeyKong.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_DonkeyKong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_KongRaji.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object\MiniGame_KongRaji</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
