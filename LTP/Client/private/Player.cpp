@@ -20,6 +20,7 @@
 #include "IngameUI.h"
 
 #include "NonInstanceMeshEffect.h"
+#include "NonInstanceMeshEffect_TT.h"
 #include "PartilceCreateMgr.h"
 #include "InstanceEffect.h"
 
@@ -75,6 +76,164 @@ _int CPlayer::Update(_double fDeltaTime)
 		Set_State_IdleStart(fDeltaTime);
 		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.350f, 322.283f)));
 	}
+
+#ifdef _DEBUG
+	if (KEYDOWN(DIK_V))
+	{
+
+		// Mesh Effect
+	//	GETPARTICLE->Create_MeshEffectDesc_Hard();
+
+		// Texture Particle Effect
+	//	GETPARTICLE->Get_EffectSetting_Tex();
+	//	GETPARTICLE->Create_Texture_Effect_Desc();
+
+		// Mesh Particle Effect
+	//	GETPARTICLE->Get_EffectSetting_Mesh();
+	//	GETPARTICLE->Create_MeshInst_DESC();
+
+	//	GETPARTICLE->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_BOW_SP_MOVE_SPEHERE,m_pTransformCom);
+
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit,
+				0,
+				0.5f,
+				_float4(0.03f, 0.25f, 0.65f, 1),
+				_float4(0.13f, 0.35f, 0.75f, 1),
+				0,
+				_float3(1.1f),
+				_float3(0.3f),
+				1);
+			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			//	desctex.vEmissive_SBB = _float3(1,0.3f,0.1f);
+			desctex.Particle_Power = 6.5f;
+			//	desctex.Particle_Power = 4.0f;
+
+			//	desctex.TempBuffer_0.z = 0;
+			//	desctex.TempBuffer_0.w = FollowingDir_Look;
+				//	desctex.FollowingTarget = m_pTransformCom;
+				//	desctex.iFollowingDir = FollowingDir_Up;
+
+			desctex.vFixedPosition =
+				m_pTransformCom->Get_WorldMatrix().r[3]
+				+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			_float val = 0.5f;
+			desctex.ParticleStartRandomPosMin= _float3(-val,0,-val);
+			desctex.ParticleStartRandomPosMax= _float3(val,0, val);
+
+			//	desc.AlphaBlendON = true;
+			//	desc.vEmissive_SBB = _float3(1, 0, 0);
+
+		//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+				0,
+				0.5f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 0.8f),
+				1,
+				_float3(0.8f),
+				_float3(1.0f),
+				1);
+
+			desctex.vEmissive_SBB = _float3(1, 0.1f, 0.5f);
+			desctex.Particle_Power = 0.5f;
+
+			desctex.vFixedPosition =
+				m_pTransformCom->Get_WorldMatrix().r[3]
+				+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			//	desctex.AlphaBlendON = true;
+			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
+
+		//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+				0,
+				1.0f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 1.0f),
+				1,
+				_float3(0.2f),
+				_float3(0.3f),
+				1);
+
+			desctex.eParticleTypeID = InstanceEffect_Straight;
+			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+
+			desctex.vEmissive_SBB = _float3(1.0f, 0.1f, 0.1f);
+			desctex.Particle_Power = 3.0f;
+			desctex.vPowerDirection = _float3(0,0,1);
+
+			_float val = 5;
+			desctex.ParticleStartRandomPosMin = _float3(-val,0,-val);
+			desctex.ParticleStartRandomPosMax = _float3(val,0,val);
+
+			desctex.FollowingTarget = m_pTransformCom;
+			desctex.iFollowingDir = FollowingDir_Up;
+
+			//desctex.vFixedPosition =
+			//	m_pTransformCom->Get_WorldMatrix().r[3]
+			//	+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			//	desctex.AlphaBlendON = true;
+			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
+
+			// GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+
+		{
+			// MESHINST_EFFECTJ_BOW_Q_ICE2
+			INSTMESHDESC descmesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2,
+			//	Prototype_Mesh_SM_ICE_01,
+				COMPONENTPROTOTYPEID(0),
+				3,
+				1.0f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 0.8f),
+				0,
+				_float3(0.8f),
+				_float3(1.0f),
+				0);
+
+
+			// mesh
+			_Vector FixPos = m_pTransformCom->Get_WorldMatrix().r[3];
+
+			_float val = 5.0f;
+			descmesh.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			descmesh.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+			descmesh.vFixedPosition = FixPos;
+			GETPARTICLE->Create_MeshInst_DESC(descmesh, m_eNowSceneNum);
+
+
+		}
+
+	//	FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+	//		CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING1, m_pTextureParticleTransform));
+	//
+	//	FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
+	//		CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
+	//	FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+	//		->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_TON, m_pTextureParticleTransform));
+	//	FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+	//		->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_ICES, m_pTextureParticleTransform));
+
+		
+	}
+#endif // _DEBUG
+
 
 	//Set_State_IdleStart(fDeltaTime);
 
@@ -653,12 +812,14 @@ void CPlayer::Set_State_UtilitySkillStart(_double fDeltaTime)
 			// #EFFECT BUG
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_UP, effecttrans, &m_bMehsArrow));
-		
+			mMeshParticle = GETPARTICLE->GetMeshEffect();
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_PLANE, m_pTransformCom));
-		
+			mMeshParticle2 = GETPARTICLE->GetMeshEffect();
+
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 				CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SHIFT_ICE, m_pTransformCom));
+			mMeshParticle3 = GETPARTICLE->GetMeshEffect();
 
 		}
 		m_pModel->Change_AnimIndex_ReturnTo(BOW_ANIM_UTILITY_START, BOW_ANIM_UTILITY_LOOP, 0.1f, true);
@@ -699,8 +860,8 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	}
 	break;
 	case WEAPON_BOW:
-		if (100.f > GetSingle(CUtilityMgr)->Get_BowSkillPersent())
-			return;
+		/*if (100.f > GetSingle(CUtilityMgr)->Get_BowSkillPersent())
+			return;*/
 
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
 		GetSingle(CUtilityMgr)->ResetBowPersent();
@@ -2511,8 +2672,8 @@ _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 		m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_In(0.5f);
 
 		// #EFFECT BUG
-		//FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
-		//FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(0));
+		FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Dead_Transform(1));
 
 		m_pIngameUI->Set_WeaponUIAngle(1);
 	}
@@ -4374,6 +4535,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					// #EFFECT BUG
 					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 						CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW1, effecttrans, &m_bMehsArrow));
+					mMeshParticle = GETPARTICLE->GetMeshEffect();
+					
 				}
 
 			}
@@ -4395,6 +4558,35 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				else
 				{
 					g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Charging_Shoot.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+					if (mMeshParticle)
+					{
+						mMeshParticle->Set_DeadMeshparticle();
+						mMeshParticle = nullptr;
+					}
+					{
+						INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_R_FlyBall,
+							0,
+							0,
+							_float4(0.03f, 0.25f, 0.65f, 1),
+							_float4(0.13f, 0.35f, 0.75f, 1),
+							0,
+							_float3(0.3f),
+							_float3(0.1f),
+							1);
+
+						desctex.Particle_Power = 8.0f;
+
+						desctex.TempBuffer_0.z = 0;
+						desctex.TempBuffer_0.w = FollowingDir_Look;
+
+						desctex.vFixedPosition =
+							m_pTransformCom->Get_WorldMatrix().r[3]
+							+ m_pTransformCom->Get_WorldMatrix().r[2] * 1.0f
+						+m_pTransformCom->Get_WorldMatrix().r[1] * 1.0f;
+
+						GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+					}
+
 				}
 
 				m_eCurBowMainAtkState = BOWMAINATK_SHOT;
@@ -4481,6 +4673,9 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+
 				}
 
 				m_bOncePlaySound = true;
@@ -4513,8 +4708,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_UtilityAttack_Shot();
 				m_bAnimChangeSwitch = false;
 
-				// #EFFECT BUG
-				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+			
 
 				// Shot Arrow //
 				CPlayerWeapon::PlayerWeaponDesc eWeaponDesc;
@@ -4763,6 +4957,8 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 						->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R, effecttrans));
+					FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+
 				}
 			}
 
@@ -4916,6 +5112,9 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				
 				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_MeshParticle(
 					CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_R_JUMP_WING2, m_pTextureParticleTransform));
+
+				FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(5));
+
 
 			}
 
@@ -6594,6 +6793,20 @@ void CPlayer::Shelling(_double fDeltaTime)
 			m_eCurUtilityState = UTILITY_START;
 			Set_State_IdleStart(fDeltaTime);
 			static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->PlayAnim_Idle();
+
+			{
+				// Shift Off
+				if (mMeshParticle)
+				{
+
+					mMeshParticle->Set_DeadMeshparticle();
+					mMeshParticle = nullptr;
+					mMeshParticle2->Set_DeadMeshparticle();
+					mMeshParticle2 = nullptr;
+					mMeshParticle3->Set_DeadMeshparticle();
+					mMeshParticle3 = nullptr;
+				}
+			}
 		}
 		break;
 	}
@@ -6645,39 +6858,102 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 			 CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 			 
 			 _Vector FixPos =  pBowArrow->Get_Transform_Hand()->Get_MatrixState_Float3(CTransform::STATE_POS).XMVector();
-			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Set_Play_Particle(7, FixPos));
 			 
 			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 			 	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_BOW, effecttrans));
 			 
 			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 			 	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_TON, m_pTextureParticleTransform));
-			 
-			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
-			 	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_ICES, m_pTextureParticleTransform));
-			 
 			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 			 	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE3, m_pTextureParticleTransform));
 
-			 
-			 INSTMESHDESC instancedesc;
-			 instancedesc.FollowingTarget = nullptr;
-			 
-			 instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE);
-			 instancedesc.vFixedPosition = FixPos;
-			 GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
-			 
-			 instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2);
-			 instancedesc.vFixedPosition = FixPos;
-			 GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
-			 
-			 instancedesc = GETPARTICLE->Get_TypeDesc_MeshInstance(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_PLANE);
-			 instancedesc.FollowingTarget = m_pTextureParticleTransform;
-			 instancedesc.iFollowingDir = FollowingDir_Up;
-			 instancedesc.TotalParticleTime = 3;
-			 instancedesc.ParticleStartRandomPosMin = _float3(-5,0,-5);
-			 instancedesc.ParticleStartRandomPosMax = _float3(5, 0, 5);;
-			 GETPARTICLE->Create_MeshInst_DESC(instancedesc, m_eNowSceneNum);
+			 FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
+			 	->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_ICES, m_pTextureParticleTransform));
+		
+			 {
+				 INSTMESHDESC descmesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE,
+					 //	Prototype_Mesh_SM_ICE_01,
+					 COMPONENTPROTOTYPEID(0),
+					 3.0f,
+					 1.f,
+					 _float4(0.25f, 0.86f, 1.0f, 1),
+					 _float4(0.25f, 0.86f, 1.0f, 0.0f),
+					 1,
+					 _float3(0.8f),
+					 _float3(1.0f),
+					 0);
+
+
+
+				 _float val = 3.0f;
+				 descmesh.ParticleStartRandomPosMin = _float3(-val, 3, -val);
+				 descmesh.ParticleStartRandomPosMax = _float3(val, 3, val);
+
+				 descmesh.iMaskingTextureIndex = NONNMASK;
+				 descmesh.iNoiseTextureIndex = NONNOISE;
+
+				 descmesh.Particle_Power = -15.0f;
+
+				 descmesh.vFixedPosition = FixPos;
+				 GETPARTICLE->Create_MeshInst_DESC(descmesh, m_eNowSceneNum);
+
+
+			 }
+			 {
+				 // MESHINST_EFFECTJ_BOW_Q_ICE2
+				 INSTMESHDESC descmesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2,
+					 //	Prototype_Mesh_SM_ICE_01,
+					 COMPONENTPROTOTYPEID(0),
+					 3.0f,
+					 1.f,
+					 _float4(0.25f, 0.86f, 1.0f, 1),
+					 _float4(0.25f, 0.86f, 1.0f, 0.0f),
+					 0,
+					 _float3(0.6f),
+					 _float3(0.8f),
+					 1);
+
+
+				 _float val = 3.0f;
+				 descmesh.ParticleStartRandomPosMin = _float3(-val, 3, -val);
+				 descmesh.ParticleStartRandomPosMax = _float3(val, 3, val);
+
+				 descmesh.iMaskingTextureIndex = NONNMASK;
+				 descmesh.iNoiseTextureIndex = NONNOISE;
+				 descmesh.Particle_Power = -10;
+
+
+				 descmesh.vFixedPosition = FixPos;
+				 GETPARTICLE->Create_MeshInst_DESC(descmesh, m_eNowSceneNum);
+			 }
+			 {
+				 // snow
+				 INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Q_Snow,
+					 3.0f,
+					 0.5f,
+					 //	_float4(0.25f, 0.86f, 1.0f, 1),
+					 _float4(0.14f, 0.25f, 0.89f, 1),
+					 _float4(0.25f, 0.86f, 1.0f, 0.1f),
+					 0,
+					 _float3(0.1f),
+					 _float3(0.2f),
+					 1);
+
+				 	 desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+
+				 _float val = 3;
+				 desctex.ParticleStartRandomPosMin = _float3(-val, 5, -val);
+				 desctex.ParticleStartRandomPosMax = _float3(val, 5, val);
+
+				 desctex.FollowingTarget = m_pTransformCom;
+				 desctex.iFollowingDir = FollowingDir_Up;
+
+				 GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+			 }
+
+
+
 		}
 
 		// Set Ultimate Attack Col
@@ -6710,9 +6986,7 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 		pBowArrow->Set_State_Ultimate_Pre_Shot();
 		m_pMainCamera->Start_CameraShaking_Fov(57.f, 2.f, 0.1f, true);
 
-
 		{
-
 			// #EFFECT BUG
 			CTransform* effecttrans = static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])->Get_EffectTransform();
 			
@@ -6742,6 +7016,48 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 			// #EFFECT BUG
 			FAILED_CHECK_NONERETURN(static_cast<CPlayerWeapon_Bow*>(m_pPlayerWeapons[WEAPON_BOW - 1])
 				->Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_ARROW_BOW_SP_PLANE2, m_pTextureParticleTransform));
+
+			
+
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+				0,
+				1.5f,
+			//	_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.14f, 0.25f, 0.89f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 0.1f),
+				1,
+				_float3(0.2f),
+				_float3(0.3f),
+				1);
+
+			desctex.eParticleTypeID = InstanceEffect_Straight;
+			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+
+			desctex.vEmissive_SBB = _float3(1.0f, 0.1f, 0.1f);
+			desctex.Particle_Power = 5.0f;
+			desctex.vPowerDirection = _float3(0, 0, 1);
+
+			_float val = 3;
+			desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+			desctex.FollowingTarget = m_pTransformCom;
+			desctex.iFollowingDir = FollowingDir_Up;
+
+			desctex.TempBuffer_1.x = 0;
+			desctex.TempBuffer_1.y = 0;
+
+			//desctex.vFixedPosition =
+			//	m_pTransformCom->Get_WorldMatrix().r[3]
+			//	+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			//	desctex.AlphaBlendON = true;
+			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
+
+			GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+
 		}
 
 	}

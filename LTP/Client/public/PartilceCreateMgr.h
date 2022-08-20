@@ -27,6 +27,7 @@ typedef struct tag_MESHADDDATA
 	_bool ScaleReFlag = false; // 스케일이 0이 되어야사라짐
 	_bool bLockScale[3] = { false, };
 	_bool bAfterApperTime = false; // 생성되면 사라짐
+	_bool bEmissive = false; // Emissive
 	CTransform* FollowTarget = nullptr;
 
 
@@ -343,6 +344,7 @@ public:
 	{
 		TEXTURE_EFFECTJ_Bow_Default,
 		TEXTURE_EFFECTJ_Bow_ArrowHit,
+		TEXTURE_EFFECTJ_Bow_ArrowHit2,
 		TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail,
 		TEXTURE_EFFECTJ_Bow_Charze_ArrowHead,
 		TEXTURE_EFFECTJ_Bow_Charze_Circle,
@@ -353,6 +355,8 @@ public:
 		TEXTURE_EFFECTJ_Bow_Q_Ball,
 		TEXTURE_EFFECTJ_Bow_R_FlyFire,
 		TEXTURE_EFFECTJ_Bow_R_FlyBall,
+		TEXTURE_EFFECTJ_Bow_Q_Snow,
+		
 
 		TEXTURE_EFFECTJ_Universal_Ball,
 		TEXTURE_EFFECTJ_Universal_Suck,
@@ -532,7 +536,7 @@ public:
 
 	HRESULT Clear_MeshEffect();
 
-	const class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
+	class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
 
 
 private:

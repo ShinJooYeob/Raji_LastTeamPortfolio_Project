@@ -232,18 +232,11 @@ HRESULT CPlayerWeapon::Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPo
 
 		if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget)
 		{
-
-			if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Get_IsOwnerDead() == true)
-				(m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Set_IsOwnerDead(false));
-
+			(m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Set_IsOwnerDead(false));
 			GETPARTICLE->Create_Texture_Effect_Desc(m_vecTextureParticleDesc[ParticleIndex], m_eNowSceneNum);
-
-
-
 		}
 		else
 		{
-
 			CreatePos = FixPos.XMVector() + offset.XMVector();
 
 			m_vecTextureParticleDesc[ParticleIndex].vFixedPosition = CreatePos;
@@ -257,17 +250,7 @@ HRESULT CPlayerWeapon::Set_Play_Particle_Must(_uint ParticleIndex, _float3 FixPo
 }
 
 
-HRESULT CPlayerWeapon::Set_Dead_Transform(_uint ParticleIndex)
-{
 
-	if (m_vecTextureParticleDesc[ParticleIndex].FollowingTarget)
-	{
-		m_vecTextureParticleDesc[ParticleIndex].FollowingTarget->Set_IsOwnerDead(true);
-
-	}
-
-	return S_OK;
-}
 
 HRESULT CPlayerWeapon::Update_Particle(_double timer)
 {

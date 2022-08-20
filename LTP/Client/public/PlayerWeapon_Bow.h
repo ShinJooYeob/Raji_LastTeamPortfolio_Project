@@ -64,6 +64,7 @@ public:
 	/* Particle */
 	virtual HRESULT Ready_ParticleDesc();
 	virtual HRESULT Update_Particle(_double timer);
+	HRESULT Set_Dead_Transform(_uint ParticleIndex);
 
 
 private:

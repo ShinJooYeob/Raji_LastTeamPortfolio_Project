@@ -38,10 +38,7 @@ public:
 	void				Set_ParentTransform(class CTransform* parentTrans);
 	void				Set_AddDesc(const MESHADDDATA& desc)
 	{
-	
-
 		mAddDesc = desc;
-
 		if (mAddDesc.DealyTime <= 0)
 		{
 			mIsDealy = false;
@@ -51,10 +48,15 @@ public:
 			mIsDealy = true;
 			mDealyTime = mAddDesc.DealyTime;
 		}
+		if (mAddDesc.bEmissive)
+		{
+			mEmissive = mMeshDesc.vEmissive;
+		}
 
 	}
 
 	HRESULT				Set_EasingMoveDesc(const MESHAEASING* desc, _uint count);
+	void				Set_DeadMeshparticle();
 
 private:
 	HRESULT				SetUp_Components();
@@ -86,6 +88,11 @@ private:
 
 	_double					mDealyTime = 0;
 	_bool					mIsDealy = false;
+
+	_float4					mEmissive = _float3(0);
+	_float					mEmissiveTimer = 0;
+	_bool					mbEmssive = false;
+
 
 private:
 	CShader*				m_pShaderCom = nullptr;

@@ -323,7 +323,7 @@ HRESULT CPlayerWeapon_Bow::Update_Particle(_double fDeltaTime)
 	mat.r[3] = vPos2;
 	m_pTextureParticleTransform_BowUp->Set_MatrixState(CTransform::STATE_POS, vPos2);
 
-	_Vector vPos3 = vPos - (mat.r[2] * 0.4f - mat.r[0] * 0.1f);
+	_Vector vPos3 = vPos - (mat.r[2] * 0.45f - mat.r[0] * 0.2f);
 	mat.r[3] = vPos3;
 	m_pTextureParticleTransform_BowBack->Set_Matrix(mat);
 
@@ -331,6 +331,17 @@ HRESULT CPlayerWeapon_Bow::Update_Particle(_double fDeltaTime)
 
 	return S_OK;
 
+}
+
+HRESULT CPlayerWeapon_Bow::Set_Dead_Transform(_uint ParticleIndex)
+{
+	if (ParticleIndex == 0)
+		m_pTextureParticleTransform_BowUp->Set_IsOwnerDead();
+
+	if (ParticleIndex == 1)
+		m_pTextureParticleTransform_BowBack->Set_IsOwnerDead();
+
+	return S_OK;
 }
 
 void CPlayerWeapon_Bow::Set_Pivot()
@@ -444,6 +455,7 @@ HRESULT CPlayerWeapon_Bow::Ready_ParticleDesc()
 	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Default);
 	instanceDesc.TotalParticleTime = 99999.f;
 	instanceDesc.FollowingTarget = m_pTextureParticleTransform_BowUp;
+	instanceDesc.iFollowingDir = FollowingDir_Up;
 	//	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
 	m_vecTextureParticleDesc.push_back(instanceDesc);
 

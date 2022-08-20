@@ -615,7 +615,9 @@ private:
 private: /* For Particle */
 	HRESULT Ready_ParticleDesc();
 	HRESULT Update_Partilce_Position();
-
+	class CNonInstanceMeshEffect_TT* mMeshParticle = nullptr;
+	class CNonInstanceMeshEffect_TT* mMeshParticle2 = nullptr;
+	class CNonInstanceMeshEffect_TT* mMeshParticle3 = nullptr;
 
 public:
 	static CPlayer*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

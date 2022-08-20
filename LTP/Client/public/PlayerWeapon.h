@@ -71,7 +71,6 @@ public:
 
 
 
-	virtual HRESULT Set_Dead_Transform(_uint ParticleIndex);
 	virtual HRESULT Update_Particle(_double timer);
 
 	virtual HRESULT Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ type, CTransform* trans, bool * pb = nullptr);

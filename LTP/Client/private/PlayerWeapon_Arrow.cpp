@@ -726,6 +726,84 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
 
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
+
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit,
+					0,
+					0.5f,
+					_float4(0.03f, 0.25f, 0.65f, 1),
+					_float4(0.13f, 0.35f, 0.75f, 1),
+					0,
+					_float3(1.1f),
+					_float3(0.3f),
+					1);
+				desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	desctex.vEmissive_SBB = _float3(1,0.3f,0.1f);
+				desctex.Particle_Power = 3.5f;
+				//	desctex.Particle_Power = 4.0f;
+
+				//	desctex.TempBuffer_0.z = 0;
+				//	desctex.TempBuffer_0.w = FollowingDir_Look;
+					//	desctex.FollowingTarget = m_pTransformCom;
+					//	desctex.iFollowingDir = FollowingDir_Up;
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+
+				_float val = 0.5f;
+				desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+				desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+					0,
+					0.5f,
+					_float4(0.25f, 0.86f, 1.0f, 1),
+					_float4(0.25f, 0.86f, 1.0f, 0.8f),
+					1,
+					_float3(0.8f),
+					_float3(1.0f),
+					1);
+
+				desctex.vEmissive_SBB = _float3(1, 0.1f, 0.5f);
+				desctex.Particle_Power = 0.5f;
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+					0,
+					0.5f,
+					_float4(0.25f, 0.86f, 1.0f, 1),
+					_float4(0.25f, 0.86f, 1.0f, 1.0f),
+					1,
+					_float3(0.7f),
+					_float3(0.1f),
+					1);
+
+				desctex.eParticleTypeID = InstanceEffect_Cone;
+				desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+
+				desctex.vEmissive_SBB = _float3(0.5f, 0.2f, 0.4f);
+				desctex.Particle_Power = 1.5f;
+				desctex.vPowerDirection = _float3(0, 0, 1);
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+
 		}
 	}
 }
