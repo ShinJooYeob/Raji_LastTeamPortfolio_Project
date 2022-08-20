@@ -169,6 +169,8 @@
 #include "UI_Texture_Universal.h"
 #include "MiniGame_DonkeyKong.h"
 #include "MiniGame_KongRaji.h"
+#include "KongRajiTrigger.h"
+#include "DonkeyKong_BulletTrigger.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 /////////MiniGame PACKMEN///////////////////////////////////////////////////////////////////////
@@ -2056,6 +2058,8 @@ HRESULT CLoader::Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_KongRaji), CMiniGame_KongRaji::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_KongRajiTrigger), CKongRajiTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger), CDonkeyKong_BulletTrigger::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 

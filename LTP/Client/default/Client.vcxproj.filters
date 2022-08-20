@@ -577,9 +577,6 @@
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong">
       <UniqueIdentifier>{0bbdaf5b-45de-4071-a01f-736cf913e21e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Dynamic_Object">
-      <UniqueIdentifier>{295574bd-6ad1-4896-8d61-52dd87e40b47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\08.Scene_MiniGame_GoluSurvivors">
       <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
     </Filter>
@@ -588,6 +585,9 @@
     </Filter>
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongRaji">
       <UniqueIdentifier>{8cb7976b-5d72-4f92-86c6-a2e0431b5efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger">
+      <UniqueIdentifier>{1d576276-0b77-48e8-86da-42f99289437c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1252,6 +1252,12 @@
     <ClInclude Include="..\public\MiniGame_KongRaji.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongRaji</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\KongRajiTrigger.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DonkeyKong_BulletTrigger.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1894,6 +1900,12 @@
     </ClCompile>
     <ClCompile Include="..\private\MiniGame_KongRaji.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongRaji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\KongRajiTrigger.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DonkeyKong_BulletTrigger.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

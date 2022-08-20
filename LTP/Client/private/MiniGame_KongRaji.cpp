@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "PartilceCreateMgr.h"
 #include "WorldTexture_Universal.h"
+#include "KongRajiTrigger.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -50,9 +51,16 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 	Camera_Pos();
 
 
-	m_pNavigationCom->Set_CurNavCellIndex(0);
-
+	m_pNavigationCom->Set_CurNavCellIndex(1);
 	m_pTransformCom->LookDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(53.42f,33.49f,40.f,1.f));
+
+
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_KongRajiTrigger)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
+
+
+
 	return S_OK;
 
 }
@@ -94,6 +102,8 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	Update_Collider(dDeltaTime);
 
+
+	m_pNavigationCom->Set_CurNavCellIndex(1);
 
 	return _int();
 }
@@ -184,7 +194,7 @@ _float CMiniGame_KongRaji::Take_Damage(CGameObject * pTargetObject, _float fDama
 
 void CMiniGame_KongRaji::Update_AttachCamPos()
 {
-	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vMyPos = XMVectorSet(40.f, 40.f, 40.f, 1.f);
 	_float3 vBonePos = Get_BonePos("skd_hip");
 	m_fAttachCamPos_Offset.y = 0.f;
 	m_fAttachCamPos_Offset.x = 0.f;

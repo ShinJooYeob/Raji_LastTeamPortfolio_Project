@@ -84,7 +84,7 @@ private:
 
 	//점프하기
 private:
-	JUMPDESC				m_JumpDesc;
+	JUMPDESC			m_JumpDesc;
 
 private:
 	_bool				m_bChangeAnimOn = false;
