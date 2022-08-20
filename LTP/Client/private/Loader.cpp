@@ -2026,22 +2026,25 @@ HRESULT CLoader::Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_
 	_Matrix			TransformMatrix;
 
 #pragma  region Static_Mesh
-
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Monster_Jalsura), TransformMatrix);
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Player), TransformMatrix);
 
 #pragma  endregion
 #pragma region PROTOTYPE_COMPONENT
 
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME_DONKEYKONG, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_MiniGame_WallCrush.dat")))))
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_MiniGame_DonkeyKong.dat")))))
 		return E_FAIL;
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE1, TAG_CP(Prototype_Mesh_SkyBox),
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME_DONKEYKONG, TAG_CP(Prototype_Mesh_SkyBox),
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
 
 #pragma  region EH
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME_DONKEYKONG, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
 #pragma endregion
 
 	FAILED_CHECK(Load_AllMonster());

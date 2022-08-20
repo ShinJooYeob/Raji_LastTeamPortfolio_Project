@@ -30,7 +30,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 
 
-	FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_WallCrush.dat", SCENE_MINIGAME_DONKEYKONG, TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_WallCrush.dat", SCENE_MINIGAME_DONKEYKONG, TAG_LAY(Layer_StaticMapObj)));
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
@@ -467,18 +467,18 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_PostPorcessing()
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, false);
 	pRenderer->Set_ShadowIntensive(0.3f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(1.5f);
 
-	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	//pRenderer->Set_DofLength(30.f);
-	//pRenderer->Set_DofBlurIntensive(1.f);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, false);
+	pRenderer->Set_DofLength(30.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
 	pRenderer->Set_FogColor(_float3{ 0.234375f });
 	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
 	pRenderer->Set_FogStartDist(5.f);

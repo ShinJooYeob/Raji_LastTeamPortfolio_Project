@@ -3,6 +3,7 @@
 #include "Camera_Main.h"
 #include "Scene.h"
 #include "PartilceCreateMgr.h"
+#include "WorldTexture_Universal.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -44,11 +45,12 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 
 
 	SetUp_Info();
-
-	m_fHP = 100;
+	SetUp_Texture();
 
 	Camera_Pos();
 
+
+	m_pNavigationCom->Set_CurNavCellIndex(0);
 	return S_OK;
 
 }
@@ -78,18 +80,32 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	Play_MiniGame(dDeltaTime);
 
-	m_pModel->Change_AnimIndex(0, 0.f);
+	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.f);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 
 
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
+	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * 1, m_bIsOnScreen));
 
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	Update_Collider(dDeltaTime);
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		m_pNavigationCom->Set_CurNavCellIndex(3);
+		//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+	{
+		m_pTransformCom->Move_Up(dDeltaTime);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	{
+		m_pTransformCom->Move_Down(dDeltaTime);
+	}
 	return _int();
 }
 
@@ -130,6 +146,7 @@ _int CMiniGame_KongRaji::Render()
 #ifdef _DEBUG
 	FAILED_CHECK(m_pNavigationCom->Render());
 #endif
+
 	return _int();
 }
 
@@ -179,10 +196,10 @@ _float CMiniGame_KongRaji::Take_Damage(CGameObject * pTargetObject, _float fDama
 void CMiniGame_KongRaji::Update_AttachCamPos()
 {
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_float3 vBonePos = Get_BonePos("sk_eye");
-	m_fAttachCamPos_Offset.y = 15.f;
+	_float3 vBonePos = Get_BonePos("skd_hip");
+	m_fAttachCamPos_Offset.y = 0.f;
 	m_fAttachCamPos_Offset.x = 0.f;
-	m_fAttachCamPos_Offset.z = 0.f;
+	m_fAttachCamPos_Offset.z = -15.f;
 	m_pMainCamera->Set_TargetArmLength(0.f);
 	XMStoreFloat3(&m_fAttachCamPos, vMyPos + m_fAttachCamPos_Offset.XMVector());
 	//m_fAttachCamPos_Offset으로 피벗 설정
@@ -195,7 +212,7 @@ void CMiniGame_KongRaji::Update_AttachCamPos()
 
 	//m_fAttachCamLook = XMVector3Normalize((XMVectorSetW(vBonePos.XMVector() - m_fAttachCamPos.XMVector(), 0.f))) + m_fAttachCamLook_Offset.XMVector();
 	//카메라가 바라보는 방향은 윗 주석으로 알려주고 밑처럼 걍 절대값 넣어줘도 됨
-	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -0.8f, 0.1f, 0.f));
+	m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	//Bone is Look
 	//m_pMainCamera->Lock_CamLook(true,XMVector3Normalize(vBonePos.XMVector()- m_fAttachCamPos.XMVector()));
@@ -215,7 +232,7 @@ HRESULT CMiniGame_KongRaji::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Jalsura), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Player), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -294,12 +311,41 @@ HRESULT CMiniGame_KongRaji::SetUp_Info()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+
+
+	m_fHP = 100;
+
+	ZeroMemory(&m_JumpDesc, sizeof(JUMPDESC));
+
+	m_JumpDesc.fJumpPower = 5.f;
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongRaji::SetUp_Texture()
+{
+	CWorldTexture_Universal::WORLDTEXTURE_UNIVERSALDESC WorldTexture_UniversalDesc;
+
+	WorldTexture_UniversalDesc.iWorldTextureNumber = CWorldTexture_Universal::DONKEYKONG_MAP;
+	WorldTexture_UniversalDesc.fScale = _float3(32.f, 20.f, 20.f);
+	WorldTexture_UniversalDesc.fPositioning = _float3(0.f, 0.f, -0.5f);
+	WorldTexture_UniversalDesc.dDuration = 100000000;
+	WorldTexture_UniversalDesc.pObject = this;
+
+	WorldTexture_UniversalDesc.bBillboardOn = true;
+	WorldTexture_UniversalDesc.bMagnetOn = false;
+	WorldTexture_UniversalDesc.pSwitch = nullptr;
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_WorldTexture_Universal), TAG_OP(Prototype_Object_WorldTexture_Universal), &WorldTexture_UniversalDesc));
 	return S_OK;
 }
 
 HRESULT CMiniGame_KongRaji::Play_MiniGame(_double dDeltaTime)
 {
+	Pivot();
 	Keyboard_Input(dDeltaTime);
+	Jumping(dDeltaTime);
+	Change_Anim();
 
 	return S_OK;
 }
@@ -316,20 +362,92 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
 	{
-		m_pTransformCom->Move_Right(dDeltatime, m_pNavigationCom);
+		m_pTransformCom->MovetoDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.5f);
+
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = ANIM_WALK;
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
 	{
-		m_pTransformCom->Move_Left(dDeltatime, m_pNavigationCom);
+		m_pTransformCom->MovetoDir(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.5f);
+
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = ANIM_WALK;
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
+	{
+		if (false == m_JumpDesc.bJump)
+		{
+			m_JumpDesc.bJump = true;
+		}
+
+	}
+
+
 	//네비 위에 태우고 싶을때 사용
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	RELEASE_INSTANCE(CGameInstance);
 
 
 
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongRaji::Change_Anim()
+{
+	if (m_bChangeAnimOn)
+	{
+		m_iAnimIndex = m_iCurrentAnimIndex;
+
+		m_bChangeAnimOn = false;
+	}
+	else {
+		m_iAnimIndex = ANIM_IDLE;
+	}
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongRaji::Pivot()
+{
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+	_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+	_float4 fTempPos;
+
+	XMStoreFloat4(&fTempPos, vTempPos);
+
+	m_JumpDesc.fJumpY = fTempPos.y;
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongRaji::Jumping(_double TimeDelta)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (true == m_JumpDesc.bJump)
+	{
+		_Vector	vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		_float4	vTempPos;
+		XMStoreFloat4(&vTempPos, vPosition);
+		vTempPos.y = m_JumpDesc.fJumpY + (m_JumpDesc.fJumpPower * m_JumpDesc.dTime - 9.8f * m_JumpDesc.dTime * m_JumpDesc.dTime * 0.5f);
+		m_JumpDesc.dTime += TimeDelta;
+
+		if (m_JumpDesc.fJumpY > vTempPos.y)
+		{
+			m_JumpDesc.bJump = false;
+			m_JumpDesc.dTime = 0;
+		}
+
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat4(&vTempPos));
+	}
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -345,7 +463,7 @@ HRESULT CMiniGame_KongRaji::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	ATTACHEDESC tAttachedDesc;
-	tAttachedDesc.Initialize_AttachedDesc(this, "sk_eye", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.29397f, -0.010983f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.074084f, -0.861011f, -75.1948f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 
 
@@ -356,7 +474,7 @@ HRESULT CMiniGame_KongRaji::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "sk_eye", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.29397f, -0.010983f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_hip", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.074084f, -0.861011f, -75.1948f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
 	return S_OK;

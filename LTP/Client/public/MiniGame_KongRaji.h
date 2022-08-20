@@ -5,6 +5,15 @@ class CCamera_Main;
 
 class CMiniGame_KongRaji final : public CGameObject
 {
+public:
+	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_END};
+
+	typedef	struct tagJumpDesc
+	{
+		_bool	bJump;
+		_float	fJumpY, fJumpPower;
+		_double	dTime;
+	}JUMPDESC;
 private:
 	explicit CMiniGame_KongRaji(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	explicit CMiniGame_KongRaji(const CMiniGame_KongRaji& rhs);
@@ -31,21 +40,29 @@ public:
 public:
 	virtual void Update_AttachCamPos()override;
 
-	HRESULT SetUp_Components();
-	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
+	HRESULT				SetUp_Components();
+	HRESULT				Adjust_AnimMovedTransform(_double dDeltatime);
 
-	HRESULT	SetUp_Info();
+	HRESULT				SetUp_Info();
+	HRESULT				SetUp_Texture();
 
-	HRESULT	SetUp_Collider();
-	HRESULT	Update_Collider(_double dDeltaTime);
+	HRESULT				SetUp_Collider();
+	HRESULT				Update_Collider(_double dDeltaTime);
 
-	HRESULT	Camera_Pos();
+	//Camera
+	HRESULT				Camera_Pos();
 
 	//InGame
-	HRESULT	Play_MiniGame(_double dDeltaTime);
+	HRESULT				Play_MiniGame(_double dDeltaTime);
 
 	//Input
-	HRESULT	Keyboard_Input(_double dDeltatime);
+	HRESULT				Keyboard_Input(_double dDeltatime);
+	HRESULT				Change_Anim();
+
+	//Piput
+	HRESULT				Pivot();
+	//Jump
+	HRESULT				Jumping(_double TimeDelta);
 
 
 private:
@@ -64,6 +81,16 @@ private:
 private:
 	CCollider*			m_pColliderCom = nullptr;
 	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+	//점프하기
+private:
+	JUMPDESC				m_JumpDesc;
+
+private:
+	_bool				m_bChangeAnimOn = false;
+	_uint				m_iAnimIndex = 0;
+	_uint				m_iCurrentAnimIndex = 0;
+
 
 private://Dissolve
 	_double				m_dDissolveTime = 0;
