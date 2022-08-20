@@ -51,6 +51,8 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 
 
 	m_pNavigationCom->Set_CurNavCellIndex(0);
+
+	m_pTransformCom->LookDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f));
 	return S_OK;
 
 }
@@ -80,7 +82,7 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	Play_MiniGame(dDeltaTime);
 
-	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.f);
+	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.1f);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -92,20 +94,7 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	Update_Collider(dDeltaTime);
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	{
-		m_pNavigationCom->Set_CurNavCellIndex(3);
-		//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
-	{
-		m_pTransformCom->Move_Up(dDeltaTime);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
-	{
-		m_pTransformCom->Move_Down(dDeltaTime);
-	}
+
 	return _int();
 }
 
@@ -356,9 +345,15 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 
 	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
 	{
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = ANIM_CLIMB_UP;
+		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
 	{
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = ANIM_CLIMB_DOWN;
+		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
 	{
@@ -366,7 +361,9 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.5f);
 
 		m_bChangeAnimOn = true;
-		m_iCurrentAnimIndex = ANIM_WALK;
+
+		if (false == m_JumpDesc.bJump)
+			m_iCurrentAnimIndex = ANIM_WALK;
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
 	{
@@ -374,7 +371,9 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.5f);
 
 		m_bChangeAnimOn = true;
-		m_iCurrentAnimIndex = ANIM_WALK;
+
+		if (false == m_JumpDesc.bJump)
+			m_iCurrentAnimIndex = ANIM_WALK;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
@@ -382,6 +381,7 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		if (false == m_JumpDesc.bJump)
 		{
 			m_JumpDesc.bJump = true;
+			m_iCurrentAnimIndex = ANIM_JUMP;
 		}
 
 	}
@@ -434,18 +434,22 @@ HRESULT CMiniGame_KongRaji::Jumping(_double TimeDelta)
 	{
 		_Vector	vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-		_float4	vTempPos;
-		XMStoreFloat4(&vTempPos, vPosition);
-		vTempPos.y = m_JumpDesc.fJumpY + (m_JumpDesc.fJumpPower * m_JumpDesc.dTime - 9.8f * m_JumpDesc.dTime * m_JumpDesc.dTime * 0.5f);
+		_float4	fTempPos;
+		XMStoreFloat4(&fTempPos, vPosition);
+		fTempPos.y = m_JumpDesc.fJumpY + (_float)(m_JumpDesc.fJumpPower * m_JumpDesc.dTime - 9.8f * m_JumpDesc.dTime * m_JumpDesc.dTime * 0.5f);
 		m_JumpDesc.dTime += TimeDelta;
 
-		if (m_JumpDesc.fJumpY > vTempPos.y)
+		if (m_JumpDesc.fJumpY > fTempPos.y)
 		{
 			m_JumpDesc.bJump = false;
 			m_JumpDesc.dTime = 0;
 		}
 
-		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat4(&vTempPos));
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat4(&fTempPos));
+
+		//라지 애니메이션 돌리기 용
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = ANIM_JUMP;
 	}
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -6,7 +6,7 @@ class CCamera_Main;
 class CMiniGame_KongRaji final : public CGameObject
 {
 public:
-	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_END};
+	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
 
 	typedef	struct tagJumpDesc
 	{
