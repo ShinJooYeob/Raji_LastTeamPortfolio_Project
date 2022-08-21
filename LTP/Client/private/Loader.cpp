@@ -378,8 +378,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(0.f));
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Ninjasura_Knife), TransformMatrix);
 
-	//	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Sinkhole), TransformMatrix);
+		//	TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		//	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Sinkhole), TransformMatrix);
 
 		TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain), TransformMatrix);
@@ -396,7 +396,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 		// USE LOAD
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-		
+
 		//JY
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightCastRing_01);
 		//
@@ -476,6 +476,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
 
 
 		// Bullet
@@ -488,11 +489,21 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
 
-
 		// ALLLOAD
 		// for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)
 		// 	STATIC_EFFECTLOAD((COMPONENTPROTOTYPEID)i);
 
+
+		// StaticTest
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_CogMedium_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Fern_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Diya_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Dry_Green_Bush_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BLD_Lion_Statue);
+		STATIC_EFFECTLOAD(Prototype_Mesh_ENV_F_DecorativePillar_02);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Pillar_03);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_D_GodHand_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_Bull);
 
 
 
@@ -2051,8 +2062,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 
 	//Map Make
-//	for (_uint i = 0; i < SCENE_END; i++)
-//		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	for (_uint i = 0; i < SCENE_END; i++)
+		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 	
 #pragma endregion
