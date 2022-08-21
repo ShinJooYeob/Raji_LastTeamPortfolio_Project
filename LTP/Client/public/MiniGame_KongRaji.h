@@ -47,6 +47,7 @@ public:
 	void				Set_NaviIndex(_uint	iNaviIndex) { m_iNaviIndex = iNaviIndex; }
 	void				Set_HeightPos(_float3 fColliderPos[HEIGHT_END]);
 	_uint				Get_NaviIndex() { return m_iNaviIndex; }
+	_bool				Get_bJump() { return m_JumpDesc.bJump; }
 
 	HRESULT				SetUp_Components();
 	HRESULT				Adjust_AnimMovedTransform(_double dDeltatime);

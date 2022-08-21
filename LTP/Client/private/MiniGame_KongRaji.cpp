@@ -104,8 +104,11 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	m_pNavigationCom->Set_CurNavCellIndex(m_iNaviIndex);
 
+	//test
+	//m_pNavigationCom->Set_CurNavCellIndex(7);
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
-
+	int a = 10;
 	return _int();
 }
 

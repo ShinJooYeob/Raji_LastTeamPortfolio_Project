@@ -98,7 +98,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(40.46f, 44.918f, 40.f, 1.f);	//_float4(40.346f, 44.92f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(40.46f, 44.771f, 40.f, 1.f);	//_float4(40.346f, 44.92f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -106,7 +106,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(40.46f, 42.642f, 40.f, 1.f);	//_float4(40.346f, 42.639f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(40.46f, 42.596f, 40.f, 1.f);	//_float4(40.346f, 42.639f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -116,7 +116,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.32f, 44.84f, 40.f, 1.f);  //_float4(46.475f, 44.838f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32f, 44.617f, 40.f, 1.f);  //_float4(46.475f, 44.838f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -124,7 +124,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.32f, 42.765f, 40.f, 1.f);  //_float4(46.475f, 42.768f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32f, 42.745f, 40.f, 1.f);  //_float4(46.475f, 42.768f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -134,7 +134,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(47.809f, 44.838f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(47.809f, 44.578f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -142,7 +142,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(47.809f, 42.796f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(47.809f, 42.783f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -152,7 +152,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(44.32f, 42.723f, 40.f, 1.f);  //_float4(44.567f, 42.728f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(44.32f, 42.694f, 40.f, 1.f);  //_float4(44.567f, 42.728f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -170,7 +170,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(36.56f, 42.56f, 40.f, 1.f);  //_float4(36.451f, 42.557f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(36.56f, 42.497f, 40.f, 1.f);  //_float4(36.451f, 42.557f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -188,7 +188,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(30.72f, 42.437f, 40.f, 1.f);	//_float4(30.389f, 42.43f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(30.72f, 42.349f, 40.f, 1.f);	//_float4(30.389f, 42.43f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -206,7 +206,7 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(28.055f, 42.381f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(28.055f, 42.281f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 

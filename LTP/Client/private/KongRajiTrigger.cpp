@@ -80,34 +80,237 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		switch (iMyColliderIndex)
+		if (m_pPlayer->Get_bJump() != true)
 		{
-		case 1:
-		{
-			m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
-			m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
-			m_pPlayer->Set_NaviIndex(iMyColliderIndex);
-
-			m_pPlayer->Set_HeightPos(m_fColliderPos);
-
-			m_pPlayer->Set_MoveToWidthOn(true);
-			break;
-		}
-		case 2:
-		{
-			if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y -0.1f <= m_fKongRajiPos.y)
+			switch (iMyColliderIndex)
 			{
-				m_pPlayer->Set_NaviIndex(3);
-				m_pPlayer->Set_MoveToWidthOn(true);
-			}
-			else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.1f > m_fKongRajiPos.y)
+			case 1:
 			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
 				m_pPlayer->Set_NaviIndex(1);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
 			}
-			break;
-		}
-		default:
-			break;
+			case 2:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(3);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(1);
+				}
+				break;
+			}
+			case 3:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(3);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 4:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(5);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(3);
+				}
+				break;
+			}
+			case 5:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(3);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 6:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(5);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(3);
+				}
+				break;
+			}
+			case 7:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(5);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 8:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(7);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(5);
+				}
+				break;
+			}
+			case 9:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(7);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 10:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(9);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(7);
+				}
+				break;
+			}
+			case 11:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(7);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 12:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(9);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(7);
+				}
+				break;
+			}
+			case 13:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(9);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 14:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(11);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(9);
+				}
+				break;
+			}
+			case 15:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+				m_pPlayer->Set_NaviIndex(11);
+
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				m_pPlayer->Set_MoveToWidthOn(true);
+				break;
+			}
+			case 16:
+			{
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex - 1);
+				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+				m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(13);
+					m_pPlayer->Set_MoveToWidthOn(true);
+				}
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				{
+					m_pPlayer->Set_NaviIndex(11);
+				}
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -225,7 +428,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(36.56f, 42.56f, 40.f, 1.f);  //_float4(36.451f, 42.557f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(36.56f, 42.497f, 40.f, 1.f);  //_float4(36.451f, 42.557f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -243,7 +446,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(30.72f, 42.437f, 40.f, 1.f);  //_float4(30.389f, 42.43f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(30.72f, 42.349f, 40.f, 1.f);  //_float4(30.389f, 42.43f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -253,7 +456,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.32f, 42.765f, 40.f, 1.f); //_float4(46.475f, 42.768f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32f, 42.745f, 40.f, 1.f); //_float4(46.475f, 42.768f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -261,7 +464,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.32, 44.84f, 40.f, 1.f);  //_float4(46.475f, 44.838f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32f, 44.617f, 40.f, 1.f);  //_float4(46.475f, 44.838f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -271,7 +474,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(42.38f, 44.892f, 40.f, 1.f);  //_float4(42.474f, 44.891f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(42.38f, 44.721f, 40.f, 1.f);  //_float4(42.474f, 44.891f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
@@ -279,7 +482,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(42.38f, 46.96f, 40.f, 1.f);  //_float4(42.474f, 46.96f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(42.38f, 46.68f, 40.f, 1.f);  //_float4(42.474f, 46.96f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
