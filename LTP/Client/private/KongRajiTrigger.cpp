@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\KongRajiTrigger.h"
+#include "MiniGame_KongRaji.h"
 
 
 CKongRajiTrigger::CKongRajiTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -68,6 +69,19 @@ _int CKongRajiTrigger::LateRender()
 
 
 	return _int();
+}
+
+void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		CMiniGame_KongRaji* pPlayer = static_cast<CMiniGame_KongRaji*>(pConflictedObj);
+	}
+}
+
+_float CKongRajiTrigger::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
 }
 
 HRESULT CKongRajiTrigger::SetUp_Components()

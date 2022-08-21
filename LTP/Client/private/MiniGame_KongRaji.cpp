@@ -56,8 +56,8 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(53.42f,33.49f,40.f,1.f));
 
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_KongRajiTrigger)));
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_KongRajiTrigger)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
 
 
 
@@ -423,16 +423,20 @@ HRESULT CMiniGame_KongRaji::Change_Anim()
 
 HRESULT CMiniGame_KongRaji::Pivot()
 {
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
-	_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	//_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
-	_float4 fTempPos;
+	//_float4 fTempPos;
 
-	XMStoreFloat4(&fTempPos, vTempPos);
+	//XMStoreFloat4(&fTempPos, vTempPos);
 
-	m_JumpDesc.fJumpY = fTempPos.y;
+	//m_JumpDesc.fJumpY = fTempPos.y;
 
+
+
+	//이게 네비 위로 가는건가?
+	//m_JumpDesc.fJumpY = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	return S_OK;
 }
 
