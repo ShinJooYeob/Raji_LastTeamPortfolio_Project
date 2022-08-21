@@ -29,7 +29,7 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-	virtual void Set_IsDead();
+	virtual void Set_IsDead()override;
 
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
@@ -39,6 +39,8 @@ public:
 
 public:
 	virtual void Update_AttachCamPos()override;
+
+	void				Set_MoveToUpOn(_bool bMoveToUpOn) { m_bMoveToUpOn = bMoveToUpOn; }
 
 	HRESULT				SetUp_Components();
 	HRESULT				Adjust_AnimMovedTransform(_double dDeltatime);
@@ -59,8 +61,6 @@ public:
 	HRESULT				Keyboard_Input(_double dDeltatime);
 	HRESULT				Change_Anim();
 
-	//Piput
-	HRESULT				Pivot();
 	//Jump
 	HRESULT				Jumping(_double TimeDelta);
 
@@ -85,6 +85,8 @@ private:
 	//점프하기
 private:
 	JUMPDESC			m_JumpDesc;
+	_float				m_fTempJumpY;
+	_float				m_fTempHeight;
 
 private:
 	_bool				m_bChangeAnimOn = false;
@@ -97,6 +99,9 @@ private://Dissolve
 
 private://Anim Speed
 	_double				m_dAcceleration = 1;
+
+private:
+	_bool				m_bMoveToUpOn = false;
 
 public:
 	static CMiniGame_KongRaji* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

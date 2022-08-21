@@ -341,7 +341,6 @@ HRESULT CMiniGame_KongRaji::SetUp_Texture()
 
 HRESULT CMiniGame_KongRaji::Play_MiniGame(_double dDeltaTime)
 {
-	Pivot();
 	Keyboard_Input(dDeltaTime);
 	Jumping(dDeltaTime);
 	Change_Anim();
@@ -353,14 +352,20 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press)
+	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press && m_bMoveToUpOn == true)
 	{
+		m_pTransformCom->Move_Up(dDeltatime);
+
+
 		m_bChangeAnimOn = true;
 		m_iCurrentAnimIndex = ANIM_CLIMB_UP;
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press && m_bMoveToUpOn == true)
 	{
+		m_pTransformCom->Move_Down(dDeltatime);
+
+
 		m_bChangeAnimOn = true;
 		m_iCurrentAnimIndex = ANIM_CLIMB_DOWN;
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
@@ -390,8 +395,13 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 	{
 		if (false == m_JumpDesc.bJump)
 		{
+			m_JumpDesc.fJumpY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+			m_fTempHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+
 			m_JumpDesc.bJump = true;
 			m_iCurrentAnimIndex = ANIM_JUMP;
+
 		}
 
 	}
@@ -421,25 +431,6 @@ HRESULT CMiniGame_KongRaji::Change_Anim()
 	return S_OK;
 }
 
-HRESULT CMiniGame_KongRaji::Pivot()
-{
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-
-	//_Vector vTempPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-
-	//_float4 fTempPos;
-
-	//XMStoreFloat4(&fTempPos, vTempPos);
-
-	//m_JumpDesc.fJumpY = fTempPos.y;
-
-
-
-	//이게 네비 위로 가는건가?
-	//m_JumpDesc.fJumpY = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-	return S_OK;
-}
-
 HRESULT CMiniGame_KongRaji::Jumping(_double TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -453,10 +444,12 @@ HRESULT CMiniGame_KongRaji::Jumping(_double TimeDelta)
 		fTempPos.y = m_JumpDesc.fJumpY + (_float)(m_JumpDesc.fJumpPower * m_JumpDesc.dTime - 9.8f * m_JumpDesc.dTime * m_JumpDesc.dTime * 0.5f);
 		m_JumpDesc.dTime += TimeDelta;
 
-		if (m_JumpDesc.fJumpY > fTempPos.y)
+		if (m_fTempHeight > fTempPos.y)
 		{
 			m_JumpDesc.bJump = false;
 			m_JumpDesc.dTime = 0;
+
+			fTempPos.y = m_fTempHeight+0.1f;
 		}
 
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMLoadFloat4(&fTempPos));

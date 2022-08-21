@@ -76,6 +76,7 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
 		CMiniGame_KongRaji* pPlayer = static_cast<CMiniGame_KongRaji*>(pConflictedObj);
+		pPlayer->Set_MoveToUpOn(true);
 	}
 }
 
