@@ -223,7 +223,6 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MiniGame_KongRaji(const _tchar * 
 
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Golu),&_float3(7.f,40.f,11.f)));
 
-	/////////123133
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
@@ -243,7 +242,6 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MiniGame_KongRaji(const _tchar * 
 	m_pMainCam->Set_FocusTarget(pJalsura);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 	pJalsura->Update_AttachCamPos();
-	///////////////123123
 
 	return S_OK;
 }

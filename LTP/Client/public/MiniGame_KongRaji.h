@@ -6,6 +6,8 @@ class CCamera_Main;
 class CMiniGame_KongRaji final : public CGameObject
 {
 public:
+	enum HeightPosType{HEIGHT_ONE_POINT,HEIGHT_TWO_POINT,HEIGHT_END};
+public:
 	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
 
 	typedef	struct tagJumpDesc
@@ -40,7 +42,11 @@ public:
 public:
 	virtual void Update_AttachCamPos()override;
 
-	void				Set_MoveToUpOn(_bool bMoveToUpOn) { m_bMoveToUpOn = bMoveToUpOn; }
+	void				Set_MoveToHeightOn(_bool bMoveToHeightOn) { m_bMoveToHeightOn = bMoveToHeightOn; }
+	void				Set_MoveToWidthOn(_bool bMoveToWidthOn) { m_bMoveToWidthOn = bMoveToWidthOn; }
+	void				Set_NaviIndex(_uint	iNaviIndex) { m_iNaviIndex = iNaviIndex; }
+	void				Set_HeightPos(_float3 fColliderPos[HEIGHT_END]);
+	_uint				Get_NaviIndex() { return m_iNaviIndex; }
 
 	HRESULT				SetUp_Components();
 	HRESULT				Adjust_AnimMovedTransform(_double dDeltatime);
@@ -100,8 +106,17 @@ private://Dissolve
 private://Anim Speed
 	_double				m_dAcceleration = 1;
 
+private://Moving
+	_bool				m_bMoveToHeightOn = false;
+	_bool				m_bMoveToWidthOn = true;
+	_uint				m_iNaviIndex = 1;
+
 private:
-	_bool				m_bMoveToUpOn = false;
+	_float3				m_fMyPos;
+
+
+private:
+	_float3				m_fHeightPos[CMiniGame_KongRaji::HEIGHT_END];
 
 public:
 	static CMiniGame_KongRaji* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

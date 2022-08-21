@@ -31,6 +31,8 @@ HRESULT CKongRajiTrigger::Initialize_Clone(void * pArg)
 
 	m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DEBUGCOLLIDER, true);
 
+
+
 	return S_OK;
 }
 
@@ -38,7 +40,10 @@ _int CKongRajiTrigger::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	Once_Trigger();
 
+
+	Update_Trigger(dDeltaTime);
 	Update_Collider(dDeltaTime);
 
 	return _int();
@@ -75,8 +80,35 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		CMiniGame_KongRaji* pPlayer = static_cast<CMiniGame_KongRaji*>(pConflictedObj);
-		pPlayer->Set_MoveToUpOn(true);
+		switch (iMyColliderIndex)
+		{
+		case 1:
+		{
+			m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+			m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex + 1);
+			m_pPlayer->Set_NaviIndex(iMyColliderIndex);
+
+			m_pPlayer->Set_HeightPos(m_fColliderPos);
+
+			m_pPlayer->Set_MoveToWidthOn(true);
+			break;
+		}
+		case 2:
+		{
+			if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y -0.1f <= m_fKongRajiPos.y)
+			{
+				m_pPlayer->Set_NaviIndex(3);
+				m_pPlayer->Set_MoveToWidthOn(true);
+			}
+			else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.1f > m_fKongRajiPos.y)
+			{
+				m_pPlayer->Set_NaviIndex(1);
+			}
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 
@@ -111,17 +143,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////첫번째
 	//Index == 1;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(50.535f,33.442f,40.f,1.f);
+	ColliderDesc.vPosition = _float4(50.25f, 33.437f, 40.f, 1.f);  //_float4(50.535f,33.442f,40.f,1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 2;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(50.535f, 35.388f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(50.25f, 35.388f, 40.f, 1.f); //_float4(50.535f, 35.388f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -129,7 +161,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////두번째
 	//Index == 3;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(39.417f,35.67f,40.f,1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -137,7 +169,7 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 
 	//Index == 4;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(39.417f, 37.894f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -147,17 +179,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////세번째
 	//Index == 5;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(31.413f, 35.879f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(31.68f, 35.872f, 40.f, 1.f);  //_float4(31.413f, 35.879f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 6;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(31.413f, 37.729f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(31.68f, 37.734f, 40.f, 1.f);  //_float4(31.413f, 37.729f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -165,17 +197,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////네번째
 	//Index == 7;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(41.499f, 37.936f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(41.46f, 37.936f, 40.f, 1.f);  //_float4(41.499f, 37.936f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 8;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(41.499f, 40.315f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(41.46f, 40.316f, 40.f, 1.f);	//(41.499f, 40.315f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -183,17 +215,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////다섯번째
 	//Index == 9;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(36.451f, 40.441f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(36.56f, 40.438f, 40.f, 1.f);  //_float4(36.451f, 40.441f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 10;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(36.451f, 42.557f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(36.56f, 42.56f, 40.f, 1.f);  //_float4(36.451f, 42.557f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -201,17 +233,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////여섯번째
 	//Index == 11;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(30.389f, 40.593f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(30.72f, 40.585f, 40.f, 1.f);  //_float4(30.389f, 40.593f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 12;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(30.389f, 42.43f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(30.72f, 42.437f, 40.f, 1.f);  //_float4(30.389f, 42.43f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -219,17 +251,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////일곱번째
 	//Index == 13;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.475f, 42.768f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32f, 42.765f, 40.f, 1.f); //_float4(46.475f, 42.768f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 14;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(46.475f, 44.838f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(46.32, 44.84f, 40.f, 1.f);  //_float4(46.475f, 44.838f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -237,17 +269,17 @@ HRESULT CKongRajiTrigger::SetUp_Collider()
 	////////////////////////여덟번째
 	//Index == 15;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(42.474f, 44.891f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(42.38f, 44.892f, 40.f, 1.f);  //_float4(42.474f, 44.891f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 
 	//Index == 16;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	ColliderDesc.vPosition = _float4(42.474f, 46.96f, 40.f, 1.f);
+	ColliderDesc.vPosition = _float4(42.38f, 46.96f, 40.f, 1.f);  //_float4(42.474f, 46.96f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////
@@ -274,6 +306,48 @@ HRESULT CKongRajiTrigger::Update_Collider(_double dDeltaTime)
 		m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
 	}
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
+
+	return S_OK;
+}
+
+HRESULT CKongRajiTrigger::Once_Trigger()
+{
+	if (m_bOnce_Switch == false)
+	{
+		m_pPlayer = static_cast<CMiniGame_KongRaji*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		m_pPlayerTransform = (CTransform*)m_pPlayer->Get_Component(TAG_COM(Com_Transform));
+
+		m_bOnce_Switch = true;
+	}
+
+	return S_OK;
+
+}
+
+HRESULT CKongRajiTrigger::Update_Trigger(_double dDeltaTime)
+{
+	m_fKongRajiPos = m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+
+	if (m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT].x - 0.3f <= m_fKongRajiPos.x &&
+		m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT].x + 0.3f >= m_fKongRajiPos.x)
+	{
+		m_pPlayer->Set_MoveToHeightOn(true);
+		//if (m_fColliderPos[ONE_POINT].y + 0.1f <= KongRajiPos.y &&
+		//	m_fColliderPos[TWO_POINT].y - 0.1f >= KongRajiPos.y)
+		//{
+		//	//m_pPlayer->Set_MoveToHeightOn(true);
+		//}
+	}
+	else {
+		m_pPlayer->Set_MoveToHeightOn(false);
+	}
+
+	//if (m_fColliderPos[CKongRajiTrigger::COLLIDER_ONE_POINT].y < m_fKongRajiPos.y &&
+	//	m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y > m_fKongRajiPos.y)
+	//{
+	//	m_pPlayer->Set_MoveToWidthOn(false);
+	//}
 
 	return S_OK;
 }

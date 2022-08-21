@@ -51,7 +51,7 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 	Camera_Pos();
 
 
-	m_pNavigationCom->Set_CurNavCellIndex(1);
+	m_pNavigationCom->Set_CurNavCellIndex(m_iNaviIndex);
 	m_pTransformCom->LookDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(53.42f,33.49f,40.f,1.f));
 
@@ -102,8 +102,9 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 
 	Update_Collider(dDeltaTime);
 
+	m_pNavigationCom->Set_CurNavCellIndex(m_iNaviIndex);
 
-	m_pNavigationCom->Set_CurNavCellIndex(1);
+
 
 	return _int();
 }
@@ -223,6 +224,12 @@ void CMiniGame_KongRaji::Update_AttachCamPos()
 	/*m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	m_fAttachCamPos.y += 2.f;
 	m_fAttachCamPos.z -= 4.f;*/
+}
+
+void CMiniGame_KongRaji::Set_HeightPos(_float3 fColliderPos[HEIGHT_END])
+{
+	m_fHeightPos[HEIGHT_ONE_POINT] = fColliderPos[HEIGHT_ONE_POINT];
+	m_fHeightPos[HEIGHT_TWO_POINT] = fColliderPos[HEIGHT_TWO_POINT];
 }
 
 HRESULT CMiniGame_KongRaji::SetUp_Components()
@@ -352,25 +359,35 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press && m_bMoveToUpOn == true)
+	m_fMyPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press && m_bMoveToHeightOn == true)
 	{
-		m_pTransformCom->Move_Up(dDeltatime);
+		if (m_fHeightPos[CMiniGame_KongRaji::HEIGHT_TWO_POINT].y + 0.1f >= m_fMyPos.y)
+		{
+			m_pTransformCom->Move_Up(dDeltatime);
+			m_bMoveToWidthOn = false;
+		}
 
 
 		m_bChangeAnimOn = true;
 		m_iCurrentAnimIndex = ANIM_CLIMB_UP;
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press && m_bMoveToUpOn == true)
+	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press && m_bMoveToHeightOn == true)
 	{
-		m_pTransformCom->Move_Down(dDeltatime);
+		if (m_fHeightPos[CMiniGame_KongRaji::HEIGHT_ONE_POINT].y <= m_fMyPos.y)
+		{
+			m_pTransformCom->Move_Down(dDeltatime);
+			m_bMoveToWidthOn = false;
+		}
 
 
 		m_bChangeAnimOn = true;
 		m_iCurrentAnimIndex = ANIM_CLIMB_DOWN;
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press)
+	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press && m_bMoveToWidthOn == true)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
 		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.5f);
@@ -378,9 +395,12 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		m_bChangeAnimOn = true;
 
 		if (false == m_JumpDesc.bJump)
+		{
 			m_iCurrentAnimIndex = ANIM_WALK;
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press)
+	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press && m_bMoveToWidthOn == true)
 	{
 		m_pTransformCom->MovetoDir(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
 		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.5f);
@@ -388,7 +408,10 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		m_bChangeAnimOn = true;
 
 		if (false == m_JumpDesc.bJump)
+		{
 			m_iCurrentAnimIndex = ANIM_WALK;
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
@@ -396,7 +419,6 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		if (false == m_JumpDesc.bJump)
 		{
 			m_JumpDesc.fJumpY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
-			m_fTempHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
 			m_JumpDesc.bJump = true;
@@ -405,6 +427,8 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		}
 
 	}
+
+	m_fTempHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
 	//네비 위에 태우고 싶을때 사용
