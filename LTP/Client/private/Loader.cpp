@@ -474,11 +474,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_RainDrop);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Box_Basic);
-		
-		//JY_Used
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
+
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -489,6 +487,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Ninjasura_Knife);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_sinkhole);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Gadasura_Terrain_Bullet);
+
 
 		// ALLLOAD
 		// for (_uint i = (_uint)Prototype_Mesh_KurtzpelStart + 1; i < (_uint)Prototype_Mesh_KurtzpelEnd; i++)

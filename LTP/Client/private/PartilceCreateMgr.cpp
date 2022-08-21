@@ -88,7 +88,8 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_DS_Basic_03_3_X_L);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
+		
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -785,20 +786,18 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 	if (type == MESHEFFECT_ARROW_BOW_SHIFT_PLANE)
 	{
 		MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ControlPointMatch_Square_02;
+		
 
 		MeshDesc.fMaxTime_Duration = 999;
-		MeshDesc.fAppearTime = 0.3f;
+		MeshDesc.fAppearTime = 0.2f;
 
-		MeshDesc.iDiffuseTextureIndex = 317;
-		MeshDesc.iDiffuseTextureIndex = 430;
-		MeshDesc.iDiffuseTextureIndex = 396;
-		MeshDesc.iDiffuseTextureIndex = 365;
-		MeshDesc.iDiffuseTextureIndex = 278;
-		MeshDesc.iDiffuseTextureIndex = 300;
+		MeshDesc.iDiffuseTextureIndex = 395;
 
-		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.MaskTextureIndex = 31;
+		MeshDesc.MaskTextureIndex = 71;
 		MeshDesc.MaskTextureIndex = 179;
+		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
 		MeshDesc.NoiseTextureIndex = 325;
 		MeshDesc.NoiseTextureIndex = 294;
@@ -809,13 +808,12 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.fAlphaTestValue = 1.0f;
 
 		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.82f, 1.0f);
-		MeshDesc.vEmissive = _float4(0.5f, 0.8f, 0.5f, 1.f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.8f, 0.5f, 1.f);
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(0);
-		MeshDesc.vSize = _float3(92);
-		MeshDesc.vSize = _float3(70);
+		MeshDesc.vPosition = _float3(0,0.2f,0);
+		MeshDesc.vSize = _float3(1.3f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
 		MeshDesc.RotationSpeedPerSec = 20;
@@ -838,30 +836,39 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	if (type == MESHEFFECT_ARROW_BOW_SHIFT_ICE)
 	{
-		MeshDesc.eMeshType = Prototype_Mesh_SM_ICE_01;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
+
 
 		MeshDesc.fMaxTime_Duration = 999;
-		MeshDesc.fAppearTime = 0.2f;
+		MeshDesc.fAppearTime = 0.3f;
 
-		MeshDesc.iDiffuseTextureIndex = 363;
+		MeshDesc.iDiffuseTextureIndex = 365;
+
+		MeshDesc.MaskTextureIndex = 31;
 		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 179;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
+		MeshDesc.NoiseTextureIndex = 325;
+		MeshDesc.NoiseTextureIndex = 294;
 
-		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.noisingdir = _float2(1, 1).Get_Nomalize();
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
-		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.fDistortionNoisingPushPower = 5.0f;
+		MeshDesc.fAlphaTestValue = 1.0f;
 
-		MeshDesc.vLimLight = _float4(0.11f, 0.26f, 0.64f, 1.0f);
-		MeshDesc.vEmissive = _float4(1.0f, 0.f, 0.f, 0.f);
+		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.82f, 1.0f);
+		MeshDesc.vEmissive = _float4(1.0f, 0.8f, 0.5f, 1.f);
+
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
 		MeshDesc.vPosition = _float3(0);
-		MeshDesc.vSize = _float3(5.5f, 1.5f, 5.5f);
+		MeshDesc.vSize = _float3(92);
+		MeshDesc.vSize = _float3(70);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
-		MeshDesc.RotationSpeedPerSec = 15.f;
+		MeshDesc.RotationSpeedPerSec = 20;
 
-		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);s
+		//	_float3 Pos = Transfom->Get_MatrixState(CTransform::STATE_POS);
 		//	_float3 dir =  Transfom->Get_MatrixState(CTransform::STATE_UP);
 
 		MeshDesc.vLookDir = _float3(1, 0, 0);
@@ -869,13 +876,12 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		//	MeshDesc.m_iPassIndex = 16; // 왜곡
 		//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
-	//	MeshDesc.m_iPassIndex = 18; // DisCard
+		//	MeshDesc.m_iPassIndex = 18; // DisCard
 		MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
 		AddDesc.LookRotAxis = FollowingDir_Right;
-		AddDesc.AccRotSpeed = 0.0f;
 
-	//	GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 	}
 
 	if (type == MESHEFFECT_ARROW_BOW_R)

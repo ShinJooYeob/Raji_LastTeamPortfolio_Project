@@ -6798,11 +6798,16 @@ void CPlayer::Shelling(_double fDeltaTime)
 				// Shift Off
 				if (mMeshParticle)
 				{
-
 					mMeshParticle->Set_DeadMeshparticle();
 					mMeshParticle = nullptr;
+				}
+				if (mMeshParticle2)
+				{
 					mMeshParticle2->Set_DeadMeshparticle();
 					mMeshParticle2 = nullptr;
+				}
+				if (mMeshParticle3)
+				{
 					mMeshParticle3->Set_DeadMeshparticle();
 					mMeshParticle3 = nullptr;
 				}
@@ -9144,7 +9149,7 @@ HRESULT CPlayer::SetUp_PlayerEffects()
 {
 	CShellingSkillRange::SHELLINGSKILLRANGEDESC		tShellingSkillRangeDesc;
 	tShellingSkillRangeDesc.fInitPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	tShellingSkillRangeDesc.fMaxDist = 18.f;
+	tShellingSkillRangeDesc.fMaxDist = 15.0F;
 	tShellingSkillRangeDesc.fSpeed = 3.f;
 	tShellingSkillRangeDesc.fStartDist = 2.f;
 	tShellingSkillRangeDesc.pOwner = this;
