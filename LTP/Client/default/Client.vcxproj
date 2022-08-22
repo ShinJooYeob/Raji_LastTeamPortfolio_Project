@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
+    <ClInclude Include="..\public\DonkeyKong_Bullet.h" />
     <ClInclude Include="..\public\DonkeyKong_BulletTrigger.h" />
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
@@ -391,6 +392,7 @@
     <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />
+    <ClCompile Include="..\private\DonkeyKong_Bullet.cpp" />
     <ClCompile Include="..\private\DonkeyKong_BulletTrigger.cpp" />
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />

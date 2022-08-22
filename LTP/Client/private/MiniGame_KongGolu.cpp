@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\MiniGame_KongGolu.h"
+#include "Scene.h"
 
 
 CMiniGame_KongGolu::CMiniGame_KongGolu(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -41,6 +42,10 @@ HRESULT CMiniGame_KongGolu::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 
+
+	m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, -1.f, 0.f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(38.513f, 46.53f, 39.5f, 1.f));
+
 	return S_OK;
 }
 
@@ -48,10 +53,20 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_bClear == true)
+	{
+		m_dClearTime += dDeltaTime;
+
+		if (m_dClearTime > 2)
+		{
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+		}
+	}
+
 	Play_MiniGame(dDeltaTime);
 
 
-	m_pModel->Change_AnimIndex(1, 0.f);
+	m_pModel->Change_AnimIndex(0, 0.f);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -118,6 +133,7 @@ void CMiniGame_KongGolu::Set_IsDead()
 
 void CMiniGame_KongGolu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	m_bClear = true;
 }
 
 _float CMiniGame_KongGolu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
@@ -257,10 +273,7 @@ HRESULT CMiniGame_KongGolu::Update_Collider(_double dDeltaTime)
 	for (_uint i = 0; i < iNumCollider; i++)
 		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pColliderCom));
-
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.f, m_pNavigationCom));
-
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
 
 	return S_OK;
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\DonkeyKong_BulletTrigger.h"
+#include "DonkeyKong_Bullet.h"
 
 
 CDonkeyKong_BulletTrigger::CDonkeyKong_BulletTrigger(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -68,6 +69,277 @@ _int CDonkeyKong_BulletTrigger::LateRender()
 
 
 	return _int();
+}
+
+void CDonkeyKong_BulletTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+{
+	CDonkeyKong_Bullet* pBullet = static_cast<CDonkeyKong_Bullet*>(pConflictedObj);
+
+	CTransform* pBulletTransform = static_cast<CTransform*>(pBullet->Get_Component(TAG_COM(Com_Transform)));
+
+	_float3 fBulletPos = pBulletTransform->Get_MatrixState_Float3(CTransform::STATE_POS);
+	_float3 fColliderPos = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
+
+	switch (iMyColliderIndex)
+	{
+	case 1:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(9);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 3:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(9);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 5:
+	{
+		if (fColliderPos.x <= fBulletPos.x + 0.2)
+		{
+			pBullet->Set_NaviIndex(9);
+			pBullet->Set_MovoToHeightOn(true);
+			pBullet->Set_MovoToWidthOn(false);
+
+			pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+		}
+		break;
+	}
+	case 7:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x >= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(7);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+			}
+		}
+		break;
+	}
+	case 9:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x >= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(7);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+			}
+		}
+		break;
+	}
+	case 11:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x >= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(7);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+			}
+		}
+		break;
+	}
+	case 13:
+	{
+		if (fColliderPos.x + 0.2 >= fBulletPos.x)
+		{
+			pBullet->Set_NaviIndex(7);
+			pBullet->Set_MovoToHeightOn(true);
+			pBullet->Set_MovoToWidthOn(false);
+
+			pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+		}
+		break;
+	}
+	case 15:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(5);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 17:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(5);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 19:
+	{
+		if (fColliderPos.x <= fBulletPos.x + 0.2)
+		{
+			pBullet->Set_NaviIndex(5);
+			pBullet->Set_MovoToHeightOn(true);
+			pBullet->Set_MovoToWidthOn(false);
+
+			pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+		}
+		break;
+	}
+	case 21:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x >= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(3);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+			}
+		}
+		break;
+	}
+	case 23:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x >= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(3);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+			}
+		}
+		break;
+	}
+	case 25:
+	{
+		if (fColliderPos.x + 0.2 >= fBulletPos.x)
+		{
+			pBullet->Set_NaviIndex(3);
+			pBullet->Set_MovoToHeightOn(true);
+			pBullet->Set_MovoToWidthOn(false);
+
+			pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::RIGHT);
+		}
+		break;
+	}
+	case 27:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(1);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 29:
+	{
+		pBullet->Set_NewColliderIndex(iMyColliderIndex);
+
+		if (pBullet->Get_bDescent() == true)
+		{
+			if (fColliderPos.x <= fBulletPos.x)
+			{
+				pBullet->Set_NaviIndex(1);
+				pBullet->Set_MovoToHeightOn(true);
+				pBullet->Set_MovoToWidthOn(false);
+
+				pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+			}
+		}
+		break;
+	}
+	case 31:
+	{
+		if (fColliderPos.x <= fBulletPos.x + 0.2)
+		{
+			pBullet->Set_NaviIndex(1);
+			pBullet->Set_MovoToHeightOn(true);
+			pBullet->Set_MovoToWidthOn(false);
+
+			pBullet->Set_MoveToDirIndex(CDonkeyKong_Bullet::LEFT);
+		}
+		break;
+	}
+	case 33:
+	{
+		pBullet->Set_IsDead();
+		break;
+	}
+	}
+}
+
+_float CDonkeyKong_BulletTrigger::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
 }
 
 HRESULT CDonkeyKong_BulletTrigger::SetUp_Components()
@@ -377,6 +649,15 @@ HRESULT CDonkeyKong_BulletTrigger::SetUp_Collider()
 	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(52.836f, 33.481f, 40.f, 1.f);
+	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+	m_pColliderCom->Set_ParantBuffer();
+	////////////////////////
+
+	//Index == 33;
+	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+	ColliderDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	ColliderDesc.vPosition = _float4(30.032f, 33.601f, 40.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	m_pColliderCom->Set_ParantBuffer();
 	////////////////////////

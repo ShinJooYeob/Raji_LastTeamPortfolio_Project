@@ -471,8 +471,11 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_FireRing,
 	Prototype_Object_MiniGame_CircusBackground,
 	Prototype_Object_MiniGame_KongRaji,
+	Prototype_Object_MiniGame_DonkeyKong,
+	Prototype_Object_MiniGame_KongGolu,
 	Prototype_Object_KongRajiTrigger,
 	Prototype_Object_DonkeyKong_BulletTrigger,
+	Prototype_Object_DonkeyKong_Bullet,
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
@@ -935,11 +938,20 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_MiniGame_KongRaji:
 		return TEXT("Prototype_Object_MiniGame_KongRaji");
 
+	case Prototype_Object_MiniGame_DonkeyKong:
+		return TEXT("Prototype_Object_MiniGame_DonkeyKong");
+
+	case Prototype_Object_MiniGame_KongGolu:
+		return TEXT("Prototype_Object_MiniGame_KongGolu");
+
 	case Prototype_Object_KongRajiTrigger:
 		return TEXT("Prototype_Object_KongRajiTrigger");
 
 	case Prototype_Object_DonkeyKong_BulletTrigger:
 		return TEXT("Prototype_Object_DonkeyKong_BulletTrigger");
+
+	case Prototype_Object_DonkeyKong_Bullet:
+		return TEXT("Prototype_Object_DonkeyKong_Bullet");
 
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
@@ -1117,7 +1129,8 @@ enum LAYERID
 	Layer_WorldTexture_Universal,
 	Layer_Golu_Bullet,
 	Layer_UI_Texture_Universal,
-	Layer_DonkeyKong_Trigger
+	Layer_DonkeyKong_Trigger,
+	Layer_MiniGame_DonkeyKong,
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1360,6 +1373,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_DonkeyKong_Trigger:
 		return TEXT("Layer_DonkeyKong_Trigger");
+		break;
+
+	case Layer_MiniGame_DonkeyKong:
+		return TEXT("Layer_MiniGame_DonkeyKong");
 		break;
 		
 	default:

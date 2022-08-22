@@ -625,6 +625,9 @@
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster">
       <UniqueIdentifier>{909b0199-9b8b-48e7-b4ce-6a6b5f818408}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet">
+      <UniqueIdentifier>{342ab623-cfb0-4be4-be33-a68ebf8d378a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1279,9 +1282,6 @@
     <ClInclude Include="..\public\PM_Food.h" />
     <ClInclude Include="..\public\PM_Monster.h" />
     <ClInclude Include="..\public\PackMen.h" />
-    <ClInclude Include="..\public\Scene_MiniGame_DonkeyKong.h">
-      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MiniGame_DonkeyKong.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong</Filter>
     </ClInclude>
@@ -1333,6 +1333,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Taiko_Monster.h">
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Scene_MiniGame_DonkeyKong.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DonkeyKong_Bullet.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2012,6 +2018,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Taiko_Monster.cpp">
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DonkeyKong_Bullet.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

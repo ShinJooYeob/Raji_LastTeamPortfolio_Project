@@ -57,7 +57,7 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_KongRajiTrigger)));
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
 
 
 
@@ -69,26 +69,26 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	if (m_fHP <= 0)
+	if (m_bDead == false)
 	{
-		m_pDissolve->Update_Dissolving(dDeltaTime);
-		m_pDissolve->Set_DissolveOn(false, 2.f);
-
-		m_dDissolveTime += dDeltaTime;
-
-		//if (m_bDieSound == false && m_dDissolveTime >= 1.)
-		//{
-		//	g_pGameInstance->Play3D_Sound(TEXT("EH_Wave_Tezabsura_Damage_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
-		//	m_bDieSound = true;
-		//}
-
-		if (m_dDissolveTime >= 2)
-		{
-			Set_IsDead();
-		}
+		Play_MiniGame(dDeltaTime);
 	}
-
-	Play_MiniGame(dDeltaTime);
+	else {
+		if (m_iSwitchIndex == 0)
+		{
+			m_JumpDesc.bJump = true;
+			m_JumpDesc.fJumpY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
+			m_fTempHeight = 30.f;
+			m_iSwitchIndex++;
+		}
+		if (m_JumpDesc.bJump == false)
+		{
+			m_dDeadTime += dDeltaTime;
+			if(m_dDeadTime > 2)
+				Set_IsDead();
+		}
+		Jumping(dDeltaTime);
+	}
 
 	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.1f);
 
@@ -108,7 +108,6 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 	//m_pNavigationCom->Set_CurNavCellIndex(7);
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
-	int a = 10;
 	return _int();
 }
 
@@ -162,6 +161,8 @@ void CMiniGame_KongRaji::Set_IsDead()
 {
 	__super::Set_IsDead();
 
+	g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+
 
 	//CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -184,14 +185,8 @@ void CMiniGame_KongRaji::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 
 _float CMiniGame_KongRaji::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	//m_fHP += -fDamageAmount;
 
-
-	if (0 >= m_fHP)
-	{
-		return -1.f;
-	}
+	m_bDead = true;
 
 	return _float();
 }

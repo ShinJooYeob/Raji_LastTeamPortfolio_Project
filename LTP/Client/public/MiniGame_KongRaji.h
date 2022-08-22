@@ -100,7 +100,6 @@ private:
 	_uint				m_iAnimIndex = 0;
 	_uint				m_iCurrentAnimIndex = 0;
 
-
 private://Dissolve
 	_double				m_dDissolveTime = 0;
 
@@ -114,6 +113,12 @@ private://Moving
 
 private:
 	_float3				m_fMyPos;
+
+private:
+	_bool				m_bDead = false;
+	_double				m_dDeadTime = 0;
+
+	_uint				m_iSwitchIndex = 0;
 
 
 private:
