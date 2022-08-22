@@ -495,15 +495,15 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 
 		// StaticTest
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_CogMedium_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Fern_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Diya_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Dry_Green_Bush_03);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_BLD_Lion_Statue);
-		STATIC_EFFECTLOAD(Prototype_Mesh_ENV_F_DecorativePillar_02);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Pillar_03);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_D_GodHand_01);
-		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_Bull);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_CogMedium_01);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Fern_01);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Diya_02);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Dry_Green_Bush_03);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_BLD_Lion_Statue);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_ENV_F_DecorativePillar_02);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_CC_Pillar_03);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_D_GodHand_01);
+	//	STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_Bull);
 
 
 
