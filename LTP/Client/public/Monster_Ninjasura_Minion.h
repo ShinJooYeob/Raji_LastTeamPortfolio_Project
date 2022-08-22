@@ -143,8 +143,9 @@ private: // particle
 	CTransform*						m_pTextureParticleTransform_Demo2 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo3 = nullptr;
 	CTransform*						m_pTextureParticleTransform_Demo4 = nullptr;
-	_bool				m_MotionTrailOn = false;
-
+	_bool							m_MotionTrailOn = false;
+									
+	void							Effect_Knife();
 
 public:
 	static CMonster_Ninjasura_Minion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
