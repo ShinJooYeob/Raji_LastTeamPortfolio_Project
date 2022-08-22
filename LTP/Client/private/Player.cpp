@@ -24,7 +24,9 @@
 #include "PartilceCreateMgr.h"
 #include "InstanceEffect.h"
 
-#define NotOnNavi
+#include "Scene.h"
+
+//#define NotOnNavi
 
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -640,7 +642,7 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 	swprintf_s(pSoundFile, TEXT("Jino_Raji_Hit_%d.wav"), iSelectSoundFileIndex);
 	g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 	//"Jino_Raji_Hit_%d.wav"
-
+	
 	return fRemainHP;
 }
 
@@ -741,6 +743,8 @@ void CPlayer::Set_State_IdleStart(_double fDeltaTime)
 	}
 
 	m_bAttackEnd = true;
+
+	m_bFootStepSound = false;
 }
 
 void CPlayer::Set_State_MoveStart(_double fDeltaTime)
@@ -778,6 +782,7 @@ void CPlayer::Set_State_DodgeStart(_double fDeltaTime)
 	Set_PlayerState(STATE_EVASION);
 	Set_TurnInputDir();
 	m_pModel->Change_AnimIndex(BASE_ANIM_DODGE_ROLL, 0.1f, true);
+	m_bFootStepSound = false;
 }
 
 void CPlayer::Set_State_MainAttackStart(_double fDeltaTime)
@@ -921,7 +926,6 @@ void CPlayer::Set_State_LedgeClimbDownStart(_float3 fLookDir, _double fDeltaTime
 	m_eCurParkourState = CTriggerObject::EParkourTriggerType::PACUR_LEDGE;
 	m_eCurLedgeState = LEDGE_HANGING_CLIMBDOWN;
 	m_pModel->Change_AnimIndex(LEDGE_ANIM_HANGING_CLIMBDOWN);
-
 }
 
 void CPlayer::Set_State_LedgeClimbUpStart(_double fDeltaTime)
@@ -935,6 +939,7 @@ void CPlayer::Set_State_LedgeClimbUpStart(_double fDeltaTime)
 	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + 0.11f);
 	vPos -= (vLook * 0.06f);
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPos);
+	g_pGameInstance->PlaySoundW(L"Jino_Raji_Ledge_Up.wav", CHANNEL_PLAYER);
 }
 
 void CPlayer::Set_State_WallJump()
@@ -944,6 +949,7 @@ void CPlayer::Set_State_WallJump()
 	m_eCurLedgeState = LEDGE_JUMP;
 	m_pModel->Change_AnimIndex(LEDGE_ANIM_JUMP);
 	m_fJumpStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
 }
 
 CPlayer::EPLAYER_STATE CPlayer::Get_PlayerState()
@@ -1216,9 +1222,27 @@ HRESULT CPlayer::Update_State_Sleep(_double fDeltaTime)
 	case BASE_ANIM_WAKEUP:
 	{
 		m_fAnimSpeed = 0.2f;
-		if (fAnimRate > 0.97f)
+
+		if (false == m_bOncePlaySound && 0.02f <= fAnimRate && 0.2f > fAnimRate)
 		{
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_0.wav", CHANNEL_PLAYER);
+			m_bOncePlaySound = true;
+		}
+		else if (true == m_bOncePlaySound && 0.2f <= fAnimRate && 0.6f > fAnimRate)
+		{
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_1.wav", CHANNEL_PLAYER);
+			m_bOncePlaySound = false;
+		}
+		else if (false == m_bOncePlaySound && 0.6f <= fAnimRate)
+		{
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_2.wav", CHANNEL_PLAYER);
+			m_bOncePlaySound = true;
+		}
+		else if (fAnimRate > 0.97f)
+		{
+			g_pGameInstance->Get_NowScene()->Play_Scene_BGM();
 			Set_State_IdleStart(fDeltaTime);
+			m_bOncePlaySound = false;
 		}
 	}
 	break;
@@ -1389,6 +1413,7 @@ HRESULT CPlayer::Update_State_Jump(_double fDeltaTime)
 		else
 		{
 			m_pModel->Change_AnimIndex(BASE_ANIM_JUMP_JUMPING);
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
 		}
 
 		// Falling Zone
@@ -1754,11 +1779,18 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.214f <= fAnimPlayRate && 0.392f >= fAnimPlayRate)
 			{
+				if (false == m_bOncePlaySound)
+				{
+					g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
+					m_bOncePlaySound = true;
+				}
+
 				m_pTransformCom->Move_Up(fDeltaTime * 1.f);
 				m_fPillarParkourInitPos.y = XMVectorGetY(vPlayerPos);
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
+				m_bOncePlaySound = false;
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 			}
 		}
@@ -1777,6 +1809,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			else
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_MOVE_DOWN);
+				g_pGameInstance->PlaySoundW(L"Jino_Raji_Slide_Loop.wav", CHANNEL_TEMP);
 			}
 		}
 		else
@@ -1815,6 +1848,12 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.16f <= fAnimPlayRate && 0.6f >= fAnimPlayRate)
 			{
+				if (false == m_bOncePlaySound)
+				{
+					g_pGameInstance->PlaySoundW(L"Jino_Raji_Climb_Up.wav", CHANNEL_PLAYER);
+					m_bOncePlaySound = true;
+				}
+
 				m_pTransformCom->Move_Up(fDeltaTime * 0.5f);
 
 				if (true == m_bBlockClimbUp)
@@ -1833,6 +1872,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 				m_bBlockClimbUp = false;
+				m_bOncePlaySound = false;
 			}
 		}
 	}
@@ -1843,6 +1883,12 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		{
 			if (0.4f <= fAnimPlayRate && 0.84f >= fAnimPlayRate)
 			{
+				if (false == m_bOncePlaySound)
+				{
+					g_pGameInstance->PlaySoundW(L"Jino_Raji_Climb_Down.wav", CHANNEL_PLAYER);
+					m_bOncePlaySound = true;
+				}
+
 				m_pTransformCom->Move_Down(fDeltaTime * 0.3f);
 				_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 				_float	fPos_y = XMVectorGetY(vPos);
@@ -1856,6 +1902,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			else if (0.98f < fAnimPlayRate)
 			{
 				m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE, 0.f);
+				m_bOncePlaySound = false;
 			}
 		}
 	}
@@ -1918,6 +1965,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 
 		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Up)
 		{
+			g_pGameInstance->Stop_ChannelSound(CHANNEL_TEMP);
 			m_pModel->Change_AnimIndex(PILLAR_ANIM_IDLE);
 			m_fFallingAcc = 0.f;
 		}
@@ -1999,10 +2047,6 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			{
 				m_pTransformCom->Move_Down(fDeltaTime * 0.5f);
 				m_pTransformCom->Move_Backward(fDeltaTime * 0.2f);
-				/*_Vector vPillarPos = static_cast<CTransform*>(m_pCurParkourTrigger->Get_Component(TAG_COM(Com_Transform)))->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				_Vector vPlayerPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-				vPillarPos = XMVectorSetY(vPillarPos, m_fPillarClimbUpBlockHeight + 0.5f);
-				m_pTransformCom->MovetoTarget_ErrRange(vPillarPos, fDeltaTime, 0.1f);*/
 			}
 			else if (0.98f < fAnimPlayRate)
 			{
@@ -2022,6 +2066,7 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			}
 			else if (false == m_bActionSwitch && 0.12f <= fAnimPlayRate)
 			{
+				g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
 				m_bActionSwitch = true;
 				m_pTransformCom->Turn_Direct(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 			}
@@ -2048,6 +2093,12 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 		m_bOnNavigation = false;
 		if (0.f < fAnimPlayRate)
 		{
+			if (false == m_bOncePlaySound)
+			{
+				m_bOncePlaySound = true;
+				g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
+			}
+
 			m_fFallingAcc += 0.03f;
 			m_pTransformCom->Move_Forward(fDeltaTime * 1.f, m_pNavigationCom, true);
 			_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -2055,10 +2106,9 @@ HRESULT CPlayer::Update_State_Pillar(_double fDeltaTime)
 			_float fPos_y = m_fFallingStart_Y + (8.f * m_fFallingAcc - 9.8f * m_fFallingAcc * m_fFallingAcc * 0.5f);
 			if (fPrePos_Y >= fPos_y)
 			{
-				/*m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-				m_fFallingAcc = 0.f;*/
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 				m_bActionSwitch = false;
+				m_bOncePlaySound = false;
 				break;
 			}
 			vMyPos = XMVectorSetY(vMyPos, fPos_y);
@@ -7503,6 +7553,7 @@ void CPlayer::Ledging(_double fDeltaTime)
 			m_fFallingStart_Y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			m_fJumpPower = 0.f;
 			m_fFallingAcc = 0.f;
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_DownJump.wav", CHANNEL_PLAYER);
 			return;
 		}
 
@@ -7519,6 +7570,7 @@ void CPlayer::Ledging(_double fDeltaTime)
 				m_pModel->Change_AnimIndex(LEDGE_ANIM_FALLING);
 				m_fJumpPower = 12.f;
 				m_fFallingAcc = 0.f;
+				g_pGameInstance->PlaySoundW(L"Jino_Raji_Jump.wav", CHANNEL_PLAYER);
 			}
 		}
 		else
@@ -8261,6 +8313,19 @@ void CPlayer::Targeting_Search()
 	m_pTargetingMonster_Transform = static_cast<CTransform*>(m_pTargetingMonster->Get_Component(TAG_COM(Com_Transform)));
 
 	Targeting_Loop();
+
+
+	if (false == m_bPlayBattleSound)
+	{
+		g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
+
+		_int iSelectSoundFileIndex = rand() % 4;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Battle_%d.wav"), iSelectSoundFileIndex);
+		g_pGameInstance->PlayBGM(pSoundFile);
+
+		m_bPlayBattleSound = true;
+	}
 }
 
 void CPlayer::Targeting_Loop()
@@ -8277,6 +8342,10 @@ void CPlayer::Targeting_Loop()
 	{
 		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 		m_eCur_TargetingState = ETARGETING_STATE::TARGETING_SEARCH;
+		m_bPlayBattleSound = false;
+
+		g_pGameInstance->Get_NowScene()->Play_Scene_BGM();
+
 		return;
 	}
 	auto& iter = find_if((*UniqMonsters).begin(), (*UniqMonsters).end(), [&](auto& UniqMonster)
@@ -9360,6 +9429,36 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 		}
 		break;
+		case BASE_ANIM_RUN_F:
+		case BASE_ANIM_RUN_BOW:
+		case BASE_ANIM_RUN_F_SWORD:
+		case SPEAR_ANIM_THROW_LOOP_MOV_F:
+		case SPEAR_ANIM_THROW_LOOP_MOV_B:
+		case SPEAR_ANIM_THROW_LOOP_MOV_L:
+		case SPEAR_ANIM_THROW_LOOP_MOV_R:
+		case BOW_ANIM_MAIN_ATK_LOOP_RUN_F:
+		case BOW_ANIM_MAIN_ATK_LOOP_RUN_B:
+		case BOW_ANIM_MAIN_ATK_LOOP_RUN_L:
+		case BOW_ANIM_MAIN_ATK_LOOP_RUN_R:
+		case SWORD_ANIM_SHIELD_WALK_F:
+		case SWORD_ANIM_SHIELD_WALK_B:
+		case SWORD_ANIM_SHIELD_WALK_L:
+		case SWORD_ANIM_SHIELD_WALK_R:
+		{
+			_float fPlayRate = (_float)m_pModel->Get_PlayRate();
+			if (true == m_bFootStepSound && 0.625f <= fPlayRate)
+			{
+				g_pGameInstance->PlaySoundW(L"Jino_FootStep_L.wav", CHANNEL_PLAYER);
+				m_bFootStepSound = false;
+			}
+			if (false == m_bFootStepSound && 0.16f <= fPlayRate && 0.625f > fPlayRate)
+			{
+				g_pGameInstance->PlaySoundW(L"Jino_FootStep_R.wav", CHANNEL_PLAYER);
+				m_bFootStepSound = true;
+			}
+		}
+		break;
+
 		}
 	}
 

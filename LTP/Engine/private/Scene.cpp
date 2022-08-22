@@ -52,6 +52,11 @@ HRESULT CScene::Set_SceneChanging(_uint _eNextScene)
 	return S_OK;
 }
 
+void CScene::Play_Scene_BGM()
+{
+
+}
+
 void CScene::Free()
 {
 	Safe_Release(m_pDeviceContext);

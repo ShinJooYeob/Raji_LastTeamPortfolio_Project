@@ -495,13 +495,13 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 	{
 		if (mbEmssive == false)
 		{
-			mEmissiveTimer += fDeltaTime * 3.0f;
+			mEmissiveTimer += (_float)fDeltaTime * 3.0f;
 			if (mEmissiveTimer > 1)
 				mbEmssive = !mbEmssive;
 		}
 		else
 		{
-			mEmissiveTimer -= fDeltaTime * 3.0f;
+			mEmissiveTimer -= (_float)fDeltaTime * 3.0f;
 			if (mEmissiveTimer < 0.1f)
 				mbEmssive = !mbEmssive;
 		}

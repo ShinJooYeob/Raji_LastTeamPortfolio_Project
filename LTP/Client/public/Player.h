@@ -501,6 +501,8 @@ private: /* Animation Control */
 private: /* Control */
 	_float					m_fDelayTime = 0.f;
 	_bool					m_bBlockCamTrigger = false;
+	_bool					m_bPlayBattleSound = false;
+	_bool					m_bFootStepSound = false;
 
 private: /* For Cheat Mode*/
 	_bool					m_bPowerOverwhelming = false;

@@ -507,7 +507,11 @@ void CSnake::Update_Direction(_double fDeltaTime)
 			m_bOnceSwitch = true;
 
 			CGameObject* pGolemObj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor));
-			if (pGolemObj != nullptr)	pGolemObj->Set_IsDead();
+			if (pGolemObj != nullptr)
+			{
+				pGolemObj->Set_IsDead();
+				g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
+			}
 
 			_float4 fSoundPos = g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA);
 			_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));

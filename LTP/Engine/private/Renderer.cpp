@@ -2620,7 +2620,7 @@ PPDDESC CRenderer::Get_PostProcessingData()
 
 
 	tResult.fLensfalreSupportSunSize = m_LensfalreSupportSunSize ;
-	tResult.fLensefalreNoiseTexIndex=		m_iLensefalreNoiseTexIndex ;
+	tResult.fLensefalreNoiseTexIndex= (_float)m_iLensefalreNoiseTexIndex ;
 
 	tResult.fBloomOverLuminceValue = m_fOverLuminece;
 	tResult.fBloomBrightnessMul = m_fBloomBrightnessMul;
@@ -2662,7 +2662,7 @@ void CRenderer::Set_PostProcessingData(PPDDESC & tDesc)
 	m_fMaxDeltaLen = tDesc.fMaxDeltaLen;
 
 	m_LensfalreSupportSunSize = tDesc.fLensfalreSupportSunSize;
-	m_iLensefalreNoiseTexIndex = tDesc.fLensefalreNoiseTexIndex;
+	m_iLensefalreNoiseTexIndex = (_uint)tDesc.fLensefalreNoiseTexIndex;
 
 	m_fOverLuminece = tDesc.fBloomOverLuminceValue;
 	m_fBloomBrightnessMul = tDesc.fBloomBrightnessMul;
