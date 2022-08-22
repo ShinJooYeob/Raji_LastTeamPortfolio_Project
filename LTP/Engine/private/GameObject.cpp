@@ -83,6 +83,11 @@ _float CGameObject::Take_Damage(CGameObject * pTargetObject, _float fDamageAmoun
 	return _float();
 }
 
+_float CGameObject::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	return _float();
+}
+
 
 _fVector CGameObject::Get_BonePos(const char * pBoneName)
 {

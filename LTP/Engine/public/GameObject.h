@@ -24,7 +24,7 @@ public:
 	virtual void CollisionPhysX_Rigid(CGameObject* pOtherObject, _uint id , COLLIDERTYPE_PhysXID eConflictedObjCollisionType){}
 
 	virtual _float Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower);
-
+	virtual _float Take_Damage_Instance(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f);
 
 public:
 	virtual void Set_NowSceneNum(_uint eNowSceneNum) {	m_eNowSceneNum = eNowSceneNum; };
