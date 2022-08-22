@@ -28,6 +28,15 @@ HRESULT CLobbyUI::Initialize_Clone(void * pArg)
 
 	Ready_Layer_UI();
 
+
+	for (auto& UI : m_vec3DStageUI)
+	{
+		//UI->Set_RevolutionStartEndAngle(0.f, 180.f);
+		//UI->Set_IsRevolutionCCW(false);
+		//UI->Set_IsRevolutionCW(true);
+		UI->UI_RevolutionCWInitialization(180.f);
+	}
+
 	return S_OK;
 }
 
@@ -49,7 +58,7 @@ _int CLobbyUI::Update(_double fDeltaTime)
 		{
 			UI->Set_3DScaled(_float3(2.f, 0.5f, 1.f));
 
-			if (MousePos.x > 38.f && MousePos.x < 314.f && MousePos.y > 441.f && MousePos.y < 503.f && m_bIsStageOn == false)
+			if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 399.f && MousePos.y < 475.f && m_bIsStageOn == false)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_First_Btn"))
 				{
@@ -60,7 +69,7 @@ _int CLobbyUI::Update(_double fDeltaTime)
 				}
 			}
 
-			if (MousePos.x > 35.f && MousePos.x < 316.f && MousePos.y > 510.f && MousePos.y < 592.f && m_bIsStageOn == false)
+			if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 491.f && MousePos.y < 580.f && m_bIsStageOn == false)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_Stage_Btn"))
 				{
@@ -70,7 +79,7 @@ _int CLobbyUI::Update(_double fDeltaTime)
 				}
 			}
 
-			if (MousePos.x > 35.f && MousePos.x < 316.f && MousePos.y > 610.f && MousePos.y < 717.f && m_bIsStageOn == false)
+			if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 582.f && MousePos.y < 698.f && m_bIsStageOn == false)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_Exit_Btn"))
 				{
@@ -81,46 +90,273 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			}
 		}
 	}
-
-
-
-	if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
+	else
 	{
-		//string ttszLog = "MousePosX " + to_string(MousePos.x) +" " + "MousePosY" + to_string(MousePos.y) + "\n";
-		//wstring ttDebugLog;
-		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
-		//OutputDebugStringW(ttDebugLog.c_str());
-
-		for (auto& UI : m_vecLobbyBtns)
+		for (auto& UI : m_vec3DStageUI)
 		{
-			if (MousePos.x > 38.f && MousePos.x < 314.f && MousePos.y > 441.f && MousePos.y < 503.f && m_bIsStageOn == false)
+			if(UI->Get_UIName() == TEXT("Stage_GetIn_Btn") || UI->Get_UIName() == TEXT("Stage_Return_Btn"))
+				UI->Set_3DScaled(_float3(2.f, 0.5f, 1.f));
+			else if (UI->Get_UIName() == TEXT("Stage_BackGround"))
+				UI->Set_3DScaled(_float3(10.f, 6.2f, 7.f));
+			else if(UI->Get_UIName() == TEXT("Stage_Image"))
+				UI->Set_3DScaled(_float3(3.f, 3.3f, 1.f));
+			else if(UI->Get_UIName() == TEXT("Stage_ImageBack"))
+				UI->Set_3DScaled(_float3(3.8f, 3.5f, 1.f));
+			else
+				UI->Set_3DScaled(_float3(1.7f, 0.3f, 1.f));
+
+
+
+			if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 399.f && MousePos.y < 475.f && m_bIsStageOn == true)
 			{
-				if (UI->Get_UIName() == TEXT("Lobby_First_Btn"))
+				if (UI->Get_UIName() == TEXT("Stage_GetIn_Btn"))
 				{
-					g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
+					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
+
+					//UI->Set_IsRevolutionCCW(true);
+					//UI->Set_RevolutionGoalAngle(360.f);
 				}
 			}
-
-			if (MousePos.x > 35.f && MousePos.x < 316.f && MousePos.y > 510.f && MousePos.y < 592.f && m_bIsStageOn == false)
+			else if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 491.f && MousePos.y < 580.f && m_bIsStageOn == true)
 			{
-				if (UI->Get_UIName() == TEXT("Lobby_Stage_Btn"))
+				if (UI->Get_UIName() == TEXT("Stage_Return_Btn"))
 				{
-					m_bIsStageOn = true;
-					for (auto& UI : m_vec3DStageUI)
-					{
-						UI->UI_RevolutionCWInitialization(180.f);
-					}
+					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
+					//UI->Set_IsRevolutionCCW(true);
+					//UI->Set_RevolutionGoalAngle(360.f);
 				}
 			}
-
-			if (MousePos.x > 35.f && MousePos.x < 316.f && MousePos.y > 610.f && MousePos.y < 717.f && m_bIsStageOn == false)
+			else if (MousePos.x > 474.f&& MousePos.x < 622.f && MousePos.y > 178.f && MousePos.y < 235.f && m_bIsStageOn == true)
 			{
-				if (UI->Get_UIName() == TEXT("Lobby_Exit_Btn"))
+				if (UI->Get_UIName() == TEXT("Stage_Btn1"))
 				{
-					DestroyWindow(g_hWnd);
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 236.f && MousePos.y < 282.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn2"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 287.f && MousePos.y < 330.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn3"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 341.f && MousePos.y < 377.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn4"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 394.f && MousePos.y < 432.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn5"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 437.f && MousePos.y < 485.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn6"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
+				}
+			}
+			else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 486.f && MousePos.y < 539.f && m_bIsStageOn == true)
+			{
+				if (UI->Get_UIName() == TEXT("Stage_Btn7"))
+				{
+					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
 		}
+	}
+
+	if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
+	{
+		string ttszLog = "MousePosX " + to_string(MousePos.x) +" " + "MousePosY" + to_string(MousePos.y) + "\n";
+		wstring ttDebugLog;
+		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		OutputDebugStringW(ttDebugLog.c_str());
+
+		if (!m_bIsStageOn)
+		{
+			for (auto& UI : m_vecLobbyBtns)
+			{
+				if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 399.f && MousePos.y < 475.f && m_bIsStageOn == false)
+				{
+					if (UI->Get_UIName() == TEXT("Lobby_First_Btn"))
+					{
+						g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
+					}
+				}
+
+				if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 491.f && MousePos.y < 580.f && m_bIsStageOn == false)
+				{
+					if (UI->Get_UIName() == TEXT("Lobby_Stage_Btn"))
+					{
+						m_bIsRajiTextOn = false;
+
+						m_bIsStageOn = true;
+
+						for (auto& UI : m_vecLobbyBtns)
+						{
+							UI->Set_RevolutionStartEndAngle(0.f, 180.f);
+							UI->Set_IsRevolutionCCW(true);
+							UI->Set_IsRevolutionCW(false);
+
+						}
+
+						for (auto& UI : m_vec3DStageUI)
+						{
+							UI->Set_RevolutionStartEndAngle(180.f, 360.f);
+							UI->Set_IsRevolutionCCW(true);
+							UI->Set_IsRevolutionCW(false);
+						}
+					}
+				}
+
+				if (MousePos.x > 38.f && MousePos.x < 341.f && MousePos.y > 582.f && MousePos.y < 698.f && m_bIsStageOn == false)
+				{
+					if (UI->Get_UIName() == TEXT("Lobby_Exit_Btn"))
+					{
+						DestroyWindow(g_hWnd);
+					}
+				}
+			}
+		}
+		else
+		{
+			for (auto& UI : m_vec3DStageUI)
+			{
+				
+				if (MousePos.x > 38.f&& MousePos.x < 341.f && MousePos.y > 399.f && MousePos.y < 475.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_GetIn_Btn"))
+					{
+						switch (m_iSelectScene)
+						{
+						case 1:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
+							break;
+						case 2:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE4);
+							break;
+						case 3:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE2);
+							break;
+						case 4:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE7);
+							break;
+						case 5:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE6);
+							break;
+						case 6:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE3);
+							break;
+						case 7:
+							g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE5);
+							break;
+						}
+					}
+				}
+
+				else if (MousePos.x > 38.f&& MousePos.x < 341.f && MousePos.y > 491. && MousePos.y < 589.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Return_Btn"))
+					{
+						m_bIsStageOn = false;
+
+						for (auto& UI : m_vecLobbyBtns)
+						{
+							UI->Set_RevolutionStartEndAngle(180.f, 360.f);
+							UI->Set_IsRevolutionCCW(false);
+							UI->Set_IsRevolutionCW(true);
+						}
+
+						for (auto& UI : m_vec3DStageUI)
+						{
+							UI->Set_RevolutionStartEndAngle(0.f, 180.f);
+							UI->Set_IsRevolutionCCW(false);
+							UI->Set_IsRevolutionCW(true);
+						}
+					}
+				}
+
+				else if (MousePos.x > 474.f&& MousePos.x < 622.f && MousePos.y > 178.f && MousePos.y < 235.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn1"))
+					{
+						m_iSelectScene = 1;
+						ChangeStageNumber();
+					}
+				}
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 236.f && MousePos.y < 282.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn2"))
+					{
+						m_iSelectScene = 2;
+						ChangeStageNumber();
+					}
+				}
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 287.f && MousePos.y < 330.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn3"))
+					{
+						m_iSelectScene = 3;
+						ChangeStageNumber();
+					}
+				}
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 341.f && MousePos.y < 377.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn4"))
+					{
+						m_iSelectScene = 4;
+						ChangeStageNumber();
+					}
+				}
+
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 394.f && MousePos.y < 432.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn5"))
+					{
+						m_iSelectScene = 5;
+						ChangeStageNumber();
+					}
+				}
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 437.f && MousePos.y < 485.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn6"))
+					{
+						m_iSelectScene = 6;
+						ChangeStageNumber();
+					}
+				}
+
+				else if (MousePos.x > 474.f && MousePos.x < 622.f && MousePos.y > 486.f && MousePos.y < 539.f && m_bIsStageOn == true)
+				{
+					if (UI->Get_UIName() == TEXT("Stage_Btn7"))
+					{
+						m_iSelectScene = 7;
+						ChangeStageNumber();
+					}
+				}
+
+
+			}
+		}
+
 
 
 	}
@@ -136,11 +372,14 @@ _int CLobbyUI::Update(_double fDeltaTime)
 	for (auto& UI : m_vecLobbyBtns)
 		UI->Update(fDeltaTime);
 
-	if (m_bIsStageOn)
-	{
-		for (auto& UI : m_vec3DStageUI)
-			UI->Update(fDeltaTime);
-	}
+	//if (m_bIsStageOn)
+	//{
+	//	for (auto& UI : m_vec3DStageUI)
+	//		UI->Update(fDeltaTime);
+	//}
+
+	for (auto& UI : m_vec3DStageUI)
+		UI->Update(fDeltaTime);
 	
 	return _int();
 }
@@ -151,19 +390,30 @@ _int CLobbyUI::LateUpdate(_double fDeltaTime)
 
 	GetSingle(CUtilityMgr)->Get_Renderer()->Add_RenderGroup(CRenderer::RENDER_NONBLEND_NOLIGHT, this);
 
+	if (!m_bIsStageOn && !m_bIsRajiTextOn)
+	{
+		_int Count = 0;
+		for (_int i = 0; i < m_vec3DStageUI.size(); ++i)
+		{
+			if (m_vec3DStageUI[i]->Get_IsRevolutionCW() == false)
+				++Count;
+		}
 
+		if (m_vec3DStageUI.size() == Count)
+			m_bIsRajiTextOn = true;
+	}
 
 	return _int();
 }
 
 _int CLobbyUI::Render()
 {
-	//if (__super::Render() < 0)		return -1;
+	if (__super::Render() < 0)		return -1;
 
 	FAILED_CHECK(m_pBackGround->Render());
 	FAILED_CHECK(m_pBackGround2->Render());
 
-	if (!m_bIsStageOn)
+	if (!m_bIsStageOn && m_bIsRajiTextOn)
 	{
 		FAILED_CHECK(m_RajiText->Render());
 	}
@@ -172,11 +422,14 @@ _int CLobbyUI::Render()
 	for (auto& UI : m_vecLobbyBtns)
 		UI->Render();
 
-	if (m_bIsStageOn)
-	{
-		for (auto& UI : m_vec3DStageUI)
-			UI->Render();
-	}
+	//if (m_bIsStageOn)
+	//{
+	//	for (auto& UI : m_vec3DStageUI)
+	//		UI->Render();
+	//}
+
+	for (auto& UI : m_vec3DStageUI)
+		UI->Render();
 	
 	return _int();
 }
@@ -237,7 +490,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.m_fX = 640.f;
 		SettingUI.m_fY = 360.f;
 		SettingUI.fAngle = 0.f;
-		SettingUI.iTextureIndex = 136;
+		SettingUI.iTextureIndex = 160;
 
 		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pBackGround2), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
 		NULL_CHECK_RETURN(m_pBackGround2, E_FAIL);
@@ -257,10 +510,10 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Lobby_RajiText");
-		SettingUI.m_fSizeX = 600.f;
-		SettingUI.m_fSizeY = 360.f;
+		SettingUI.m_fSizeX = 680.f;
+		SettingUI.m_fSizeY = 410.f;
 		SettingUI.m_fX = 640.f;
-		SettingUI.m_fY = 230.f;
+		SettingUI.m_fY = 220.f;
 		SettingUI.fAngle = 0.f;
 		SettingUI.iTextureIndex = 135;
 		SettingUI.bSettingOtherTexture = true;
@@ -285,7 +538,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Lobby_First_Btn");
-		SettingUI.v3DUIPosition = _float3(-3.f, 0.2f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, -0.6f, 5.f);
 		SettingUI.v3DUIScaled = _float3(2.f, 0.5f, 1.f);
 		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 141;
@@ -309,7 +562,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Lobby_Stage_Btn");
-		SettingUI.v3DUIPosition = _float3(-3.f, -0.5f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, -1.4f, 5.f);
 		SettingUI.v3DUIScaled = _float3(2.f, 0.5f, 1.f);
 		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 142;
@@ -333,7 +586,7 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Lobby_Exit_Btn");
-		SettingUI.v3DUIPosition = _float3(-3.f, -1.2f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, -2.2f, 5.f);
 		SettingUI.v3DUIScaled = _float3(2.f, 0.5f, 1.f);
 		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 143;
@@ -357,9 +610,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_GetIn_Btn");
-		SettingUI.v3DUIPosition = _float3(-3.f, 0.2f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, -0.6f, 5.f);
 		SettingUI.v3DUIScaled = _float3(2.f, 0.5f, 1.f);
-		SettingUI.fAngle = 40.f;
+		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 144;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -381,9 +634,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Return_Btn");
-		SettingUI.v3DUIPosition = _float3(-3.f, -0.5f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, -1.4f, 5.f);
 		SettingUI.v3DUIScaled = _float3(2.f, 0.5f, 1.f);
-		SettingUI.fAngle = 40.f;
+		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 145;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -405,9 +658,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Number");
-		SettingUI.v3DUIPosition = _float3(-3.f, 1.3f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-3.5f, 0.5f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = 40.f;
+		SettingUI.fAngle = 30.f;
 		SettingUI.iTextureIndex = 146;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -429,9 +682,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_BackGround");
-		SettingUI.v3DUIPosition = _float3(1.0f, 1.5f, 5.f);
-		SettingUI.v3DUIScaled = _float3(10.f, 7.f, 7.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.v3DUIPosition = _float3(0.5f, 0.25f, 5.f);
+		SettingUI.v3DUIScaled = _float3(10.f, 6.2f, 7.f);
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 47;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -453,9 +706,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn1");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 2.3f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, 1.2f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 146;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -477,9 +730,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn2");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 2.f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, 0.8f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 147;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -501,9 +754,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn3");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 1.7f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, 0.4f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 148;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -525,9 +778,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn4");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 1.4f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, 0.f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 149;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -549,9 +802,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn5");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 1.1f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, -0.4f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 150;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -573,9 +826,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn6");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 0.8f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, -0.8f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 151;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -597,9 +850,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Btn7");
-		SettingUI.v3DUIPosition = _float3(-0.4f, 0.5f, 5.f);
+		SettingUI.v3DUIPosition = _float3(-0.8f, -1.2f, 5.f);
 		SettingUI.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 152;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -621,10 +874,10 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_Image");
-		SettingUI.v3DUIPosition = _float3(2.f, 1.5f, 5.f);
-		SettingUI.v3DUIScaled = _float3(2.75f, 3.3f, 1.f);
-		SettingUI.fAngle = -35.f;
-		SettingUI.iTextureIndex = 159;
+		SettingUI.v3DUIPosition = _float3(1.8f, 0.f, 5.f);
+		SettingUI.v3DUIScaled = _float3(3.f, 3.3f, 1.f);
+		SettingUI.fAngle = -30.f;
+		SettingUI.iTextureIndex = 153;
 		SettingUI.eUIType = CUI::UI_3D;
 
 		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
@@ -645,9 +898,9 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 		SettingUI.bColl = false;
 		SettingUI.iLevelIndex = m_eNowSceneNum;
 		SettingUI.pUI_Name = TEXT("Stage_ImageBack");
-		SettingUI.v3DUIPosition = _float3(2.f, 1.5f, 5.f);
-		SettingUI.v3DUIScaled = _float3(3.5f, 3.5f, 1.f);
-		SettingUI.fAngle = -35.f;
+		SettingUI.v3DUIPosition = _float3(1.8f, 0.f, 5.f);
+		SettingUI.v3DUIScaled = _float3(3.8f, 3.5f, 1.f);
+		SettingUI.fAngle = -30.f;
 		SettingUI.iTextureIndex = 31;
 		SettingUI.eUIType = CUI::UI_3D;
 
@@ -660,6 +913,56 @@ HRESULT CLobbyUI::Ready_Layer_UI()
 
 
 	return S_OK;
+}
+
+void CLobbyUI::ChangeStageNumber()
+{
+	CUI* pNumberUI = nullptr;
+	CUI* pStageUI = nullptr;
+
+	for (auto& UI : m_vec3DStageUI)
+	{
+		if (UI->Get_UIName() == TEXT("Stage_Number"))
+		{
+			pNumberUI = UI;
+		}
+		else if (UI->Get_UIName() == TEXT("Stage_Image"))
+		{
+			pStageUI = UI;
+		}
+	}
+
+	switch (m_iSelectScene)
+	{
+	case 1:
+		pNumberUI->Set_TextureIndex(146);
+		pStageUI->Set_TextureIndex(153);
+		break;
+	case 2:
+		pNumberUI->Set_TextureIndex(147);
+		pStageUI->Set_TextureIndex(154);
+		break;
+	case 3:
+		pNumberUI->Set_TextureIndex(148);
+		pStageUI->Set_TextureIndex(155);
+		break;
+	case 4:
+		pNumberUI->Set_TextureIndex(149);
+		pStageUI->Set_TextureIndex(156);
+		break;
+	case 5:
+		pNumberUI->Set_TextureIndex(150);
+		pStageUI->Set_TextureIndex(157);
+		break;
+	case 6:
+		pNumberUI->Set_TextureIndex(151);
+		pStageUI->Set_TextureIndex(158);
+		break;
+	case 7:
+		pNumberUI->Set_TextureIndex(152);
+		pStageUI->Set_TextureIndex(159);
+		break;
+	}
 }
 
 HRESULT CLobbyUI::SetUp_Components()

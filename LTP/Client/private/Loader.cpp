@@ -52,6 +52,7 @@
 #include "GraphicUI.h"
 #include "SoundUI.h"
 #include "IngameUI.h"
+#include "TaikoUI.h"
 
 
 //ParticleCollider
@@ -174,6 +175,9 @@
 #include "PM_Monster.h"
 #include "PM_Food.h"
 
+/////////MiniGame Taigo//////////////////////////////////
+#include "MiniGame_JJB_Player.h"
+#include "MiniGamePlayerWeapon.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
@@ -246,6 +250,10 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 
 	case SCENEID::SCENE_MINIGAME_Jino:
 		pLoader->Load_Scene_Minigame_Jino(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
+	case SCENEID::SCENE_MINIGAME_JJB:
+		pLoader->Load_Scene_Minigame_JJB(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
 
 	case SCENEID::SCENE_EDIT:
@@ -2011,6 +2019,41 @@ HRESULT CLoader::Load_Scene_Minigame_Jino(_bool * _IsClientQuit, CRITICAL_SECTIO
 	m_bIsLoadingFinished = true;
 	LeaveCriticalSection(_CriSec);
 	m_bIsLoadingFinished = true;
+	return S_OK;
+}
+
+HRESULT CLoader::Load_Scene_Minigame_JJB(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+#pragma  region Mesh
+
+	TransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_MiniGame_JJB_Player), TransformMatrix);
+
+
+
+#pragma  endregion
+
+#pragma region PROTOTYPE_COMPONENT
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	//Taiko 
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_TaikoUI), CTaikoUI::Create(m_pDevice, m_pDeviceContext)));
+
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_JJB_Player), CMiniGame_JJB_Player::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_PlayerWeapon), CMiniGamePlayerWeapon::Create(m_pDevice, m_pDeviceContext)));
+
+
+#pragma  endregion
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+
 	return S_OK;
 }
 

@@ -39,6 +39,7 @@ public:
 	HRESULT	Load_Scene_Minigame_PM(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
 	HRESULT	Load_Scene_Minigame_Jino(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
+	HRESULT	Load_Scene_Minigame_JJB(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
 	HRESULT Load_Scene_Edit(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 

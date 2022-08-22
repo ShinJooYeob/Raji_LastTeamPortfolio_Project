@@ -226,6 +226,8 @@
     <ClInclude Include="..\public\MandalaPuzzle.h" />
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
+    <ClInclude Include="..\public\MiniGamePlayerWeapon.h" />
+    <ClInclude Include="..\public\MiniGame_JJB_Player.h" />
     <ClInclude Include="..\public\PM_Food.h" />
     <ClInclude Include="..\public\PM_Monster.h" />
     <ClInclude Include="..\public\PackMen.h" />
@@ -310,6 +312,7 @@
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
+    <ClInclude Include="..\public\Scene_MiniGame_JJB.h" />
     <ClInclude Include="..\public\Scene_Minigame_PM.h" />
     <ClInclude Include="..\public\Scene_Minigame1.h" />
     <ClInclude Include="..\public\Scene_MiniGame_Jino.h" />
@@ -335,6 +338,8 @@
     <ClInclude Include="..\public\SoundUI.h" />
     <ClInclude Include="..\public\SpearWave.h" />
     <ClInclude Include="..\public\StaticInstanceMapObject.h" />
+    <ClInclude Include="..\public\TaikoUI.h" />
+    <ClInclude Include="..\public\Taiko_Monster.h" />
     <ClInclude Include="..\public\TestLedgeTrigger.h" />
     <ClInclude Include="..\public\TestNonAnimInstancing.h" />
     <ClInclude Include="..\public\StaticMapObject.h" />
@@ -405,6 +410,8 @@
     <ClCompile Include="..\private\MandalaMesh.cpp" />
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\MiniGamePlayerWeapon.cpp" />
+    <ClCompile Include="..\private\MiniGame_JJB_Player.cpp" />
     <ClCompile Include="..\private\PM_Food.cpp" />
     <ClCompile Include="..\private\PM_Monster.cpp" />
     <ClCompile Include="..\private\PackMen.cpp" />
@@ -484,6 +491,7 @@
     <ClCompile Include="..\private\Rope.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
+    <ClCompile Include="..\private\Scene_MiniGame_JJB.cpp" />
     <ClCompile Include="..\private\Scene_Minigame_PM.cpp" />
     <ClCompile Include="..\private\Scene_Minigame1.cpp" />
     <ClCompile Include="..\private\Scene_MiniGame_Jino.cpp" />
@@ -500,6 +508,8 @@
     <ClCompile Include="..\private\SoundUI.cpp" />
     <ClCompile Include="..\private\SpearWave.cpp" />
     <ClCompile Include="..\private\StaticInstanceMapObject.cpp" />
+    <ClCompile Include="..\private\TaikoUI.cpp" />
+    <ClCompile Include="..\private\Taiko_Monster.cpp" />
     <ClCompile Include="..\private\TestLedgeTrigger.cpp" />
     <ClCompile Include="..\private\TestNonAnimInstancing.cpp" />
     <ClCompile Include="..\private\StaticMapObject.cpp" />

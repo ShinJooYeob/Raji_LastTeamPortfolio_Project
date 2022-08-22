@@ -49,6 +49,7 @@ HRESULT CUI::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_SettingUIDesc.v3DUIPosition);
 	}
 
+	m_bIsRevolutionCW = false;
 	return S_OK;
 }
 
@@ -64,22 +65,23 @@ _int CUI::Update(_double fDeltaTime)
 		EsingUV_Y(fDeltaTime);
 	}
 
-	if (m_SettingUIDesc.pUI_Name == TEXT("Lobby_Stage_Btn"))
+	if (m_SettingUIDesc.pUI_Name == TEXT(" "))
 	{
-		//m_SettingUIDesc.v3DUIPosition = _float3(-3.f, 1.3f, 5.f);
-		//m_SettingUIDesc.v3DUIScaled = _float3(1.7f, 0.3f, 1.f);
-		//m_SettingUIDesc.fAngle = 40.f;
+		m_SettingUIDesc.v3DUIPosition = _float3(0.5f, 0.25f, 5.f);
+		m_SettingUIDesc.v3DUIScaled = _float3(10.f, 6.2f, 7.f);
+		//m_SettingUIDesc.fAngle = 30.f;
 		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+		_int test = 0;
 	}
 
 	if (m_bIsRevolutionCCW)
 	{
-		UI_RevolutionCCW(fDeltaTime);
+		UI_RevolutionCCW();
 		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
 	}
 	if (m_bIsRevolutionCW)
 	{
-		UI_RevolutionCW(fDeltaTime);
+		UI_RevolutionCW();
 	}
 
 
@@ -88,6 +90,9 @@ _int CUI::Update(_double fDeltaTime)
 	else
 		Update_Rect3D();
 
+	if (m_bIsDrawTimeOn)
+		TimeDraw(fDeltaTime);
+
 	return _int();
 }
 
@@ -95,8 +100,14 @@ _int CUI::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
-
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
+	if (m_SettingUIDesc.eUIKindsID == UIID_MINIGAME_TAIKODRUM)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	}
+	else
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
+	}
 
 
 	return _int();
@@ -148,6 +159,15 @@ _int CUI::Render()
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime * 2.5f));
 
 		break;
+
+	case Client::CUI::UIID_MINIGAME_TAIKO:
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex));
+		break;
+
+	case Client::CUI::UIID_MINIGAME_TAIKODRUM:
+		FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime * 1.5f));
+		break;
+
 	case Client::CUI::UIID_END:
 		break;
 	default:
@@ -225,6 +245,14 @@ HRESULT CUI::SetUp_Components()
 	case Client::CUI::UIID_JY_Lobby:
 		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"LobbyUI"));
 		break;
+	case Client::CUI::UIID_MINIGAME_TAIKO:
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"TaikoUI"));
+		break;
+
+	case Client::CUI::UIID_MINIGAME_TAIKODRUM:
+		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"TaikoDrumUI"));
+		break;
+
 	case Client::CUI::UIID_END:
 		break;
 	default:
@@ -234,53 +262,109 @@ HRESULT CUI::SetUp_Components()
 	return S_OK;
 }
 
-void CUI::UI_RevolutionCCW(_double fDeltaTime)
+void CUI::UI_RevolutionCCW()
 {
 	//m_fRevolutionAngle += (_float)fDeltaTime;
 
-	m_fRevolutionAngle += 3.f;
+	m_fRevolutionStartAngle += 3.f;
 
-	if (m_fRevolutionAngle > m_fRevolutionGoalAngle)
+	if (m_fRevolutionStartAngle > m_fRevolutionGoalAngle)
 	{
 		m_bIsRevolutionCCW = false;
-		m_fRevolutionAngle = 0.f;
+		m_fRevolutionStartAngle = 0.f;
+		m_fRevolutionGoalAngle = 0.f;
 		return;
 	}
 
 	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
-	//m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
-	//	XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
-	//	XMMatrixRotationAxis(XMVectorSet(0, 1.f, 0, 0), XMConvertToRadians(m_fRevolutionAngle)) *
-	//	XMMatrixTranslation(0, Pos.y, -0.8f));
+	
+	_Matrix mat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
 
-	m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
+	_float3 vCamPos = mat.r[3];
+	
+
+	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
+		XMMatrixRotationAxis(XMVectorSet(0,1,0,0), XMConvertToRadians(m_SettingUIDesc.fAngle * -1.f))*
+		XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
+		XMMatrixRotationAxis(-mat.r[1], XMConvertToRadians(m_fRevolutionStartAngle)) *
+		XMMatrixTranslation(vCamPos.x, vCamPos.y, vCamPos.z));
+
+	//m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
 }
 
-void CUI::UI_RevolutionCW(_double fDeltaTime)
+void CUI::UI_RevolutionCW()
 {
-	m_fRevolutionAngle += 3.f;
+	m_fRevolutionStartAngle += 3.f;
 
-	if (m_fRevolutionAngle > m_fRevolutionGoalAngle)
+	if (m_fRevolutionStartAngle > m_fRevolutionGoalAngle)
 	{
 		m_bIsRevolutionCW = false;
-		m_fRevolutionAngle = 0.f;
+		m_fRevolutionStartAngle = 0.f;
+		m_fRevolutionGoalAngle = 0.f;
 		return;
 	}
 
 	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
-	m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
+	_Matrix mat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	_float3 vCamPos = mat.r[3];
+
+	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
+		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_SettingUIDesc.fAngle* -1.f))*
+		XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
+		XMMatrixRotationAxis(mat.r[1], XMConvertToRadians(m_fRevolutionStartAngle)) *
+		XMMatrixTranslation(vCamPos.x, vCamPos.y, vCamPos.z));
+
+	//m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(3.f));
 }
 
 void CUI::UI_RevolutionCCWInitialization(_float Angle)
 {
+	//_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	//m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));
+
 	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
-	m_pTransformCom->Turn_Revolution_CCW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));
+
+	_Matrix mat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+
+	_float3 vCamPos = mat.r[3];
+
+
+	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
+		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_SettingUIDesc.fAngle* -1.f))*
+		XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
+		XMMatrixRotationAxis(-mat.r[1], XMConvertToRadians(Angle)) *
+		XMMatrixTranslation(vCamPos.x, vCamPos.y, vCamPos.z));
 }
 
 void CUI::UI_RevolutionCWInitialization(_float Angle)
 {
+	/*_float3 Pos = m_SettingUIDesc.v3DUIPosition;
+	m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));*/
+
 	_float3 Pos = m_SettingUIDesc.v3DUIPosition;
-	m_pTransformCom->Turn_Revolution_CW(_float3(0, Pos.y, 0).XMVector(), Pos.z + 0.8f, XMConvertToRadians(Angle));
+	_Matrix mat = XMMatrixInverse(nullptr, g_pGameInstance->Get_Transform_Matrix(PLM_VIEW));
+	_float3 vCamPos = mat.r[3];
+
+	m_pTransformCom->Set_Matrix(XMMatrixScaling(m_SettingUIDesc.v3DUIScaled.x, m_SettingUIDesc.v3DUIScaled.y, m_SettingUIDesc.v3DUIScaled.z) *
+		XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(m_SettingUIDesc.fAngle* -1.f))*
+		XMMatrixTranslation(Pos.x, Pos.y, Pos.z) *
+		XMMatrixRotationAxis(mat.r[1], XMConvertToRadians(Angle)) *
+		XMMatrixTranslation(vCamPos.x, vCamPos.y, vCamPos.z));
+}
+
+void CUI::TimeDraw(_double TimeDelta)
+{
+	m_fDrawTime -= (_float)TimeDelta;
+
+	if (m_fDrawTime > 0.f)
+		m_bDraw = true;
+
+	if (m_fDrawTime <= 0.f)
+	{
+		m_bIsDrawTimeOn = false;
+		m_fDrawTime = 0.f;
+		m_bDraw = false;
+	}
 }
 
 void CUI::SetUp_UIInfo(SETTING_UI & pStruct)

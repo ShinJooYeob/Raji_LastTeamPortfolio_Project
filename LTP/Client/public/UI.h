@@ -20,7 +20,7 @@ public:
 public:
 	enum UIID
 	{
-		UIID_JB, UIID_JY_Lobby, UIID_END
+		UIID_JB, UIID_JY_Lobby, UIID_MINIGAME_TAIKO, UIID_MINIGAME_TAIKODRUM, UIID_END
 	};
 
 	typedef struct tagSettingUI
@@ -79,6 +79,14 @@ public:
 	_float			Get_Alpha() { return m_SettingUIDesc.fAlpha; }
 	_float4			Get_Color() { return m_vColor; }
 
+	_bool			Get_IsRevolutionCW() {
+		return m_bIsRevolutionCW;
+	}
+
+	_bool			Get_IsRevolutionCCW() {
+		return m_bIsRevolutionCCW;
+	}
+
 public:
 	void			Set_PassIndex(_int Index) { m_iPassIndex = Index; }
 	void			Set_UIPosition(_float fX, _float fY) { m_fX = fX, m_fY = fY; }
@@ -110,9 +118,23 @@ public:
 		m_fRenderSortValue = Valuew;
 	}
 
-	void			Set_RevolutionGoalAngle(_float Angle) { m_fRevolutionGoalAngle = Angle; }
+	void			Set_RevolutionStartEndAngle(_float StartAngle, _float GoalAngel)
+	{
+		m_fRevolutionStartAngle = StartAngle;
+		m_fRevolutionGoalAngle = GoalAngel; 
+	}
+
 	void			UI_RevolutionCCWInitialization(_float Angle);
 	void			UI_RevolutionCWInitialization(_float Angle);
+
+	void			TimeDrawStart(_float Time)
+	{
+		m_bIsDrawTimeOn = true;
+		m_fDrawTime = Time;
+	}
+	
+	void			TimeDraw(_double TimeDelta);
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -153,6 +175,10 @@ private:
 
 	_float		m_PassedTimer = 0;	
 
+	//시간지나면 그리지않기위한 변수
+	_bool				m_bIsDrawTimeOn = false;
+	_float				m_fDrawTime = 0.f;
+
 	//디졸브
 	_float				m_fTotalTargetTime = 7.f;
 	_float				m_fApearTime = 0.35f;
@@ -161,13 +187,13 @@ private:
 	//공전
 	_bool				m_bIsRevolutionCCW = false;
 	_bool				m_bIsRevolutionCW = false;
-	_float				m_fRevolutionAngle = 0.f;
+	_float				m_fRevolutionStartAngle = 0.f;
 	_float				m_fRevolutionGoalAngle = 0.f;
 
 private:
 	HRESULT SetUp_Components();
-	void	UI_RevolutionCCW(_double fDeltaTime);
-	void	UI_RevolutionCW(_double fDeltaTime);
+	void	UI_RevolutionCCW();
+	void	UI_RevolutionCW();
 
 private:
 	void SetUp_UIInfo(SETTING_UI& pStruct);			// 얻어온 구조체 값으로 멤버변수 채우기

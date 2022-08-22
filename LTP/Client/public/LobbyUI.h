@@ -37,9 +37,14 @@ private:
 private:
 	_bool			m_bIsStageOn = false;
 	_bool			m_bIsStageOnStart = false;
+	_bool			m_bIsRajiTextOn = true;
+
+	_int			m_iSelectScene = 0;
 
 private:
 	HRESULT Ready_Layer_UI();
+
+	void	ChangeStageNumber();
 
 private:
 	HRESULT SetUp_Components();
