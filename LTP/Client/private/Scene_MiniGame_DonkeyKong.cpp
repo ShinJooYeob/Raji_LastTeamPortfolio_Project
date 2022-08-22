@@ -1,16 +1,13 @@
 #include "stdafx.h"
-#include "..\public\Scene_Minigame1.h"
+#include "..\public\Scene_MiniGame_DonkeyKong.h"
 #include "Scene_Loading.h"
 #include "Camera_Main.h"
 #include "TriggerObject.h"
-#include "Player.h"
 #include "StaticInstanceMapObject.h"
 #include "MonsterBatchTrigger.h"
-#include "MiniGameBuilding.h"
-#include "MiniGame_Golu.h"
+#include "MiniGame_KongRaji.h"
 
-
-CScene_Minigame1::CScene_Minigame1(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+Scene_MiniGame_DonkeyKong::Scene_MiniGame_DonkeyKong(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
 {
 }
@@ -19,7 +16,7 @@ CScene_Minigame1::CScene_Minigame1(ID3D11Device * pDevice, ID3D11DeviceContext *
 
 
 
-HRESULT CScene_Minigame1::Initialize()
+HRESULT Scene_MiniGame_DonkeyKong::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
@@ -29,22 +26,22 @@ HRESULT CScene_Minigame1::Initialize()
 	FAILED_CHECK(Ready_Light());
 
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
-	//FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
-	FAILED_CHECK(Ready_Layer_MiniGame_Golu(TAG_LAY(Layer_Player)));
+	FAILED_CHECK(Ready_Layer_MiniGame_KongRaji(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 
 
-	FAILED_CHECK(Ready_MapData(L"Stage_MiniGame1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_StaticMapObj)));
+	//FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_WallCrush.dat", SCENE_MINIGAME_DONKEYKONG, TAG_LAY(Layer_StaticMapObj)));
 
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
 
-	g_pGameInstance->PlayBGM(TEXT("EH_53 One Hell Of A Time.mp3"),0,0.2f);
+	//g_pGameInstance->PlayBGM(TEXT("EH_53 One Hell Of A Time.mp3"),0,0.2f);
+
 	return S_OK;
 }
 
-_int CScene_Minigame1::Update(_double fDeltaTime)
+_int Scene_MiniGame_DonkeyKong::Update(_double fDeltaTime)
 {
 	//m_pPlayerTransform
 	if (__super::Update(fDeltaTime) < 0)
@@ -55,16 +52,13 @@ _int CScene_Minigame1::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
-		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
-
-
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME_Jino), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
 
-	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
+	if (m_iSceneStartChecker <= 2)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -93,7 +87,7 @@ _int CScene_Minigame1::Update(_double fDeltaTime)
 	return 0;
 }
 
-_int CScene_Minigame1::LateUpdate(_double fDeltaTime)
+_int Scene_MiniGame_DonkeyKong::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
@@ -104,27 +98,24 @@ _int CScene_Minigame1::LateUpdate(_double fDeltaTime)
 	return 0;
 }
 
-_int CScene_Minigame1::Render()
+_int Scene_MiniGame_DonkeyKong::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
+	if (m_fSceneStartTimer < 0.5f)
 	{
-		if (m_fSceneStartTimer < 0.5f)
-		{
-			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
-		}
-		else if (m_fSceneStartTimer < 2.5f)
-		{
-			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
-		}
+		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
 	}
+	else if (m_fSceneStartTimer < 2.5f)
+	{
 
+		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+	}
 
 	return 0;
 }
 
-_int CScene_Minigame1::LateRender()
+_int Scene_MiniGame_DonkeyKong::LateRender()
 {
 	if (__super::LateRender() < 0)
 		return -1;
@@ -132,10 +123,8 @@ _int CScene_Minigame1::LateRender()
 	return 0;
 }
 
-_int CScene_Minigame1::Change_to_NextScene()
+_int Scene_MiniGame_DonkeyKong::Change_to_NextScene()
 {
-
-	CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
 
 	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
 	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, (SCENEID)m_eNextScene), SCENEID::SCENE_LOADING));
@@ -147,7 +136,7 @@ _int CScene_Minigame1::Change_to_NextScene()
 
 
 
-HRESULT CScene_Minigame1::Ready_Light()
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Light()
 {
 
 	const LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
@@ -179,7 +168,7 @@ HRESULT CScene_Minigame1::Ready_Light()
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
@@ -213,44 +202,17 @@ HRESULT CScene_Minigame1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	else
 	{
-		m_pMainCam->Set_NowSceneNum(SCENE_MINIGAME1);
+		m_pMainCam->Set_NowSceneNum(SCENE_MINIGAME_DONKEYKONG);
 	}
 
 	m_pMainCam->Set_TargetArmLength(40.f); //Camera Length
 	m_pMainCam->Set_MaxTargetArmLength(10.f);
 	m_pMainCam->Set_MinTargetArmLength(1.f);
-	m_pMainCam->Ortho_OnOff(true, ORTHOGONAL_CAMERA_Y);
+	m_pMainCam->Ortho_OnOff(false, ORTHOGONAL_CAMERA_Y);
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_Layer_Player(const _tchar * pLayerTag)
-{
-	//m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	//NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	//m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636597f, 56.5242004f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
-
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Player), &_float3(31.773f, 37.5f, 64.801f)));
-	//CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME1, TAG_LAY(Layer_Player)));
-	//NULL_CHECK_RETURN(pPlayer, E_FAIL);
-
-	//static_cast<CPlayer*>(pPlayer)->Set_State_FirstStart();
-
-	//m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
-	//NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
-
-	//CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-	//PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	//pPlayer->Update_AttachCamPos();
-
-	//m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-	//m_pMainCam->Set_FocusTarget(pPlayer);
-	//m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636597f, 56.5242004f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
-	//pPlayer->Update_AttachCamPos();
-
-	return S_OK;
-}
-
-HRESULT CScene_Minigame1::Ready_Layer_MiniGame_Golu(const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MiniGame_KongRaji(const _tchar * pLayerTag)
 {
 	/*
 	1. Main Cam -> FocusTarget Settomg
@@ -259,41 +221,39 @@ HRESULT CScene_Minigame1::Ready_Layer_MiniGame_Golu(const _tchar * pLayerTag)
 	4. Main Cam->Set_TargetArmLength, Max, Min, Or Cur
 	*/
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Golu),&_float3(7.f,40.f,11.f)));
-
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Golu),&_float3(7.f,40.f,11.f)));
 
 	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f,1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_MiniGame_Golu), &_float3(40.f, 40.f, 40.f)));
-	CGameObject* pGolu = (CMiniGame_Golu*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME1, TAG_LAY(Layer_Player)));
-	NULL_CHECK_RETURN(pGolu, E_FAIL);
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_Object_MiniGame_KongRaji), &_float3(40.f, 40.f, 40.f)));
+	CGameObject* pJalsura = (CMiniGame_KongRaji*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_MINIGAME_DONKEYKONG, TAG_LAY(Layer_Player)));
+	NULL_CHECK_RETURN(pJalsura, E_FAIL);
 
-	m_pGoluTransform = (CTransform*)pGolu->Get_Component(TAG_COM(Com_Transform));
-	NULL_CHECK_RETURN(m_pGoluTransform, E_FAIL);
+	m_pJalsuraTransform = (CTransform*)pJalsura->Get_Component(TAG_COM(Com_Transform));
+	NULL_CHECK_RETURN(m_pJalsuraTransform, E_FAIL);
 
-	CNavigation* PlayerNavi = (CNavigation*)pGolu->Get_Component(TAG_COM(Com_Navaigation));
-	PlayerNavi->FindCellIndex(m_pGoluTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-	pGolu->Update_AttachCamPos();
+	CNavigation* PlayerNavi = (CNavigation*)pJalsura->Get_Component(TAG_COM(Com_Navaigation));
+	PlayerNavi->FindCellIndex(m_pJalsuraTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+	pJalsura->Update_AttachCamPos();
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-	m_pMainCam->Set_FocusTarget(pGolu);
+	m_pMainCam->Set_FocusTarget(pJalsura);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
-	pGolu->Update_AttachCamPos();
-
+	pJalsura->Update_AttachCamPos();
 
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_Layer_SkyBox(const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_Layer_Terrain(const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Terrain)));
 
@@ -302,7 +262,7 @@ HRESULT CScene_Minigame1::Ready_Layer_Terrain(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_MapData(const _tchar * szMapDataFileName, SCENEID eSceneID, const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_MapData(const _tchar * szMapDataFileName, SCENEID eSceneID, const _tchar * pLayerTag)
 {
 	//../bin/Resources/Data/Map/
 	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Map/";
@@ -371,7 +331,7 @@ HRESULT CScene_Minigame1::Ready_MapData(const _tchar * szMapDataFileName, SCENEI
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
 {
 
 	{
@@ -451,7 +411,7 @@ HRESULT CScene_Minigame1::Ready_TriggerObject(const _tchar * szTriggerDataName, 
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_PostPorcessing()
+HRESULT Scene_MiniGame_DonkeyKong::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
 
@@ -505,18 +465,18 @@ HRESULT CScene_Minigame1::Ready_PostPorcessing()
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, false);
 	pRenderer->Set_ShadowIntensive(0.3f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(1.5f);
 
-	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	//pRenderer->Set_DofLength(30.f);
-	//pRenderer->Set_DofBlurIntensive(1.f);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, false);
+	pRenderer->Set_DofLength(30.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
 	pRenderer->Set_FogColor(_float3{ 0.234375f });
 	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
 	pRenderer->Set_FogStartDist(5.f);
@@ -528,7 +488,7 @@ HRESULT CScene_Minigame1::Ready_PostPorcessing()
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_MapParticle()
+HRESULT Scene_MiniGame_DonkeyKong::Ready_MapParticle()
 {
 	INSTPARTICLEDESC tDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FireParticle_0"));
 	tDesc.FollowingTarget = nullptr;
@@ -575,7 +535,7 @@ HRESULT CScene_Minigame1::Ready_MapParticle()
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
 {
 
 
@@ -640,38 +600,28 @@ HRESULT CScene_Minigame1::Ready_MonsterBatchTrigger(const _tchar * szTriggerData
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_Layer_UI(const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_UI(const _tchar * pLayerTag)
 {
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 
-HRESULT CScene_Minigame1::Ready_MiniGameBuilding(const _tchar * pLayerTag)
+Scene_MiniGame_DonkeyKong * Scene_MiniGame_DonkeyKong::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 {
-	CMiniGameBuilding::MGBDESC tDesc;
-	tDesc.vPosition = _float3(20.513f, 37.5f, 43.651f);
-	tDesc.vScale = _float3(1.f);
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
+	Scene_MiniGame_DonkeyKong* pScene_MiniGame_WallCrush = NEW Scene_MiniGame_DonkeyKong(pDevice, pDeviceContext);
 
-	return S_OK;
-}
-
-CScene_Minigame1 * CScene_Minigame1::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
-{
-	CScene_Minigame1* pScene_Minigame1 = NEW CScene_Minigame1(pDevice, pDeviceContext);
-
-	if (FAILED(pScene_Minigame1->Initialize()))
+	if (FAILED(pScene_MiniGame_WallCrush->Initialize()))
 	{
-		Safe_Release(pScene_Minigame1);
-		MSGBOX("Failed to Creating CScene_Minigame1");
+		Safe_Release(pScene_MiniGame_WallCrush);
+		MSGBOX("Failed to Creating Scene_MiniGame_DonkeyKong");
 		return nullptr;
 	}
 
-	return pScene_Minigame1;
+	return pScene_MiniGame_WallCrush;
 
 }
 
-void CScene_Minigame1::Free()
+void Scene_MiniGame_DonkeyKong::Free()
 {
 	__super::Free();
 }

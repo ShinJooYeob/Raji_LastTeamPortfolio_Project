@@ -3,7 +3,8 @@
 
 const _tchar* m_pWorldTexture_UniversalTag[CWorldTexture_Universal::WORLDTEXTURE_UNIVERSAL_END]
 {
-	L"Alpabet"
+	L"Alpabet",
+	L"DonkeyKong_Map"
 };
 
 CWorldTexture_Universal::CWorldTexture_Universal(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)

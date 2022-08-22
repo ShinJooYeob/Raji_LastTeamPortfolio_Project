@@ -10,6 +10,7 @@ class CWorldTexture_Universal : public CGameObject
 public:
 	enum WorldTexture_UniversalType {
 		ALPABET,
+		DONKEYKONG_MAP,
 		WORLDTEXTURE_UNIVERSAL_END
 	};
 public:

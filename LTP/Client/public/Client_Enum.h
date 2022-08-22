@@ -234,6 +234,7 @@ enum SCENEID
 	SCENE_MINIGAME1,
 	SCENE_MINIGAME_PM,
 	SCENE_MINIGAME_Jino,
+	SCENE_MINIGAME_DONKEYKONG,
 
 
 	SCENE_EDIT,
@@ -275,9 +276,11 @@ static const char* Tag_ScenenName(SCENEID eTag)
 		return "SCENE_MINIGAME1";
 	case SCENE_MINIGAME_PM:
 		return "SCENE_MINIGAME_PM";
-		
 	case SCENE_MINIGAME_Jino:
 		return "SCENE_MINIGAME_Jino";
+	case SCENE_MINIGAME_DONKEYKONG:
+		return "SCENE_MINIGAME_DONKEYKONG";
+
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
 	default:
@@ -460,6 +463,9 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_BeachBall,
 	Prototype_Object_MiniGame_FireRing,
 	Prototype_Object_MiniGame_CircusBackground,
+	Prototype_Object_MiniGame_KongRaji,
+	Prototype_Object_KongRajiTrigger,
+	Prototype_Object_DonkeyKong_BulletTrigger,
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
@@ -893,6 +899,15 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_MiniGame_CircusBackground:
 		return TEXT("Prototype_Object_MiniGame_CircusBackground");
 
+	case Prototype_Object_MiniGame_KongRaji:
+		return TEXT("Prototype_Object_MiniGame_KongRaji");
+
+	case Prototype_Object_KongRajiTrigger:
+		return TEXT("Prototype_Object_KongRajiTrigger");
+
+	case Prototype_Object_DonkeyKong_BulletTrigger:
+		return TEXT("Prototype_Object_DonkeyKong_BulletTrigger");
+
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:
 		return TEXT("Prototype_Object_Static_PhysX");
@@ -1067,7 +1082,8 @@ enum LAYERID
 	//EH
 	Layer_WorldTexture_Universal,
 	Layer_Golu_Bullet,
-	Layer_UI_Texture_Universal
+	Layer_UI_Texture_Universal,
+	Layer_DonkeyKong_Trigger
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1302,6 +1318,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_UI_Texture_Universal:
 		return TEXT("Layer_UI_Texture_Universal");
+		break;
+
+	case Layer_DonkeyKong_Trigger:
+		return TEXT("Layer_DonkeyKong_Trigger");
 		break;
 		
 	default:

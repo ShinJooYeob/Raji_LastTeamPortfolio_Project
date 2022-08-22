@@ -1231,12 +1231,12 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 				if (m_iSoundIndex == 0 && PlayRate > 0)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 					m_iSoundIndex++;
 				}
 				else if (m_iSoundIndex == 1 && PlayRate >= 0.5)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(TEXT("EH_Tezabsura_Footstep_03.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 					m_iSoundIndex++;
 				}
 			}
@@ -1477,6 +1477,11 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_EffectAdjust++;
 				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_Tezabsura_Cash0, m_pTransformCom);
 
+				if (m_iSoundIndex == 1)
+				{
+					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_961.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_SUBEFFECT, 0.3f);
+					m_iSoundIndex++;
+				}
 			
 
 			}

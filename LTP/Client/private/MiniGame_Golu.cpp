@@ -546,6 +546,10 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 			FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Golu_Bullet), TAG_OP(Prototype_Object_Golu_Bullet), &Golu_BulletDesc));
 
 
+
+			g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1285.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
+
 			//CoolTime
 			//CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -612,8 +616,15 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
 
+
+
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1452.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 				m_dBlackHoleCoolTime = 0;
 			
+			}else
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1207.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 			}
 			break;
 		}
@@ -716,7 +727,13 @@ HRESULT CMiniGame_Golu::Skill_Input(_double dDeltatime)
 
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc));
 		
+
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1752.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 		m_dBarrierCoolTime = 0;
+	}else if(pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down && m_dBarrierCoolTime <= 3.5)
+	{
+		g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1207.mp3"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 	}
 
 

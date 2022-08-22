@@ -725,15 +725,24 @@ HRESULT CMonster_Wormgrub::Adjust_AnimMovedTransform(_double dDeltatime)
 		}
 		if (PlayRate <= 0.95)
 		{
-			if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
+			for (_int j = 0; j < m_vecInstancedTransform.size(); j++)
 			{
-				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+				_float fDistance = m_vecInstancedTransform[j].pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
+
+				if (fDistance > 6 && m_vecInstancedTransform[j].iHp <= 0)
+					continue;
+				if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
 				{
-					//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1669.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
-					g_pGameInstance->Play3D_Sound(TEXT("EH_M1_2243.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
-					m_iSoundIndex[i]++;
+					if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.1)
+					{
+						//g_pGameInstance->Play3D_Sound(TEXT("EH_M1_1669.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+						g_pGameInstance->Play3D_Sound(TEXT("EH_M1_2243.mp3"), m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.1f);
+						m_iSoundIndex[i]++;
+						break;
+					}
 				}
 			}
+
 			if (i >= ANIM_ATTACK_Frame1 && i <= ANIM_ATTACK_Frame5)
 			{
 				if (m_iSoundIndex[i] == 0 && m_bSoundSwitch[i] == true && m_pModel[i]->Get_PlayRate() >= 0.3571)

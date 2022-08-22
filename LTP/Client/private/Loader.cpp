@@ -167,6 +167,10 @@
 #include "MiniGame_Golu.h"
 #include "Golu_Bullet.h"
 #include "UI_Texture_Universal.h"
+#include "MiniGame_DonkeyKong.h"
+#include "MiniGame_KongRaji.h"
+#include "KongRajiTrigger.h"
+#include "DonkeyKong_BulletTrigger.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 /////////MiniGame PACKMEN///////////////////////////////////////////////////////////////////////
@@ -246,6 +250,10 @@ _uint CALLBACK LoadingThread(void* _Prameter)
 
 	case SCENEID::SCENE_MINIGAME_Jino:
 		pLoader->Load_Scene_Minigame_Jino(tThreadArg.IsClientQuit, tThreadArg.CriSec);
+		break;
+
+	case SCENEID::SCENE_MINIGAME_DONKEYKONG:
+		pLoader->Load_Scene_Minigame_DonkeyKong(tThreadArg.IsClientQuit, tThreadArg.CriSec);
 		break;
 
 	case SCENEID::SCENE_EDIT:
@@ -1797,13 +1805,6 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
 
 
-	FAILED_CHECK(Load_AllMonster());
-
-	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME1));
-
-
-#pragma endregion
-
 #pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_Texture_Monster_Bullet),
@@ -1820,6 +1821,13 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 	/* For.Prototype_Component_Prototype_UI_Texture_Universal */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME1, TAG_CP(Prototype_UI_Texture_Universal),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Texture_Universal.txt")));
+
+#pragma endregion
+
+	FAILED_CHECK(Load_AllMonster());
+
+	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME1));
+
 
 #pragma endregion
 
@@ -2012,6 +2020,71 @@ HRESULT CLoader::Load_Scene_Minigame_Jino(_bool * _IsClientQuit, CRITICAL_SECTIO
 	return S_OK;
 }
 
+HRESULT CLoader::Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_Matrix			TransformMatrix;
+
+#pragma  region Static_Mesh
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Player), TransformMatrix);
+
+#pragma  endregion
+#pragma region PROTOTYPE_COMPONENT
+
+	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME_DONKEYKONG, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/data/NaviMesh/NaviData_Stage_MiniGame_DonkeyKong.dat")))))
+		return E_FAIL;
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME_DONKEYKONG, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_Boss.FBX", TransformMatrix)));
+
+#pragma  region EH
+	/* For.Prototype_Component_WorldTexutre_Universal */
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_MINIGAME_DONKEYKONG, TAG_CP(Prototype_WorldTexture_Universal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"WorldTexture_Universal.txt")));
+#pragma endregion
+#pragma endregion
+
+	FAILED_CHECK(Load_AllMonster());
+
+	FAILED_CHECK(Load_MapMesh(SCENE_MINIGAME_DONKEYKONG));
+
+
+#pragma endregion
+
+#pragma  region PROTOTYPE_GAMEOBJECT
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_KongRaji), CMiniGame_KongRaji::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_KongRajiTrigger), CKongRajiTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger), CDonkeyKong_BulletTrigger::Create(m_pDevice, m_pDeviceContext)));
+
+#pragma endregion
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	EnterCriticalSection(_CriSec);
+	m_iLoadingMaxCount = 1;
+	m_iLoadingProgressCount = 0;
+	LeaveCriticalSection(_CriSec);
+
+	for (int i = 0; i < m_iLoadingMaxCount; ++i)
+	{
+		EnterCriticalSection(_CriSec);
+		m_iLoadingProgressCount = i;
+		LeaveCriticalSection(_CriSec);
+	}
+
+	EnterCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	LeaveCriticalSection(_CriSec);
+	m_bIsLoadingFinished = true;
+	return S_OK;
+	return S_OK;
+}
+
 HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -2050,8 +2123,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 
 	//Map Make
-	//	for (_uint i = 0; i < SCENE_END; i++)
-	//		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//for (_uint i = 0; i < SCENE_END; i++)
+	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 	
 #pragma endregion
@@ -4103,6 +4176,22 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		bBool = true;
 	}
 	break;
+	case SCENE_MINIGAME_DONKEYKONG:
+	{
+		static _bool bBool = false;
+
+		if (bBool) return S_FALSE;
+		bBool = true;
+
+#pragma  region Static_Mesh
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
+
+#pragma endregion
+		break;
+	}
 	case SCENE_END:
 		break;
 	default:

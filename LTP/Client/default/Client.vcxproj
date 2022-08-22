@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\DeadZone.h" />
     <ClInclude Include="..\public\DemonTreePuzzleTrigger.h" />
     <ClInclude Include="..\public\Demon_Tree.h" />
+    <ClInclude Include="..\public\DonkeyKong_BulletTrigger.h" />
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\public\Grovetender.h" />
     <ClInclude Include="..\public\GrovetenderDeadZone.h" />
     <ClInclude Include="..\public\JumpingMonkey.h" />
+    <ClInclude Include="..\public\KongRajiTrigger.h" />
     <ClInclude Include="..\public\MahaHead.h" />
     <ClInclude Include="..\public\MiniGameBuilding.h" />
     <ClInclude Include="..\public\FemaleStatue.h" />
@@ -226,6 +228,9 @@
     <ClInclude Include="..\public\MandalaPuzzle.h" />
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
+    <ClInclude Include="..\public\MiniGame_DonkeyKong.h" />
+    <ClInclude Include="..\public\MiniGame_KongGolu.h" />
+    <ClInclude Include="..\public\MiniGame_KongRaji.h" />
     <ClInclude Include="..\public\PM_Food.h" />
     <ClInclude Include="..\public\PM_Monster.h" />
     <ClInclude Include="..\public\PackMen.h" />
@@ -310,6 +315,7 @@
     <ClInclude Include="..\public\NaviPoint.h" />
     <ClInclude Include="..\public\Scene_Loading.h" />
     <ClInclude Include="..\public\Scene_Loby.h" />
+    <ClInclude Include="..\public\Scene_MiniGame_DonkeyKong.h" />
     <ClInclude Include="..\public\Scene_Minigame_PM.h" />
     <ClInclude Include="..\public\Scene_Minigame1.h" />
     <ClInclude Include="..\public\Scene_MiniGame_Jino.h" />
@@ -376,6 +382,7 @@
     <ClCompile Include="..\private\DeadZone.cpp" />
     <ClCompile Include="..\private\DemonTreePuzzleTrigger.cpp" />
     <ClCompile Include="..\private\Demon_Tree.cpp" />
+    <ClCompile Include="..\private\DonkeyKong_BulletTrigger.cpp" />
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
@@ -385,6 +392,7 @@
     <ClCompile Include="..\private\Grovetender.cpp" />
     <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
     <ClCompile Include="..\private\JumpingMonkey.cpp" />
+    <ClCompile Include="..\private\KongRajiTrigger.cpp" />
     <ClCompile Include="..\private\MahaHead.cpp" />
     <ClCompile Include="..\private\MiniGameBuilding.cpp" />
     <ClCompile Include="..\private\FemaleStatue.cpp" />
@@ -405,6 +413,9 @@
     <ClCompile Include="..\private\MandalaMesh.cpp" />
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
+    <ClCompile Include="..\private\MiniGame_DonkeyKong.cpp" />
+    <ClCompile Include="..\private\MiniGame_KongGolu.cpp" />
+    <ClCompile Include="..\private\MiniGame_KongRaji.cpp" />
     <ClCompile Include="..\private\PM_Food.cpp" />
     <ClCompile Include="..\private\PM_Monster.cpp" />
     <ClCompile Include="..\private\PackMen.cpp" />
@@ -484,6 +495,7 @@
     <ClCompile Include="..\private\Rope.cpp" />
     <ClCompile Include="..\private\SceneChangeTrigger.cpp" />
     <ClCompile Include="..\private\Scene_Edit.cpp" />
+    <ClCompile Include="..\private\Scene_MiniGame_DonkeyKong.cpp" />
     <ClCompile Include="..\private\Scene_Minigame_PM.cpp" />
     <ClCompile Include="..\private\Scene_Minigame1.cpp" />
     <ClCompile Include="..\private\Scene_MiniGame_Jino.cpp" />

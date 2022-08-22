@@ -73,8 +73,6 @@ private:
 	HRESULT	SetUp_Collider();
 	HRESULT	Update_Collider(_double dDeltaTime);
 
-private:
-	_Vector Bezier(_Vector StartPoint,_Vector LastPoint, _double dDeltaTime);
 
 private:
 	HRESULT	Vayusura_Leader_Bullet(_double dDeltaTime);
@@ -87,6 +85,9 @@ private:
 	HRESULT Tezabsura_Landmine_Install(_double dDeltaTime);
 	HRESULT	Ninjasura_Knife(_double dDeltaTime);
 	HRESULT	Gadasura_Black(_double dDeltaTime);
+
+private:
+	_Vector Bomber_Bezier(_Vector StartPoint, _Vector LastPoint, _double dDeltaTime);
 
 private:
 	MONSTER_BULLET_UNIVERSALDESC m_Monster_Bullet_UniversalDesc; //Monster_Bullet_Universal Desc;
