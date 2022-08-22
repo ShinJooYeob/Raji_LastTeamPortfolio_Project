@@ -415,6 +415,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 		//JY
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_4E_LightCastRing_01);
 		//
 
@@ -661,7 +662,7 @@ HRESULT CLoader::Load_Scene_StageSelect(_bool * _IsClientQuit, CRITICAL_SECTION 
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TransformMatrix);
 
 
-	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1685,7 +1686,7 @@ HRESULT CLoader::Load_Scene_Stage7(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 
 
 
-	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2724,7 +2725,7 @@ HRESULT CLoader::Load_AllBoss()
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_ChieftianWeapon4), TransformMatrix);
 
 
-	TransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -4219,7 +4220,10 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Burger_Alphabet.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_09E.fbx", TransformMatrix);
-		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);	
+
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Aura_Linear_01);
 #pragma endregion
 
 

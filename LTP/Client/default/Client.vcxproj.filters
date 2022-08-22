@@ -588,7 +588,7 @@
     </Filter>
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu">
       <UniqueIdentifier>{eb4318b7-190f-4344-a5f8-2adea00b9331}</UniqueIdentifier>
-      </Filter>
+    </Filter>
     <Filter Include="01.GameObject\01.Player\03. ETC">
       <UniqueIdentifier>{50529050-6974-4363-871d-79893fc14ae0}</UniqueIdentifier>
     </Filter>
@@ -1985,7 +1985,7 @@
     </ClCompile>
     <ClCompile Include="..\private\MiniGame_KongGolu.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu</Filter>
-        </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\RajiMask.cpp">
       <Filter>01.GameObject\01.Player\03. ETC\00. RajiMask</Filter>
     </ClCompile>
@@ -2062,8 +2062,5 @@
     <Natvis Include="..\public\Imgui\imgui.natvis">
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
     </Natvis>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

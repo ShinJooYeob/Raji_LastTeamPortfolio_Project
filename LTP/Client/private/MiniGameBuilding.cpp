@@ -79,10 +79,14 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER)) < 10)
 	{
-		Start_SceneChanging_CamAct();
+		if (g_pGameInstance->Get_DIKeyState(DIK_E) & DIS_Down)
+		{
+			Start_SceneChanging_CamAct();
+		}
 	}
+
 
 
 	m_fPassedTimer += (_float)fDeltaTime;
@@ -171,6 +175,8 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 
 		}
 	}
+
+	g_pGameInstance->Add_RepelGroup(m_pTransformCom,4, nullptr, true);
 
 	//m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(30));
 	//m_pTransformCom->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltaTime);

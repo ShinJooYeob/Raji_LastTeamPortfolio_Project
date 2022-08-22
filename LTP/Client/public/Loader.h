@@ -44,6 +44,7 @@ public:
 	HRESULT Load_Scene_Edit(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
 
 	HRESULT Load_Scene_Laboratory_Jino(_bool* _IsClientQuit, CRITICAL_SECTION* _CriSec);
+	HRESULT Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_SECTION * _CriSec);
 
 	HRESULT Load_Model_DatFile();
 	HRESULT Load_Model(const list<MYFILEPATH*>& pathlist, list<MODELDESC*>& List_Modeldesc);
