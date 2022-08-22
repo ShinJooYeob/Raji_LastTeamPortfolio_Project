@@ -315,6 +315,9 @@ HRESULT CUtilityMgr::Bind_UtilTex_OnShader(UTILTEXTUREID eID, CShader * pShader,
 	case Client::CUtilityMgr::UTILTEX_MASK:
 		FAILED_CHECK(m_pTexture->Change_TextureLayer(L"MaskTexture"));
 		break;
+	case Client::CUtilityMgr::UTILTEX_MINIGAMETEX:
+		FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"MGBT"));
+		break;
 	default:
 		break;
 	}
@@ -334,6 +337,9 @@ ID3D11ShaderResourceView * CUtilityMgr::Get_UtilTex_SRV(UTILTEXTUREID eID, _uint
 		break;
 	case Client::CUtilityMgr::UTILTEX_MASK:
 		FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"MaskTexture"));
+		break;
+	case Client::CUtilityMgr::UTILTEX_MINIGAMETEX:
+		FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"MGBT"));
 		break;
 	default:
 		break;
@@ -401,7 +407,8 @@ HRESULT CUtilityMgr::SCD_Rendering_Rolling(_float RollingStartTime, _float Rolli
 	_uint RollingRate = min(_uint(RollingStartTime / RollingTargetTime * _float(NumRollingTexture)) , NumRollingTexture - 1);
 
 
-	m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433);
+	FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", SceneChangeNoiseIndex));
 	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_DiffuseTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
 	FAILED_CHECK(m_pLoadingSCD.Render_SCD_Rolling(RollingRate));
 	//PS_PaperCurlOut
@@ -413,7 +420,8 @@ HRESULT CUtilityMgr::SCD_Rendering_FadeOut(_float RollingStartTime, _float Rolli
 	_float FadeIntensive = min(max(RollingStartTime / RollingTargetTime,0.f ),1.f);
 
 
-	m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", 433);
+	FAILED_CHECK_NONERETURN(m_pTexture->Change_TextureLayer(L"NoiseTexture"));
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pLoadingSCD.pShader, "g_NoiseTexture", SceneChangeNoiseIndex));
 	FAILED_CHECK(m_pLoadingSCD.pShader->Set_Texture("g_SourTexture", g_pGameInstance->Get_SRV(szRenderTargetTag)));
 	FAILED_CHECK(m_pLoadingSCD.Render_SCD_FadeOut( 8, FadeIntensive));
 
@@ -461,6 +469,32 @@ void CUtilityMgr::Set_Renderer(CRenderer * pRenderer)
 	m_pRenderer = pRenderer;
 	Safe_AddRef(m_pRenderer);
 }
+
+HRESULT CUtilityMgr::Ready_SceneChangingData(_uint eSceneID, _uint iLayerIndex)
+{
+	m_tForSceneChangingData = m_pRenderer->Get_PostProcessingData();
+
+	m_tForSceneChangingData.PlayerWorldMat = ((CTransform*)(g_pGameInstance->Get_Commponent_By_LayerIndex(eSceneID, TAG_LAY(Layer_Player), TAG_COM(Com_Transform))))->Get_WorldFloat4x4();
+	m_tForSceneChangingData.CamWorldMat =		((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))))->Get_Camera_Transform()->Get_WorldFloat4x4();
+	m_tForSceneChangingData.ObjMgrLaterIdx = iLayerIndex;
+
+	return S_OK;
+}
+
+PPDDESC CUtilityMgr::Set_SceneChangingData(_uint eSceneID)
+{
+
+	m_pRenderer->Set_PostProcessingData(m_tForSceneChangingData);
+
+	((CTransform*)(g_pGameInstance->Get_Commponent_By_LayerIndex(eSceneID, TAG_LAY(Layer_Player), TAG_COM(Com_Transform))))->Set_Matrix(m_tForSceneChangingData.PlayerWorldMat);
+
+	((CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main))))->Get_Camera_Transform()->Set_Matrix(m_tForSceneChangingData.CamWorldMat);
+
+
+
+	return PPDDESC();
+}
+
 
 _uint CUtilityMgr::CountDigit(_uint iNum)
 {

@@ -18,6 +18,7 @@
 #include "Scene_MiniGame_Jino.h"
 //#include "Scene_Ending.h"
 
+#include "MiniGameBuilding.h"
 
 #ifdef _DEBUG
  #include "Scene_Edit.h"
@@ -25,10 +26,7 @@
 
 
 
-
-
-
-
+_uint CScene_Loading::m_iLoadingKinds = LOADINGKINDS_NORMAL;
 
 CScene_Loading::CScene_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -40,9 +38,80 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	m_eOldSceneIndex =(SCENEID)g_pGameInstance->Get_NowSceneNum();
+
+	_bool bOldIsMiniGame = (m_eOldSceneIndex < SCENE_LABORATORY_JINO || m_eOldSceneIndex >= SCENE_EDIT) ? false : true;
+	_bool bNextIsMiniGame = (eSceneID < SCENE_LABORATORY_JINO || eSceneID >= SCENE_EDIT) ? false : true;
+
 	FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging());
 
-	FAILED_CHECK(GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(0)));
+
+	//LOADINGKINDS_NORMAL, LOADINGKINDS_NORMAL_TO_MINI, LOADINGKINDS_MINI_TO_NORMAL, LOADINGKINDS_END
+
+	m_iLoadingKinds = (bOldIsMiniGame) ? ((bNextIsMiniGame)? LOADINGKINDS_NORMAL : LOADINGKINDS_MINI_TO_NORMAL) 
+		: ((bNextIsMiniGame) ? LOADINGKINDS_NORMAL_TO_MINI : LOADINGKINDS_NORMAL);
+
+	switch (m_iLoadingKinds)
+	{
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL:
+	{
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(0)));
+	}
+		break;
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL_TO_MINI:
+	{
+
+		GetSingle(CUtilityMgr)->Get_Renderer()->Copy_CompletelyLastDeferredTexture();
+		switch (eSceneID)
+		{
+		case SCENE_LABORATORY_JINO:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_FALLOFF;
+			break;
+		case SCENE_MINIGAME1:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL;
+			break;
+		case SCENE_MINIGAME_PM:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_PACKMAN;
+			break;
+		case SCENE_MINIGAME_Jino:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_CIRCUS;
+			break;
+		default:
+			break;
+		}
+	}
+	case Client::CScene_Loading::LOADINGKINDS_MINI_TO_NORMAL:		
+	{
+
+		GetSingle(CUtilityMgr)->Get_Renderer()->Copy_CompletelyLastDeferredTexture();
+		switch (m_eOldSceneIndex)
+		{
+		case SCENE_LABORATORY_JINO:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_FALLOFF;
+			break;
+		case SCENE_MINIGAME1:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL;
+			break;
+		case SCENE_MINIGAME_PM:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_PACKMAN;
+			break;
+		case SCENE_MINIGAME_Jino:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_CIRCUS;
+			break;
+		default:
+			break;
+		}
+	}
+		break;
+	default:
+		__debugbreak();
+		MSGBOX("Worng LoadingKinds");
+		break;
+	}
+
+
+
+
 
 	m_eNextSceneIndex = eSceneID;
 	m_pLoader = CLoader::Create(m_pDevice,m_pDeviceContext,eSceneID);
@@ -69,12 +138,22 @@ _int CScene_Loading::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (m_fSceneStartTimer < 2.f)
+
+	switch (m_iLoadingKinds)
 	{
-		GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(m_fSceneStartTimer / 2.f));
-
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL:
+		if (m_fSceneStartTimer < 2.f)
+		{
+			GetSingle(CUtilityMgr)->Copy_LastDeferredToToonShadingTexture(_float(m_fSceneStartTimer / 2.f));
+		}
+		break;
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL_TO_MINI:
+		break;
+	case Client::CScene_Loading::LOADINGKINDS_MINI_TO_NORMAL:
+		break;
+	default:
+		break;
 	}
-
 
 	return 0;
 }
@@ -173,25 +252,29 @@ _int CScene_Loading::Render()
 		return -1;
 
 
-
-	GetSingle(CUtilityMgr)->SCD_Rendering();
-	//FAILED_CHECK(m_pLoadingSCD.Render_SCD(1));
-
-
-
-#ifdef _DEBUG
-	if (!g_bIsShowFPS)
-
-	if (m_pLoader != nullptr) 
+	switch (m_iLoadingKinds)
 	{
-		_int iPercent = int((m_pLoader->Get_ProgressCount() / (float)m_pLoader->Get_MaxCount()) * 100);
-		_tchar  szTempString[MAX_PATH];
-		_itow_s(iPercent, szTempString, MAX_PATH , 10);
-		lstrcat(szTempString,L"% ·Îµù Áß (Loading Scene)");
-
-		SetWindowText(g_hWnd, szTempString);
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL:
+		GetSingle(CUtilityMgr)->SCD_Rendering();
+		break;
+	case Client::CScene_Loading::LOADINGKINDS_NORMAL_TO_MINI:
+	{
+		_float fValue = min(m_fSceneStartTimer / 2.f, 1.f);
+		GetSingle(CUtilityMgr)->Get_Renderer()->Copy_CompletelyLastDeferredTexToNowTex(fValue, CMiniGameBuilding::m_vecMGBTargets[m_iMiniGameIndex].pSRV);
 	}
-#endif // _DEBUG
+		break;
+	case Client::CScene_Loading::LOADINGKINDS_MINI_TO_NORMAL:
+	{
+		_float fValue = min(m_fSceneStartTimer / 2.f, 1.f);
+		GetSingle(CUtilityMgr)->Get_Renderer()->Copy_MiniGameDeferredTexToNowTex(fValue, CMiniGameBuilding::m_vecMGBTargets[m_iMiniGameIndex].pSRV,
+			GetSingle(CUtilityMgr)->Get_UtilTex_SRV(CUtilityMgr::UTILTEX_MINIGAMETEX, 1));
+	}
+		break;
+	default:
+		break;
+	}
+
+
 
 
 	ID3D11ShaderResourceView* pSRV[8] = { nullptr };

@@ -40,6 +40,8 @@
 #define DIS_DoubleDown		0b00000100
 #define DIS_Press			0b11111111
 
+#define SceneChangeNoiseIndex 434
+
 #define D3D11COLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 //#define D3D11COLOR_ARGB(a,r,g,b) \

@@ -76,7 +76,7 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 		return 0;
 	}
 
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -115,16 +115,18 @@ _int CScene_Stage5::Render()
 		return -1;
 
 	if (m_bIsNeedToSceneChange) return S_FALSE;
-
-	if (m_fSceneStartTimer < 0.5f)
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
-		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
 	}
-	else if (m_fSceneStartTimer < 2.5f)
-	{
 
-		FAILED_CHECK(GetSingle(CUtilityMgr)->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
-	}
 
 
 	return 0;

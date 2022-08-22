@@ -38,6 +38,10 @@ private:
 	CTransform*				m_pTransformCom = nullptr;
 	CCollider*				m_pCollider = nullptr;
 
+
+private:
+	NONINSTNESHEFTDESC m_tVolcanoDesc;
+	_float				m_fCurTime_Duration = 0;
 public:
 	static CFireRing*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject*			Clone(void* pArg);

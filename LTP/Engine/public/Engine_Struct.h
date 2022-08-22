@@ -454,6 +454,7 @@ namespace Engine
 		_uint						iNumVertexBuffers = 0;
 
 	}FORINSTDATA;
+
 	typedef struct tagForIndexData
 	{
 		_uint						iNumPrimitive;
@@ -463,4 +464,46 @@ namespace Engine
 		FACEINDICES32*				pIndices;
 
 	}FORINDEXDATA;
+
+
+
+	typedef struct tagPostProcessingData
+	{
+		_bool bPostProcessingArr[9];
+
+		_float3 SunPos;
+		_float3 SunAt;
+
+		_float4 vDiffuse;
+		_float4 vAmbient;
+		_float4 vSpecular;
+
+		_float fShadowIntensive;
+
+		_float	 fSunSize;
+		_float	 fGodrayLength;
+		_float	 fGodrayIntensity;
+		_float	 fStartDecay;
+		_float	 fDistDecay;
+		_float	 fMaxDeltaLen;
+
+		_float		fLensfalreSupportSunSize;
+		_float		fLensefalreNoiseTexIndex;
+
+		_float		fBloomOverLuminceValue;
+		_float		fBloomBrightnessMul;
+
+		_float		fDofLength;
+		_float		fDofBlurIntensive;
+
+		_float3		vFogColor;
+		_float3		vFogHighlightColor;
+		_float		fFogStartDist;
+		_float		fFogGlobalDensity;
+		_float		fFogHeightFalloff;
+
+		_float4x4 PlayerWorldMat;
+		_float4x4 CamWorldMat;
+		_uint		ObjMgrLaterIdx = 0;
+	}PPDDESC;
 }

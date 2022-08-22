@@ -75,7 +75,7 @@ _int CScene_Stage3::Update(_double fDeltaTime)
 	}
 
 
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -110,15 +110,18 @@ _int CScene_Stage3::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-	if (m_fSceneStartTimer < 0.5f)
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
 	}
-	else if (m_fSceneStartTimer < 2.5f)
-	{
 
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
-	}
 	return 0;
 }
 

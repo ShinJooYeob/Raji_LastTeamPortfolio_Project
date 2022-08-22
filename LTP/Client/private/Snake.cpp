@@ -935,10 +935,15 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 
 
-						m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+						//m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
 
-						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
-						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform1->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+						//m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+						//m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform1->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 6.472f), 3.236f);
+
+						m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 3.236f), 3.236f);
+
+						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 3.236f), 3.236f);
+						m_pMotionTrail->Add_MotionBuffer(m_pTextureParticleTransform1->Get_WorldFloat4x4(), _float4(0.734375f, 0.13671875f, 0.98046875f, 3.236f), 3.236f);
 						Timer = 0.05;
 					}
 				}

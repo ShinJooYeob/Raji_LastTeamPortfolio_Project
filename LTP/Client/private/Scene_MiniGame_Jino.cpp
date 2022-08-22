@@ -13,6 +13,7 @@
 #include "JumpingMonkey.h"
 #include "FireRing.h"
 #include "CircusBackground.h"
+#include "MiniGameBuilding.h"
 
 CScene_MiniGame_Jino::CScene_MiniGame_Jino(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -68,7 +69,7 @@ _int CScene_MiniGame_Jino::Update(_double fDeltaTime)
 		}
 	}
 
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -76,8 +77,11 @@ _int CScene_MiniGame_Jino::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
+
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_CIRCUS);
+
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE1), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
@@ -95,8 +99,10 @@ _int CScene_MiniGame_Jino::LateUpdate(_double fDeltaTime)
 
 	if (true == m_bGameClear)
 	{
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_CIRCUS);
+
 		GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange();
-		g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING);
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE1), SCENEID::SCENE_LOADING));
 	}
 
 	return 0;
@@ -106,6 +112,18 @@ _int CScene_MiniGame_Jino::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
+	{
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
+	}
 
 	return 0;
 }

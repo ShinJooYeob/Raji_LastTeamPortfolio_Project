@@ -16,6 +16,8 @@
 
 #define MonsterDmgTime		1.5
 
+#define SceneChangeCopyFrame 2
+
 #define KEYUP(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Up
 #define KEYDOWN(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Down
 #define KEYPRESS(x)		GetSingle(CGameInstance)->Get_DIKeyState(x)& DIS_Press

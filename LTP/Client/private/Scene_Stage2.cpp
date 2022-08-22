@@ -6,6 +6,7 @@
 #include "StaticInstanceMapObject.h"
 #include "MonsterBatchTrigger.h"
 #include "MapObject.h"
+#include "MiniGameBuilding.h"
 
 CScene_Stage2::CScene_Stage2(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -30,7 +31,8 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_Layer_Terrain(TAG_LAY(Layer_Terrain)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	//FAILED_CHECK(Ready_Layer_Monster(TAG_LAY(Layer_Monster)));
-	
+
+	FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
 	FAILED_CHECK(Ready_MapData(L"Stage_2.dat", SCENE_STAGE2, TAG_LAY(Layer_StaticMapObj)));
 	FAILED_CHECK(Ready_TriggerObject(L"Stage2Trigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
@@ -69,7 +71,7 @@ _int CScene_Stage2::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE7), SCENEID::SCENE_LOADING));
 		return 0;
 	}
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -100,15 +102,18 @@ _int CScene_Stage2::Render()
 	if (__super::Render() < 0)
 		return -1;
 
-	if (m_fSceneStartTimer < 0.5f)
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
 	}
-	else if (m_fSceneStartTimer < 2.5f)
-	{
 
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
-	}
 	return 0;
 }
 
@@ -292,6 +297,28 @@ HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	return S_OK;
 
+}
+
+HRESULT CScene_Stage2::Ready_MiniGameBuilding(const _tchar * pLayerTag)
+{
+
+
+		CMiniGameBuilding::MGBDESC tDesc;
+		tDesc.vPosition = _float3(490.428f, 4.850f, 434.639f);
+		tDesc.vScale = _float3(1.f);
+		tDesc.eKindsOfMiniGame = CMiniGameBuilding::MINIGAME_RHYTHM;
+		tDesc.vLookDir = _float3(0, 0, -1).Get_Nomalize();
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
+
+
+		//tDesc.vPosition = _float3(193.102f, 28.700f, 222.103f);
+		//tDesc.vScale = _float3(1.f);
+		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
+
+		return S_OK;
+
+
+	return S_OK;
 }
 
 HRESULT CScene_Stage2::Ready_MapData(const _tchar * szMapDataFileName, SCENEID eSceneID, const _tchar * pLayerTag)

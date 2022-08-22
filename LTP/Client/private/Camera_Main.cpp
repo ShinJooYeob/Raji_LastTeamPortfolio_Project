@@ -99,7 +99,7 @@ _bool CCamera_Main::CamActionStart(CAMERAACTION Act)
 	m_iNowPosIndex = 0;
 	m_iNowLookIndex = 0;
 
-	CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+	CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 	pPlayer->Set_State_StopActionStart();
 
 	GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
@@ -1058,9 +1058,12 @@ HRESULT CCamera_Main::Update_CamAction(_double fDeltaTime)
 		//m_pTransform->Set_MatrixState(CTransform::STATE_POS, EasedPos);
 		//m_pTransform->LookAt(EasedLookAt.XMVector());
 
-		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
-		pPlayer->Set_State_StopActionEnd();
-		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		if (pPlayer != nullptr)
+		{
+			pPlayer->Set_State_StopActionEnd();
+			GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+		}
 	}
 	else
 		//마지막 프레임까지 돌지 않았다면 보간하면서 라업룩포를 구해라

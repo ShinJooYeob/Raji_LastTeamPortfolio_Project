@@ -4,7 +4,7 @@
 
 texture2D			g_NoiseTexture;
 texture2D			g_DepthTexture;
-
+float4 g_vCamPosition;
 
 cbuffer AttechMatrix
 {
@@ -243,6 +243,20 @@ struct PS_OUT
 	vector		vWorldPosition : SV_TARGET5;
 	vector		vLimLight : SV_TARGET6;
 };
+
+
+struct PS_OUT_OccludedMask
+{
+	vector		vDiffuse : SV_TARGET0;
+	vector		vNormal : SV_TARGET1;
+	vector		vSpecular : SV_TARGET2;
+	vector		vEmissive : SV_TARGET3;
+	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
+	vector		vOccludedMask : SV_TARGET7;
+};
+
 struct PS_OUT_NOLIGHT
 {
 	vector		vDiffuse : SV_TARGET0;
@@ -304,6 +318,50 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 	Out.vLimLight = g_vLimLight;
 	return Out;
 }
+PS_OUT_OccludedMask PS_MAIN_DEFAULT_WithOccludedMask(PS_IN In)
+{
+	PS_OUT_OccludedMask		Out = (PS_OUT_OccludedMask)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	//
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+	float3x3	NormalWorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+	vNormal = mul(vNormal, NormalWorldMatrix);
+
+
+	Out.vDiffuse = vDiffuse;
+
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
+	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
+	Out.vOccludedMask = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, Out.vNormal.x, Out.vNormal.y);
+
+	return Out;
+}
+
 
 PS_OUT PS_MotionTrail(PS_IN In)
 {
@@ -320,14 +378,21 @@ PS_OUT PS_MotionTrail(PS_IN In)
 	vNormal = mul(vNormal, NormalWorldMatrix);
 
 
-	Out.vDiffuse = vector(0,0,0,0.001f);
+	float3 vCameraPos = normalize(g_vCamPosition.xyz - In.vWorldPos.xyz);
+	float RimLightColor = smoothstep(1.0f - g_vLimLight.a, 1.0f, 1 - max(0, dot(vNormal.xyz, vCameraPos)));
+	RimLightColor =	min(max(RimLightColor, 0.01f) * 10.f,1.f);
+
+	Out.vDiffuse = vector(0.0f, 0.0f, 0.0f, 0.001f);
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	//vNormal = (vNormal *RimLightColor);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, RimLightColor);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, RimLightColor);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = 1.f;
-	Out.vLimLight = g_vLimLight;
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, RimLightColor);
+	Out.vEmissive =vector(1.f,0.5f,1.f, 1.f) * RimLightColor;
+	Out.vLimLight = g_vLimLight * 1.f;
+
+
 	return Out;
 }
 
@@ -462,14 +527,24 @@ PS_OUT PS_MotionTrail_NoEmissive(PS_IN In)
 	vNormal = mul(vNormal, NormalWorldMatrix);
 
 
-	Out.vDiffuse = vector(g_vLimLight.xyz, 0.0001f);
+
+
+	float3 vCameraPos = normalize(g_vCamPosition.xyz - In.vWorldPos.xyz);
+	float RimLightColor = smoothstep(1.0f - g_vLimLight.a, 1.0f, 1 - max(0, dot(vNormal.xyz, vCameraPos)));
+	RimLightColor = min(max(RimLightColor, 0.01f) * 10.f, 1.f);
+
+	Out.vDiffuse = vector(0.0f, 0.0f, 0.0f, 0.001f);
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
-	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	//vNormal = (vNormal *RimLightColor);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, RimLightColor);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, RimLightColor);
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = 0.f;
-	Out.vLimLight = g_vLimLight;
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, RimLightColor);
+	//Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f) * RimLightColor;
+	Out.vEmissive = vector(0, 0, 0, 0) * RimLightColor;
+	Out.vLimLight = g_vLimLight * 1.f;
+
+
 	return Out;
 }
 
@@ -582,7 +657,7 @@ technique11		DefaultTechnique
 	}
 	pass ForMotionTrailBuffer//5
 	{
-		SetBlendState(AlphaBlendingJustDiffuse, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(AlphaBlendingExpectLimLight, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(ZTestAndWriteState, 0);
 		SetRasterizerState(CullMode_ccw);
 
@@ -707,4 +782,16 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SoftEffect();
 	}
+
+	pass Player_WithOccludedMask		//17
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_NOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_WithOccludedMask();
+	}
+	
 }

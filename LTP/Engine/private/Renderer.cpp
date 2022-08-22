@@ -62,7 +62,10 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_WorldPosition"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 0.f, 0.f, 1.f)));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_LimLight"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
+	/* For.Target_OccludedMaskMap */
+	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_OccludedMaskMap"), (_uint)Viewport.Width, (_uint)Viewport.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f)));
 
+	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_RenderTarget(TEXT("Target_OldWorldPosition"), (_uint)Viewport.Width, (_uint)Viewport.Height,
 		DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 0.f, 0.f, 1.f),false));
@@ -141,6 +144,17 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_Depth")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_WorldPosition")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_Material"), TEXT("Target_LimLight")));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_MtrlDiffuse")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_MtrlNormal")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_MtrlSpecular")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_MtrlEmissive")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_Depth")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_WorldPosition")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_LimLight")));
+	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OccludedMaterial"), TEXT("Target_OccludedMaskMap")));
+	
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_OldWorld"), TEXT("Target_OldWorldPosition")));
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_VelocityMap"), TEXT("Target_VelocityMap")));
@@ -274,6 +288,9 @@ HRESULT CRenderer::Initialize_Prototype(void * pArg)
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_VelocityMap"), 1280 - 250, 450, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_MtrlDiffuseSceneChaging"), 1280 - 250, 550, 100, 100));
 	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_ToonDeferredSceneChaging"), 1280 - 250, 650, 100, 100));
+	
+
+	FAILED_CHECK(Add_DebugRenderTarget(TEXT("Target_OccludedMaskMap"), 1280 - 350, 50, 100, 100));
 	
 	
 	
@@ -530,6 +547,7 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
 
 	FAILED_CHECK(Render_BlurShadow());
+	FAILED_CHECK(Apply_OccludedMask());
 	FAILED_CHECK(Render_Lights(fDeltaTime));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DefferredNReference")));
@@ -681,6 +699,18 @@ HRESULT CRenderer::Render_Priority()
 
 HRESULT CRenderer::Render_NonBlend()
 {
+	for (auto& RenderObject : m_RenderObjectList[RENDER_PRENONBLEND])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_PRENONBLEND].clear();
+
+
+
 	for (auto& RenderObject : m_RenderObjectList[RENDER_NONBLEND])
 	{
 		if (RenderObject != nullptr)
@@ -778,6 +808,8 @@ HRESULT CRenderer::Copy_DeferredToReference()
 	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_ReferenceDefferred")));
 	return S_OK;
 }
+
+
 
 HRESULT CRenderer::Copy_DeferredToBackBuffer()
 {
@@ -1603,6 +1635,61 @@ HRESULT CRenderer::Copy_BluredMtrlDiffuse(_float TexelSize)
 	return S_OK;
 }
 
+HRESULT CRenderer::Copy_CompletelyLastDeferredTexture()
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Clear_SpecificMRT(TEXT("MRT_DeferredSceneChaging")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_DeferredSceneChaging")));
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Defferred"))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 27));
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_DeferredSceneChaging")));
+
+
+
+	return S_OK;
+}
+HRESULT CRenderer::Copy_CompletelyLastDeferredTexToNowTex(_float fRate, ID3D11ShaderResourceView* pSRV)
+{
+	NULL_CHECK_RETURN(pSRV, E_FAIL);
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_DeferredSceneChaging"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_SourTexture", pSRV));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_MixRate", &fRate, sizeof(_float)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 28));
+
+
+	return S_OK;
+}
+HRESULT CRenderer::Copy_MiniGameDeferredTexToNowTex(_float fRate, ID3D11ShaderResourceView * pminGameClearSRV, ID3D11ShaderResourceView * pBGSRV)
+{
+	NULL_CHECK_RETURN(pminGameClearSRV, E_FAIL);
+	NULL_CHECK_RETURN(pBGSRV, E_FAIL);
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", pminGameClearSRV));
+	FAILED_CHECK(m_pShader->Set_Texture("g_SourTexture", pBGSRV));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_MixRate", &fRate, sizeof(_float)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 29));
+	return S_OK;
+}
 HRESULT CRenderer::Copy_LastDeferredTexture(_float fToonMaxIntensive)
 {
 	//TEXT("Target_DeferredSceneChaging")));
@@ -1614,7 +1701,7 @@ HRESULT CRenderer::Copy_LastDeferredTexture(_float fToonMaxIntensive)
 
 	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_Defferred"))));
 	FAILED_CHECK(m_pShader->Set_Texture("g_DiffuseTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_MtrlDiffuse"))));
-	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", 433));
+	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pShader, "g_NoiseTexture", SceneChangeNoiseIndex));
 
 
 	FAILED_CHECK(m_pShader->Set_RawValue("g_fToonMaxIntensive", &fToonMaxIntensive, sizeof(_float)));
@@ -2202,6 +2289,41 @@ HRESULT CRenderer::Render_ShadowGroup()
 	return S_OK;
 }
 
+HRESULT CRenderer::Apply_OccludedMask()
+{
+
+	//Target_UpScaled_By3
+	FAILED_CHECK(Copy_RenderTarget(TEXT("Target_Depth")));
+
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(TEXT("MRT_Material")));
+	//Target_UpScaled_By3
+
+
+	FAILED_CHECK(m_pShader->Set_Texture("g_TargetTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_OccludedMaskMap"))));
+	FAILED_CHECK(m_pShader->Set_Texture("g_DepthTexture", m_pRenderTargetMgr->Get_SRV(TEXT("Target_UpScaled_By3"))));
+
+	CPipeLineMgr*		pPipeLineMgr = GetSingle(CPipeLineMgr);
+	_float4x4		ViewMatrixInv, ProjMatrixInv;
+
+	XMStoreFloat4x4(&ViewMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_VIEW))));
+	XMStoreFloat4x4(&ProjMatrixInv, XMMatrixTranspose(XMMatrixInverse(nullptr, pPipeLineMgr->Get_Transform_Matrix(PLM_PROJ))));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrixInv", &ViewMatrixInv, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrixInv", &ProjMatrixInv, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pShader->Set_RawValue("g_vOcdMaskColor", &m_vOcdMaskColor, sizeof(_float4)));
+	
+	FAILED_CHECK(m_pShader->Set_RawValue("g_WorldMatrix", &m_WVPmat.WorldMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ViewMatrix", &m_WVPmat.ViewMatrix, sizeof(_float4x4)));
+	FAILED_CHECK(m_pShader->Set_RawValue("g_ProjMatrix", &m_WVPmat.ProjMatrix, sizeof(_float4x4)));
+
+	FAILED_CHECK(m_pVIBuffer->Render(m_pShader, 26));
+
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(TEXT("MRT_Material")));
+	return S_OK;
+}
+
 HRESULT CRenderer::Add_DebugRenderTarget(const _tchar * szTargetTag, _float fX, _float fY, _float fCX, _float fCY)
 {
 #ifdef _DEBUG
@@ -2472,7 +2594,94 @@ HRESULT CRenderer::Render_UI()
 	return S_OK;
 }
 
+PPDDESC CRenderer::Get_PostProcessingData()
+{
+	PPDDESC tResult;
+
+
+	memcpy(tResult.bPostProcessingArr, m_PostProcessingOn, sizeof(_bool)*POSTPROCESSING_END);
+
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+	tResult.SunPos = pLightDesc->vVector;
+	tResult.SunAt = m_vSunAtPoint;
+
+	tResult.vDiffuse = pLightDesc->vDiffuse;
+	tResult.vAmbient = pLightDesc->vAmbient;
+	tResult.vSpecular = pLightDesc->vSpecular;
+
+	tResult.fShadowIntensive = m_fShadowIntensive;
+
+	tResult.fSunSize = m_SunSize;
+	tResult.fGodrayLength = m_fGodrayLength;
+	tResult.fGodrayIntensity = m_fGodrayIntensity;
+	tResult.fStartDecay = m_fInitDecay ;
+	tResult.fDistDecay = m_fDistDecay;
+	tResult.fMaxDeltaLen = m_fMaxDeltaLen ;
+
+
+	tResult.fLensfalreSupportSunSize = m_LensfalreSupportSunSize ;
+	tResult.fLensefalreNoiseTexIndex=		m_iLensefalreNoiseTexIndex ;
+
+	tResult.fBloomOverLuminceValue = m_fOverLuminece;
+	tResult.fBloomBrightnessMul = m_fBloomBrightnessMul;
+
+	tResult.fDofLength = m_fDofLength;
+	tResult.fDofBlurIntensive = m_fDofBlurIntensive;
+
+	tResult.vFogColor		=	m_vFogColor ;
+	tResult.vFogHighlightColor = m_vFogHighlightColor;
+	tResult.fFogStartDist = m_fFogStartDist ;
+	tResult.fFogGlobalDensity = m_fFogGlobalDensity ;
+	tResult.fFogHeightFalloff	= m_fFogHeightFalloff ;
+	
+
+	return tResult;
+}
+
+void CRenderer::Set_PostProcessingData(PPDDESC & tDesc)
+{
+
+	memcpy(m_PostProcessingOn, tDesc.bPostProcessingArr, sizeof(_bool)*POSTPROCESSING_END);
+
+	LIGHTDESC* pLightDesc = m_pLightMgr->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+
+	pLightDesc->vVector = tDesc.SunPos;
+	m_vSunAtPoint = tDesc.SunAt;
+
+	pLightDesc->vDiffuse = tDesc.vDiffuse;
+	pLightDesc->vAmbient = tDesc.vAmbient;
+	pLightDesc->vSpecular = tDesc.vSpecular;
+
+	m_fShadowIntensive = tDesc.fShadowIntensive;
+
+	m_SunSize = tDesc.fSunSize;
+	m_fGodrayLength = tDesc.fGodrayLength;
+	m_fGodrayIntensity = tDesc.fGodrayIntensity;
+	m_fInitDecay = tDesc.fStartDecay;
+	m_fDistDecay = tDesc.fDistDecay;
+	m_fMaxDeltaLen = tDesc.fMaxDeltaLen;
+
+	m_LensfalreSupportSunSize = tDesc.fLensfalreSupportSunSize;
+	m_iLensefalreNoiseTexIndex = tDesc.fLensefalreNoiseTexIndex;
+
+	m_fOverLuminece = tDesc.fBloomOverLuminceValue;
+	m_fBloomBrightnessMul = tDesc.fBloomBrightnessMul;
+
+	m_fDofLength = tDesc.fDofLength;
+	m_fDofBlurIntensive = tDesc.fDofBlurIntensive;
+
+	m_vFogColor = tDesc.vFogColor;
+	m_vFogHighlightColor = tDesc.vFogHighlightColor;
+	m_fFogStartDist = tDesc.fFogStartDist;
+	m_fFogGlobalDensity = tDesc.fFogGlobalDensity;
+	m_fFogHeightFalloff = tDesc.fFogHeightFalloff;
+
+
+
+}
+
 #ifdef _DEBUG
+
 HRESULT CRenderer::Render_Debug()
 {
 	FAILED_CHECK(m_pShader->Apply(20));

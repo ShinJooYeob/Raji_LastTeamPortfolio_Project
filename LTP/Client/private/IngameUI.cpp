@@ -16,7 +16,6 @@ HRESULT CIngameUI::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
-
 	return S_OK;
 }
 
@@ -40,6 +39,7 @@ HRESULT CIngameUI::Initialize_Clone(void * pArg)
 
 _int CIngameUI::Update(_double fDeltaTime)
 {
+
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
 	if (m_bIsChangeWeapon)
@@ -74,6 +74,8 @@ _int CIngameUI::Update(_double fDeltaTime)
 
 _int CIngameUI::LateUpdate(_double fDeltaTime)
 {
+
+
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 	m_pWeaponUI->LateUpdate(fDeltaTime);

@@ -111,7 +111,7 @@ void CPM_Food::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, 
 
 #define CoilliderSize 0.7f
 #define BurgurSize 0.5f
-#define ColaSize 0.05f
+#define ColaSize 0.075f
 
 HRESULT CPM_Food::Ready_AtIndexFood(const _tchar * pLayerTag, _uint iIndex)
 {

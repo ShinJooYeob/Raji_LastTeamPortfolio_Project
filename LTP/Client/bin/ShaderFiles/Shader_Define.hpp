@@ -122,6 +122,22 @@ BlendEnable[7] = true;
 	DestBlend = Inv_Src_Alpha;
 };
 
+BlendState	AlphaBlendingExpectLimLight
+{
+	BlendEnable[0] = true;
+BlendEnable[1] = true;
+BlendEnable[2] = true;
+BlendEnable[3] = true;
+BlendEnable[4] = true;
+BlendEnable[5] = true;
+BlendEnable[6] = false;
+BlendEnable[7] = false;
+
+BlendOp = Add;
+SrcBlend = Src_Alpha;
+DestBlend = Inv_Src_Alpha;
+};
+
 BlendState	AlphaBlendingJustDiffuse
 {
 	BlendEnable[0] = true;

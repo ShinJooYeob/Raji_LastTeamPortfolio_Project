@@ -19,6 +19,7 @@ public:
 	{
 		UTILTEX_NOISE,
 		UTILTEX_MASK,
+		UTILTEX_MINIGAMETEX,
 		UTILTEX_END,
 	};
 
@@ -136,6 +137,10 @@ public:
 	_float	Get_BowSkillPersent() { return m_fBowSkillPersent; }
 	_float	Get_SwordshieldSkillPersent() { return m_fSwordshieldSkillPersent; }
 
+	HRESULT Ready_SceneChangingData(_uint eSceneID,_uint iLayerIndex);
+	PPDDESC Set_SceneChangingData(_uint eSceneID);
+
+
 private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
@@ -149,6 +154,7 @@ private:
 	CVIBuffer_Rect*			m_pVIBufferRect = nullptr;
 	CShader*				m_pRectShader = nullptr;
 
+	PPDDESC					m_tForSceneChangingData;
 
 	class CRadialBlurUI*		m_pRadialUI = nullptr;
 	class CHitEffectUI*			m_pHitEffectUI = nullptr;

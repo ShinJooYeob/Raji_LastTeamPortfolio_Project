@@ -33,12 +33,30 @@ HRESULT CFireRing::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_Etc());
 	FAILED_CHECK(SetUp_Colliders());
 
+	m_tVolcanoDesc.fAppearTime = 0.25f;
+	m_tVolcanoDesc.fMaxTime_Duration = 999999999999.f;
+
+	m_tVolcanoDesc.noisingdir = _float2(1, 1).XMVector() * 0.25f;
+	m_tVolcanoDesc.fDistortionNoisingPushPower = 20.f;
+	m_tVolcanoDesc.NoiseTextureIndex = 6;
+	m_tVolcanoDesc.MaskTextureIndex = 81;
+	m_tVolcanoDesc.iDiffuseTextureIndex = 299;
+	m_tVolcanoDesc.m_iPassIndex = 19;
+	m_tVolcanoDesc.vEmissive = _float4(1, 0.5f, 1.f, 0);
+	m_tVolcanoDesc.vLimLight = _float4(0.075f, 0.075f, 0.f, 1);
+	m_tVolcanoDesc.NoiseTextureIndex = 381;
+	m_tVolcanoDesc.vColor = _float4(1, 1, 1, 1);
+	m_tVolcanoDesc.vSize = _float3(1.f, 1.5f, 1.f);
+
+	m_fCurTime_Duration = 0;
 	return S_OK;
 }
 
 _int CFireRing::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
+
+	m_fCurTime_Duration += (_float)fDeltaTime;
 
 //	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(10.f, 3.8f, 0.f));
 
@@ -72,14 +90,32 @@ _int CFireRing::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
+
+
+
+
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_fCurTime_Duration, sizeof(_float)));
+	Set_LimLight_N_Emissive(m_tVolcanoDesc.vLimLight, m_tVolcanoDesc.vEmissive);
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &m_tVolcanoDesc.vColor, sizeof(_float4)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAppearTimer", &m_tVolcanoDesc.fAppearTime, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &m_tVolcanoDesc.fMaxTime_Duration, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &m_tVolcanoDesc.noisingdir, sizeof(_float2)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDistortionNoisingPushPower", &m_tVolcanoDesc.fDistortionNoisingPushPower, sizeof(_float)));
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fAlphaTestValue", &m_tVolcanoDesc.fAlphaTestValue, sizeof(_float)));
+	CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_tVolcanoDesc.NoiseTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_tVolcanoDesc.MaskTextureIndex));
+	FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", m_tVolcanoDesc.iDiffuseTextureIndex));
+
+
 	_uint NumMaterial = m_pModel->Get_NumMaterial();
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+		for (_uint j = 2; j < AI_TEXTURE_TYPE_MAX; j++)
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPEFORENGINE(j)));
 
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 2, i, "g_BoneMatrices"));
+		FAILED_CHECK(m_pModel->Render(m_pShaderCom, m_tVolcanoDesc.m_iPassIndex, i, "g_BoneMatrices"));
 	}
 
 	return _int();

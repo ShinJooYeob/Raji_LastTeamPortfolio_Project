@@ -311,9 +311,6 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"ShellingSkillRange.txt")));
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_ShellingPoint),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"ShellingSkillTargetPoint.txt")));
-	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_MingameBuildingTex),
-		CTexture::Create(m_pDevice, m_pDeviceContext, L"MiniGameBuilding.txt")));
-
 	// #TEST Create NoAssimp 
 
 	static _bool bisLoaded = false; 
@@ -551,7 +548,6 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));
 
-	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGameBuilding), CMiniGameBuilding::Create(m_pDevice, m_pDeviceContext)));
 
 	//JJB
 	//ParticleCollider
@@ -986,6 +982,8 @@ HRESULT CLoader::Load_Scene_Stage4(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golem), TransformMatrix);
 
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE4, TAG_CP(Prototype_Mesh_SkyBox),
+		CModel::Create(m_pDevice, m_pDeviceContext, CModel::TYPE_NONANIM, "SkyBox", "SkyBox_0.FBX", TransformMatrix)));
 #pragma region EH
 
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */

@@ -7,12 +7,19 @@ BEGIN(Client)
 class CMiniGameBuilding :public CMapObject
 {
 public:
+	enum eMiniGameID
+	{
+		MINIGAME_FALLOFF, MINIGAME_CIRCUS, MINIGAME_PACKMAN, MINIGAME_VAMPIRESURVIAL, MINIGAME_DONKINGKONG , MINIGAME_RHYTHM, MINIGAME_END
+	};
+
+
 
 	typedef struct tagMiniGameBulidingDesc
 	{
 		_float3 vPosition = _float3(0);
 		_float3 vScale = _float3(1);
 		_float3 vLookDir = _float3(1,0,0);
+		_uint	eKindsOfMiniGame = MINIGAME_FALLOFF;
 
 	}MGBDESC;
 
@@ -32,6 +39,12 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+	HRESULT Start_SceneChanging_CamAct();
+	HRESULT Start_ReverseSceneChanging_CamAct();
+
+
+	void Set_OffRadiation();
+
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 
@@ -44,6 +57,16 @@ private:
 	CTexture*			m_pTexture = nullptr;
 	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
 
+	_float				m_fPassedTimer = 0;
+
+
+	_float				m_fSceneChangingTimer = 0;
+	_bool				m_bIsReverseChange = false;
+	SCENEID				m_eTargetScene = SCENE_LOBY;
+
+	_bool			bRadiation = true;
+	_bool			bRealOff = false;
+	_float			fTargetValue = 0;
 private:
 	MGBDESC				m_tMGBDesc;
 	_float2				m_ArrTextureDir[4];
@@ -54,8 +77,9 @@ private:
 
 public:
 	static HRESULT Copy_NowScreenToBuliding(_uint iIndex, ID3D11ShaderResourceView* pTargetSRV = nullptr);
-private:
+
 	static vector<MGBTARGET>	m_vecMGBTargets;
+private:
 	static ID3D11Device* m_pDevice_ForStatic;
 	static ID3D11DeviceContext* m_pDeviceContext_ForStatic;
 	static MATRIXWVP			m_pFullScreenWVP;

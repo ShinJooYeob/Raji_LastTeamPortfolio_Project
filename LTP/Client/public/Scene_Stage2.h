@@ -30,6 +30,7 @@ private:
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 
 
+	HRESULT Ready_MiniGameBuilding(const _tchar* pLayerTag);
 	
 	HRESULT	Ready_MapData(const _tchar* szMapDataFileName, SCENEID eSceneID, const _tchar* pLayerTag);
 	HRESULT	Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag);

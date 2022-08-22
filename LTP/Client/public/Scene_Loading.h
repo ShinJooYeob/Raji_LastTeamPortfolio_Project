@@ -6,6 +6,12 @@ BEGIN(Client)
 class CScene_Loading final : public CScene
 {
 public:
+	enum LOADINGKINDSID
+	{
+		LOADINGKINDS_NORMAL, LOADINGKINDS_NORMAL_TO_MINI, LOADINGKINDS_MINI_TO_NORMAL, LOADINGKINDS_END
+	};
+
+public:
 	explicit CScene_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	virtual ~CScene_Loading() = default;
 
@@ -21,10 +27,15 @@ public:
 
 
 
+	static _uint		m_iLoadingKinds;
 
 private:
 	SCENEID m_eNextSceneIndex = SCENEID::SCENE_END;
+	SCENEID m_eOldSceneIndex = SCENEID::SCENE_END;
 	class CLoader*		m_pLoader;
+
+
+	_uint				m_iMiniGameIndex = 0;
 
 
 

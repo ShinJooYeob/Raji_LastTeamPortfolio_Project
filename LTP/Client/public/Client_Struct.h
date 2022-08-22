@@ -367,6 +367,10 @@ typedef struct tagSceneChangeDraw
 		pRenderer = (CRenderer*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer));
 		pPaperCurlTexture = (CTexture*)g_pGameInstance->Clone_Component(SCENE_STATIC, L"Prototype_Texture_PaperCurl");
 		
+		NULL_CHECK_RETURN(pVIBuffer, E_FAIL);
+		NULL_CHECK_RETURN(pShader, E_FAIL);
+		NULL_CHECK_RETURN(pRenderer, E_FAIL);
+		NULL_CHECK_RETURN(pPaperCurlTexture, E_FAIL);
 
 		matTransePosedWorld = XMMatrixTranspose(XMMatrixSet(	tUI.fCX, 0, 0, 0,	0, tUI.fCY, 0, 0,	0, 0, 1, 0,
 						tUI.fX - (g_iWinCX * 0.5f), -tUI.fY + (g_iWinCY * 0.5f), 0, 1.f));

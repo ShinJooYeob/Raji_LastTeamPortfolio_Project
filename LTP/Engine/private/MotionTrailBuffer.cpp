@@ -3,6 +3,7 @@
 #include "HierarchyNode.h"
 #include "MeshContainer.h"
 #include "Shader.h"
+#include "PipeLineMgr.h"
 
 
 CMotionTrailBuffer::CMotionTrailBuffer()
@@ -66,7 +67,9 @@ HRESULT CMotionTrailBuffer::Render(CShader * pShader, _uint iPassIndex,  const c
 	FAILED_CHECK(pShader->Set_RawValue("g_fEmissive", &m_fEmisive, sizeof(_float)));
 	FAILED_CHECK(pShader->Set_RawValue("g_vLimLight", &m_vColor, sizeof(_float4)));
 	FAILED_CHECK(pShader->Set_RawValue("g_WorldMatrix", &m_WorldMatrix, sizeof(_float4x4)));
-	
+
+	FAILED_CHECK(pShader->Set_RawValue("g_vCamPosition", &GetSingle(CPipeLineMgr)->Get_TargetPostion_float4(PLV_CAMERA), sizeof(_float4)));
+
 	for (_uint i = 0 ; i< m_iNumMaterials; i++)
 	{
 		NULL_CHECK_RETURN(szBoneValueName, E_FAIL);

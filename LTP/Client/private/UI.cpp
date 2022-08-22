@@ -49,12 +49,15 @@ HRESULT CUI::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_SettingUIDesc.v3DUIPosition);
 	}
 
+	
+
 	return S_OK;
 }
 
 _int CUI::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
+
 
 	m_PassedTimer += (_float)fDeltaTime;
 
@@ -106,6 +109,7 @@ _int CUI::Render()
 {
 	if (__super::Render() < 0)return -1;
 
+
 	if (!m_bDraw)
 		return S_OK;
 
@@ -137,15 +141,19 @@ _int CUI::Render()
 	switch (m_SettingUIDesc.eUIKindsID)
 	{
 	case Client::CUI::UIID_JB:
-	{	
+	{
+
 		if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
 		return E_FAIL;
 
 		break;
 	}
 	case Client::CUI::UIID_JY_Lobby:
+	{
+
 
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime * 2.5f));
+	}
 
 		break;
 	case Client::CUI::UIID_END:
@@ -331,9 +339,20 @@ HRESULT CUI::SettingTexture()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_UV_Y", &m_fUV_Y, sizeof(_float)));
 
 	_float4 g_vColor = m_vColor;
-	_float2 noisingdir = _float2(0.0f, 0.25f);
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vColor", &g_vColor, sizeof(_float4)));
-	FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
+	
+	if (m_iPassIndex == 16)
+	{
+		_float2 noisingdir = _float2(0.0f, 0.075f);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
+
+	}
+	else
+	{
+
+		_float2 noisingdir = _float2(0.0f, 0.25f);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &noisingdir, sizeof(_float2)));
+	}
 
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fMaxTime", &(m_fTotalTargetTime), sizeof(_float)));

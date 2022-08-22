@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "..\public\MiniGameBuilding.h"
+#include "Camera_Main.h"
+#include "Scene.h"
+#include "Player.h"
 
 
 
@@ -24,7 +27,10 @@ HRESULT CMiniGameBuilding::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
+
 	FAILED_CHECK(Ready_MiniGameScreenTarget_For_Prototype());
+
+
 
 	return S_OK;
 }
@@ -57,13 +63,14 @@ HRESULT CMiniGameBuilding::Initialize_Clone(void * pArg)
 
 	if (m_bIsFirst)
 	{
-		for (_uint i = 0 ; i < 4 ; i ++)
+		for (_uint i = 0 ; i < MINIGAME_END; i ++)
 		{
 			FAILED_CHECK(Copy_NowScreenToBuliding(i, m_pTexture->Get_ShaderResourceView(2 + i)));
 		}
 		m_bIsFirst = false;
 	}
 
+	bRadiation = true;
 	return S_OK;
 }
 
@@ -72,17 +79,101 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	static _uint TextInt = 0;
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
-		(Copy_NowScreenToBuliding(TextInt));
-		TextInt++;
-		if (TextInt > 3)TextInt = 0;
+		Start_SceneChanging_CamAct();
 	}
 
-	m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(30));
 
-	m_pTransformCom->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltaTime);
+	m_fPassedTimer += (_float)fDeltaTime;
+	if (m_fPassedTimer > 1.5f)
+		m_fPassedTimer = 0;
+
+	if (m_fSceneChangingTimer > 0)
+	{
+		if (m_bIsReverseChange)
+		{
+			m_fSceneChangingTimer -= (_float)fDeltaTime;
+
+
+			if (m_fSceneChangingTimer > 4)
+			{
+				_float Timer = m_fSceneChangingTimer - 4.f;
+
+				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, 0), _float4(Timer, 0.01f, 1.f, 0));
+			}
+
+
+			if (m_fSceneChangingTimer <= 0)
+			{
+				CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+				NULL_CHECK_RETURN(pPlayer, E_FAIL);
+				CCamera_Main* pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+				NULL_CHECK_RETURN(pMainCam, E_FAIL);
+				pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+				pMainCam->Set_FocusTarget(pPlayer);
+
+			}
+		}
+		else
+		{
+			m_fSceneChangingTimer -= (_float)fDeltaTime;
+
+			static _float3	vDiffuse;
+			static _float3	vAmbient;
+			static _float	TargetValue;
+
+			if (m_fSceneChangingTimer > 3)
+			{
+				TargetValue = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0.5f, 1.f, m_fPassedTimer, 1.5f);
+				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, TargetValue), _float4(0, 0.01f, 1.f, 0));
+
+				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+				vDiffuse = pLightDesc->vDiffuse;
+				vAmbient = pLightDesc->vAmbient;
+
+			}
+			else if (m_fSceneChangingTimer > 2)
+			{
+				_float Timer = 3.f - m_fSceneChangingTimer;
+
+
+				_float3 fDifValue = g_pGameInstance->Easing_Vector(TYPE_SinInOut, vDiffuse, _float3(1.f), Timer, 1.f);
+				_float3 fAmbValue = g_pGameInstance->Easing_Vector(TYPE_SinInOut, vAmbient, _float3(1.f), Timer, 1.f);
+				_float fValue = g_pGameInstance->Easing(TYPE_SinInOut, TargetValue, 0.f, Timer, 1.f);
+
+				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+				pLightDesc->vDiffuse = fDifValue;
+				pLightDesc->vAmbient = fAmbValue;
+
+				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, fValue), _float4(Timer, 0.01f, 1.f, 0));
+			}
+
+			if (m_fSceneChangingTimer <= 0)
+			{
+				m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+				g_pGameInstance->Get_NowScene()->Set_SceneChanging(m_eTargetScene);
+			}
+		}
+	}
+	else
+	{
+		if (bRadiation)
+		{
+			_float fValue = g_pGameInstance->Easing_Return(TYPE_SinInOut, TYPE_SinInOut, 0.5f, 1.f, m_fPassedTimer, 1.5f);
+			Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, fValue), _float4(0, 0.01f, 1.f, 0));
+		}
+		else
+		{
+
+			Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, 0), _float4(0, 0.01f, 1.f, 0));
+
+
+		}
+	}
+
+	//m_pTransformCom->Set_TurnSpeed(XMConvertToRadians(30));
+	//m_pTransformCom->Turn_CW(XMVectorSet(0, 1, 0, 0), fDeltaTime);
 
 	return _int();
 }
@@ -139,6 +230,170 @@ _int CMiniGameBuilding::LateRender()
 	if (__super::LateRender() < 0)		return -1;
 
 	return _int();
+}
+
+HRESULT CMiniGameBuilding::Start_SceneChanging_CamAct()
+{
+
+
+	CAMERAACTION tAct;
+
+	CAMACTDESC tActDesc;
+	{
+
+		tActDesc.fDuration = 0.5f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.5f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 5.4f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.5f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 4.65f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.f;
+		tAct.vecCamPos.push_back(tActDesc);
+
+	}
+
+	tActDesc.fDuration = 0.5f;
+	tActDesc.vPosition =
+		m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+		m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+
+	tAct.vecLookAt.push_back(tActDesc);
+
+	CCamera_Main* pCam = (CCamera_Main*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main));
+	NULL_CHECK_RETURN(pCam, E_FAIL);
+
+	if(pCam->CamActionStart(tAct))
+	{
+		m_bIsReverseChange = false;
+		m_fSceneChangingTimer = 5;
+
+		switch (m_tMGBDesc.eKindsOfMiniGame)
+		{
+		case Client::CMiniGameBuilding::MINIGAME_FALLOFF:
+			m_eTargetScene = SCENE_LABORATORY_JINO;
+			break;
+		case Client::CMiniGameBuilding::MINIGAME_CIRCUS:
+			m_eTargetScene = SCENE_MINIGAME_Jino;
+			break;
+		case Client::CMiniGameBuilding::MINIGAME_PACKMAN:
+			m_eTargetScene = SCENE_MINIGAME_PM;
+			break;
+		case Client::CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL:
+			m_eTargetScene = SCENE_MINIGAME1;
+			break;
+		case Client::CMiniGameBuilding::MINIGAME_DONKINGKONG:
+			m_eTargetScene = SCENE_MINIGAME_PM;
+			break;
+		case Client::CMiniGameBuilding::MINIGAME_RHYTHM:
+			m_eTargetScene = SCENE_MINIGAME_PM;
+			break;
+		default:
+			m_eTargetScene = SCENE_LOBY;
+			break;
+		}
+
+
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+		_uint iIndex = 0;
+		list<CGameObject*>* pMinigmaeLayer = g_pGameInstance->Get_ObjectList_from_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGameBuilding));
+		NULL_CHECK_RETURN(pMinigmaeLayer, E_FAIL);
+		for (auto& pObj : *pMinigmaeLayer)
+		{
+			if (this == pObj)
+				break;
+			iIndex++;
+		}
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Ready_SceneChangingData(m_eNowSceneNum, iIndex));
+
+		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+	}
+	return S_OK;
+}
+
+HRESULT CMiniGameBuilding::Start_ReverseSceneChanging_CamAct()
+{
+
+	CAMERAACTION tAct;
+
+	CAMACTDESC tActDesc;
+	{
+		tActDesc.fDuration = 1.f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 4.65f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.5f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 5.4f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 1.5f;
+		tAct.vecCamPos.push_back(tActDesc);
+		tActDesc.fDuration = 0.5f;
+		tActDesc.vPosition =
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 10.f +
+			m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+		tAct.vecCamPos.push_back(tActDesc);
+	}
+
+	tActDesc.fDuration = 0.5f;
+	tActDesc.vPosition =
+		m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+		m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f;
+
+	tAct.vecLookAt.push_back(tActDesc);
+
+	CCamera_Main* pCam = (CCamera_Main*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main));
+	NULL_CHECK_RETURN(pCam, E_FAIL);
+
+	CCamera_Main* pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+	NULL_CHECK_RETURN(pMainCam, E_FAIL);
+
+	pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_FIX);
+	pMainCam->Set_FocusTarget(nullptr);
+
+	pMainCam->Get_Camera_Transform()->Set_MatrixState(CTransform::STATE_POS, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+		m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_LOOK) * 4.65f +
+		m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f);
+	pMainCam->Get_Camera_Transform()->LookAt(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
+		m_pTransformCom->Get_MatrixState_Normalized(CTransform::STATE_UP) * 2.4f);
+
+
+	if (pCam->CamActionStart(tAct))
+	{
+
+
+
+
+		m_fSceneChangingTimer = 5;
+		m_bIsReverseChange = true;
+	}
+	return S_OK;
+}
+
+void CMiniGameBuilding::Set_OffRadiation()
+{
+	 bRadiation = false;
+	 fTargetValue = m_vLimLight.w;
 }
 
 HRESULT CMiniGameBuilding::SetUp_Components()
@@ -239,7 +494,7 @@ HRESULT CMiniGameBuilding::Render_Texture(_uint iIndex)
 
 
 	FAILED_CHECK(m_pTexture->Bind_OnShader(m_pSubShaderCom, "g_SourTexture", 1));
-	FAILED_CHECK(m_pSubShaderCom->Set_Texture("g_DiffuseTexture", m_vecMGBTargets[iIndex].pSRV));
+	FAILED_CHECK(m_pSubShaderCom->Set_Texture("g_DiffuseTexture", m_vecMGBTargets[m_tMGBDesc.eKindsOfMiniGame].pSRV));
 	FAILED_CHECK(m_pVIBufferCom->Render(m_pSubShaderCom, 10));
 
 	return S_OK;
@@ -259,7 +514,7 @@ HRESULT CMiniGameBuilding::Ready_MiniGameScreenTarget_For_Prototype()
 	m_vecMGBTargets.clear();
 	m_vecMGBTargets.reserve(4);
 
-	for (_uint i = 0 ; i < 4 ; i ++)
+	for (_uint i = 0 ; i < MINIGAME_END; i ++)
 	{
 		MGBTARGET tMGBDesc;
 		tMGBDesc.vClearColor = _float4(0.f, 0.f, 0.f, 0.f);

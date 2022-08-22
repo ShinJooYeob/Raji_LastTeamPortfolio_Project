@@ -16,6 +16,8 @@
 #include "MapObject.h"
 #include "AssimpCreateMgr.h"
 
+#include "MiniGameBuilding.h"
+
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
@@ -33,6 +35,8 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
 	FAILED_CHECK(Ready_Layer_Player(TAG_LAY(Layer_Player)));
 	//FAILED_CHECK(Ready_Layer_TestMapObject(TAG_LAY(Layer_StaticMapObj)));
+
+	FAILED_CHECK(Ready_MiniGameBuilding(TAG_LAY(Layer_MiniGameBuilding)));
 	FAILED_CHECK(Ready_MapData(L"Stage_3.dat", SCENE_STAGE6, TAG_LAY(Layer_StaticMapObj)));
 
 	FAILED_CHECK(Ready_TriggerObject(L"Stage3Trigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
@@ -92,7 +96,7 @@ _int CScene_Stage6::Update(_double fDeltaTime)
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE3), SCENEID::SCENE_LOADING));
 		return 0;
 	}
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
@@ -163,14 +167,16 @@ _int CScene_Stage6::Render()
 
 	if (m_bIsNeedToSceneChange) return S_FALSE;
 
-	if (m_fSceneStartTimer < 0.5f)
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
-	}
-	else if (m_fSceneStartTimer < 2.5f)
-	{
-
-		FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
 	}
 
 
@@ -346,7 +352,7 @@ HRESULT CScene_Stage6::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage6::Ready_Layer_SkyBox(const _tchar * pLayerTag)
 {
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STATIC, pLayerTag, TAG_OP(Prototype_SkyBox)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_SkyBox)));
 
 	return S_OK;
 }
@@ -737,6 +743,29 @@ HRESULT CScene_Stage6::Ready_EnvMappedWater(const _tchar * pLayerTag)
 	FAILED_CHECK(pInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_EnvMappedWater), &tEmwDesc));
 
 	
+	return S_OK;
+}
+
+HRESULT CScene_Stage6::Ready_MiniGameBuilding(const _tchar * pLayerTag)
+{
+
+	CMiniGameBuilding::MGBDESC tDesc;
+	tDesc.vPosition = _float3(189.799f, 31.890f, 274.338f);
+	tDesc.vScale = _float3(1.f);
+	tDesc.eKindsOfMiniGame = CMiniGameBuilding::MINIGAME_DONKINGKONG;
+	tDesc.vLookDir = _float3(1, 0, 0).Get_Nomalize();
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
+
+
+
+	tDesc.vPosition = _float3(78.476f, 31.637f, 241.825f);
+	tDesc.vScale = _float3(1.f);
+	tDesc.eKindsOfMiniGame = CMiniGameBuilding::MINIGAME_PACKMAN;
+	tDesc.vLookDir = _float3(1, 0, 0).Get_Nomalize();
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
+
+
+
 	return S_OK;
 }
 

@@ -12,6 +12,7 @@
 #include "NonInstanceMeshEffect.h"
 #include "NonInstanceMeshEffect_TT.h"
 #include "PartilceCreateMgr.h"
+#include "MiniGameBuilding.h"
 
 #include "PhysX/Collider_PhysX_Static.h"
 #include "PhysX/Collider_PhysX_Dynamic.h"
@@ -422,6 +423,8 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, L"Prototype_Texture_PaperCurl",
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"PaperCurl.txt")));
 
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_MingameBuildingTex),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"MiniGameBuilding.txt")));
 
 	//TestEffect.txt;
 
@@ -487,9 +490,10 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect), CNonInstanceMeshEffect::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect_TT), CNonInstanceMeshEffect_TT::Create(m_pDevice, m_pDeviceContext)));
-	
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGameBuilding), CMiniGameBuilding::Create(m_pDevice, m_pDeviceContext)));
 
-	
+
+
 
 
 	//JJB

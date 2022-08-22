@@ -6,6 +6,7 @@
 #include "Golu.h"
 #include "DynamicPlatform.h"
 #include "RepelWall.h"
+#include "MiniGameBuilding.h"
 
 CScene_Laboratory_Jino::CScene_Laboratory_Jino(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice, pDeviceContext)
@@ -36,17 +37,20 @@ _int CScene_Laboratory_Jino::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
-
+	
 	Update_Game();
 	Check_GameOver();
 
-	if (m_iSceneStartChecker <= 2)
+	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
+
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_FALLOFF);
+
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME1), SCENEID::SCENE_LOADING));
 		return 0;
@@ -74,12 +78,16 @@ _int CScene_Laboratory_Jino::LateUpdate(_double fDeltaTime)
 		}
 		else if (0.f >= m_fGameOverDelay)
 		{
+			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_FALLOFF);
+
 			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LABORATORY_JINO), SCENEID::SCENE_LOADING));
 		}
 	}
 	else if (true == m_bGameClear)
 	{
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_FALLOFF);
+
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
 		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME1), SCENEID::SCENE_LOADING));
 	}
@@ -91,7 +99,19 @@ _int CScene_Laboratory_Jino::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
-	
+
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
+	{
+		if (m_fSceneStartTimer < 0.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_Rolling(((_float)m_fSceneStartTimer), 0.5f, L"Target_ToonDeferredSceneChaging2"));
+		}
+		else if (m_fSceneStartTimer < 2.5f)
+		{
+			FAILED_CHECK(m_pUtilMgr->SCD_Rendering_FadeOut(((_float)m_fSceneStartTimer - 0.5f), 2.f, L"Target_ToonDeferredSceneChaging2"));
+		}
+	}
+
 	return 0;
 }
 

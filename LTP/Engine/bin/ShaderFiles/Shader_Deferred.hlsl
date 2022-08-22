@@ -11,6 +11,7 @@
 #define mix				lerp
 
 texture2D			g_TargetTexture;
+texture2D			g_SourTexture;
 texture2D			g_DiffuseTexture;
 texture2D			g_NormalTexture;
 texture2D			g_SpecularTexture;
@@ -69,6 +70,7 @@ cbuffer MtrlDesc
 	vector			g_vMtrlDiffuse = (vector)1.f;
 	vector			g_vMtrlAmbient = (vector)1.f;
 	vector			g_vMtrlSpecular = (vector)1.f;
+	vector			g_vOcdMaskColor = (vector)1.f;
 };
 
 cbuffer ScreenSizeBuffer
@@ -97,6 +99,7 @@ cbuffer ForPostProcessing
 
 	float				g_fToonShadingValue = 1.f;
 	float				g_fToonMaxIntensive = 5.f;
+	float				g_MixRate = 0.f;
 };
 cbuffer cbFog					
 {
@@ -466,6 +469,17 @@ struct PS_OUT_LIGHT
 {
 	vector		vShade : SV_TARGET0;
 	vector		vSpecular : SV_TARGET1;
+};
+
+struct PS_OUT_Mtrl
+{
+	vector		vDiffuse : SV_TARGET0;
+	vector		vNormal : SV_TARGET1;
+	vector		vSpecular : SV_TARGET2;
+	vector		vEmissive : SV_TARGET3;
+	vector		vDepth : SV_TARGET4;
+	vector		vWorldPosition : SV_TARGET5;
+	vector		vLimLight : SV_TARGET6;
 };
 
 struct PS_IN_BLUR
@@ -1323,6 +1337,113 @@ PS_OUT Copy_OrignNBlured_To_Defferd(PS_IN In)
 
 }
 
+PS_OUT_Mtrl Apply_OcdMsk(PS_IN In)
+{
+
+	PS_OUT_Mtrl		Out = (PS_OUT_Mtrl)0;
+
+
+
+	//vector		vDiffuse : SV_TARGET0;
+	//vector		vNormal : SV_TARGET1;
+	//vector		vSpecular : SV_TARGET2;
+	//vector		vEmissive : SV_TARGET3;
+	//vector		vDepth : SV_TARGET4;
+	//vector		vWorldPosition : SV_TARGET5;
+	//vector		vLimLight : SV_TARGET6;
+
+	vector vOccludedMaskDesc = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+	vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float fDepthViewZ = vDepthDesc.x *  FarDist;
+	float fViewZ = vOccludedMaskDesc.x *  FarDist;
+
+	
+	if (vDepthDesc.x == 1 || fDepthViewZ + 0.002f* FarDist >= fViewZ) discard;
+
+
+	//vector		vNormal = vector(vOccludedMaskDesc.z * 2.f - 1.f, vOccludedMaskDesc.w * 2.f - 1.f, 0, 0.f);
+	//vNormal.z = cross(float3(vNormal.x ), vNormal.y);
+
+
+	vector		vWorldPos;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+	vWorldPos.x = (In.vTexUV.x * 2.f - 1.f) * fViewZ;
+	vWorldPos.y = (In.vTexUV.y * -2.f + 1.f) * fViewZ;
+	vWorldPos.z = vOccludedMaskDesc.y * fViewZ; /* 0 ~ f */
+	vWorldPos.w = fViewZ;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 */
+	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+	/* 로컬위치 * 월드행렬 */
+	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
+
+
+	Out.vDiffuse = g_vOcdMaskColor;
+	Out.vNormal = vector(0, 0, 0, 0);
+	Out.vSpecular = vector(0, 0, 0, 0);
+	Out.vEmissive = vector(1.f,0.5f,1.f,0);
+	Out.vDepth = vector(vOccludedMaskDesc.x, vOccludedMaskDesc.y,0.f,0.f);
+	Out.vWorldPosition = vector(vWorldPos.xyz,0);
+	Out.vLimLight = vector(0,0,0,0);
+
+
+
+	return Out;
+
+}
+PS_OUT_AfterDeferred PS_CompletelyCopyLastDeferred(PS_IN In)
+{
+
+	PS_OUT_AfterDeferred		Out = (PS_OUT_AfterDeferred)0;
+
+	Out.vColor = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vColor2 = Out.vColor;
+
+	return Out;
+}
+PS_OUT PS_ChangeATex2BTex(PS_IN In)
+{
+
+	PS_OUT		Out = (PS_OUT)0;
+
+	vector vATexDesc = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+	vector vBTexDesc = g_SourTexture.Sample(DefaultSampler, In.vTexUV);
+	
+
+	Out.vColor = vATexDesc * (1.f - g_MixRate) + vBTexDesc * g_MixRate;
+
+	return Out;
+}
+
+PS_OUT PS_MiniGameTex2BTex(PS_IN In)
+{
+
+	PS_OUT		Out = (PS_OUT)0;
+
+	vector vATexDesc = g_TargetTexture.Sample(DefaultSampler, In.vTexUV);
+	vector SourceDesc = g_SourTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float flen = length(vATexDesc.xyz);
+
+	vector vColor = vector(0.38823529411764f, 0.33333333333333f, 0.290196078431372f, 1.f) * flen +
+		vector(0.32941176470588f, 0.27450980392156f, 0.258823529411764f, 1.f) * (1 - flen);
+
+	flen = saturate(flen - 0.2f);
+
+	SourceDesc.xyz = (SourceDesc.xyz * (1 - flen) + vColor.xyz* flen);
+	SourceDesc.a = 1.f;
+
+
+	Out.vColor = vATexDesc * (1.f - g_MixRate) + SourceDesc * g_MixRate;
+
+	return Out;
+}
+
+
+
 
 
 
@@ -1658,6 +1779,49 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 Copy_OrignNBlured_To_Defferd();
+	}
+
+	pass ApplyOccludedMask// 26
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 Apply_OcdMsk();
+	}
+
+	pass CompletelyCopyLastScene// 27
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_CompletelyCopyLastDeferred();
+	}
+
+	pass ChangeATex2BTex// 28
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_ChangeATex2BTex();
+	}
+	pass MiniGameTex2BTex// 29
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MiniGameTex2BTex();
 	}
 	
 }

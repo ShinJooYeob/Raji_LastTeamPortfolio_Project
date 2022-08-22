@@ -43,6 +43,7 @@ private:
 	class CCamera_Main*				m_pMainCam			= nullptr;
 	CUtilityMgr*					m_pUtilMgr			= nullptr;
 	CTransform*						m_pPlayerTransform	= nullptr;
+	_int							m_iBuildingIndex = -1;
 
 public:
 	static CScene_Stage1* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);

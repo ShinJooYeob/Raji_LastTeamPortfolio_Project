@@ -12,7 +12,7 @@ class ENGINE_DLL CRenderer final :public CComponent
 public:
 	enum RENDERGROUP 
 	{
-		RENDER_PRIORITY, RENDER_NONBLEND, RENDER_SUBNONBLEND, RENDER_BLEND, RENDER_SUBBLEND, 
+		RENDER_PRIORITY, RENDER_PRENONBLEND ,RENDER_NONBLEND, RENDER_SUBNONBLEND, RENDER_BLEND, RENDER_SUBBLEND,
 		RENDER_AFTERALLOBJ, RENDER_ENVMAPPED , RENDER_DISTORTION,RENDER_SUBDISTORTION, RENDER_EFFECT, RENDER_NONBLEND_NOLIGHT,
 		RENDER_SCREENEFFECT, RENDER_UI, RENDER_END
 	};
@@ -82,12 +82,15 @@ public:
 	HRESULT Copy_OrignNBlured_To_Defferd(const _tchar* szOriginTag, const _tchar* szBluredTag);
 
 	HRESULT Copy_DeferredToReference();
+	HRESULT Copy_CompletelyLastDeferredTexture();
+	HRESULT Copy_CompletelyLastDeferredTexToNowTex(_float fRate, ID3D11ShaderResourceView* pSRV);
+	HRESULT Copy_MiniGameDeferredTexToNowTex(_float fRate, ID3D11ShaderResourceView* pminGameClearSRV, ID3D11ShaderResourceView* pBGSRV);
+
 	HRESULT Copy_LastDeferredTexture(_float fToonMaxIntensive = 5.f);
 	HRESULT Copy_LastDeferredToToonShadingTexture(_float fToonShadingIntensive = 1.f,_bool bIsScecond = false);
 
 	HRESULT Begin_RenderTarget(const _tchar* szTargetName);
 	HRESULT End_RenderTarget(const _tchar* szTargetName);
-
 private:
 	list<CGameObject*>					m_RenderObjectList[RENDER_END];
 	typedef list<CGameObject*>			RENDEROBJECTS;
@@ -170,6 +173,8 @@ private:
 	_float4x4					m_OldViewMat = XMMatrixIdentity();
 	_float4x4					m_OldProjMat = XMMatrixIdentity();
 
+	_float4						m_vOcdMaskColor = _float4(1.f);
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
@@ -210,6 +215,7 @@ private:
 	HRESULT Render_DepthOfField();
 	HRESULT Render_ShadowMap();
 	HRESULT Render_ShadowGroup();
+	HRESULT	Apply_OccludedMask();
 
 	HRESULT Add_DebugRenderTarget(const _tchar* szTargetTag, _float fX, _float fY, _float fCX, _float fCY);
 	HRESULT Ready_For_Update(_double fDelataTimme);
@@ -277,6 +283,12 @@ public:
 	void		Set_LensefalreNoiseTexIndex(_uint vVector) { m_iLensefalreNoiseTexIndex = vVector; }
 
 
+
+	//_uint		Get_LensefalreNoiseTexIndex() { return m_iLensefalreNoiseTexIndex; }
+	void		Set_vOcdMaskColor(_float4 vVector) { m_vOcdMaskColor = vVector; }
+	
+	PPDDESC		Get_PostProcessingData();
+	void		Set_PostProcessingData(PPDDESC& tDesc);
 #ifdef _DEBUG
 	HRESULT Render_Debug();
 #endif // _DEBUG

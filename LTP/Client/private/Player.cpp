@@ -250,7 +250,7 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 	LateUpdate_UI(fDeltaTimer);
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this, m_pTransformCom, m_pShaderCom, m_pModel, nullptr,m_pDissolveCom));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 
@@ -264,6 +264,11 @@ _int CPlayer::LateUpdate(_double fDeltaTimer)
 
 _int CPlayer::Render()
 {
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+
+
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
+
 	if (__super::Render() < 0)		return -1;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
@@ -273,7 +278,7 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolveCom->Render(13));
+	FAILED_CHECK(m_pDissolveCom->Render(17));
 
 #ifdef _DEBUG
 //	m_pNavigationCom->Render(m_pTransformCom); 
@@ -281,6 +286,8 @@ _int CPlayer::Render()
 //		m_pHeadJoint->Render();
 #endif // _DEBUG
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 	return _int();
 }
 
@@ -2196,6 +2203,7 @@ HRESULT CPlayer::LateUpdate_UI(_double fDeltaTime)
 		m_pSkillUI->LateUpdate(fDeltaTime);
 	}
 
+
 	m_pIngameUI->LateUpdate(fDeltaTime);
 
 	return S_OK;
@@ -2512,6 +2520,23 @@ _bool CPlayer::Check_Action_KeyInput(_double fDeltaTime)
 
 _bool CPlayer::Check_SwapWeapon_KeyInput(_double fDeltaTime)
 {
+	switch (m_eCurWeapon)
+	{
+	case Client::CPlayer::WEAPON_SPEAR:
+		m_pRendererCom->Set_vOcdMaskColor(_float4(1,0.5f,0,1));
+		break;
+	case Client::CPlayer::WEAPON_BOW:
+		m_pRendererCom->Set_vOcdMaskColor(_float4(0.3125f, 0.734375f, 0.87109375f, 1));
+		break;
+	case Client::CPlayer::WEAPON_SWORD:
+		m_pRendererCom->Set_vOcdMaskColor(_float4(1, 1, 0, 1));
+		break;
+	default:
+		m_pRendererCom->Set_vOcdMaskColor(_float4(0,1,0,1));
+		break;
+	}
+
+
 	CGameInstance* pGameInstance = GetSingle(CGameInstance);
 
 	if (pGameInstance->Get_DIKeyState(DIK_1) & DIS_Down && m_eCurWeapon != EWEAPON_TYPE::WEAPON_SPEAR)
@@ -8030,7 +8055,22 @@ void CPlayer::CheckOn_MotionTrail()
 
 void CPlayer::Active_MotionTrail()
 {
-	m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1.f, 0.1f, 0.1f, 1.f), 0.4f);
+	switch (m_eCurWeapon)
+	{
+	case Client::CPlayer::WEAPON_SPEAR:
+		m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1, 0, 0, 1), 0.7f);
+		break;
+	case Client::CPlayer::WEAPON_BOW:
+		m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(0.3125f, 0.734375f, 0.87109375f, 1), 0.7f);
+		break;
+	case Client::CPlayer::WEAPON_SWORD:
+		m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1, 0.7f, 0, 1), 0.7f);
+		break;
+	default:
+		m_pMotionTrail->Add_MotionBuffer(m_pTransformCom->Get_WorldFloat4x4(), _float4(1, 1, 1, 1), 0.7f);
+		break;
+	}
+
 }
 
 
@@ -8528,7 +8568,7 @@ HRESULT CPlayer::SetUp_Components()
 
 
 	CMotionTrail::MOTIONTRAILDESC tMotionDesc;
-	tMotionDesc.iNumTrailCount = 3;
+	tMotionDesc.iNumTrailCount = 9;
 	tMotionDesc.pModel = m_pModel;
 	tMotionDesc.pShader = m_pShaderCom;
 	tMotionDesc.iPassIndex = 5;
