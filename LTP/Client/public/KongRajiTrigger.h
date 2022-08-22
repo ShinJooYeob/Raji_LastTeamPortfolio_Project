@@ -62,6 +62,9 @@ private:
 private:
 	_float3				m_fColliderPos[CKongRajiTrigger::COLLIDER_END];
 
+private:
+	_uint				m_iColliderIndex = 0;
+
 public:
 	static CKongRajiTrigger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

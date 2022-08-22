@@ -82,6 +82,7 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 	{
 		if (m_pPlayer->Get_bJump() != true)
 		{
+			m_iColliderIndex = iMyColliderIndex;
 			switch (iMyColliderIndex)
 			{
 			case 1:
@@ -509,6 +510,77 @@ HRESULT CKongRajiTrigger::Update_Collider(_double dDeltaTime)
 		m_pColliderCom->Update_Transform(i, m_pTransformCom->Get_WorldMatrix());
 	}
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pColliderCom));
+
+
+	switch (m_iColliderIndex)
+	{
+	case 2:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(3);
+		}
+		break;
+	}
+	case 4:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(5);
+		}
+		break;
+	}
+	case 6:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(5);
+		}
+		break;
+	}
+	case 8:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(7);
+		}
+		break;
+	}
+	case 10:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(9);
+		}
+		break;
+	}
+	case 12:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(9);
+		}
+		break;
+	}
+	case 14:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(11);
+		}
+		break;
+	}
+	case 16:
+	{
+		if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y <= m_fKongRajiPos.y)
+		{
+			m_pPlayer->Set_NaviIndex(13);
+		}
+		break;
+	}
+	default:
+		break;
+	}
 
 	return S_OK;
 }

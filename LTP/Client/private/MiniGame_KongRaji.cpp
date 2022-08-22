@@ -427,6 +427,9 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 			m_JumpDesc.bJump = true;
 			m_iCurrentAnimIndex = ANIM_JUMP;
 
+			m_bMoveToWidthOn = true;
+			m_bMoveToHeightOn = false;
+
 		}
 
 	}
