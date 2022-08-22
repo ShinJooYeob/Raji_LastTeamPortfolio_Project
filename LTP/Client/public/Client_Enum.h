@@ -235,6 +235,7 @@ enum SCENEID
 	SCENE_MINIGAME_PM,
 	SCENE_MINIGAME_Jino,
 	SCENE_MINIGAME_DONKEYKONG,
+	SCENE_MINIGAME_JJB,
 
 
 	SCENE_EDIT,
@@ -280,6 +281,8 @@ static const char* Tag_ScenenName(SCENEID eTag)
 		return "SCENE_MINIGAME_Jino";
 	case SCENE_MINIGAME_DONKEYKONG:
 		return "SCENE_MINIGAME_DONKEYKONG";
+	case SCENE_MINIGAME_JJB:
+		return "SCENE_MINIGAME_JJB";
 
 	case SCENE_EDIT:
 		return "SCENE_EDIT";
@@ -426,8 +429,12 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_SoundUI,
 	Prototype_Object_IngameUI,
 	Prototype_Object_LobbyUI,
+	Prototype_Object_TaikoUI,
 	Prototype_Object_ParticleCollider,
 	Prototype_Object_ParticleColliderInOut,
+	Prototype_Object_MiniGame_JJB_Player,
+	Prototype_Object_MiniGame_PlayerWeapon,
+
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
 	Prototype_Object_Map_Gear,
@@ -473,10 +480,10 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_RajiHand,
 	Prototype_Object_Rajibalsura,
 	Prototype_Object_EndingPortal,
+	Prototype_Object_PM_Player,
+	Prototype_Object_PM_Food,
+	Prototype_Object_PM_Monster,
 
-		Prototype_Object_PM_Player,
-		Prototype_Object_PM_Food,
-		Prototype_Object_PM_Monster,
 
 
 	Object_Prototype_End
@@ -808,11 +815,21 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_LobbyUI:
 		return TEXT("Prototype_Object_LobbyUI");
 
+	case Prototype_Object_TaikoUI:
+		return TEXT("Prototype_Object_TaikoUI");
+		
 	case Prototype_Object_ParticleCollider:
 		return TEXT("Prototype_Object_ParticleCollider");
 
 	case Prototype_Object_ParticleColliderInOut:
 		return TEXT("Prototype_Object_ParticleColliderInOut");
+
+	case Prototype_Object_MiniGame_JJB_Player:
+		return TEXT("Prototype_Object_MiniGame_JJB_Player");
+
+	case Prototype_Object_MiniGame_PlayerWeapon:
+		return TEXT("Prototype_Object_MiniGame_PlayerWeapon");
+		
 		
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
@@ -1089,6 +1106,7 @@ enum LAYERID
 	Layer_FlameTerrain,
 	Layer_ParticleCollider,
 	Layer_ParticleColliderInOut,
+	Layer_MiniGamePlayer_JJB,
 
 
 	Layer_InteractObject,
@@ -1301,6 +1319,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_ParticleColliderInOut:
 		return TEXT("Layer_ParticleColliderInOut");
+		break;
+
+	case Layer_MiniGamePlayer_JJB:
+		return TEXT("Layer_MiniGamePlayer_JJB");
 		break;
 		
 	case Layer_MapObject:
@@ -3529,6 +3551,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_PlayerEffect_ShellingParabola,
 	Prototype_Mesh_Golu,
 	Prototype_Mesh_MiniGame_Jino_Player,
+	Prototype_Mesh_MiniGame_JJB_Player,
 
 	Prototype_Mesh_Monster_Mahinasura_Minion,
 	Prototype_Mesh_Monster_Mahinasura_Leader,
@@ -9912,6 +9935,10 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_MiniGame_Jino_Player:
 		return TEXT("MiniGameJino_Player.fbx");
+		break;
+
+	case Prototype_Mesh_MiniGame_JJB_Player:
+		return TEXT("MiniGameJJB_Player.fbx");
 		break;
 		
 	case Prototype_Mesh_DemonTree_Seg01:

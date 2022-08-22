@@ -177,8 +177,10 @@ HRESULT CScene_Loby::Ready_Camera(const _tchar* pLayerTag)
 {
 	CCamera::CAMERADESC CameraDesc;
 	CameraDesc.vWorldRotAxis = _float3(0, 0, 0);
-	CameraDesc.vEye = _float3(0.125f, 1.3f, -0.8f);
-	CameraDesc.vAt = _float3(0.225f, 1.3f, 0);
+	CameraDesc.vEye = _float3(0.f, 0.f, 0.f);
+	CameraDesc.vAt = _float3(0, 0, 1);
+	//CameraDesc.vEye = _float3(0.125f, 1.3f, -0.8f);
+	//CameraDesc.vAt = _float3(0.225f, 1.3f, 0);
 	CameraDesc.vAxisY = _float3(0, 1, 0);
 
 	CameraDesc.fFovy = XMConvertToRadians(60.f);

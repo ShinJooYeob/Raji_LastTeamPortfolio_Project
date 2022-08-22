@@ -106,9 +106,6 @@
     <Filter Include="01.GameObject\97.TestObject\00.For_EditorScene">
       <UniqueIdentifier>{ff4047c5-d159-4854-b153-f03f045d7655}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\96.NaviPoint">
-      <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Manager\03.AssimpCreateMgr">
       <UniqueIdentifier>{273b7580-8fe8-4ad0-94a1-60d11ec214b9}</UniqueIdentifier>
     </Filter>
@@ -607,6 +604,27 @@
     <Filter Include="01.GameObject\01.Player\03. ETC\03. EndingPortal">
       <UniqueIdentifier>{8e4a71df-b9ce-4c41-b53e-0efb4dcce448}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB">
+      <UniqueIdentifier>{6c55d9fa-8caf-46d7-9212-45ea3c8c49e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI\MiniGameUI">
+      <UniqueIdentifier>{6f11f7b5-0f35-4e8d-9d0f-f227bfed19ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\99.UI\MiniGameUI\TaikoUI">
+      <UniqueIdentifier>{80ee24c2-d3f4-4afa-b3b9-6e055bdebccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player">
+      <UniqueIdentifier>{00b91a5a-d685-4922-9101-bc6e3434c12a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\96.NaviPoint">
+      <UniqueIdentifier>{07cfe2b2-9c5f-4be7-8329-33bced33751a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon">
+      <UniqueIdentifier>{3750dd8f-e0d6-4ac0-8ca2-70b9d9e2c21c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster">
+      <UniqueIdentifier>{909b0199-9b8b-48e7-b4ce-6a6b5f818408}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -727,7 +745,7 @@
       <Filter>01.GameObject\07.MapObject\02.StaticObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\NaviPoint.h">
-      <Filter>01.GameObject\96.NaviPoint</Filter>
+      <Filter>01.GameObject\12.MiniGame\96.NaviPoint</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Loader.h">
       <Filter>02.Scene</Filter>
@@ -1296,6 +1314,26 @@
     <ClInclude Include="..\public\EndingPortal.h">
       <Filter>01.GameObject\01.Player\03. ETC\03. EndingPortal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CircusBackground.h" />
+    <ClInclude Include="..\public\FireRing.h" />
+    <ClInclude Include="..\public\PM_Food.h" />
+    <ClInclude Include="..\public\PM_Monster.h" />
+    <ClInclude Include="..\public\PackMen.h" />
+    <ClInclude Include="..\public\Scene_MiniGame_JJB.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TaikoUI.h">
+      <Filter>01.GameObject\99.UI\MiniGameUI\TaikoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGame_JJB_Player.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MiniGamePlayerWeapon.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Taiko_Monster.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1392,7 +1430,7 @@
       <Filter>01.GameObject\07.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\NaviPoint.cpp">
-      <Filter>01.GameObject\96.NaviPoint</Filter>
+      <Filter>01.GameObject\12.MiniGame\96.NaviPoint</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Loader.cpp">
       <Filter>02.Scene</Filter>
@@ -1959,6 +1997,21 @@
     </ClCompile>
     <ClCompile Include="..\private\EndingPortal.cpp">
       <Filter>01.GameObject\01.Player\03. ETC\03. EndingPortal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Scene_MiniGame_JJB.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TaikoUI.cpp">
+      <Filter>01.GameObject\99.UI\MiniGameUI\TaikoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_JJB_Player.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGamePlayerWeapon.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Taiko_Monster.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

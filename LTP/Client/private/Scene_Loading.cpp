@@ -17,6 +17,7 @@
 #include "Scene_Minigame_PM.h"
 #include "Scene_MiniGame_Jino.h"
 #include "Scene_MiniGame_DonkeyKong.h"
+#include "Scene_MiniGame_JJB.h"
 //#include "Scene_Ending.h"
 
 #include "MiniGameBuilding.h"
@@ -226,6 +227,9 @@ _int CScene_Loading::LateUpdate(_double fDeltaTime)
 
 		case SCENEID::SCENE_MINIGAME_DONKEYKONG:
 			FAILED_CHECK(g_pGameInstance->Scene_Change(Scene_MiniGame_DonkeyKong::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
+			break;
+		case SCENEID::SCENE_MINIGAME_JJB:
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_MiniGame_JJB::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
 			break;
 //		case SCENEID::SCENE_ENDING:
 //			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Ending::Create(m_pDevice, m_pDeviceContext), m_eNextSceneIndex));
