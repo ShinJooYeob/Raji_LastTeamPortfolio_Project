@@ -21,6 +21,7 @@ public:
 
 public:
 	void	Set_PlayGoluSound(_bool bPlaySound);
+	void	Set_Change_NextScene();
 
 private:
 	void	Play_GoluSound(_double fTimeDelta);

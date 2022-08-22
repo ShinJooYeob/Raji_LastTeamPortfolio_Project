@@ -11,6 +11,8 @@
 
 #include "InstanceMonsterBatchTrigger.h"
 
+#include "Scene_Stage7.h"
+
 CChiedtian::CChiedtian(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -2977,6 +2979,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			// Jino
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CScene_Stage7*>(g_pGameInstance->Get_NowScene())->Set_Change_NextStage();
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			//
 		}

@@ -656,6 +656,7 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		{
 			iAnimCounter = 0;
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_TargetArmLength(3.f);
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			m_iCurCutSceneState = 4;
 			m_fDelayTime = 4;

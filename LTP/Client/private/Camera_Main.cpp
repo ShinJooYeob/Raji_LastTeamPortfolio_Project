@@ -2,6 +2,8 @@
 #include "..\Public\Camera_Main.h"
 #include "Player.h"
 #include "Golu.h"
+#include "RajiHand.h"
+#include "Rajibalsura.h"
 
 _uint CALLBACK CameraEffectThread(void* _Prameter)
 {
@@ -99,7 +101,7 @@ _bool CCamera_Main::CamActionStart(CAMERAACTION Act)
 	m_iNowPosIndex = 0;
 	m_iNowLookIndex = 0;
 
-	CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+	CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 	pPlayer->Set_State_StopActionStart();
 
 	GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
@@ -194,6 +196,13 @@ void CCamera_Main::Set_CameraMode(ECameraMode eCameraMode)
 		m_tAttachDesc.Initialize_AttachedDesc(pPlayer, "skd_head", _float3(1), _float3(0), _float3(0.024161f, -0.499942f, -127.252f));
 	}
 	break;
+	case ECameraMode::CAM_MODE_ENDING:
+	{
+		m_eCurCamMode = eCameraMode;
+		m_iCurState_EndingCutScene = 0;
+		m_fDelayTime = 3.f;
+	}
+		break;
 	}
 }
 
@@ -300,6 +309,8 @@ _int CCamera_Main::Update(_double fDeltaTime)
 
 	Update_CamMoveWeight();
 
+	_Vector vPos = m_pTransform->Get_MatrixState(CTransform::STATE_POS);
+
 	if (true == m_bCamActionStart)
 	{
 		FAILED_CHECK(Update_CamAction(fDeltaTime));
@@ -338,6 +349,11 @@ _int CCamera_Main::Update(_double fDeltaTime)
 		case ECameraMode::CAM_MODE_FIRSTPERSONVIEW:
 		{
 			Update_FirstPersonView(fDeltaTime);
+		}
+		break;
+		case ECameraMode::CAM_MODE_ENDING:
+		{
+			Update_Ending(fDeltaTime);
 		}
 		break;
 		}
@@ -774,6 +790,11 @@ HRESULT CCamera_Main::Set_ViewMatrix()
 	return S_OK;
 }
 
+void CCamera_Main::Set_EndingCutSceneState(_uint iState)
+{
+	m_iCurState_EndingCutScene = iState;
+}
+
 _int CCamera_Main::Update_FreeMode(_double fDeltaTime)
 {
 	_Vector vtestpos = m_pTransform->Get_MatrixState(CTransform::TransformState::STATE_POS);
@@ -981,6 +1002,131 @@ _int CCamera_Main::Update_FirstPersonView(_double fDeltaTime)
 	return _int();
 }
 
+_int CCamera_Main::Update_Ending(_double fDeltaTime)
+{
+	switch (m_iCurState_EndingCutScene)
+	{
+	case 0:
+	{
+		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		m_pPlayerTramsformCom = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+		m_pPlayerTramsformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, 30.14f, 326.7f));
+		m_pPlayerTramsformCom->LookDir(XMVectorSet(0.f, -0.f, -1.f, 0.f));
+
+		m_pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, /*35.46f*/36.f, 326.7f));
+		m_pTransform->LookDir(XMVectorSet(0.f, -0.f, -1.f, 0.f));
+
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 1;
+			m_fDelayTime = 1.f;
+			pPlayer->Set_BlockUpdate(true);
+		}
+		break;
+	}
+	case 1:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 2;
+			m_fDelayTime = 1.5f;
+		}
+		break;
+	}
+	case 2:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, -0.8f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			CRajiHand* pRajiHand = static_cast<CRajiHand*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_Volcano)));
+			pRajiHand->Set_CutSceneState(1);
+			m_iCurState_EndingCutScene = 3;
+		}
+		break;
+	}
+	case 3:
+	{
+		m_fDelayTime = 1.f;
+	}
+		break;
+	case 4:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 5;
+			m_fDelayTime = 0.8f;
+		}
+	}
+		break;
+	case 5:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(1.f, 0.f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 6;
+			m_fDelayTime = 0.8f;
+		}
+	}
+		break;
+	case 6:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(-1.f, 0.f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 7;
+			m_fDelayTime = 0.5f;
+		}
+	}
+		break;
+	case 7:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.f, 1.f, 0.f), 0.9f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 8;
+			m_fDelayTime = 3.5f;
+		}
+	}
+		break;
+	case 8:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, -1.f, 0.1f, 0.f), 0.98f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 9;
+			m_fDelayTime = 7.f;
+		}
+	}
+		break;
+	case 9:
+	{
+		m_pTransform->Turn_Dir(XMVectorSet(0.f, 0.f, 1.f, 0.f), 0.99f);
+		m_fDelayTime -= (_float)fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			m_iCurState_EndingCutScene = 10;
+		}
+	}
+		break;
+	case 10:
+	{
+		CRajibalsura* pRajibalsura = static_cast<CRajibalsura*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_RoseObj)));
+		pRajibalsura->Set_CurState(1);
+	}
+	}
+	return _int();
+}
+
 void CCamera_Main::Update_CamMoveWeight()
 {
 	if (m_fCur_CamLookWeight < m_fTarget_CamLookWeight)
@@ -1058,8 +1204,12 @@ HRESULT CCamera_Main::Update_CamAction(_double fDeltaTime)
 		//m_pTransform->Set_MatrixState(CTransform::STATE_POS, EasedPos);
 		//m_pTransform->LookAt(EasedLookAt.XMVector());
 
-		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
-		pPlayer->Set_State_StopActionEnd();
+		CPlayer* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		if (nullptr != pPlayer)
+		{
+			pPlayer->Set_State_StopActionEnd();
+		}
+
 		GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 	}
 	else

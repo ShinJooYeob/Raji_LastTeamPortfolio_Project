@@ -120,6 +120,10 @@
 #include "JumpingMonkey.h"
 #include "FireRing.h"
 #include "CircusBackground.h"
+#include "RajiMask.h"
+#include "RajiHand.h"
+#include "Rajibalsura.h"
+#include "EndingPortal.h"
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -1065,6 +1069,9 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Boss_MahabalasurCopy), TransformMatrix);
 
+	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Texture_EndingPortal),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"EndingPortal.txt")));
+
 #pragma region EH
 	/* For.Prototype_Component_Texture_Monster_Texture_Bullet */
 	FAILED_CHECK(pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STAGE5, TAG_CP(Prototype_Texture_Monster_Bullet),
@@ -1089,6 +1096,10 @@ HRESULT CLoader::Load_Scene_Stage5(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), CMahabalasura_SpearWave::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_MahabalasuraATKSPR), CMahabalasura_AttackSpear::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MahaHead), CMahaHead::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_RajiMask), CRajiMask::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_RajiHand), CRajiHand::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Rajibalsura), CRajibalsura::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_EndingPortal), CEndingPortal::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 
@@ -3350,7 +3361,9 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_VishnuTemple_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"QRocksC.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"MahaHead.fbx", TransformMatrix);
-
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"MahaHead_Ending.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Player_Hand.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"Player_Arm.fbx", TransformMatrix);
 #pragma  endregion Mahabalasura
 
 	}

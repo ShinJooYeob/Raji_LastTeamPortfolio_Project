@@ -44,6 +44,8 @@ _int CNormalMonkey::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	SetUp_MonsterType(m_eMonsterType);
+
 	m_pTransformCom->LookDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f));
 
 	Update_Move(fDeltaTime);
@@ -116,11 +118,13 @@ void CNormalMonkey::SetUp_MonsterType(EMONSTER_TYPE eMonsterType)
 	switch (eMonsterType)
 	{
 	case EMONSTER_TYPE::TYPE_WALKER:
+		m_eMonsterType = eMonsterType;
 		m_fAnimSpeed = 2.f;
 		m_pModel->Change_AnimIndex(1);
 		m_pTransformCom->Set_MoveSpeed(2.f);
 		break;
 	case EMONSTER_TYPE::TYPE_RUNNER:
+		m_eMonsterType = eMonsterType;
 		m_fAnimSpeed = 1.f;
 		m_pModel->Change_AnimIndex(21);
 		m_pTransformCom->Set_MoveSpeed(7.f);

@@ -32,11 +32,6 @@ public:
 	virtual void			Dead() override;
 
 public:
-	//void			Dead();
-//	void			SetUp_MonsterType(ENORMALMONKEY_TYPE eMonsterType);
-//	void			Set_Position(_float3 vPos);
-
-public:
 	void			Set_Active(_bool bActive);
 
 private:
@@ -52,6 +47,7 @@ private:
 	CTransform*				m_pPlayerTransform = nullptr;
 	_float					m_fAnimSpeed = 0.f;
 	_bool					m_bActive = false;
+	EMONSTER_TYPE			m_eMonsterType = TYPE_WALKER;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

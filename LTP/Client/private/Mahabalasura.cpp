@@ -15,6 +15,8 @@
 #include "ParticleCollider.h"
 #include "Particle_ColliderInOut.h"
 
+#include "Scene_Stage5.h"
+
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -182,8 +184,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 	if (m_pDissolveCom->Get_IsFadeIn() == false && m_pDissolveCom->Get_DissolvingRate() >= 1.0)
 	{
+		
 		Set_IsDead();
-
+		
 		// JH
 		static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
@@ -1076,7 +1079,7 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 		if (0.f >= m_fDelayTime)
 		{
 			m_iCutSceneStep = 4;
-			m_fDelayTime = 6.f;
+			m_fDelayTime = 8.f;
 			m_pModel->Change_AnimIndex(1);
 			m_pDissolveCom->Set_DissolveOn(false, 6.f);
 		}
@@ -1098,6 +1101,7 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 			Set_IsDead();
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			static_cast<CScene_Stage5*>(g_pGameInstance->Get_NowScene())->Start_Ending();
 		}
 	}
 		break;

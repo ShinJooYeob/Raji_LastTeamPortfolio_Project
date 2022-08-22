@@ -57,12 +57,15 @@ public:
 
 	virtual HRESULT		Set_ViewMatrix() override;
 
+public:
+	void				Set_EndingCutSceneState(_uint iState);
 
 public:
 	_bool				Get_IsCamAction() { return m_bCamActionStart; };
 	_bool				Get_CamLock() { return m_bCamLock; }
 	_float3				Get_FixLookDir() { return m_fFixLookDir; }
 	CTransform*			Get_CamTransformCom() { return m_pTransform; }
+	_bool				Get_CamPos() { m_pTransform->Get_MatrixState(CTransform::STATE_POS); }
 
 public:
 	_bool				CamActionStart(CAMERAACTION Act);
@@ -141,6 +144,7 @@ private:
 	_int				Update_TargetingMode(_double fDeltaTime);
 	_int				Update_RajiGolu_MiniGameMode(_double fDeltaTime);
 	_int				Update_FirstPersonView(_double fDeltaTime);
+	_int				Update_Ending(_double fDeltaTime);
 
 	void				Update_CamMoveWeight();
 
@@ -194,6 +198,8 @@ private: /* Fov Shaking */
 
 private: /* For ETC */
 	ATTACHEDESC					m_tAttachDesc;
+	_int						m_iCurState_EndingCutScene = 0;
+	_float						m_fDelayTime = 0.f;
 
 public:
 	static CCamera_Main* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void* pArg = nullptr);

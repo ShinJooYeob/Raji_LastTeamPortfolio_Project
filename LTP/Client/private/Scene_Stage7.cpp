@@ -63,6 +63,8 @@ HRESULT CScene_Stage7::Initialize()
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
+	m_eNextScene = SCENE_STAGE6;
+
 	return S_OK;
 }
 
@@ -72,7 +74,13 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 		return -1;
 
 	if (m_bIsNeedToSceneChange)
-		return Change_to_NextScene();
+	{
+		m_fDelayTime -= fDeltaTime;
+		if (0.f >= m_fDelayTime)
+		{
+			return Change_to_NextScene();
+		}
+	}
 
 
 
@@ -140,7 +148,13 @@ _int CScene_Stage7::LateUpdate(_double fDeltaTime)
 		return -1;
 
 	if (m_bIsNeedToSceneChange)
-		return Change_to_NextScene();
+	{
+		if (0.f >= m_fDelayTime)
+		{
+			return Change_to_NextScene();
+		}
+	}
+
 
 	return 0;
 }
@@ -181,11 +195,16 @@ _int CScene_Stage7::LateRender()
 
 _int CScene_Stage7::Change_to_NextScene()
 {
-
 	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
 	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, (SCENEID)m_eNextScene), SCENEID::SCENE_LOADING));
 
 	return _int();
+}
+
+void CScene_Stage7::Set_Change_NextStage()
+{
+	m_bIsNeedToSceneChange = true;
+	m_fDelayTime = 3.f;
 }
 
 
