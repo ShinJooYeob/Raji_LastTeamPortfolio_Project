@@ -445,6 +445,7 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	else
 	{
 		m_pMainCam->Set_NowSceneNum(SCENE_LABORATORY_JINO);
+		m_pMainCam->Set_CameraDesc(CameraDesc);
 	}
 
 	m_pMainCam->Set_TargetArmLength(15.f);
@@ -467,6 +468,7 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(Tag_Component(Com_Transform)));
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
+	m_pPlayer->Update(g_fDeltaTime);
 
 	m_pMainCam->Set_FocusTarget(m_pPlayer);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
@@ -474,6 +476,9 @@ HRESULT CScene_MiniGame_Jino::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	pBeachBall->SetUp_PlayerTransform(m_pPlayerTransform);
 	pBeachBall->Set_State_Ride();
+
+
+	m_pMainCam->Set_CameraInitState(XMVectorSet(3.5f, 1.f, -8.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 
 	return S_OK;
 }

@@ -591,6 +591,21 @@
     </Filter>
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu">
       <UniqueIdentifier>{eb4318b7-190f-4344-a5f8-2adea00b9331}</UniqueIdentifier>
+      </Filter>
+    <Filter Include="01.GameObject\01.Player\03. ETC">
+      <UniqueIdentifier>{50529050-6974-4363-871d-79893fc14ae0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\03. ETC\00. RajiMask">
+      <UniqueIdentifier>{49939265-bf89-4600-8004-e4fac7574085}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\03. ETC\01. RajiHand">
+      <UniqueIdentifier>{e370980b-b11e-4ad5-b508-41716d1f05cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\03. ETC\02. Rajibalsura">
+      <UniqueIdentifier>{76de01e9-b26b-468e-8737-2727447d5538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\01.Player\03. ETC\03. EndingPortal">
+      <UniqueIdentifier>{8e4a71df-b9ce-4c41-b53e-0efb4dcce448}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1264,6 +1279,23 @@
     <ClInclude Include="..\public\MiniGame_KongGolu.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CircusBackground.h" />
+    <ClInclude Include="..\public\FireRing.h" />
+    <ClInclude Include="..\public\PM_Food.h" />
+    <ClInclude Include="..\public\PM_Monster.h" />
+    <ClInclude Include="..\public\PackMen.h" />
+    <ClInclude Include="..\public\RajiMask.h">
+      <Filter>01.GameObject\01.Player\03. ETC\00. RajiMask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RajiHand.h">
+      <Filter>01.GameObject\01.Player\03. ETC\01. RajiHand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rajibalsura.h">
+      <Filter>01.GameObject\01.Player\03. ETC\02. Rajibalsura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EndingPortal.h">
+      <Filter>01.GameObject\01.Player\03. ETC\03. EndingPortal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1915,6 +1947,18 @@
     </ClCompile>
     <ClCompile Include="..\private\MiniGame_KongGolu.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu</Filter>
+        </ClCompile>
+    <ClCompile Include="..\private\RajiMask.cpp">
+      <Filter>01.GameObject\01.Player\03. ETC\00. RajiMask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RajiHand.cpp">
+      <Filter>01.GameObject\01.Player\03. ETC\01. RajiHand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rajibalsura.cpp">
+      <Filter>01.GameObject\01.Player\03. ETC\02. Rajibalsura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EndingPortal.cpp">
+      <Filter>01.GameObject\01.Player\03. ETC\03. EndingPortal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1965,5 +2009,8 @@
     <Natvis Include="..\public\Imgui\imgui.natvis">
       <Filter>03.Manager\02.ImguiMgr\99.Default</Filter>
     </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

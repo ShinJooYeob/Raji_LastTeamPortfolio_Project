@@ -745,6 +745,24 @@ PS_OUT_NOLIGHT PS_FADE(PS_IN In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_MAIN_RECT_Jino(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);//vector(1.f, 0.f, 0.f, 1.f);rgba
+
+	if (Out.vDiffuse.a < 0.1f)
+	{
+		discard;
+	}
+	else
+	{
+		Out.vDiffuse.a = 1.f;
+	}
+	//Out.vDiffuse *= g_vColor;
+
+	return Out;
+}
 
 technique11		DefaultTechnique
 {
@@ -925,5 +943,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_Rect_Noise();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_LOBBYNOISE_RECT();
+	}
+
+	pass Rect_NoneCull_Jino			//17
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_RECT();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RECT_Jino();
 	}
 }

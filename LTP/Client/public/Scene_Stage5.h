@@ -16,8 +16,15 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-
 	virtual _int Change_to_NextScene() override;
+
+public:
+	void	Start_EndingCinematic();
+	void	Start_Ending();
+	
+public:
+	void	Set_EndGame();
+	void	GameEnd();
 
 private:
 	HRESULT Ready_Light();
@@ -38,10 +45,18 @@ private:
 
 	HRESULT Ready_PostPorcessing();
 
+	HRESULT Ready_CinematicCamAction();
+	
 private:
-	class CCamera_Main*				m_pMainCam = nullptr;
-	CUtilityMgr*					m_pUtilMgr = nullptr;
-	CTransform*						m_pPlayerTransform = nullptr;
+	CAMERAACTION						m_tCamActionDesc;
+	_bool								m_bActive = false;
+	_bool								m_bEndGame = false;
+
+private:
+	class CCamera_Main*					m_pMainCam = nullptr;
+	CUtilityMgr*						m_pUtilMgr = nullptr;
+	CTransform*							m_pPlayerTransform = nullptr;
+
 public:
 	static CScene_Stage5* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
 	virtual void Free() override;

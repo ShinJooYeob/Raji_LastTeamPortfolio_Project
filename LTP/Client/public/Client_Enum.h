@@ -205,7 +205,7 @@ static const char* Tag_MeshPass(eMeshInstancePassID eTag)
 
 enum ECameraMode
 {
-	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX, CAM_MODE_RAJIGOLU_MINIGAME, CAM_MODE_FIRSTPERSONVIEW
+	CAM_MODE_FREE, CAM_MODE_NOMAL, CAM_MODE_TARGETING, CAM_MODE_FIX, CAM_MODE_RAJIGOLU_MINIGAME, CAM_MODE_FIRSTPERSONVIEW, CAM_MODE_ENDING
 };
 
 enum UPGRADEID
@@ -469,6 +469,10 @@ enum OBJECTPROTOTYPEID
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
+	Prototype_Object_RajiMask,
+	Prototype_Object_RajiHand,
+	Prototype_Object_Rajibalsura,
+	Prototype_Object_EndingPortal,
 
 		Prototype_Object_PM_Player,
 		Prototype_Object_PM_Food,
@@ -860,6 +864,18 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Grovetender:
 		return TEXT("Prototype_Object_Grovetender");
 		
+	case Prototype_Object_RajiMask:
+		return TEXT("Prototype_Object_RajiMask");
+
+	case Prototype_Object_RajiHand:
+		return TEXT("Prototype_Object_RajiHand");
+
+	case Prototype_Object_Rajibalsura:
+		return TEXT("Prototype_Object_Rajibalsura");
+
+	case Prototype_Object_EndingPortal:
+		return TEXT("Prototype_Object_EndingPortal");
+
 	case Prototype_Object_MiniGameBuilding:
 		return TEXT("Prototype_Object_MiniGameBuilding");
 
@@ -3494,6 +3510,9 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Elevator,
 	Prototype_Mesh_ArrowDir,
 	Prototype_Mesh_MahaHead,
+	Prototype_Mesh_RajiMask,
+	Prototype_Mesh_RajiHand,
+	Prototype_Mesh_RajiArm,
 
 	Prototype_Mesh_AlgaeRock_Ledge,
 
@@ -3603,6 +3622,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_PathArrow,
 	Prototype_Texture_MingameBuildingTex,
 	Prototype_Texture_MiniGameJino_Background,
+	Prototype_Texture_EndingPortal,
 
 	Prototype_VIBuffer_Plat,
 		Prototype_VIBuffer_Terrain_0,
@@ -10003,6 +10023,18 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_MahaHead:
 		return TEXT("MahaHead.fbx");
 		break;
+	
+	case Prototype_Mesh_RajiMask:
+		return TEXT("MahaHead_Ending.fbx");
+		break;
+	
+	case Prototype_Mesh_RajiHand:
+		return TEXT("Player_Hand.fbx");
+		break;
+
+	case Prototype_Mesh_RajiArm:
+		return TEXT("Player_Arm.fbx");
+		break;
 		
 	case Prototype_Mesh_DarkBaldTree:
 		return TEXT("DarkBaldTree.fbx");
@@ -10317,7 +10349,11 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Texture_MiniGameJino_Background:
 		return TEXT("Prototype_Texture_MiniGameJino_Background");
 		break;
-		
+	
+	case Prototype_Texture_EndingPortal:
+		return TEXT("Prototype_Texture_EndingPortal");
+		break;
+
 	case 	Prototype_Texture_DefaultUI:
 		return TEXT("Prototype_Texture_DefaultUI");
 		break;

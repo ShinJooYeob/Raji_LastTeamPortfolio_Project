@@ -184,6 +184,7 @@ public: /* public Setter */
 	void	Set_TargetingLookDir(_float3 fTargetingLookDir);
 	void	Set_MaxBossTargetingDist(_float fDist);
 	void	Set_MinBossTargetingDist(_float fDist);
+	void	Set_BlockUpdate(_bool bBlockUpdate);
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
@@ -494,6 +495,8 @@ private: /* Animation Control */
 	_bool					m_bLedge_ReachBackState = false;
 
 	_bool					m_bFallingDead = false;
+
+	_bool					m_bBlockUpdate = false;
 
 private: /* Control */
 	_float					m_fDelayTime = 0.f;

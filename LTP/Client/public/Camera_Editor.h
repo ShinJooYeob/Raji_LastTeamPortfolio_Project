@@ -20,9 +20,11 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-
 public:
 	_bool	CamActionStart(CAMERAACTION Act);
+
+	void	Repair_Camera();
+
 private:
 	_bool			m_bIsCamMoving = false;
 

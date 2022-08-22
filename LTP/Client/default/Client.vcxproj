@@ -197,6 +197,7 @@
     <ClInclude Include="..\public\DonkeyKong_BulletTrigger.h" />
     <ClInclude Include="..\public\DynamicPlatform.h" />
     <ClInclude Include="..\public\Elevator.h" />
+    <ClInclude Include="..\public\EndingPortal.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
     <ClInclude Include="..\public\FireRing.h" />
     <ClInclude Include="..\public\GoalTrigger.h" />
@@ -302,6 +303,9 @@
     <ClInclude Include="..\public\PlayerWeapon_Sword.h" />
     <ClInclude Include="..\public\HitEffectUI.h" />
     <ClInclude Include="..\public\RadialBlurUI.h" />
+    <ClInclude Include="..\public\Rajibalsura.h" />
+    <ClInclude Include="..\public\RajiHand.h" />
+    <ClInclude Include="..\public\RajiMask.h" />
     <ClInclude Include="..\public\Rangda.h" />
     <ClInclude Include="..\public\Randa_Wasp_Bullet.h" />
     <ClInclude Include="..\public\Rangda_Statue.h" />
@@ -385,6 +389,7 @@
     <ClCompile Include="..\private\DonkeyKong_BulletTrigger.cpp" />
     <ClCompile Include="..\private\DynamicPlatform.cpp" />
     <ClCompile Include="..\private\Elevator.cpp" />
+    <ClCompile Include="..\private\EndingPortal.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
     <ClCompile Include="..\private\FireRing.cpp" />
     <ClCompile Include="..\private\GoalTrigger.cpp" />
@@ -485,6 +490,9 @@
     <ClCompile Include="..\private\PlayerWeapon_Sword.cpp" />
     <ClCompile Include="..\private\HitEffectUI.cpp" />
     <ClCompile Include="..\private\RadialBlurUI.cpp" />
+    <ClCompile Include="..\private\Rajibalsura.cpp" />
+    <ClCompile Include="..\private\RajiHand.cpp" />
+    <ClCompile Include="..\private\RajiMask.cpp" />
     <ClCompile Include="..\private\Rangda.cpp" />
     <ClCompile Include="..\private\Randa_Wasp_Bullet.cpp" />
     <ClCompile Include="..\private\Rangda_Statue.cpp" />
@@ -580,6 +588,9 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\public\Imgui\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -304,7 +304,7 @@ _int CRangda::Update(_double fDeltaTime)
 		if (m_bInstanceMonsterDieSwitch == false)
 		{
 			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
-			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			//pMonsterBatchTrigger->Set_MonsterAllDie(true);
 			m_bInstanceMonsterDieSwitch = true;
 		}
 		m_pDissolve->Set_DissolveOn(false, 9.4f);
@@ -1694,6 +1694,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			// JH
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			static_cast<CScene_Stage3*>(g_pGameInstance->Get_NowScene())->Set_Change_NextScene();
 			//
 		}
 		if (iNowAnimIndex == 6 || iNowAnimIndex == 7)

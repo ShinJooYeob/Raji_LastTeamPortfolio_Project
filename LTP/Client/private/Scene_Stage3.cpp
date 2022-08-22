@@ -51,6 +51,7 @@ HRESULT CScene_Stage3::Initialize()
 	m_fPlayGoluSoundDelay = 0.f;
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
+	m_eNextScene = SCENE_STAGE5;
 	return S_OK;
 }
 
@@ -145,6 +146,11 @@ _int CScene_Stage3::Change_to_NextScene()
 void CScene_Stage3::Set_PlayGoluSound(_bool bPlaySound)
 {
 	m_bPlayGoluSound = bPlaySound;
+}
+
+void CScene_Stage3::Set_Change_NextScene()
+{
+	m_bIsNeedToSceneChange = true;
 }
 
 void CScene_Stage3::Play_GoluSound(_double fTimeDelta)

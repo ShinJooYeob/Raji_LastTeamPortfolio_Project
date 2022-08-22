@@ -69,6 +69,7 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 _int CPlayer::Update(_double fDeltaTime)
 {
+	if (true == m_bBlockUpdate) return 0;
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
@@ -398,6 +399,7 @@ _int CPlayer::Update(_double fDeltaTime)
 
 _int CPlayer::LateUpdate(_double fDeltaTimer)
 {
+	if (true == m_bBlockUpdate) return 0;
 	if (__super::LateUpdate(fDeltaTimer) < 0)return -1;
 
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
@@ -577,7 +579,7 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 		return -2.f;
 	}
 
-	if (STATE_STOPACTION == m_eCurState)
+	if (STATE_STOPACTION == m_eCurState || STATE_ULTIMATESKILL == m_eCurState)
 	{
 		return 0.f;
 	}
@@ -2510,12 +2512,16 @@ _bool CPlayer::Check_ChangeCameraView_KeyInput_ForDebug(_double fDeltaTime)
 			m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -1.f, 1.f, 1.f));
 			m_fAttachCamPos_Offset = _float3(0.f, -1.f, 3.f);  */
 
-			/*m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.1f, 0.f, 0.f));
-			m_fAttachCamPos_Offset = _float3(-3.f, 6.f, 0.f);
-			m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);*/
-		m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-		m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.f, -0.35f, 1.f, 0.f));
-		m_fAttachCamPos_Offset = _float3(0.f, 12.f, -15.f);
+		/*m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.1f, 0.f, 0.f));
+		m_fAttachCamPos_Offset = _float3(-3.f, 6.f, 0.f);
+		m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);*/
+		
+
+		//m_pMainCamera->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.f, 0.65f, 0.f));
+		//m_fAttachCamPos_Offset = _float3(-6.f, 5.f, -4.f);
+
+
 		//m_fAttachCamLook_Offset = _float3(0.f, 0.f, 0.f);
 
 		//	m_fAttachCamLook_Offset = _float3(0.f, 0.1f, 1.f);
@@ -7914,6 +7920,11 @@ void CPlayer::Set_MaxBossTargetingDist(_float fDist)
 void CPlayer::Set_MinBossTargetingDist(_float fDist)
 {
 	m_fDist_MinBossTargeting = fDist;
+}
+
+void CPlayer::Set_BlockUpdate(_bool bBlockUpdate)
+{
+	m_bBlockUpdate = bBlockUpdate;
 }
 
 void CPlayer::Set_TurnInputDir()

@@ -9,6 +9,10 @@
 #include "Transform.h"
 #include "TriggerObject.h"
 #include "MonsterBatchTrigger.h"
+#include "RajiMask.h"
+#include "RajiHand.h"
+#include "Rajibalsura.h"
+#include "EndingPortal.h"
 
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
@@ -56,6 +60,8 @@ HRESULT CScene_Stage5::Initialize()
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
+	FAILED_CHECK(Ready_CinematicCamAction());
+
 	return S_OK;
 }
 
@@ -64,6 +70,17 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		//Start_EndingCinematic();
+		Start_Ending();
+	}
+	
+	if (true == m_bEndGame)
+	{
+		GameEnd();
+		return 0;
+	}
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -102,6 +119,12 @@ _int CScene_Stage5::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
+
+	if (true == m_bEndGame)
+	{
+		GameEnd();
+		return 0;
+	}
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
@@ -149,7 +172,32 @@ _int CScene_Stage5::Change_to_NextScene()
 	return _int();
 }
 
+void CScene_Stage5::Start_EndingCinematic()
+{
+	m_pMainCam->CamActionStart(m_tCamActionDesc);
+}
 
+void CScene_Stage5::Start_Ending()
+{
+	GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, true);
+	m_pMainCam->Set_CameraMode(CAM_MODE_ENDING);
+	g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_RoseObj), TAG_OP(Prototype_Object_RajiMask), nullptr);
+	g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Volcano), TAG_OP(Prototype_Object_RajiHand), nullptr);
+}
+
+void CScene_Stage5::Set_EndGame()
+{
+	m_bEndGame = true;
+}
+
+void CScene_Stage5::GameEnd()
+{
+	m_pMainCam->Set_CameraMoveWeight(0.9f);
+	m_pMainCam->Set_CameraLookWeight(0.9f);
+
+	GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange();
+	g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING);
+}
 
 HRESULT CScene_Stage5::Ready_Light()
 {
@@ -226,9 +274,7 @@ HRESULT CScene_Stage5::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, 38.881f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, pLayerTag, TAG_OP(Prototype_Player), &_float3(101.513f, 11.92f, /*38.881f*/220.f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE5, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
@@ -252,6 +298,10 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_FocusTarget(pPlayer);
 	m_pMainCam->Set_CameraInitState(XMVectorSet(101.544647f, 15.5318298f, 34.5054054f, 1.f), XMVectorSet(-0.0105607901f, -0.609869421f, 0.792431772f, 0.f));
 
+
+	//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_RoseObj), TAG_OP(Prototype_Object_RajiMask), nullptr);
+	//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Volcano), TAG_OP(Prototype_Object_RajiHand), nullptr);
+	
 	return S_OK;
 }
 
@@ -280,7 +330,7 @@ HRESULT CScene_Stage5::Ready_Layer_TestMapObject(const _tchar * pLayerTag)
 
 	
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MahaHead)));
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, Tag_Layer(Layer_MazeDoor), TAG_OP(Prototype_Object_MahaHead)));
 
 
 
@@ -637,6 +687,54 @@ HRESULT CScene_Stage5::Ready_PostPorcessing()
 #endif // !_DEBUG
 
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage5::Ready_CinematicCamAction()
+{
+	m_tCamActionDesc.vecCamPos.clear();
+	m_tCamActionDesc.vecLookAt.clear();
+
+	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/CameraAction/EndingCamAction.dat";
+	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
+
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD    dwByte = 0;
+
+	CGameInstance* pInstance = g_pGameInstance;
+
+	_uint iCount = 0;
+	ReadFile(hFile, &(iCount), sizeof(_uint), &dwByte, nullptr);
+
+	CAMACTDESC tDesc;
+
+	for (_uint i = 0; i < iCount; i++)
+	{
+		ReadFile(hFile, &(tDesc.fDuration), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(tDesc.vPosition), sizeof(_float3), &dwByte, nullptr);
+
+		m_tCamActionDesc.vecCamPos.push_back(tDesc);
+
+	}
+	m_tCamActionDesc.vecCamPos.pop_back();
+
+	iCount = 0;
+	ReadFile(hFile, &(iCount), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < iCount; i++)
+	{
+		ReadFile(hFile, &(tDesc.fDuration), sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &(tDesc.vPosition), sizeof(_float3), &dwByte, nullptr);
+
+		m_tCamActionDesc.vecLookAt.push_back(tDesc);
+	}
+	m_tCamActionDesc.vecLookAt.pop_back();
+
+	CloseHandle(hFile);
 
 	return S_OK;
 }

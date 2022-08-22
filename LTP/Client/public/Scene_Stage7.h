@@ -19,6 +19,8 @@ public:
 
 	virtual _int Change_to_NextScene() override;
 
+	void Set_Change_NextStage();
+
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Layer_MainCamera(const _tchar* pLayerTag);
@@ -43,6 +45,9 @@ private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 	CUtilityMgr*					m_pUtilMgr = nullptr;
 	CTransform*						m_pPlayerTransform = nullptr;
+
+	_float							m_fDelayTime = 0.f;
+	_bool							m_bClearStage = false;
 
 public:
 	static CScene_Stage7* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
