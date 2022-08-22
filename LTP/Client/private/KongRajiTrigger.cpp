@@ -102,12 +102,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(3);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(1);
 				}
@@ -130,12 +130,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(5);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(3);
 				}
@@ -158,12 +158,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(5);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(3);
 				}
@@ -186,12 +186,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(7);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(5);
 				}
@@ -214,12 +214,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(9);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(7);
 				}
@@ -242,12 +242,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(9);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(7);
 				}
@@ -270,12 +270,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(11);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(9);
 				}
@@ -298,12 +298,12 @@ void CKongRajiTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCollide
 				m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT] = pMyCollider->Get_ColliderPosition(iMyColliderIndex);
 				m_pPlayer->Set_HeightPos(m_fColliderPos);
 
-				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f <= m_fKongRajiPos.y)
+				if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f <= m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(13);
 					m_pPlayer->Set_MoveToWidthOn(true);
 				}
-				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.2f > m_fKongRajiPos.y)
+				else if (m_fColliderPos[CKongRajiTrigger::COLLIDER_TWO_POINT].y - 0.3f > m_fKongRajiPos.y)
 				{
 					m_pPlayer->Set_NaviIndex(11);
 				}

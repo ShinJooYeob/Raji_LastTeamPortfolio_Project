@@ -96,7 +96,7 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 
 
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * 1, m_bIsOnScreen));
+	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
@@ -364,6 +364,38 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 
 	m_fMyPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press && m_bMoveToWidthOn == true)
+	{
+		m_pTransformCom->MovetoDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.5f);
+		m_bMoveToHeightOn = false;
+
+
+		m_bChangeAnimOn = true;
+
+		if (false == m_JumpDesc.bJump)
+		{
+			m_iCurrentAnimIndex = ANIM_WALK;
+			m_pNavigationCom->Set_CurNavCellIndex(m_iNaviIndex);
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press && m_bMoveToWidthOn == true)
+	{
+		m_pTransformCom->MovetoDir(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
+		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.5f);
+		m_bMoveToHeightOn = false;
+
+		m_bChangeAnimOn = true;
+
+		if (false == m_JumpDesc.bJump)
+		{
+			m_iCurrentAnimIndex = ANIM_WALK;
+			m_pNavigationCom->Set_CurNavCellIndex(m_iNaviIndex);
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+		}
+	}
+
 	if (pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press && m_bMoveToHeightOn == true)
 	{
 		if (m_fHeightPos[CMiniGame_KongRaji::HEIGHT_TWO_POINT].y + 0.1f >= m_fMyPos.y)
@@ -374,7 +406,16 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 
 
 		m_bChangeAnimOn = true;
-		m_iCurrentAnimIndex = ANIM_CLIMB_UP;
+
+		if (m_fHeightPos[CMiniGame_KongRaji::HEIGHT_TWO_POINT].y >= m_fMyPos.y)
+		{
+			m_iCurrentAnimIndex = ANIM_CLIMB_UP;
+		}
+		else if (m_fHeightPos[CMiniGame_KongRaji::HEIGHT_TWO_POINT].y <= m_fMyPos.y)
+		{
+			m_iCurrentAnimIndex = ANIM_IDLE;
+		}
+
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press && m_bMoveToHeightOn == true)
@@ -389,32 +430,6 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 		m_bChangeAnimOn = true;
 		m_iCurrentAnimIndex = ANIM_CLIMB_DOWN;
 		m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, 1.f, 0.f));
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_A) & DIS_Press && m_bMoveToWidthOn == true)
-	{
-		m_pTransformCom->MovetoDir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
-		m_pTransformCom->Turn_Dir(XMVectorSet(-1.f, 0.f, 0.f, 0.f), 0.5f);
-
-		m_bChangeAnimOn = true;
-
-		if (false == m_JumpDesc.bJump)
-		{
-			m_iCurrentAnimIndex = ANIM_WALK;
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-		}
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_D) & DIS_Press && m_bMoveToWidthOn == true)
-	{
-		m_pTransformCom->MovetoDir(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltatime, m_pNavigationCom);
-		m_pTransformCom->Turn_Dir(XMVectorSet(1.f, 0.f, 0.f, 0.f), 0.5f);
-
-		m_bChangeAnimOn = true;
-
-		if (false == m_JumpDesc.bJump)
-		{
-			m_iCurrentAnimIndex = ANIM_WALK;
-			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
-		}
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE) & DIS_Down)
@@ -452,13 +467,34 @@ HRESULT CMiniGame_KongRaji::Change_Anim()
 	if (m_bChangeAnimOn)
 	{
 		m_iAnimIndex = m_iCurrentAnimIndex;
+		m_dAcceleration = 1;
 
 		m_bChangeAnimOn = false;
 	}
 	else {
+		m_dAcceleration = 1;
 		m_iAnimIndex = ANIM_IDLE;
 	}
+
+
+
+	if (m_bMoveToWidthOn == false)
+	{
+		m_iAnimIndex = ANIM_CLIMB_UP;
+	}
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press ||
+		g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
+	{
+		m_dAcceleration = 1;
+	}
+	else if (m_bMoveToWidthOn == false)
+	{
+		m_dAcceleration = 0;
+	}
+
 	return S_OK;
+
 }
 
 HRESULT CMiniGame_KongRaji::Jumping(_double TimeDelta)
