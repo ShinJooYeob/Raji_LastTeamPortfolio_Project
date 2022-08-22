@@ -86,6 +86,9 @@ void CSceneChangeTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		{
 			m_bTriggerChecker = true;
 			g_pGameInstance->Get_NowScene()->Set_SceneChanging(m_eNextSceneID);
+
+			//g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
+			//g_pGameInstance->PlaySoundW(L"Jino_Change_NextScene.wav", CHANNEL_PLAYER);
 		}
 	}
 }

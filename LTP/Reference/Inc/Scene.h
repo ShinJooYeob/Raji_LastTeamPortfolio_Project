@@ -20,6 +20,8 @@ public:
 	_bool	Get_bIsNeedToSceneChange() { return m_bIsNeedToSceneChange; }
 	HRESULT Set_SceneChanging(_uint _INextScene);
 
+	virtual void Play_Scene_BGM();
+
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;

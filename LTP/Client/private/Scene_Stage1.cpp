@@ -69,6 +69,8 @@ HRESULT CScene_Stage1::Initialize()
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
+	g_pGameInstance->PlaySoundW(L"Jino_Stage1_Start.wav", CHANNEL_PLAYER);
+	g_pGameInstance->PlayBGM(L"Jino_Stage1_Start_Wind.wav");
 	return S_OK;
 }
 
@@ -168,6 +170,11 @@ _int CScene_Stage1::Change_to_NextScene()
 
 }
 
+void CScene_Stage1::Play_Scene_BGM()
+{
+	g_pGameInstance->PlayBGM(L"Jino_BGM_Stage1.wav");
+}
+
 
 
 HRESULT CScene_Stage1::Ready_Light()
@@ -249,6 +256,8 @@ HRESULT CScene_Stage1::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	// End Pos : _float3(350.722f, 41.092f, 268.068f)
+
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(31.773f, 37.5f, 64.801f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);

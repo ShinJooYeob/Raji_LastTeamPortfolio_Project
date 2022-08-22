@@ -236,6 +236,7 @@ HRESULT CGrovetender::Update_State_Idle(_double fDeltaTime)
 
 				_Vector vSoundPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_CAMERA) + XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 				g_pGameInstance->Play3D_Sound(L"Jino_Golem_Grow.wav", vSoundPos, CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlayBGM(L"Jino_FakeBoss_Golem.wav");
 			}
 
 			m_fAnimSpeed = 0.5f;

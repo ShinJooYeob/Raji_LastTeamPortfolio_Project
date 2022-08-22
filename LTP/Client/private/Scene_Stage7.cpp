@@ -75,7 +75,7 @@ _int CScene_Stage7::Update(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 	{
-		m_fDelayTime -= fDeltaTime;
+		m_fDelayTime -= (_float)fDeltaTime;
 		if (0.f >= m_fDelayTime)
 		{
 			return Change_to_NextScene();
