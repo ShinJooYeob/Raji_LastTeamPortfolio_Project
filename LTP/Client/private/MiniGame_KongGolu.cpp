@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "..\public\MiniGame_DonkeyKong.h"
+#include "..\public\MiniGame_KongGolu.h"
 
 
-CMiniGame_DonkeyKong::CMiniGame_DonkeyKong(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
+CMiniGame_KongGolu::CMiniGame_KongGolu(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
 }
 
-CMiniGame_DonkeyKong::CMiniGame_DonkeyKong(const CMiniGame_DonkeyKong & rhs)
+CMiniGame_KongGolu::CMiniGame_KongGolu(const CMiniGame_KongGolu & rhs)
 	: CGameObject(rhs)
 {
 }
 
 
-HRESULT CMiniGame_DonkeyKong::Initialize_Prototype(void * pArg)
+HRESULT CMiniGame_KongGolu::Initialize_Prototype(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Prototype(pArg));
 
@@ -21,7 +21,7 @@ HRESULT CMiniGame_DonkeyKong::Initialize_Prototype(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::Initialize_Clone(void * pArg)
+HRESULT CMiniGame_KongGolu::Initialize_Clone(void * pArg)
 {
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -44,7 +44,7 @@ HRESULT CMiniGame_DonkeyKong::Initialize_Clone(void * pArg)
 	return S_OK;
 }
 
-_int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
+_int CMiniGame_KongGolu::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
@@ -65,7 +65,7 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 	return _int();
 }
 
-_int CMiniGame_DonkeyKong::LateUpdate(_double dDeltaTime)
+_int CMiniGame_KongGolu::LateUpdate(_double dDeltaTime)
 {
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
@@ -83,7 +83,7 @@ _int CMiniGame_DonkeyKong::LateUpdate(_double dDeltaTime)
 	return _int();
 }
 
-_int CMiniGame_DonkeyKong::Render()
+_int CMiniGame_KongGolu::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
@@ -105,22 +105,22 @@ _int CMiniGame_DonkeyKong::Render()
 	return _int();
 }
 
-_int CMiniGame_DonkeyKong::LateRender()
+_int CMiniGame_KongGolu::LateRender()
 {
 	return _int();
 }
 
-void CMiniGame_DonkeyKong::Set_IsDead()
+void CMiniGame_KongGolu::Set_IsDead()
 {
 	__super::Set_IsDead();
 
 }
 
-void CMiniGame_DonkeyKong::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
+void CMiniGame_KongGolu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
 }
 
-_float CMiniGame_DonkeyKong::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+_float CMiniGame_KongGolu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
 	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
 	//m_fHP += -fDamageAmount;
@@ -134,7 +134,7 @@ _float CMiniGame_DonkeyKong::Take_Damage(CGameObject * pTargetObject, _float fDa
 	return _float();
 }
 
-HRESULT CMiniGame_DonkeyKong::SetUp_Components()
+HRESULT CMiniGame_KongGolu::SetUp_Components()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Renderer), TAG_COM(Com_Renderer), (CComponent**)&m_pRendererCom));
 
@@ -171,7 +171,7 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::Adjust_AnimMovedTransform(_double dDeltatime)
+HRESULT CMiniGame_KongGolu::Adjust_AnimMovedTransform(_double dDeltatime)
 {
 	_uint iNowAnimIndex = m_pModel->Get_NowAnimIndex();
 	_double PlayRate = m_pModel->Get_PlayRate();
@@ -209,17 +209,17 @@ HRESULT CMiniGame_DonkeyKong::Adjust_AnimMovedTransform(_double dDeltatime)
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::SetUp_Info()
+HRESULT CMiniGame_KongGolu::SetUp_Info()
 {
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::Play_MiniGame(_double dDeltaTime)
+HRESULT CMiniGame_KongGolu::Play_MiniGame(_double dDeltaTime)
 {
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::SetUp_Collider()
+HRESULT CMiniGame_KongGolu::SetUp_Collider()
 {
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pColliderCom));
 
@@ -248,7 +248,7 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Collider()
 	return S_OK;
 }
 
-HRESULT CMiniGame_DonkeyKong::Update_Collider(_double dDeltaTime)
+HRESULT CMiniGame_KongGolu::Update_Collider(_double dDeltaTime)
 {
 	m_pColliderCom->Update_ConflictPassedTime(dDeltaTime);
 
@@ -265,31 +265,31 @@ HRESULT CMiniGame_DonkeyKong::Update_Collider(_double dDeltaTime)
 	return S_OK;
 }
 
-CMiniGame_DonkeyKong * CMiniGame_DonkeyKong::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
+CMiniGame_KongGolu * CMiniGame_KongGolu::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)
 {
-	CMiniGame_DonkeyKong*	pInstance = NEW CMiniGame_DonkeyKong(pDevice, pDeviceContext);
+	CMiniGame_KongGolu*	pInstance = NEW CMiniGame_KongGolu(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pArg)))
 	{
-		MSGBOX("Failed to Created CMiniGame_DonkeyKong");
+		MSGBOX("Failed to Created CMiniGame_KongGolu");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CMiniGame_DonkeyKong::Clone(void * pArg)
+CGameObject * CMiniGame_KongGolu::Clone(void * pArg)
 {
-	CMiniGame_DonkeyKong*	pInstance = NEW CMiniGame_DonkeyKong(*this);
+	CMiniGame_KongGolu*	pInstance = NEW CMiniGame_KongGolu(*this);
 
 	if (FAILED(pInstance->Initialize_Clone(pArg)))
 	{
-		MSGBOX("Failed to Created CMiniGame_DonkeyKong");
+		MSGBOX("Failed to Created CMiniGame_KongGolu");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMiniGame_DonkeyKong::Free()
+void CMiniGame_KongGolu::Free()
 {
 	__super::Free();
 

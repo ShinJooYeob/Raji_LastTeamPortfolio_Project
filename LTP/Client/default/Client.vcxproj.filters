@@ -571,14 +571,14 @@
     <Filter Include="01.GameObject\99.UI\3DUI">
       <UniqueIdentifier>{178f8e87-57c8-4177-adc1-d615e40320e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong">
-      <UniqueIdentifier>{efa95b74-925f-44fd-8f01-587aaa13c873}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_DonkingKong">
       <UniqueIdentifier>{0bbdaf5b-45de-4071-a01f-736cf913e21e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.Scene\04.Scene_InGame\08.Scene_MiniGame_GoluSurvivors">
       <UniqueIdentifier>{6dde7a14-084e-4717-9ce3-889c9ecb7008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong">
+      <UniqueIdentifier>{efa95b74-925f-44fd-8f01-587aaa13c873}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong">
       <UniqueIdentifier>{d0227e83-416c-46e4-b5f3-486cde110faa}</UniqueIdentifier>
@@ -588,6 +588,9 @@
     </Filter>
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger">
       <UniqueIdentifier>{1d576276-0b77-48e8-86da-42f99289437c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu">
+      <UniqueIdentifier>{eb4318b7-190f-4344-a5f8-2adea00b9331}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1258,6 +1261,9 @@
     <ClInclude Include="..\public\DonkeyKong_BulletTrigger.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MiniGame_KongGolu.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1906,6 +1912,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DonkeyKong_BulletTrigger.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_KongGolu.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongGolu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

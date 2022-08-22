@@ -229,6 +229,7 @@
     <ClInclude Include="..\public\MandalaPuzzleTrigger.h" />
     <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\MiniGame_DonkeyKong.h" />
+    <ClInclude Include="..\public\MiniGame_KongGolu.h" />
     <ClInclude Include="..\public\MiniGame_KongRaji.h" />
     <ClInclude Include="..\public\PM_Food.h" />
     <ClInclude Include="..\public\PM_Monster.h" />
@@ -413,6 +414,7 @@
     <ClCompile Include="..\private\MandalaPuzzle.cpp" />
     <ClCompile Include="..\private\MandalaPuzzleTrigger.cpp" />
     <ClCompile Include="..\private\MiniGame_DonkeyKong.cpp" />
+    <ClCompile Include="..\private\MiniGame_KongGolu.cpp" />
     <ClCompile Include="..\private\MiniGame_KongRaji.cpp" />
     <ClCompile Include="..\private\PM_Food.cpp" />
     <ClCompile Include="..\private\PM_Monster.cpp" />

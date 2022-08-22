@@ -2,12 +2,12 @@
 
 BEGIN(Client)
 
-class CMiniGame_DonkeyKong final : public CGameObject
+class CMiniGame_KongGolu final : public CGameObject
 {
 private:
-	explicit CMiniGame_DonkeyKong(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMiniGame_DonkeyKong(const CMiniGame_DonkeyKong& rhs);
-	virtual ~CMiniGame_DonkeyKong() = default;
+	explicit CMiniGame_KongGolu(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMiniGame_KongGolu(const CMiniGame_KongGolu& rhs);
+	virtual ~CMiniGame_KongGolu() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -54,7 +54,7 @@ private:
 	vector<ATTACHEDESC> m_vecAttachedDesc;
 
 public:
-	static CMiniGame_DonkeyKong* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMiniGame_KongGolu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
