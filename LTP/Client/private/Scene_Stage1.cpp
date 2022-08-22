@@ -397,6 +397,10 @@ HRESULT CScene_Stage1::Ready_MapData(const _tchar * szMapDataFileName, SCENEID e
 
 		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
 
+		//// 14 -> 22
+		//if (tData.PassIndex == 14)
+		//	tData.PassIndex = 22;
+
 		FAILED_CHECK(pInstanceMapObject->Add_InstanceMapObject(tData));
 
 	}

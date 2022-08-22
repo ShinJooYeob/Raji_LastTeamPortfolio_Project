@@ -51,17 +51,17 @@ HRESULT CScene_Stage6::Initialize()
 	// #RICK 병합시 수정
 
 	//EH
-	 FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
-	 
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 //FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 //FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	 FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+	
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 
 

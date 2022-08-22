@@ -9,8 +9,9 @@ class CPlayerWeapon_Bow final : public CPlayerWeapon
 public:
 	enum EBowPivot { BOW_PIVOT_NORMAL, BOW_PIVOT_THROW, BOW_PIVOT_TAKEDOWN, BOW_PIVOT_END };
 
-	enum EBowAnim {
-		BOW_ANIM_IDLE, BOW_ANIM_NORMAL_READY, BOW_ANIM_NORMAL_LOOP, BOW_ANIM_NORMAL_SHOT, 
+	enum EBowAnim
+	{
+		BOW_ANIM_IDLE, BOW_ANIM_NORMAL_READY, BOW_ANIM_NORMAL_LOOP, BOW_ANIM_NORMAL_SHOT,
 		BOW_ANIM_UTILITY_LOOP, BOW_ANIM_UTILITY_READY, BOW_ANIM_UTILITY_SHOT, BOW_ANIM_END
 	};
 
@@ -60,6 +61,11 @@ public:
 	}
 
 
+	/* Particle */
+	virtual HRESULT Ready_ParticleDesc();
+	virtual HRESULT Update_Particle(_double timer);
+	HRESULT Set_Dead_Transform(_uint ParticleIndex);
+
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -90,16 +96,11 @@ private:
 
 
 private:/*For Particle*/
-
-	/* Particle */
-	HRESULT Ready_ParticleDesc();
-	HRESULT Update_Particle(_double timer);
-	// HRESULT PlayParticle(_uint index);
-
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowUp = nullptr;
 	CTransform*						m_pTextureParticleTransform_BowBack = nullptr;
-	
+	//	CTransform*						m_pTextureParticleTransform_BowFront = nullptr;
+
 
 
 private:

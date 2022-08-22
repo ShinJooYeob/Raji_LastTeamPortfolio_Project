@@ -355,6 +355,7 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 		}
 		else
 		{
+			// BUG False Code
 			m_pTransformCom->Turn_CW(m_vRotAxis.XMVector(), fDeltaTime*mMeshDesc.RotationSpeedPerSec);
 		}
 	}
@@ -488,6 +489,25 @@ _int CNonInstanceMeshEffect_TT::Update(_double fDeltaTime)
 	_Sfloat3 f = m_pTransformCom->Get_Scale();
 	if (f.x <= 0.1f || f.y <= 0.1f || f.z <= 0.1f)
 		Set_IsDead();
+
+	// Emssive
+	if (mAddDesc.bEmissive)
+	{
+		if (mbEmssive == false)
+		{
+			mEmissiveTimer += fDeltaTime * 3.0f;
+			if (mEmissiveTimer > 1)
+				mbEmssive = !mbEmssive;
+		}
+		else
+		{
+			mEmissiveTimer -= fDeltaTime * 3.0f;
+			if (mEmissiveTimer < 0.1f)
+				mbEmssive = !mbEmssive;
+		}
+
+		Set_LimLight_N_Emissive(_float4(0.04f, 0.18f, 0.95f, mEmissiveTimer), _float4(mEmissiveTimer, mEmissiveTimer*0.5f, mEmissiveTimer, 0.9f));
+	}
 
 	// Timer
 	if (m_fCurTime_Duration >= mMeshDesc.fMaxTime_Duration)
@@ -647,6 +667,11 @@ HRESULT CNonInstanceMeshEffect_TT::Set_EasingMoveDesc(const MESHAEASING* desc, _
 	mEasingCountMAX = count;
 	mbEasingStart = false;
 	return S_OK;
+}
+
+void CNonInstanceMeshEffect_TT::Set_DeadMeshparticle()
+{
+	m_fCurTime_Duration = mMeshDesc.fMaxTime_Duration - mMeshDesc.fAppearTime;
 }
 
 HRESULT CNonInstanceMeshEffect_TT::SetUp_Components()

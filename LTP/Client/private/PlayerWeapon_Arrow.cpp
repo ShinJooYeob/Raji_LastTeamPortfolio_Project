@@ -36,7 +36,7 @@ HRESULT CPlayerWeapon_Arrow::Initialize_Clone(void * pArg)
 	m_bEffect_Head = false;
 
 
-	
+
 	return S_OK;
 }
 
@@ -85,16 +85,15 @@ _int CPlayerWeapon_Arrow::Update(_double fDeltaTime)
 		(m_eCurState != Arrow_State_NormalReady) ||
 		(m_eCurState != Arrow_State_UtilityReady) ||
 		(m_eCurState != Arrow_State_UltimateReady_Pre_Ready) ||
-		(m_eCurState != Arrow_State_UltimateReady_Post_Ready) 
+		(m_eCurState != Arrow_State_UltimateReady_Post_Ready)
 		)
 	{
 		if (!m_bEffect_Head)
 		{
-			GETPARTICLE->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom);
-			m_bEffect_Head = true;
+			Set_Play_MeshParticle(CPartilceCreateMgr::MESHEFFECT_ARROW_HEAD, m_pTransformCom, &m_bEffect_Head);
 		}
 
-	
+
 	}
 
 	if (true == m_bFired)
@@ -222,7 +221,7 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint i
 
 	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1, 1, 1), _float3(-100, -180, 70), _float3(0.0, 0.0, 0.0));
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(0.283f, -0.85f, 0.497f));
-	
+
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 	m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
 
@@ -234,7 +233,7 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_0(_fVector vShotDir, _uint i
 	if (1 == iArrowIndex)
 	{
 		m_pTransformCom->Turn_Direct(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP), XMConvertToRadians(10.f));
-	} 
+	}
 	else if (2 == iArrowIndex)
 	{
 		m_pTransformCom->Turn_Direct(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_UP), XMConvertToRadians(-10.f));
@@ -275,7 +274,7 @@ void CPlayerWeapon_Arrow::Set_State_PowerShot_Combo_2(_fVector vShotDir, _float 
 {
 	m_tPlayerWeaponDesc.eAttachedDesc.Set_DefaultBonePivot(_float3(1.1f, 1.1f, 1.1f), _float3(-110, -80, 110), _float3(0, 0, 0));
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(-0.957f, 0.11f, 0.667f));
-	
+
 	m_fAttachedMatrix = m_pTransformCom->Get_WorldMatrix() * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 	m_pTransformCom->Set_Matrix(m_fAttachedMatrix);
 
@@ -355,9 +354,7 @@ _int CPlayerWeapon_Arrow::UpdateState_NormalShot(_double fDeltaTime)
 		m_pTransformCom->Move_Forward(fDeltaTime);
 		m_pTimer_Destroy->Get_DeltaTime();
 		m_bFired = true;
-
-		// #EFFECT BUG
-		// FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
+		FAILED_CHECK_NONERETURN(Set_Play_Particle(1));
 
 	}
 	else
@@ -390,7 +387,7 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 	//m_pTransformCom->Move_Forward(fDeltaTime);
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	m_pTransformCom->MovetoDir(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
-	 
+
 	m_fCurTime_Destroy += (_float)fDeltaTime;
 	if (1.f <= m_fCurTime_Destroy)
 	{
@@ -403,7 +400,7 @@ _int CPlayerWeapon_Arrow::UpdateState_UtilityShot(_double fDeltaTime)
 	}
 
 	m_bFired = true;
-	
+
 	return _int();
 }
 
@@ -436,17 +433,17 @@ _int CPlayerWeapon_Arrow::UpdateState_PowerShot_Conbo_1(_double fDeltaTime)
 
 _int CPlayerWeapon_Arrow::UpdateState_PowerShot_Conbo_2(_double fDeltaTime)
 {
-	 _float fPos_y = m_fStartPos_y + (0.f * m_fTimeAcc - 9.8f * m_fTimeAcc * m_fTimeAcc * 0.5f);
-	 m_fTimeAcc += 0.02f;
+	_float fPos_y = m_fStartPos_y + (0.f * m_fTimeAcc - 9.8f * m_fTimeAcc * m_fTimeAcc * 0.5f);
+	m_fTimeAcc += 0.02f;
 
-	 _Vector vMyPos_Before = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	 m_pTransformCom->Move_Forward(fDeltaTime);
-	 _Vector vMyPos_After = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	_Vector vMyPos_Before = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
+	m_pTransformCom->Move_Forward(fDeltaTime);
+	_Vector vMyPos_After = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 
-	 vMyPos_After = XMVectorSetY(vMyPos_After, fPos_y);
-	 m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos_After);
-	 
-	 m_pTransformCom->LookDir(XMVector3Normalize(vMyPos_After - vMyPos_Before));
+	vMyPos_After = XMVectorSetY(vMyPos_After, fPos_y);
+	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos_After);
+
+	m_pTransformCom->LookDir(XMVector3Normalize(vMyPos_After - vMyPos_Before));
 
 	return _int();
 }
@@ -467,7 +464,7 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Pre_Shot(_double fDeltaTime)
 		// Spawn Core Sphere
 		Set_IsDead();
 	}
-	
+
 	return _int();
 }
 
@@ -481,7 +478,7 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 {
 	m_pTransformCom->Move_Forward(fDeltaTime);
 
-	
+
 
 	/** Check Collision to CoreSphere
 	if ()
@@ -496,6 +493,9 @@ _int CPlayerWeapon_Arrow::UpdateState_Ultimate_Post_Shot(_double fDeltaTime)
 
 HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 {
+
+	FAILED_CHECK(__super::Ready_ParticleDesc());
+
 	// Transform 
 	m_pTextureParticleTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
 	NULL_CHECK_BREAK(m_pTextureParticleTransform);
@@ -506,25 +506,25 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 	// Particle
 
 	// 0
-	//auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_ArrowHead);
-	//instanceDesc.FollowingTarget = nullptr;
-	//GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	auto instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_ArrowHead);
+	instanceDesc.FollowingTarget = nullptr;
+	GETPARTICLE->Create_Texture_Effect_Desc(instanceDesc, m_eNowSceneNum);
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	//// 1
-	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail);
-	//instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	// 1
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Bow_ArrowTrail);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	//// 2
-	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit);
-	//instanceDesc.FollowingTarget = m_pTextureParticleTransform;
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	// 2
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
-	//// 3
-	//instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
-	//instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
-	//m_vecTextureParticleDesc.push_back(instanceDesc);
+	// 3
+	instanceDesc = GETPARTICLE->Get_TypeDesc_TextureInstance(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_Charze_Long);
+	instanceDesc.FollowingTarget = m_pTextureParticleTransform_Hand;
+	m_vecTextureParticleDesc.push_back(instanceDesc);
 
 
 
@@ -534,12 +534,13 @@ HRESULT CPlayerWeapon_Arrow::Ready_ParticleDesc()
 
 HRESULT CPlayerWeapon_Arrow::Update_Particle(_double fDeltaTime)
 {
+	FAILED_CHECK(__super::Update_Particle(fDeltaTime));
 
-//	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
+	//	_Matrix mat = m_pTransformCom->Get_WorldMatrix()  * m_tPlayerWeaponDesc.eAttachedDesc.Caculate_AttachedBoneMatrix();
 
-	//	EX)
-	//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
-	//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
+		//	EX)
+		//	mat.r[3] = vPos - (mat.r[2] * 0.2f + mat.r[0] * 0.03f + mat.r[1] * 0.03f);
+		//	m_vecTextureParticleDesc[0].vFixedPosition = mat.r[3];
 
 	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
 	m_pTextureParticleTransform->Set_Matrix(mat);
@@ -549,7 +550,7 @@ HRESULT CPlayerWeapon_Arrow::Update_Particle(_double fDeltaTime)
 	mat2.r[1] = XMVector3Normalize(mat2.r[1]);
 	mat2.r[2] = XMVector3Normalize(mat2.r[2]);
 
-	mat2.r[3] += mat2.r[0] * 0 + mat2.r[1] * 0 + mat2.r[2]*0.8f;
+	mat2.r[3] += mat2.r[0] * 0 + mat2.r[1] * 0 + mat2.r[2] * 0.8f;
 
 	m_pTextureParticleTransform_Hand->Set_Matrix(mat2);
 
@@ -577,8 +578,7 @@ void CPlayerWeapon_Arrow::Update_Trail(_fMatrix * pMat, _double fDeltaTime)
 	{
 	case EArrowState::Arrow_State_NormalReady:
 		m_pSwordTrail->Update_SwordTrail((*pMat).r[3] + (*pMat).r[2] * 0.62f, (*pMat).r[3] + (*pMat).r[2] * 0.75f, fDeltaTime);
-		// #EFFECT BUG
-		// FAILED_CHECK_NONERETURN(Set_Play_Particle(0, (*pMat).r[3] + (*pMat).r[2] * 0.75f));
+		FAILED_CHECK_NONERETURN(Set_Play_Particle(0, (*pMat).r[3] + (*pMat).r[2] * 0.75f));
 		break;
 	case EArrowState::Arrow_State_NormalShot:
 	case EArrowState::Arrow_State_PowerShot_Combo_0:
@@ -723,11 +723,87 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			swprintf_s(pSoundFile, TEXT("Jino_Raji_Arrow_Impact_%d.wav"), iSelectSoundFileIndex);
 			g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 1.f);
 
-
-			// #EFFECT BUG
-			// FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
+			FAILED_CHECK_NONERETURN(Set_Play_Particle(2));
 
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 3.f, 0.2f, true);
+
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit,
+					0,
+					0.5f,
+					_float4(0.03f, 0.25f, 0.65f, 1),
+					_float4(0.13f, 0.35f, 0.75f, 1),
+					0,
+					_float3(1.1f),
+					_float3(0.3f),
+					1);
+				desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				//	desctex.vEmissive_SBB = _float3(1,0.3f,0.1f);
+				desctex.Particle_Power = 3.5f;
+				//	desctex.Particle_Power = 4.0f;
+
+				//	desctex.TempBuffer_0.z = 0;
+				//	desctex.TempBuffer_0.w = FollowingDir_Look;
+					//	desctex.FollowingTarget = m_pTransformCom;
+					//	desctex.iFollowingDir = FollowingDir_Up;
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+
+				_float val = 0.5f;
+				desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+				desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+					0,
+					0.5f,
+					_float4(0.25f, 0.86f, 1.0f, 1),
+					_float4(0.25f, 0.86f, 1.0f, 0.8f),
+					1,
+					_float3(0.8f),
+					_float3(1.0f),
+					1);
+
+				desctex.vEmissive_SBB = _float3(1, 0.1f, 0.5f);
+				desctex.Particle_Power = 0.5f;
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+			{
+				INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+					0,
+					0.5f,
+					_float4(0.25f, 0.86f, 1.0f, 1),
+					_float4(0.25f, 0.86f, 1.0f, 1.0f),
+					1,
+					_float3(0.7f),
+					_float3(0.1f),
+					1);
+
+				desctex.eParticleTypeID = InstanceEffect_Cone;
+				desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+
+				desctex.vEmissive_SBB = _float3(0.5f, 0.2f, 0.4f);
+				desctex.Particle_Power = 1.5f;
+				desctex.vPowerDirection = _float3(0, 0, 1);
+
+				desctex.vFixedPosition =
+					m_pTransformCom->Get_WorldMatrix().r[3];
+
+				GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+			}
+
 		}
 	}
 }
@@ -745,7 +821,7 @@ HRESULT CPlayerWeapon_Arrow::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PlayerWeapon_Arrow), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 
-	CTransform::TRANSFORMDESC tDesc = {}; 
+	CTransform::TRANSFORMDESC tDesc = {};
 	tDesc.fMovePerSec = 30;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.fScalingPerSec = 1;

@@ -1188,81 +1188,10 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				}
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.9f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.9)
+			// if (m_EffectAdjust == 0 && PlayRate >= 0.6)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
-
-				{
-					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
-						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.4f,
-						0.2f,
-						_float4(0.15f, 0.38f, 0.92f, 1),
-						_float4(0.15f, 0.38f, 0.92f, 0.0f),
-						1,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*0.3f,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*3.0f,
-						1);
-
-					// testMesh.fDistortionNoisingPushPower = 0;
-					// testMesh.Particle_Power = ;
-					testMesh.eParticleTypeID = InstanceEffect_Ball;
-					testMesh.eInstanceCount = Prototype_ModelInstance_16;
-					testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
-					// testMesh.Particle_Power = randpower;
-					// testMesh.iMaskingTextureIndex = 64;
-					// testMesh.iNoiseTextureIndex = 102;
-					// testMesh.vEmissive_SBB = _float3(1,0,0);
-
-
-					testMesh.ParticleStartRandomPosMin = _float3(-2.5f, 1, -2.5f);
-					testMesh.ParticleStartRandomPosMax = _float3(2.5f, 4, 2.5f);
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testMesh.vFixedPosition = pos;
-					// testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					testMesh.vNoisePushingDir = _float2(-1, 0);
-					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-				}
-
-				{
-					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
-						0,
-						0.5f,
-						_float4(1),
-						_float4(1, 1, 1, 0.5f),
-						1,
-						_float3(0.05f, 3, 0.05f),
-						_float3(0.05f, 4, 0.05f),
-						1);
-					//	testTex.eParticleTypeID = InstanceEffect_Ball;
-					//	testTex.ePassID = InstancePass_OriginColor;
-					//	testTex.ePassID = InstancePass_BrightColor;
-					//	testTex.vEmissive_SBB = _float3(1,0,0);
-
-					testTex.Particle_Power = 5.0f;
-
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
-					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
-
-					testTex.vPowerDirection = _float3(1, 1, 1);
-					testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
-
-					testTex.iTextureLayerIndex = 10;
-					//	testTex.iMaskingTextureIndex = 74;
-					//	testTex.iNoiseTextureIndex = 160;
-					//	testTex.TempBuffer_1.y = 0.0f;
-
-					////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testTex.vFixedPosition = pos;
-
-
-					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-
-				}
+				Effect_Knife();
 
 				m_EffectAdjust++;
 			}
@@ -1400,82 +1329,11 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iSoundIndex++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.5f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.5)
+			//if (m_EffectAdjust == 0 && PlayRate >= 0.2)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
 
-				{
-					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
-						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.4f,
-						0.2f,
-						_float4(0.15f, 0.38f, 0.92f, 1),
-						_float4(0.15f, 0.38f, 0.92f, 0.0f),
-						1,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*0.3f,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*3.0f,
-						1);
-
-					// testMesh.fDistortionNoisingPushPower = 0;
-					// testMesh.Particle_Power = ;
-					testMesh.eParticleTypeID = InstanceEffect_Ball;
-					testMesh.eInstanceCount = Prototype_ModelInstance_16;
-					testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
-					// testMesh.Particle_Power = randpower;
-					// testMesh.iMaskingTextureIndex = 64;
-					// testMesh.iNoiseTextureIndex = 102;
-					// testMesh.vEmissive_SBB = _float3(1,0,0);
-
-
-					testMesh.ParticleStartRandomPosMin = _float3(-2.5f, 1, -2.5f);
-					testMesh.ParticleStartRandomPosMax = _float3(2.5f, 4, 2.5f);
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testMesh.vFixedPosition = pos;
-					// testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					testMesh.vNoisePushingDir = _float2(-1, 0);
-					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-				}
-
-				{
-					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
-						0,
-						0.5f,
-						_float4(1),
-						_float4(1, 1, 1, 0.5f),
-						1,
-						_float3(0.05f, 3, 0.05f),
-						_float3(0.05f, 4, 0.05f),
-						1);
-					//	testTex.eParticleTypeID = InstanceEffect_Ball;
-					//	testTex.ePassID = InstancePass_OriginColor;
-					//	testTex.ePassID = InstancePass_BrightColor;
-					//	testTex.vEmissive_SBB = _float3(1,0,0);
-
-					testTex.Particle_Power = 5.0f;
-
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-
-					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
-					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
-
-					testTex.vPowerDirection = _float3(1, 1, 1);
-					testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
-
-					testTex.iTextureLayerIndex = 10;
-					//	testTex.iMaskingTextureIndex = 74;
-					//	testTex.iNoiseTextureIndex = 160;
-					//	testTex.TempBuffer_1.y = 0.0f;
-
-					////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testTex.vFixedPosition = pos;
-
-
-					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-				}
-
+				Effect_Knife();
 				m_EffectAdjust++;
 			}
 			break;
@@ -1554,82 +1412,10 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_iSoundIndex++;
 			}
 
-			if (m_EffectAdjust == 0 && PlayRate >= 0.5f)
+			if (m_EffectAdjust == 0 && PlayRate >= 0.5)
+			// if (m_EffectAdjust == 0 && PlayRate >= 0.2)
 			{
-				Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
-
-				{
-					INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
-						Prototype_Mesh_SM_DS_Basic_03_3_X_L,
-						0.4f,
-						0.2f,
-						_float4(0.15f, 0.38f, 0.92f, 1),
-						_float4(0.15f, 0.38f, 0.92f, 0.0f),
-						1,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*0.3f,
-						_float3(0.1f, 0.5f, 0.1f).XMVector()*3.0f,
-						1);
-
-					// testMesh.fDistortionNoisingPushPower = 0;
-					// testMesh.Particle_Power = ;
-					testMesh.eParticleTypeID = InstanceEffect_Ball;
-					testMesh.eInstanceCount = Prototype_ModelInstance_16;
-					testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
-					// testMesh.Particle_Power = randpower;
-					// testMesh.iMaskingTextureIndex = 64;
-					// testMesh.iNoiseTextureIndex = 102;
-					// testMesh.vEmissive_SBB = _float3(1,0,0);
-
-
-
-					testMesh.ParticleStartRandomPosMin = _float3(-2.5f, 1, -2.5f);
-					testMesh.ParticleStartRandomPosMax = _float3(2.5f, 4, 2.5f);
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testMesh.vFixedPosition = pos;
-					// testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					testMesh.vNoisePushingDir = _float2(-1, 0);
-					GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
-				}
-				{
-					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
-						0,
-						0.5f,
-						_float4(1),
-						_float4(1, 1, 1, 0.5f),
-						1,
-						_float3(0.05f, 3, 0.05f),
-						_float3(0.05f, 4, 0.05f),
-						1);
-					//	testTex.eParticleTypeID = InstanceEffect_Ball;
-					//	testTex.ePassID = InstancePass_OriginColor;
-					//	testTex.ePassID = InstancePass_BrightColor;
-					//	testTex.vEmissive_SBB = _float3(1,0,0);
-
-					testTex.Particle_Power = 5.0f;
-
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
-
-					testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
-					testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
-
-					testTex.vPowerDirection = _float3(1, 1, 1);
-					testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
-
-					testTex.iTextureLayerIndex = 10;
-					//	testTex.iMaskingTextureIndex = 74;
-					//	testTex.iNoiseTextureIndex = 160;
-					//	testTex.TempBuffer_1.y = 0.0f;
-
-					////	testTex.FollowingTarget = m_pTextureParticleTransform_Demo1;
-					_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
-					_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
-					testTex.vFixedPosition = pos;
-
-					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-
-				}
-
+				Effect_Knife();
 
 				m_EffectAdjust++;
 			}
@@ -1792,6 +1578,94 @@ HRESULT CMonster_Ninjasura_Minion::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
+}
+
+void CMonster_Ninjasura_Minion::Effect_Knife()
+{
+	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_NM_Cash4, m_pTextureParticleTransform_Demo1);
+
+	{
+		INSTMESHDESC testMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase,
+			Prototype_Mesh_SM_DS_Basic_03_3_X_L,
+			0.4f,
+			0.2f,
+			_float4(0.15f, 0.38f, 0.92f, 1),
+			_float4(0.15f, 0.38f, 0.92f, 0.0f),
+			1,
+			_float3(0.1f, 0.5f, 0.1f).XMVector()*0.3f,
+			_float3(0.1f, 0.5f, 0.1f).XMVector()*3.0f,
+			1);
+
+		// testMesh.fDistortionNoisingPushPower = 0;
+		// testMesh.Particle_Power = ;
+		testMesh.eParticleTypeID = InstanceEffect_Ball;
+		testMesh.eInstanceCount = Prototype_ModelInstance_16;
+		testMesh.ePassID = MeshPass_MaskingNoising_Appear_Bright;
+		// testMesh.Particle_Power = randpower;
+		// testMesh.iMaskingTextureIndex = 64;
+		// testMesh.iNoiseTextureIndex = 102;
+		// testMesh.vEmissive_SBB = _float3(1,0,0);
+
+
+
+		testMesh.ParticleStartRandomPosMin = _float3(-2.5f, 1, -2.5f);
+		testMesh.ParticleStartRandomPosMax = _float3(2.5f, 4, 2.5f);
+
+		// TRANS 
+	//	testMesh.FollowingTarget = m_pTransformCom;
+	//	testMesh.TempBuffer_0.z = 0;
+
+		// FIXPOS
+		_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+		_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+		testMesh.vFixedPosition = pos;
+
+
+		// testMesh.FollowingTarget = m_pTextureParticleTransform_Demo1;
+		testMesh.vNoisePushingDir = _float2(-1, 0);
+		GETPARTICLE->Create_MeshInst_DESC(testMesh, m_eNowSceneNum);
+	}
+	{
+		INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
+			0,
+			0.5f,
+			_float4(1),
+			_float4(1, 1, 1, 0.5f),
+			1,
+			_float3(0.05f, 3, 0.05f),
+			_float3(0.05f, 4, 0.05f),
+			1);
+		//	testTex.eParticleTypeID = InstanceEffect_Ball;
+		//	testTex.ePassID = InstancePass_OriginColor;
+		//	testTex.ePassID = InstancePass_BrightColor;
+		//	testTex.vEmissive_SBB = _float3(1,0,0);
+
+		testTex.Particle_Power = 5.0f;
+
+		testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+
+		testTex.ParticleStartRandomPosMin = _float3(-1.5f, 1, -1.5f);
+		testTex.ParticleStartRandomPosMax = _float3(1.5f, 3, 1.5f);
+
+		testTex.vPowerDirection = _float3(1, 1, 1);
+		testTex.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+
+		testTex.iTextureLayerIndex = 10;
+		//	testTex.iMaskingTextureIndex = 74;
+		//	testTex.iNoiseTextureIndex = 160;
+
+		// TRANS 
+	//	testTex.FollowingTarget = m_pTransformCom;
+	//	testTex.TempBuffer_1.y = 0.0f;
+
+		_Matrix mat = m_pTextureParticleTransform_Demo1->Get_WorldMatrix();
+		_Vector pos = mat.r[3] - mat.r[2] * 3.0f;
+		testTex.vFixedPosition = pos;
+
+		GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+	}
+
 }
 
 CMonster_Ninjasura_Minion * CMonster_Ninjasura_Minion::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)

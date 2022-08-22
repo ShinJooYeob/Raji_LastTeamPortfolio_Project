@@ -95,7 +95,7 @@ _int CShellingSkillRange::Render()
 	if (FAILED(m_pTextureCom->Bind_OnShader(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
 
-	m_pVIBufferCom->Render(m_pShaderCom, 3);
+//	m_pVIBufferCom->Render(m_pShaderCom, 3);
 
 	return _int();
 }

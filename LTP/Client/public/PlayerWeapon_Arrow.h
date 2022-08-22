@@ -11,13 +11,15 @@ BEGIN(Client)
 class CPlayerWeapon_Arrow final : public CPlayerWeapon
 {
 public:
-	enum EArrowState { 
-		Arrow_State_NormalReady, Arrow_State_NormalShot, 
-		Arrow_State_UtilityReady, Arrow_State_UtilityShot, 
+	enum EArrowState
+	{
+		Arrow_State_NormalReady, Arrow_State_NormalShot,
+		Arrow_State_UtilityReady, Arrow_State_UtilityShot,
 		Arrow_State_PowerShot_Combo_0, Arrow_State_PowerShot_Combo_1, Arrow_State_PowerShot_Combo_2,
 		Arrow_State_UltimateReady_Pre_Ready, Arrow_State_UltimateShot_Pre_Shot,
 		Arrow_State_UltimateReady_Post_Ready, Arrow_State_UltimateShot_Post_Shot,
-		STATE_END };
+		STATE_END
+	};
 
 private:
 	CPlayerWeapon_Arrow(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -84,7 +86,7 @@ public:
 
 public:
 	virtual HRESULT Ready_ParticleDesc();
-//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
+	//	virtual HRESULT Set_Play_Particle(_uint ParticleIndex, _float Timer = -1, CTransform* defaultTrans = nullptr, _float3 offset = _float3::Zero());
 	virtual HRESULT Update_Particle(_double fDeltaTime);
 
 private:
@@ -130,7 +132,7 @@ private:
 private:/*For Particle*/
 	CTransform*						m_pTextureParticleTransform = nullptr;
 	CTransform*						m_pTextureParticleTransform_Hand = nullptr;
-	
+
 
 public:
 	static CPlayerWeapon_Arrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
