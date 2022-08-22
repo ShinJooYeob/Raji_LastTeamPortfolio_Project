@@ -110,7 +110,7 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 
 			if (m_fSceneChangingTimer <= 0)
 			{
-				CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
+				CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 				NULL_CHECK_RETURN(pPlayer, E_FAIL);
 				CCamera_Main* pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
 				NULL_CHECK_RETURN(pMainCam, E_FAIL);

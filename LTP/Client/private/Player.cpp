@@ -24,7 +24,7 @@
 #include "PartilceCreateMgr.h"
 #include "InstanceEffect.h"
 
-//#define NotOnNavi
+#define NotOnNavi
 
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)

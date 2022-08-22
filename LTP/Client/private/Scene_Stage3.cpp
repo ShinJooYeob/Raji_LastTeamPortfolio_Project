@@ -301,7 +301,8 @@ HRESULT CScene_Stage3::Ready_Layer_UI(const _tchar * pLayerTag)
 }
 HRESULT CScene_Stage3::Ready_Layer_Terrain(const _tchar * pLayerTag)
 {
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Terrain)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_Boss_Vishnu_RollingEye)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, pLayerTag, TAG_OP(Prototype_Object_Boss_Vishnu_RollingEye)));
 
 
 

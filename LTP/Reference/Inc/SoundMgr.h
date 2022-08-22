@@ -56,12 +56,17 @@ private:
 	_float				m_fPassedTimeArr[MaxChannelCount];
 	_float				m_VolumeArr[CHANNEL_MAXCHANNEL];
 	_bool				m_PauseArr[CHANNEL_MAXCHANNEL];
+	SOUNDDESC			m_tSoundDesc[BGMChannelCount];
 
 	_uint				m_Verson;
 	E_SOUNDMODE			me_SoundMode = SOUNDMODE_END;
 
 	_float3				mCamPostiotn = _float3(0,0,0);
 
+
+	_uint  m_iBGMIndex = 0;
+	_bool  m_bChangingBGM = false;
+	_double m_ChangingBGMTime = 0;
 
 private:
 	HRESULT LoadSoundFile_3D();

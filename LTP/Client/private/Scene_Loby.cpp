@@ -52,8 +52,6 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	//}
 
 
-
-
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());

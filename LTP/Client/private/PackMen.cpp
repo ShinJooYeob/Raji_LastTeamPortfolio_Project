@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\PackMen.h"
 #include "Scene.h"
+#include "MiniGameBuilding.h"
 
 
 CPackMen::CPackMen(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -209,7 +210,10 @@ HRESULT CPackMen::Added_Damaged()
 	}
 	else
 	{
-		g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_PACKMAN);
+
+		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+		g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_MINIGAME_PM);
 
 	}
 

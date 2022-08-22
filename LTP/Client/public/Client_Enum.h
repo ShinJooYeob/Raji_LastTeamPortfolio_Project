@@ -415,6 +415,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_Boss_MahabalasuraATKSPR,
 	Prototype_Object_Boss_Volcano,
 	Prototype_Object_Boss_FlameTeraain,
+	Prototype_Object_Boss_Vishnu_RollingEye,
 	Prototype_Object_Effect_MagicCircle,
 	Prototype_Object_Map_Demon_Tree,
 	Prototype_Object_Map_TreeMesh,
@@ -773,7 +774,12 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Object_Boss_FlameTeraain:
 		return TEXT("Prototype_Object_Boss_FlameTeraain");
 		break;		
-				
+
+	case Prototype_Object_Boss_Vishnu_RollingEye:
+		return TEXT("Prototype_Object_Boss_Vishnu_RollingEye");
+		break;
+		
+
 	case Prototype_Object_Effect_MagicCircle:
 		return TEXT("Prototype_Object_Effect_MagicCircle");
 
@@ -1479,8 +1485,13 @@ enum COMPONENTPROTOTYPEID
 		Prototype_Mesh_JY_Gazebo_Piece03,
 		Prototype_Mesh_JY_Gazebo_Piece04,
 		Prototype_Mesh_Burger_Alphabet,
+
 		
-	Prototype_Mesh_Wing,
+		Prototype_Mesh_Wing,
+
+		Prototype_Mesh_Vishnu_Rolling_Eye,
+		Prototype_Mesh_Vishnu_Statue,
+
 
 
 		Prototype_Mesh_PackMen,
@@ -4027,7 +4038,14 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 	case Prototype_Mesh_Burger_Alphabet:
 		return TEXT("Burger_Alphabet.fbx");
 		break;
-		
+
+	case Prototype_Mesh_Vishnu_Rolling_Eye:
+		return TEXT("Vishnu_Rolling_Eye.fbx");
+		break;
+	case Prototype_Mesh_Vishnu_Statue:
+		return TEXT("Vishnu_Statue.fbx");
+		break;
+
 
 	case Prototype_Mesh_Plat_Wall:
 		return TEXT("Plat_Wall.fbx");

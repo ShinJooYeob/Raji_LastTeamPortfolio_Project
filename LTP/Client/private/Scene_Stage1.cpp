@@ -292,27 +292,8 @@ HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 		PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 
-		//m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-		//NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-		//m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-		//m_pMainCam->Set_FocusTarget(pPlayer);
 
 		m_iBuildingIndex = tDesc.ObjMgrLaterIdx;
-
-		//static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(29.8301334f, 43.5636215f, 56.5241318f));
-		//m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636215f, 56.5241318f, 1.f), XMVectorSet(0.242860183f, -0.570450962f, 0.784604728f, 0.f));
-		//pPlayer->Update(g_fDeltaTime);
-		//pPlayer->Update(g_fDeltaTime);
-		//pPlayer->Update(g_fDeltaTime);
-		//pPlayer->Update(g_fDeltaTime);
-		//pPlayer->Update(g_fDeltaTime);
-		//pPlayer->Update(g_fDeltaTime);
-		//static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(29.8301334f, 43.5636215f, 56.5241318f));
-		//m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636215f, 56.5241318f, 1.f), XMVectorSet(0.242860183f, -0.570450962f, 0.784604728f, 0.f));
-
-
-		//m_pMainCam->Set_FocusTarget(pPlayer);
-		//m_pMainCam->Set_CameraInitState(XMVectorSet(29.8301334f, 43.5636215f, 56.5241318f, 1.f), XMVectorSet(0.242860183f, -0.570450962f, 0.784604728f, 0.f));
 
 	}
 

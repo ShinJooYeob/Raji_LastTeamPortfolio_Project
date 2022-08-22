@@ -59,7 +59,7 @@ _int CScene_Minigame1::Update(_double fDeltaTime)
 
 
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME_Jino), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE1), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 

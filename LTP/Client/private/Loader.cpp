@@ -125,6 +125,8 @@
 #include "RajiHand.h"
 #include "Rajibalsura.h"
 #include "EndingPortal.h"
+#include "Vishnu_RollingEye.h"
+
 //////////////////////////////////////////////////////////////////////////////
 ////STA0GE_6//////////////////////////////////////////////////////////////////
 #include "TestObject_PhysX.h"
@@ -372,6 +374,14 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		{
 			GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(COMPONENTPROTOTYPEID(i)), TransformMatrix);
 		}
+
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		for (_uint i = Prototype_Mesh_Vishnu_Rolling_Eye; i <= Prototype_Mesh_Vishnu_Statue; i++)
+		{
+			GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(COMPONENTPROTOTYPEID(i)), TransformMatrix);
+		}
+
+
 
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_ConeMesh), TransformMatrix);
@@ -963,10 +973,12 @@ HRESULT CLoader::Load_Scene_Stage3(_bool * _IsClientQuit, CRITICAL_SECTION * _Cr
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Rangda_WaspBullet), CRanda_Wasp_Bullet::Create(m_pDevice, m_pDeviceContext)));
 	
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Effect_MagicCircle), CRangda_MagicCircle::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_Boss_Vishnu_RollingEye), CVishnu_RollingEye::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NPC_Golu), CGolu::Create(m_pDevice, m_pDeviceContext)));
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_UI_PathArrow), CPathArrow::Create(m_pDevice, m_pDeviceContext)));
+	
 #pragma endregion
 
 
@@ -2188,8 +2200,8 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 
 	//Map Make
-	for (_uint i = 0; i < SCENE_END; i++)
-		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+	//for (_uint i = 0; i < SCENE_END; i++)
+	//	FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
 	
 #pragma endregion

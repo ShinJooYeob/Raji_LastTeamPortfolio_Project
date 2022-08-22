@@ -625,6 +625,9 @@
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster">
       <UniqueIdentifier>{909b0199-9b8b-48e7-b4ce-6a6b5f818408}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\07.MapObject\02.StaticObject\Vishnu_RollingEye">
+      <UniqueIdentifier>{5c10e7aa-fa27-4d04-960e-7bfea0219ef3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1334,6 +1337,9 @@
     <ClInclude Include="..\public\Taiko_Monster.h">
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Vishnu_RollingEye.h">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Vishnu_RollingEye</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2012,6 +2018,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Taiko_Monster.cpp">
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Vishnu_RollingEye.cpp">
+      <Filter>01.GameObject\07.MapObject\02.StaticObject\Vishnu_RollingEye</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

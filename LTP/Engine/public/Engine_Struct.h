@@ -2,6 +2,12 @@
 
 namespace Engine
 {
+	typedef struct tag3DSoundDesc
+	{
+		_float					fTargetSound = 1.f;
+		_bool					bStopSoundNow = false;
+		//_uint					iIdentificationNumber = 0;
+	}SOUNDDESC;
 
 	typedef struct tagVertex_Point
 	{

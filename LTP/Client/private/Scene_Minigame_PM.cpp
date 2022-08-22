@@ -62,7 +62,7 @@ _int CScene_Minigame_PM::Update(_double fDeltaTime)
 
 
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE6), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
@@ -91,6 +91,7 @@ _int CScene_Minigame_PM::Render()
 {
 	if (__super::Render() < 0)
 		return -1;
+
 	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		if (m_fSceneStartTimer < 0.5f)

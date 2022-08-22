@@ -54,10 +54,8 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 	
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -373,23 +371,37 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
-
-	m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
-	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
-
-	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-	PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-
-	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(0.f, 2.3f, 3.f));
-	static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(14.3749924f, 51.0999756f, -2.48100090f));
 	
-	m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
-	NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
-	m_pMainCam->Lock_CamLook(true);
-	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-	m_pMainCam->Set_FocusTarget(pPlayer);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(14.3749924f, 51.0999756f, -2.48100090f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
+	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
+	{
+		m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+		NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
 
+		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+		PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+		static_cast<CPlayer*>(pPlayer)->Set_AttachCamPosOffset(_float3(0.f, 2.3f, 3.f));
+		static_cast<CPlayer*>(pPlayer)->Set_AttachCamPos(_float3(14.3749924f, 51.0999756f, -2.48100090f));
+
+		m_pMainCam = (CCamera_Main*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STATIC, TAG_LAY(Layer_Camera_Main)));
+		NULL_CHECK_RETURN(m_pMainCam, E_FAIL);
+		m_pMainCam->Lock_CamLook(true);
+		m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		m_pMainCam->Set_FocusTarget(pPlayer);
+		m_pMainCam->Set_CameraInitState(XMVectorSet(14.3749924f, 51.0999756f, -2.48100090f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
+
+	}
+	else
+	{
+		PPDDESC tDesc = (GetSingle(CUtilityMgr)->Set_SceneChangingData(SCENE_STAGE6));
+
+		m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+		NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
+
+		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+		PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+		m_iBuildingIndex = tDesc.ObjMgrLaterIdx;
+	}
 	return S_OK;
 }
 
@@ -749,22 +761,40 @@ HRESULT CScene_Stage6::Ready_EnvMappedWater(const _tchar * pLayerTag)
 HRESULT CScene_Stage6::Ready_MiniGameBuilding(const _tchar * pLayerTag)
 {
 
+
+	_uint iNum = 0;
+
 	CMiniGameBuilding::MGBDESC tDesc;
 	tDesc.vPosition = _float3(189.799f, 31.890f, 274.338f);
 	tDesc.vScale = _float3(1.f);
 	tDesc.eKindsOfMiniGame = CMiniGameBuilding::MINIGAME_DONKINGKONG;
-	tDesc.vLookDir = _float3(1, 0, 0).Get_Nomalize();
+	tDesc.vLookDir = _float3(-1, 0, 0).Get_Nomalize();
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
 
+	if (m_iBuildingIndex >= (_int)iNum)
+	{
+		CMiniGameBuilding* pObj = (CMiniGameBuilding*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag);
+		pObj->Set_OffRadiation();
+		if (m_iBuildingIndex == (_int)iNum)
+			pObj->Start_ReverseSceneChanging_CamAct();
+	}
+	iNum++;
 
 
 	tDesc.vPosition = _float3(78.476f, 31.637f, 241.825f);
 	tDesc.vScale = _float3(1.f);
 	tDesc.eKindsOfMiniGame = CMiniGameBuilding::MINIGAME_PACKMAN;
-	tDesc.vLookDir = _float3(1, 0, 0).Get_Nomalize();
+	tDesc.vLookDir = _float3(-1, 0, 0).Get_Nomalize();
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Object_MiniGameBuilding), &tDesc));
 
-
+	if (m_iBuildingIndex >= (_int)iNum)
+	{
+		CMiniGameBuilding* pObj = (CMiniGameBuilding*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENEID::SCENE_STAGE6, pLayerTag);
+		pObj->Set_OffRadiation();
+		if (m_iBuildingIndex == (_int)iNum)
+			pObj->Start_ReverseSceneChanging_CamAct();
+	}
+	iNum++;
 
 	return S_OK;
 }

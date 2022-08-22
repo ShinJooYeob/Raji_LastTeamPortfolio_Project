@@ -55,6 +55,7 @@ private:
 	class CCamera_Main*				m_pMainCam = nullptr;
 	CUtilityMgr*					m_pUtilMgr = nullptr;
 	CTransform*						m_pPlayerTransform = nullptr;
+	_int							m_iBuildingIndex = -1;
 
 	class CPhyxSampleTest*			m_pPhySample = nullptr;
 public:

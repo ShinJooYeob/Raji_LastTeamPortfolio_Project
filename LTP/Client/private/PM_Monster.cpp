@@ -462,7 +462,7 @@ _int CPM_Monster::Update(_double dDeltaTime)
 	}
 	
 
-	if (m_PassedTimer < 2)
+	if (m_PassedTimer < 0.5f)
 	{
 		m_PassedTimer += (_float)dDeltaTime;
 		return 1;

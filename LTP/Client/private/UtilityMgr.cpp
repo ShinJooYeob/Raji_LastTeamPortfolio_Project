@@ -492,7 +492,7 @@ PPDDESC CUtilityMgr::Set_SceneChangingData(_uint eSceneID)
 
 
 
-	return PPDDESC();
+	return m_tForSceneChangingData;
 }
 
 

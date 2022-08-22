@@ -2,6 +2,7 @@
 #include "..\public\UI_Texture_Universal.h"
 #include "MiniGame_Golu.h"
 #include "Scene.h"
+#include "MiniGameBuilding.h"
 
 const _tchar* m_pUI_Texture_Universal_Tag[CUI_Texture_Universal::UI_END]
 {
@@ -297,7 +298,10 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 
 		if (m_AccumulationTime > 2.5)
 		{
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
+			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
 		}
 		break;
 	}
@@ -321,7 +325,9 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 
 		if (m_AccumulationTime > 2.5)
 		{
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
+			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_MINIGAME1);
 		}
 		break;
 	}
