@@ -884,14 +884,15 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 		break;
 	case WEAPON_SWORD:
 	{
-		if (100.f > GetSingle(CUtilityMgr)->Get_SwordshieldSkillPersent())
-			return;
+		//if (100.f > GetSingle(CUtilityMgr)->Get_SwordshieldSkillPersent())
+		//	return;
 
 		GetSingle(CUtilityMgr)->ResetSwordshieldPersent();
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
 
 		m_vecNonInstMeshDesc[6].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 		m_vecNonInstMeshDesc[6].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
 			&m_vecNonInstMeshDesc[6]);
 	}
@@ -6755,6 +6756,10 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 			XMVector3Normalize((m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK)
 				+ m_pTransformCom->Get_MatrixState(CTransform::STATE_UP) * 10.f) - m_vecNonInstMeshDesc[2].vPosition.XMVector());
 
+
+
+		m_vecTextureParticleDesc[11].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[11]);
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]);
 		GetSingle(CUtilityMgr)->SlowMotionStart(1.5f, 0.1f);
 	}
@@ -7274,6 +7279,8 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 
 			m_vecNonInstMeshDesc[7].vLookDir = -(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
 
+
+
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect),
 				&m_vecNonInstMeshDesc[7]);
 		}
@@ -7333,7 +7340,6 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 			m_vecNonInstMeshDesc[9].vLookDir = ((m_vecNonInstMeshDesc[9].vPosition.XMVector()) - (m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
 				m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK) * 1.5f
 				));
-
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 				TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[9]);
@@ -8077,6 +8083,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 		{
 			if (false == m_bPlayPowerAttack)
 			{
+				m_pPlayerWeapons[WEAPON_SPEAR - 1]->EffectParticleOn(0);
 				if (true == bJumpAttack)
 					m_pModel->Change_AnimIndex(SPEAR_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK, 0.2f, true);
 				else
@@ -8094,6 +8101,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 		{
 			if (false == m_bPlayPowerAttack)
 			{
+				m_pPlayerWeapons[WEAPON_SPEAR - 1]->EffectParticleOn(0);
 				if (true == bJumpAttack)
 					m_pModel->Change_AnimIndex(SPEAR_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK, 0.2f, true);
 				else
@@ -8111,6 +8119,7 @@ void CPlayer::Set_MainAttackAnim(_bool bJumpAttack)
 		{
 			if (false == m_bPlayPowerAttack)
 			{
+				m_pPlayerWeapons[WEAPON_SPEAR - 1]->EffectParticleOn(0);
 				if (true == bJumpAttack)
 					m_pModel->Change_AnimIndex(SPEAR_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK, 0.2f, true);
 				else
@@ -9406,18 +9415,28 @@ HRESULT CPlayer::Adjust_AnimMovedTransform(_double fDeltatime)
 					Set_PlayerState(STATE_MOV);
 					m_pModel->Change_AnimIndex(BASE_ANIM_RUN_F, 0.1f);
 					m_iCurCombo = 1;
+
+					if (true == m_bMainAttacking)
+						m_pPlayerWeapons[WEAPON_SPEAR - 1]->EffectParticleOn(1);
+					
 					m_bMainAttacking = false;
 					m_bPlayJumpAttack = false;
 					m_bPlayPowerAttack = false;
+
 				}
 				else if (MOVDIR_END == m_eInputDir && true == m_bAttackEnd)			// If not input Command & not input Mov Command
 				{
 					Set_PlayerState(STATE_IDLE);
 					m_pModel->Change_AnimIndex(BASE_ANIM_IDLE, 0.2f);
 					m_iCurCombo = 1;
+
+					if (true == m_bMainAttacking)
+						m_pPlayerWeapons[WEAPON_SPEAR - 1]->EffectParticleOn(1);
+
 					m_bMainAttacking = false;
 					m_bPlayJumpAttack = false;
 					m_bPlayPowerAttack = false;
+
 				}
 
 				if (true == m_bAttackEnd)
@@ -9531,6 +9550,11 @@ HRESULT CPlayer::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = m_pJYTextureParticleTransform;
 	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].iFollowingDir = FollowingDir_Look;
 
+	// 11
+	m_vecTextureParticleDesc.push_back(pUtil->Get_TextureParticleDesc(L"JY_TextureEft_24"));
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].FollowingTarget = nullptr;
+	m_vecTextureParticleDesc[m_vecTextureParticleDesc.size() - 1].TotalParticleTime = 2.2f;
+
 
 #pragma region NonInstMesh;
 
@@ -9616,7 +9640,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		tNIMEDesc.RotAxis = FollowingDir_Look;
 		tNIMEDesc.RotationSpeedPerSec = 1080.f;
-		tNIMEDesc.vSize = _float3(0.4f);
+		tNIMEDesc.vSize = _float3(0.2530625f);
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 
 	}
@@ -9643,7 +9667,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		tNIMEDesc.RotAxis = FollowingDir_Up;
 		tNIMEDesc.RotationSpeedPerSec = 360.f;
-		tNIMEDesc.vSize = _float3(2.f, 0.2f, 2.f);
+		tNIMEDesc.vSize = _float3(1.425f, 0.1425f, 1.425f);
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
 	// 4
@@ -9729,8 +9753,9 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.vColor = _float3(0.98046875f, 0.93359375f, 0.19140625f);
 
 		tNIMEDesc.RotAxis = FollowingDir_Look;
-		tNIMEDesc.RotationSpeedPerSec = 0.f;
-		tNIMEDesc.vSize = _float3(0.06f);
+		tNIMEDesc.RotationSpeedPerSec = 0.f;		
+		tNIMEDesc.vSize = _float3(0.04275f);
+
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
 	}
 	// 7 
@@ -9762,7 +9787,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 
 		tNIMEDesc.RotAxis = FollowingDir_Look;
 		tNIMEDesc.RotationSpeedPerSec = 0.f;
-		tNIMEDesc.vSize = _float3(0.0155f);
+		tNIMEDesc.vSize = _float3(0.01104375f, 0.0155f, 0.01104375f);
 
 
 		m_vecNonInstMeshDesc.push_back(tNIMEDesc);
@@ -9827,7 +9852,7 @@ HRESULT CPlayer::Ready_ParticleDesc()
 		tNIMEDesc.OnceStartRot = -90.f;
 
 		tNIMEDesc.RotationSpeedPerSec = 0.f;
-		tNIMEDesc.vSize = _float3(0.08f, 0.08f, 0.08f);
+		tNIMEDesc.vSize = _float3(0.057f, 0.08f, 0.057f);
 
 		tNIMEDesc.MoveDir = FollowingDir_Look;
 		tNIMEDesc.MoveSpeed = 0;

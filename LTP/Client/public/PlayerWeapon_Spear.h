@@ -35,6 +35,8 @@ public:
 	virtual void		Dissolve_In(_double fTargetTime) override;
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
+	virtual void		EffectParticleOn(_uint iIndex, void* pArg = nullptr);
+
 private:
 	void				Update_JavelinMode(_double fTargetTime);
 
@@ -89,7 +91,9 @@ private:/*For Particle*/
 	class CMeshEffect*				m_pThrowChargingEffect = nullptr;
 	class CMeshEffect*				m_pThrowChargingEffect2 = nullptr;
 	class CInstanceEffect*			m_pThrowChargingEffectTex = nullptr;
+	class CInstanceEffect*			m_pSpearNormalEffectTex = nullptr;
 	
+	ATTACHEDESC						m_tHandDesc;
 
 private:
 	_float4x4				m_fAttachedMatrix;

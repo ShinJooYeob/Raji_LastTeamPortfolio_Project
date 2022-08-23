@@ -64,13 +64,24 @@ _int CVishnu_RollingEye::Update(_double fDeltaTime)
 	{
 	case 0:
 	{
+		_float3 vRePlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+		_float RePassedValue = max(min(vPlayerPos.y, 72.f), 58);
+		_float3 NowPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+
+		NowPos.z = g_pGameInstance->Easing(TYPE_SinOut, 58.334f, 58.234f, RePassedValue - 58.f, 14.f);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, NowPos);
 
 		m_pTransformCom->LookAt(vPlayerPos.XMVector());
 		break;
 	}
 	case 1:
 	{
+		_float3 vRePlayerPos = g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER);
+		_float RePassedValue = max(min(vPlayerPos.y, 72.f), 58);
+		_float3 NowPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+		NowPos.z = g_pGameInstance->Easing(TYPE_SinOut, 58.f, 57.9f, RePassedValue - 58.f, 14.f);
+		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, NowPos);
 
 		m_pTransformCom->LookAt(vPlayerPos.XMVector());
 		break;

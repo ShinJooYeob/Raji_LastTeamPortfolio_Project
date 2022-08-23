@@ -265,8 +265,7 @@ HRESULT CMiniGame_Golu::SetUp_Components()
 
 	CNavigation::NAVIDESC NaviDesc;
 	NaviDesc.iCurrentIndex = 0;
-	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
-		return E_FAIL;
+	FAILED_CHECK(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc));
 
 
 	SetUp_Collider();

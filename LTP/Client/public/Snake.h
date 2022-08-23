@@ -37,6 +37,8 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CMotionTrail*		m_pMotionTrail = nullptr;
 
+	CSwordTrail*		m_pLeftEyeTrail = nullptr;
+	CSwordTrail*		m_pRightEyeTrail = nullptr;
 
 
 	CCollider*				m_pCollider = nullptr;
@@ -44,6 +46,9 @@ private:
 
 	CCollider*				m_pSpecialSkillCollider = nullptr;
 	ATTACHEDESC				m_SpecialSkillAttachedDesc;
+
+	ATTACHEDESC				m_ArrEyeAttachedDesc[2];
+
 
 	_uint				m_iOldAnimIndex = INT_MAX;
 	_uint				m_iAdjMovedIndex = 0;
@@ -76,6 +81,8 @@ private:
 	_Vector				m_vAngle;
 	_Vector				m_vMapAngle;
 
+
+	_float		 m_fRedLight = 0.75f;
 
 	CGameObject*		m_pPlayerObj = nullptr;
 	CTransform*			m_pPlayerTransform = nullptr;

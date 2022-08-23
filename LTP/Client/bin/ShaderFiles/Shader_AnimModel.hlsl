@@ -603,6 +603,50 @@ PS_OUT PS_MAIN_SoftEffect(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_Snake_Eye(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	//
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	vDiffuse = vDiffuse * (1.f - g_fDeltaTime) + vector(1, 0, 0, 1) * g_fDeltaTime;
+
+	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+	float3x3	NormalWorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+	vNormal = mul(vNormal, NormalWorldMatrix);
+
+
+	Out.vDiffuse = vDiffuse;
+
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
+	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
+	return Out;
+}
+
 technique11		DefaultTechnique
 {
 	pass Shadow		//0
@@ -792,6 +836,16 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_NOWEIGHTW();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_WithOccludedMask();
+	}
+	pass Snake_Eye		//18
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_NOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_Snake_Eye();
 	}
 	
 }

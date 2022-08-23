@@ -8,6 +8,9 @@
 #include "Player.h"
 //
 
+#define RUL 0
+#define TrailSize 1.f
+
 CSnake::CSnake(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CBoss(pDevice, pDeviceContext)
 {
@@ -263,6 +266,11 @@ _int CSnake::LateUpdate(_double fDeltaTime)
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	m_vOldPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+	
+		
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pLeftEyeTrail));
+	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pRightEyeTrail));
+
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pSpecialSkillCollider));
 
@@ -289,9 +297,40 @@ _int CSnake::Render()
 
 	for (_uint i = 0; i < NumMaterial; i++)
 	{
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
-			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
-		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+
+		if (i == 0)
+		{
+			
+			_float4 L = XMVectorSet(1, 0, 0, 0) * m_fRedLight;
+			_float4 E = XMVectorSet(1, 0.5f, 1, 1);
+
+
+			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, 1, MODLETEXTYPE(1)));
+
+			FAILED_CHECK(m_pShaderCom->Set_Texture("g_EmissiveTexture", GetSingle(CUtilityMgr)->Get_UtilTex_SRV(CUtilityMgr::UTILTEX_NOISE, 72)));
+
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDeltaTime", &m_fRedLight, sizeof(_float)));
+
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLimLight", &L, sizeof(_float4)));
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &E, sizeof(_float4)));
+			_float DissolveValue = 0;
+
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
+
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 18, i, "g_BoneMatrices"));
+		}
+		else
+		{
+			for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
+				FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPE(j)));
+
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_vLimLight", &m_vLimLight, sizeof(_float4)));
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fEmissive", &m_fEmissiveIntensive, sizeof(_float4)));
+			_float DissolveValue = 0;
+			FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDissolveValue", &(DissolveValue), sizeof(_float)));
+
+			FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
+		}
 	}
 
 	return _int();
@@ -462,6 +501,16 @@ HRESULT CSnake::Update_Particle(_double timer)
 
 	
 
+
+
+	_Matrix LeftEyeMat = m_ArrEyeAttachedDesc[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+	_Matrix RightEyePos = m_ArrEyeAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+
+	m_pLeftEyeTrail->Update_SwordTrail(LeftEyeMat.r[3] + LeftEyeMat.r[RUL]* TrailSize, LeftEyeMat.r[3] - LeftEyeMat.r[RUL] * TrailSize, g_fDeltaTime);
+	m_pRightEyeTrail->Update_SwordTrail(RightEyePos.r[3] + RightEyePos.r[RUL] * TrailSize, RightEyePos.r[3] - RightEyePos.r[RUL] * TrailSize, g_fDeltaTime);
+	
+
+
 	return S_OK;
 }
 
@@ -478,6 +527,14 @@ void CSnake::Update_Direction(_double fDeltaTime)
 
 	if (0 == m_iCurCutSceneState)
 	{
+		{
+			_Matrix LeftEyeMat = m_ArrEyeAttachedDesc[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+			_Matrix RightEyePos = m_ArrEyeAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+
+			m_pLeftEyeTrail->Set_TrailTurnOn(true, LeftEyeMat.r[3] + LeftEyeMat.r[RUL] * TrailSize, LeftEyeMat.r[3] - LeftEyeMat.r[RUL] * TrailSize);
+			m_pRightEyeTrail->Set_TrailTurnOn(true, RightEyePos.r[3] + RightEyePos.r[RUL] * TrailSize, RightEyePos.r[3] - RightEyePos.r[RUL] * TrailSize);
+		}
+
 		m_pModel->Change_AnimIndex(3);
 		m_iCurCutSceneState = 1;
 	}
@@ -487,6 +544,8 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		{
 			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, _float3(38.39f, -144.8f, 87.017f));
 			m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(215.f));
+
+			m_fRedLight = 1.f;
 		}
 		else if (0.98f <= fAnimPlayRate)
 		{
@@ -512,6 +571,8 @@ void CSnake::Update_Direction(_double fDeltaTime)
 				pGolemObj->Set_IsDead();
 				g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
 			}
+
+
 
 			_float4 fSoundPos = g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA);
 			_Vector vLook = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
@@ -597,11 +658,23 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		}
 		else if (0.375f <= fAnimPlayRate)
 		{
+
+			{
+				m_pLeftEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+				m_pRightEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+			}
+
+			m_fRedLight = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)fAnimPlayRate - 0.375f, 0.075f);
+			m_fRedLight = max(min(m_fRedLight, 1.f), 0.f);
+
 			m_fAnimmultiple = 0.2f;
 		}
 	}
 	else if(2 == m_iCurCutSceneState)
 	{
+
+		m_fRedLight = 1;
+
 		m_fDelayTime -= (_float)fDeltaTime;
 		if (6.f >= m_fDelayTime && true == m_bOnceSwitch)
 		{
@@ -618,6 +691,8 @@ void CSnake::Update_Direction(_double fDeltaTime)
 	}
 	else if (3 == m_iCurCutSceneState)
 	{
+
+		m_fRedLight = 1;
 
 		GetSingle(CUtilityMgr)->Set_RadialBlurTargetPos_ByWorldPos(m_SpecialSkillAttachedDesc.Get_AttachedBoneWorldPosition());
 
@@ -643,6 +718,12 @@ void CSnake::Update_Direction(_double fDeltaTime)
 			pUtil->Set_IsRadialBlurFadeIn(false, 1.f, 0.f, 0.15f);
 
 			iAnimCounter++;
+		}
+		if (fAnimPlayRate > 0.2875f)
+		{
+			m_fRedLight = g_pGameInstance->Easing(TYPE_Linear, 1, 0, (_float)fAnimPlayRate - 0.2875f, 0.575f);
+			m_fRedLight = max(min(m_fRedLight, 1.f), 0.f);
+
 		}
 
 
@@ -670,9 +751,11 @@ void CSnake::Update_Direction(_double fDeltaTime)
 	} 
 	else if (4 == m_iCurCutSceneState)
 	{
+
 		m_fDelayTime -= (_float)fDeltaTime;
 		if (0.f >= m_fDelayTime)
 		{
+
 			m_bBlockUpdate = false;
 		} 
 	}
@@ -731,6 +814,19 @@ HRESULT CSnake::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_MotionTrail), TAG_COM(Com_MotionTrail), (CComponent**)&m_pMotionTrail, &tMotionDesc));
 	
 
+	m_ArrEyeAttachedDesc[0].Initialize_AttachedDesc(this, "sk_eye_l", _float3(1), _float3(0), _float3(-323.05f, -81.245f, -163.72f));
+	m_ArrEyeAttachedDesc[1].Initialize_AttachedDesc(this, "sk_eye_r", _float3(1), _float3(0), _float3(-323.05f, 81.245f, -163.72f));
+
+
+
+	CSwordTrail::TRAILDESC tSwordDesc;
+	tSwordDesc.iPassIndex = 0;
+	tSwordDesc.vColor = _float4(1.f, 0.2f, 0.1f, 1.f);
+	tSwordDesc.iTextureIndex = 1;
+	tSwordDesc.NoiseSpeed = 0;
+		
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pLeftEyeTrail, &tSwordDesc));
+	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SubSwordTrail), (CComponent**)&m_pRightEyeTrail, &tSwordDesc));
 
 	return S_OK;
 }
@@ -744,7 +840,16 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 	{
 		m_EffectAdjust = 0;
 		m_iAdjMovedIndex = 0;
+
+
+
+		{
+			m_pLeftEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+			m_pRightEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+		}
 	}
+
+	m_fRedLight = 0;
 
 
 	if (PlayRate <= 0.98)
@@ -762,6 +867,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			float Value = g_pGameInstance->Easing_Return(TYPE_Linear, TYPE_Linear, 0, 1, (_float)PlayRate, 0.9f);
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.46f, 0.44f, 0.21f, Value), _float4(Value, Value*0.7f, Value, 0.9f));
+
+			//m_fRedLight = Value;
 
 			m_bIsAttack = false;
 			if (m_iRotationRandom == 0)
@@ -898,6 +1005,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.87f, 0.39f, 0.96f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
 
+			m_fRedLight = Value;
+
 			static _double Timer = 0;
 			static _float3 FindPos = _float3(0);
 			static _uint	iEffectCount = 0;
@@ -955,6 +1064,11 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			else if (iEffectCount == 0)
 			{
+
+
+
+
+
 				m_vecJYMeshNonInst[0].vPosition = XMVectorSetY(FindPos.XMVector(),2.13f);
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Particle), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecJYMeshNonInst[0]);
 
@@ -998,18 +1112,33 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_bIsBite = true;
 
 
+				{
+					_Matrix LeftEyeMat = m_ArrEyeAttachedDesc[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+					_Matrix RightEyePos = m_ArrEyeAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+
+					m_pLeftEyeTrail->Set_TrailTurnOn(true, LeftEyeMat.r[3] + LeftEyeMat.r[RUL] * TrailSize, LeftEyeMat.r[3] - LeftEyeMat.r[RUL] * TrailSize);
+					m_pRightEyeTrail->Set_TrailTurnOn(true, RightEyePos.r[3] + RightEyePos.r[RUL] * TrailSize, RightEyePos.r[3] - RightEyePos.r[RUL] * TrailSize);
+				}
+
+
 				m_iAdjMovedIndex++;
 			}
 
 			if (PlayRate > 0 && m_iAdjMovedIndex == 1)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hiss_Charge.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+
 				m_iAdjMovedIndex++;
 			}
 
 			if (PlayRate > 0.4375 && m_iAdjMovedIndex == 2)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+
+				m_pLeftEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+				m_pRightEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
 
 				m_iAdjMovedIndex++;
 			}
@@ -1109,6 +1238,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			Value = max(min(Value, 1.f), 0.f);
 			Set_LimLight_N_Emissive(_float4(0.46f,0.44f,0.21f,Value), _float4(Value, Value*0.7f, Value, 0.9f));
 
+			m_fRedLight = Value;
+
 			if (PlayRate > 0 && m_iAdjMovedIndex == 0)
 			{
 				_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -1120,6 +1251,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_1.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
+
+
 				//m_fAnimmultiple = 0.2f;
 			}
 
@@ -1173,8 +1306,27 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			Set_LimLight_N_Emissive(_float4(0, 1.f, 0.5f, Value), _float4(Value, Value*0.5f, Value, 0.9f));
 			//Set_LimLight_N_Emissive(_float4(vLLC, Value), _float4(Value, Value*0.5f, Value, 0.9f));
 
-			if (PlayRate > 0.10055865921787709f  && m_iAdjMovedIndex == 0)
+			m_fRedLight = Value;
+
+			if (PlayRate > 0 &&  m_iAdjMovedIndex == 0)
 			{
+				{
+					_Matrix LeftEyeMat = m_ArrEyeAttachedDesc[0].Caculate_AttachedBoneMatrix_BlenderFixed();
+					_Matrix RightEyePos = m_ArrEyeAttachedDesc[1].Caculate_AttachedBoneMatrix_BlenderFixed();
+
+					m_pLeftEyeTrail->Set_TrailTurnOn(true, LeftEyeMat.r[3] + LeftEyeMat.r[RUL] * TrailSize, LeftEyeMat.r[3] - LeftEyeMat.r[RUL] * TrailSize);
+					m_pRightEyeTrail->Set_TrailTurnOn(true, RightEyePos.r[3] + RightEyePos.r[RUL] * TrailSize, RightEyePos.r[3] - RightEyePos.r[RUL] * TrailSize);
+
+				}
+
+				m_iAdjMovedIndex++;
+			}
+
+			if (PlayRate > 0.10055865921787709f  && m_iAdjMovedIndex == 1)
+			{
+
+
+
 				m_pRaserObj->Start_BeamEffect();
 				m_iAdjMovedIndex++;
 			}
@@ -1204,6 +1356,10 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate > 0.1284916 && PlayRate <= 0.86592178770)
 			{
+
+				m_pLeftEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+				m_pRightEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
+
 				m_bIsSpecialSkillAttack = true;
 				_float fAngle = g_pGameInstance->Easing(TYPE_SinInOut, 180, 0.f, (_float)PlayRate - 0.1284916f, 0.7374301877f);
 
@@ -1353,8 +1509,11 @@ void CSnake::Free()
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pSpecialSkillCollider);
 	Safe_Release(m_pMotionTrail);
-	
 
+	Safe_Release(m_pLeftEyeTrail);
+	Safe_Release(m_pRightEyeTrail);
+
+	
 	Safe_Release(m_pTextureParticleTransform);
 	Safe_Release(m_pTextureParticleTransform1);
 	Safe_Release(m_pTextureParticleTransform2);

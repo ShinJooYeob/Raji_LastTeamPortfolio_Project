@@ -161,12 +161,14 @@ void CPlayerWeapon_Spear::Active_Trail(_bool bActivate)
 
 		if (!bChecker)
 		{
-			GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+
+
 			bChecker = true;
 		}
 	}
 	else
 	{
+
 		m_pSwordTrail->Set_TrailTurnOn(false, _float3(0.f, 0.f, 0.f), _float3(0.f, 0.f, 0.f));
 		bChecker = false;
 	}
@@ -262,6 +264,34 @@ void CPlayerWeapon_Spear::Dissolve_In(_double fTargetTime)
 void CPlayerWeapon_Spear::Dissolve_Out(_double fTargetTime)
 {
 	m_pDissolveCom->Set_DissolveOn(false, fTargetTime);
+}
+
+void CPlayerWeapon_Spear::EffectParticleOn(_uint iIndex, void * pArg)
+{
+	switch (iIndex)
+	{
+	case 0:
+	{
+
+		if (m_pSpearNormalEffectTex != nullptr)
+			m_pSpearNormalEffectTex->Set_GonnabeDie();
+		m_vecTextureParticleDesc[0].bBillboard = false;
+		m_vecTextureParticleDesc[0].eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
+		m_pSpearNormalEffectTex = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
+	}
+		break;
+
+	case 1:
+	{
+
+		if (m_pSpearNormalEffectTex != nullptr)
+			m_pSpearNormalEffectTex->Set_GonnabeDie();
+	}
+		break;
+	default:
+		break;
+	}
 }
 
 void CPlayerWeapon_Spear::Update_JavelinMode(_double fTargetTime)
@@ -429,8 +459,20 @@ void CPlayerWeapon_Spear::Update_Colliders_4()
 
 void CPlayerWeapon_Spear::Update_ParticleTransform()
 {
-	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
-	m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(1).XMVector());
+
+	//m_pTextureParticleTransform->Set_Matrix(XMMatrixIdentity());
+	//m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(2));
+	//m_pTextureParticleTransform->LookAt(m_pCollider->Get_ColliderPosition(1).XMVector());
+
+
+	_Matrix mat = m_tHandDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
+	//_float3 TargetPos = mat.r[3] + mat.r[0] * -0.78f + mat.r[1] * -1.2f + mat.r[2] * -1.f;
+	_float3 TargetPos = mat.r[3] + mat.r[0] * -1.0f;
+
+
+	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, TargetPos);
+	m_pTextureParticleTransform->LookDir(-XMVector3Normalize(mat.r[2] + mat.r[0] * 0.2f + mat.r[1] * 0.1f));
+	
 
 
 	//m_pJYParticleTransform2->Set_MatrixState(CTransform::STATE_POS,
@@ -731,6 +773,14 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolveCom, &tDissolveDesc));
+
+
+
+
+
+
+	m_tHandDesc.Initialize_AttachedDesc(m_tPlayerWeaponDesc.pOwner, "skd_r_wrist", _float3(1), _float3(0), _float3(-58.667f, -0.60365f, -114.675f));
+
 	return S_OK;
 }
 
