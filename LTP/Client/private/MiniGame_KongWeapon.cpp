@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\MiniGame_KongWeapon.h"
 #include "MiniGame_KongRaji.h"
+#include "DonkeyKong_Bullet.h"
 
 
 CMiniGame_KongWeapon::CMiniGame_KongWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -156,9 +157,8 @@ _int CMiniGame_KongWeapon::LateRender()
 
 void CMiniGame_KongWeapon::Set_IsDead()
 {
-
-
 	m_bIsDead = true;
+
 }
 
 void CMiniGame_KongWeapon::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -168,6 +168,11 @@ void CMiniGame_KongWeapon::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
 		pConflictedCollider->Set_Conflicted(1.f);
+	}
+
+	if (CollisionTypeID::CollisionType_Monster == eConflictedObjCollisionType)
+	{
+		pConflictedObj->Set_IsDead();
 	}
 }
 
@@ -300,7 +305,7 @@ HRESULT CMiniGame_KongWeapon::Update_Collider(_double dDeltaTime)
 	mat.r[3] = vPos - (mat.r[2] *0.02f + mat.r[0] * 3.9899f + mat.r[1] *0.7699f);
 	m_pColliderCom->Update_Transform(3, mat);
 
-
+	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pColliderCom));
 
 	//test!!!!
 	//mat.r[3] = vPos - (mat.r[2] * -110.03f + mat.r[0] * 112.f +mat.r[1] * -110.7299f);
@@ -352,7 +357,7 @@ HRESULT CMiniGame_KongWeapon::MagnetOn(_double dDeltaTime)
 	
 	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
-	if (fDistance < 0.1f)
+	if (fDistance < 0.3f)
 	{
 		m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 		m_bMagnet = true;

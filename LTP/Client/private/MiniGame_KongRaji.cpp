@@ -90,6 +90,7 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 				Set_IsDead();
 		}
 		Jumping(dDeltaTime);
+		m_dAcceleration = 0;
 	}
 
 	m_pModel->Change_AnimIndex(m_iAnimIndex, m_fAnimBlend);
