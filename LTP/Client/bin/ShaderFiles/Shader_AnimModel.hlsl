@@ -603,6 +603,19 @@ PS_OUT PS_MAIN_SoftEffect(PS_IN In)
 	return Out;
 }
 
+
+PS_OUT_NOLIGHT PS_JJB_MiniGamePlayer(PS_IN In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	//
+	//if (vDiffuse.a < 0.1f)
+	//	discard;
+
+	return Out;
+}
+
 technique11		DefaultTechnique
 {
 	pass Shadow		//0
@@ -793,5 +806,4 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_WithOccludedMask();
 	}
-	
 }

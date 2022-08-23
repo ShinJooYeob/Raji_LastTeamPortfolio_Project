@@ -28,6 +28,10 @@ private:
 	vector<CUI*> m_vecBasicUI;
 	vector<CUI*> m_vecButtonUI;
 
+	_bool		m_StartTime = false;
+	_float		m_TestTime = 0.f;
+	_int		m_iComboCount = 0;
+
 
 private:
 

@@ -186,6 +186,8 @@
 /////////MiniGame Taigo//////////////////////////////////
 #include "MiniGame_JJB_Player.h"
 #include "MiniGamePlayerWeapon.h"
+#include "Taiko_Monster.h"
+#include "GaolCollider.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
@@ -2125,6 +2127,13 @@ HRESULT CLoader::Load_Scene_Minigame_JJB(_bool * _IsClientQuit, CRITICAL_SECTION
 	TransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_MiniGame_JJB_Player), TransformMatrix);
 
+	TransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) *
+		XMMatrixRotationY(XMConvertToRadians(180.0f)) *
+		XMMatrixRotationX(XMConvertToRadians(270.f))*
+		XMMatrixTranslation(0.f, 0.7f, 0.f);
+
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PMMonster), TransformMatrix);
+
 
 
 #pragma  endregion
@@ -2139,6 +2148,8 @@ HRESULT CLoader::Load_Scene_Minigame_JJB(_bool * _IsClientQuit, CRITICAL_SECTION
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_JJB_Player), CMiniGame_JJB_Player::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_PlayerWeapon), CMiniGamePlayerWeapon::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PM_Monster), CTaiko_Monster::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_GoalCollider), CGaolCollider::Create(m_pDevice, m_pDeviceContext)));
 
 
 #pragma  endregion
@@ -2146,6 +2157,8 @@ HRESULT CLoader::Load_Scene_Minigame_JJB(_bool * _IsClientQuit, CRITICAL_SECTION
 	EnterCriticalSection(_CriSec);
 	m_bIsLoadingFinished = true;
 	LeaveCriticalSection(_CriSec);
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

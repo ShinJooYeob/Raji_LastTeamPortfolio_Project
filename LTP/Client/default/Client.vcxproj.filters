@@ -622,8 +622,11 @@
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon">
       <UniqueIdentifier>{3750dd8f-e0d6-4ac0-8ca2-70b9d9e2c21c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster">
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\01.Monster">
       <UniqueIdentifier>{909b0199-9b8b-48e7-b4ce-6a6b5f818408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\02.GoalCollider">
+      <UniqueIdentifier>{da264319-6364-486c-afe3-af5645d06664}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1332,7 +1335,10 @@
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Taiko_Monster.h">
-      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\01.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GaolCollider.h">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\02.GoalCollider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2011,7 +2017,10 @@
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\00.Player\PlayerWeapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Taiko_Monster.cpp">
-      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\Monster</Filter>
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\01.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GaolCollider.cpp">
+      <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\02.GoalCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

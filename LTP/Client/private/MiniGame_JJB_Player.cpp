@@ -87,6 +87,7 @@ _int CMiniGame_JJB_Player::Render()
 			FAILED_CHECK(m_pModel->Bind_OnShader(m_pShaderCom, i, j, MODLETEXTYPEFORENGINE(j)));
 		FAILED_CHECK(m_pModel->Render(m_pShaderCom, 3, i, "g_BoneMatrices"));
 	}
+
 	return _int();
 }
 

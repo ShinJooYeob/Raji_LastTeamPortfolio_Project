@@ -409,8 +409,13 @@ HRESULT CMainApp::Ready_Static_Component_Prototype()
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_HPUI),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"HPUI.txt")));
 
+#ifdef _DEBUG
+FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_UI),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI_Debug.txt")));
+#else
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_UI),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"UI.txt")));
+#endif // _DEBUG
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_TestEffect),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"Instance_Effect.txt")));
