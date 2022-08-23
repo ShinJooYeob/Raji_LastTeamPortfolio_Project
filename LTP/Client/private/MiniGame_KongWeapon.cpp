@@ -24,6 +24,8 @@ HRESULT CMiniGame_KongWeapon::Initialize_Prototype(void * pArg)
 
 HRESULT CMiniGame_KongWeapon::Initialize_Clone(void * pArg)
 {
+
+	ZeroMemory(&m_KongRaji_Weapon_UniversalDesc, sizeof(KongRaji_Weapon_UniversalDesc));
 	if (nullptr != pArg)
 	{
 		memcpy(&m_KongRaji_Weapon_UniversalDesc, pArg, sizeof(m_KongRaji_Weapon_UniversalDesc));

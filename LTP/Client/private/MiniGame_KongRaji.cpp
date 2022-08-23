@@ -62,6 +62,7 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_DonkeyKong_Trigger), TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger)));
 
 
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
 
 	return S_OK;
 
