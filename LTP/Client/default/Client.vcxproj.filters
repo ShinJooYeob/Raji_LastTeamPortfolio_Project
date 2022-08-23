@@ -628,6 +628,9 @@
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet">
       <UniqueIdentifier>{342ab623-cfb0-4be4-be33-a68ebf8d378a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongWeapon">
+      <UniqueIdentifier>{ca79990f-4217-4bab-b229-cfc6f83cc916}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1340,6 +1343,9 @@
     <ClInclude Include="..\public\DonkeyKong_Bullet.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MiniGame_KongWeapon.h">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongWeapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2021,6 +2027,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DonkeyKong_Bullet.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MiniGame_KongWeapon.cpp">
+      <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_KongWeapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ class CMiniGame_KongRaji final : public CGameObject
 public:
 	enum HeightPosType{HEIGHT_ONE_POINT,HEIGHT_TWO_POINT,HEIGHT_END};
 public:
-	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
+	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK =14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
 
 	typedef	struct tagJumpDesc
 	{
@@ -40,7 +40,7 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
-	virtual void Update_AttachCamPos()override;
+	virtual void		Update_AttachCamPos()override;
 
 	void				Set_MoveToHeightOn(_bool bMoveToHeightOn) { m_bMoveToHeightOn = bMoveToHeightOn; }
 	void				Set_MoveToWidthOn(_bool bMoveToWidthOn) { m_bMoveToWidthOn = bMoveToWidthOn; }
@@ -54,6 +54,7 @@ public:
 
 	HRESULT				SetUp_Info();
 	HRESULT				SetUp_Texture();
+	HRESULT				SetUp_Weapon();
 
 	HRESULT				SetUp_Collider();
 	HRESULT				Update_Collider(_double dDeltaTime);
@@ -89,6 +90,8 @@ private:
 	CCollider*			m_pColliderCom = nullptr;
 	vector<ATTACHEDESC> m_vecAttachedDesc;
 
+	class CMiniGame_KongWeapon* m_pWeapon = nullptr;
+
 	//점프하기
 private:
 	JUMPDESC			m_JumpDesc;
@@ -105,6 +108,7 @@ private://Dissolve
 
 private://Anim Speed
 	_double				m_dAcceleration = 1;
+	_float				m_fAnimBlend = 0.1f;
 
 private://Moving
 	_bool				m_bMoveToHeightOn = false;

@@ -476,6 +476,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_KongRajiTrigger,
 	Prototype_Object_DonkeyKong_BulletTrigger,
 	Prototype_Object_DonkeyKong_Bullet,
+	Prototype_Object_KongWeapon,
 
 	Prototype_Object_MahaHead,
 	Prototype_Object_Grovetender,
@@ -952,6 +953,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_DonkeyKong_Bullet:
 		return TEXT("Prototype_Object_DonkeyKong_Bullet");
+
+	case Prototype_Object_KongWeapon:
+		return TEXT("Prototype_Object_KongWeapon");
 
 	///////////////////////////////////////////////////////////////
 	case Prototype_Object_Static_PhysX:

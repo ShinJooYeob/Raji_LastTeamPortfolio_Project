@@ -5,6 +5,7 @@
 #include "PartilceCreateMgr.h"
 #include "WorldTexture_Universal.h"
 #include "KongRajiTrigger.h"
+#include "MiniGame_KongWeapon.h"
 
 /*
 1. Main Cam -> FocusTarget Settomg
@@ -47,6 +48,7 @@ HRESULT CMiniGame_KongRaji::Initialize_Clone(void * pArg)
 
 	SetUp_Info();
 	SetUp_Texture();
+	SetUp_Weapon();
 
 	Camera_Pos();
 
@@ -90,7 +92,7 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 		Jumping(dDeltaTime);
 	}
 
-	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.1f);
+	m_pModel->Change_AnimIndex(m_iAnimIndex, m_fAnimBlend);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -107,6 +109,9 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 	//test
 	//m_pNavigationCom->Set_CurNavCellIndex(7);
 	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+	if (m_pWeapon != nullptr)
+		m_pWeapon->Update(dDeltaTime);
 
 	return _int();
 }
@@ -125,6 +130,9 @@ _int CMiniGame_KongRaji::LateUpdate(_double dDeltaTime)
 #ifdef _DEBUG
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 #endif
+
+	if (m_pWeapon != nullptr)
+		m_pWeapon->LateUpdate(dDeltaTime);
 
 	return _int();
 }
@@ -274,7 +282,11 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
 		m_iAdjMovedIndex = 0;
+		m_dAcceleration = 1;
+		m_fAnimBlend = 0.1f;
+	}
 
 
 	if (PlayRate <= 0.98)
@@ -298,6 +310,17 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 		case 2:
 
 			break;
+
+		case ANIM_ATTACK:
+		{
+			if (PlayRate <= 0.9)
+			{
+				m_bChangeAnimOn = true;
+				m_dAcceleration = 2;
+				m_fAnimBlend = 0.3f;
+			}
+			break;
+		}
 		}
 	}
 
@@ -341,6 +364,18 @@ HRESULT CMiniGame_KongRaji::SetUp_Texture()
 	WorldTexture_UniversalDesc.pSwitch = nullptr;
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_WorldTexture_Universal), TAG_OP(Prototype_Object_WorldTexture_Universal), &WorldTexture_UniversalDesc));
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongRaji::SetUp_Weapon()
+{
+	CMiniGame_KongWeapon::KongRaji_Weapon_UniversalDesc KongWeaponDesc;
+
+	KongWeaponDesc.Object = this;
+	KongWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(-97, -120, -60), _float3(-0.453f, -0.5039f, -0.821f));
+
+	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pWeapon), m_eNowSceneNum, TAG_OP(Prototype_Object_KongWeapon), &KongWeaponDesc);
+
 	return S_OK;
 }
 
@@ -447,8 +482,11 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 	m_fTempHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
-	//네비 위에 태우고 싶을때 사용
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+	if (pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
+	{
+		m_bChangeAnimOn = true;
+		m_iCurrentAnimIndex = 14;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -608,6 +646,7 @@ void CMiniGame_KongRaji::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pWeapon);
 	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pColliderCom);
