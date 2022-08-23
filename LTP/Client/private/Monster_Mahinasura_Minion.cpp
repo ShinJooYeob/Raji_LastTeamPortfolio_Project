@@ -485,6 +485,12 @@ HRESULT CMonster_Mahinasura_Minion::Play_SpawnEffect()
 	if (m_SpawnEffectAdjust == 0)
 	{
 		m_SpawnEffectAdjust++;
+
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_02.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+
+
 		{
 			// ring
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(

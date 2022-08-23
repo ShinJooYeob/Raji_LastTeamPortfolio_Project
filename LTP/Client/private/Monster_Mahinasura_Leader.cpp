@@ -46,7 +46,8 @@ HRESULT CMonster_Mahinasura_Leader::Initialize_Clone(void * pArg)
 
 
 	// Particle
-	Set_DealyDIssolveTime(0.5f);
+	Set_DealyDIssolveTime(1.0f, 0.8f);
+
 
 	return S_OK;
 }
@@ -1170,6 +1171,11 @@ HRESULT CMonster_Mahinasura_Leader::Play_SpawnEffect()
 	if (m_SpawnEffectAdjust == 0)
 	{
 		m_SpawnEffectAdjust++;
+
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_01.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+
 
 		{
 			// ring
