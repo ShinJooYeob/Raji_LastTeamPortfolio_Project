@@ -32,6 +32,8 @@ _int CTaikoUI::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
+	if(m_StartTime)
+		m_TestTime += (_float)fDeltaTime;
 
 	for (auto& UI : m_vecBasicUI)
 	{
@@ -40,6 +42,12 @@ _int CTaikoUI::Update(_double fDeltaTime)
 			UI->Set_Size(50.f, 70.f);
 			UI->Set_UIPosition(205.f, 338.f);
 		}
+	}
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_T)&DIS_Down)
+	{
+		m_StartTime = true;
+		g_pGameInstance->PlayBGM(TEXT("sacuranbo.wav"));
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_F)&DIS_Down)
@@ -51,6 +59,12 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
+
+		m_iComboCount++;
+		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
+		wstring ttDebugLog;
+		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_J)&DIS_Down)
@@ -62,6 +76,11 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
+		m_iComboCount++;
+		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
+		wstring ttDebugLog;
+		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_D)&DIS_Down)
@@ -73,6 +92,11 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
+		m_iComboCount++;
+		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
+		wstring ttDebugLog;
+		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_K)&DIS_Down)
@@ -84,6 +108,11 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
+		m_iComboCount++;
+		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
+		wstring ttDebugLog;
+		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	FAILED_CHECK(m_pBackGround->Update(fDeltaTime));

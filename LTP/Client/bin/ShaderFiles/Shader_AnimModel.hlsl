@@ -644,6 +644,7 @@ PS_OUT PS_Snake_Eye(PS_IN In)
 	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
 	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
 	Out.vLimLight = g_vLimLight;
+
 	return Out;
 }
 

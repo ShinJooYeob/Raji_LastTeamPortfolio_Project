@@ -200,6 +200,7 @@
     <ClInclude Include="..\public\EndingPortal.h" />
     <ClInclude Include="..\public\EventTrigger.h" />
     <ClInclude Include="..\public\FireRing.h" />
+    <ClInclude Include="..\public\GaolCollider.h" />
     <ClInclude Include="..\public\GoalTrigger.h" />
     <ClInclude Include="..\public\Golu_Bullet.h" />
     <ClInclude Include="..\public\Grovetender.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="..\private\EndingPortal.cpp" />
     <ClCompile Include="..\private\EventTrigger.cpp" />
     <ClCompile Include="..\private\FireRing.cpp" />
+    <ClCompile Include="..\private\GaolCollider.cpp" />
     <ClCompile Include="..\private\GoalTrigger.cpp" />
     <ClCompile Include="..\private\Golu_Bullet.cpp" />
     <ClCompile Include="..\private\Grovetender.cpp" />

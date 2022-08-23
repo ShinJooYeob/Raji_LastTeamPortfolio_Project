@@ -1,5 +1,8 @@
 #pragma once
 #include "Scene.h"
+#include "Taiko_Monster.h"
+
+BEGIN(Client)
 
 class CScene_MiniGame_JJB final : public CScene
 {
@@ -21,12 +24,24 @@ private:
 	HRESULT				Ready_Layer_MainCamera(const _tchar* pLayerTag);
 	HRESULT				Ready_Layer_Objects(const _tchar * pLayerTag);
 	HRESULT				Ready_Layer_Player(const _tchar* pLayerTag);
+	HRESULT				Ready_Layer_Monster(const _tchar* pLayerTag);
+	HRESULT				Ready_Layer_GoalCollider(const _tchar* pLayerTag);
 
 	HRESULT				Ready_Layer_UI(const _tchar* pLayerTag);
 
 
 
 	HRESULT				Ready_PostPorcessing();
+
+private:
+	list<CTaiko_Monster*>		m_NoteSmallRedMonsterList;
+	list<CTaiko_Monster*>		m_NoteBicRedMonsterList;
+	list<CTaiko_Monster*>		m_NoteSmallBlueMonsterList;
+	list<CTaiko_Monster*>		m_NoteBicBlueMonsterList;
+
+	_float						m_AccumulateTime = 0.f;
+
+
 
 private:
 	class CCamera_Main*				m_pMainCam = nullptr;
@@ -37,4 +52,4 @@ public:
 	virtual void				Free() override;
 
 };
-
+END

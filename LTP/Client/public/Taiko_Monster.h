@@ -3,6 +3,18 @@
 BEGIN(Client)
 class CTaiko_Monster final : public CGameObject
 {
+public:
+	enum NoteSizeType {NOTE_SMALL, NOTE_BIG, NOTE_END};
+	enum NotePositionType {NOTEPOS_IN, NOTEPOS_OUT, NOTEPOS_END};
+
+	typedef struct  NoteDesc
+	{
+		NoteSizeType		NoteType = NOTE_END;
+		NotePositionType	NotePosType = NOTEPOS_END;
+		_float3				vNotePosition;
+		_float3				vScaled;
+		_bool				bIsUse = false;
+	}NOTEDESC;
 
 private:
 	explicit CTaiko_Monster(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
@@ -25,6 +37,9 @@ public:
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
 public:
+	void	InitializeMonster();
+
+public:
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
@@ -38,6 +53,14 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pColliderCom = nullptr;
 	CDissolve*			m_pDissolve = nullptr;
+
+	NOTEDESC			NoteDesc;
+
+	_uint				m_iOldAnimIndex = INT_MAX;
+	_uint				m_iAdjMovedIndex = 0;
+
+	_float				m_PosX = 0;
+	_float3				m_vPos;
 
 public:
 	static CTaiko_Monster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
