@@ -188,7 +188,7 @@ public: /* public Setter */
 
 public: /* Damage Logic*/
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
-	virtual _float	Take_Damage_Instance(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f);
+	virtual _float	Take_Damage_Instance(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 	_float	Apply_Damage(CGameObject* pTargetObject, _float fDamageAmount, _bool bKnockback);
 
 public:

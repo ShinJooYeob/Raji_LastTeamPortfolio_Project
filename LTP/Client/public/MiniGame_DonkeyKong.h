@@ -38,12 +38,13 @@ public:
 	//InGame
 	HRESULT	Play_MiniGame(_double dDeltaTime);
 
+	HRESULT Play_Anim(_double dDeltaTime);
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModel = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
-	CNavigation*		m_pNavigationCom = nullptr;
 	CDissolve*			m_pDissolve = nullptr;
 
 	_uint				m_iOldAnimIndex = INT_MAX;
@@ -52,6 +53,10 @@ private:
 private:
 	CCollider*			m_pColliderCom = nullptr;
 	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+private://Anim
+	_double				m_dAnimTime = 0;
+	_uint				m_iAnimIndex = 0;
 
 public:
 	static CMiniGame_DonkeyKong* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

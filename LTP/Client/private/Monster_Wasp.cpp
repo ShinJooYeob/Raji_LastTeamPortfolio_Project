@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Wasp.h"
 #include "InstanceMonsterBatchTrigger.h"
+#include "Player.h"
 
 CMonster_Wasp::CMonster_Wasp(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CMonster(pDevice, pDeviceContext)
@@ -140,7 +141,7 @@ void CMonster_Wasp::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		pConflictedObj->Take_Damage(this, 1.f, XMVector3Normalize(XMVectorSetW(g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER) -
+		pConflictedObj->Take_Damage_Instance(this, 1.f, XMVector3Normalize(XMVectorSetW(g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER) -
 			pMyCollider->Get_ColliderPosition(iMyColliderIndex).XMVector(), 0)), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
@@ -760,7 +761,7 @@ HRESULT CMonster_Wasp::Adjust_AnimMovedTransform(_double dDeltatime)
 			{
 				_float fDistance = m_vecInstancedTransform[j].pTransform->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
-				if (fDistance > 6 && m_vecInstancedTransform[j].iHp <= 0)
+				if (fDistance > 6 || m_vecInstancedTransform[j].iHp <= 0)
 					continue;
 				if (i >= ANIM_RUN_Frame1 && i <= ANIM_RUN_Frame2)
 				{

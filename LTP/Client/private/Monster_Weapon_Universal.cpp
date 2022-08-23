@@ -34,7 +34,7 @@ HRESULT CMonster_Weapon_Universal::Initialize_Clone(void * pArg)
 		memcpy(&m_Monster_Weapon_UniversalDesc, pArg, sizeof(Monster_Weapon_UniversalDesc));
 	}
 	else {
-		MSGBOX("Monster_Bullet의 pArg가 Nullptr입니다.");
+		MSGBOX("CMonster_Weapon_Universal의 pArg가 Nullptr입니다.");
 	}
 
 

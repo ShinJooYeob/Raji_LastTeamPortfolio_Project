@@ -182,8 +182,22 @@ void CMiniGame_Golu::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderI
 
 _float CMiniGame_Golu::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	//m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
-	//m_fHP += -fDamageAmount;
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
+
+
+	if (0 >= m_fHP)
+	{
+		return -1.f;
+	}
+
+	return _float();
+}
+
+_float CMiniGame_Golu::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
+{
+	m_pHPUI->Set_ADD_HitCount((_int)fDamageAmount);
+	m_fHP += -fDamageAmount;
 
 
 	if (0 >= m_fHP)

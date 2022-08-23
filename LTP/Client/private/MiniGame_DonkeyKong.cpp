@@ -34,13 +34,15 @@ HRESULT CMiniGame_DonkeyKong::Initialize_Clone(void * pArg)
 	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(180));
 
 
-
-
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
 	SetUp_Info();
 
+
+	m_pTransformCom->LookDir(XMVectorSet(0.35f, 0.f, -0.65f, 0.f));
+	m_pTransformCom->Scaled_All(_float3(0.65f, 0.65f, 0.65f));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(31.803f, 44.619f, 39.29f, 1.f));
 	return S_OK;
 }
 
@@ -50,8 +52,7 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 
 	Play_MiniGame(dDeltaTime);
 
-
-	m_pModel->Change_AnimIndex(1, 0.f);
+	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.2f);
 
 
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
@@ -61,6 +62,23 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	Update_Collider(dDeltaTime);
+
+
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
+	{
+		m_iAnimIndex = 0;
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
+	{
+		m_iAnimIndex = 17;
+	}
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_C) & DIS_Down)
+	{
+		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong), TAG_OP(Prototype_Object_DonkeyKong_Bullet)));
+	}
+
 
 	return _int();
 }
@@ -99,9 +117,6 @@ _int CMiniGame_DonkeyKong::Render()
 
 	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
-#ifdef _DEBUG
-	FAILED_CHECK(m_pNavigationCom->Render());
-#endif
 	return _int();
 }
 
@@ -140,7 +155,7 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Golu), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_Monster_Gadasura_Black), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	FAILED_CHECK(m_pModel->Change_AnimIndex(0));
 
 	CTransform::TRANSFORMDESC tDesc = {};
@@ -160,12 +175,6 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Components()
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));
 
 
-	CNavigation::NAVIDESC NaviDesc;
-	NaviDesc.iCurrentIndex = 0;
-	if (FAILED(__super::Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Navigation), TAG_COM(Com_Navaigation), (CComponent**)&m_pNavigationCom, &NaviDesc)))
-		return E_FAIL;
-
-
 	SetUp_Collider();
 
 	return S_OK;
@@ -177,7 +186,14 @@ HRESULT CMiniGame_DonkeyKong::Adjust_AnimMovedTransform(_double dDeltatime)
 	_double PlayRate = m_pModel->Get_PlayRate();
 
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
+	{
 		m_iAdjMovedIndex = 0;
+
+
+		if(PlayRate >= 0.98)
+			m_iAnimIndex = 0;
+	}
+
 
 
 	if (PlayRate <= 0.98)
@@ -199,8 +215,16 @@ HRESULT CMiniGame_DonkeyKong::Adjust_AnimMovedTransform(_double dDeltatime)
 
 			break;
 		case 2:
-
 			break;
+		case 17:
+		{
+			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.3879)
+			{
+				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong), TAG_OP(Prototype_Object_DonkeyKong_Bullet)));
+				m_iAdjMovedIndex++;
+			}
+			break;
+		}
 		}
 	}
 
@@ -216,6 +240,22 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Info()
 
 HRESULT CMiniGame_DonkeyKong::Play_MiniGame(_double dDeltaTime)
 {
+	Play_Anim(dDeltaTime);
+
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_DonkeyKong::Play_Anim(_double dDeltaTime)
+{
+	m_dAnimTime += dDeltaTime;
+
+	if (m_dAnimTime >= 1)
+	{
+		m_iAnimIndex = 17;
+		m_dAnimTime = 0;
+	}
+
 	return S_OK;
 }
 
@@ -231,7 +271,7 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Collider()
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 	ATTACHEDESC tAttachedDesc;
-	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Hips", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.29397f, -0.010983f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.00047f, -0.027856f, -1.8269f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 
 
@@ -241,8 +281,7 @@ HRESULT CMiniGame_DonkeyKong::SetUp_Collider()
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
-	tAttachedDesc = ATTACHEDESC();
-	tAttachedDesc.Initialize_AttachedDesc(this, "Skd_Hips", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(0.f, 0.29397f, -0.010983f));
+	tAttachedDesc.Initialize_AttachedDesc(this, "skd_spine_01", _float3(1.f, 1.f, 1.f), _float3(0.f, 0.f, 0.f), _float3(-0.00047f, -0.027856f, -1.8269f));
 	m_vecAttachedDesc.push_back(tAttachedDesc);
 	m_pColliderCom->Set_ParantBuffer();
 	return S_OK;
@@ -258,8 +297,6 @@ HRESULT CMiniGame_DonkeyKong::Update_Collider(_double dDeltaTime)
 		m_pColliderCom->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Player, this, m_pColliderCom));
-
-	FAILED_CHECK(g_pGameInstance->Add_RepelGroup(m_pTransformCom, 1.f, m_pNavigationCom));
 
 
 	return S_OK;
@@ -300,5 +337,4 @@ void CMiniGame_DonkeyKong::Free()
 	Safe_Release(m_pDissolve);
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pNavigationCom);
 }

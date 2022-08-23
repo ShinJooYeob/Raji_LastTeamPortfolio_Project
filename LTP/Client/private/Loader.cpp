@@ -169,7 +169,7 @@
 #include "Monster_Plat_Bullet.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-//EH Class//////////////////////////////////////////////////////////////////////
+//EH MiniGame Class//////////////////////////////////////////////////////////////////////
 #include "WorldTexture_Universal.h"
 #include "MiniGame_Golu.h"
 #include "Golu_Bullet.h"
@@ -178,6 +178,10 @@
 #include "MiniGame_KongRaji.h"
 #include "KongRajiTrigger.h"
 #include "DonkeyKong_BulletTrigger.h"
+#include "MiniGame_DonkeyKong.h"
+#include "MiniGame_KongGolu.h"
+#include "DonkeyKong_Bullet.h"
+#include "MiniGame_KongWeapon.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 /////////MiniGame PACKMEN///////////////////////////////////////////////////////////////////////
@@ -1832,12 +1836,10 @@ HRESULT CLoader::Load_Scene_Minigame1(_bool * _IsClientQuit, CRITICAL_SECTION * 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	_Matrix			TransformMatrix;
 
-#pragma  region Static_Mesh
 
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
 
-#pragma  endregion
 #pragma region PROTOTYPE_COMPONENT
 
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME1, TEXT("Prototype_Component_Navigation"),
@@ -2069,11 +2071,20 @@ HRESULT CLoader::Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	_Matrix			TransformMatrix;
 
-#pragma  region Static_Mesh
 	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Player), TransformMatrix);
 
-#pragma  endregion
+	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_Golu), TransformMatrix);
+
+
+
+	TransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PlayerWeapon_Spear), TransformMatrix);
+
+	TransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine), TransformMatrix);
+
 #pragma region PROTOTYPE_COMPONENT
 
 	if (FAILED(pGameInstance->Add_Component_Prototype(SCENE_MINIGAME_DONKEYKONG, TEXT("Prototype_Component_Navigation"),
@@ -2100,8 +2111,12 @@ HRESULT CLoader::Load_Scene_Minigame_DonkeyKong(_bool * _IsClientQuit, CRITICAL_
 
 #pragma  region PROTOTYPE_GAMEOBJECT
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_KongRaji), CMiniGame_KongRaji::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_KongGolu), CMiniGame_KongGolu::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGame_DonkeyKong), CMiniGame_DonkeyKong::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_KongRajiTrigger), CKongRajiTrigger::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DonkeyKong_BulletTrigger), CDonkeyKong_BulletTrigger::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_DonkeyKong_Bullet), CDonkeyKong_Bullet::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_KongWeapon), CMiniGame_KongWeapon::Create(m_pDevice, m_pDeviceContext)));
 
 #pragma endregion
 

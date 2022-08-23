@@ -1,27 +1,20 @@
 #pragma once
-#include "MonsterWeapon.h"
 
 BEGIN(Client)
 
-class CMonster_Weapon_Universal final : public CMonsterWeapon
+class CMiniGame_KongWeapon final : public CGameObject
 {
 public:
-	enum Monster_Weapon_UniversalType {
-		GADASURA_BLACK_WEAPON,
-		GADASURA_RAGE_WEAPON,
-		MONSTER_WEAPON_UNIVERSAL_END
-	};
-	typedef struct tagMonsterWeaponDesc
+	typedef struct tagKongRajiWeaponDesc
 	{
-		_uint			iMonsterWeaponMeshNumber;
 		ATTACHEDESC		eAttachedDesc;
 		void*			Object = nullptr;
-	}Monster_Weapon_UniversalDesc;
+	}KongRaji_Weapon_UniversalDesc;
 
 private:
-	explicit CMonster_Weapon_Universal(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	explicit CMonster_Weapon_Universal(const CMonster_Weapon_Universal& rhs);
-	virtual ~CMonster_Weapon_Universal() = default;
+	explicit CMiniGame_KongWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMiniGame_KongWeapon(const CMiniGame_KongWeapon& rhs);
+	virtual ~CMiniGame_KongWeapon() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* pArg)override;
@@ -68,12 +61,11 @@ private:
 private:
 	HRESULT Update_Weapon(_double dDeltaTime);
 
-
-	HRESULT	Gadasura_Black_Weapon(_double dDeltaTime);
-	HRESULT	Gadasura_Rage_Weapon(_double dDeltaTime);
+private:
+	HRESULT MagnetOn(_double dDeltaTime);
 
 private:
-	Monster_Weapon_UniversalDesc m_Monster_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
+	KongRaji_Weapon_UniversalDesc m_KongRaji_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
 
 private:
@@ -84,12 +76,12 @@ private:
 	CDissolve*			m_pDissolve = nullptr;
 
 private:
-	CGameObject*		m_pMonster_Object = nullptr;
-	CModel*				m_pMonster_Model = nullptr;
-
-private:
 	CCollider*			m_pColliderCom = nullptr;
 	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+private:
+	class CMiniGame_KongRaji* m_pPlayer = nullptr;
+	CTransform*			m_pPlayerTransform = nullptr;
 
 private:
 	_float4x4			m_fAttachedMatrix;
@@ -98,8 +90,19 @@ private:
 private:
 	_bool				m_WeaponAttackOn = false;
 
+private:
+	_bool				m_bMagnet = false;
+
+
+private:
+	_uint				m_iOnceIndex = 0;
+
+	//test!@#@!#$@!$@!$@!$@
+//private:
+//	_float3				TestPos = _float3(0.f, 0.f, 0.f);
+
 public:
-	static CMonster_Weapon_Universal* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
+	static CMiniGame_KongWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 

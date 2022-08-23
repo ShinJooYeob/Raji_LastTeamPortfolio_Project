@@ -28,7 +28,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Initialize()
 	FAILED_CHECK(Ready_Layer_MainCamera(TAG_LAY(Layer_Camera_Main)));
 	FAILED_CHECK(Ready_Layer_MiniGame_KongRaji(TAG_LAY(Layer_Player)));
 	FAILED_CHECK(Ready_Layer_SkyBox(TAG_LAY(Layer_SkyBox)));
-
+	FAILED_CHECK(Ready_DonkeyKong_Dynamic(TAG_LAY(Layer_MiniGame_DonkeyKong)));
 
 	//FAILED_CHECK(Ready_MapData(L"Stage_MiniGame_WallCrush.dat", SCENE_MINIGAME_DONKEYKONG, TAG_LAY(Layer_StaticMapObj)));
 
@@ -331,86 +331,6 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_MapData(const _tchar * szMapDataFileNam
 	return S_OK;
 }
 
-HRESULT Scene_MiniGame_DonkeyKong::Ready_TriggerObject(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
-{
-
-	{
-
-		CGameInstance* pInstance = g_pGameInstance;
-
-		_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/Trigger/";
-		lstrcat(szFullPath, szTriggerDataName);
-
-
-		HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
-
-
-		if (INVALID_HANDLE_VALUE == hFile)
-		{
-			__debugbreak();
-			return E_FAIL;
-		}
-
-		DWORD	dwByte = 0;
-		_int iIDLength = 0;
-
-
-
-
-		while (true)
-		{
-
-
-
-			_uint eNumber = 0;
-			_tchar eObjectID[MAX_PATH];
-			_float4x4 WorldMat = XMMatrixIdentity();
-			_float4x4 ValueData = XMMatrixIdentity();
-			_float4x4 SubValueData = XMMatrixIdentity();
-
-			ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
-
-			ReadFile(hFile, &(eNumber), sizeof(_uint), &dwByte, nullptr);
-			ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
-			ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
-
-			ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-			ReadFile(hFile, &(ValueData), sizeof(_float4x4), &dwByte, nullptr);
-			ReadFile(hFile, &(SubValueData), sizeof(_float4x4), &dwByte, nullptr);
-			if (0 == dwByte) break;
-
-
-
-			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, eObjectID, &eNumber));
-
-			CTriggerObject* pObject = (CTriggerObject*)(pInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
-
-			NULL_CHECK_RETURN(pObject, E_FAIL);
-
-			pObject->Set_eNumberNObjectID(eNumber, eObjectID);
-
-			((CTransform*)pObject->Get_Component(TAG_COM(Com_Transform)))->Set_Matrix(WorldMat);
-
-			pObject->Set_ValueMat(&ValueData);
-			pObject->Set_SubValueMat(&SubValueData);
-
-			pObject->After_Initialize();
-
-		}
-
-		CloseHandle(hFile);
-	}
-
-
-
-
-
-
-
-
-	return S_OK;
-}
-
 HRESULT Scene_MiniGame_DonkeyKong::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
@@ -535,74 +455,11 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_MapParticle()
 	return S_OK;
 }
 
-HRESULT Scene_MiniGame_DonkeyKong::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataName, SCENEID eSceneID, const _tchar * pLayerTag)
+HRESULT Scene_MiniGame_DonkeyKong::Ready_DonkeyKong_Dynamic(const _tchar* pLayerTag)
 {
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_Object_MiniGame_KongGolu)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENE_MINIGAME_DONKEYKONG, pLayerTag, TAG_OP(Prototype_Object_MiniGame_DonkeyKong)));
 
-
-	//../bin/Resources/Data/ParicleData/TextureParticle/
-	_tchar szFullPath[MAX_PATH] = L"../bin/Resources/Data/MonsterBatchData/";
-	lstrcat(szFullPath, szTriggerDataName);
-
-	HANDLE hFile = ::CreateFileW(szFullPath, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, NULL);
-
-
-	if (INVALID_HANDLE_VALUE == hFile)
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	DWORD	dwByte = 0;
-
-	_int iIDLength = 0;
-
-
-	_float4x4 WorldMat = XMMatrixIdentity();
-	_float4x4 ValueMat = XMMatrixIdentity();
-	_tchar	 eObjectID[MAX_PATH] = L"";
-
-	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
-
-
-
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_MonsterBatchTrigger)));
-	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));
-
-	NULL_CHECK_RETURN(pMonsterBatchTrigger, E_FAIL);
-
-	CTransform * pTrigTransform = (CTransform*)pMonsterBatchTrigger->Get_Component(TAG_COM(Com_Transform));
-
-	//////////////////////////////////////////////////////////////////////////메트릭스 넣기
-
-	pTrigTransform->Set_Matrix(WorldMat);
-	pMonsterBatchTrigger->Set_ValueMat(&ValueMat);
-
-
-	while (true)
-	{
-		ZeroMemory(eObjectID, sizeof(_tchar) * MAX_PATH);
-
-		ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
-
-		ReadFile(hFile, &(iIDLength), sizeof(_int), &dwByte, nullptr);
-		ReadFile(hFile, &(eObjectID), sizeof(_tchar) * iIDLength, &dwByte, nullptr);
-
-
-		if (0 == dwByte) break;
-		pMonsterBatchTrigger->Add_MonsterBatch(WorldMat, eObjectID);
-	}
-
-
-	CloseHandle(hFile);
-
-
-	return S_OK;
-}
-
-HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_UI(const _tchar * pLayerTag)
-{
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME1, pLayerTag, TAG_OP(Prototype_Object_PauseUI)));
 	return S_OK;
 }
 
