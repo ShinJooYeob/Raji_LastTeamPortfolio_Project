@@ -1448,13 +1448,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 	}
 
-
-
-
 	if (type == MESHEFFECT_ARROW_BOW_SP_TON)
 	{
-
-
 		MeshDesc.eMeshType = Prototype_Mesh_ConeMesh;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_SG_tornado;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_tornado3;
@@ -1466,8 +1461,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.iDiffuseTextureIndex = 317;
 		MeshDesc.iDiffuseTextureIndex = 278;
 		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.MaskTextureIndex = 55;
-		MeshDesc.MaskTextureIndex = 57;
+		MeshDesc.MaskTextureIndex = 29;
 		MeshDesc.MaskTextureIndex = 109;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
 		MeshDesc.NoiseTextureIndex = 362;
@@ -1478,6 +1472,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		MeshDesc.vLimLight = _float4(0.09f, 0.09f, 0.75f, 1.0f);
 		MeshDesc.vEmissive = _float3(0.8f, 0.6f, 0.1f);
+		MeshDesc.fAlphaTestValue = 0.55f;
 
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
@@ -1490,7 +1485,6 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.RotationSpeedPerSec = 40.0f;
 
 		MeshDesc.vLookDir = _float3(0, 0, 1);
-
 
 		// MeshDesc.m_iPassIndex = 16; // ø÷∞Ó
 		 MeshDesc.m_iPassIndex = 17; // ø÷∞Ó µÓ¿Â

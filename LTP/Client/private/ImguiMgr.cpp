@@ -21,6 +21,7 @@
 #include "AssimpCreateMgr.h"
 #include "EnvMappedWater.h"
 
+#include "Player.h"
 #ifdef _DEBUG
 
 
@@ -1793,80 +1794,95 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 {
-	static _float3 PlayPostiton1 = _float3::Zero();
-	ImGui::DragFloat3("PlayPostiton1:", (float*)&PlayPostiton1, 0.1f, -100, 100);
-	static  _float3 PlayPostiton2 = _float3::Zero();
-	ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
+	//static _float3 PlayPostiton1 = _float3::Zero();
+	//ImGui::DragFloat3("PlayPostiton1:", (float*)&PlayPostiton1, 0.1f, -100, 100);
+	//static  _float3 PlayPostiton2 = _float3::Zero();
+	//ImGui::DragFloat3("PlayPostiton2:", (float*)&PlayPostiton2, 0.1f, -100, 100);
 
-	static TCHAR* str_DemoSoundFile = L"3DTestSound2.wav";
+	//static TCHAR* str_DemoSoundFile = L"3DTestSound2.wav";
 
-	static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
-	static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
-	static const wchar_t* layerTrigger = TAG_LAY(Layer_ColTrigger);
+	//static const wchar_t* layerStatic = TAG_LAY(Layer_ColStatic);
+	//static const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
+	//static const wchar_t* layerTrigger = TAG_LAY(Layer_ColTrigger);
 
-	static CTestObject_PhysX* PlayerSoundObject = nullptr;
+	//static CTestObject_PhysX* PlayerSoundObject = nullptr;
 
-	if (ImGui::Button("Create_SoundPlayer"))
-	{
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-		(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
-		PlayerSoundObject =
-			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
-		PlayerSoundObject->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
-		PlayerSoundObject->Set_TYPE(CTestObject_PhysX::TESTTYPE_SOUND);
-		CTransform* objTrans = (CTransform*)PlayerSoundObject->Get_Component(TAG_COM(Com_Transform));
-		objTrans->Set_MatrixState(CTransform::STATE_POS, PlayPostiton1);
-		NULL_CHECK_BREAK(PlayerSoundObject);
-		NULL_CHECK_BREAK(objTrans);
+	//if (ImGui::Button("Create_SoundPlayer"))
+	//{
+	//	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
+	//	(g_pGameInstance->Get_NowSceneNum(), layerStatic, TAG_OP(Prototype_Object_Static_PhysX)));
+	//	PlayerSoundObject =
+	//		static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerStatic));
+	//	PlayerSoundObject->Set_ModelSetting(CTestObject_PhysX::MODEL_PLAYER);
+	//	PlayerSoundObject->Set_TYPE(CTestObject_PhysX::TESTTYPE_SOUND);
+	//	CTransform* objTrans = (CTransform*)PlayerSoundObject->Get_Component(TAG_COM(Com_Transform));
+	//	objTrans->Set_MatrixState(CTransform::STATE_POS, PlayPostiton1);
+	//	NULL_CHECK_BREAK(PlayerSoundObject);
+	//	NULL_CHECK_BREAK(objTrans);
 
 
-	}
+	//}
 
-	if (PlayerSoundObject)
-	{
-		static FMOD_SYSTEM* SoundSystem = GetSingle(CGameInstance)->Get_SOUNDSYSTEM();
+	//if (PlayerSoundObject)
+	//{
+	//	static FMOD_SYSTEM* SoundSystem = GetSingle(CGameInstance)->Get_SOUNDSYSTEM();
 
-		// 3D Sound
-		int iListener=0;
-		float fDopperScale, fDistance, fRollScale;
+	//	// 3D Sound
+	//	int iListener=0;
+	//	float fDopperScale, fDistance, fRollScale;
 
-		FMOD_System_Get3DSettings(SoundSystem, &fDopperScale, &fDistance,&fRollScale);
-		FMOD_System_Get3DNumListeners(SoundSystem, &iListener);
+	//	FMOD_System_Get3DSettings(SoundSystem, &fDopperScale, &fDistance,&fRollScale);
+	//	FMOD_System_Get3DNumListeners(SoundSystem, &iListener);
+	//
+	//	ImGui::Text("3DSetting:(%.2f,%.2f,%.2f,)", fDopperScale, fDistance, fRollScale);
+	//	ImGui::Text("3DListener:(%d)", iListener);
+
+	//	// Scale 
+	//	_float MinusValue = fRollScale;
+	//	ImGui::DragFloat("DopperScale Distance RollScale:", &MinusValue, 0.1f, 0.01f, 1000);
+
+	//	GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
+
+	//	// 3DSOUND
+
+	//	if (ImGui::Button("StartSound"))
+	//	{
+	//		GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
+
+	//	}
+
+	//	if (ImGui::Button("Start3DSound"))
+	//	{
+	//		GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile,_float3(0,0,0), CHANNEL_EFFECT, 1.0f);
+	//	}
+	//	if (ImGui::Button("Start3DSound_Move"))
+	//	{
+
+	//		/*
+	//		velx = (posx-lastposx) * 1000 / timedelta;
+	//		velz = (posy-lastposy) * 1000 / timedelta;
+	//		velz = (posz-lastposz) * 1000 / timedelta;
+
+	//		*/
+	//		GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile, _float3(0, 0, 0), CHANNEL_EFFECT, 1.0f,_float3(1,0,0),1000);
+	//	}
+
+	//}
 	
-		ImGui::Text("3DSetting:(%.2f,%.2f,%.2f,)", fDopperScale, fDistance, fRollScale);
-		ImGui::Text("3DListener:(%d)", iListener);
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "NAVI");
 
-		// Scale 
-		_float MinusValue = fRollScale;
-		ImGui::DragFloat("DopperScale Distance RollScale:", &MinusValue, 0.1f, 0.01f, 1000);
+	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
 
-		GetSingle(CGameInstance)->Set_3DSound_DistanceMinValue(MinusValue);
 
-		// 3DSOUND
 
-		if (ImGui::Button("StartSound"))
-		{
-			GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
-
-		}
-
-		if (ImGui::Button("Start3DSound"))
-		{
-			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile,_float3(0,0,0), CHANNEL_EFFECT, 1.0f);
-		}
-		if (ImGui::Button("Start3DSound_Move"))
-		{
-
-			/*
-			velx = (posx-lastposx) * 1000 / timedelta;
-			velz = (posy-lastposy) * 1000 / timedelta;
-			velz = (posz-lastposz) * 1000 / timedelta;
-
-			*/
-			GetSingle(CGameInstance)->Play3D_Sound(str_DemoSoundFile, _float3(0, 0, 0), CHANNEL_EFFECT, 1.0f,_float3(1,0,0),1000);
-		}
-
+	if (player)
+	{
+		_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
+		ImGui::Text("playerNaviIndex = %d", index);
+		
 	}
+
+
 	return _int();
 }
 
