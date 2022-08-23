@@ -808,6 +808,31 @@ void CPlayerWeapon_Arrow::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 	}
 }
 
+void CPlayerWeapon_Arrow::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
+{
+	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_IceSkillPointArry();
+
+	switch (eAttackType)
+	{
+	case CPlayerWeapon::ATTACK_MAIN:
+	{
+		m_fDamage = m_Arr_MainAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
+	}
+	case CPlayerWeapon::ATTACK_STRONG:
+	{
+		m_fDamage = m_Arr_StrongAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
+	}
+	case CPlayerWeapon::ATTACK_SUB:
+	{
+		m_fDamage = m_fSubAttackDamage;
+		break;
+	}
+
+	}
+}
+
 void CPlayerWeapon_Arrow::LookAtDir(_fVector fDir)
 {
 	m_pTransformCom->LookDir(fDir);

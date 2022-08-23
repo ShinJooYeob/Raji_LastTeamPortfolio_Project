@@ -65,6 +65,8 @@ HRESULT CScene_Stage7::Initialize()
 	
 	m_eNextScene = SCENE_STAGE6;
 
+	Play_Scene_BGM();
+
 	return S_OK;
 }
 
@@ -209,6 +211,11 @@ void CScene_Stage7::Set_Change_NextStage()
 {
 	m_bIsNeedToSceneChange = true;
 	m_fDelayTime = 3.f;
+}
+
+void CScene_Stage7::Play_Scene_BGM()
+{
+	g_pGameInstance->PlayBGM(L"Jino_BGM_Stage7.wav");
 }
 
 

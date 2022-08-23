@@ -353,6 +353,30 @@ void CPlayerWeapon_Sword::EffectParticleOn(_uint iIndex, void* pArg)
 
 }
 
+void CPlayerWeapon_Sword::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
+{
+	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_FireSkillPointArry();
+
+	switch (eAttackType)
+	{
+	case CPlayerWeapon::ATTACK_MAIN:
+	{
+		m_fDamage = m_Arr_MainAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
+	}
+	case CPlayerWeapon::ATTACK_STRONG:
+	{
+		m_fDamage = m_Arr_StrongAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
+	}
+	case CPlayerWeapon::ATTACK_SUB:
+	{
+		m_fDamage = m_fSubAttackDamage;
+		break;
+	}
+	}
+}
+
 void CPlayerWeapon_Sword::Set_ShieldBashAttack(_bool bShieldBashAttack)
 {
 	if (false == m_bShieldBashAttack)
@@ -484,6 +508,21 @@ HRESULT CPlayerWeapon_Sword::SetUp_Components()
 HRESULT CPlayerWeapon_Sword::SetUp_EtcInfo()
 {
 	m_fMaxTime_ClearTrail = 0.2f;
+
+	// Setup Damage
+	m_Arr_MainAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_MainAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_MainAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_MainAttackDamage[3] = { 2.f, 2.f, 3.f };
+
+	m_Arr_StrongAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_StrongAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_StrongAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_StrongAttackDamage[3] = { 2.f, 2.f, 3.f };
+
+	m_fSubAttackDamage = 1.f;
+	//
+
 	return S_OK;
 }
 

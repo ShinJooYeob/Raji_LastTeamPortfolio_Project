@@ -308,7 +308,7 @@ void CSnake::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CG
 {
 	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
 	{
-		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedObj->Take_Damage(this, 10.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
 		pConflictedCollider->Set_Conflicted(1.f);
 	}
 }
@@ -666,6 +666,7 @@ void CSnake::Update_Direction(_double fDeltaTime)
 			m_fDelayTime = 4;
 			m_pModel->Change_AnimIndex(1);
 			GetSingle(CUtilityMgr)->Get_Renderer()->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+			g_pGameInstance->PlayBGM(L"Jino_Snake_BGM.wav");
 		}
 	} 
 	else if (4 == m_iCurCutSceneState)
@@ -1007,11 +1008,34 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				m_iAdjMovedIndex++;
 			}
 
+			if (false == m_bOncePlaySound && 0.32f <= PlayRate && 0.4f > PlayRate)
+			{
+				// JH
+				CCamera_Main::CAMERASHAKEDIRDESC tCameraShakeDirDesc;
+				tCameraShakeDirDesc.fTotalTime = 0.5f;
+				tCameraShakeDirDesc.fPower = 90.f;
+				tCameraShakeDirDesc.fChangeDirectioninterval = 0.001f;
+				_float3 fShakeDir = GetSingle(CUtilityMgr)->RandomFloat3(-1.f, 1.f).XMVector();
+				
+				tCameraShakeDirDesc.fShakingDir = XMVector3Normalize(fShakeDir.XMVector());
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Dir_Thread(&tCameraShakeDirDesc, false);
+
+				CCamera_Main::CAMERASHAKEROTDESC tCameraShakeRotDesc;
+				tCameraShakeRotDesc.fTotalTime = 0.5f;
+				tCameraShakeRotDesc.fPower = 3.f;
+				tCameraShakeRotDesc.fChangeDirectioninterval = 0.02f;
+				tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
+
+				m_bOncePlaySound = true;
+			}
+
 			if (PlayRate > 0.4375 && m_iAdjMovedIndex == 2)
 			{
 				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 				m_iAdjMovedIndex++;
+
 			}
 
 			if (PlayRate > 0.45 && m_iAdjMovedIndex == 3)
@@ -1095,6 +1119,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				_float3 EsingPos = g_pGameInstance->Easing_Vector(TYPE_SinInOut, m_AttackAnimPos.XMVector(), m_StartPos.XMVector(), (_float)PlayRate - 0.4375f, 0.1875f);
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, EsingPos);*/
+				m_bOncePlaySound = false;
 			}
 
 		}

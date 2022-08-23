@@ -35,6 +35,7 @@ HRESULT CLilyPad::Initialize_Clone(void * pArg)
 
 	Set_LimLight_N_Emissive(_float4(0.f, 0.0625f, 0.06640625f, 0.55859375f), _float4(0.2f, 0.5f, 1.f, 0.f));
 
+	g_pGameInstance->Play3D_Sound(L"Jino_Raji_LilypadOnWater.wav", m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER, 0.5f);
 	return S_OK;
 }
 
@@ -63,6 +64,11 @@ _int CLilyPad::Update(_double fDeltaTime)
 	}
 	else if (m_fDuaton <= 3.f)
 	{
+		if (false == m_bPlayOnceSound)
+		{
+			g_pGameInstance->Play3D_Sound(L"Jino_Raji_LilypadOnWater.wav", m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNEL_PLAYER, 0.5f);
+			m_bPlayOnceSound = true;
+		}
 		m_pTransformCom->Move_Down(fDeltaTime * m_fFallingAcc);
 		m_fFallingAcc += 0.01f;
 	}

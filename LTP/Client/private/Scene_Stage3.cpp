@@ -52,6 +52,8 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 	m_eNextScene = SCENE_STAGE5;
+
+	Play_Scene_BGM();
 	return S_OK;
 }
 
@@ -141,6 +143,11 @@ _int CScene_Stage3::Change_to_NextScene()
 	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, (SCENEID)m_eNextScene), SCENEID::SCENE_LOADING));
 
 	return _int();
+}
+
+void CScene_Stage3::Play_Scene_BGM()
+{
+	g_pGameInstance->PlayBGM(L"Jino_Rangda_BGM_0.wav");
 }
 
 void CScene_Stage3::Set_PlayGoluSound(_bool bPlaySound)

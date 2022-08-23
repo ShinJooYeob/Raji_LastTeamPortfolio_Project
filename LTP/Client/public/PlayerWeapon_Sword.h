@@ -36,6 +36,8 @@ public:
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 	virtual void		EffectParticleOn(_uint iIndex , void* pArg = nullptr) override;
 
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount) override;
+
 public:
 	void				Set_ShieldBashAttack(_bool bShieldBashAttack);
 
@@ -75,6 +77,11 @@ private:
 	_float				m_fMaxTime_ClearTrail = 0.f;
 	_float				m_fCurTime_ClearTrail = 0.f;
 	_bool				m_bShieldBashAttack = false;
+
+	vector<_float>			m_Arr_MainAttackDamage[4];
+	vector<_float>			m_Arr_StrongAttackDamage[4];
+	_float					m_fSubAttackDamage = 1.f;
+
 
 private:
 	CShader*			m_pShaderCom = nullptr;

@@ -183,6 +183,7 @@ void CDynamicPlatform::Set_Appear(_bool bAppear)
 {
 	if (true == bAppear && true == m_bDisappear)
 	{
+		g_pGameInstance->PlaySoundW(L"Jino_Teleport.wav", CHANNEL_PLAYER);
 		m_pDissolveCom->Set_DissolveOn(true, 0.5f);		// Appear
 		m_bDisappear = false;
 

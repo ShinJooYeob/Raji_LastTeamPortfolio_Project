@@ -30,6 +30,8 @@ HRESULT CScene_Laboratory_Jino::Initialize()
 	m_fGameOverDelay = 11.f;
 	m_bOncePlaySound = false;
 
+	g_pGameInstance->PlayBGM(L"Jino_MiniGame_Golu_BGM.wav");
+
 	return S_OK;
 }
 
@@ -153,6 +155,7 @@ void CScene_Laboratory_Jino::Update_Game()
 			m_bEndUpdate = true;
 			m_pMainCam->Set_MaxTargetArmLength(5.f);
 			m_pMainCam->Set_MinTargetArmLength(5.f);
+			g_pGameInstance->PlaySoundW(L"Jino_Teleport.wav", CHANNEL_PLAYER);
 		}
 		else
 		{
