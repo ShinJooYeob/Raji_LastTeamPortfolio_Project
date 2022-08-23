@@ -65,12 +65,12 @@ _int CScene_Loby::Update(_double fDeltaTime)
 	else if (GetKeyState(VK_F3) & 0x8000)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LABORATORY_JINO), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME_JJB), SCENEID::SCENE_LOADING));
 	}
-	else if (GetKeyState(VK_F6) & 0x8000)
+	else if (GetKeyState(VK_F4) & 0x8000)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE6), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME_DONKEYKONG), SCENEID::SCENE_LOADING));
 	}
 
 

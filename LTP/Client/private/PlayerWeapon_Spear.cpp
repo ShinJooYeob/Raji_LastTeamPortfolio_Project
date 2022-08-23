@@ -280,7 +280,7 @@ void CPlayerWeapon_Spear::EffectParticleOn(_uint iIndex, void * pArg)
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 		m_pSpearNormalEffectTex = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
 	}
-		break;
+	break;
 
 	case 1:
 	{
@@ -288,11 +288,13 @@ void CPlayerWeapon_Spear::EffectParticleOn(_uint iIndex, void * pArg)
 		if (m_pSpearNormalEffectTex != nullptr)
 			m_pSpearNormalEffectTex->Set_GonnabeDie();
 	}
-		break;
+	break;
 	default:
 		break;
-		
+
+	}
 }
+
 void CPlayerWeapon_Spear::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
 {
 	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_FireSkillPointArry();
@@ -314,7 +316,7 @@ void CPlayerWeapon_Spear::Set_WeaponDamage(EAttackType eAttackType, _int iComboC
 		m_fDamage = m_fSubAttackDamage;
 		break;
 	}
-	
+	}
 }
 
 void CPlayerWeapon_Spear::Update_JavelinMode(_double fTargetTime)

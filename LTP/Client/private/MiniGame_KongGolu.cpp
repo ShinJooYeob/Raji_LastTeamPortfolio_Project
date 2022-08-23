@@ -115,7 +115,7 @@ _int CMiniGame_KongGolu::Render()
 	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
 #ifdef _DEBUG
-	FAILED_CHECK(m_pNavigationCom->Render());
+	//FAILED_CHECK(m_pNavigationCom->Render());
 #endif
 	return _int();
 }

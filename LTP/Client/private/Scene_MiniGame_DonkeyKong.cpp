@@ -53,7 +53,7 @@ _int Scene_MiniGame_DonkeyKong::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_MINIGAME_Jino), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 

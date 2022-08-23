@@ -185,6 +185,8 @@ void CSpearWave::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex
 
 void CSpearWave::Update_Colliders()
 {
+	if (m_pTransformCom == nullptr) return;
+
 	_Matrix Matrix = m_pTransformCom->Get_WorldMatrix();
 
 	m_pCollider->Update_Transform(0, Matrix);
