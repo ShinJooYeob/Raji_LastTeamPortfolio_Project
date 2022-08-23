@@ -9,6 +9,7 @@ class CPlayerWeapon abstract : public CGameObject
 {
 public:
 	enum EWeaponState { STATE_STRUCTURE, STATE_EQUIP, STATE_NON_EQUIP, STATE_END };
+	enum EAttackType { ATTACK_MAIN, ATTACK_STRONG, ATTACK_SUB, ATTACK_END };
 
 	typedef struct tagPlayerWeaponDesc
 	{
@@ -35,6 +36,8 @@ public:
 public:
 	virtual void		Dissolve_In(_double fTargetTime);
 	virtual void		Dissolve_Out(_double fTargetTime);
+
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount);
 
 public:
 	void				Active_Collision();
@@ -105,6 +108,8 @@ protected:
 	_bool						m_bActiveCollision_2 = false;
 	_bool						m_bActiveCollision_3 = false;
 	_bool						m_bActiveCollision_4 = false;
+
+	_float						m_fDamage = 1.f;
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

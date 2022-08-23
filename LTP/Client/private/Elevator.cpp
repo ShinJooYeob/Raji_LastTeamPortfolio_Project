@@ -49,6 +49,7 @@ _int CElevator::Update(_double fDeltaTime)
 			{
 				m_pPlayer->Set_State_ElevatorEnd();
 				m_bEndInteract = true;
+				g_pGameInstance->Stop_ChannelSound(CHANNEL_TEMP);
 				return _int();
 			}
 			else
@@ -114,6 +115,7 @@ void CElevator::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex,
 			m_pPlayer = pPlayer;
 			m_pPlayer->Set_State_ElevatorStart();
 			m_bActive = true;
+			g_pGameInstance->PlaySoundW(L"Jino_Elevator_Moving.wav", CHANNEL_TEMP);
 		}
 	}
 }

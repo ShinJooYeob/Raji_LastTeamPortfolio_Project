@@ -1485,6 +1485,11 @@ HRESULT CPlayer::Update_State_Fall(_double fDeltaTime)
 		&& fPos_y <= fOnNavPos_Y
 		&& (false == m_bOnLilyPad && (CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption()) || true == m_bOnLilyPad))
 	{
+		if (true == m_bOnLilyPad)
+		{
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_OnLilypad.wav", CHANNEL_PLAYER);
+		}
+
 		vMyPos = XMVectorSetY(vMyPos, fOnNavPos_Y);
 		Set_State_IdleStart(fDeltaTime);
 		m_fFallingAcc = 0.f;
@@ -1685,6 +1690,7 @@ HRESULT CPlayer::Update_State_Curtain(_double fDeltaTime)
 			else if (0.98f <= fAnimPlayRate)
 			{
 				m_pModel->Change_AnimIndex(CURTAIN_ANIM_FALLING);
+				g_pGameInstance->PlaySoundW(L"Jino_Raji_Slide_Loop.wav", CHANNEL_TEMP);
 			}
 		}
 
@@ -1704,32 +1710,8 @@ HRESULT CPlayer::Update_State_Curtain(_double fDeltaTime)
 			m_bOnNavigation = true;
 			fPos_y = fNavPos_y;
 			Set_State_IdleStart(fDeltaTime);
+			g_pGameInstance->Stop_ChannelSound(CHANNEL_TEMP);
 		}
-
-
-		/*m_pTransformCom->Move_Down(fDeltaTime * 2.f);
-		_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-		_float fMyPos_Y = XMVectorGetY(vMyPos);
-
-
-		if (fNavPos_y <= fPrePos_Y && fNavPos_y >= fPos_y && CCell::CELL_BLOCKZONE != m_pNavigationCom->Get_CurCellOption())
-		{
-			m_bOnNavigation = true;
-			fPos_y = fNavPos_y;
-			m_fFallingAcc = 0.f;
-			Set_State_IdleStart(fDeltaTime);
-		}
-
-
-
-		if (0.f >= fMyPos_Y)
-		{
-			vMyPos = XMVectorSetY(vMyPos, 0.f);
-			m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vMyPos);
-
-			Set_State_IdleStart(fDeltaTime);
-		}*/
-
 	}
 	break;
 	}
@@ -2208,6 +2190,7 @@ HRESULT CPlayer::Update_State_Petal(_double fDeltaTime)
 			m_pModel->Change_AnimIndex(PETAL_ANIM_THROW_THROW);
 			m_eCurPetalState = PETAL_THROW_THROW;
 			m_fPetalPos = Check_MousePicking();
+			g_pGameInstance->PlaySoundW(L"Jino_Raji_Throw_Lotus.wav", CHANNEL_PLAYER);
 			break;
 		}
 
@@ -8326,12 +8309,10 @@ void CPlayer::Targeting_Search()
 
 	if (false == m_bPlayBattleSound)
 	{
-		g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
-
-		_int iSelectSoundFileIndex = rand() % 4;
+		/*_int iSelectSoundFileIndex = rand() % 4;
 		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_Battle_%d.wav"), iSelectSoundFileIndex);
-		g_pGameInstance->PlayBGM(pSoundFile);
+		swprintf_s(pSoundFile, TEXT("Jino_Battle_5.wav"), iSelectSoundFileIndex);*/
+		g_pGameInstance->PlayBGM(L"Jino_Battle_5.wav");
 
 		m_bPlayBattleSound = true;
 	}

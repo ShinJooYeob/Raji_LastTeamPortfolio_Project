@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Snake_Poison_Raser.h"
+#include "Camera_Main.h"
 
 CSnake_Poison_Raser::CSnake_Poison_Raser(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -34,6 +35,9 @@ HRESULT CSnake_Poison_Raser::Initialize_Clone(void * pArg)
 	FAILED_CHECK(Ready_MeshDesc());
 
 	m_fCurTime_Duration = 99999999999999999999.f;
+
+	//JH
+	m_fDelayTime = 0.f;
 	return S_OK;
 }
 
@@ -46,6 +50,21 @@ _int CSnake_Poison_Raser::Update(_double fDeltaTime)
 	m_fCurTime_Duration += (_float)fDeltaTime;
 
 
+	//JH
+	CGameObject* pPlayer = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(Layer_Player));
+	_Vector vPlayerPos = static_cast<CTransform*>(pPlayer->Get_Component(Tag_Component(Com_Transform)))->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vBeamPos = m_pExplosionTransformCom->Get_MatrixState(CTransform::STATE_POS);
+	_float fDist = XMVectorGetX(XMVector3Length(vBeamPos - vPlayerPos));
+	m_fDelayTime -= (_float)fDeltaTime;
+	if (fDist <= 20.f)
+	{
+		if (0.f >= m_fDelayTime)
+		{
+			m_fDelayTime = 0.5f;
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 4.f, 0.5f, false);
+		}
+	}
+	//
 
 	return _int();
 }

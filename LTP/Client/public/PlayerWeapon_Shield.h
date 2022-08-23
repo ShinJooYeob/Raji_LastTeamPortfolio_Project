@@ -35,6 +35,7 @@ public:
 	virtual void		Dissolve_In(_double fTargetTime) override;
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount) override;
 
 public:
 	void				Start_UltimateMode(_fVector fStartPos, _float fUltimateTargetHeight);
@@ -85,6 +86,10 @@ private:
 	_float					m_fStartDist;
 	_float					m_fTargetDist;
 	EShieldUltimateState	m_eUltimateState = SHIELDULTIMATE_MOV;
+
+	vector<_float>			m_Arr_MainAttackDamage[4];
+	vector<_float>			m_Arr_StrongAttackDamage[4];
+	_float					m_fSubAttackDamage = 1.f;
 
 
 private:

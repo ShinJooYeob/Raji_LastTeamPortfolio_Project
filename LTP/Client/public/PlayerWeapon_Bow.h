@@ -40,6 +40,8 @@ public:
 	virtual void		Dissolve_In(_double fTargetTime) override;
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount) override;
+
 public:
 	void				Set_UltimateAttackPos(_fVector fPos);
 
@@ -112,6 +114,10 @@ private:
 	_float3				m_fUltimateAttackPos = _float3(0.f, 0.f, 0.f);
 	_float				m_fMaxTime_UltimateAttackDuration = 5.f;
 	_float				m_fCurTime_UltimateAttackDuration = 5.f;
+
+	vector<_float>			m_Arr_MainAttackDamage[4];
+	vector<_float>			m_Arr_StrongAttackDamage[4];
+	_float					m_fSubAttackDamage = 1.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

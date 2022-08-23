@@ -16,8 +16,9 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-
 	virtual _int Change_to_NextScene() override;
+
+	virtual void Play_Scene_BGM() override;
 
 public:
 	void	Set_PlayGoluSound(_bool bPlaySound);

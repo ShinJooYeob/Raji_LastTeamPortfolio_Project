@@ -35,6 +35,7 @@ private:
 	_float					m_fDuaton = 10.f;
 	_bool					m_bScaling = true;
 	_float					m_fFallingAcc = 0.f;
+	_bool					m_bPlayOnceSound = false;
 
 private:
 	CShader*				m_pShaderCom = nullptr;

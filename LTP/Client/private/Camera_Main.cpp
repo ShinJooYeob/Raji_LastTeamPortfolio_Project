@@ -1103,6 +1103,7 @@ _int CCamera_Main::Update_Ending(_double fDeltaTime)
 		m_fDelayTime -= (_float)fDeltaTime;
 		if (0.f >= m_fDelayTime)
 		{
+			g_pGameInstance->PlayBGM(L"Jino_Ending.wav");
 			m_iCurState_EndingCutScene = 9;
 			m_fDelayTime = 7.f;
 		}

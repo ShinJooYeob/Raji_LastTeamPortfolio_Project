@@ -65,6 +65,9 @@ private:
 
 	ATTACHEDESC			m_AttachedDesc;
 
+	//JH
+	_float				m_fDelayTime = 0.5f;
+
 private:
 	void				Update_AttachMatrix();
 	HRESULT				SetUp_Components();

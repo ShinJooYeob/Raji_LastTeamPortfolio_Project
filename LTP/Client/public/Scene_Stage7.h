@@ -21,6 +21,8 @@ public:
 
 	void Set_Change_NextStage();
 
+	virtual void Play_Scene_BGM() override;
+
 private:
 	HRESULT Ready_Light();
 	HRESULT Ready_Layer_MainCamera(const _tchar* pLayerTag);

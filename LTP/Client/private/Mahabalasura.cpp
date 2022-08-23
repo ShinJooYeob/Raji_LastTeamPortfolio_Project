@@ -157,6 +157,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		m_pSpear->Update(fDeltaTime);
 		m_pDissolveCom->Update_Dissolving(fDeltaTime);
 		FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * (m_fAnimmultiple), m_bIsOnScreen));
+		g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
 		return _int();
 	}
 	//
@@ -1008,6 +1009,8 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 				g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, Tag_Layer(LAYERID::Layer_MazeDoor))->Set_IsDead();
 				m_fDelayTime = 3.f;
 				m_iCutSceneStep = 0;
+
+				g_pGameInstance->PlayBGM(L"Jino_Subala_BGM.wav");
 			}
 		}
 	}

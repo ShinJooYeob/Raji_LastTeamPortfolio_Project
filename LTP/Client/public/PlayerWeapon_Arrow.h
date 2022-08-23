@@ -41,6 +41,8 @@ public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
 		_uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType) override;
 
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount) override;
+
 public:
 	void				LookAtDir(_fVector fDir);
 
@@ -119,6 +121,10 @@ private:
 	_float				m_fMaxTime_Destroy = 3.f;
 	_float				m_fCurTime_Destroy = 0.f;
 	_bool				m_bEffect_Head = false;
+
+	vector<_float>		m_Arr_MainAttackDamage[4];
+	vector<_float>		m_Arr_StrongAttackDamage[4];
+	_float				m_fSubAttackDamage = 1.f;
 
 private:
 	CShader*			m_pShaderCom = nullptr;

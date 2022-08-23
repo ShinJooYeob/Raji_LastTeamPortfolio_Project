@@ -18,6 +18,8 @@ public:
 
 	virtual _int Change_to_NextScene() override;
 
+	virtual void Play_Scene_BGM() override;
+
 public:
 	void	Start_EndingCinematic();
 	void	Start_Ending();

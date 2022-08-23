@@ -55,6 +55,8 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_MapParticle());
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
+	Play_Scene_BGM();
+
 	return S_OK;
 }
 
@@ -134,6 +136,11 @@ _int CScene_Stage2::Change_to_NextScene()
 	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, (SCENEID)m_eNextScene), SCENEID::SCENE_LOADING));
 
 	return _int();
+}
+
+void CScene_Stage2::Play_Scene_BGM()
+{
+	g_pGameInstance->PlayBGM(L"Jino_BGM_Stage2.wav");
 }
 
 

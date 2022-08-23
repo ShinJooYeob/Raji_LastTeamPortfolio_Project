@@ -70,7 +70,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 	g_pGameInstance->PlaySoundW(L"Jino_Stage1_Start.wav", CHANNEL_PLAYER);
-	g_pGameInstance->PlayBGM(L"Jino_Stage1_Start_Wind.wav");
+	g_pGameInstance->PlayBGM(L"Jino_Stage1_Start_Wind.wav", 1);
 	return S_OK;
 }
 

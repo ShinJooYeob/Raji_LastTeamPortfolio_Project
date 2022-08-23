@@ -67,6 +67,10 @@ void CPlayerWeapon::Dissolve_Out(_double fTargetTime)
 
 }
 
+void CPlayerWeapon::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
+{
+}
+
 void CPlayerWeapon::Active_Collision()
 {
 	m_bActiveCollision = true;
@@ -302,7 +306,6 @@ void CPlayerWeapon::Set_VecParticle(_uint index, INSTPARTICLEDESC & d)
 
 
 }
-
 
 _bool CPlayerWeapon::AbleToChangeWeapon()
 {

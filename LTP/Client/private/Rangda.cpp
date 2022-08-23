@@ -202,6 +202,7 @@ _int CRangda::Update(_double fDeltaTime)
 			// JH
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+			g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
 			//
 		}
 
@@ -588,6 +589,7 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			m_pModel->Change_AnimIndex(0);
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
+			g_pGameInstance->PlayBGM(L"Jino_Rangda_BGM_1.wav");
 		}
 		else if (fAnimPlayRate > 0.43410852713  && iAnimChecker == 1)
 		{

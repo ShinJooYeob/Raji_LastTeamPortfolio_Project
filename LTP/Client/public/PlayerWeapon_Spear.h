@@ -36,6 +36,7 @@ public:
 	virtual void		Dissolve_Out(_double fTargetTime) override;
 
 	virtual void		EffectParticleOn(_uint iIndex, void* pArg = nullptr);
+	virtual void		Set_WeaponDamage(EAttackType eAttackType, _int iComboCount) override;
 
 private:
 	void				Update_JavelinMode(_double fTargetTime);
@@ -103,6 +104,10 @@ private:
 	_uint					m_iPassNum;
 	_uint					m_iCurAnim;
 	_bool					m_bUltimateAttacking = false;
+
+	vector<_float>			m_Arr_MainAttackDamage[4];
+	vector<_float>			m_Arr_StrongAttackDamage[4];
+	_float					m_fSubAttackDamage = 1.f;
 
 	// JY
 	_bool					m_bOnceControll = false;

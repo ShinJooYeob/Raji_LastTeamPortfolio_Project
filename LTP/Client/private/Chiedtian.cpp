@@ -233,6 +233,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 		m_fAttachCamPos.z -= 10.f;
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Lock_CamLook(true, XMVectorSet(0.f, 0.f, 1.f, 0.f));
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+		g_pGameInstance->PlayBGM(L"Jino_Stage1_Start_Wind.wav");
 		/*static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionStart();*/
 		//
 
@@ -254,8 +255,8 @@ _int CChiedtian::Update(_double fDeltaTime)
 				m_bIsHit = true;
 		}
 
-		if (m_fHP <= m_fHP / 2.f)
-		{
+		if (m_fHP <= m_fMaxHP / 2.f)
+		{ 
 			if (m_bIsAtaackAimEnd)
 				m_bIsHit = true;
 		}
@@ -563,6 +564,8 @@ _int CChiedtian::Update(_double fDeltaTime)
 				SecondPageWeapon->Set_AttackfinishOff(true);
 			}
 
+			//JH
+			g_pGameInstance->PlayBGM(L"Jino_Titan_BGM_1.wav");
 		}
 
 		if (m_bIsLookAt)
@@ -1069,8 +1072,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(this);
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 
-
-
+			g_pGameInstance->PlayBGM(L"Jino_Titan_BGM_0.wav");
 		}
 		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)
 		{

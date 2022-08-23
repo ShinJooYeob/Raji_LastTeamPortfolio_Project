@@ -291,7 +291,30 @@ void CPlayerWeapon_Spear::EffectParticleOn(_uint iIndex, void * pArg)
 		break;
 	default:
 		break;
+		
+}
+void CPlayerWeapon_Spear::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
+{
+	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_FireSkillPointArry();
+
+	switch (eAttackType)
+	{
+	case CPlayerWeapon::ATTACK_MAIN:
+	{
+		m_fDamage = m_Arr_MainAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
 	}
+	case CPlayerWeapon::ATTACK_STRONG:
+	{
+		m_fDamage = m_Arr_StrongAttackDamage[pSkillPoint[0]][iComboCount];
+		break;
+	}
+	case CPlayerWeapon::ATTACK_SUB:
+	{
+		m_fDamage = m_fSubAttackDamage;
+		break;
+	}
+	
 }
 
 void CPlayerWeapon_Spear::Update_JavelinMode(_double fTargetTime)
@@ -788,6 +811,21 @@ HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 {
 	m_iPassNum = 9;
 	m_iCurAnim = 0;
+
+	// Setup Damage
+	m_Arr_MainAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_MainAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_MainAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_MainAttackDamage[3] = { 2.f, 2.f, 3.f };
+
+	m_Arr_StrongAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_StrongAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_StrongAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_StrongAttackDamage[3] = { 2.f, 2.f, 3.f };
+	
+	m_fSubAttackDamage = 1.f;
+	//
+
 	return S_OK;
 }
 
