@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\MiniGame_KongWeapon.h"
+#include "MiniGame_KongRaji.h"
 
 
 CMiniGame_KongWeapon::CMiniGame_KongWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -42,7 +43,6 @@ HRESULT CMiniGame_KongWeapon::Initialize_Clone(void * pArg)
 	SetUp_BoneMatrix();
 	m_fAttachedMatrix = XMMatrixIdentity();
 
-
 	return S_OK;
 }
 
@@ -50,20 +50,26 @@ _int CMiniGame_KongWeapon::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
+	if (m_iOnceIndex == 0)
+	{
+		m_pPlayer = static_cast<CMiniGame_KongRaji*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
+		m_pPlayerTransform = (CTransform*)m_pPlayer->Get_Component(TAG_COM(Com_Transform));
+		m_iOnceIndex++;
+	}
+
 	if (m_bMagnet == true)
 	{
 		Update_AttachMatrix();
-		Update_Weapon(dDeltaTime);
 		Update_Collider(dDeltaTime);
 	}
 	else {
 		m_pTransformCom->Scaled_All(_float3(1.f,1.f,1.f));
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(28.7f, 43.3f, 40.f));
+
+		MagnetOn(dDeltaTime);
 	}
 
-
 	return _int();
-
 }
 
 _int CMiniGame_KongWeapon::LateUpdate(_double dDeltaTime)
@@ -336,6 +342,22 @@ HRESULT CMiniGame_KongWeapon::Update_Collider(_double dDeltaTime)
 HRESULT CMiniGame_KongWeapon::Update_Weapon(_double dDeltaTime)
 {
 	
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongWeapon::MagnetOn(_double dDeltaTime)
+{
+	_float fDistance;
+	
+	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+
+	if (fDistance < 0.1f)
+	{
+		m_pTransformCom->Set_Matrix(XMMatrixIdentity());
+		m_bMagnet = true;
+	}
+
 
 	return S_OK;
 }

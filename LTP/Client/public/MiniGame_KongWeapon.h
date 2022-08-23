@@ -62,6 +62,9 @@ private:
 	HRESULT Update_Weapon(_double dDeltaTime);
 
 private:
+	HRESULT MagnetOn(_double dDeltaTime);
+
+private:
 	KongRaji_Weapon_UniversalDesc m_KongRaji_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
 
@@ -77,6 +80,10 @@ private:
 	vector<ATTACHEDESC> m_vecAttachedDesc;
 
 private:
+	class CMiniGame_KongRaji* m_pPlayer = nullptr;
+	CTransform*			m_pPlayerTransform = nullptr;
+
+private:
 	_float4x4			m_fAttachedMatrix;
 	CHierarchyNode*		m_pAttachedNode = nullptr;
 
@@ -86,6 +93,9 @@ private:
 private:
 	_bool				m_bMagnet = false;
 
+
+private:
+	_uint				m_iOnceIndex = 0;
 
 	//test!@#@!#$@!$@!$@!$@
 //private:
