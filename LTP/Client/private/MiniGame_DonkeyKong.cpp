@@ -50,8 +50,11 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	Play_MiniGame(dDeltaTime);
+	m_dStartTime += dDeltaTime;
 
+	//if(m_dStartTime > 1)
+	//	Play_MiniGame(dDeltaTime);
+	m_iAnimIndex = 0;
 	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.2f);
 
 
