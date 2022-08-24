@@ -53,19 +53,21 @@ HRESULT CScene_Stage1::Initialize()
 	////_float Length = _float3(-64, 64, -64).Get_Distance(_float3(128.f, -128.f, -256.f).XMVector());
 
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"Stage1_InstanceMonsterTrigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
-
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_6.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_TriggerObject(L"Stage1_InstanceMonsterTrigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+//
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_6.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
-	FAILED_CHECK(Ready_MapParticle());
+
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE1));
+//	FAILED_CHECK(Ready_MapParticle());
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
@@ -387,7 +389,7 @@ HRESULT CScene_Stage1::Ready_MapData(const _tchar * szMapDataFileName, SCENEID e
 
 		if (!lstrcmp(L"Prototype_EditorCursor", tData.ObjectID)) continue;
 
-		//// 14 -> 22
+		// 14 -> 22
 		//if (tData.PassIndex == 14)
 		//	tData.PassIndex = 22;
 
@@ -638,7 +640,7 @@ HRESULT CScene_Stage1::Ready_MonsterBatchTrigger(const _tchar * szTriggerDataNam
 	ReadFile(hFile, &(WorldMat), sizeof(_float4x4), &dwByte, nullptr);
 	ReadFile(hFile, &(ValueMat), sizeof(_float4x4), &dwByte, nullptr);
 
-
+	
 
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(eSceneID, pLayerTag, TAG_OP(Prototype_MonsterBatchTrigger)));
 	CMonsterBatchTrigger* pMonsterBatchTrigger = (CMonsterBatchTrigger*)(g_pGameInstance->Get_GameObject_By_LayerLastIndex(eSceneID, pLayerTag));

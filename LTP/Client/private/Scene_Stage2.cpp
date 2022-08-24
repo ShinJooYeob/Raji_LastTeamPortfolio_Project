@@ -13,10 +13,6 @@ CScene_Stage2::CScene_Stage2(ID3D11Device * pDevice, ID3D11DeviceContext * pDevi
 {
 }
 
-
-
-
-
 HRESULT CScene_Stage2::Initialize()
 {
 	if (FAILED(__super::Initialize()))
@@ -52,7 +48,9 @@ HRESULT CScene_Stage2::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
-	FAILED_CHECK(Ready_MapParticle());
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE2));
+
+//	FAILED_CHECK(Ready_MapParticle());
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 	
 	Play_Scene_BGM();

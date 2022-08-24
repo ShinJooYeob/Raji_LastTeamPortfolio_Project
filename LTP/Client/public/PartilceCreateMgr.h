@@ -57,6 +57,33 @@ typedef struct tag_DealyTex
 	_double timer;
 }DELAYTEX;
 
+enum E_PARTICLEDESC_TYPE
+{
+	PARTICLEDESC_TYPE_TEX,
+	PARTICLEDESC_TYPE_MESH,
+	PARTICLEDESC_TYPE_END
+};
+typedef struct tag_MapEffect
+{
+	E_PARTICLEDESC_TYPE mParticleType = PARTICLEDESC_TYPE_END;
+	_float3				mFixpos = _float3(0); 
+	_float				mRange = 10;
+	wstring				mSoundFileName= TEXT("");
+	_bool				mIsCreate = false;
+
+	INSTPARTICLEDESC	mParticleDesc;
+	INSTMESHDESC		mMeshParticleDesc;
+	
+	CGameObject*		mObject = nullptr;
+
+	void SetObject(CGameObject* obj)
+	{
+		mObject = obj;
+	}
+
+}MAPEFFECT;
+
+
 
 
 class CPartilceCreateMgr final :public CBase
@@ -531,20 +558,31 @@ public:
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
-	HRESULT Update_MeshEffect(_double timer);
-	HRESULT Remove_MeshEffect(enum MeshEffect);
-
-	HRESULT Clear_MeshEffect();
-
 	class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
+
+	// Map Particle
+public:
+	HRESULT Ready_MapParticle_Stage(SCENEID id);
+
+
+private:
+	HRESULT ReadyParticle_ALL_Stages();
+
+	list<INSTPARTICLEDESC>	mListTexParticleMap[SCENEID::SCENE_END];
+	list<INSTMESHDESC>		mListMeshParticleMap[SCENEID::SCENE_END];
+	SCENEID					mCurrentScene = SCENE_END;
+	_int					Update_MapEffect(_double timer);
+
+	vector<MAPEFFECT>		mVecCurrentObjects;
+	const _double			mMapUpdateLate = 0.5;
+	_double					mMapUpdateLate_Timer = 0.0;
+
 
 
 private:
 	HRESULT			Ready_MeshEffect();
 	HRESULT			Ready_TextureEffect();
 	HRESULT			Ready_MeshInstanceEffect();
-	
-	
 	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
 	HRESULT Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ type, CTransform* Transfom = nullptr);
@@ -556,11 +594,8 @@ private:
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
 	vector<INSTMESHDESC>		mVecMeshInstDesc;
 
-
 	list<DELAYTEX>				mListParticleDesc_Delay;
 	list<DELAYMESH>				mListMeshInstDesc_Delay;
-
-
 
 	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
 
