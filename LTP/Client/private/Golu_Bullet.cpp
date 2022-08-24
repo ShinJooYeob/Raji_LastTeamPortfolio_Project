@@ -170,7 +170,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 
 				//디퓨즈 텍스쳐
 				ParticleMesh.TempBuffer_0.w = 301;
-				ParticleMesh.TempBuffer_0.w = 301;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
 				ParticleMesh.iMaskingTextureIndex = 122;
@@ -224,7 +223,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
 
 				//디퓨즈 텍스쳐
-				ParticleMesh.TempBuffer_0.w = 300;
 				ParticleMesh.TempBuffer_0.w = 300;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
@@ -280,7 +278,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 
 				//디퓨즈 텍스쳐
 				ParticleMesh.TempBuffer_0.w = 271;
-				ParticleMesh.TempBuffer_0.w = 271;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
 				ParticleMesh.iMaskingTextureIndex = 122;
@@ -334,7 +331,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
 
 				//디퓨즈 텍스쳐
-				ParticleMesh.TempBuffer_0.w = 305;
 				ParticleMesh.TempBuffer_0.w = 305;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
@@ -390,7 +386,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 
 				//디퓨즈 텍스쳐
 				ParticleMesh.TempBuffer_0.w = 309;
-				ParticleMesh.TempBuffer_0.w = 309;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
 				ParticleMesh.iMaskingTextureIndex = 122;
@@ -444,7 +439,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
 
 				//디퓨즈 텍스쳐
-				ParticleMesh.TempBuffer_0.w = 391;
 				ParticleMesh.TempBuffer_0.w = 391;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
@@ -500,7 +494,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 
 				//디퓨즈 텍스쳐
 				ParticleMesh.TempBuffer_0.w = 198;
-				ParticleMesh.TempBuffer_0.w = 198;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
 				ParticleMesh.iMaskingTextureIndex = 122;
@@ -554,7 +547,6 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 				ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0.5f, val);
 
 				//디퓨즈 텍스쳐
-				ParticleMesh.TempBuffer_0.w = 267;
 				ParticleMesh.TempBuffer_0.w = 267;
 
 				ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음

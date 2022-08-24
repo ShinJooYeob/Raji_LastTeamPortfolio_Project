@@ -2,6 +2,7 @@
 #include "..\public\MiniGame_KongWeapon.h"
 #include "MiniGame_KongRaji.h"
 #include "DonkeyKong_Bullet.h"
+#include "PartilceCreateMgr.h"
 
 
 CMiniGame_KongWeapon::CMiniGame_KongWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -370,7 +371,61 @@ HRESULT CMiniGame_KongWeapon::MagnetOn(_double dDeltaTime)
 		//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
 		g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 		g_pGameInstance->PlayBGM(TEXT("EH_DonkeyKong_Weapon.mp3"), 0, 0.4f);
+
+		Get_Firecracker();
 	}
+
+
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongWeapon::Get_Firecracker()
+{
+	// Fragment
+	INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+		Prototype_Mesh_SM_4E_IceShards_01, //FBX
+		0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+		0.3f, //파티클 지속시간
+		_float4(0.28f, 0.29f, 0.95f, 1.f), //색깔1
+		_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+		1, //여기에 1을 넣으면 됨
+		_float3(1), //사이즈
+		_float3(0.01f), //사이즈2 이것도 위에랑 마찬가지
+		1);
+	ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+	ParticleMesh.eInstanceCount = Prototype_ModelInstance_128; //인스턴스 갯수
+	ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+												 //범위
+	_float val = 0.0f;
+	ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0, -val);
+	ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0, val);
+
+	//디퓨즈 텍스쳐
+	ParticleMesh.TempBuffer_0.w = 398;
+
+	ParticleMesh.iMaskingTextureIndex = 122;
+	ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+	ParticleMesh.iNoiseTextureIndex = 289;
+	ParticleMesh.vEmissive_SBB = _float3(0.f, 0.f, 0.f);
+	ParticleMesh.Particle_Power = 20.0f;
+
+	ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+	ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+	ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+									 //위치지정
+	_Matrix mat = m_pPlayerTransform->Get_WorldMatrix();
+	_Vector pos = mat.r[3];
+	ParticleMesh.vFixedPosition = pos;
+
+	//위치지정
+	// ParticleMesh.FollowingTarget = m_pTransformCom;
+	// ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+	GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
 
 
 	return S_OK;

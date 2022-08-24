@@ -4299,6 +4299,11 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_WallTrim_02.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_WallBasic_11.fbx", TransformMatrix);
 
+
+
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(TAG_CP(Prototype_Mesh_PM_PowerUpFood), TransformMatrix);
+
 #pragma endregion
 		break;
 	}

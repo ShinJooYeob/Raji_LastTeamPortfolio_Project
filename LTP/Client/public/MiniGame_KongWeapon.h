@@ -57,6 +57,9 @@ private:
 	HRESULT MagnetOn(_double dDeltaTime);
 
 private:
+	HRESULT Get_Firecracker();
+
+private:
 	KongRaji_Weapon_UniversalDesc m_KongRaji_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
 

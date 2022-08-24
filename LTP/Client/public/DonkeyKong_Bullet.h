@@ -90,6 +90,9 @@ private://Collider
 private:
 	_uint				m_iSoundIndex = 0;
 
+private:
+	class CMiniGame_KongGolu* m_pKongGolu = nullptr;
+
 public:
 	static CDonkeyKong_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

@@ -27,6 +27,9 @@ public:
 
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
+public:
+	_bool	Get_bClear() { return m_bClear; }
+
 	HRESULT SetUp_Components();
 	HRESULT Adjust_AnimMovedTransform(_double dDeltatime);
 
@@ -37,6 +40,8 @@ public:
 
 	//InGame
 	HRESULT	Play_MiniGame(_double dDeltaTime);
+
+	HRESULT	Clear_Firecracker(_double dDeltaTime);
 
 private:
 	CShader*			m_pShaderCom = nullptr;
@@ -56,6 +61,7 @@ private:
 private:
 	_bool				m_bClear = false;
 	_double				m_dClearTime = 0;
+	_uint				m_iClearIndex = 0;
 
 private:
 	_bool				m_bSoundIndex = 0;

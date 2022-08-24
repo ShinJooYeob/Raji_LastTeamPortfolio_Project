@@ -175,21 +175,6 @@ void CMiniGame_KongRaji::Set_IsDead()
 	__super::Set_IsDead();
 
 	g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
-
-
-	//CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
-
-	//UI_Texture_UniversalDesc.iUI_TextureType = CUI_Texture_Universal::UI_TEXT;
-	//UI_Texture_UniversalDesc.iTextureIndex = 3;
-
-	//UI_Texture_UniversalDesc.fSizeX = 700.f;
-	//UI_Texture_UniversalDesc.fSizeY = 500.f;
-	//UI_Texture_UniversalDesc.fX = 640.f;
-	//UI_Texture_UniversalDesc.fY = 360.f;
-	//UI_Texture_UniversalDesc.fDepth = 10.f;
-
-	//g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_UI_Texture_Universal), TAG_OP(Prototype_Object_UI_Texture_Universal), &UI_Texture_UniversalDesc);
-
 }
 
 void CMiniGame_KongRaji::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
