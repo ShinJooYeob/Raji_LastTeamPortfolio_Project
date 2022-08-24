@@ -287,7 +287,7 @@ HRESULT CDonkeyKong_Bullet::SetUp_Collider()
 
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
