@@ -277,11 +277,14 @@ HRESULT CScene_Minigame1::Ready_Layer_MiniGame_Golu(const _tchar * pLayerTag)
 	PlayerNavi->FindCellIndex(m_pGoluTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 	pGolu->Update_AttachCamPos();
 
+	pGolu->Update(g_fDeltaTime);
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pGolu);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
 	pGolu->Update_AttachCamPos();
-
+	pGolu->Update(g_fDeltaTime);
+	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.f, -0.919145048f, 0.393919289f, 0.f));
+	pGolu->Update_AttachCamPos();
+	pGolu->Update(g_fDeltaTime);
 
 	return S_OK;
 }

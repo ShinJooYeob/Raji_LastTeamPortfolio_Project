@@ -58,6 +58,9 @@ private://Anim
 	_double				m_dAnimTime = 0;
 	_uint				m_iAnimIndex = 0;
 
+private:
+	_uint				m_dAcceleration = 2;
+
 public:
 	static CMiniGame_DonkeyKong* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

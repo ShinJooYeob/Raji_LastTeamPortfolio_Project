@@ -8,7 +8,9 @@ class CMiniGame_KongRaji final : public CGameObject
 public:
 	enum HeightPosType{HEIGHT_ONE_POINT,HEIGHT_TWO_POINT,HEIGHT_END};
 public:
-	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK =14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
+	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK = 14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
+private:
+	enum AnimSpeed{NORMAL_SPEED};
 
 	typedef	struct tagJumpDesc
 	{
@@ -116,6 +118,9 @@ private://Moving
 	_uint				m_iNaviIndex = 1;
 
 private:
+	_float3				m_fHeightPos[CMiniGame_KongRaji::HEIGHT_END];
+
+private:
 	_float3				m_fMyPos;
 
 private:
@@ -124,9 +129,9 @@ private:
 
 	_uint				m_iSwitchIndex = 0;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
 
-private:
-	_float3				m_fHeightPos[CMiniGame_KongRaji::HEIGHT_END];
 
 public:
 	static CMiniGame_KongRaji* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

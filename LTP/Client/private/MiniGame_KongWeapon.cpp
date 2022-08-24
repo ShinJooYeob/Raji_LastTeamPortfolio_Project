@@ -63,7 +63,9 @@ _int CMiniGame_KongWeapon::Update(_double dDeltaTime)
 	if (m_bMagnet == true)
 	{
 		Update_AttachMatrix();
-		Update_Collider(dDeltaTime);
+		
+		if(m_bColliderOn == true)
+			Update_Collider(dDeltaTime);
 	}
 	else {
 		m_pTransformCom->Scaled_All(_float3(1.f,1.f,1.f));
@@ -237,7 +239,7 @@ HRESULT CMiniGame_KongWeapon::SetUp_Collider()
 	m_pColliderCom->Set_ParantBuffer();
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(3.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -359,10 +361,14 @@ HRESULT CMiniGame_KongWeapon::MagnetOn(_double dDeltaTime)
 	
 	fDistance = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
 
-	if (fDistance < 0.3f)
+	if (fDistance < 0.5f)
 	{
 		m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 		m_bMagnet = true;
+
+		g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
+		g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+		g_pGameInstance->PlayBGM(TEXT("EH_DonkeyKong_Weapon.mp3"), 0, 0.4f);
 	}
 
 

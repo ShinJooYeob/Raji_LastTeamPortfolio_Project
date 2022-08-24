@@ -57,6 +57,9 @@ private:
 	_bool				m_bClear = false;
 	_double				m_dClearTime = 0;
 
+private:
+	_bool				m_bSoundIndex = 0;
+
 public:
 	static CMiniGame_KongGolu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

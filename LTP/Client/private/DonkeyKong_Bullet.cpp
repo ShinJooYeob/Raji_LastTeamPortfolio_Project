@@ -116,6 +116,7 @@ void CDonkeyKong_Bullet::Set_IsDead()
 {
 	__super::Set_IsDead();
 
+	g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
 }
 
 void CDonkeyKong_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -192,12 +193,20 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 	m_fNaviHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_fMyPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
-	if (m_fNaviHeight + 0.5f <= m_fMyPos.y && m_bMovoToHeightOn == true)
+	if (m_fNaviHeight + 0.3f <= m_fMyPos.y && m_bMovoToHeightOn == true)
 	{
-		m_pTransformCom->Move_Down(dDeltaTime);
+		//m_pTransformCom->Move_Down(dDeltaTime);
+		m_pTransformCom->MovetoDir(XMVectorSet(0.f, -1.f, 0.f, 0.f), dDeltaTime,m_pNavigationCom);
+
+		if (m_iSoundIndex == 0)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Descent.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			m_iSoundIndex++;
+		}
 	}
 	else {
 		m_bMoveToWidthOn = true;
+		m_iSoundIndex = 0;
 	}
 
 
@@ -212,6 +221,8 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fPivotPos, vTempPos);
 		m_fPivotPos.y += 0.5;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fPivotPos);
+
+		m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime);
 	}
 	else if (m_iMoveToDirIndex == LEFT && m_bMoveToWidthOn == true)
 	{
@@ -223,6 +234,8 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fPivotPos, vTempPos);
 		m_fPivotPos.y += 0.5;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fPivotPos);
+
+		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime);
 	}
 	
 

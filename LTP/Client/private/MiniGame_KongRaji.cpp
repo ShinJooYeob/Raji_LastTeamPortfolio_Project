@@ -81,13 +81,15 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 		{
 			m_JumpDesc.bJump = true;
 			m_JumpDesc.fJumpY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
-			m_fTempHeight = 30.f;
+			m_fTempHeight = 28.f;
+
+			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Miss.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
 			m_iSwitchIndex++;
 		}
 		if (m_JumpDesc.bJump == false)
 		{
 			m_dDeadTime += dDeltaTime;
-			if(m_dDeadTime > 2)
+			if(m_dDeadTime > 4)
 				Set_IsDead();
 		}
 		Jumping(dDeltaTime);
@@ -156,7 +158,7 @@ _int CMiniGame_KongRaji::Render()
 	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
 #ifdef _DEBUG
-	//FAILED_CHECK(m_pNavigationCom->Render());
+	FAILED_CHECK(m_pNavigationCom->Render());
 #endif
 
 	return _int();
@@ -288,6 +290,10 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 		m_iAdjMovedIndex = 0;
 		m_dAcceleration = 1;
 		m_fAnimBlend = 0.1f;
+		
+		m_pWeapon->Set_ColliderOn(false);
+
+		m_iSoundIndex = 0;
 	}
 
 
@@ -295,24 +301,20 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 	{
 		switch (iNowAnimIndex)
 		{
-		case 1://애니메이션 인덱스마다 잡아주면 됨
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.0) // 이렇게 되면 이전 애니메이션에서 보간되는 시간 끝나자 마자 바로 들어옴
+		case ANIM_WALK:
+		{
+			if (m_iSoundIndex == 0 && PlayRate >= 0.125)
 			{
-
-				m_iAdjMovedIndex++;
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.1f);
+				m_iSoundIndex++;
 			}
-			else if (m_iAdjMovedIndex == 1 && PlayRate > 0.7666666666666666) //특정 프레임 플레이 레이트이후에 들어오면실행
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.583)
 			{
-
-
-				m_iAdjMovedIndex++;
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
 			}
-
 			break;
-		case 2:
-
-			break;
-
+		}
 		case ANIM_ATTACK:
 		{
 			if (PlayRate <= 0.9)
@@ -320,12 +322,56 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 				m_bChangeAnimOn = true;
 				m_dAcceleration = 2;
 				m_fAnimBlend = 0.3f;
+
+				m_pWeapon->Set_ColliderOn(true);
+			}
+			if (m_iSoundIndex == 0 && PlayRate >= 0.5714)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_Donkey_Kong_Attack.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
 			}
 			break;
 		}
+		case ANIM_CLIMB_UP:
+		{
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
+			}else if (m_iSoundIndex == 1 && PlayRate >= 0.8)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		case ANIM_CLIMB_DOWN:
+		{
+			if (m_iSoundIndex == 0 && PlayRate > 0)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
+			}
+			else if (m_iSoundIndex == 1 && PlayRate >= 0.8)
+			{
+				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				m_iSoundIndex++;
+			}
+			break;
+		}
+		//case ANIM_JUMP:
+		//{
+		//	if (m_iSoundIndex == 0 && PlayRate > 0)
+		//	{
+		//		g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Jump.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+		//		m_iSoundIndex++;
+		//	}
+		//	break;
+		//}
 		}
 	}
 
+	//지금 돈키콩 마무리 됐고 파티클이랑 사운드만 추가해주자.
 
 	m_iOldAnimIndex = iNowAnimIndex;
 	return S_OK;
@@ -477,17 +523,19 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 			m_bMoveToWidthOn = true;
 			m_bMoveToHeightOn = false;
 
-		}
 
+			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Jump.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+
+		}
 	}
 
 	m_fTempHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
-	if (pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down)
+	if (pGameInstance->Get_DIKeyState(DIK_K) & DIS_Down && m_pWeapon->Get_Magnet())
 	{
 		m_bChangeAnimOn = true;
-		m_iCurrentAnimIndex = 14;
+		m_iCurrentAnimIndex = ANIM_ATTACK;
 	}
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -36,7 +36,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 
-	//g_pGameInstance->PlayBGM(TEXT("EH_53 One Hell Of A Time.mp3"),0,0.2f);
+	g_pGameInstance->PlayBGM(TEXT("EH_DonkeyKong_Bgm.mp3"),0,0.4f);
 
 	return S_OK;
 }
@@ -240,7 +240,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MiniGame_KongRaji(const _tchar * 
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pJalsura);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(40.f, 40.f, 25.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	pJalsura->Update_AttachCamPos();
 
 	return S_OK;

@@ -57,6 +57,12 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 	{
 		m_dClearTime += dDeltaTime;
 
+		if (m_bSoundIndex == 0)
+		{
+			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Clear.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			m_bSoundIndex++;
+		}
+
 		if (m_dClearTime > 2)
 		{
 			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);

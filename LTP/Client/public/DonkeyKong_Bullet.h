@@ -21,7 +21,7 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
-	virtual void Set_IsDead();
+	virtual void Set_IsDead()override;
 
 public:
 	virtual void CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderIndex, CGameObject* pConflictedObj, class CCollider* pConflictedCollider,
@@ -86,6 +86,9 @@ private://Collider
 	_uint				m_iCurColliderIndex = 0;
 	_uint				m_iNewColliderIndex = 0;
 	_bool				m_bDescent = false;
+
+private:
+	_uint				m_iSoundIndex = 0;
 
 public:
 	static CDonkeyKong_Bullet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
