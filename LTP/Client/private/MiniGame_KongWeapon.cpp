@@ -367,7 +367,8 @@ HRESULT CMiniGame_KongWeapon::MagnetOn(_double dDeltaTime)
 		m_bMagnet = true;
 
 		g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
-		g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+		//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+		g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Weapon_Get.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 		g_pGameInstance->PlayBGM(TEXT("EH_DonkeyKong_Weapon.mp3"), 0, 0.4f);
 	}
 

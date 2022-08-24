@@ -83,7 +83,8 @@ _int CMiniGame_KongRaji::Update(_double dDeltaTime)
 			m_JumpDesc.fJumpY = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y;
 			m_fTempHeight = 28.f;
 
-			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Miss.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Miss.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Miss.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 			m_iSwitchIndex++;
 		}
 		if (m_JumpDesc.bJump == false)
@@ -288,7 +289,7 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 	if (iNowAnimIndex != m_iOldAnimIndex || PlayRate > 0.98)
 	{
 		m_iAdjMovedIndex = 0;
-		m_dAcceleration = 1;
+		m_dAcceleration = NORMAL_SPEED;
 		m_fAnimBlend = 0.1f;
 		
 		m_pWeapon->Set_ColliderOn(false);
@@ -305,12 +306,14 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_iSoundIndex == 0 && PlayRate >= 0.125)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.1f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.1f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Walk.wav"), CHANNELID::CHANNEL_PLAYER, 0.2f);
 				m_iSoundIndex++;
 			}
 			else if (m_iSoundIndex == 1 && PlayRate >= 0.583)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Walk.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Walk.wav"), CHANNELID::CHANNEL_PLAYER, 0.2f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -320,14 +323,15 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 			if (PlayRate <= 0.9)
 			{
 				m_bChangeAnimOn = true;
-				m_dAcceleration = 2;
+				m_dAcceleration = FAST_SPEED;
 				m_fAnimBlend = 0.3f;
 
 				m_pWeapon->Set_ColliderOn(true);
 			}
 			if (m_iSoundIndex == 0 && PlayRate >= 0.5714)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_Donkey_Kong_Attack.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_Donkey_Kong_Attack.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_Donkey_Kong_Attack.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -336,11 +340,13 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_iSoundIndex == 0 && PlayRate > 0)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Ladder.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 				m_iSoundIndex++;
 			}else if (m_iSoundIndex == 1 && PlayRate >= 0.8)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Ladder.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
@@ -349,25 +355,24 @@ HRESULT CMiniGame_KongRaji::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_iSoundIndex == 0 && PlayRate > 0)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Ladder.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 				m_iSoundIndex++;
 			}
 			else if (m_iSoundIndex == 1 && PlayRate >= 0.8)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Ladder.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Ladder.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 				m_iSoundIndex++;
 			}
 			break;
 		}
-		//case ANIM_JUMP:
-		//{
-		//	if (m_iSoundIndex == 0 && PlayRate > 0)
-		//	{
-		//		g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Jump.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
-		//		m_iSoundIndex++;
-		//	}
-		//	break;
-		//}
+		case ANIM_JUMP:
+		{
+			if(m_iAdjMovedIndex == 0 && PlayRate > 0)
+				m_dAcceleration = SLOW_SPEED;
+			break;
+		}
 		}
 	}
 
@@ -524,8 +529,8 @@ HRESULT CMiniGame_KongRaji::Keyboard_Input(_double dDeltatime)
 			m_bMoveToHeightOn = false;
 
 
-			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Jump.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
-
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Jump.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Jump.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 		}
 	}
 
@@ -550,12 +555,19 @@ HRESULT CMiniGame_KongRaji::Change_Anim()
 	if (m_bChangeAnimOn)
 	{
 		m_iAnimIndex = m_iCurrentAnimIndex;
-		m_dAcceleration = 1;
+
+		if (m_iAnimIndex != ANIM_JUMP)
+		{
+			m_dAcceleration = NORMAL_SPEED;
+		}
+		else {
+			m_dAcceleration = SLOW_SPEED;
+		}
 
 		m_bChangeAnimOn = false;
 	}
 	else {
-		m_dAcceleration = 1;
+		m_dAcceleration = NORMAL_SPEED;
 		m_iAnimIndex = ANIM_IDLE;
 	}
 
@@ -569,7 +581,13 @@ HRESULT CMiniGame_KongRaji::Change_Anim()
 	if (g_pGameInstance->Get_DIKeyState(DIK_W) & DIS_Press ||
 		g_pGameInstance->Get_DIKeyState(DIK_S) & DIS_Press)
 	{
-		m_dAcceleration = 1;
+		if (m_iAnimIndex != ANIM_JUMP)
+		{
+			m_dAcceleration = NORMAL_SPEED;
+		}
+		else {
+			m_dAcceleration = SLOW_SPEED;
+		}
 	}
 	else if (m_bMoveToWidthOn == false)
 	{

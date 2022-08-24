@@ -116,7 +116,8 @@ void CDonkeyKong_Bullet::Set_IsDead()
 {
 	__super::Set_IsDead();
 
-	g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+	//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+	g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 }
 
 void CDonkeyKong_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -200,7 +201,8 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 
 		if (m_iSoundIndex == 0)
 		{
-			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Descent.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Descent.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Descent.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 			m_iSoundIndex++;
 		}
 	}

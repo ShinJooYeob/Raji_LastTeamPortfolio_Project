@@ -3,14 +3,16 @@
 BEGIN(Client)
 class CCamera_Main;
 
+#define SLOW_SPEED 1
+#define NORMAL_SPEED 2
+#define FAST_SPEED 3
+
 class CMiniGame_KongRaji final : public CGameObject
 {
 public:
 	enum HeightPosType{HEIGHT_ONE_POINT,HEIGHT_TWO_POINT,HEIGHT_END};
 public:
 	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK = 14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
-private:
-	enum AnimSpeed{NORMAL_SPEED};
 
 	typedef	struct tagJumpDesc
 	{
@@ -109,7 +111,7 @@ private://Dissolve
 	_double				m_dDissolveTime = 0;
 
 private://Anim Speed
-	_double				m_dAcceleration = 1;
+	_double				m_dAcceleration = NORMAL_SPEED;
 	_float				m_fAnimBlend = 0.1f;
 
 private://Moving

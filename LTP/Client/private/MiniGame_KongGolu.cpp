@@ -59,7 +59,8 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 
 		if (m_bSoundIndex == 0)
 		{
-			g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Clear.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Clear.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Clear.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
 			m_bSoundIndex++;
 		}
 
