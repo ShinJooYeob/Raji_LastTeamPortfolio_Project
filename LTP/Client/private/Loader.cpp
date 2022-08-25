@@ -1887,10 +1887,10 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	FAILED_CHECK(Load_AllDynamicMapObject());
 
 	//Map Make
-	for (_uint i = 0; i < SCENE_END; i++)
-		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
+//	for (_uint i = 0; i < SCENE_END; i++)
+//		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
-//	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE1));
+	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE1));
 
 	
 #pragma endregion
@@ -2760,12 +2760,17 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Grass_01A1.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Mountain_08.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Mystic_Roots_Hanging_02.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"VentQStone.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_DT_Platform06_Base.fbx", TransformMatrix);
-
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"ElephantHead.fbx", TransformMatrix);
-		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_boxbush_01.fbx", TransformMatrix);
 
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_01.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_02.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_03.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_04.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_05.fbx", TransformMatrix);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_Roots_Hanging_06.fbx", TransformMatrix);
 
 		
 #pragma endregion

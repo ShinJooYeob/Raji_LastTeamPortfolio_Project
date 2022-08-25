@@ -82,7 +82,6 @@ _int CPlayer::Update(_double fDeltaTime)
 
 	//Set_State_IdleStart(fDeltaTime);
 
-
 	// For Debuging
 	DebugingCode();
 

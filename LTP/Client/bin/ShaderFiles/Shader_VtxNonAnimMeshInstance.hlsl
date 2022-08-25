@@ -1165,114 +1165,6 @@ PS_OUT PS_MAIN_LillyDiscard2(PS_IN In)
 }
 
 
-PS_OUT PS_MAIN_Color1(PS_IN In)
-{
-	PS_OUT      Out = (PS_OUT)0;
-
-	vector      vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
-
-	Out.vDiffuse = vDiffuse;
-
-
-	Out.vEmissive = vector(1.f, 0.5f, 1.f, 1);
-
-	//if (vEmissiveDesc.a > 0)
-	//{
-	//	Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
-	//	if (length(Out.vEmissive.xyz) > 0)
-	//		Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
-	//}
-	//else
-	//{
-	//	Out.vEmissive = vector(1.f,0.5f,1.f, 1);
-	//}
-
-	vector      vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
-
-	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-
-	vNormal = mul(vNormal, WorldMatrix);
-
-
-	if (vDiffuse.a < 0.1f)
-		discard;
-
-
-	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
-	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = float4(1.f, 0.5f, 0.5f, 0.f);
-	//	Out.vLimLight = float4(vDiffuse.xyz, 0.8f);
-	Out.vLimLight = float4(float3(0.93f, 0.33f, 0.75f), 0.8f);
-
-	return Out;
-}
-
-
-
-
-
-PS_OUT PS_MAIN_Color2(PS_IN In)
-{
-	PS_OUT      Out = (PS_OUT)0;
-
-	vector      vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
-	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
-
-	Out.vDiffuse = vDiffuse;
-
-
-	Out.vEmissive = vector(1.f, 0.5f, 1.f, 1);
-
-	//if (vEmissiveDesc.a > 0)
-	//{
-	//	Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
-	//	if (length(Out.vEmissive.xyz) > 0)
-	//		Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
-	//}
-	//else
-	//{
-	//	Out.vEmissive = vector(1.f,0.5f,1.f, 1);
-	//}
-
-	vector      vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
-
-	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-
-	vNormal = mul(vNormal, WorldMatrix);
-
-
-	if (vDiffuse.a < 0.1f)
-		discard;
-
-
-	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
-	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
-	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
-	Out.vEmissive = float4(1.f, 0.5f, 0.5f, 0.f);
-	//	Out.vLimLight = float4(vDiffuse.xyz, 0.8f);
-	Out.vLimLight = float4(float3(0.58f, 0.15f, 0.85f), 0.8f);
-
-	return Out;
-}
-
-
-
-
-
-
-
-
-
-
-
 technique11		DefaultTechnique
 {
 
@@ -1462,30 +1354,7 @@ technique11		DefaultTechnique
 
 	}
 
-	pass Color_Light1 //18
-	{
-		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_None);
 
-		VertexShader = compile vs_5_0 VS_MAIN_DEFAULT();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_Color1();
-
-	}
-
-	pass Color_Light2 //19
-	{
-		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(ZTestAndWriteState, 0);
-		SetRasterizerState(CullMode_None);
-
-		VertexShader = compile vs_5_0 VS_MAIN_DEFAULT();
-		GeometryShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_Color2();
-
-
-	}
 
 }
 

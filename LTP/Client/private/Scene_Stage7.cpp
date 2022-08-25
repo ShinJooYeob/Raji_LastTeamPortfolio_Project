@@ -12,14 +12,12 @@
 #include "Trigger_ChangeCameraView.h"
 #include "Elevator.h"
 
+// #SCENE STAGE CHIF
+
 CScene_Stage7::CScene_Stage7(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
 }
-
-
-
-
 
 HRESULT CScene_Stage7::Initialize()
 {

@@ -18,6 +18,8 @@
 
 #include "MiniGameBuilding.h"
 
+// #SCENE STAGE3 
+
 CScene_Stage6::CScene_Stage6(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
@@ -192,71 +194,43 @@ _int CScene_Stage6::LateRender()
 
 #ifdef _DEBUG
 
-	//if (KEYDOWN(DIK_F))
-	//{
-	//	const wchar_t* layerDynamic = TAG_LAY(Layer_ColDynamic);
-	//	CCollider_PhysX_Base::PHYSXDESC_DYNAMIC createDynamic;
+if (KEYDOWN(DIK_H))
+{
+	// 해당 영역에 보냄
 
-	//		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer
-	//		(g_pGameInstance->Get_NowSceneNum(), layerDynamic, TAG_OP(Prototype_Object_Dynamic_PhysX)));
-	//		CTestObject_PhysX* obj =
-	//			static_cast<CTestObject_PhysX*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(g_pGameInstance->Get_NowSceneNum(), layerDynamic));
-
-	//		obj->Set_ColSetID(E_PHYTYPE_DYNAMIC);
-	//		obj->Set_ModelSetting(CTestObject_PhysX::MODEL_GEMETRY);
-	//		CCollider_PhysX_Dynamic* coldynamic = (CCollider_PhysX_Dynamic*)obj->Get_Component(TAG_COM(Com_Collider_PhysX));
+	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player)));
+		NULL_CHECK_BREAK(pPlayer);
+	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
 
 
-	//		CTransform* objTrans = (CTransform*)obj->Get_Component(TAG_COM(Com_Transform));
-	//		objTrans->Set_MatrixState(CTransform::STATE_POS, _float3(0,2,0));
-	//		objTrans->Scaled_All(_float3(1, 1, 1));
+	// pick pos
+	POINT ptMouse;
+	GetCursorPos(&ptMouse);
+	ScreenToClient(g_hWnd, &ptMouse);
 
-	//		createDynamic.eShapeType = E_GEOMAT_SPEHE;
-	//		createDynamic.mTrnasform = objTrans;
-	//		createDynamic.mGameObect = obj;
-	//		NULL_CHECK_BREAK(createDynamic.mTrnasform);
-	//		createDynamic.mVelocity = _float3(10000, 0, 0);
-	//		coldynamic->Set_ColiiderDesc(createDynamic);
+	_Vector vCursorPos = XMVectorSet(
+		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+		0, 1.f);
 
-	//}
+	_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+	_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
 
-//if (KEYDOWN(DIK_F))
-//{
-//	// 해당 영역에 보냄
-//
-//	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
-//	NULL_CHECK_BREAK(pPlayer);
-//	CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
-//	CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
-//
-//
-//	// pick pos
-//	POINT ptMouse;
-//	GetCursorPos(&ptMouse);
-//	ScreenToClient(g_hWnd, &ptMouse);
-//
-//	_Vector vCursorPos = XMVectorSet(
-//		(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
-//		(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
-//		0, 1.f);
-//
-//	_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
-//	_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
-//
-//	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
-//
-//	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
-//
-//
-//	_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
-//	_Vector vOldPos = vCamPos;
-//	_Vector vNewPos;
-//	vNewPos = vOldPos + vRayDir;
-//
-//	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
-//	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
-//
-//}
+	_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+	vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+	_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+	_Vector vOldPos = vCamPos;
+	_Vector vNewPos;
+	vNewPos = vOldPos + vRayDir;
+
+	static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
+	PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+}
 
 
 

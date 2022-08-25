@@ -8,6 +8,8 @@
 #include "MapObject.h"
 #include "MiniGameBuilding.h"
 
+// #SCENE STAGE2
+
 CScene_Stage2::CScene_Stage2(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
@@ -36,14 +38,14 @@ HRESULT CScene_Stage2::Initialize()
 	FAILED_CHECK(Ready_Layer_MapObject(TAG_LAY(Layer_MapObject)));
 	
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"Stage2_InstanceMonsterTrigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
-
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_1.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_2.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_3.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_4.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_5.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_6.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_TriggerObject(L"Stage2_InstanceMonsterTrigger.dat", SCENE_STAGE2, TAG_LAY(Layer_ColTrigger)));
+//
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_1.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_2.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_3.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_4.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_5.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
+//	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage2_MonsterTrigger_6.dat", SCENE_STAGE2, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//								
 
 	FAILED_CHECK(Ready_PostPorcessing());
@@ -84,6 +86,50 @@ _int CScene_Stage2::Update(_double fDeltaTime)
 	_Vector vDir = XMVector3Normalize(XMVector3Normalize(XMVectorSetY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS), 10) - AtPoint) + XMVectorSet(0,0.5f,0,0));
 	g_pGameInstance->Relocate_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0, m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS) + vDir * 60.f);
 
+
+#ifdef _DEBUG
+
+	if (KEYDOWN(DIK_H))
+	{
+		// 해당 영역에 보냄
+
+		CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player)));
+		NULL_CHECK_BREAK(pPlayer);
+		CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+
+
+		// pick pos
+		POINT ptMouse;
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+		_Vector vCursorPos = XMVectorSet(
+			(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+			(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+			0, 1.f);
+
+		_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+		_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
+
+		_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+		vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+		_Vector vCamPos = m_pMainCam->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vOldPos = vCamPos;
+		_Vector vNewPos;
+		vNewPos = vOldPos + vRayDir;
+
+		static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
+		PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	}
+
+
+
+#endif // _DEBUG
 
 	return 0;
 }

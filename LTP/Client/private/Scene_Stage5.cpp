@@ -14,6 +14,8 @@
 #include "Rajibalsura.h"
 #include "EndingPortal.h"
 
+// #SCENE STAGE ENDBOSS
+
 CScene_Stage5::CScene_Stage5(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
