@@ -33,6 +33,18 @@ typedef struct tag_MESHADDDATA
 
 }MESHADDDATA;
 
+typedef struct tag_LIGHTDATA
+{
+	bool bRim = false;
+	bool bEmsiive = false;
+	_float SpeedTime_Rim = 1.0f;
+	_float SpeedTime_Emsive = 1.0f;
+
+	_float Ambiant = 0.1f;
+
+}MESHLIGHTDATA;
+
+
 typedef struct tag_EASINGDESC
 {
 //	_float3 StartPos = _float3();
@@ -70,9 +82,6 @@ enum E_PARTICLSOUND_TYPE
 	UM_Env_Fire, // ¤·
 	UM_Env_Water_Cave,
 	UM_Env_Water_Wet,
-
-
-
 	PARTICLSOUND_TYPE_END,
 
 };
@@ -379,6 +388,17 @@ public:
 
 #pragma region MAP_EFFECT
 
+		MESHEFFECT_MAP_NONE,
+
+		MESHEFFECT_MAP_TEST0,
+		MESHEFFECT_MAP_TEST1,
+		MESHEFFECT_MAP_TEST2,
+		MESHEFFECT_MAP_TEST3,
+
+			MESHEFFECT_MAP_OBJ_SphereLight,
+			MESHEFFECT_MAP_OBJ_BoxBar,
+
+
 
 		MESHEFFECT_MAP_STAGE1_Cash0,
 		MESHEFFECT_MAP_STAGE1_Cash1,
@@ -596,10 +616,16 @@ public:
 
 
 	HRESULT Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, CTransform * parentTransform, MESHAEASING* easing = nullptr,_uint Count = 0);
-
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
+	class CNonInstanceMeshEffect_TT_Fix* Create_MeshEffectDesc_Map_Pos(E_MESH_EFFECTJ type, _float3 position);
+	HRESULT Create_MeshEffectDesc_MAP(NONINSTNESHEFTDESC desc, MESHADDDATA desc2, _float3 pos, MESHLIGHTDATA desc3);
+
+
+
+
 	class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
+	class CNonInstanceMeshEffect_TT_Fix* GetMeshEffect_Fix() const;
 
 	// Map Particle
 public:
@@ -619,6 +645,7 @@ private:
 	
 	HRESULT					AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType , _float Range = 10);
 	void					PlaySound_Map(_float3  pos , E_PARTICLSOUND_TYPE type,_float vol = 1.0f);
+	void					Create_MapMeshParticle(SCENEID id);
 
 //	vector<MAPEFFECT>		mVecCurrentObjects;
 
@@ -646,7 +673,8 @@ private:
 	list<DELAYTEX>				mListParticleDesc_Delay;
 	list<DELAYMESH>				mListMeshInstDesc_Delay;
 
-	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
+	class CNonInstanceMeshEffect_TT*		mPreMeshEffect = nullptr;
+	class CNonInstanceMeshEffect_TT_Fix*	mPreMeshEffect_Fix = nullptr;
 	CGameObject*	mTestObj = nullptr;
 
 

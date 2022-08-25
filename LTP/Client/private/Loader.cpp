@@ -520,7 +520,8 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
-
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Box_Basic);
+		
 
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
@@ -1900,7 +1901,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	for (_uint i = 0; i < SCENE_END; i++)
 //		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
-	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE1));
+	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE6));
 
 	
 #pragma endregion

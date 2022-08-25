@@ -364,6 +364,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_NaviPoint,
 	Prototype_NonInstanceMeshEffect,
 	Prototype_NonInstanceMeshEffect_TT,
+	Prototype_NonInstanceMeshEffect_TT_Fix,
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -661,6 +662,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 		break;
 	case Prototype_NonInstanceMeshEffect_TT:
 		return TEXT("Prototype_NonInstanceMeshEffect_TT");
+		break;
+	case Prototype_NonInstanceMeshEffect_TT_Fix:
+		return TEXT("Prototype_NonInstanceMeshEffect_TT_Fix");
 		break;
 
 	case Prototype_NaviPoint:

@@ -1805,15 +1805,26 @@ _int CImguiMgr::Update_DebugWnd_MapEffect(_double fDeltaTime)
 		//ImGui::Text("PlayerNaviIndex = %d", index);
 
 	}
+	
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "NEW_INITPARTICLEDATA");
+	if (ImGui::Button("ALL_RELOAD"))
+	{
 
+	}
+	if (ImGui::Button("STAGE1"))
+	{
 
-//	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
-	// if (player)
-	// {
-	// 	_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
-	// 	ImGui::Text("playerNaviIndex = %d", index);
-	// }
+	}
+	if (ImGui::Button("STAGE2"))
+	{
 
+	}
+	if (ImGui::Button("STAGE3"))
+	{
+
+	}
+
+	
 	return _int();
 }
 

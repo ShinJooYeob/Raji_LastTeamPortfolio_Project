@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\PartilceCreateMgr.h"
 #include "..\public\NonInstanceMeshEffect_TT.h"
+#include "..\public\NonInstanceMeshEffect_TT_Fix.h"
 
 #include "Player.h"
 
@@ -91,6 +92,7 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
+		STATIC_EFFECTLOAD(SM_Box_Basic);
 		
 
 		// Bullet
@@ -300,9 +302,6 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 	if (KEYDOWN(DIK_V))
 	{
 		// MESHINST
-
-		
-
 		{
 			// MESHINST_EFFECTJ_BOW_Q_ICE2
 			INSTMESHDESC descmesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2,
@@ -338,9 +337,19 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 	{
 		// MESH Effect
 
-		GETPARTICLE->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_MAP_STAGE1_Cash0, m_pTransformCom);
+		
+		_float3 FixPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
+	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST0, FixPos);
+	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST1, FixPos);
+	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST2, FixPos);
 
+		GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_SphereLight, FixPos);
+		GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_BoxBar, FixPos);
+
+	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_STAGE1_Cash0, FixPos);
+		
+		
 //	 Mesh Effect
 //	GETPARTICLE->Create_MeshEffectDesc_Hard();
 
@@ -567,6 +576,27 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHA
 	return S_OK;
 }
 
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_MAP(NONINSTNESHEFTDESC desc, MESHADDDATA desc2,_float3 pos, MESHLIGHTDATA desc3)
+{
+
+	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
+	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, 
+		TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT_Fix), &desc);
+	NULL_CHECK_BREAK(obj);
+
+	CNonInstanceMeshEffect_TT_Fix * meshobj = static_cast<CNonInstanceMeshEffect_TT_Fix*>(obj);
+	NULL_CHECK_BREAK(meshobj);
+
+	meshobj->Set_Position(pos);
+	meshobj->Set_AddDesc(desc2);
+	meshobj->Set_LightDesc(desc3);
+
+	mPreMeshEffect_Fix = meshobj;
+	return S_OK;
+}
+
+
+
 HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfom)
 {
 	if (type >= MESHEFFECT_END)
@@ -650,13 +680,517 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 }
 
 
+CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos(E_MESH_EFFECTJ type, _float3 Pos)
+{
+	mPreMeshEffect_Fix = nullptr;
 
+	if (type <= MESHEFFECT_MAP_NONE)
+	{
+		DEBUGBREAK;
+		return nullptr;
+	}
+
+	NONINSTNESHEFTDESC	MeshDesc;
+	MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
+	MESHADDDATA			AddDesc;
+	MESHLIGHTDATA		LightDesc;
+
+	// RANDOM
+	static bool bRandomVal = true;
+	bRandomVal = !bRandomVal;
+
+
+	if (type == MESHEFFECT_MAP_TEST0)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_Sample_Mesh_Fake_Mesh_Lighting;
+		MeshDesc.eMeshType = Prototype_Mesh_MS_Shot_Cylinder_00;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_GT_SphereHarf;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_sphere_dist_wind;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
+		
+			
+			
+
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = NONNOISE;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vEmissive = _float4(0);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(2.0f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 45;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = false;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		LightDesc.SpeedTime_Rim = 5.0f;
+		LightDesc.SpeedTime_Emsive = 1.0f;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+	}
+
+	if (type == MESHEFFECT_MAP_TEST1)
+	{
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 321;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 3;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.1f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.5f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		LightDesc.SpeedTime_Rim = 10.0f;
+		LightDesc.SpeedTime_Emsive = 10.0f;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+
+	}
+
+	if (type == MESHEFFECT_MAP_TEST2)
+	{
+
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ENV_DT_Diya_02_01;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ENV_DT_Bull;
+		
+
+
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		AddDesc.DealyTime = 0.1f;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 321;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.MaskTextureIndex = 3;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.1f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.5f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		LightDesc.SpeedTime_Rim = 10.0f;
+		LightDesc.SpeedTime_Emsive = 10.0f;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+
+	}
+
+	if (type == MESHEFFECT_MAP_OBJ_SphereLight)
+	{
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 250;
+		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 0.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.3f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+	}
+
+	if (type == MESHEFFECT_MAP_OBJ_BoxBar)
+	{
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Box_Basic;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 250;
+		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 0.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.5f,2,0.5f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+	}
+
+	if (type == MESHEFFECT_MAP_STAGE1_Cash0)
+	{
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ENV_DT_Bull;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 276;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.3f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(180, 0, 0);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+
+	}
+
+
+
+
+
+	NULL_CHECK_BREAK(mPreMeshEffect_Fix);
+	return mPreMeshEffect_Fix;
+}
 
 
 
 CNonInstanceMeshEffect_TT * CPartilceCreateMgr::GetMeshEffect() const
 {
 	return mPreMeshEffect;
+}
+
+CNonInstanceMeshEffect_TT_Fix * CPartilceCreateMgr::GetMeshEffect_Fix() const
+{
+	return mPreMeshEffect_Fix;
 }
 
 
@@ -8593,85 +9127,6 @@ GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom
 #pragma endregion BOSS_Chiedtian  
 
 
-#pragma region MAP
-
-
-	if (type == MESHEFFECT_MAP_STAGE1_Cash0)
-	{
-
-		// Plane
-		// Mesh
-		MeshDesc.eMeshType = Prototype_Mesh_MS_Shot_Cylinder_00;
-
-		// Time
-		MeshDesc.fMaxTime_Duration = 1.0f;
-		MeshDesc.fAppearTime = 0.2f;
-		AddDesc.bAfterApperTime = true;
-
-		// Tex
-		MeshDesc.iDiffuseTextureIndex =  365;
-
-		MeshDesc.MaskTextureIndex = 13;
-		MeshDesc.MaskTextureIndex = NONNMASK;
-		MeshDesc.NoiseTextureIndex = 383;
-		MeshDesc.NoiseTextureIndex = NONNOISE;
-
-
-		// Noise
-		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
-		MeshDesc.fDistortionNoisingPushPower = 10.0f;
-		MeshDesc.vColor = _float4(1, 1, 1, 1);
-
-		// Color
-		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 1.0f);
-		MeshDesc.vEmissive = _float4(1);
-		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
-
-			// Transform_Base
-		MeshDesc.vPosition = _float3(0.0f, 3.0f, 0);
-		MeshDesc.vSize = _float3(2.0f);
-
-		// Move
-		MeshDesc.MoveDir = FollowingDir_Look;
-		MeshDesc.MoveSpeed = 0;
-		AddDesc.AccMoveSpeed = 0;
-
-		// RotS
-		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
-		AddDesc.LookRotSpeed = 0;
-
-		MeshDesc.RotAxis = FollowingDir_Look;
-		MeshDesc.RotationSpeedPerSec = 30;
-		AddDesc.AccRotSpeed = 0;
-		AddDesc.InitRot = _float3(0, 0, 0.0f);
-
-		// Scale
-		AddDesc.AccScaleSpeed = 0.0f;
-		AddDesc.ScaleReFlag = false;
-
-		AddDesc.bLockScale[0] = true;
-		AddDesc.bLockScale[1] = true;
-		AddDesc.bLockScale[2] = true;
-
-
-		// Fix
-		AddDesc.FixFlag_Move = false;
-		AddDesc.FixFlag_Rot = false;
-		AddDesc.FollowTarget = nullptr;
-
-		// Shader
-	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		MeshDesc.m_iPassIndex = 18; // DisCard
-	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
-
-		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
-
-
-	}
-
-#pragma endregion MAP
 	return S_OK;
 }
 
@@ -8704,6 +9159,10 @@ HRESULT CPartilceCreateMgr::Ready_MapParticle_Stage(SCENEID id)
 	{
 		val.mIsSoundPlay = false;
 	}
+
+	Create_MapMeshParticle(id);
+
+
 	return S_OK;
 }
 
@@ -8925,7 +9384,37 @@ void CPartilceCreateMgr::PlaySound_Map(_float3  pos, E_PARTICLSOUND_TYPE type, _
 		CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
 }
 
+void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
+{
+	_float3 FixPos = _float3(-999, -999, -999);
 
+	switch (id)
+	{
+
+	case SCENE_STAGE1:
+	{
+		//	FixPos = _float3();
+		//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_SphereLight, FixPos);
+
+	}
+	break;
+	case SCENE_STAGE2:
+		break;
+	case SCENE_STAGE3:
+		break;
+	case SCENE_STAGE4:
+		break;
+	case SCENE_STAGE5:
+		break;
+	case SCENE_STAGE6:
+		break;
+	case SCENE_STAGE7:
+		break;
+	default:
+		break;
+	}
+
+}
 
 
 HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
