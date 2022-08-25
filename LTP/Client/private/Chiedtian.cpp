@@ -37,7 +37,10 @@ HRESULT CChiedtian::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 
-
+	// JH
+	m_fMaxHP = 80.f;
+	m_fHP = m_fMaxHP;
+	//
 
 	if (pArg != nullptr)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));

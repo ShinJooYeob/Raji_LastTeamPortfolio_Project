@@ -49,8 +49,8 @@ HRESULT CScene_Stage5::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"Stage5_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_ColTrigger)));
 	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Mahabalasura_InstanceMonsterTrigger.dat", SCENE_STAGE5, TAG_LAY(Layer_InstanceMonsterTrigger)));
 
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_1.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_2.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_3.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage5_MonsterTrigger_4.dat", SCENE_STAGE5, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//

@@ -181,8 +181,8 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		if (m_pCollider_Ultimate == pMyCollider)
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-			pConflictedObj->Take_Damage(this, 3.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-			pConflictedCollider->Set_Conflicted(0.1f);
+			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
+			pConflictedCollider->Set_Conflicted(0.2f); 
 		}
 		else  
 		{
@@ -191,7 +191,7 @@ void CPlayerWeapon_Spear::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 			pUtil->PlusSpearSkillPersent(1.f);
 
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-			if (0 > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+			if (0 > pConflictedObj->Take_Damage(this, m_fDamage, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
 				pUtil->SlowMotionStart(2.f, 0.02f);
 			}
@@ -919,13 +919,13 @@ HRESULT CPlayerWeapon_Spear::SetUp_Collider()
 	// Ultimate Attack Collider
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider_4), (CComponent**)&m_pCollider_Ultimate));
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(12.5f);
+	ColliderDesc.vScale = _float3(10.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(12.f);
+	ColliderDesc.vScale = _float3(9.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

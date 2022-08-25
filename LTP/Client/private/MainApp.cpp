@@ -63,7 +63,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK(Scene_Change(SCENEID::SCENE_LOBY));
 
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"VinerFonts", L"../bin/Resources/Fonts/Reenie.spritefont"));
-
+	FAILED_CHECK(g_pGameInstance->Add_Font(L"JunguFonts", L"../bin/Resources/Fonts/JunguGaShikidna.spritefont"));
 
 	return S_OK;
 }

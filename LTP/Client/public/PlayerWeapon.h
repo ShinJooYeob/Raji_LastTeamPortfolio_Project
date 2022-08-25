@@ -83,7 +83,7 @@ public:
 
 	void Set_VecParticle(_uint index, INSTPARTICLEDESC& d);
 
-
+	_float Get_WeaponDamage();
 
 private:
 	virtual _fVector	Get_BonePos(const char* pBoneName) override;
@@ -108,8 +108,6 @@ protected:
 	_bool						m_bActiveCollision_2 = false;
 	_bool						m_bActiveCollision_3 = false;
 	_bool						m_bActiveCollision_4 = false;
-
-	_float						m_fDamage = 1.f;
 
 public:
 	virtual CGameObject*		Clone(void* pArg)PURE;

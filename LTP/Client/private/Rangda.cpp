@@ -73,8 +73,8 @@ HRESULT CRangda::Initialize_Clone(void * pArg)
 		m_vFingerPoss[i] = Get_FingerPos(i);
 	}
 
-	m_fHP = 32.f;
-	m_fMaxHP = 32.f;
+	m_fHP = 80.f;
+	m_fMaxHP = 80.f;
 
 	_int iRandom = rand() % 11;
 
@@ -383,21 +383,21 @@ void CRangda::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, C
 
 _float CRangda::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_fHP -= fDamageAmount;
+	m_fHP -= 1.f;//fDamageAmount;
 
-	if (m_fHP == 28)
+	if (m_fHP == 70)
 		m_bIsHit = true;
-	else if(m_fHP == 24)
+	else if(m_fHP == 60)
+		m_bIsHit = true;
+	else if (m_fHP == 50)
+		m_bIsHit = true;
+	else if (m_fHP == 40)
+		m_bIsHit = true;
+	else if (m_fHP == 30)
 		m_bIsHit = true;
 	else if (m_fHP == 20)
 		m_bIsHit = true;
-	else if (m_fHP == 16)
-		m_bIsHit = true;
-	else if (m_fHP == 12)
-		m_bIsHit = true;
-	else if (m_fHP == 8)
-		m_bIsHit = true;
-	else if (m_fHP == 4)
+	else if (m_fHP == 10)
 		m_bIsHit = true;
 	else if (m_fHP <= 0)
 		m_bIsHit = true;

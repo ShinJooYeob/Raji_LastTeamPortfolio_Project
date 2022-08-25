@@ -89,7 +89,6 @@ public:
 
 
 	
-	
 
 private:
 	const aiScene*				m_pScene = nullptr;
@@ -99,6 +98,8 @@ private:
 
 public:
 	_fMatrix Get_BoneMatrix(const char* pBoneName);
+	_fMatrix Get_BoneMatrix_byNode(CHierarchyNode* pHierarchyNode);
+	CHierarchyNode* Get_HierarchyNode(const char* pBoneName);
 
 private: /*매시 보관(영항 받는 머테리얼 기준으로 분류하여 저장)*/
 	_uint									m_iNumMeshContainers = 0;

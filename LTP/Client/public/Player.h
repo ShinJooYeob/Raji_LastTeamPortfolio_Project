@@ -18,7 +18,7 @@ class CPlayer final : public CGameObject
 public:
 	enum EPLAYER_STATE {
 		STATE_IDLE, STATE_MOV, STATE_ATTACK, STATE_JUMPATTACK, STATE_UTILITYSKILL, STATE_ULTIMATESKILL, STATE_PARKOUR, STATE_JUMP, STATE_FALL, STATE_CURTAIN, STATE_WALLRUN, STATE_PILLAR, STATE_PETAL, STATE_STOPACTION, STATE_ELEVATOR, STATE_EVASION, STATE_TAKE_DAMAGE, STATE_EXECUTION, STATE_SLEEP, STATE_DEAD, 
-		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_DYNAMICPLATFORM_DEAD, STATE_FIRSTPERSONVIEW, STATE_END
+		STATE_DYNAMICPLATFORM_IDLE, STATE_DYNAMICPLATFORM_MOVE, STATE_DYNAMICPLATFORM_DEAD, STATE_FIRSTPERSONVIEW, STATE_ENDING, STATE_END
 	};
 
 	enum EINPUT_MOVDIR {
@@ -195,6 +195,9 @@ public:
 	void	Move_OppositeDir();
 
 public:
+	// Ending
+	void	Set_State_Ending();
+
 	// First Start
 	void	Set_State_FirstStart();
 
@@ -304,6 +307,8 @@ private:
 	HRESULT Update_State_Damage(_double fDeltaTime);
 	HRESULT Update_State_Execution(_double fDeltaTime);
 	HRESULT Update_State_Dead(_double fDeltaTime);
+
+	HRESULT Update_State_Ending(_double fDeltaTime);
 
 
 	HRESULT	Update_Collider(_double fDeltaTime);
@@ -503,6 +508,10 @@ private: /* Control */
 	_bool					m_bBlockCamTrigger = false;
 	_bool					m_bPlayBattleSound = false;
 	_bool					m_bFootStepSound = false;
+
+	_int					m_iEndingState = 0;
+
+	CHierarchyNode*			m_pHipNode = nullptr;
 
 private: /* For Cheat Mode*/
 	_bool					m_bPowerOverwhelming = false;

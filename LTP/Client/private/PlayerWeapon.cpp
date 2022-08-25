@@ -28,6 +28,8 @@ HRESULT CPlayerWeapon::Initialize_Clone(void * pArg)
 	{
 		memcpy(&m_tPlayerWeaponDesc, pArg, sizeof(PlayerWeaponDesc));
 	}
+
+	m_fDamage = 1.f;
 	return S_OK;
 }
 
@@ -305,6 +307,11 @@ void CPlayerWeapon::Set_VecParticle(_uint index, INSTPARTICLEDESC & d)
 	m_vecTextureParticleDesc[index] = d;
 
 
+}
+
+_float CPlayerWeapon::Get_WeaponDamage()
+{
+	return m_fDamage;
 }
 
 _bool CPlayerWeapon::AbleToChangeWeapon()

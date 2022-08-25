@@ -125,9 +125,9 @@ public:
 	void	Set_SkillWeaponType(WeaponType Type) { m_eSkillWeaponType = Type; }
 
 public:
-	void	PlusSpearSkillPersent(_float fPersent = 5.f) { m_fSpearSkillPersent += 5.f; }
-	void	PlusBowSkillPersent(_float fPersent = 5.f) { m_fBowSkillPersent += 5.f; }
-	void	PlusSwordshieldSkillPersent(_float fPersent = 5.f) { m_fSwordshieldSkillPersent += 5.f; }
+	void	PlusSpearSkillPersent(_float fPersent = 5.f) { m_fSpearSkillPersent += (5.f + (5.f * 0.25f * m_FireSkillPoint[2])); }
+	void	PlusBowSkillPersent(_float fPersent = 5.f) { m_fBowSkillPersent += (5.f + (5.f * 0.25f * m_IceSkillPoint[2])); }
+	void	PlusSwordshieldSkillPersent(_float fPersent = 5.f) { m_fSwordshieldSkillPersent += (5.f + (5.f * 0.25f * m_LightningSkillPoint[2])); }
 
 	void	ResetSpearPersent() { m_fSpearSkillPersent = 0.f; }
 	void	ResetBowPersent() { m_fBowSkillPersent = 0.f; }
@@ -139,7 +139,6 @@ public:
 
 	HRESULT Ready_SceneChangingData(_uint eSceneID,_uint iLayerIndex);
 	PPDDESC Set_SceneChangingData(_uint eSceneID);
-
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;
