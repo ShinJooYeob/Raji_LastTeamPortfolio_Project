@@ -952,8 +952,10 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		AddDesc.bAfterApperTime = false;
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 250;
 		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.iDiffuseTextureIndex = 394;
+		MeshDesc.iDiffuseTextureIndex = NODIFF;
+		MeshDesc.iDiffuseTextureIndex = 275;
 		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
 
@@ -965,16 +967,16 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.fAlphaTestValue = 1.0f;
 
 		// Color
-		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
-		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
+		MeshDesc.vLimLight = _float4(1.0f, 1, 1, 0.0f);
+		MeshDesc.vLimLight = _float4(0.3f, 0.3f, 0.3f, 1.0f);
 		MeshDesc.vEmissive = _float4(1);
 
 
 		// Transform_Base
 		// LocalPos
 		MeshDesc.vLookDir = _float3(0, 0, 1);
-		MeshDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);
-		MeshDesc.vSize = _float3(0.3f);
+		MeshDesc.vPosition = _float3(-0.0f, 1.5f, 0.0f);
+		MeshDesc.vSize = _float3(0.35f);
 
 
 		// Move
@@ -986,7 +988,7 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
 		AddDesc.InitRot = _float3(0);
 		MeshDesc.RotAxis = FollowingDir_Up;
-		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.AccRotSpeed = 4.5f;
 		AddDesc.LookRotSpeed = 0;
 
 		// Scale
@@ -1004,7 +1006,7 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		LightDesc.bEmsiive = true;
 		LightDesc.bRim = true;
 		LightDesc.Ambiant = 0.5f;
-		_float Time = 3.0f;
+		_float Time = 1.5f;
 		LightDesc.SpeedTime_Rim = Time;
 		LightDesc.SpeedTime_Emsive = Time;
 
@@ -1030,8 +1032,8 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 250;
-		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.iDiffuseTextureIndex = 397;
+		MeshDesc.iDiffuseTextureIndex = 306;
 		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
 
@@ -1043,16 +1045,16 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.fAlphaTestValue = 1.0f;
 
 		// Color
-		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 1.0f);
+		MeshDesc.vLimLight = _float4(0.0f, 0.0f, 0.5f, 1.0f);
 		MeshDesc.vLimLight = _float4(1.0f, 0.00f, 0.00f, 0.0f);
-		MeshDesc.vEmissive = _float4(1);
+		MeshDesc.vEmissive = _float4(0);
 
 
 		// Transform_Base
 		// LocalPos
 		MeshDesc.vLookDir = _float3(0, 0, 1);
-		MeshDesc.vPosition = _float3(0.0f, 1.0f, 0.0f);
-		MeshDesc.vSize = _float3(0.5f,2,0.5f);
+		MeshDesc.vPosition = _float3(0.0f, 0, 0.0f);
+		MeshDesc.vSize = _float3(1.0f,10, 1.0f);
 
 
 		// Move
@@ -1061,7 +1063,7 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 
 		// Rot
 		AddDesc.LookRotAxis = FollowingDir_Look;
-		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 		AddDesc.InitRot = _float3(0);
 		MeshDesc.RotAxis = FollowingDir_Up;
 		AddDesc.AccRotSpeed = 0.0f;
@@ -1079,8 +1081,8 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		AddDesc.FixFlag_Rot = false;
 		AddDesc.DealyTime = 0.1f;
 
-		LightDesc.bEmsiive = true;
-		LightDesc.bRim = true;
+		LightDesc.bEmsiive = false;
+		LightDesc.bRim = false;
 		LightDesc.Ambiant = 0.5f;
 		_float Time = 3.0f;
 		LightDesc.SpeedTime_Rim = Time;

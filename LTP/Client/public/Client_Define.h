@@ -24,6 +24,7 @@ extern _bool g_bShowMouse;
 
 #define  NONNOISE	388
 #define  NONNMASK	50
+#define  NODIFF		295
 
 #define  UPDATE_SKIP	2
 #define  UPDATE_ERROR	-1
