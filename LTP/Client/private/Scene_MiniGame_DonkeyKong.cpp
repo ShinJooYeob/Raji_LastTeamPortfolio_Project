@@ -36,7 +36,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 
-	//g_pGameInstance->PlayBGM(TEXT("EH_53 One Hell Of A Time.mp3"),0,0.2f);
+	g_pGameInstance->PlayBGM(TEXT("EH_DonkeyKong_Bgm.mp3"),0,0.4f);
 
 	return S_OK;
 }
@@ -240,7 +240,7 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_Layer_MiniGame_KongRaji(const _tchar * 
 
 	m_pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 	m_pMainCam->Set_FocusTarget(pJalsura);
-	m_pMainCam->Set_CameraInitState(XMVectorSet(39.9999733f, 49.4999771f, 37.0000153f, 1.f), XMVectorSet(0.242860109f, -0.570451736f, 0.784604549f, 0.f));
+	m_pMainCam->Set_CameraInitState(XMVectorSet(40.f, 40.f, 25.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f));
 	pJalsura->Update_AttachCamPos();
 
 	return S_OK;
@@ -335,10 +335,13 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
 
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	//pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -348,18 +351,20 @@ HRESULT Scene_MiniGame_DonkeyKong::Ready_PostPorcessing()
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, false);
 	pRenderer->Set_ShadowIntensive(0.3f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(1.5f);
 
-	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	//pRenderer->Set_DofLength(30.f);
-	//pRenderer->Set_DofBlurIntensive(1.f);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, false);
+	pRenderer->Set_DofLength(30.f);
+	pRenderer->Set_DofBlurIntensive(1.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
+	pRenderer->Set_FogColor(_float3{ 0.234375f });
+	pRenderer->Set_FogHighlightColor(_float3{ 1.f });
 	pRenderer->Set_FogStartDist(5.f);
 	pRenderer->Set_FogGlobalDensity(0.1f);
 	pRenderer->Set_FogHeightFalloff(0.1f);

@@ -29,6 +29,7 @@ HRESULT CMonster_Wasp::Initialize_Clone(void * pArg)
 {
 	for (auto& p : m_pModel)	p = nullptr;
 	for (auto& p : m_pModelInstance)	p = nullptr;
+	ZeroMemory(&m_Instance_Info, sizeof(INSTANCE_INFO));
 
 	FAILED_CHECK(__super::Initialize_Clone(pArg));
 
@@ -56,7 +57,7 @@ _int CMonster_Wasp::Update(_double dDeltaTime)
 		{
 			m_vecInstancedTransform[i].iRenderType = RENDMER_DIE;
 			m_vecInstancedTransform[i].iHp = -10;
-			m_pBatchTrigger->Set_IsDead();
+			//m_pBatchTrigger->Set_IsDead();
 		}
 	}
 

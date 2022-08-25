@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\public\DonkeyKong_Bullet.h"
+#include "PartilceCreateMgr.h"
+#include "MiniGame_KongGolu.h"
 
 
 CDonkeyKong_Bullet::CDonkeyKong_Bullet(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -31,18 +33,19 @@ HRESULT CDonkeyKong_Bullet::Initialize_Clone(void * pArg)
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, *((_float3*)pArg));
 
 
-	m_pTransformCom->Rotation_CW(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(180));
-
-
-
 
 	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 
 
 	SetUp_Info();
 
+	m_pTransformCom->Rotation_CW(XMVectorSet(1.f, 0.f, 0.f, 0.f), XMConvertToRadians(90));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(33.033f, 45.49f, 40.f, 1.f));
-	m_pTransformCom->Scaled_All(_float3(1.f, 1.f, 1.f));
+	m_pTransformCom->Scaled_All(_float3(0.3f, 0.3f, 0.3f));
+
+
+	//씬에 있는 레이어 순서 확인할것!
+	m_pKongGolu = static_cast<CMiniGame_KongGolu*>(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong)));
 
 	return S_OK;
 }
@@ -116,6 +119,62 @@ void CDonkeyKong_Bullet::Set_IsDead()
 {
 	__super::Set_IsDead();
 
+	//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+
+	if(m_pKongGolu->Get_bClear() == false)
+		g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Bullet_Delete.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
+
+	// Fragment
+	INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+		Prototype_Mesh_SM_4E_IceShards_01, //FBX
+		0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+		0.3f, //파티클 지속시간
+		_float4(0.28f, 0.29f, 0.95f, 0.f), //색깔1
+		_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+		1, //여기에 1을 넣으면 됨
+		_float3(2), //사이즈
+		_float3(1.f), //사이즈2 이것도 위에랑 마찬가지
+		1);
+	ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+	ParticleMesh.eInstanceCount = Prototype_ModelInstance_32; //인스턴스 갯수
+	ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+												 //범위
+	_float val = 0.0f;
+	ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0, -val);
+	ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0, val);
+
+	//디퓨즈 텍스쳐
+	ParticleMesh.TempBuffer_0.w = 398;
+
+	ParticleMesh.iMaskingTextureIndex = 122;
+	ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+	ParticleMesh.iNoiseTextureIndex = 289;
+	ParticleMesh.vEmissive_SBB = _float3(0.f, 0.f, 0.f);
+	ParticleMesh.Particle_Power = 10.0f;
+
+	ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+	ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+	ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+	//위치지정
+	_Matrix mat = m_pTransformCom->Get_WorldMatrix();
+	_Vector pos = mat.r[3];
+	ParticleMesh.vFixedPosition = pos;
+
+	//위치지정
+	// ParticleMesh.FollowingTarget = m_pTransformCom;
+	// ParticleMesh.iFollowingDir = FollowingDir_Up;
+
+	GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+	ParticleMesh.TempBuffer_0.w = 404;
+	GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+	ParticleMesh.TempBuffer_0.w = 405;
+	GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
 }
 
 void CDonkeyKong_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
@@ -144,8 +203,8 @@ HRESULT CDonkeyKong_Bullet::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VNAM), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine), TAG_COM(Com_Model), (CComponent**)&m_pModel));
-
+	//FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Tezabsura_Landmine), TAG_COM(Com_Model), (CComponent**)&m_pModel));
+	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Mesh_PM_PowerUpFood), TAG_COM(Com_Model), (CComponent**)&m_pModel));
 	CTransform::TRANSFORMDESC tDesc = {};
 
 	tDesc.fMovePerSec = 5;
@@ -192,12 +251,21 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 	m_fNaviHeight = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	m_fMyPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
 
-	if (m_fNaviHeight + 0.5f <= m_fMyPos.y && m_bMovoToHeightOn == true)
+	if (m_fNaviHeight + 0.3f <= m_fMyPos.y && m_bMovoToHeightOn == true)
 	{
-		m_pTransformCom->Move_Down(dDeltaTime);
+		//m_pTransformCom->Move_Down(dDeltaTime);
+		m_pTransformCom->MovetoDir(XMVectorSet(0.f, -1.f, 0.f, 0.f), dDeltaTime,m_pNavigationCom);
+
+		if (m_iSoundIndex == 0 && m_pKongGolu->Get_bClear() == false)
+		{
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Descent.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Descent.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			m_iSoundIndex++;
+		}
 	}
 	else {
 		m_bMoveToWidthOn = true;
+		m_iSoundIndex = 0;
 	}
 
 
@@ -212,6 +280,8 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fPivotPos, vTempPos);
 		m_fPivotPos.y += 0.5;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fPivotPos);
+
+		m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime*4.235801032);
 	}
 	else if (m_iMoveToDirIndex == LEFT && m_bMoveToWidthOn == true)
 	{
@@ -223,6 +293,8 @@ HRESULT CDonkeyKong_Bullet::Play_Bullet(_double dDeltaTime)
 		XMStoreFloat3(&m_fPivotPos, vTempPos);
 		m_fPivotPos.y += 0.5;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_fPivotPos);
+
+		m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime*4.235801032);
 	}
 	
 
@@ -264,7 +336,7 @@ HRESULT CDonkeyKong_Bullet::SetUp_Collider()
 
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.5f, 1.5f, 1.5f);
+	ColliderDesc.vScale = _float3(2.5f, 2.5f, 2.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -272,7 +344,7 @@ HRESULT CDonkeyKong_Bullet::SetUp_Collider()
 
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);
+	ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

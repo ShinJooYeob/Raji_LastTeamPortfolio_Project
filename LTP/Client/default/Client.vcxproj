@@ -203,6 +203,8 @@
     <ClInclude Include="..\public\FireRing.h" />
     <ClInclude Include="..\public\GaolCollider.h" />
     <ClInclude Include="..\public\GoalTrigger.h" />
+    <ClInclude Include="..\public\Goldfish.h" />
+    <ClInclude Include="..\public\GoldfishTrigger.h" />
     <ClInclude Include="..\public\Golu_Bullet.h" />
     <ClInclude Include="..\public\Grovetender.h" />
     <ClInclude Include="..\public\GrovetenderDeadZone.h" />
@@ -405,6 +407,8 @@
     <ClCompile Include="..\private\FireRing.cpp" />
     <ClCompile Include="..\private\GaolCollider.cpp" />
     <ClCompile Include="..\private\GoalTrigger.cpp" />
+    <ClCompile Include="..\private\Goldfish.cpp" />
+    <ClCompile Include="..\private\GoldfishTrigger.cpp" />
     <ClCompile Include="..\private\Golu_Bullet.cpp" />
     <ClCompile Include="..\private\Grovetender.cpp" />
     <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />

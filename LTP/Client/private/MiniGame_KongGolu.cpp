@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\MiniGame_KongGolu.h"
 #include "Scene.h"
+#include "PartilceCreateMgr.h"
 
 
 CMiniGame_KongGolu::CMiniGame_KongGolu(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -57,10 +58,20 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 	{
 		m_dClearTime += dDeltaTime;
 
-		if (m_dClearTime > 2)
+		if (m_bSoundIndex == 0)
+		{
+			//g_pGameInstance->Play3D_Sound(TEXT("EH_DonkeyKong_Clear.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Stop_ChannelSound(CHANNEL_BGM);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_Clear.wav"), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->PlaySound(TEXT("EH_DonkeyKong_cheer.mp3"), CHANNELID::CHANNEL_PLAYER, 0.5f);
+			m_bSoundIndex++;
+		}
+
+		if (m_dClearTime > 4)
 		{
 			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
 		}
+		Clear_Firecracker(dDeltaTime);
 	}
 
 	Play_MiniGame(dDeltaTime);
@@ -232,6 +243,156 @@ HRESULT CMiniGame_KongGolu::SetUp_Info()
 
 HRESULT CMiniGame_KongGolu::Play_MiniGame(_double dDeltaTime)
 {
+	return S_OK;
+}
+
+HRESULT CMiniGame_KongGolu::Clear_Firecracker(_double dDeltaTime)
+{
+	// Fragment
+	INSTMESHDESC ParticleMesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::E_MESHINST_EFFECTJ::Um_MeshBase4_TurnAuto,
+		Prototype_Mesh_SM_4E_IceShards_01, //FBX
+		0.01f, //파티클 전체의 지속시간 한번만 재생시키기 위해 짧음
+		3.f, //파티클 지속시간
+		_float4(0.28f, 0.29f, 0.95f, 0.f), //색깔1
+		_float4(0), //색깔2 색깔1~2끼리 움직이면서 함 즉, 바꾸지 않게 하려면 같은 색을 넣고
+		1, //여기에 1을 넣으면 됨
+		_float3(1), //사이즈
+		_float3(0.01f), //사이즈2 이것도 위에랑 마찬가지
+		1);
+	ParticleMesh.eParticleTypeID = InstanceEffect_Ball; //퍼지는 타입
+	ParticleMesh.eInstanceCount = Prototype_ModelInstance_128; //인스턴스 갯수
+	ParticleMesh.ePassID = MeshPass_BrightColor; //노이즈
+
+												 //범위
+	_float val = 0.0f;
+	ParticleMesh.ParticleStartRandomPosMin = _float3(-val, -0, -val);
+	ParticleMesh.ParticleStartRandomPosMax = _float3(val, -0, val);
+
+	ParticleMesh.iMaskingTextureIndex = 122;
+	ParticleMesh.iMaskingTextureIndex = NONNMASK;//노이즈 타입이 아니면 동작하지 않음
+	ParticleMesh.iNoiseTextureIndex = 289;
+	ParticleMesh.vEmissive_SBB = _float3(0.3f, 0.3f, 0.3f);
+	ParticleMesh.Particle_Power = 20.0f;
+
+	ParticleMesh.SubPowerRandomRange_RUL = _float3(1, 1, 1);
+	ParticleMesh.fRotSpeed_Radian = XMConvertToRadians(max(1080, 0));
+
+
+	ParticleMesh.TempBuffer_0.z = 1; //한번에 파티클이 생성됨
+
+									 //위치지정
+	_Vector pos;
+
+	if (m_iClearIndex == 0 && m_dClearTime >= 0)
+	{
+		//디퓨즈 텍스쳐
+		ParticleMesh.TempBuffer_0.w = 393;
+		pos = XMVectorSet(40.f, 40.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 390;
+		pos = XMVectorSet(43.f, 38.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+
+		ParticleMesh.TempBuffer_0.w = 398;
+		pos = XMVectorSet(43.f, 38.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 396;
+		pos = XMVectorSet(39.f, 44.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		m_iClearIndex++;
+	}
+	else if (m_iClearIndex == 1 && m_dClearTime >= 0.4)
+	{
+		ParticleMesh.TempBuffer_0.w = 395;
+		pos = XMVectorSet(50.f, 48.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 396;
+		pos = XMVectorSet(43.f, 38.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 397;
+		pos = XMVectorSet(36.f, 35.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 408;
+		pos = XMVectorSet(51.f, 41.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		m_iClearIndex++;
+	}
+	else if (m_iClearIndex == 2 && m_dClearTime >= 0.8)
+	{
+		ParticleMesh.TempBuffer_0.w = 391;
+		pos = XMVectorSet(48.f, 43.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 396;
+		pos = XMVectorSet(28.f, 48.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 397;
+		pos = XMVectorSet(30.f, 42.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+		ParticleMesh.TempBuffer_0.w = 397;
+		pos = XMVectorSet(30.f, 31.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		m_iClearIndex++;
+	}
+	else if (m_iClearIndex == 3 && m_dClearTime >= 1.2)
+	{
+		ParticleMesh.TempBuffer_0.w = 299;
+		pos = XMVectorSet(41.f, 39.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 300;
+		pos = XMVectorSet(50.f, 33.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 301;
+		pos = XMVectorSet(33.f, 47.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		m_iClearIndex++;
+	}else if (m_iClearIndex == 4 && m_dClearTime >= 1.5)
+	{
+		ParticleMesh.TempBuffer_0.w = 375;
+		pos = XMVectorSet(26.f, 31.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 365;
+		pos = XMVectorSet(57.f, 45.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		ParticleMesh.TempBuffer_0.w = 368;
+		pos = XMVectorSet(33.f, 44.f, 40.f, 1.f);
+		ParticleMesh.vFixedPosition = pos;
+		GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
+
+		m_iClearIndex++;
+	}
 	return S_OK;
 }
 

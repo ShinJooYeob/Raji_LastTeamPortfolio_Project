@@ -50,7 +50,10 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 {
 	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	Play_MiniGame(dDeltaTime);
+	m_dStartTime += dDeltaTime;
+
+	if (m_dStartTime > 1)
+		Play_MiniGame(dDeltaTime);
 
 	m_pModel->Change_AnimIndex(m_iAnimIndex, 0.2f);
 
@@ -58,12 +61,14 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 
 
-	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime, m_bIsOnScreen));
+	FAILED_CHECK(m_pModel->Update_AnimationClip(dDeltaTime * m_dAcceleration, m_bIsOnScreen));
 	FAILED_CHECK(Adjust_AnimMovedTransform(dDeltaTime));
 
 	Update_Collider(dDeltaTime);
 
 
+
+#ifdef _DEBUG
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
 	{
@@ -78,7 +83,7 @@ _int CMiniGame_DonkeyKong::Update(_double dDeltaTime)
 	{
 		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong), TAG_OP(Prototype_Object_DonkeyKong_Bullet)));
 	}
-
+#endif
 
 	return _int();
 }
@@ -220,7 +225,7 @@ HRESULT CMiniGame_DonkeyKong::Adjust_AnimMovedTransform(_double dDeltatime)
 		{
 			if (m_iAdjMovedIndex == 0 && PlayRate >= 0.3879)
 			{
-				//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong), TAG_OP(Prototype_Object_DonkeyKong_Bullet)));
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MiniGame_DonkeyKong), TAG_OP(Prototype_Object_DonkeyKong_Bullet)));
 				m_iAdjMovedIndex++;
 			}
 			break;

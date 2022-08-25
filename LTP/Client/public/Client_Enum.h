@@ -336,6 +336,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Trigger_GearPuzzleTrigger,
 	Prototype_Trigger_FogTrigger,
 	Prototype_Trigger_EventTrigger,
+	Prototype_Trigger_GoldfishTrigger,
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
@@ -438,6 +439,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_GoalCollider,
 	Prototype_Object_MiniGame_TempCollider,
 	Prototype_Object_PlayerIndicator,
+	Prototype_Object_Goldfish,
 
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
@@ -589,6 +591,11 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 	case Prototype_Trigger_EventTrigger:
 		return TEXT("Prototype_Trigger_EventTrigger");
 		break;
+
+	case Prototype_Trigger_GoldfishTrigger:
+		return TEXT("Prototype_Trigger_GoldfishTrigger");
+		break;
+
 	case Prototype_Trigger_ChangeNavIndex:
 		return TEXT("Prototype_Trigger_ChangeNavIndex");
 		break;
@@ -851,6 +858,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_PlayerIndicator:
 		return TEXT("Prototype_Object_PlayerIndicator");
+
+	case Prototype_Object_Goldfish:
+		return TEXT("Prototype_Object_Goldfish");
 		
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
@@ -1155,6 +1165,7 @@ enum LAYERID
 	Layer_UI_Texture_Universal,
 	Layer_DonkeyKong_Trigger,
 	Layer_MiniGame_DonkeyKong,
+	Layer_Npc
 };
 
 static const _tchar* Tag_Layer(LAYERID eTag)
@@ -1410,6 +1421,10 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 
 	case Layer_MiniGame_DonkeyKong:
 		return TEXT("Layer_MiniGame_DonkeyKong");
+		break;
+
+	case Layer_Npc:
+		return TEXT("Layer_Npc");
 		break;
 		
 	default:
@@ -3625,6 +3640,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Mesh_Monster_WormGrub,
 	Prototype_Mesh_Monster_Spider,
 	Prototype_Mesh_Monster_Wolf,
+	Prototype_Mesh_Goldfish,
 
 	Prototype_Mesh_Monster_Gadasura_Rage_Hollogram,
 	Prototype_Mesh_Monster_Weapon_Gadasura_Black,
@@ -10247,6 +10263,9 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 
 	case Prototype_Mesh_Monster_Wolf:
 		return TEXT("Monster_Wolf.fbx");
+
+	case Prototype_Mesh_Goldfish:
+		return TEXT("Goldfish.fbx");
 
 	case Prototype_Mesh_Monster_Weapon_Gadasura_Black:
 		return TEXT("Gadesura_Black_Waepon.fbx");

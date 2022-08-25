@@ -211,7 +211,7 @@ _float CMiniGame_Golu::Take_Damage_Instance(CGameObject * pTargetObject, _float 
 void CMiniGame_Golu::Update_AttachCamPos()
 {
 	_Vector vMyPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
-	_float3 vBonePos = Get_BonePos("skd_hip");
+
 	m_fAttachCamPos_Offset.y = 7.f;
 	m_fAttachCamPos_Offset.x = 0.f;
 	m_fAttachCamPos_Offset.z = -3.f;
@@ -231,7 +231,7 @@ void CMiniGame_Golu::Update_AttachCamPos()
 
 	//Bone is Look
 	//m_pMainCamera->Lock_CamLook(true,XMVector3Normalize(vBonePos.XMVector()- m_fAttachCamPos.XMVector()));
-
+	_Vector v = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_fAttachCamPos.XMVector());
 	m_pMainCamera->Lock_CamLook(true, XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) - m_fAttachCamPos.XMVector()));
 
 

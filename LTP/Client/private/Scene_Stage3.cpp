@@ -41,7 +41,7 @@ HRESULT CScene_Stage3::Initialize()
 	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda.dat", SCENE_STAGE3, TAG_LAY(Layer_ColTrigger)));
 
 	//EH
-	//FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_InstanceMonsterTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"BossStage_Rangda_InstanceMonsterTrigger.dat", SCENE_STAGE3, TAG_LAY(Layer_InstanceMonsterTrigger)));
 	//
 	
 

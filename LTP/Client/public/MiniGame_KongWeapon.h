@@ -35,17 +35,9 @@ public:
 	virtual _float	Take_Damage(CGameObject* pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback = false, _float fKnockbackPower = 0.f) override;
 
 public:
-	vector<ATTACHEDESC>* Get_VecAttachedDesc()
-	{
-		return &m_vecAttachedDesc;
-	}
-
-	CCollider* Get_Collider()
-	{
-		return m_pColliderCom;
-	}
-
-
+	void	Set_ColliderOn(_bool bColliderOn) { m_bColliderOn = bColliderOn; }
+	_bool	Get_ColliderOn() { return m_bColliderOn; }
+	_bool	Get_Magnet() { return m_bMagnet; }
 
 private:
 	HRESULT SetUp_Components();
@@ -65,6 +57,9 @@ private:
 	HRESULT MagnetOn(_double dDeltaTime);
 
 private:
+	HRESULT Get_Firecracker();
+
+private:
 	KongRaji_Weapon_UniversalDesc m_KongRaji_Weapon_UniversalDesc; //Monster_Bullet_Universal Desc;
 	ATTACHEDESC			m_AttachedDesc; //Born Desc;
 
@@ -77,7 +72,9 @@ private:
 
 private:
 	CCollider*			m_pColliderCom = nullptr;
-	vector<ATTACHEDESC> m_vecAttachedDesc;
+
+private:
+	_bool				m_bColliderOn = false;
 
 private:
 	class CMiniGame_KongRaji* m_pPlayer = nullptr;
@@ -85,7 +82,6 @@ private:
 
 private:
 	_float4x4			m_fAttachedMatrix;
-	CHierarchyNode*		m_pAttachedNode = nullptr;
 
 private:
 	_bool				m_WeaponAttackOn = false;

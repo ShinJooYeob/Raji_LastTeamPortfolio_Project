@@ -3,12 +3,16 @@
 BEGIN(Client)
 class CCamera_Main;
 
+#define SLOW_SPEED 1
+#define NORMAL_SPEED 2
+#define FAST_SPEED 3
+
 class CMiniGame_KongRaji final : public CGameObject
 {
 public:
 	enum HeightPosType{HEIGHT_ONE_POINT,HEIGHT_TWO_POINT,HEIGHT_END};
 public:
-	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK =14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
+	enum AnimType{ANIM_IDLE,ANIM_WALK,ANIM_ATTACK = 14 ,ANIM_CLIMB_UP = 121, ANIM_CLIMB_DOWN, ANIM_JUMP = 143,ANIM_END};
 
 	typedef	struct tagJumpDesc
 	{
@@ -107,13 +111,16 @@ private://Dissolve
 	_double				m_dDissolveTime = 0;
 
 private://Anim Speed
-	_double				m_dAcceleration = 1;
+	_double				m_dAcceleration = NORMAL_SPEED;
 	_float				m_fAnimBlend = 0.1f;
 
 private://Moving
 	_bool				m_bMoveToHeightOn = false;
 	_bool				m_bMoveToWidthOn = true;
 	_uint				m_iNaviIndex = 1;
+
+private:
+	_float3				m_fHeightPos[CMiniGame_KongRaji::HEIGHT_END];
 
 private:
 	_float3				m_fMyPos;
@@ -124,9 +131,9 @@ private:
 
 	_uint				m_iSwitchIndex = 0;
 
+private://Sound
+	_uint				m_iSoundIndex = 0;
 
-private:
-	_float3				m_fHeightPos[CMiniGame_KongRaji::HEIGHT_END];
 
 public:
 	static CMiniGame_KongRaji* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
