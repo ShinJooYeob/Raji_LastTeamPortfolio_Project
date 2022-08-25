@@ -166,6 +166,8 @@ HRESULT CStaticInstanceMapObject::Add_InstanceMapObject(OBJELEMENT& tElements)
 		if (tElements.PassIndex == 14) InstanceMapDesc.iPassIndex = 15;
 		if (tElements.PassIndex == 22) InstanceMapDesc.iPassIndex = 16;
 
+		if (tElements.PassIndex == 28) InstanceMapDesc.iPassIndex = 17;
+
 
 		//InstanceMapDesc.iPassIndex = tElements.PassIndex;
 		InstanceMapDesc.bIsOcllusion = tElements.bIsOcllsuion;

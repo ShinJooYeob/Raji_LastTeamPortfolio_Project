@@ -811,6 +811,10 @@ HRESULT CMonster_Vayusura_Minion::Play_SpawnEffect()
 	if (m_SpawnEffectAdjust == 0)
 	{
 		m_SpawnEffectAdjust++;
+
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_05.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 0.8f);
 		{
 			// ring
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(

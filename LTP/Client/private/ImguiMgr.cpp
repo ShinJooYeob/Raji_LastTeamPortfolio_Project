@@ -1334,28 +1334,36 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 
 	ImGui::Separator();
 
-	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	IMGUITREE("MapEffect")
 	{
-		IMGUITREE("PhysX Controller")
-		{
-			Update_DebugWnd_PhysX(fDeltaTime);
-			IMGUITREE_END
-		}
-		ImGui::Separator();
-
+		Update_DebugWnd_MapEffect(fDeltaTime);
+		IMGUITREE_END
 	}
-	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
-	{
-		IMGUITREE("Sound_3D_PlayerTest")
-		{
+	
+	ImGui::Separator();
 
-			Update_DebugWnd_Sound3D(fDeltaTime);
+	//if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	//{
+	//	IMGUITREE("PhysX Controller")
+	//	{
+	//		Update_DebugWnd_PhysX(fDeltaTime);
+	//		IMGUITREE_END
+	//	}
+	//	ImGui::Separator();
 
-			IMGUITREE_END
-		}
-		ImGui::Separator();
+	//}
+	//if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
+	//{
+	//	IMGUITREE("Sound_3D_PlayerTest")
+	//	{
 
-	}
+	//		Update_DebugWnd_Sound3D(fDeltaTime);
+
+	//		IMGUITREE_END
+	//	}
+	//	ImGui::Separator();
+
+	//}
 
 	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
 	{
@@ -1369,16 +1377,6 @@ _int CImguiMgr::Update_DebugWnd(_double fDeltaTime)
 		ImGui::Separator();
 
 	}
-
-
-	//IMGUITREE("Load Particle Data")
-	//{
-	//	Update_DebugWnd_EditTest(fDeltaTime);
-	//	IMGUITREE_END
-	//}
-	
-	ImGui::Separator();
-
 
 //	if (GetSingle(CGameInstance)->Get_NowSceneNum() == SCENE_STAGE6)
 	//{
@@ -1792,6 +1790,33 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 	return _int();
 }
 
+_int CImguiMgr::Update_DebugWnd_MapEffect(_double fDeltaTime)
+{
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "PLAYERPOS");
+
+	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player))));
+	if (player)
+	{
+
+		_float3 pos = player->Get_Transform()->Get_MatrixState(CTransform::STATE_POS);
+		ImGui::DragFloat3("Position:", (float*)&pos, 0.1f, -10000, 10000);
+
+		//_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
+		//ImGui::Text("PlayerNaviIndex = %d", index);
+
+	}
+
+
+//	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
+	// if (player)
+	// {
+	// 	_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
+	// 	ImGui::Text("playerNaviIndex = %d", index);
+	// }
+
+	return _int();
+}
+
 _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 {
 	//static _float3 PlayPostiton1 = _float3::Zero();
@@ -1845,11 +1870,11 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 
 	//	// 3DSOUND
 
-	//	if (ImGui::Button("StartSound"))
-	//	{
-	//		GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
+	//if (ImGui::Button("StartSound"))
+	//{
+	//	GetSingle(CGameInstance)->PlaySound(str_DemoSoundFile, CHANNEL_EFFECT, 1.0f);
 
-	//	}
+	//}
 
 	//	if (ImGui::Button("Start3DSound"))
 	//	{
@@ -1868,19 +1893,6 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 	//	}
 
 	//}
-	
-	ImGui::TextColored(ImVec4(1, 0, 0, 1), "NAVI");
-
-	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
-
-
-
-	if (player)
-	{
-		_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
-		ImGui::Text("playerNaviIndex = %d", index);
-		
-	}
 
 
 	return _int();
@@ -2219,13 +2231,13 @@ _int CImguiMgr::Update_DebugWnd_EditTest(_double fDeltaTime)
 
 
 
-	if (ImGui::Button("SAVE_EFFECT_PATH"))
-	{
-		GetSingle(CAssimpCreateMgr)->Save_To_Effect();
+	//if (ImGui::Button("SAVE_EFFECT_PATH"))
+	//{
+	//	GetSingle(CAssimpCreateMgr)->Save_To_Effect();
 
-		GetSingle(CUtilityMgr)->Ready_Particles();
-	
-	}
+	//	GetSingle(CUtilityMgr)->Ready_Particles();
+	//
+	//}
 
 	return _int();
 }

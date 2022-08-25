@@ -9,6 +9,8 @@
 #include "Elevator.h"
 #include "Grovetender.h"
 
+// #SCENE STAGE SNAKE
+
 CScene_Stage4::CScene_Stage4(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {

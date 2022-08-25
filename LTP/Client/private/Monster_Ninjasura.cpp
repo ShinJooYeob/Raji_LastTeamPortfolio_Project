@@ -732,6 +732,10 @@ HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 	{
 		m_SpawnEffectAdjust++;
 
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_08.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+
 		{
 			INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_Hit_2_DisDiffuse,
 				0.8f,
@@ -772,6 +776,10 @@ HRESULT CMonster_Ninjasura::Play_SpawnEffect()
 	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.0f)
 	{
 		m_SpawnEffectAdjust++;
+
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_06_0.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
 
 		// smoke
 		{

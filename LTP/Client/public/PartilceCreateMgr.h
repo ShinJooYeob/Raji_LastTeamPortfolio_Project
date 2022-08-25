@@ -57,6 +57,48 @@ typedef struct tag_DealyTex
 	_double timer;
 }DELAYTEX;
 
+enum E_PARTICLEDESC_TYPE
+{
+	PARTICLEDESC_TYPE_TEX,
+	PARTICLEDESC_TYPE_MESH,
+	PARTICLEDESC_TYPE_END
+};
+
+enum E_PARTICLSOUND_TYPE
+{
+	PARTICLSOUND_TYPE_NONE,
+	UM_Env_Fire, // ¤·
+	UM_Env_Water_Cave,
+	UM_Env_Water_Wet,
+
+
+
+	PARTICLSOUND_TYPE_END,
+
+};
+
+typedef struct tag_MapEffect
+{
+	E_PARTICLEDESC_TYPE mParticleType = PARTICLEDESC_TYPE_END;
+	_float3				mFixpos = _float3(0); 
+	_float				mRange = 10;
+	wstring				mSoundFileName;
+	_bool				mIsCreate = false;
+
+	INSTPARTICLEDESC	mParticleDesc;
+	INSTMESHDESC		mMeshParticleDesc;
+	
+}MAPEFFECT;
+
+typedef struct tag_MapSound
+{
+	E_PARTICLSOUND_TYPE mSoundType = PARTICLSOUND_TYPE_END;
+	_float3				mFixpos = _float3(0);
+	_float				mRange = 10; // sound
+	_bool				mIsSoundPlay = false;
+}MAPSOUND;
+
+
 
 
 class CPartilceCreateMgr final :public CBase
@@ -335,6 +377,31 @@ public:
 
 #pragma endregion BOSS
 
+#pragma region MAP_EFFECT
+
+
+		MESHEFFECT_MAP_STAGE1_Cash0,
+		MESHEFFECT_MAP_STAGE1_Cash1,
+		MESHEFFECT_MAP_STAGE1_Cash2,
+		MESHEFFECT_MAP_STAGE1_Cash3,
+		MESHEFFECT_MAP_STAGE1_Cash4,
+		MESHEFFECT_MAP_STAGE1_Cash5,
+
+		MESHEFFECT_MAP_STAGE2_Cash0,
+		MESHEFFECT_MAP_STAGE2_Cash1,
+		MESHEFFECT_MAP_STAGE2_Cash2,
+		MESHEFFECT_MAP_STAGE2_Cash3,
+		MESHEFFECT_MAP_STAGE2_Cash4,
+		MESHEFFECT_MAP_STAGE2_Cash5,
+
+		MESHEFFECT_MAP_STAGE3_Cash0,
+		MESHEFFECT_MAP_STAGE3_Cash1,
+		MESHEFFECT_MAP_STAGE3_Cash2,
+		MESHEFFECT_MAP_STAGE3_Cash3,
+		MESHEFFECT_MAP_STAGE3_Cash4,
+		MESHEFFECT_MAP_STAGE3_Cash5,
+
+#pragma endregion regionName
 
 		MESHEFFECT_END,
 
@@ -490,7 +557,8 @@ public:
 
 public:
 	_int Update_EffectMgr(_double Timer);
-
+	_int Update_DebugParticle(_double Timer);
+	
 
 	//HRESULT ReadyParticleData_TextureInstacnce();
 	//HRESULT ReadyParticleData_MeshInstance();
@@ -531,20 +599,39 @@ public:
 
 	HRESULT Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTransform* Transfomr = nullptr);
 
-	HRESULT Update_MeshEffect(_double timer);
-	HRESULT Remove_MeshEffect(enum MeshEffect);
-
-	HRESULT Clear_MeshEffect();
-
 	class CNonInstanceMeshEffect_TT* GetMeshEffect() const;
+
+	// Map Particle
+public:
+	HRESULT Ready_MapParticle_Stage(SCENEID id);
+
+
+private:
+	HRESULT ReadyParticle_ALL_Stages();
+
+	list<INSTPARTICLEDESC>	mListTexParticleMap[SCENEID::SCENE_END];
+	list<INSTMESHDESC>		mListMeshParticleMap[SCENEID::SCENE_END];
+	list<MAPSOUND>			mListSound3DMap[SCENEID::SCENE_END];
+
+	SCENEID					mCurrentScene = SCENE_END;
+//	_int					Update_MapEffect(_double timer);
+	_int					Update_MapEffect_Sound(_double timer);
+	
+	HRESULT					AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType , _float Range = 10);
+	void					PlaySound_Map(_float3  pos , E_PARTICLSOUND_TYPE type,_float vol = 1.0f);
+
+//	vector<MAPEFFECT>		mVecCurrentObjects;
+
+
+	const _double			mMapUpdateLate = 0.5;
+	_double					mMapUpdateLate_Timer = 0.0;
+	_bool					mbInitScene = false;
 
 
 private:
 	HRESULT			Ready_MeshEffect();
 	HRESULT			Ready_TextureEffect();
 	HRESULT			Ready_MeshInstanceEffect();
-	
-	
 	MESHAEASING		CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax);
 
 	HRESULT Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ type, CTransform* Transfom = nullptr);
@@ -556,13 +643,11 @@ private:
 	vector<INSTPARTICLEDESC>	mVecTextureEffectDesc;
 	vector<INSTMESHDESC>		mVecMeshInstDesc;
 
-
 	list<DELAYTEX>				mListParticleDesc_Delay;
 	list<DELAYMESH>				mListMeshInstDesc_Delay;
 
-
-
 	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
+	CGameObject*	mTestObj = nullptr;
 
 
 

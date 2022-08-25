@@ -1132,10 +1132,19 @@ HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
 		m_SpawnEffectAdjust++;
 		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TB, m_pTransformCom);
 	}
-
-	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.3f)
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 2.1f)
 	{
 		m_SpawnEffectAdjust++;
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_09.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+	}
+
+	if (m_SpawnEffectAdjust == 2 && m_SpawnDealytime <= 1.3f)
+	{
+		m_SpawnEffectAdjust++;
+
+
 
 		{
 			// Stones
@@ -1144,7 +1153,7 @@ HRESULT CMonster_Tezabsura_Bomber::Play_SpawnEffect()
 				0.01f,
 				0.5f,
 				_float4(0.98f, 0.1f, 0.0f, 0),
-				_float4(0.96f, 0.05f, 0.0f,0),
+				_float4(0.96f, 0.05f, 0.0f, 0),
 				4,
 				_float3(5.0f, 12.f, 5.f).XMVector()*0.4f,
 				_float3(3.0f).XMVector() * 0.1f,

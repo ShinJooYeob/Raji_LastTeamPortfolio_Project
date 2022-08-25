@@ -553,7 +553,9 @@ HRESULT CMonster_Jalsura::Play_SpawnEffect()
 	{
 		m_SpawnEffectAdjust++;
 
-
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_07.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
 
 		{
 			INSTPARTICLEDESC base = GETPARTICLE->Get_EffectSetting_Tex(

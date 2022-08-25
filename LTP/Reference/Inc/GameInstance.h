@@ -88,6 +88,7 @@ public: /*For. SoundMgr*/
 	HRESULT PlaySound(TCHAR* pSoundKey, CHANNELID eID, _float fLouderMultiple = 1.f);
 	HRESULT PlayBGM(TCHAR* pSoundKey, _uint iBGMIndex = 0, _float fLouderMultiple = 1.f);
 	HRESULT Play3D_Sound(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple = 1.f, _float3 dir = _float3::Zero(), _float speed = 1.f);
+	HRESULT Play3D_Sound_IsPlay(TCHAR* pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple = 1.f, _float3 dir = _float3::Zero(), _float speed = 1.f,_bool* Playing = nullptr);
 
 	HRESULT Set_3DSound_DistanceMinValue(_float rolloffscale);
 

@@ -2,6 +2,8 @@
 #include "..\public\PartilceCreateMgr.h"
 #include "..\public\NonInstanceMeshEffect_TT.h"
 
+#include "Player.h"
+
 IMPLEMENT_SINGLETON(CPartilceCreateMgr);
 
 // #define RIMCOLOR(x,x,x);
@@ -114,11 +116,13 @@ HRESULT CPartilceCreateMgr::Initialize_ParticleMgr()
 	FAILED_CHECK(Ready_TextureEffect());
 	FAILED_CHECK(Ready_MeshInstanceEffect());
 
+	FAILED_CHECK(ReadyParticle_ALL_Stages());
 	return S_OK;
 }
 
 _int CPartilceCreateMgr::Update_EffectMgr(_double Timer)
 {
+	// Effect Timer
 	if (mListMeshInstDesc_Delay.empty() == false)
 	{
 		mListMeshInstDesc_Delay.begin();
@@ -156,7 +160,205 @@ _int CPartilceCreateMgr::Update_EffectMgr(_double Timer)
 
 	}
 
+
+	// Map Effect
+//	Update_MapEffect(Timer);
+	Update_MapEffect_Sound(Timer);
+
+	Update_DebugParticle(Timer);
+
 	return 0;
+}
+
+_int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
+{
+
+#ifdef _DEBUG
+
+	if (
+		mCurrentScene != SCENE_STAGE1 &&
+		mCurrentScene != SCENE_STAGE2 &&
+		mCurrentScene != SCENE_STAGE3 &&
+		mCurrentScene != SCENE_STAGE4 &&
+		mCurrentScene != SCENE_STAGE5 &&
+		mCurrentScene != SCENE_STAGE6 &&
+		mCurrentScene != SCENE_STAGE7
+		)
+		return _int();
+
+
+	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player))));
+	if (player == nullptr)
+		return 0;
+
+	CTransform* m_pTransformCom = player->Get_Transform();
+	
+	_uint m_eNowSceneNum = g_pGameInstance->Get_NowSceneNum();
+	if (KEYDOWN(DIK_C))
+	{
+		// Tex
+
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit,
+				0,
+				0.5f,
+				_float4(0.03f, 0.25f, 0.65f, 1),
+				_float4(0.13f, 0.35f, 0.75f, 1),
+				0,
+				_float3(1.1f),
+				_float3(0.3f),
+				1);
+			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+			//	desctex.vEmissive_SBB = _float3(1,0.3f,0.1f);
+			desctex.Particle_Power = 6.5f;
+			//	desctex.Particle_Power = 4.0f;
+
+			//	desctex.TempBuffer_0.z = 0;
+			//	desctex.TempBuffer_0.w = FollowingDir_Look;
+				//	desctex.FollowingTarget = m_pTransformCom;
+				//	desctex.iFollowingDir = FollowingDir_Up;
+
+			desctex.vFixedPosition =
+				m_pTransformCom->Get_WorldMatrix().r[3]
+				+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			_float val = 0.5f;
+			desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+			//	desc.AlphaBlendON = true;
+			//	desc.vEmissive_SBB = _float3(1, 0, 0);
+
+			GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+				0,
+				0.5f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 0.8f),
+				1,
+				_float3(0.8f),
+				_float3(1.0f),
+				1);
+
+			desctex.vEmissive_SBB = _float3(1, 0.1f, 0.5f);
+			desctex.Particle_Power = 0.5f;
+
+			desctex.vFixedPosition =
+				m_pTransformCom->Get_WorldMatrix().r[3]
+				+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			//	desctex.AlphaBlendON = true;
+			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
+
+		//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+		{
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+				0,
+				1.0f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 1.0f),
+				1,
+				_float3(0.2f),
+				_float3(0.3f),
+				1);
+
+			desctex.eParticleTypeID = InstanceEffect_Straight;
+			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+
+			desctex.vEmissive_SBB = _float3(1.0f, 0.1f, 0.1f);
+			desctex.Particle_Power = 3.0f;
+			desctex.vPowerDirection = _float3(0, 0, 1);
+
+			_float val = 5;
+			desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+			desctex.FollowingTarget = m_pTransformCom;
+			desctex.iFollowingDir = FollowingDir_Up;
+
+			//desctex.vFixedPosition =
+			//	m_pTransformCom->Get_WorldMatrix().r[3]
+			//	+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			//	desctex.AlphaBlendON = true;
+			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
+
+			// GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+
+
+		}
+
+	}
+
+	if (KEYDOWN(DIK_V))
+	{
+		// MESHINST
+
+		
+
+		{
+			// MESHINST_EFFECTJ_BOW_Q_ICE2
+			INSTMESHDESC descmesh = GETPARTICLE->Get_EffectSetting_Mesh(CPartilceCreateMgr::MESHINST_EFFECTJ_BOW_Q_ICE2,
+				//	Prototype_Mesh_SM_ICE_01,
+				COMPONENTPROTOTYPEID(0),
+				3,
+				1.0f,
+				_float4(0.25f, 0.86f, 1.0f, 1),
+				_float4(0.25f, 0.86f, 1.0f, 0.8f),
+				0,
+				_float3(0.8f),
+				_float3(1.0f),
+				0);
+
+
+			// mesh
+			_Vector FixPos = m_pTransformCom->Get_WorldMatrix().r[3];
+
+			_float val = 5.0f;
+			descmesh.ParticleStartRandomPosMin = _float3(-val, 0, -val);
+			descmesh.ParticleStartRandomPosMax = _float3(val, 0, val);
+
+			descmesh.vFixedPosition = FixPos;
+			//	GETPARTICLE->Create_MeshInst_DESC(descmesh, m_eNowSceneNum);
+
+
+		}
+
+	}
+
+
+	if (KEYDOWN(DIK_B))
+	{
+		// MESH Effect
+
+		GETPARTICLE->Create_MeshEffectDesc_Hard(CPartilceCreateMgr::MESHEFFECT_MAP_STAGE1_Cash0, m_pTransformCom);
+
+
+//	 Mesh Effect
+//	GETPARTICLE->Create_MeshEffectDesc_Hard();
+
+	// Texture Particle Effect
+//	GETPARTICLE->Get_EffectSetting_Tex();
+//	GETPARTICLE->Create_Texture_Effect_Desc();
+
+	// Mesh Particle Effect
+//	GETPARTICLE->Get_EffectSetting_Mesh();
+//	GETPARTICLE->Create_MeshInst_DESC();
+
+
+
+	}
+
+#endif // _DEBUG
+
+	return _int();
 }
 
 HRESULT CPartilceCreateMgr::Create_Texture_Effect(E_TEXTURE_EFFECTJ type, CTransform * parentTransform)
@@ -450,21 +652,13 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 
 
 
-HRESULT CPartilceCreateMgr::Update_MeshEffect(_double timer)
-{
 
-	return S_OK;
-}
-
-HRESULT CPartilceCreateMgr::Clear_MeshEffect()
-{
-	return S_OK;
-}
 
 CNonInstanceMeshEffect_TT * CPartilceCreateMgr::GetMeshEffect() const
 {
-		return mPreMeshEffect;
+	return mPreMeshEffect;
 }
+
 
 #define MESHIMPORT(x,y)						MeshEffectDESC.eMeshType = x; mVecMeshEffectDesc[y] = MeshEffectDESC;
 
@@ -627,7 +821,6 @@ HRESULT CPartilceCreateMgr::Ready_MeshInstanceEffect()
 
 	return S_OK;
 }
-
 
 MESHAEASING CPartilceCreateMgr::CreateEasingDesc(EasingTypeID id, _float3 endpos, _float timemax)
 {
@@ -1361,9 +1554,9 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		MeshDesc.iDiffuseTextureIndex = 236;
 		MeshDesc.iDiffuseTextureIndex = 300;
-		MeshDesc.MaskTextureIndex = 179;
 		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.MaskTextureIndex = 178;
+		MeshDesc.MaskTextureIndex = 13;
 		MeshDesc.NoiseTextureIndex = 294;
 
 
@@ -1372,13 +1565,12 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.vColor = _float4(1, 1, 1, 1);
 		MeshDesc.fDistortionNoisingPushPower = 10.0f;
 
-		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.82f, 1.f);
-		MeshDesc.vEmissive = _float4(0.1f, 0.4f, 0.82f, 1.f);
+		MeshDesc.vLimLight = _float4(0.13f, 0.16f, 0.82f, 1.f);
+		MeshDesc.vEmissive = _float4(0.8f, 0.4f, 0.82f, 1.f);
 
-		// MeshDesc.fAlphaTestValue = 1.0f;
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
-		MeshDesc.vPosition = _float3(-0.0f, -1.0f, -0.0f);
+		MeshDesc.vPosition = _float3(-0.0f, -0.8f, -0.0f);
 		MeshDesc.vSize = _float3(8.0f);
 		MeshDesc.vSize = _float3(8.0f,5.0f,8.0f);
 
@@ -1392,13 +1584,21 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 
 		//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
 	//	MeshDesc.m_iPassIndex = 18; // DisCardB
 		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		AddDesc.LookRotAxis = FollowingDir_Right;
 		AddDesc.FixFlag_Move = true;
 		AddDesc.AccRotSpeed = -10.0f;
+
+		MeshDesc.vLimLight = _float4(0.13f, 0.16f, 0.82f, 1.f);
+		MeshDesc.fAlphaTestValue = 0.6f;
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+		MeshDesc.vPosition = _float3(-0.0f, -1.0f, -0.0f);
+		MeshDesc.vLimLight = _float4(0.03f, 0.06f, 0.92f, 1.f);
+		MeshDesc.fAlphaTestValue = 0.0f;
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
@@ -1451,8 +1651,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 	if (type == MESHEFFECT_ARROW_BOW_SP_TON)
 	{
 		MeshDesc.eMeshType = Prototype_Mesh_ConeMesh;
-		MeshDesc.eMeshType = Prototype_Mesh_SM_SG_tornado;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_tornado3;
+		MeshDesc.eMeshType = Prototype_Mesh_SM_SG_tornado;
 
 		// MAX
 		MeshDesc.fMaxTime_Duration = 4.0f;
@@ -1477,9 +1677,8 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 
 		//	MeshDesc.vRotAxis = _float3(1, 0, 0);
 		MeshDesc.vPosition = _float3(0.0f, -0.5f, 0.0f);
-		MeshDesc.vSize = _float3(7.0f);
-		MeshDesc.vSize = _float3(4.0f);
-		MeshDesc.vSize = _float3(30.0f, 50.0f, 30.0f);
+		MeshDesc.vSize = _float3(10.0f, 30.0f, 10.0f);
+		MeshDesc.vSize = _float3(1.5f, 2.5f, 1.5f);
 
 		MeshDesc.RotAxis = FollowingDir_Up;
 		MeshDesc.RotationSpeedPerSec = 40.0f;
@@ -1487,17 +1686,31 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_MONSTER(E_MESH_EFFECTJ ty
 		MeshDesc.vLookDir = _float3(0, 0, 1);
 
 		// MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-		 MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-		// MeshDesc.m_iPassIndex = 18; // DisCard
-		 MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+		MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+	   // MeshDesc.m_iPassIndex = 18; // DisCard
+		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
 		AddDesc.LookRotAxis = FollowingDir_Look;
 		AddDesc.FixFlag_Move = true;
 		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
 		AddDesc.AccRotSpeed = 5.0f;
+		MeshDesc.vPosition = _float3(0.0f, -0.7f, 0.0f);
 
 		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Helix_Crystal;
+		MeshDesc.vSize = _float3(0.2f, 0.4f, 0.2f);
+		MeshDesc.MaskTextureIndex = 59;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+		MeshDesc.fAlphaTestValue = 0.3f;
+		MeshDesc.vPosition = _float3(0.0f, -0.5f, 0.0f);
+
+		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+
+	
 	}
 
 	if (type == MESHEFFECT_ARROW_BOW_SP_ICES)
@@ -8282,19 +8495,19 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 		AddDesc.bLockScale[1] = false;
 		AddDesc.bLockScale[2] = true;
 
-		// Fix
-		AddDesc.FixFlag_Move = true;
-		AddDesc.FixFlag_Rot = false;
+// Fix
+AddDesc.FixFlag_Move = true;
+AddDesc.FixFlag_Rot = false;
 
-		//	AddDesc.FollowTarget = Transfom;
+//	AddDesc.FollowTarget = Transfom;
 
-			// Shader
-		MeshDesc.m_iPassIndex = 16; // ¿Ö°î
-	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
-	//	MeshDesc.m_iPassIndex = 18; // DisCard
-		MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+	// Shader
+MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+//	MeshDesc.m_iPassIndex = 18; // DisCard
+MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
 
-		GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+GetSingle(CPartilceCreateMgr)->Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
 
 
 	}
@@ -8380,18 +8593,497 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard_BOSS(E_MESH_EFFECTJ type,
 #pragma endregion BOSS_Chiedtian  
 
 
+#pragma region MAP
+
+
+	if (type == MESHEFFECT_MAP_STAGE1_Cash0)
+	{
+
+		// Plane
+		// Mesh
+		MeshDesc.eMeshType = Prototype_Mesh_MS_Shot_Cylinder_00;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 1.0f;
+		MeshDesc.fAppearTime = 0.2f;
+		AddDesc.bAfterApperTime = true;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex =  365;
+
+		MeshDesc.MaskTextureIndex = 13;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = 383;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.1f, 0.4f, 0.96f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+		//	MeshDesc.vEmissive = _float4(0.1f, 0.3f, 0.1f, 1.f);
+
+			// Transform_Base
+		MeshDesc.vPosition = _float3(0.0f, 3.0f, 0);
+		MeshDesc.vSize = _float3(2.0f);
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		MeshDesc.MoveSpeed = 0;
+		AddDesc.AccMoveSpeed = 0;
+
+		// RotS
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.LookRotSpeed = 0;
+
+		MeshDesc.RotAxis = FollowingDir_Look;
+		MeshDesc.RotationSpeedPerSec = 30;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.InitRot = _float3(0, 0, 0.0f);
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.ScaleReFlag = false;
+
+		AddDesc.bLockScale[0] = true;
+		AddDesc.bLockScale[1] = true;
+		AddDesc.bLockScale[2] = true;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.FollowTarget = nullptr;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // ¿Ö°î
+	//	MeshDesc.m_iPassIndex = 17; // ¿Ö°î µîÀå
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // ³ëÀÌÁî µîÀå
+
+		Create_MeshEffectDesc(MeshDesc, AddDesc, Transfom);
+
+
+	}
+
+#pragma endregion MAP
+	return S_OK;
+}
+
+
+HRESULT CPartilceCreateMgr::Ready_MapParticle_Stage(SCENEID id)
+{
+	if (SCENEID::SCENE_END <= id)
+		return E_FAIL;
+
+	mCurrentScene = id;
+	mbInitScene = false;
+	//GETINSTANCE->Play3D_Sound(
+//	TEXT("UM_Spawn_04.ogg"),
+//	Fixpos,
+//	CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
+
+// GETINSTANCE->Stop_ChannelSound(CHANNEL_MAPOBJECT);
+
+
+	for (auto val : mListTexParticleMap[mCurrentScene])
+	{
+		GetSingle(CUtilityMgr)->Create_TextureInstance(mCurrentScene, val);
+	}
+
+	for (auto val : mListMeshParticleMap[mCurrentScene])
+	{
+		GetSingle(CUtilityMgr)->Create_MeshInstance(mCurrentScene, val);
+	}
+	for (auto& val : mListSound3DMap[mCurrentScene])
+	{
+		val.mIsSoundPlay = false;
+	}
+	return S_OK;
+}
+
+//_int CPartilceCreateMgr::Update_MapEffect(_double timer)
+//{
+//	if (
+//		mCurrentScene != SCENE_STAGE1 &&
+//		mCurrentScene != SCENE_STAGE2 &&
+//		mCurrentScene != SCENE_STAGE3 &&
+//		mCurrentScene != SCENE_STAGE4 &&
+//		mCurrentScene != SCENE_STAGE5 &&
+//		mCurrentScene != SCENE_STAGE6 &&
+//		mCurrentScene != SCENE_STAGE7
+//		)
+//		return _int();
+//
+//	if(mbInitScene == false)
+//	{
+//		mbInitScene = true;
+//		return _int();
+//	}
+//
+//	// Map Effect Create / Sound 
+//	mMapUpdateLate_Timer -= timer;
+//	_bool bParticleUpate = false;
+//
+//	if (mMapUpdateLate_Timer<=0)
+//	{
+//		mMapUpdateLate_Timer = mMapUpdateLate;
+//		bParticleUpate = true;
+//	}
+//
+//	if (bParticleUpate == false)
+//		return 0;
+//
+//
+//	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(mCurrentScene, TAG_LAY(Layer_Player))));
+//
+//	if (player)
+//	{
+//
+//		for (MAPEFFECT& mesheffect : mVecCurrentObjects)
+//		{
+//			_float PlyDistance = player->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(mesheffect.mFixpos.XMVector());
+//
+//			if (mesheffect.mIsCreate)
+//			{
+//				if (mesheffect.mRange+10 < PlyDistance)
+//				{
+//					// Map Particle OFF 
+//					if (mesheffect.mObject)
+//					{
+//						CGameObject* obj = ((CGameObject*)mesheffect.mObject);
+//						if (obj)
+//							obj->Set_IsDead();
+//						Safe_Release(mesheffect.mObject);
+//					//	mesheffect.mObject = nullptr;
+//					}
+//					mesheffect.mIsCreate = false;
+//				}
+//
+//			}
+//
+//			else
+//			{
+//				if (mesheffect.mRange > PlyDistance)
+//				{
+//					// Map Particle ON 
+//					mesheffect.mIsCreate = true;
+//
+//					if (mesheffect.mParticleType == PARTICLEDESC_TYPE_TEX)
+//					{
+//						GETUTIL->Create_TextureInstance(mCurrentScene, mesheffect.mParticleDesc);
+//						mTestObj = GETINSTANCE->Get_GameObject_By_LayerIndex(mCurrentScene, TAG_LAY(Layer_Particle));
+//						mesheffect.mObject = mTestObj;
+//						Safe_AddRef(mesheffect.mObject);
+//
+//						// PlaySound
+//						if (mesheffect.mSoundFileName.empty() == false)
+//						{
+//							GETINSTANCE->Play3D_Sound(
+//							(TCHAR*)mesheffect.mSoundFileName.c_str(), // TEXT("UM_Spawn_04.ogg"),
+//								mesheffect.mFixpos,
+//							CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
+//						}
+//					}
+//
+//					//if (mesheffect.mParticleType == PARTICLEDESC_TYPE_MESH)
+//					//{
+//					//	GETUTIL->Create_MeshInstance(mCurrentScene, mesheffect.mMeshParticleDesc);
+//					//	//mesheffect.mObject = (GETINSTANCE->Get_GameObject_By_LayerIndex(mCurrentScene, TAG_LAY(Layer_Particle)));
+//
+//					//	if (mesheffect.mSoundFileName.empty() == false)
+//					//	{
+//					//		GETINSTANCE->Play3D_Sound(
+//					//			(TCHAR*)mesheffect.mSoundFileName.c_str(), // TEXT("UM_Spawn_04.ogg"),
+//					//			mesheffect.mFixpos,
+//					//			CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
+//					//	}
+//
+//
+//					//}
+//				}
+//			}
+//
+//			
+//		}
+//	}
+//	return 0;
+//}
+
+
+_int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
+{
+	if (
+		mCurrentScene != SCENE_STAGE1 &&
+		mCurrentScene != SCENE_STAGE2 &&
+		mCurrentScene != SCENE_STAGE3 &&
+		mCurrentScene != SCENE_STAGE4 &&
+		mCurrentScene != SCENE_STAGE5 &&
+		mCurrentScene != SCENE_STAGE6 &&
+		mCurrentScene != SCENE_STAGE7
+		)
+		return _int();
+
+	if (mbInitScene == false)
+	{
+		mbInitScene = true;
+		return _int();
+	}
+
+	// Map Effect Create / Sound 
+	mMapUpdateLate_Timer -= timer;
+	_bool bParticleUpate = false;
+
+	if (mMapUpdateLate_Timer <= 0)
+	{
+		mMapUpdateLate_Timer = mMapUpdateLate;
+		bParticleUpate = true;
+	}
+
+	if (bParticleUpate == false)
+		return 0;
+
+
+	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(mCurrentScene, TAG_LAY(Layer_Player))));
+
+	if (player)
+	{
+		for (MAPSOUND& mesheffect : mListSound3DMap[mCurrentScene])
+		{
+			_float PlyDistance = player->Get_Transform()->Get_MatrixState_Float3(CTransform::STATE_POS).Get_Distance(mesheffect.mFixpos.XMVector());
+
+			if (mesheffect.mIsSoundPlay)
+			{
+				if (mesheffect.mRange + 5 < PlyDistance)
+				{
+					// Sound Off
+					mesheffect.mIsSoundPlay = false;
+				}
+			}
+
+			else
+			{
+				if (mesheffect.mRange > PlyDistance)
+				{
+					// Sound On
+					mesheffect.mIsSoundPlay = true;
+
+					// PlaySound
+					PlaySound_Map(mesheffect.mFixpos, mesheffect.mSoundType);
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+HRESULT CPartilceCreateMgr::AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType, _float Range )
+{
+	MAPSOUND sound;
+	sound.mFixpos = worldpos;
+	sound.mSoundType = mSoundType;
+	sound.mRange = Range;
+	mListSound3DMap[id].push_back(sound);
+	return S_OK;
+}
+
+void CPartilceCreateMgr::PlaySound_Map(_float3  pos, E_PARTICLSOUND_TYPE type, _float vol)
+{
+	wstring wstr;
+	_int random = 0;
+	// GETUTIL->RandomFloat(0, 3);
+//	wstr = TEXT("UM_FireLoop.ogg");
+
+	switch (type)
+	{
+
+	case Client::UM_Env_Fire:
+		wstr = TEXT("UM_Env_Fire.ogg");
+		break;
+	case Client::UM_Env_Water_Cave:
+		wstr = TEXT("UM_Env_Water_Cave.ogg");
+		break;
+	case Client::UM_Env_Water_Wet:
+		wstr = TEXT("UM_Env_Water_Wet.ogg");
+		break;
+
+	default:
+		return;
+
+	}
+	if (wstr.empty())
+		return;
+
+	g_pGameInstance->Play3D_Sound(
+		(TCHAR*)wstr.c_str(),
+		pos,
+		CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
+}
 
 
 
 
+HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
+{
+	INSTPARTICLEDESC texDesc;
+	INSTMESHDESC	 meshDesc;
 
+#pragma region SCENE_STAGE1
+ 
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FireParticle_0"));
+	texDesc.FollowingTarget = nullptr;
+
+	texDesc.vFixedPosition = _float3(32.2f, 42.8f, 65.4f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1,texDesc.vFixedPosition, UM_Env_Fire);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
+
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_WaterFallParticle_0"));
+	texDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
+	texDesc.FollowingTarget = nullptr;
+	texDesc.bBillboard = true;
+	texDesc.TextureChageFrequency = 1;
+
+	texDesc.vFixedPosition = _float3(95.110130f, 35.100010f, 40.533039f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, UM_Env_Water_Cave);
+
+	texDesc.vFixedPosition = _float3(101.110130f, 35.100010f, 42.033039f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, UM_Env_Water_Cave);
+
+	texDesc.vFixedPosition = _float3(117.710f, 36.6f, 39.433f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, UM_Env_Water_Cave);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc2, &vParticlesPos);
+
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_WaterFallParticle_1"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(256.512f, 33.f, 191.703f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, UM_Env_Water_Cave);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_0"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(257.012054f, 24.5f, 180.302515f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, UM_Env_Water_Wet);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_1"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(256.811218f, 21.f, 191.899643f);
+	texDesc.TotalParticleTime = 999999999999.f;
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_Rain_0"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(256.811218f, 27.5f, 178.358f);
+	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE1, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
+
+#pragma endregion SCENE_STAGE1
+
+#pragma region SCENE_STAGE2
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_1"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(395.f, 4.400f, 227.5f);
+	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
+
+
+	meshDesc = GetSingle(CUtilityMgr)->Get_MeshParticleDesc(TEXT("Jino_Stage2_Mesh_PinkBall"));
+	meshDesc.FollowingTarget = nullptr;
+	meshDesc.vFixedPosition = _float3(473.970f, 4.900f, 414.755f);;
+	meshDesc.EachParticleLifeTime = 999999999.f;
+	mListMeshParticleMap[SCENE_STAGE2].push_back(meshDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+	//	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, meshDesc);
+	mListMeshParticleMap[SCENE_STAGE2].push_back(meshDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+	meshDesc.vFixedPosition = _float3(495.42f, 4.61f, 420.7f);
+	//	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, meshDesc);
+	mListMeshParticleMap[SCENE_STAGE2].push_back(meshDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+	meshDesc.vFixedPosition = _float3(485.67f, 4.91f, 420.289f);
+	//	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, meshDesc);
+	mListMeshParticleMap[SCENE_STAGE2].push_back(meshDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+	meshDesc.vFixedPosition = _float3(475.605f, 4.900f, 420.541f);
+	mListMeshParticleMap[SCENE_STAGE2].push_back(meshDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+//	GetSingle(CUtilityMgr)->Create_MeshInstance(SCENE_STAGE2, meshDesc);
+
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(568.f, 24.300f, 403.5f);
+	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
+
+	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_FireParticle_0"));
+	texDesc.FollowingTarget = nullptr;
+	texDesc.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
+	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+
+//	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
+
+#pragma endregion SCENE_STAGE2
+
+
+#pragma region SCENE_STAGE3
+#pragma endregion SCENE_STAGE3
+
+
+#pragma region SCENE_STAGE4
+#pragma endregion SCENE_STAGE4
+
+
+#pragma region SCENE_STAGE5
+#pragma endregion SCENE_STAGE5
+
+
+#pragma region SCENE_STAGE6
+#pragma endregion SCENE_STAGE6
+
+
+#pragma region SCENE_STAGE7
+#pragma endregion SCENE_STAGE7
 
 	return S_OK;
 }
 
 
+
 void CPartilceCreateMgr::Free()
 {
-	
-
 }

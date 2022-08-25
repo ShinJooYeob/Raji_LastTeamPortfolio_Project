@@ -936,9 +936,20 @@ HRESULT CMonster_Tezabsura_Landmine::Play_SpawnEffect()
 	{
 		m_SpawnEffectAdjust++;
 		Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_SPAWN_TL, m_pTransformCom);
+
 	}
 
-	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 1.3f)
+	if (m_SpawnEffectAdjust == 1 && m_SpawnDealytime <= 2.1f)
+	{
+		m_SpawnEffectAdjust++;
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_09.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+	}
+
+
+
+	if (m_SpawnEffectAdjust == 2 && m_SpawnDealytime <= 1.3f)
 	{
 		m_SpawnEffectAdjust++;
 

@@ -1073,6 +1073,10 @@ HRESULT CMonster_Gadasura_Rage::Play_SpawnEffect()
 	{
 		m_SpawnEffectAdjust++;
 
+		g_pGameInstance->Play3D_Sound(TEXT("UM_Spawn_03.ogg"),
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS),
+			CHANNELID::CHANNEL_MONSTER, 1.0f);
+
 		{
 			Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_MONSTER_GL_Cash1, m_pTransformCom);
 		}

@@ -9,6 +9,8 @@
 #include "Golu.h"
 #include "PathArrow.h"
 
+// #SCENE STAGE RAMDA
+
 CScene_Stage3::CScene_Stage3(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CScene(pDevice,pDeviceContext)
 {
