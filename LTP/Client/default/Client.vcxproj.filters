@@ -640,6 +640,12 @@
     <Filter Include="01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet">
       <UniqueIdentifier>{e7692393-aefc-4f34-8e48-8866c3931551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\03.Npc\Goldfish">
+      <UniqueIdentifier>{2f81db4e-8d0c-406a-bfb4-04f07d1c2633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\98.TriggerObject\16.GoldfishTrigger">
+      <UniqueIdentifier>{bbb1356d-62ec-40d0-9d51-df375b2294a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1362,6 +1368,12 @@
     <ClInclude Include="..\public\DonkeyKong_Bullet.h">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Goldfish.h">
+      <Filter>01.GameObject\03.Npc\Goldfish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GoldfishTrigger.h">
+      <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2052,6 +2064,12 @@
     </ClCompile>
     <ClCompile Include="..\private\DonkeyKong_Bullet.cpp">
       <Filter>01.GameObject\12.MiniGame\1.MiniGame_DonkeyKong\MiniGame_DonkeyKong\DonkeyKong_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Goldfish.cpp">
+      <Filter>01.GameObject\03.Npc\Goldfish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GoldfishTrigger.cpp">
+      <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

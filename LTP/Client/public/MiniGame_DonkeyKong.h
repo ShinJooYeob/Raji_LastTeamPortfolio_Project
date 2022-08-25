@@ -59,7 +59,7 @@ private://Anim
 	_uint				m_iAnimIndex = 0;
 
 private:
-	_uint				m_dAcceleration = 2;
+	_double				m_dAcceleration = 2;
 
 private:
 	_double				m_dStartTime = 0;
