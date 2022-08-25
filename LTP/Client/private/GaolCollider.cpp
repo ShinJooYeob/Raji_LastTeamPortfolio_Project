@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\GaolCollider.h"
 #include "Taiko_Monster.h"
+#include "Scene_MiniGame_JJB.h"
+#include "PartilceCreateMgr.h"
 
 CGaolCollider::CGaolCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
@@ -40,10 +42,10 @@ HRESULT CGaolCollider::Initialize_Clone(void * pArg)
 
 _int CGaolCollider::Update(_double fDeltaTime)
 {
-	m_pTransformCom->Scaled_All(_float3(1.f));
+	if (__super::Update(fDeltaTime) < 0)
+		return -1;
 
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
-	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(-16.6f, 0.5f, -1.f));
 
 	//Collider
 	_uint	iNumCollider = m_pCollider->Get_NumColliderBuffer();
@@ -55,8 +57,9 @@ _int CGaolCollider::Update(_double fDeltaTime)
 
 	}
 
+
+
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_PlayerWeapon, this, m_pCollider));
-	return S_OK;
 
 	return _int();
 }
@@ -65,7 +68,6 @@ _int CGaolCollider::LateUpdate(_double fDeltaTime)
 {
 	if (__super::LateUpdate(fDeltaTime) < 0)
 		return -1;
-
 
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 
@@ -89,9 +91,86 @@ void CGaolCollider::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 {
 	if (eConflictedObjCollisionType == CollisionType_Monster)
 	{
-		if (m_GoalColliderDesc.ColliderType == CGaolCollider::COLLIDER_DIE)
+		CTaiko_Monster* Monster = static_cast<CTaiko_Monster*>(pConflictedObj);
+		if (!Monster->Get_IsUse()) return;
+
+		if (m_GoalColliderDesc.ColliderType == CGaolCollider::COLLIDER_GOOD)
 		{
-			static_cast<CTaiko_Monster*>(pConflictedObj)->InitializeMonster();
+
+			if (g_pGameInstance->Get_DIKeyState(DIK_F)&DIS_Down || g_pGameInstance->Get_DIKeyState(DIK_J)&DIS_Down)
+			{
+
+				if (Monster->Get_NoteDesc().NoteType == CTaiko_Monster::NOTE_SMALL && Monster->Get_NoteDesc().NotePosType == CTaiko_Monster::NOTEPOS_IN)
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboPlus();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowComboUI();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowGoodEffectUI();
+
+					_int MaxCombo = static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Get_MaxCombo();
+
+					if(MaxCombo == 50)
+						g_pGameInstance->PlaySoundW(L"Taiko_50combo_1P.wav", CHANNEL_EFFECT);
+
+					g_pGameInstance->PlaySoundW(L"Taiko_Don.wav", CHANNEL_EFFECT);
+				}
+				/*else
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboZero();
+				}*/
+			}
+
+			if (g_pGameInstance->Get_DIKeyState(DIK_D)&DIS_Down || g_pGameInstance->Get_DIKeyState(DIK_K)&DIS_Down)
+			{
+				if (Monster->Get_NoteDesc().NoteType == CTaiko_Monster::NOTE_SMALL && Monster->Get_NoteDesc().NotePosType == CTaiko_Monster::NOTEPOS_OUT)
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboPlus();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowComboUI();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowGoodEffectUI();
+
+					_int MaxCombo = static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Get_MaxCombo();
+
+					if (MaxCombo == 50)
+						g_pGameInstance->PlaySoundW(L"Taiko_50combo_1P.wav", CHANNEL_EFFECT);
+
+					g_pGameInstance->PlaySoundW(L"Taiko_Katsu.wav", CHANNEL_EFFECT);
+				}
+				/*else
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboZero();
+				}*/
+			}
+
+			if (g_pGameInstance->Get_DIKeyState(DIK_SPACE)&DIS_Down)
+			{
+				if (Monster->Get_NoteDesc().NoteType == CTaiko_Monster::NOTE_BIG)
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboPlus();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowComboUI();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->ShowGoodEffectUI();
+
+					_int MaxCombo = static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Get_MaxCombo();
+
+					if (MaxCombo == 50)
+						g_pGameInstance->PlaySoundW(L"Taiko_50combo_1P.wav", CHANNEL_EFFECT);
+
+					g_pGameInstance->PlaySoundW(L"Taiko_Big Don.wav", CHANNEL_EFFECT);
+				}
+				/*else
+				{
+					Monster->UseOFF();
+					static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboZero();
+				}*/
+			}
+		}
+		else if(m_GoalColliderDesc.ColliderType == CGaolCollider::COLLIDER_DIE)
+		{
+			Monster->UseOFF();
+			static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Set_ComboZero();
 		}
 	}
 }
@@ -116,7 +195,7 @@ HRESULT CGaolCollider::SetUp_Components()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	if (m_GoalColliderDesc.ColliderType == CGaolCollider::COLLIDER_GOOD)
 	{
-		ColliderDesc.vScale = _float3(1.f, 1.f, 1.f);//2.8f
+		ColliderDesc.vScale = _float3(0.5f);//2.8f
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

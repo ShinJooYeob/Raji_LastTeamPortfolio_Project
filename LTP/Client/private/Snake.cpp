@@ -66,7 +66,8 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_pPlayerTransform = (CTransform*)m_pPlayerObj->Get_Component(TAG_COM(Com_Transform));
 	NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
 
-	m_vPlayerStartPos = (m_pPlayerTransform)->Get_MatrixState(CTransform::STATE_POS);
+	//m_vPlayerStartPos = (m_pPlayerTransform)->Get_MatrixState(CTransform::STATE_POS);
+	m_vPlayerStartPos = _float3(21.607f, 2.130f, -0.730f);
 	Set_IsOcllusion(true);
 
 	_float3 Pos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
@@ -247,7 +248,7 @@ _int CSnake::Update(_double fDeltaTime)
 
 	if (m_bIsSpecialSkillAttack)
 	{
-		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pCollider));
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_MonsterWeapon, this, m_pSpecialSkillCollider));
 	}
 
 	//if(m_bIsSpecialSkillAttack)
@@ -345,10 +346,21 @@ _int CSnake::LateRender()
 
 void CSnake::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
-	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	if (m_pCollider == pMyCollider)
 	{
-		pConflictedObj->Take_Damage(this, 10.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
-		pConflictedCollider->Set_Conflicted(1.f);
+		if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+		{
+			pConflictedObj->Take_Damage(this, 10.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+			pConflictedCollider->Set_Conflicted(1.f);
+		}
+	}
+	else if (m_pSpecialSkillCollider == pMyCollider)
+	{
+		if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+		{
+			pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+			pConflictedCollider->Set_Conflicted(1.f);
+		}
 	}
 }
 
@@ -1153,24 +1165,24 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 				tCameraShakeRotDesc.fShakingRotAxis = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Get_MatrixState(CTransform::TransformState::STATE_RIGHT);
 				GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Rot_Thread(&tCameraShakeRotDesc, false);
 
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
 				m_bOncePlaySound = true;
 			}
 
 			if (PlayRate > 0.4375 && m_iAdjMovedIndex == 2)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
-
-
 				m_pLeftEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
 				m_pRightEyeTrail->Set_TrailTurnOn(false, _float3(0), _float3(0));
 
 				m_iAdjMovedIndex++;
-
 			}
 
 			if (PlayRate > 0.45 && m_iAdjMovedIndex == 3)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				/*g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Bite.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hit_Impact.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);*/
 
 				m_iAdjMovedIndex++;
 			}
@@ -1388,11 +1400,11 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				m_bIsSpecialSkillAttack = true;
 				_float fAngle = g_pGameInstance->Easing(TYPE_SinInOut, 180, 0.f, (_float)PlayRate - 0.1284916f, 0.7374301877f);
+				m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle));
 
 				/*_Vector Dir = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 				Dir = XMVector3Normalize(XMVectorSet(0, 0, 1.f, 1.f) - m_vPlayerStartPos.XMVector());*/
 
-				m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle));
 			}
 
 			if (PlayRate > 0.86592178770 && PlayRate <= 0.95)

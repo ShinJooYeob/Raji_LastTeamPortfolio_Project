@@ -277,6 +277,8 @@ _int CSkillUI::Update(_double fDeltaTime)
 
 	if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
 	{
+		g_pGameInstance->PlaySoundW(L"JJB_Button_1.mp3", CHANNEL_EFFECT);
+
 		//BowImage Click
 		UIPosX = m_pWeaponBowUI->Get_PosX();
 		UIPosY = m_pWeaponBowUI->Get_PosY();
@@ -628,6 +630,8 @@ _int CSkillUI::Update(_double fDeltaTime)
 	}
 	else if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_RBUTTON) & DIS_Down)
 	{
+		g_pGameInstance->PlaySoundW(L"JJB_Button_2.mp3", CHANNEL_EFFECT);
+
 		//m_pSkillGrass_1 Click
 		_float UIPosX = m_pSkillGrass_1->Get_PosX();
 		_float UIPosY = m_pSkillGrass_1->Get_PosY();
@@ -1500,9 +1504,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_JB_Texture_87_SkillGrass_1");
-	SettingUI.m_fSizeX = 138.f;
+	SettingUI.m_fSizeX = 188.f;//138.f
 	SettingUI.m_fSizeY = 188.f;
-	SettingUI.m_fX = 406.f;
+	SettingUI.m_fX = 370.f;
 	SettingUI.m_fY = 583.f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 87;
@@ -1516,7 +1520,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_JB_Texture_129_SkillGrass_2");
-	SettingUI.m_fSizeX = 138.f;
+	SettingUI.m_fSizeX = 188.f;
 	SettingUI.m_fSizeY = 188.f;
 	SettingUI.m_fX = 630.f;//609.f;
 	SettingUI.m_fY = 626.f;
@@ -1532,9 +1536,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_JB_Texture_129_SkillGrass_3");
-	SettingUI.m_fSizeX = 138.f;
+	SettingUI.m_fSizeX = 188.f;
 	SettingUI.m_fSizeY = 188.f;
-	SettingUI.m_fX = 895.f;
+	SettingUI.m_fX = 910.f;
 	SettingUI.m_fY = 568.f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 129;
@@ -1548,15 +1552,15 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("SkillImage_1");
-	SettingUI.m_fSizeX = 60.f;
+	SettingUI.m_fSizeX = 85.f;
 	SettingUI.m_fSizeY = 96.f;
-	SettingUI.m_fX = 384.f;
-	SettingUI.m_fY = 611.f;
+	SettingUI.m_fX = 341.f;
+	SettingUI.m_fY = 611.5f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 40;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkill_1), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_pSkill_1->Set_RenderSortValue(-1.f);
+	m_pSkill_1->Set_RenderSortValue(0.f);
 
 	//SkillImage_2
 	SettingUI.bClick = false;
@@ -1564,16 +1568,16 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bDraw = true;
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
-	SettingUI.pUI_Name = TEXT("SkillImage_1");
-	SettingUI.m_fSizeX = 62.f;
-	SettingUI.m_fSizeY = 104.f;
-	SettingUI.m_fX = 649.f;
-	SettingUI.m_fY = 654.f;
+	SettingUI.pUI_Name = TEXT("SkillImage_2");
+	SettingUI.m_fSizeX = 84.f;
+	SettingUI.m_fSizeY = 95.f;
+	SettingUI.m_fX = 658.f;
+	SettingUI.m_fY = 657.f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 41;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkill_2), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_pSkill_2->Set_RenderSortValue(-1.f);
+	m_pSkill_2->Set_RenderSortValue(0.f);
 
 	//SkillImage_3
 	SettingUI.bClick = false;
@@ -1581,16 +1585,16 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bDraw = true;
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
-	SettingUI.pUI_Name = TEXT("SkillImage_1");
-	SettingUI.m_fSizeX = 62.f;
-	SettingUI.m_fSizeY = 104.f;
-	SettingUI.m_fX = 917.f;
-	SettingUI.m_fY = 600.f;
+	SettingUI.pUI_Name = TEXT("SkillImage_3");
+	SettingUI.m_fSizeX = 84.f;
+	SettingUI.m_fSizeY = 95.f;
+	SettingUI.m_fX = 939.3f;
+	SettingUI.m_fY = 597.5f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 42;
 
 	pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pSkill_3), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
-	m_pSkill_3->Set_RenderSortValue(-1.f);
+	m_pSkill_3->Set_RenderSortValue(0.f);
 
 	//Skill_1_Sprout1
 	SettingUI.bClick = false;
@@ -1601,8 +1605,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_1_Sprout1");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 331.f;
-	SettingUI.m_fY = 533.f;
+	SettingUI.m_fX = 272.f;
+	SettingUI.m_fY = 526.f;
 	SettingUI.fAngle = 0.f;
 	SettingUI.iTextureIndex = 77;
 
@@ -1618,8 +1622,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_1_Sprout2");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 340.f;
-	SettingUI.m_fY = 504.f;
+	SettingUI.m_fX = 278.f;
+	SettingUI.m_fY = 500.f;
 	SettingUI.fAngle = -15.f;
 	SettingUI.iTextureIndex = 78;
 
@@ -1635,8 +1639,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_1_Sprout3");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 363.f;
-	SettingUI.m_fY = 516.f;
+	SettingUI.m_fX = 308.f;
+	SettingUI.m_fY = 515.f;
 	SettingUI.fAngle = -47.f;
 	SettingUI.iTextureIndex = 79;
 
@@ -1652,7 +1656,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_2_Sprout1");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 648.f + 26.f;
+	SettingUI.m_fX = 696.f;
 	SettingUI.m_fY = 562.f;
 	SettingUI.fAngle = -25.f;
 	SettingUI.iTextureIndex = 77;
@@ -1669,8 +1673,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_2_Sprout2");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 679.f + 26.f;
-	SettingUI.m_fY = 559.f;
+	SettingUI.m_fX = 727.f;
+	SettingUI.m_fY = 562.f;
 	SettingUI.fAngle = -70.f;
 	SettingUI.iTextureIndex = 78;
 
@@ -1685,9 +1689,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_2_Sprout3");
 	SettingUI.m_fSizeX = 50.f;
-	SettingUI.m_fSizeY = 50.f;
-	SettingUI.m_fX = 684.f + 26.f;
-	SettingUI.m_fY = 581.f;
+	SettingUI.m_fSizeY = 60.f;
+	SettingUI.m_fX = 738.f;
+	SettingUI.m_fY = 585.f;
 	SettingUI.fAngle = -107.f;
 	SettingUI.iTextureIndex = 79;
 
@@ -1703,8 +1707,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_3_Sprout1");
 	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 50.f;
-	SettingUI.m_fX = 925.f;
-	SettingUI.m_fY = 505.f;
+	SettingUI.m_fX = 962.f;
+	SettingUI.m_fY = 507.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 77;
 
@@ -1718,10 +1722,10 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.bColl = false;
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_3_Sprout2");
-	SettingUI.m_fSizeX = 60.f;
+	SettingUI.m_fSizeX = 50.f;
 	SettingUI.m_fSizeY = 60.f;
-	SettingUI.m_fX = 968.f;
-	SettingUI.m_fY = 511.f;
+	SettingUI.m_fX = 1000.f;
+	SettingUI.m_fY = 515.f;
 	SettingUI.fAngle = -78.f;
 	SettingUI.iTextureIndex = 78;
 
@@ -1736,9 +1740,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_3_Sprout3");
 	SettingUI.m_fSizeX = 50.f;
-	SettingUI.m_fSizeY = 50.f;
-	SettingUI.m_fX = 975.f;
-	SettingUI.m_fY = 533.f;
+	SettingUI.m_fSizeY = 60.f;
+	SettingUI.m_fX = 1013.f;
+	SettingUI.m_fY = 535.f;
 	SettingUI.fAngle = -120.f;
 	SettingUI.iTextureIndex = 79;
 
@@ -2162,9 +2166,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts1_1");
 	SettingUI.m_fSizeX = 15.f;
-	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 325.f;
-	SettingUI.m_fY = 537.f;
+	SettingUI.m_fSizeY = 17.f;
+	SettingUI.m_fX = 266.f;
+	SettingUI.m_fY = 528.6f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2181,8 +2185,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts1_2");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 332.f;
-	SettingUI.m_fY = 489.f;
+	SettingUI.m_fX = 270.5f;
+	SettingUI.m_fY = 488.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2199,8 +2203,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts1_3");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 372.f;
-	SettingUI.m_fY = 513.f;
+	SettingUI.m_fX = 317.5f;
+	SettingUI.m_fY = 512.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2217,7 +2221,7 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts2_1");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 18.f;
-	SettingUI.m_fX = 642.f + 27.f;
+	SettingUI.m_fX = 690.f;
 	SettingUI.m_fY = 561.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
@@ -2235,8 +2239,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts2_2");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 686.f + 25.f;
-	SettingUI.m_fY = 545.f;
+	SettingUI.m_fX = 734.f;
+	SettingUI.m_fY = 549.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2253,8 +2257,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts2_3");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 690.f + 25.f;
-	SettingUI.m_fY = 587.f;
+	SettingUI.m_fX = 744.5f;
+	SettingUI.m_fY = 591.5f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2270,9 +2274,9 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.iLevelIndex = m_eNowSceneNum;
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts3_1");
 	SettingUI.m_fSizeX = 15.f;
-	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 919.f;
-	SettingUI.m_fY = 506.f;
+	SettingUI.m_fSizeY = 17.f;
+	SettingUI.m_fX = 956.f;
+	SettingUI.m_fY = 509.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2289,8 +2293,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts3_2");
 	SettingUI.m_fSizeX = 16.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 976.f;
-	SettingUI.m_fY = 496.f;
+	SettingUI.m_fX = 1008.f;
+	SettingUI.m_fY = 502.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 
@@ -2307,8 +2311,8 @@ HRESULT CSkillUI::Ready_Layer_UI()
 	SettingUI.pUI_Name = TEXT("Skill_Sprouts3_3");
 	SettingUI.m_fSizeX = 15.f;
 	SettingUI.m_fSizeY = 15.f;
-	SettingUI.m_fX = 980.f;
-	SettingUI.m_fY = 541.f;
+	SettingUI.m_fX = 1018.f;
+	SettingUI.m_fY = 543.f;
 	SettingUI.fAngle = 0;
 	SettingUI.iTextureIndex = 130;
 

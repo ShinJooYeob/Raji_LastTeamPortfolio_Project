@@ -46,6 +46,15 @@ public:
 	HRESULT	SetUp_Collider();
 	HRESULT	Update_Collider(_double dDeltaTime);
 
+public:
+	void	UseON();
+	void	UseOFF();
+	_bool  Get_IsUse() {return NoteDesc.bIsUse;	}
+
+	NOTEDESC	Get_NoteDesc() { return NoteDesc; }
+
+	void		Set_IsCollisonOnOff(_bool	State) { m_bIsCollisionOn = State; }
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -61,6 +70,8 @@ private:
 
 	_float				m_PosX = 0;
 	_float3				m_vPos;
+
+	_bool				m_bIsCollisionOn = false;
 
 public:
 	static CTaiko_Monster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

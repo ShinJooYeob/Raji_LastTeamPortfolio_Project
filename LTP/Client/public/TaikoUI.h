@@ -20,17 +20,46 @@ public:
 	virtual _int Render()override;
 	virtual _int LateRender()override;
 
+public:
+	class CUI*		Get_StartTimeUI() { return m_StartTimeUI; }
+	class CUI*		Get_QuestUI() { return m_QuestUI; }
+
+	void			Set_IsQuestUIStart();
+	void			Set_IsShowComboUI()
+	{
+		m_bIsShowComboUIOn = true; 
+		m_fShowComboUITime = 0.f;
+	}
+	void			Set_IsShowGoodEffectUI();
+	void			Set_ShowResultUI(_int TextureIndex);
+
+	void			UseComboUI(_double fDeltaTime);
+
+
 private:
 	class CUI*	m_pBackGround = nullptr;
 	class CUI*	m_pNoteUI = nullptr;
+	class CUI*	m_StartTimeUI = nullptr;
+	class CUI*	m_QuestUI = nullptr;
+	class CUI*  m_ResultUI = nullptr;
 
 
 	vector<CUI*> m_vecBasicUI;
 	vector<CUI*> m_vecButtonUI;
+	vector<CUI*> m_vecComboUI;
+	vector<CUI*> m_vecGoodEffectUI;
 
-	_bool		m_StartTime = false;
+	_bool		m_bISStartTime = false;
+	_bool		m_bIsQuestUI = false;
+	_bool		m_bIsShowComboUIOn = false;
+	_bool		m_bIsShowGoodEffectTime = false;
+	_bool		m_bIsShowResultt = false;
+
 	_float		m_TestTime = 0.f;
-	_int		m_iComboCount = 0;
+	_float		m_fQuestTime = 0.f;
+	_float		m_fShowComboUITime = 0.f;
+	_float		m_fShowGoodEffectUITime = 0.f;
+	_float		m_fShowResultTime = 0.f;
 
 
 private:

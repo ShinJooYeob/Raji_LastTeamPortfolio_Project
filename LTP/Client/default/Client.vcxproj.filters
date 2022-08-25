@@ -649,6 +649,9 @@
     <Filter Include="01.GameObject\98.TriggerObject\16.GoldfishTrigger">
       <UniqueIdentifier>{bbb1356d-62ec-40d0-9d51-df375b2294a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\SpeechUI">
+      <UniqueIdentifier>{c46f2cd2-be8b-4a0a-b72b-1295ffa81d23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1382,6 +1385,8 @@
     <ClInclude Include="..\public\GoldfishTrigger.h">
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpeechUI.h" />
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2083,6 +2088,8 @@
     </ClCompile>
     <ClCompile Include="..\private\GoldfishTrigger.cpp">
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpeechUI.cpp" />
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

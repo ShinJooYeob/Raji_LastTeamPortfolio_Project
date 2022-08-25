@@ -68,13 +68,18 @@ _int CUI::Update(_double fDeltaTime)
 		EsingUV_Y(fDeltaTime);
 	}
 
-	if (m_SettingUIDesc.pUI_Name == TEXT(" "))
-	{
-		m_SettingUIDesc.v3DUIPosition = _float3(0.5f, 0.25f, 5.f);
-		m_SettingUIDesc.v3DUIScaled = _float3(10.f, 6.2f, 7.f);
-		//m_SettingUIDesc.fAngle = 30.f;
-		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
-	}
+	//if (m_SettingUIDesc.pUI_Name == TEXT("Skill_3_Sprout1"))
+	//{
+	//	//m_SettingUIDesc.v3DUIPosition = _float3(0.5f, 0.25f, 5.f);
+	//	//m_SettingUIDesc.v3DUIScaled = _float3(10.f, 6.2f, 7.f);
+	//	//m_SettingUIDesc.fAngle = 30.f;
+	//	//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
+	//	m_fSizeX = 50.f;
+	//	m_fSizeY = 50.f;
+	//	m_fX = 962.f;
+	//	m_fY = 507.f;
+
+	//}
 
 	if (m_bIsRevolutionCCW)
 	{
@@ -119,15 +124,12 @@ _int CUI::Render()
 {
 	if (__super::Render() < 0)return -1;
 
-
+	 
 	if (!m_bDraw)
 		return S_OK;
 
 	if (nullptr == m_pVIBufferCom)
 		return E_FAIL;
-
-	//if (m_pUIName == TEXT("UI_Damage_Num"))
-	//	_int a = 0;
 
 	m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix");
 

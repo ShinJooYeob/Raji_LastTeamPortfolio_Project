@@ -111,7 +111,10 @@ _int CPauseUI::Update(_double fDeltaTime)
 	m_bIsBtnClick = false;
 
 	if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
+	{
 		m_bIsBtnClick = true;
+		g_pGameInstance->PlaySoundW(L"JJB_Button_1.mp3", CHANNEL_EFFECT);
+	}
 
 	if (!m_bIsGraphicUIOn && !m_bIsSoundUIOn)
 	{

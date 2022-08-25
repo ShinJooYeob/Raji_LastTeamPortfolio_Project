@@ -10801,3 +10801,11 @@ static const _tchar* Tag_ModelMonsterBulletType(_uint eTag)
 
 #define TAG_MONSTER_BULLET Tag_ModelMonsterBulletType
 
+typedef struct tagNoteTimingDesc
+{
+	tagNoteTimingDesc() {};
+	tagNoteTimingDesc(_float a, _uint e) {	fNoteTiming = a; eType = e; };
+	_float			fNoteTiming = 0.f;
+	_uint	eType = 0;
+
+}NOTETIMINGDESC;

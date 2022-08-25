@@ -40,6 +40,7 @@ private:
 	_bool			m_bIsRajiTextOn = true;
 
 	_int			m_iSelectScene = 0;
+	_int			m_iButtonCollisionIndex = 0;
 
 private:
 	HRESULT Ready_Layer_UI();
