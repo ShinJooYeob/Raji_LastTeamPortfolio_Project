@@ -546,6 +546,89 @@ HRESULT CSoundMgr::Play3D_Sound(TCHAR * pSoundKey, _float3 Pos, CHANNELID eID, _
 	return S_OK;
 }
 
+HRESULT CSoundMgr::Play3D_Sound_IsPlay(TCHAR * pSoundKey, _float3 Pos, CHANNELID eID, _float fLouderMultiple, _float3 dir, _float speed, _bool* playing)
+{
+
+	// 방향과 속도를 주면 해당 방향의 속도 구현 가능
+
+	//FMOD_RESULT r;
+
+	//FMOD_VECTOR		Dir = { dir.x*speed ,dir.y*speed ,dir.z*speed };
+	//FMOD_VECTOR		Vec = { Pos.x,Pos.y,Pos.z };
+	//FMOD_CHANNEL*	Chanel = nullptr;
+
+	//if (eID == CHANNEL_BGM)
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+
+
+	//map<TCHAR*, FMOD_SOUND*>::iterator iter;
+
+	//iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)
+	//{
+	//	return !lstrcmp(pSoundKey, iter.first);
+	//});
+
+	//if (iter == m_mapSound.end())
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+
+	//FMOD_BOOL bPlay = FALSE;
+	//_uint fOldSoundIndx = -1;
+	//_float fOldestTime = -1.f;
+
+	//for (_uint i = eID * m_iNumOfEachChannel; i < (eID + 1) * m_iNumOfEachChannel; i++)
+	//{
+	//	if (FMOD_Channel_IsPlaying(m_pChannelArr[i], &bPlay))
+	//	if (m_fPassedTimeArr[i] == 0)
+	//	{
+	//		FMOD_Channel_Stop(m_pChannelArr[i]);
+	//		FMOD_System_PlaySound(m_pSystem, iter->second, nullptr, FALSE, &m_pChannelArr[i]);
+
+
+	//		Chanel = m_pChannelArr[i];
+	//		r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, &Dir);
+	//		if (r != FMOD_OK)
+	//			return E_FAIL;
+
+	//		FMOD_Channel_SetVolume(m_pChannelArr[i], m_VolumeArr[eID] * fLouderMultiple);
+	//		m_fPassedTimeArr[i] = 0.1f;
+
+	//		return S_OK;
+	//	}
+
+	//	if (m_fPassedTimeArr[i] > fOldestTime)
+	//	{
+	//		fOldestTime = m_fPassedTimeArr[i];
+	//		fOldSoundIndx = i;
+	//	}
+
+	//}
+
+
+	//FMOD_Channel_Stop(m_pChannelArr[fOldSoundIndx]);
+
+	//FMOD_System_PlaySound(m_pSystem, iter->second, nullptr, FALSE, &m_pChannelArr[fOldSoundIndx]);
+
+	//Chanel = m_pChannelArr[fOldSoundIndx];
+	//r = FMOD_Channel_Set3DAttributes(Chanel, &Vec, &Dir);
+	//if (r != FMOD_OK)
+	//	return E_FAIL;
+
+	//FMOD_Channel_SetVolume(m_pChannelArr[fOldSoundIndx], m_VolumeArr[eID] * fLouderMultiple);
+
+	//m_fPassedTimeArr[fOldSoundIndx] = 0.1f;
+
+	return S_OK;
+}
+
+
+
+
 HRESULT CSoundMgr::Set_3DSound_Distance_World(_float rolloffscale)
 {
 	// roll 값만 적용

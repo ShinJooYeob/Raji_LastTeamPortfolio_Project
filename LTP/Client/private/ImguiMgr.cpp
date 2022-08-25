@@ -1792,12 +1792,20 @@ _int CImguiMgr::Update_DebugWnd_PhysX(_double fDeltaTime)
 
 _int CImguiMgr::Update_DebugWnd_MapEffect(_double fDeltaTime)
 {
-	ImGui::TextColored(ImVec4(1, 0, 0, 1), "MapObj");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "PLAYERPOS");
 
-	// Map Object
+	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player))));
+	if (player)
 	{
 
+		_float3 pos = player->Get_Transform()->Get_MatrixState(CTransform::STATE_POS);
+		ImGui::DragFloat3("Position:", (float*)&pos, 0.1f, -10000, 10000);
+
+		//_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
+		//ImGui::Text("PlayerNaviIndex = %d", index);
+
 	}
+
 
 //	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
 	// if (player)
@@ -1885,17 +1893,6 @@ _int CImguiMgr::Update_DebugWnd_Sound3D(_double fDeltaTime)
 	//	}
 
 	//}
-	
-	ImGui::TextColored(ImVec4(1, 0, 0, 1), "NAVI");
-
-	CPlayer* player = ((CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player))));
-
-	if (player)
-	{
-		_uint index = ((CNavigation*)player->Get_Component(TAG_COM(Com_Navaigation)))->Get_CurNavCellIndex();
-		ImGui::Text("playerNaviIndex = %d", index);
-		
-	}
 
 
 	return _int();

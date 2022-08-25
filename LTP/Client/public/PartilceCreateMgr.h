@@ -63,25 +63,61 @@ enum E_PARTICLEDESC_TYPE
 	PARTICLEDESC_TYPE_MESH,
 	PARTICLEDESC_TYPE_END
 };
+
+enum E_PARTICLSOUND_TYPE
+{
+	PARTICLSOUND_TYPE_Fire0, // し
+	PARTICLSOUND_TYPE_Fire1,
+	PARTICLSOUND_TYPE_Fire2,
+
+	PARTICLSOUND_TYPE_Water0, // し
+	PARTICLSOUND_TYPE_Water1, // し
+	PARTICLSOUND_TYPE_Water2,
+
+	PARTICLSOUND_TYPE_Wind0,
+	PARTICLSOUND_TYPE_Wind1,
+	PARTICLSOUND_TYPE_Wind2,
+
+	PARTICLSOUND_TYPE_Rock0,
+	PARTICLSOUND_TYPE_Rock1,
+	PARTICLSOUND_TYPE_Rock2,
+
+	PARTICLSOUND_TYPE_Fountain0, // し
+	PARTICLSOUND_TYPE_Fountain1,
+	PARTICLSOUND_TYPE_Fountain2,
+	PARTICLSOUND_TYPE_Fountain3,
+
+	PARTICLSOUND_TYPE_Rain0,
+	PARTICLSOUND_TYPE_Rain1,
+	PARTICLSOUND_TYPE_Rain2,
+
+	PARTICLSOUND_TYPE_CASH0,
+	PARTICLSOUND_TYPE_CASH1,
+	PARTICLSOUND_TYPE_CASH2,
+	PARTICLSOUND_TYPE_END,
+
+};
+
 typedef struct tag_MapEffect
 {
 	E_PARTICLEDESC_TYPE mParticleType = PARTICLEDESC_TYPE_END;
 	_float3				mFixpos = _float3(0); 
 	_float				mRange = 10;
-	wstring				mSoundFileName= TEXT("");
+	wstring				mSoundFileName;
 	_bool				mIsCreate = false;
 
 	INSTPARTICLEDESC	mParticleDesc;
 	INSTMESHDESC		mMeshParticleDesc;
 	
-	CGameObject*		mObject = nullptr;
-
-	void SetObject(CGameObject* obj)
-	{
-		mObject = obj;
-	}
-
 }MAPEFFECT;
+
+typedef struct tag_MapSound
+{
+	E_PARTICLSOUND_TYPE mSoundType = PARTICLSOUND_TYPE_END;
+	_float3				mFixpos = _float3(0);
+	_float				mRange = 10; // sound
+	_bool				mIsSoundPlay = false;
+}MAPSOUND;
 
 
 
@@ -362,6 +398,13 @@ public:
 
 #pragma endregion BOSS
 
+		MESHEFFECT_MAP_STAGE1_Cash0,
+		MESHEFFECT_MAP_STAGE1_Cash1,
+		MESHEFFECT_MAP_STAGE1_Cash2,
+		MESHEFFECT_MAP_STAGE1_Cash3,
+		MESHEFFECT_MAP_STAGE1_Cash4,
+		MESHEFFECT_MAP_STAGE1_Cash5,
+
 
 		MESHEFFECT_END,
 
@@ -517,7 +560,8 @@ public:
 
 public:
 	_int Update_EffectMgr(_double Timer);
-
+	_int Update_DebugParticle(_double Timer);
+	
 
 	//HRESULT ReadyParticleData_TextureInstacnce();
 	//HRESULT ReadyParticleData_MeshInstance();
@@ -570,13 +614,21 @@ private:
 
 	list<INSTPARTICLEDESC>	mListTexParticleMap[SCENEID::SCENE_END];
 	list<INSTMESHDESC>		mListMeshParticleMap[SCENEID::SCENE_END];
-	SCENEID					mCurrentScene = SCENE_END;
-	_int					Update_MapEffect(_double timer);
+	list<MAPSOUND>			mListSound3DMap[SCENEID::SCENE_END];
 
-	vector<MAPEFFECT>		mVecCurrentObjects;
+	SCENEID					mCurrentScene = SCENE_END;
+//	_int					Update_MapEffect(_double timer);
+	_int					Update_MapEffect_Sound(_double timer);
+	
+	HRESULT					AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType , _float Range = 10);
+	void					PlaySound_Map(_float3  pos , E_PARTICLSOUND_TYPE type,_float vol = 1.0f);
+
+//	vector<MAPEFFECT>		mVecCurrentObjects;
+
+
 	const _double			mMapUpdateLate = 0.5;
 	_double					mMapUpdateLate_Timer = 0.0;
-
+	_bool					mbInitScene = false;
 
 
 private:
@@ -598,6 +650,7 @@ private:
 	list<DELAYMESH>				mListMeshInstDesc_Delay;
 
 	class CNonInstanceMeshEffect_TT*	mPreMeshEffect = nullptr;
+	CGameObject*	mTestObj = nullptr;
 
 
 
