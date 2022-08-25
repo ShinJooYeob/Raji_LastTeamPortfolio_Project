@@ -99,7 +99,7 @@ private:
 
 	_double				m_dAcceleration = 1.;
 
-	_float3				m_fRoute[4][5];
+	_float3				m_fRoute[5][3];
 
 public:
 	static CGoldfish* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

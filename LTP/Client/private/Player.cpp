@@ -27,7 +27,7 @@
 #include "Scene.h"
 #include "Scene_Stage5.h"
 
-#define NotOnNavi
+//#define NotOnNavi
 
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -65,7 +65,6 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 	FAILED_CHECK(SetUp_PlayerEffects());
 
 	FAILED_CHECK(Ready_ParticleDesc());
-
 
 	return S_OK;
 }

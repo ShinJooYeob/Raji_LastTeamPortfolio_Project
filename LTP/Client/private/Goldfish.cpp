@@ -241,7 +241,6 @@ HRESULT CGoldfish::SetUp_Info()
 		m_pModelInstance[i] = pModelInstance;
 	}
 
-
 	_int	iNumber = 0;
 	_double	dpercent = 0.24;
 
@@ -391,21 +390,25 @@ HRESULT CGoldfish::Instance_Route()
 	{
 	case 0:
 	{
-		m_fRoute[0][0] = _float3(15.f,50.f,10.f);
-		m_fRoute[0][1] = _float3(10.f,55.f,5.f);
-		m_fRoute[0][2] = _float3(20.f,60.f,15.f);
+		m_fRoute[0][0] = _float3(122.f,38.f,71.f);
+		m_fRoute[0][1] = _float3(131.f,39.f,78.f);
+		m_fRoute[0][2] = _float3(147.f,40.f,78.f);
 
-		m_fRoute[1][0] = _float3(12.f, 55.f, 10.f);
-		m_fRoute[1][1] = _float3(14.f, 57.f, 5.f);
-		m_fRoute[1][2] = _float3(24.f, 70.f, 15.f);
+		m_fRoute[1][0] = _float3(180.f, 38.f, 71.f);
+		m_fRoute[1][1] = _float3(169.f, 38.f, 72.f);
+		m_fRoute[1][2] = _float3(152.f, 39.f, 75.f);
 
-		m_fRoute[2][0] = _float3(14.f, 60.f, 10.f);
-		m_fRoute[2][1] = _float3(16.f, 65.f, 5.f);
-		m_fRoute[2][2] = _float3(28.f, 50.f, 15.f);
+		m_fRoute[2][0] = _float3(119.f, 38.f, 80.f);
+		m_fRoute[2][1] = _float3(144.f, 39.f, 80.f);
+		m_fRoute[2][2] = _float3(148.f, 39.f, 96.f);
 
-		m_fRoute[3][0] = _float3(18.f, 50.f, 10.f);
-		m_fRoute[3][1] = _float3(28.f, 55.f, 5.f);
-		m_fRoute[3][2] = _float3(38.f, 50.f, 15.f);
+		m_fRoute[3][0] = _float3(180.f, 39.f, 102.f);
+		m_fRoute[3][1] = _float3(177.f, 38.f, 95.f);
+		m_fRoute[3][2] = _float3(151.f, 40.f, 95.f);
+
+		m_fRoute[4][0] = _float3(157.f, 39.f, 79.f);
+		m_fRoute[4][1] = _float3(153.f, 38.f, 92.f);
+		m_fRoute[4][2] = _float3(144.f, 39.f, 95.f);
 
 	/*	m_fRoute[1][0] = _float3();
 		m_fRoute[1][1] = _float3();
