@@ -305,10 +305,10 @@ HRESULT CMiniGameBuilding::Start_SceneChanging_CamAct()
 			m_eTargetScene = SCENE_MINIGAME1;
 			break;
 		case Client::CMiniGameBuilding::MINIGAME_DONKINGKONG:
-			m_eTargetScene = SCENE_MINIGAME_PM;
+			m_eTargetScene = SCENE_MINIGAME_DONKEYKONG;
 			break;
 		case Client::CMiniGameBuilding::MINIGAME_RHYTHM:
-			m_eTargetScene = SCENE_MINIGAME_PM;
+			m_eTargetScene = SCENE_MINIGAME_JJB;
 			break;
 		default:
 			m_eTargetScene = SCENE_LOBY;

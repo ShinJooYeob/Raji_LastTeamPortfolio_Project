@@ -78,6 +78,13 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 		case SCENE_MINIGAME_Jino:
 			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_CIRCUS;
 			break;
+		case SCENE_MINIGAME_DONKEYKONG:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_DONKINGKONG;
+			break;
+		case SCENE_MINIGAME_JJB:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_RHYTHM;
+			break;
+
 		default:
 			break;
 		}
@@ -99,6 +106,12 @@ HRESULT CScene_Loading::Initialize(SCENEID eSceneID)
 			break;
 		case SCENE_MINIGAME_Jino:
 			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_CIRCUS;
+			break;
+		case SCENE_MINIGAME_DONKEYKONG:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_DONKINGKONG;
+			break;
+		case SCENE_MINIGAME_JJB:
+			m_iMiniGameIndex = CMiniGameBuilding::MINIGAME_RHYTHM;
 			break;
 		default:
 			break;

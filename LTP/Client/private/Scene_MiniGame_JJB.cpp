@@ -47,6 +47,18 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 	{
 		m_fReadyTime -= (_float)fDeltaTime;
 
+		if (m_bIsSceneChange)
+		{
+			m_fChangeWaitingTime += (_float)fDeltaTime;
+
+			if (m_fChangeWaitingTime > 5.f)
+			{
+				m_bIsSceneChange = false;
+				m_fChangeWaitingTime = 0.f;
+				//여기서 하심 됨
+			}
+		}
+
 		if (m_fReadyTime <= 0)
 		{
 			CUI* StartTimeUI = nullptr;
@@ -102,6 +114,17 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 		m_AccumulateTime += (_float)fDeltaTime;
 	}
 
+	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
+	{
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
+
+
+		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
+		return 0;
+	}
+
+
 	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
@@ -111,26 +134,26 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 	/*if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 
-		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
+	CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
 
-		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
-		return 0;
+	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
+	return 0;
 	}*/
 
 	//if (g_pGameInstance->Get_DIKeyState(DIK_T)&DIS_Down)
 	//{
-	//	m_StartBGM = true;
-	//	g_pGameInstance->PlayBGM(TEXT("sacuranbo.wav"));
+	//   m_StartBGM = true;
+	//   g_pGameInstance->PlayBGM(TEXT("sacuranbo.wav"));
 	//}
 
-	if(m_iVecCount < m_vecNoteTimings.size() && m_bIsStartBGM)
+	if (m_iVecCount < m_vecNoteTimings.size() && m_bIsStartBGM)
 		ProduceTimingNote();
 
 	if (m_iVecCount >= m_vecNoteTimings.size() && m_bIsGameEnd == false && 10 == m_NoteBigRedMonsterList.size())
 	{
 		g_pGameInstance->Stop_AllChannel();
-		
+
 		m_bIsStartBGM = false;
 		m_bIsGameEnd = true;
 
@@ -145,11 +168,12 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 		{
 			m_fEndTime = 0.f;
 			m_bIsResult = true;
+			m_bIsSceneChange = true;
 			if (m_iMaxCombo > 70)
 				m_pTaikoUI->Set_ShowResultUI(28);
 			else
 				m_pTaikoUI->Set_ShowResultUI(29);
-		}	
+		}
 	}
 
 	if (m_bIsResult)
@@ -261,10 +285,10 @@ void CScene_MiniGame_JJB::Pop_NoteBigBlueMonsterLsit()
 void CScene_MiniGame_JJB::TimingNoteSetting()
 {
 #pragma region NoteVector
-	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.219098f,	TYPE_SMALLRED  });
-	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.585941f,	TYPE_SMALLRED });
-	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.752646f,	TYPE_SMALLRED });
-	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.952678f,	TYPE_SMALLRED });
+	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.219098f,   TYPE_SMALLRED });
+	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.585941f,   TYPE_SMALLRED });
+	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.752646f,   TYPE_SMALLRED });
+	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 9.952678f,   TYPE_SMALLRED });
 	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 10.119604f,  TYPE_SMALLRED });
 	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 10.319639f,  TYPE_SMALLRED });
 	m_vecNoteTimings.push_back(NOTETIMINGDESC{ 10.653112f,  TYPE_BIGRED });
@@ -502,7 +526,7 @@ void CScene_MiniGame_JJB::TimingNoteSetting()
 
 void CScene_MiniGame_JJB::ProduceTimingNote()
 {
-	if (m_AccumulateTime > m_vecNoteTimings[m_iVecCount].fNoteTiming - 1.25f )
+	if (m_AccumulateTime > m_vecNoteTimings[m_iVecCount].fNoteTiming - 1.25f)
 	{
 		switch (m_vecNoteTimings[m_iVecCount].eType)
 		{
@@ -526,50 +550,50 @@ void CScene_MiniGame_JJB::ProduceTimingNote()
 
 //void CScene_MiniGame_JJB::KeyClick()
 //{
-//	if (g_pGameInstance->Get_DIKeyState(DIK_F)&DIS_Down)
-//	{
-//		if (m_pGoodCollider->Get_GoodColliderSmallRedCrashing())
-//		{
-//			m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
-//			Set_ComboPlus();
-//		}
-//	}
+//   if (g_pGameInstance->Get_DIKeyState(DIK_F)&DIS_Down)
+//   {
+//      if (m_pGoodCollider->Get_GoodColliderSmallRedCrashing())
+//      {
+//         m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
+//         Set_ComboPlus();
+//      }
+//   }
 //
-//	if (g_pGameInstance->Get_DIKeyState(DIK_J)&DIS_Down)
-//	{
-//		if (m_pGoodCollider->Get_GoodColliderSmallRedCrashing())
-//		{
-//			m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
-//			Set_ComboPlus();
-//		}
-//	}
+//   if (g_pGameInstance->Get_DIKeyState(DIK_J)&DIS_Down)
+//   {
+//      if (m_pGoodCollider->Get_GoodColliderSmallRedCrashing())
+//      {
+//         m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
+//         Set_ComboPlus();
+//      }
+//   }
 //
-//	if (g_pGameInstance->Get_DIKeyState(DIK_D)&DIS_Down)
-//	{
-//		if (m_pGoodCollider->Get_GoodColliderSmallBlueCrashing())
-//		{
-//			m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
-//			Set_ComboPlus();
-//		}
-//	}
+//   if (g_pGameInstance->Get_DIKeyState(DIK_D)&DIS_Down)
+//   {
+//      if (m_pGoodCollider->Get_GoodColliderSmallBlueCrashing())
+//      {
+//         m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
+//         Set_ComboPlus();
+//      }
+//   }
 //
-//	if (g_pGameInstance->Get_DIKeyState(DIK_K)&DIS_Down)
-//	{
-//		if (m_pGoodCollider->Get_GoodColliderSmallBlueCrashing())
-//		{
-//			m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
-//			Set_ComboPlus();
-//		}
-//	}
+//   if (g_pGameInstance->Get_DIKeyState(DIK_K)&DIS_Down)
+//   {
+//      if (m_pGoodCollider->Get_GoodColliderSmallBlueCrashing())
+//      {
+//         m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
+//         Set_ComboPlus();
+//      }
+//   }
 //
-//	if (g_pGameInstance->Get_DIKeyState(DIK_SPACE)&DIS_Down)
-//	{
-//		if (m_pGoodCollider->Get_GoodColliderBigBlueCrashing() || m_pGoodCollider->Get_GoodColliderBigRedCrashing())
-//		{
-//			m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
-//			Set_ComboPlus();
-//		}
-//	}
+//   if (g_pGameInstance->Get_DIKeyState(DIK_SPACE)&DIS_Down)
+//   {
+//      if (m_pGoodCollider->Get_GoodColliderBigBlueCrashing() || m_pGoodCollider->Get_GoodColliderBigRedCrashing())
+//      {
+//         m_pGoodCollider->Get_GoodCollisionMonster()->UseOFF();
+//         Set_ComboPlus();
+//      }
+//   }
 //}
 
 void CScene_MiniGame_JJB::ShowComboUI()
@@ -640,8 +664,12 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_MainCamera(const _tchar * pLayerTag)
 	}
 	else
 	{
+
 		m_pMainCam->Set_NowSceneNum(SCENE_MINIGAME_JJB);
 		m_pMainCam->Set_CameraDesc(CameraDesc);
+
+		m_pMainCam->Get_Camera_Transform()->Set_MatrixState(CTransform::STATE_POS, _float3(0, 0.f, -5.f));
+		m_pMainCam->Get_Camera_Transform()->LookAt(_float3(0, 0.f, 0.1f).XMVector());
 	}
 
 	m_pMainCam->Set_TargetArmLength(15.f);
@@ -722,7 +750,7 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_Monster(const _tchar * pLayerTag)
 	NoteMonsterDesc.vNotePosition = _float3(0.f, 0.5f, -1.f);
 	NoteMonsterDesc.vScaled = _float3(1.2f);
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_MINIGAME_JJB, pLayerTag, TAG_OP(Prototype_Object_PM_Monster), &NoteMonsterDesc));
-*/
+	*/
 	return S_OK;
 }
 
@@ -758,10 +786,9 @@ HRESULT CScene_MiniGame_JJB::Ready_PostPorcessing()
 #ifndef _DEBUG
 
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	pLightDesc->vVector = _float4(0, 64.f, -64.f, 1);
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(0, -64.f, 64.f));
-	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
+	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -769,6 +796,23 @@ HRESULT CScene_MiniGame_JJB::Ready_PostPorcessing()
 
 	for (_uint i = 0; i < POSTPROCESSING_END; i++)
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
+
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, false);
+	pRenderer->Set_ShadowIntensive(0.3f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
+	pRenderer->Set_BloomOverLuminceValue(1.0f);
+	pRenderer->Set_BloomBrightnessMul(1.5f);
+
+	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	//pRenderer->Set_DofLength(30.f);
+	//pRenderer->Set_DofBlurIntensive(1.f);
+
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
+	pRenderer->Set_FogStartDist(5.f);
+	pRenderer->Set_FogGlobalDensity(0.1f);
+	pRenderer->Set_FogHeightFalloff(0.1f);
 
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE

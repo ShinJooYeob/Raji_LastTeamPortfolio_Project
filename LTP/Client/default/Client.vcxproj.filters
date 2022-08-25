@@ -1386,7 +1386,6 @@
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SpeechUI.h" />
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2090,7 +2089,6 @@
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SpeechUI.cpp" />
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

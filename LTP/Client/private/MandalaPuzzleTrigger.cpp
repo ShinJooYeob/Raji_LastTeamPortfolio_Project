@@ -49,7 +49,7 @@ _int CMandalaPuzzleTrigger::Update(_double fDeltaTime)
 
 			m_fPassedTime += (_float)fDeltaTime;
 
-			if (m_fPassedTime > 0.75f)
+			if (m_fPassedTime > 0.5f)
 			{
 				m_fPassedTime = -999999999.f;
 				GetSingle(CUtilityMgr)->Plus_SKillPoint(2);
@@ -124,7 +124,7 @@ void CMandalaPuzzleTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyCo
 				m_pMainCamera->Lock_CamLook(true, XMVectorSet(0.1f, -1.f, 0.1f, 0.f));
 			}
 		}
-		else if(true == pPuzzle->IsClear())
+		else if(true == pPuzzle->IsClear()&& !m_bClearChecker)
 		{
 			CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
 			pPlayer->Set_State_StopActionEnd();

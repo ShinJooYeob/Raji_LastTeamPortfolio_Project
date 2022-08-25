@@ -49,7 +49,7 @@ _int CGearPuzzleTrigger::Update(_double fDeltaTime)
 
 			m_fPassedTime += (_float)fDeltaTime;
 
-			if (m_fPassedTime > 0.75f)
+			if (m_fPassedTime > 0.55f)
 			{
 				m_fPassedTime = -999999999.f;
 				GetSingle(CUtilityMgr)->Plus_SKillPoint(2);
@@ -123,7 +123,7 @@ void CGearPuzzleTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 				m_pMainCamera->Lock_CamLook(true, XMVectorSet(1.f, 0.f, 0.f, 0.f));
 			}
 		}
-		else if (2 == pPuzzle->Get_PuzzleState())
+		else if (2 == pPuzzle->Get_PuzzleState() && !m_bClearChecker)
 		{
 			CPlayer* pPlayer = static_cast<CPlayer*>(pConflictedObj);
 			pPlayer->Set_State_StopActionEnd();

@@ -48,9 +48,8 @@ _int CMiniGame_JJB_Player::Update(_double fDeltaTime)
 	//m_pTransformCom->Scaled_All(_float3(0.4f));
 	//m_pTransformCom->Turn_CW(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.f));
 
-	m_bIsOnScreen = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS), m_fFrustumRadius);
 
-	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, m_bIsOnScreen));
+	FAILED_CHECK(m_pModel->Update_AnimationClip(fDeltaTime * m_fAnimSpeed, true));
 	Adjust_AnimMovedTransform(fDeltaTime);
 
 	//m_pTransformCom->Scaled_All()
@@ -63,7 +62,7 @@ _int CMiniGame_JJB_Player::LateUpdate(_double fDeltaTimer)
 	if (__super::LateUpdate(fDeltaTimer) < 0)		return -1;
 
 	m_fRenderSortValue = -2.f;
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_JJBMINIGAME, this));
 
 	return _int();
 }
@@ -114,6 +113,8 @@ HRESULT CMiniGame_JJB_Player::SetUp_Components()
 	tDesc.vPivot = _float3(0, 0, 0);
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
+
+	FAILED_CHECK(m_pModel->Update_AnimationClip(g_fDeltaTime, true));
 
 	return S_OK;
 }

@@ -111,6 +111,10 @@ _int CUI::LateUpdate(_double fDeltaTime)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 	}
+	else if (m_SettingUIDesc.eUIKindsID == UIID_MINIGAME_TAIKO)
+	{
+		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_JJBMINIGAME, this));
+	}
 	else
 	{
 		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));

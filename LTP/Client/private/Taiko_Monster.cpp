@@ -91,7 +91,7 @@ _int CTaiko_Monster::LateUpdate(_double dDeltaTime)
 	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 	m_fRenderSortValue = -2.f;
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_JJBMINIGAME, this));
 
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pColliderCom));
 

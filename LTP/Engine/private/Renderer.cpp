@@ -587,9 +587,9 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 		FAILED_CHECK(Render_Bloom());
 
 	FAILED_CHECK(Render_ScreenEffect());
+	FAILED_CHECK(Render_JJBMiniGame());
 
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
-
 	FAILED_CHECK(Render_UI());
 
 
@@ -2570,6 +2570,30 @@ HRESULT CRenderer::Render_ScreenEffect()
 	m_RenderObjectList[RENDER_SCREENEFFECT].clear();
 
 
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_JJBMiniGame()
+{
+	FAILED_CHECK(m_pRenderTargetMgr->Begin(L"MRT_Defferred"));
+
+
+	m_RenderObjectList[RENDER_JJBMINIGAME].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
+	{
+		return pSour->Get_RenderSortValue() > pDest->Get_RenderSortValue();
+	});
+	for (auto& RenderObject : m_RenderObjectList[RENDER_JJBMINIGAME])
+	{
+		if (RenderObject != nullptr)
+		{
+			FAILED_CHECK(RenderObject->Render());
+		}
+		Safe_Release(RenderObject);
+	}
+	m_RenderObjectList[RENDER_JJBMINIGAME].clear();
+
+	FAILED_CHECK(m_pRenderTargetMgr->End(L"MRT_Defferred"));
+	FAILED_CHECK(Copy_DeferredToReference());
 	return S_OK;
 }
 

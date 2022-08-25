@@ -196,7 +196,7 @@ _int CTaikoUI::LateUpdate(_double fDeltaTime)
 	if (__super::LateUpdate(fDeltaTime) < 0)return -1;
 
 
-	GetSingle(CUtilityMgr)->Get_Renderer()->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	GetSingle(CUtilityMgr)->Get_Renderer()->Add_RenderGroup(CRenderer::RENDER_JJBMINIGAME, this);
 
 	return _int();
 }

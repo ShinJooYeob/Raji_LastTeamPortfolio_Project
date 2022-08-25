@@ -7,6 +7,8 @@
 #include "KongRajiTrigger.h"
 #include "MiniGame_KongWeapon.h"
 
+#include "MiniGameBuilding.h"
+
 /*
 1. Main Cam -> FocusTarget Settomg
 2. Target Obj->Set_AttachCamPos()
@@ -174,7 +176,13 @@ void CMiniGame_KongRaji::Set_IsDead()
 {
 	__super::Set_IsDead();
 
-	g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+	{
+		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_DONKINGKONG);
+
+		GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange();
+		g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_MINIGAME_DONKEYKONG);
+	}
+
 }
 
 void CMiniGame_KongRaji::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)

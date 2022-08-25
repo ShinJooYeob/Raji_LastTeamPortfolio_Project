@@ -2,6 +2,7 @@
 #include "..\public\MiniGame_KongGolu.h"
 #include "Scene.h"
 #include "PartilceCreateMgr.h"
+#include "MiniGameBuilding.h"
 
 
 CMiniGame_KongGolu::CMiniGame_KongGolu(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -69,7 +70,19 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 
 		if (m_dClearTime > 4)
 		{
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+			if (!m_bIsClear)
+			{
+				CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_DONKINGKONG);
+
+				GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange();
+				g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE3);
+
+				m_bIsClear = true;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		Clear_Firecracker(dDeltaTime);
 	}
