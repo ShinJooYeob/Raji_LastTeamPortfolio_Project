@@ -25,6 +25,7 @@
 #include "InstanceEffect.h"
 
 #include "Scene.h"
+#include "Scene_Stage5.h"
 
 //#define NotOnNavi
 
@@ -74,9 +75,11 @@ _int CPlayer::Update(_double fDeltaTime)
 	if (true == m_bBlockUpdate) return 0;
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	//m_pNavigationCom->Set_CurNavCellIndex(865);
 	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
 	{
-		Set_State_IdleStart(fDeltaTime);
+
+		//Set_State_IdleStart(fDeltaTime);
 		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.350f, 322.283f)));
 	}
 
@@ -348,6 +351,9 @@ _int CPlayer::Update(_double fDeltaTime)
 		case EPLAYER_STATE::STATE_FIRSTPERSONVIEW:
 			FAILED_CHECK(Update_State_FirstPersonView(fDeltaTime));
 			break;
+		case EPLAYER_STATE::STATE_ENDING:
+			FAILED_CHECK(Update_State_Ending(fDeltaTime));
+			break;
 		default:
 			MSGBOX("CPlayer::Update : Unknown Player Cur_State Value");
 			break;
@@ -441,9 +447,9 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	FAILED_CHECK(m_pDissolveCom->Render(17));
-
+	 
 #ifdef _DEBUG
-	//	m_pNavigationCom->Render(m_pTransformCom); 
+		//m_pNavigationCom->Render(m_pTransformCom); 
 	//	if (m_pHeadJoint)
 	//		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -466,7 +472,7 @@ void CPlayer::CollisionTriger(class CCollider* pMyCollider, _uint iMyColliderInd
 
 _fVector CPlayer::Get_BonePos(const char * pBoneName)
 {
-	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix(pBoneName);
+	_Matrix BoneMatrix = m_pModel->Get_BoneMatrix_byNode(m_pHipNode);//;m_pModel->Get_BoneMatrix(pBoneName);
 	_Matrix TransformMatrix = BoneMatrix * m_pTransformCom->Get_WorldMatrix();
 	_Vector vPos, vRot, vScale;
 	XMMatrixDecompose(&vScale, &vRot, &vPos, TransformMatrix);
@@ -563,14 +569,25 @@ void CPlayer::Set_OnLilyPad(_bool bOnLilyPad)
 
 _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	if (true == m_bShieldMode)
+	if (true == m_bShieldMode && 9.f > fDamageAmount)
 	{
+		_Vector DamageDir = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		if (0.f == XMVectorGetX(XMVector3Length(vDamageDir)))
+		{
+			DamageDir = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		}
+
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
 
+		_int iSelectSoundFileIndex = rand() % 2;
+		_tchar pSoundFile[MAXLEN] = TEXT("");
+		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
+
+		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 		m_pJYTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS,
 			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
-			+ XMVectorSet(0, 0.75f, 0, 0) - vDamageDir * 3.5f);
-		m_pJYTextureParticleTransform->LookDir(-vDamageDir);
+			+ XMVectorSet(0, 0.75f, 0, 0) - DamageDir * 3.5f);
+		m_pJYTextureParticleTransform->LookDir(-DamageDir);
 		m_pJYTextureParticleTransform->Turn_CW(m_pJYTextureParticleTransform->Get_MatrixState_Normalized(CTransform::STATE_RIGHT), XMConvertToRadians(85.f));
 
 		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[9]);
@@ -583,7 +600,7 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 	{
 		return 0.f;
 	}
-	else if (STATE_EVASION == m_eCurState)
+	else if (STATE_EVASION == m_eCurState && 9.f > fDamageAmount)
 	{
 		GetSingle(CUtilityMgr)->SlowMotionStart(1.f, 0.1f);
 		return 0.f;
@@ -646,6 +663,11 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 
 _float CPlayer::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
+	if (0 < (rand() % 3))
+	{
+		return 0.f;
+	}
+
 	if (STATE_STOPACTION == m_eCurState || STATE_EVASION == m_eCurState || STATE_TAKE_DAMAGE == m_eCurState || STATE_DEAD == m_eCurState || true == m_bPowerOverwhelming || 0 >= m_fHP)
 	{
 		return 0.f;
@@ -655,11 +677,30 @@ _float CPlayer::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamage
 
 	if (true == m_bShieldMode)
 	{
+		_Vector DamageDir = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		if (0.f == XMVectorGetX(XMVector3Length(vDamageDir)))
+		{
+			DamageDir = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		}
+
 		_int iSelectSoundFileIndex = rand() % 2;
 		_tchar pSoundFile[MAXLEN] = TEXT("");
 		swprintf_s(pSoundFile, TEXT("Jino_Raji_Shield_Block_%d.wav"), iSelectSoundFileIndex);
 		g_pGameInstance->Play3D_Sound(pSoundFile, m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-		return 0.f;
+
+
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		m_pJYTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS,
+			m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)
+			+ XMVectorSet(0, 0.75f, 0, 0) - DamageDir * 3.5f);
+		m_pJYTextureParticleTransform->LookDir(-DamageDir);
+		m_pJYTextureParticleTransform->Turn_CW(m_pJYTextureParticleTransform->Get_MatrixState_Normalized(CTransform::STATE_RIGHT), XMConvertToRadians(85.f));
+
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[9]);
+		pUtil->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[10]);
+
+		return -2.f;
 	}
 
 	if (0.f < fDamageAmount)
@@ -709,6 +750,17 @@ _float CPlayer::Apply_Damage(CGameObject * pTargetObject, _float fDamageAmount, 
 void CPlayer::Move_OppositeDir()
 {
 
+}
+
+void CPlayer::Set_State_Ending()
+{
+	m_iEndingState = 0;
+	m_eCurState = STATE_ENDING;
+	m_pModel->Change_AnimIndex(BASE_ANIM_WALK_F);
+	m_pTransformCom->Set_MoveSpeed(2.f);
+	m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, -1.f, 0.f));
+	m_fAnimSpeed = 0.5f;
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, 30.14f, 335.7f));
 }
 
 void CPlayer::Set_State_FirstStart()
@@ -2306,6 +2358,89 @@ HRESULT CPlayer::Update_State_Dead(_double fDeltaTime)
 	return _int();
 }
 
+HRESULT CPlayer::Update_State_Ending(_double fDeltaTime)
+{
+	switch (m_iEndingState)
+	{
+	case 0:
+	{
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+
+		m_pMainCameraTransform->MovetoTarget_ErrRange(_float3(101.f, 36.f, 326.7f).XMVector(), fDeltaTime * 2.f, 0.001f);
+
+		if (326.7f >= XMVectorGetZ(vPos))
+		{
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, 30.14f, 326.7f));
+			m_pModel->Change_AnimIndex(BASE_ANIM_IDLE);
+			m_iEndingState = 1;
+		}
+		else
+		{
+			m_pTransformCom->Move_Forward(fDeltaTime, m_pNavigationCom);
+		}
+
+		vPos = XMVectorSetZ(vPos, XMVectorGetZ(vPos) - 20.f);
+		_Vector vLookDir = XMVector3Normalize(vPos - m_pMainCamera->Get_CamPos().XMVector());
+		m_pMainCameraTransform->Turn_Dir(vLookDir, 0.9f, 0.1f);
+
+		break;
+	}
+	case 1:
+	{
+		m_pMainCameraTransform->MovetoTarget_ErrRange(_float3(101.f, 36.f, 326.7f).XMVector(), fDeltaTime * 2.f, 0.001f);
+		_Vector vCamPos = m_pMainCameraTransform->Get_MatrixState(CTransform::STATE_POS);
+		if (326.7f >= XMVectorGetZ(vCamPos))
+		{
+			m_pMainCameraTransform->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, 36.f, 326.7f));
+			m_iEndingState = 2;
+			m_fDelayTime = 2.f;
+		}
+
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vDist = XMVector3Length(vPos - m_pMainCamera->Get_CamPos().XMVector());
+
+		/*if (3.f >= XMVectorGetX(vDist))
+		{
+			m_pMainCameraTransform->Turn_Dir(XMVectorSet(0.f, 0.f, -1.f, 0.f), 0.9f);
+		}
+		else
+		{*/
+			vPos = XMVectorSetZ(vPos, XMVectorGetZ(vPos) - 20.f);
+			vPos = XMVectorSetY(vPos, 36.f);
+			_Vector vLookDir = XMVector3Normalize(vPos - m_pMainCamera->Get_CamPos().XMVector());
+			m_pMainCameraTransform->Turn_Dir(vLookDir, 0.9f, 0.1f);
+		//}
+	
+		break;
+	}
+	case 2:
+	{
+		_Vector vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vDist = XMVector3Length(vPos - m_pMainCamera->Get_CamPos().XMVector());
+		if (5.f >= XMVectorGetX(vDist))
+		{
+			m_fDelayTime -= (_float)fDeltaTime;
+			if (0.f >= m_fDelayTime)
+			{
+				m_iEndingState = 3;
+
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
+				static_cast<CScene_Stage5*>(g_pGameInstance->Get_NowScene())->Start_Ending();
+			}
+			m_pMainCameraTransform->Turn_Dir(XMVectorSet(0.f, 0.f, -1.f, 0.f), 0.9f, 0.1f);
+		}
+		else
+		{
+			_Vector vLookDir = XMVector3Normalize(vPos - m_pMainCamera->Get_CamPos().XMVector());
+			m_pMainCameraTransform->Turn_Dir(vLookDir, 0.9f, 0.1f);
+		}
+		break;
+	}
+	}
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Update_Collider(_double fDeltaTime)
 {
 	m_pCollider->Update_ConflictPassedTime(fDeltaTime);
@@ -3273,6 +3408,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 		//// Main Attack ////
 	case SPEAR_ANIM_MAIN_ATK_COMBO_0:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
+
 		// Play Sound
 		if (false == m_bOncePlaySwingSound && 0.4f < fAnimPlayRate)
 		{
@@ -3351,6 +3488,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+
 		// Play Sound
 		if (false == m_bOncePlaySwingSound && 0.6f < fAnimPlayRate)
 		{
@@ -3427,6 +3566,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_3();
 
 
@@ -3548,6 +3689,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_3();
 
 		// Play Sound
@@ -3671,6 +3814,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+
 		// Play Sound
 		if (false == m_bOncePlaySwingSound && 0.15f < fAnimPlayRate)
 		{
@@ -3758,6 +3903,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
+
 		// Play Sound
 		if (false == m_bOncePlaySwingSound && 0.035f < fAnimPlayRate)
 		{
@@ -3863,6 +4010,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	//// Power Attack ////
 	case SPEAR_ANIM_POWER_ATK_COMBO_0:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+
 		if (true == m_bActionSwitch)
 		{
 			m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_2();
@@ -3970,6 +4119,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_1:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+
 		if (false == m_bOncePlaySwingSound && 0.2f < fAnimPlayRate)
 		{
 			m_bOncePlaySwingSound = true;
@@ -3994,6 +4145,7 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 			tSpearWaveDesc.fStartPos.y += 0.8f;
 			tSpearWaveDesc.fLookDir = XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK));
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill), TAG_OP(Prototype_PlayerSkill_SpearWave), &tSpearWaveDesc);
+			(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerSkill)))->Set_Damage(m_pPlayerWeapons[WEAPON_SPEAR - 1]->Get_WeaponDamage());
 		}
 		//
 
@@ -4053,6 +4205,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+
 		if (false == m_bOncePlaySwingSound && 0.4f < fAnimPlayRate)
 		{
 			m_bOncePlaySwingSound = true;
@@ -4189,6 +4343,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+
 		// Active Damage Collider
 		if (true == m_bActionSwitch)
 		{
@@ -4306,6 +4462,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+
 		if (false == m_bOncePlaySwingSound && 0.2f < fAnimPlayRate)
 		{
 			m_bOncePlaySwingSound = true;
@@ -4392,6 +4550,8 @@ void CPlayer::Attack_Spear(_double fDeltaTime)
 	break;
 	case SPEAR_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+
 		if (true == m_bOncePlaySwingSound)
 		{
 			m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_1();
@@ -4547,6 +4707,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_NormalReady);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
 			}
 			else if (0.96f <= m_pModel->Get_PlayRate())
 			{
@@ -4622,6 +4783,9 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				}
 				else
 				{
+					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
+					pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+
 					g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Charging_Shoot.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
 					if (mMeshParticle)
 					{
@@ -4782,18 +4946,21 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 0);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
 
 				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 1);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
 
 				eWeaponDesc.eAttachedDesc.Initialize_AttachedDesc(this, "skd_r_palm", _float3(1, 1, 1), _float3(0, 0, 0), _float3(0.f, 0.f, 0.0f));
 				eWeaponDesc.eWeaponState = CPlayerWeapon::EWeaponState::STATE_EQUIP;
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_0(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK), 2);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
 				//
 
 			}
@@ -4939,6 +5106,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 					pBowArrow->Set_State_PowerShot_Combo_1(m_pTransformCom->Get_MatrixState(CTransform::STATE_LOOK));
+					pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
 				}
 			}
 			else if (0.806f < fAnimPlayRate)
@@ -5046,6 +5214,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 10.f);
+					pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 				}
 			}
 			else if (false == m_bAnimChangeSwitch && 0.6 < fAnimPlayRate)
@@ -5069,6 +5238,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 15.f);
+					pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 				}
 			}
 			else if (false == m_bAnimChangeSwitch && 0.5 < fAnimPlayRate)
@@ -5092,6 +5262,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 					g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 					CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 					pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 20.f);
+					pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 				}
 			}
 			else if (false == m_bAnimChangeSwitch && 0.375 < fAnimPlayRate)
@@ -5203,14 +5374,17 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 10.f);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 15.f);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 
 				g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 				pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 				pBowArrow->Set_State_PowerShot_Combo_2(XMVector3Normalize(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_LOOK)), 20.f);
+				pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
 			}
 
 
@@ -5329,7 +5503,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		//// Main Attack ////
 	case SWORD_ANIM_MAIN_ATK_COMBO_0:
 	{
-
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
 
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.2f < fAnimPlayRate)
@@ -5416,6 +5591,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_1:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.5f < fAnimPlayRate)
 		{
@@ -5515,6 +5693,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_2:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+
 		m_pPlayerWeapons[WEAPON_SWORD - 1]->DeActive_Collision_1();
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.45f < fAnimPlayRate && m_pModel->Get_PlayRate() < 0.512f)
@@ -5668,6 +5849,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 2);
+
 		//m_pPlayerWeapons[WEAPON_SWORD - 1]->DeActive_Collision_1();
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate && m_pModel->Get_PlayRate() < 0.357f)
@@ -5819,6 +6003,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 1);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.2f < fAnimPlayRate)
 		{
@@ -5913,6 +6100,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_MAIN_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_MAIN, 0);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.2f < fAnimPlayRate)
 		{
@@ -6020,6 +6210,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	//// Power Attack ////
 	case SWORD_ANIM_POWER_ATK_COMBO_0:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
 		{
@@ -6103,6 +6296,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+
 		m_bOnNavigation = true;
 
 		// 
@@ -6185,6 +6381,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.3f < fAnimPlayRate)
 		{
@@ -6293,6 +6492,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_0_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 0);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate)
 		{
@@ -6381,6 +6583,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_1_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 1);
+
 		m_bOnNavigation = true;
 
 		if (0.1f > fAnimPlayRate)
@@ -6471,6 +6676,9 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 	break;
 	case SWORD_ANIM_POWER_ATK_COMBO_2_JUMPATTACK:
 	{
+		m_pPlayerWeapons[WEAPON_SWORD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+		m_pPlayerWeapons[WEAPON_SHIELD - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_STRONG, 2);
+
 		// Play Sound
 		if (false == m_bOncePlaySound && 0.05f < fAnimPlayRate)
 		{
@@ -6666,6 +6874,8 @@ void CPlayer::Javelin(_double fDeltaTime)
 
 void CPlayer::Throw_Spear(_double fDeltaTime)
 {
+	m_pPlayerWeapons[WEAPON_SPEAR - 1]->Set_WeaponDamage(CPlayerWeapon::ATTACK_SUB, 0);
+
 	if (0.588f <= m_pModel->Get_PlayRate())
 	{
 		if (true == m_bPressedUtilityKey)
@@ -6755,6 +6965,12 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 		m_pPlayerWeapons[WEAPON_SPEAR - 1]->DeActive_Collision_4();
 		m_bOncePlaySound = false;
 		m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
+		
+		if (m_fMaxHP > Get_NowHP())
+		{ 
+			Add_NowHP(1.f);
+			m_pHPUI->Set_ADD_HitCount(-1);
+		}
 	}
 }
 
@@ -6844,6 +7060,7 @@ void CPlayer::Shelling(_double fDeltaTime)
 			CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 			pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityShot);
 			pBowArrow->Set_TargetPos(m_pShellingSkillRange->Get_AttackPoint());
+			pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_SUB, 0);
 			m_pMainCamera->Start_CameraShaking_Fov(58.f, 2.f, 0.03f, true);
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Bow_Shelling_Shoot.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
@@ -6900,6 +7117,7 @@ void CPlayer::Shot_Shelling(_double fDeltaTime)
 		g_pGameInstance->Add_GameObject_To_Layer(g_pGameInstance->Get_TargetSceneNum(), TAG_LAY(Layer_PlayerWeapon), TAG_OP(Prototype_PlayerWeapon_Arrow), &eWeaponDesc);
 		CPlayerWeapon_Arrow* pBowArrow = static_cast<CPlayerWeapon_Arrow*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerWeapon)));
 		pBowArrow->Set_State(CPlayerWeapon_Arrow::Arrow_State_UtilityReady);
+		pBowArrow->Set_WeaponDamage(CPlayerWeapon::ATTACK_SUB, 0);
 	}
 }
 
@@ -6909,6 +7127,11 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 
 	if (0.98f <= m_pModel->Get_PlayRate())
 	{
+		if (m_fMaxHP > Get_NowHP())
+		{
+			Add_NowHP(1.f);
+			m_pHPUI->Set_ADD_HitCount(-1);
+		}
 		Set_State_IdleStart(fDeltaTime);
 		m_bAnimChangeSwitch = false;
 	}
@@ -7333,14 +7556,20 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	else if (fAnimPlayRate > 0.8f)
 	{
 		//m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID::POSTPROCESSING_CAMMOTIONBLUR, false);
+		static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->DeActive_Collision_3();
 	}
 
 	if (0.98f <= fAnimPlayRate)
 	{
+		if (m_fMaxHP > Get_NowHP())
+		{
+			Add_NowHP(1.f);
+			m_pHPUI->Set_ADD_HitCount(-1);
+		}
+
 		m_bAnimChangeSwitch = false;
 		Set_State_IdleStart(fDeltaTime);
 		static_cast<CPlayerWeapon_Shield*>(m_pPlayerWeapons[WEAPON_SHIELD - 1])->End_UltimateMode();
-		static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->DeActive_Collision_3();
 		m_bActive_ActionCameraShake = true;
 		m_bOncePlaySound = false;
 		m_bActionSwitch = false;
@@ -9090,6 +9319,7 @@ HRESULT CPlayer::SetUp_EtcInfo()
 
 	Set_LimLight_N_Emissive(_float4(0, 0, 0, 0), _float4(0.5f, 0, 0, 0));
 
+	m_pHipNode = m_pModel->Get_HierarchyNode("skd_hip");
 	return S_OK;
 }
 

@@ -51,7 +51,7 @@ HRESULT CScene_Stage6::Initialize()
 	// #RICK 병합시 수정
 
 	//EH
-	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
 	
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
@@ -59,7 +59,9 @@ HRESULT CScene_Stage6::Initialize()
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_9.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
 
 
@@ -684,7 +686,7 @@ HRESULT CScene_Stage6::Ready_Layer_InteractObject(const _tchar * pLayerTag)
 {
 	CElevator::ELEVATORDESC tElevatorDesc;
 	tElevatorDesc.fStartPos = _float3(169.314f, 56.6f, 157.903f);
-	tElevatorDesc.fDestPos = _float3(169.314f, 44.735f, 157.903f);
+	tElevatorDesc.fDestPos = _float3(169.314f, 43.820f, 157.903f);
 	tElevatorDesc.fRotation = _float3(0.f, XMConvertToRadians(180.f), 0.f);
 	tElevatorDesc.fScale = _float3(1.f, 1.f, 1.f);
 	tElevatorDesc.fMoveSpeed = 5.f;

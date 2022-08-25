@@ -160,7 +160,7 @@ void CPlayerWeapon_Shield::CollisionTriger(CCollider * pMyCollider, _uint iMyCol
 		GetSingle(CUtilityMgr)->PlusSwordshieldSkillPersent(1.f);
 
 		_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
-		if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+		if (0.f > pConflictedObj->Take_Damage(this, m_fDamage, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 		{
 			GetSingle(CUtilityMgr)->SlowMotionStart(2.f, 0.02f);
 		}
@@ -188,7 +188,7 @@ void CPlayerWeapon_Shield::Dissolve_Out(_double fTargetTime)
 
 void CPlayerWeapon_Shield::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
 {
-	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_FireSkillPointArry();
+	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_LightningSkillPointArry();
 
 	switch (eAttackType)
 	{
@@ -452,6 +452,20 @@ HRESULT CPlayerWeapon_Shield::SetUp_Components()
 
 HRESULT CPlayerWeapon_Shield::SetUp_EtcInfo()
 {
+
+	// Setup Damage
+	m_Arr_MainAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_MainAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_MainAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_MainAttackDamage[3] = { 2.f, 2.f, 3.f };
+
+	m_Arr_StrongAttackDamage[0] = { 1.f, 1.f, 2.f };
+	m_Arr_StrongAttackDamage[1] = { 1.f, 2.f, 2.f };
+	m_Arr_StrongAttackDamage[2] = { 1.f, 2.f, 3.f };
+	m_Arr_StrongAttackDamage[3] = { 2.f, 2.f, 3.f };
+
+	m_fSubAttackDamage = 1.f;
+	//
 	return S_OK;
 }
 

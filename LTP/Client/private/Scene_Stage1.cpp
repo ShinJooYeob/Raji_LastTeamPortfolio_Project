@@ -39,7 +39,7 @@ HRESULT CScene_Stage1::Initialize()
 
 	//FAILED_CHECK(Ready_TriggerObject(L"Stage1_Instance.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
-	FAILED_CHECK(Ready_TriggerObject(L"Stage1_0.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
+	//FAILED_CHECK(Ready_TriggerObject(L"Stage1_0.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
 	//TestMeshInstance2
 	//L"Stage1_Instance.dat"
@@ -61,6 +61,7 @@ HRESULT CScene_Stage1::Initialize()
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_6.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_7.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 	FAILED_CHECK(Ready_PostPorcessing());

@@ -268,7 +268,7 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 		if (pMyCollider == m_pCollider_Ultimate)
 		{
 			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-			pConflictedCollider->Set_Conflicted(0.1f);
+			pConflictedCollider->Set_Conflicted(0.2f);
 		}
 		else
 		{
@@ -276,7 +276,7 @@ void CPlayerWeapon_Sword::CollisionTriger(CCollider * pMyCollider, _uint iMyColl
 
 			pUtil->PlusSwordshieldSkillPersent(1.f);
 
-			if (0.f > pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
+			if (0.f > pConflictedObj->Take_Damage(this, m_fDamage, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower))
 			{
 				pUtil->SlowMotionStart(2.f, 0.02f);
 			}
@@ -340,7 +340,7 @@ void CPlayerWeapon_Sword::EffectParticleOn(_uint iIndex, void* pArg)
 
 void CPlayerWeapon_Sword::Set_WeaponDamage(EAttackType eAttackType, _int iComboCount)
 {
-	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_FireSkillPointArry();
+	int* pSkillPoint = GetSingle(CUtilityMgr)->Get_LightningSkillPointArry();
 
 	switch (eAttackType)
 	{

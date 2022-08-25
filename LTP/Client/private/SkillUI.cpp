@@ -188,16 +188,15 @@ HRESULT CSkillUI::Initialize_Clone(void * pArg)
 
 	m_SkillNameFont.fAngle = 0.f;
 	m_SkillNameFont.szString = L"";
-	m_SkillNameFont.vPosition = _float2(970.f, 145.f);
+	m_SkillNameFont.vPosition = _float2(950.f, 150.f);// _float2(970.f, 145.f);
 	m_SkillNameFont.vColor = _float4(1.f, 1.f, 1.f, 1.f);
-	m_SkillNameFont.vFontScale = _float2(0.8f);
+	m_SkillNameFont.vFontScale = _float2(0.4f);//_float2(0.8f);
 
 	m_SkillExplanationFont.fAngle = 0.f;
 	m_SkillExplanationFont.szString = L"";
-	m_SkillExplanationFont.vPosition = _float2(965.f, 200.f);
+	m_SkillExplanationFont.vPosition = _float2(830.f, 230.f);// _float2(965.f, 200.f);
 	m_SkillExplanationFont.vColor = _float4(1.f, 1.f, 1.f, 1.f);
-	m_SkillExplanationFont.vFontScale = _float2(0.5f);
-
+	m_SkillExplanationFont.vFontScale = _float2(0.3f); // _float2(0.5f);
 
 	return S_OK;
 }
@@ -214,7 +213,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 	m_bIsSkillExplanation = false;
 	m_SkillNameFont.szString = L"";
 	m_SkillExplanationFont.szString = L"";
-	m_SkillExplanationFont.vPosition = _float2(965.f, 230.f);
+	//m_SkillExplanationFont.vPosition = _float2(965.f, 230.f);
 	//m_SkillNameFont.vPosition = _float2(965.f, 145.f);
 
 	_float2				MousePos;
@@ -1114,13 +1113,13 @@ void CSkillUI::DrawSkillName(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillNameFont.szString = L"test";
+			m_SkillNameFont.szString = L"비슈누의 피";
 			break;
 		case 1:
-			m_SkillNameFont.szString = L"test1";
+			m_SkillNameFont.szString = L"비슈누의 뼈";
 			break;
 		case 2:
-			m_SkillNameFont.szString = L"test2";
+			m_SkillNameFont.szString = L"비슈누의 뇌";
 			break;
 		}
 	}
@@ -1129,13 +1128,13 @@ void CSkillUI::DrawSkillName(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillNameFont.szString = L"test3";
+			m_SkillNameFont.szString = L"드루가의 피";
 			break;
 		case 1:
-			m_SkillNameFont.szString = L"test4";
+			m_SkillNameFont.szString = L"드루가의 뼈";
 			break;
 		case 2:
-			m_SkillNameFont.szString = L"test5";
+			m_SkillNameFont.szString = L"드루가의 뇌";
 			break;
 		}
 	}
@@ -1144,13 +1143,13 @@ void CSkillUI::DrawSkillName(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillNameFont.szString = L"test6";
+			m_SkillNameFont.szString = L"시바신의 피";
 			break;
 		case 1:
-			m_SkillNameFont.szString = L"test7";
+			m_SkillNameFont.szString = L"시바신의 뼈";
 			break;
 		case 2:
-			m_SkillNameFont.szString = L"test8";
+			m_SkillNameFont.szString = L"시바신의 뇌";
 			break;
 		}
 	}
@@ -1163,13 +1162,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Test YOU1";
+			m_SkillExplanationFont.szString = L"비슈누의 맑은 피를 활에 발라 신성도를 높입니다.\n                   (좌클릭 공격력 증가)";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Test YOU2";
+			m_SkillExplanationFont.szString = L"비슈누의 맑은 뼈로 활을 갈아 강인도를 높입니다.\n                   (우클릭 공격력 증가)";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Test YOU3";
+			m_SkillExplanationFont.szString = L"비슈누의 맑은 정신과 교감을 하여 신앙심을 \n높입니다.\n                    (궁극기 충전률 증가)";
 			break;
 		}
 	}
@@ -1178,13 +1177,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Test YOU4";
+			m_SkillExplanationFont.szString = L"드루가의 타는 피를 창에 발라 신성도를 높입니다.\n                   (좌클릭 공격력 증가)";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Test YOU5";
+			m_SkillExplanationFont.szString = L"드루가의 타는 뼈로 창을 갈아 강인도를 높입니다.\n                   (우클릭 공격력 증가)";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Test YOU6";
+			m_SkillExplanationFont.szString = L"드루가의 타는 정신과 교감을 하여 신앙심을 \n높입니다.\n                    (궁극기 충전률 증가)";
 			break;
 		}
 	}
@@ -1193,13 +1192,13 @@ void CSkillUI::DrawSkillExplanation(_int iSkillNum)
 		switch (iSkillNum)
 		{
 		case 0:
-			m_SkillExplanationFont.szString = L"Test YOU7";
+			m_SkillExplanationFont.szString = L"시바신의 짜릿한 피를 칼에 발라 신성도를 \n높입니다.\n                   (좌클릭 공격력 증가)";
 			break;
 		case 1:
-			m_SkillExplanationFont.szString = L"Test YOU8";
+			m_SkillExplanationFont.szString = L"시바신의 짜릿한 뼈로 칼을 갈아 강인도를 \n높입니다.\n                   (우클릭 공격력 증가)";
 			break;
 		case 2:
-			m_SkillExplanationFont.szString = L"Test YOU9";
+			m_SkillExplanationFont.szString = L"시바신의 짜릿한 정신과 교감을 하여 신앙심을 \n높입니다.\n                    (궁극기 충전률 증가)";
 			break;
 		}
 	}
@@ -1209,10 +1208,10 @@ HRESULT CSkillUI::Render_Fonts()
 {
 	CGameInstance* pInstance = g_pGameInstance;
 
-	pInstance->Render_Font(L"VinerFonts", m_SkillNameFont.szString.c_str(), m_SkillNameFont.vPosition,
+	pInstance->Render_Font(L"JunguFonts", m_SkillNameFont.szString.c_str(), m_SkillNameFont.vPosition,
 		m_SkillNameFont.vColor, m_SkillNameFont.fAngle, m_SkillNameFont.vFontScale);
-
-	pInstance->Render_Font(L"VinerFonts", m_SkillExplanationFont.szString.c_str(), m_SkillExplanationFont.vPosition,
+	 
+	pInstance->Render_Font(L"JunguFonts", m_SkillExplanationFont.szString.c_str(), m_SkillExplanationFont.vPosition,
 		m_SkillExplanationFont.vColor, m_SkillExplanationFont.fAngle, m_SkillExplanationFont.vFontScale);
 	
 

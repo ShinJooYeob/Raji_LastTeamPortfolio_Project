@@ -161,7 +161,7 @@ void CPlayerWeapon_Bow::CollisionTriger(CCollider * pMyCollider, _uint iMyCollid
 		{
 			_Vector vDamageDir = XMVector3Normalize(pConflictedCollider->Get_ColliderPosition(iConflictedObjColliderIndex).XMVector() - m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));
 			pConflictedObj->Take_Damage(this, 1.f, vDamageDir, m_bOnKnockbackCol, m_fKnockbackColPower);
-			pConflictedCollider->Set_Conflicted(0.2f);
+			pConflictedCollider->Set_Conflicted(0.5f);
 		}
 	}
 }
@@ -455,13 +455,13 @@ HRESULT CPlayerWeapon_Bow::SetUp_Collider()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider), TAG_COM(Com_Collider), (CComponent**)&m_pCollider_Ultimate));
 	COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(12.5f);
+	ColliderDesc.vScale = _float3(10.f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
 
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-	ColliderDesc.vScale = _float3(12.f);
+	ColliderDesc.vScale = _float3(9.5f);
 	ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 	ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
 	FAILED_CHECK(m_pCollider_Ultimate->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

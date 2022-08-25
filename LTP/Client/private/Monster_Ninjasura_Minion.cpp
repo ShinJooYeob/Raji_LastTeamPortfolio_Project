@@ -214,11 +214,22 @@ _float CMonster_Ninjasura_Minion::Take_Damage(CGameObject * pTargetObject, _floa
 		if (bKnockback == false)
 		{
 			m_bKnockbackOn = false;
-			m_iOncePattern = 40;
+
+			_int iRand_Num = rand() % 3;
+			if (2 == iRand_Num)
+			{
+				m_iOncePattern = 40;
+			}
 		}
 		else {
 			m_bKnockbackOn = true;
-			m_iOncePattern = 40;
+
+			_int iRand_Num = rand() % 3;
+			if (2 == iRand_Num)
+			{
+				m_iOncePattern = 40;
+				m_iOncePattern = 40;
+			}
 
 			XMStoreFloat3(&m_fKnockbackDir, vDamageDir);
 		}

@@ -65,7 +65,7 @@ public:
 	_bool				Get_CamLock() { return m_bCamLock; }
 	_float3				Get_FixLookDir() { return m_fFixLookDir; }
 	CTransform*			Get_CamTransformCom() { return m_pTransform; }
-	_bool				Get_CamPos() { m_pTransform->Get_MatrixState(CTransform::STATE_POS); }
+	_float3				Get_CamPos() { return m_pTransform->Get_MatrixState(CTransform::STATE_POS); }
 
 public:
 	_bool				CamActionStart(CAMERAACTION Act);
@@ -175,6 +175,8 @@ private:
 
 	_float						m_fTarget_CamMoveWeight = 0.9f;
 	_float						m_fCur_CamMoveWeight = 0.9f;
+
+	_bool						m_bOnceSwitch = false;
 
 private: /* Target Info */
 	CGameObject*				m_pFocusTarget = nullptr;

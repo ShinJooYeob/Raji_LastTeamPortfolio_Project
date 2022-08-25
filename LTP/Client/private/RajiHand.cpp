@@ -63,12 +63,22 @@ _int CRajiHand::Update(_double fDeltaTime)
 		else if (0.48f >= fAnimPlayRate && 0.3f <= fAnimPlayRate)
 		{
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Set_MoveSpeed(0.5f);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->MovetoTarget_ErrRange(XMVectorSet(101.f, 36.f, 326.7f, 1.f), fDeltaTime, 0.05f);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->MovetoTarget_ErrRange(XMVectorSet(101.f, 36.f, 326.7f, 1.f), fDeltaTime, 0.01f);
+			_float3 fCamPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamPos();
+			if (36.f <= fCamPos.y)
+			{
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(101.f, 36.f, 326.7f, 1.f));
+			}
 		}
 		else if (0.266f >= fAnimPlayRate)
 		{
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Set_MoveSpeed(1.f);
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->MovetoTarget_ErrRange(XMVectorSet(101.f, 35.46f, 326.7f, 1.f), fDeltaTime, 0.05f);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->MovetoTarget_ErrRange(XMVectorSet(101.f, 35.46f, 326.7f, 1.f), fDeltaTime, 0.01f);
+			_float3 fCamPos = GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamPos();
+			if (35.46f >= fCamPos.y)
+			{
+				GetSingle(CUtilityMgr)->Get_MainCamera()->Get_CamTransformCom()->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(101.f, 35.46f, 326.7f, 1.f));
+			}
 		}
 		else if (0.706f <= fAnimPlayRate && 0.806f >= fAnimPlayRate)
 		{

@@ -102,8 +102,10 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 		m_pArms.push_back(Arm);
 	}
 
-	m_fMaxHP = 10.f;
-	m_fHP = 10.f;
+	// JH
+	m_fMaxHP = 100.f;
+	m_fHP = m_fMaxHP;
+	//
 
 	CHpUI::HPDesc HpDesc;
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
@@ -177,10 +179,11 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		
 		Set_IsDead();
 		
-		// JH
-		static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
-		GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
-		//
+		//// JH
+		//static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
+		//static_cast<CPlayer*>(m_pPlayerObj)->Set_State_Ending();
+		//GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+		////
 	}
 
 	if (m_fHP <= 0 && !m_bIsHit)
@@ -515,7 +518,7 @@ void CMahabalasura::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIn
 
 _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_fHP -= fDamageAmount;
+	m_fHP -= 1;// fDamageAmount;
 
 	m_pHPUI->Set_ADD_HitCount();
 
@@ -1019,6 +1022,7 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 		
 		if (false == m_bOncePlaySound)
 		{
+			g_pGameInstance->Stop_ChannelSound(CHANNEL_MONSTER);
 			g_pGameInstance->Play3D_Sound(L"Jino_MrM_Dead_0.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 			m_bOncePlaySound = true;
 		}
@@ -1093,9 +1097,17 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 		if (0.f >= m_fDelayTime)
 		{
 			Set_IsDead();
-			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
-			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
-			static_cast<CScene_Stage5*>(g_pGameInstance->Get_NowScene())->Start_Ending();
+
+
+			//GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
+			//static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
+			//static_cast<CScene_Stage5*>(g_pGameInstance->Get_NowScene())->Start_Ending();
+			// JH
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_Targeting(nullptr);
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(nullptr);
+			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_Ending();
+			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
+			//
 		}
 	}
 		break;

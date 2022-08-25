@@ -542,7 +542,7 @@ HRESULT CModel::Change_AnimIndex_ReturnTo_Must(_uint iAnimIndex, _uint iReturnIn
 
 _double CModel::Get_PlayRate()
 {
-	return m_vecAnimator[m_iNowAnimIndex]->Get_PlayRate(m_NowPlayTimeAcc);
+ 	return m_vecAnimator[m_iNowAnimIndex]->Get_PlayRate(m_NowPlayTimeAcc);
 }
 
 void CModel::Set_OldAnimIndex(_uint iAnimIndex)
@@ -1057,6 +1057,27 @@ _fMatrix CModel::Get_BoneMatrix(const char * pBoneName)
 	BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
 
 	return BoneMatrix;
+}
+
+_fMatrix CModel::Get_BoneMatrix_byNode(CHierarchyNode * pHierarchyNode)
+{
+	_Matrix BoneMatrix = XMMatrixIdentity();
+
+	if (nullptr == pHierarchyNode)
+		return BoneMatrix;
+
+	BoneMatrix = pHierarchyNode->Get_UpdatedMatrix() * m_DefaultPivotMatrix.XMatrix();
+
+	BoneMatrix.r[0] = XMVector3Normalize(BoneMatrix.r[0]);
+	BoneMatrix.r[1] = XMVector3Normalize(BoneMatrix.r[1]);
+	BoneMatrix.r[2] = XMVector3Normalize(BoneMatrix.r[2]);
+
+	return BoneMatrix;
+}
+
+CHierarchyNode * CModel::Get_HierarchyNode(const char * pBoneName)
+{
+	return Find_HierarchyNode(pBoneName);
 }
 
 

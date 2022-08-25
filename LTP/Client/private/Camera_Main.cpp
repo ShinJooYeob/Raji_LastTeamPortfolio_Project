@@ -1017,7 +1017,12 @@ _int CCamera_Main::Update_Ending(_double fDeltaTime)
 		m_pTransform->LookDir(XMVectorSet(0.f, -0.f, -1.f, 0.f));
 
 		m_fDelayTime -= (_float)fDeltaTime;
-		if (0.f >= m_fDelayTime)
+		if (false == m_bOnceSwitch && 1.f >= m_fDelayTime)
+		{
+			m_bOnceSwitch = true;
+			g_pGameInstance->PlaySoundW(L"Jino_FallingHeadSound.wav", CHANNEL_PLAYER);
+		}
+		else if (0.f >= m_fDelayTime)
 		{
 			m_iCurState_EndingCutScene = 1;
 			m_fDelayTime = 1.f;
