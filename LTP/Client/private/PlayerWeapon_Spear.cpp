@@ -107,7 +107,7 @@ _int CPlayerWeapon_Spear::LateUpdate(_double fDeltaTimer)
 		Update_Trail(&mat, fDeltaTimer);
 	}
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 
 
@@ -121,6 +121,9 @@ _int CPlayerWeapon_Spear::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -132,6 +135,8 @@ _int CPlayerWeapon_Spear::Render()
 
 	FAILED_CHECK(m_pDissolveCom->Render(m_iPassNum));
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 	return _int();
 }
 
@@ -275,8 +280,6 @@ void CPlayerWeapon_Spear::EffectParticleOn(_uint iIndex, void * pArg)
 
 		if (m_pSpearNormalEffectTex != nullptr)
 			m_pSpearNormalEffectTex->Set_GonnabeDie();
-		m_vecTextureParticleDesc[0].bBillboard = false;
-		m_vecTextureParticleDesc[0].eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
 		GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTextureParticleDesc[0]);
 		m_pSpearNormalEffectTex = (CInstanceEffect*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Particle));
 	}
@@ -492,11 +495,13 @@ void CPlayerWeapon_Spear::Update_ParticleTransform()
 
 	_Matrix mat = m_tHandDesc.Caculate_AttachedBoneMatrix_BlenderFixed();
 	//_float3 TargetPos = mat.r[3] + mat.r[0] * -0.78f + mat.r[1] * -1.2f + mat.r[2] * -1.f;
-	_float3 TargetPos = mat.r[3] + mat.r[0] * -1.0f;
+
+	_float3 TargetPos = mat.r[3] + mat.r[0] * GetSingle(CUtilityMgr)->RandomFloat(-0.4f,-0.8f);
 
 
 	m_pTextureParticleTransform->Set_MatrixState(CTransform::STATE_POS, TargetPos);
-	m_pTextureParticleTransform->LookDir(-XMVector3Normalize(mat.r[2] + mat.r[0] * 0.2f + mat.r[1] * 0.1f));
+	m_pTextureParticleTransform->LookAt(m_pTextureParticleTransform->Get_MatrixState(CTransform::STATE_POS) 
+		+ GetSingle(CUtilityMgr)->RandomFloat3(_float3(-1.f), _float3(1.f)).XMVector());
 	
 
 
@@ -613,7 +618,7 @@ void CPlayerWeapon_Spear::Throw_Start(_fVector vThrowDir)
 	m_pTransformCom->LookDir(vThrowDir);
 	m_bThrowing = true;
 	m_bThrowDir = vThrowDir;
-	m_iPassNum = 13;
+	m_iPassNum = 17;
 	m_iCurAnim = 8;
 
 
@@ -673,7 +678,7 @@ void CPlayerWeapon_Spear::Throw_End()
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 	m_bThrowing = false;
 	m_bThrowDir = { 0.f, 0.f, 0.f };
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 }
 
@@ -793,7 +798,7 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_SubTransform), (CComponent**)&m_pTransformCom_Skill, &tDesc));
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;
@@ -811,7 +816,7 @@ HRESULT CPlayerWeapon_Spear::SetUp_Components()
 
 HRESULT CPlayerWeapon_Spear::SetUp_EtcInfo()
 {
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 
 	// Setup Damage
@@ -954,6 +959,10 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 	m_vecTextureParticleDesc[0].TotalParticleTime = 2.f;
 	m_vecTextureParticleDesc[0].FollowingTarget = m_pTextureParticleTransform;
 	m_vecTextureParticleDesc[0].iFollowingDir = FollowingDir_Look;
+	m_vecTextureParticleDesc[0].bBillboard = false;
+	m_vecTextureParticleDesc[0].eParticleTypeID = InstanceEffect_Fountain;
+	m_vecTextureParticleDesc[0].PowerRandomRange = _float2(0.5f, 1.f);
+	m_vecTextureParticleDesc[0].eInstanceCount = Prototype_VIBuffer_Point_Instance_64;
 
 	
 	//	1
@@ -1049,7 +1058,7 @@ HRESULT CPlayerWeapon_Spear::Ready_ParticleDesc()
 		tNIMEDesc.StartRot = GetSingle(CUtilityMgr)->RandomFloat(0, 360);
 		tNIMEDesc.RotationSpeedPerSec = 360.f;
 
-		tNIMEDesc.SizeSpeed = 4.95f;
+		tNIMEDesc.SizeSpeed = 6.55f;
 
 		tNIMEDesc.vSizingRUL = _float3(1, 1, 0);
 		tNIMEDesc.vSize = _float3(0.1f, 0.1f, 0.00001f);

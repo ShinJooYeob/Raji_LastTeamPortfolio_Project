@@ -110,8 +110,10 @@ _int CDemon_Tree::Update(_double fDeltaTime)
 		Pos.y = XMVectorGetY(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 		m_pTreeMeshs[m_iCompleteCount]->Set_ObjPos(Pos);
 
-		if (m_iCompleteCount == m_pTreeMeshs.size()-1)
+		if (m_iCompleteCount == m_pTreeMeshs.size() - 1)
+		{
 			m_bIsClear = true;
+		}
 		else 
 			m_iCompleteCount++;
 	}

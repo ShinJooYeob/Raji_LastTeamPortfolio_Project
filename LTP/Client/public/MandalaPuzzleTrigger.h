@@ -40,6 +40,8 @@ private:
 private:
 	class CCamera_Main*				m_pMainCamera;
 
+	_float						m_fPassedTime = 0;
+	_bool						m_bClearChecker = false;
 
 public:
 	static CMandalaPuzzleTrigger*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

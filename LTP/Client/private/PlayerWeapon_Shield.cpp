@@ -107,7 +107,7 @@ _int CPlayerWeapon_Shield::LateUpdate(_double fDeltaTimer)
 		break;
 	}
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_MOTION, m_pMotionTrail));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
@@ -122,6 +122,9 @@ _int CPlayerWeapon_Shield::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -132,6 +135,9 @@ _int CPlayerWeapon_Shield::Render()
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	FAILED_CHECK(m_pDissolveCom->Render(m_iPassNum));
+
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 
 	return _int();
 }
@@ -214,7 +220,7 @@ void CPlayerWeapon_Shield::Start_UltimateMode(_fVector fStartPos, _float fUltima
 	m_pTransformCom->Rotation_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), 0.f);
 	m_pTransformCom->Scaled_All(_float3(1.2f, 1.2f, 1.2f));
 	
-	m_iPassNum = 13;
+	m_iPassNum = 17;
 	m_iCurAnim = 1;
 	m_bUltimateMode = true;
 
@@ -224,7 +230,7 @@ void CPlayerWeapon_Shield::Start_UltimateMode(_fVector fStartPos, _float fUltima
 void CPlayerWeapon_Shield::End_UltimateMode()
 {
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 	m_bUltimateMode = false;
 }
@@ -234,7 +240,7 @@ void CPlayerWeapon_Shield::Start_SmashMode(_fVector vPutOnPos)
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vPutOnPos);
 	m_pTransformCom->Scaled_All(_float3(1.2f, 1.2f, 1.2f));
-	m_iPassNum = 13;
+	m_iPassNum = 17;
 	m_iCurAnim = 1;
 	m_bSmashMode = true;
 }
@@ -242,7 +248,7 @@ void CPlayerWeapon_Shield::Start_SmashMode(_fVector vPutOnPos)
 void CPlayerWeapon_Shield::End_SmashMode()
 {
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 	m_bSmashMode = false;
 	Change_Pivot(EShieldPivot::SHIELD_PIVOT_NORMAL);
@@ -256,7 +262,7 @@ void CPlayerWeapon_Shield::Start_ThrowMode(_fVector vStartPos, _float fThrowDist
 	m_pTransformCom->Set_MatrixState(CTransform::TransformState::STATE_POS, vStartPos);
 	m_pTransformCom->Scaled_All(_float3(1.2f, 1.2f, 1.2f));
 	 
-	m_iPassNum = 13;
+	m_iPassNum = 17;
 	m_iCurAnim = 1;
 	m_bThrowMode = true;
 
@@ -269,7 +275,7 @@ void CPlayerWeapon_Shield::End_ThrowMode()
 {
 	m_pTransformCom->Set_Matrix(XMMatrixIdentity());
 
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 	m_bThrowMode = false;
 
@@ -422,7 +428,7 @@ HRESULT CPlayerWeapon_Shield::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Transform), TAG_COM(Com_Transform), (CComponent**)&m_pTransformCom, &tDesc));
 
-	m_iPassNum = 9;
+	m_iPassNum = 19;
 	m_iCurAnim = 0;
 
 
@@ -435,7 +441,7 @@ HRESULT CPlayerWeapon_Shield::SetUp_Components()
 
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;

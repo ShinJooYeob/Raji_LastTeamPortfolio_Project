@@ -222,6 +222,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 	}
 	if (m_fHP <= 0)
 	{
+		m_bIsCombat = false;
 		m_bIsAttack = true;
 		m_pModel->Change_AnimIndex(3, 1.f);
 
@@ -1073,6 +1074,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 
 			g_pGameInstance->PlayBGM(L"Jino_Titan_BGM_0.wav");
+			m_bIsCombat = true;
 		}
 		else if (true == m_bOnceSwitch && 0.341f <= fAnimPlayRate && 0.512f > fAnimPlayRate)
 		{
@@ -2434,7 +2436,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect),
 						TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]);
 
-					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_Boss));
+					CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_PlayerEffect));
 					CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
 
 					CParticle_ColliderInOut::SETTINGCOLLIDERINOUT ColliderDesc;

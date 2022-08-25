@@ -5,7 +5,8 @@ BEGIN(Client)
 
 class CSkillUI final : public CGameObject
 {
-
+public:
+	enum UIEffectID { UEI_Spear, UEI_Bow, UEI_Sword, UEI_END };
 //public:
 //	enum WeaponType {WEAPON_BOW, WEAPON_SPEAR, WEAPON_SWORDSHIELD, WEAPON_END};
 private:
@@ -81,6 +82,9 @@ private:
 	vector<class CUI*> m_vSkillPoint_Sprouts2;
 	vector<class CUI*> m_vSkillPoint_Sprouts3;
 	vector<class CUI*> m_vSkillExplanations;
+
+
+	vector<class CUI*> m_vecUIEffect;
 
 private:
 	HRESULT Ready_Layer_UI();

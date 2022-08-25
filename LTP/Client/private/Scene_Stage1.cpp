@@ -306,7 +306,8 @@ HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	}
 
-
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, TAG_LAY(Layer_PlayerIndicator), TAG_OP(Prototype_Object_PlayerIndicator)));
+	
 	
 	return S_OK;
 }

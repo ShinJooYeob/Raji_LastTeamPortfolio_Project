@@ -168,13 +168,13 @@ VS_OUT_Noise VS_Rect_Noise(VS_IN In)
 
 
 	Out.texCoords1 = (Out.vTexUV * g_vScale.x);
-	Out.texCoords1 += noisingdir*(g_fTimer * g_vScrollSpeeds.x);
+	Out.texCoords1 += noisingdir *(g_fTimer * g_vScrollSpeeds.x);
 
 	Out.texCoords2 = (Out.vTexUV * g_vScale.y);
-	Out.texCoords2 += noisingdir*(g_fTimer * g_vScrollSpeeds.y);
+	Out.texCoords2 += noisingdir *(g_fTimer * g_vScrollSpeeds.y);
 
 	Out.texCoords3 = (Out.vTexUV * g_vScale.z);
-	Out.texCoords3 += noisingdir*(g_fTimer * g_vScrollSpeeds.z);
+	Out.texCoords3 += noisingdir *(g_fTimer * g_vScrollSpeeds.z);
 
 
 
@@ -764,6 +764,114 @@ PS_OUT_NOLIGHT PS_MAIN_RECT_Jino(PS_IN In)
 	return Out;
 }
 
+PS_OUT_NOLIGHT PS_UINoise_RECT(PS_IN_Noise In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	//if (length(In.vTexUV - float2(0.5f, 0.5f)) > 0.4f)
+	//	discard;
+
+	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
+	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
+	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
+
+	noise1 = (noise1 - 0.5f) * 2.0f;
+	noise2 = (noise2 - 0.5f) * 2.0f;
+	noise3 = (noise3 - 0.5f) * 2.0f;
+
+	noise1.xy = noise1.xy * distortion1.xy;
+	noise2.xy = noise2.xy * distortion2.xy;
+	noise3.xy = noise3.xy * distortion3.xy;
+
+	vector finalNoise = noise1 + noise2 + noise3;
+	float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale) + distortionBias);
+	float2 noiseCoords = saturate((finalNoise.xy * perturb) + In.vTexUV.xy);
+
+
+
+	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, noiseCoords.xy);
+	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
+
+	//if (g_UV_Y > noiseCoords.y)
+	//	alphaColor = 0;
+
+
+	fireColor *= g_vColor;
+	fireColor = pow(fireColor, 1. / 1.86181f);
+	fireColor.a = length(alphaColor.xyz) * g_vColor.a;
+	Out.vDiffuse = saturate(fireColor);
+
+	if (Out.vDiffuse.a < 0.1f)discard;
+
+
+	return Out;
+}
+
+PS_OUT_NOLIGHT PS_BrightChange(PS_IN_Noise In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+	//if (length(In.vTexUV - float2(0.5f, 0.5f)) > 0.4f)
+	//	discard;
+
+	vector noise1 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords1);
+	vector noise2 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords2);
+	vector noise3 = g_NoiseTexture.Sample(DefaultSampler, In.texCoords3);
+
+	noise1 = (noise1 - 0.5f) * 2.0f;
+	noise2 = (noise2 - 0.5f) * 2.0f;
+	noise3 = (noise3 - 0.5f) * 2.0f;
+
+	noise1.xy = noise1.xy * distortion1.xy;
+	noise2.xy = noise2.xy * distortion2.xy;
+	noise3.xy = noise3.xy * distortion3.xy;
+
+	vector finalNoise = noise1 + noise2 + noise3;
+	float perturb = saturate(((1.0f - length(In.vTexUV.xy)) * distortionScale) + distortionBias);
+	float2 noiseCoords = saturate((finalNoise.xy * perturb) + In.vTexUV.xy);
+
+
+
+	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, In.vTexUV);
+	vector alphaColor = g_SourTexture.Sample(ClampSampler, noiseCoords.xy);
+
+	//if (g_UV_Y > noiseCoords.y)
+	//	alphaColor = 0;
+
+
+	Out.vDiffuse = pow(fireColor, 1.f / (length(alphaColor.xyz)*2.f));
+	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vDiffuse.a = fireColor.a;
+	if (Out.vDiffuse.a < 0.1f)discard;
+
+
+	return Out;
+}
+PS_OUT_NOLIGHT PS_BrightChange2(PS_IN_Noise In)
+{
+	PS_OUT_NOLIGHT		Out = (PS_OUT_NOLIGHT)0;
+
+
+	vector fireColor = g_DiffuseTexture.Sample(ClampSampler, In.vTexUV);
+	if (fireColor.a < 0.1f)discard;
+
+	int Kinds = int(g_fTimer) % 2;
+	float fValue = g_fTimer - int(g_fTimer);
+
+	if (Kinds == 1)
+		fValue = 1.f - fValue;
+
+
+	Out.vDiffuse += fValue * 0.5f + 0.5f;
+	//Out.vDiffuse = pow(fireColor, 1.f / (1.f + fValue * 3.f));
+	Out.vDiffuse = saturate(Out.vDiffuse);
+	Out.vDiffuse.a = fireColor.a;
+
+
+	return Out;
+}
+
+
 technique11		DefaultTechnique
 {
 	pass Rect			//0
@@ -955,4 +1063,35 @@ technique11		DefaultTechnique
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_RECT_Jino();
 	}
+	pass UI_Noise		//18
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Rect_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_UINoise_RECT();
+	}
+	pass UI_BrightChage		//19
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Rect_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_BrightChange();
+	}	
+	pass UI_BrightChage2		//20
+	{
+		SetBlendState(AlphaBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(NonZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_Rect_Noise();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_BrightChange2();
+	}
+	
 }

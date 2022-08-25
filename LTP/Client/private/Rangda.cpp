@@ -590,6 +590,7 @@ void CRangda::Update_Direction(_double fDeltaTime)
 			static_cast<CPlayer*>(m_pPlayerObj)->Set_State_StopActionEnd();
 			m_pRendererCom->OnOff_PostPorcessing_byParameter(POSTPROCESSING_CAMMOTIONBLUR, false);
 			g_pGameInstance->PlayBGM(L"Jino_Rangda_BGM_1.wav");
+			m_bIsCombat = true;
 		}
 		else if (fAnimPlayRate > 0.43410852713  && iAnimChecker == 1)
 		{
@@ -1694,6 +1695,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 			Set_IsDead();
 
 			// JH
+			m_bIsCombat = false;
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(m_pPlayerObj);
 			static_cast<CScene_Stage3*>(g_pGameInstance->Get_NowScene())->Set_Change_NextScene();

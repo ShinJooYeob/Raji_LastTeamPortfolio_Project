@@ -40,14 +40,6 @@ _int CChiedtuan_Weapon::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(false, 5.5f);
-	}
-	if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	{
-		m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-	}
 
 
 	FAILED_CHECK(m_pDissolveCom->Update_Dissolving(fDeltaTime));

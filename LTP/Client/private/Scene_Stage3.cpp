@@ -285,6 +285,10 @@ HRESULT CScene_Stage3::Ready_Layer_Player(const _tchar * pLayerTag)
 	m_pMainCam->Set_CameraInitState(XMVectorSet(195.684082f, 33.2127151f, 58.4076653f, 1.f), XMVectorSet(-0.0105243996f, -0.613130927f, 0.789911389f, 0.f));
 	
 	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, TAG_LAY(Layer_UI_IMG), TAG_OP(Prototype_UI_PathArrow), &_float3(152.708f, 96.4f, 156.475f)));
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE3, TAG_LAY(Layer_PlayerIndicator), TAG_OP(Prototype_Object_PlayerIndicator)));
+
 	return S_OK;
 }
 

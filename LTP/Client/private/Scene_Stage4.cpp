@@ -359,6 +359,9 @@ HRESULT CScene_Stage4::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	pTransform->Set_Matrix(tt);*/
 
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE4, TAG_LAY(Layer_PlayerIndicator), TAG_OP(Prototype_Object_PlayerIndicator)));
+
+
 	return S_OK;
 }
 

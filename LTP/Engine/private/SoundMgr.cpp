@@ -582,11 +582,16 @@ void CSoundMgr::Stop_ChannelSound(CHANNELID eID)
 
 void CSoundMgr::Stop_AllChannel()
 {
-	for (_uint i = 0; i < MaxChannelCount; ++i) {
+	for (_uint i = 0; i < MaxChannelCount - BGMChannelCount; ++i) 
+	{
 
 		FMOD_Channel_Stop(m_pChannelArr[i]);
 		m_fPassedTimeArr[i] = 0;
 	}
+
+	m_bChangingBGM = true;
+	m_ChangingBGMTime = 0;
+	m_iBGMIndex = (m_iBGMIndex) ? 0 : 1;
 }
 
 _float CSoundMgr::Get_Channel_Volume(CHANNELID eID)

@@ -122,6 +122,7 @@ public:
 	void	Set_IceSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
 	void	Set_LightningSkillPointArry(_int iArrayNum, _int iCount) { m_FireSkillPoint[iArrayNum] = iCount; }
 	void	Set_SKillPoint(_int PointCount) { m_iSkillPoint = PointCount; }
+	void	Plus_SKillPoint(_int PointCount);
 	void	Set_SkillWeaponType(WeaponType Type) { m_eSkillWeaponType = Type; }
 
 public:
@@ -172,7 +173,7 @@ private:
 	_int		m_IceSkillPoint[3] = { 0,0,0 };
 	_int		m_LightningSkillPoint[3] = { 0,0,0 };
 
-	_int		m_iSkillPoint = 18;
+	_int		m_iSkillPoint = 0;
 
 	WeaponType  m_eSkillWeaponType = WEAPON_BOW;
 

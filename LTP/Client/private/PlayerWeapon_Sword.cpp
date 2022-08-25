@@ -42,26 +42,6 @@ _int CPlayerWeapon_Sword::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
-	{
-		m_ParticlePassedTime = 0;
-
-		m_ParticleTargetTime = m_vecMeshParticleDesc[0].TotalParticleTime;
-		m_vParticleMovingDir = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
-
-		m_pMeshParticleTransform->Set_IsOwnerDead(false);
-		m_pMeshParticleTransform->Set_MatrixState(CTransform::STATE_POS, m_pCollider->Get_ColliderPosition(4));
-
-		GetSingle(CUtilityMgr)->Create_MeshInstance(m_eNowSceneNum, m_vecMeshParticleDesc[0]);
-	}
-
-
-
-
-
-
-
-
 
 
 
@@ -199,7 +179,7 @@ _int CPlayerWeapon_Sword::LateUpdate(_double fDeltaTimer)
 	}
 
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD_DISTORT, m_pSwordTrail));
 
@@ -231,6 +211,8 @@ _int CPlayerWeapon_Sword::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -240,7 +222,10 @@ _int CPlayerWeapon_Sword::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_AttechMatrix", &m_fAttachedMatrix, sizeof(_float4x4)));
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolveCom->Render(9));
+	FAILED_CHECK(m_pDissolveCom->Render(19));
+
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 
 	return _int();
 }
@@ -496,7 +481,7 @@ HRESULT CPlayerWeapon_Sword::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;

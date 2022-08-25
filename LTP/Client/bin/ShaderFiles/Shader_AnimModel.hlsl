@@ -363,6 +363,63 @@ PS_OUT_OccludedMask PS_MAIN_DEFAULT_WithOccludedMask(PS_IN In)
 }
 
 
+PS_OUT_OccludedMask PS_MAIN_Dissolve_WithOccludedMask(PS_IN In)
+{
+	PS_OUT_OccludedMask		Out = (PS_OUT_OccludedMask)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexUV);
+	vector      vEmissiveDesc = g_EmissiveTexture.Sample(DefaultSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+
+	if (vEmissiveDesc.a > 0)
+	{
+		Out.vEmissive.xyz = min(g_fEmissive.xyz * length(vEmissiveDesc.xyz), 1.f);
+		if (length(Out.vEmissive.xyz) > 0)
+			Out.vDiffuse += length(Out.vEmissive.xyz) * pow(g_vLimLight, 1.f / 2.2f);
+	}
+	else
+	{
+		Out.vEmissive = vector(g_fEmissive.xyz, 1);
+	}
+
+	vector		NoiseDesc = g_DissolveNoiseTexture.Sample(DefaultSampler, In.vTexUV) - g_fDissolveValue;
+
+	if (NoiseDesc.r < 0)
+		discard;
+
+	if (NoiseDesc.r < 0.15 && g_fDissolveValue > 0 && g_fDissolveValue < 1)
+	{
+		vector		BurnRampDesc = pow(g_BurnRampTexture.Sample(DefaultSampler, float2(NoiseDesc.r *(1 / 0.15), 0)), 1.5f);
+
+		Out.vDiffuse = BurnRampDesc;
+		//Out.vEmissive = max((max(BurnRampDesc.r, BurnRampDesc.g), BurnRampDesc.b) - 0.15f, 0);
+		Out.vEmissive = vector(1.f, 0.5f, 1.f, 1.f);
+		//o.Emission = tex2D(_BurnRamp, float2(test *(1 / _BurnSize), 0));
+		//o.Albedo *= o.Emission;
+	}
+
+
+	vector		vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+	float3x3	NormalWorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+	vNormal = mul(vNormal, NormalWorldMatrix);
+
+
+	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
+	Out.vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexUV);
+	Out.vWorldPosition = vector(In.vWorldPos.xyz, 0);
+	Out.vLimLight = g_vLimLight;
+	Out.vOccludedMask = vector(In.vProjPos.w / FarDist, In.vProjPos.z / In.vProjPos.w, Out.vNormal.x, Out.vNormal.y);
+
+	return Out;
+}
+
 PS_OUT PS_MotionTrail(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
@@ -847,6 +904,26 @@ technique11		DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN_NOWEIGHTW();
 		GeometryShader = NULL;
 		PixelShader = compile ps_5_0 PS_Snake_Eye();
+	}
+	pass AttachedWeapon_WithOccludedMask //19
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_ccw);
+
+		VertexShader = compile vs_5_0 VS_MAIN_ATTACHEDNOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_DEFAULT_WithOccludedMask();
+	}
+	pass Dissolve_AttachedWeapon_WithOccludedMask //20
+	{
+		SetBlendState(NonBlending, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(ZTestAndWriteState, 0);
+		SetRasterizerState(CullMode_None);
+
+		VertexShader = compile vs_5_0 VS_MAIN_ATTACHEDNOWEIGHTW();
+		GeometryShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_Dissolve_WithOccludedMask();
 	}
 	
 }

@@ -756,9 +756,10 @@ void CSnake::Update_Direction(_double fDeltaTime)
 		m_fDelayTime -= (_float)fDeltaTime;
 		if (0.f >= m_fDelayTime)
 		{
-
+			m_bIsCombat = true;
 			m_bBlockUpdate = false;
-		} 
+		}
+
 	}
 }
 

@@ -40,6 +40,7 @@ public:
 	INSTPARTICLEDESC&	Get_VecParticle(_uint index);
 	void				Set_VecParticle(_uint index, INSTPARTICLEDESC& d);
 
+	_bool				Get_IsCombat() { return m_bIsCombat; };
 
 protected:
 //	CTransform*						m_PartilceTransform = nullptr;
@@ -58,6 +59,8 @@ protected:
 	_float		m_fAnimmultiple = 1.f; // AnimationPlaySpeed
 	_float		m_fRange = 0.f; // 오브젝트간의 거리변수
 
+
+	_bool		m_bIsCombat = false;
 public:
 	virtual void Free() override;
 };

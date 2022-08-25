@@ -54,6 +54,22 @@ HRESULT CDissolve::Initialize_Clone(void * pArg)
 		m_iDissolvePassedIndex = 11;
 		m_iShadowPassIndex = 13;
 		break;
+
+	case Engine::CDissolve::DISSOLVE_ANIM_WEIGHTW:
+		m_iDissolvePassedIndex = 8;
+		m_iShadowPassIndex = 10;
+		break;
+	case Engine::CDissolve::DISSOLVE_NONANIM_OCLD:
+		m_iDissolvePassedIndex = 27;
+		m_iShadowPassIndex = 12;
+		break;
+
+	case Engine::CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD:
+		m_iDissolvePassedIndex = 20;
+		m_iShadowPassIndex = 12;
+		break;
+		
+
 	default:
 		MSGBOX("Wrong Dissolve Type");
 		__debugbreak();

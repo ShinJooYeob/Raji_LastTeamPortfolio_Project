@@ -100,15 +100,14 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 			m_fSceneChangingTimer -= (_float)fDeltaTime;
 
 
-			if (m_fSceneChangingTimer > 4)
+			if (m_fSceneChangingTimer > 5)
 			{
-				_float Timer = m_fSceneChangingTimer - 4.f;
+				_float Timer = m_fSceneChangingTimer - 5.f;
 
 				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, 0), _float4(Timer, 0.01f, 1.f, 0));
 			}
 
-
-			if (m_fSceneChangingTimer <= 0)
+			if (m_fSceneChangingTimer <= 1)
 			{
 				CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(m_eNowSceneNum, TAG_LAY(Layer_Player)));
 				NULL_CHECK_RETURN(pPlayer, E_FAIL);
@@ -116,7 +115,11 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 				NULL_CHECK_RETURN(pMainCam, E_FAIL);
 				pMainCam->Set_CameraMode(ECameraMode::CAM_MODE_NOMAL);
 				pMainCam->Set_FocusTarget(pPlayer);
+			}
 
+			if (m_fSceneChangingTimer <= 0)
+			{
+				GetSingle(CUtilityMgr)->Plus_SKillPoint(2);
 			}
 		}
 		else
@@ -390,7 +393,7 @@ HRESULT CMiniGameBuilding::Start_ReverseSceneChanging_CamAct()
 
 
 
-		m_fSceneChangingTimer = 5;
+		m_fSceneChangingTimer = 6;
 		m_bIsReverseChange = true;
 	}
 	return S_OK;

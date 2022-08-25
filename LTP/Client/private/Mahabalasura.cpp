@@ -153,6 +153,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	}
 	else if (m_fHP <= 0.f)
 	{
+		m_bIsCombat = false;
 		Update_Dead(fDeltaTime);
 		m_pSpear->Update(fDeltaTime);
 		m_pDissolveCom->Update_Dissolving(fDeltaTime);
@@ -165,19 +166,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
-	{
 
-		{
-
-
-
-
-		}
-
-
-
-	}
 
 	_float3 test = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
@@ -335,8 +324,8 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
 			m_bIsAttack = true;
 
-		iRandom = mOnlyPattern; // DEBUG
-		iRandom = 3;
+		//iRandom = mOnlyPattern; // DEBUG
+		//iRandom = 3;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -1011,6 +1000,8 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 				m_iCutSceneStep = 0;
 
 				g_pGameInstance->PlayBGM(L"Jino_Subala_BGM.wav");
+
+				m_bIsCombat = true;
 			}
 		}
 	}
@@ -1657,7 +1648,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.5076923f)
 			{
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_CopyBoss"), TAG_OP(Prototype_Object_Boss_MahabalasuraCopy)));
-				CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum,TAG_LAY(Layer_Boss));
+				//CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_CopyBoss"));
 
 				m_bIsTeleport = true;
 				m_bIsTeleportSound = false;

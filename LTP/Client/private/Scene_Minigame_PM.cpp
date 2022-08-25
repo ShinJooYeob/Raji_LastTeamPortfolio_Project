@@ -490,10 +490,12 @@ HRESULT CScene_Minigame_PM::Ready_PostPorcessing()
 {
 #ifndef _DEBUG
 
+
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
-	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
-	pLightDesc->vDiffuse = _float4(0.78125f, 0.78125f, 1.f, 1.f);
-	pLightDesc->vAmbient = _float4(0.6640625f, 0.65625f, 1.f, 1.f);
+	pLightDesc->vVector = _float4(0, 64.f, -64.f, 1);
+	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(0, -64.f, 64.f));
+	pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 	CRenderer* pRenderer = m_pUtilMgr->Get_Renderer();
@@ -501,23 +503,6 @@ HRESULT CScene_Minigame_PM::Ready_PostPorcessing()
 
 	for (_uint i = 0; i < POSTPROCESSING_END; i++)
 		pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSINGID(i), false);
-
-
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
-	pRenderer->Set_ShadowIntensive(0.3f);
-
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
-	pRenderer->Set_BloomOverLuminceValue(1.0f);
-	pRenderer->Set_BloomBrightnessMul(1.5f);
-
-	//pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
-	//pRenderer->Set_DofLength(30.f);
-	//pRenderer->Set_DofBlurIntensive(1.f);
-
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
-	pRenderer->Set_FogStartDist(5.f);
-	pRenderer->Set_FogGlobalDensity(0.1f);
-	pRenderer->Set_FogHeightFalloff(0.1f);
 
 	//POSTPROCESSING_GODRAY
 	//POSTPROCESSING_LENSEFLARE

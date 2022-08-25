@@ -470,6 +470,33 @@ void CUtilityMgr::Set_Renderer(CRenderer * pRenderer)
 	Safe_AddRef(m_pRenderer);
 }
 
+void CUtilityMgr::Plus_SKillPoint(_int PointCount)
+{
+	m_iSkillPoint += PointCount; 
+	if (m_iSkillPoint > 18) m_iSkillPoint = 18;
+
+	INSTPARTICLEDESC tDesc[3];
+
+	tDesc[0]= Get_TextureParticleDesc(L"JY_TextureEft_4");
+	tDesc[0].FollowingTarget = nullptr;
+
+	//3
+	tDesc[1] = (Get_TextureParticleDesc(L"JY_TextureEft_6"));
+	tDesc[1].FollowingTarget = nullptr;
+	tDesc[1].eInstanceCount = Prototype_VIBuffer_Point_Instance_4;
+
+	//4
+	tDesc[2] = (Get_TextureParticleDesc(L"JY_TextureEft_7"));
+	tDesc[2].FollowingTarget = nullptr;
+
+	tDesc[0].vFixedPosition = tDesc[1].vFixedPosition = tDesc[2].vFixedPosition
+		= g_pGameInstance->Get_TargetPostion_Vector(PLV_PLAYER) + XMVectorSet(0,.5f,0,0);
+
+	for (_uint i = 0; i < 2; i++)
+		Create_TextureInstance(g_pGameInstance->Get_NowSceneNum(), tDesc[i]);
+
+}
+
 HRESULT CUtilityMgr::Ready_SceneChangingData(_uint eSceneID, _uint iLayerIndex)
 {
 	m_tForSceneChangingData = m_pRenderer->Get_PostProcessingData();

@@ -91,11 +91,6 @@ _int CMonster_Tezabsura_Landmine::Update(_double dDeltaTime)
 		}
 	}
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_Z)&DIS_Down)
-	{
-
-	}
-
 
 
 

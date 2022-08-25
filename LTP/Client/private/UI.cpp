@@ -74,7 +74,6 @@ _int CUI::Update(_double fDeltaTime)
 		m_SettingUIDesc.v3DUIScaled = _float3(10.f, 6.2f, 7.f);
 		//m_SettingUIDesc.fAngle = 30.f;
 		//m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 1.f, 0.f, 0.f), fDeltaTime);
-		_int test = 0;
 	}
 
 	if (m_bIsRevolutionCCW)
@@ -146,8 +145,20 @@ _int CUI::Render()
 
 	m_pShaderCom->Set_RawValue("g_Alpha", &m_SettingUIDesc.fAlpha, sizeof(_float));
 
+
 	if (m_SettingUIDesc.bSettingOtherTexture)
 		SettingTexture();
+
+	if (m_iPassIndex == 19 || m_iPassIndex == 20)
+	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 52));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 36));
+
+		_float2 vNoiseDir = _float2(0, 0.2f);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &vNoiseDir, sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
+	}
 
 	switch (m_SettingUIDesc.eUIKindsID)
 	{
@@ -176,11 +187,31 @@ _int CUI::Render()
 		FAILED_CHECK(m_pTextureCom->Bind_OnShader_AutoFrame(m_pShaderCom, "g_DiffuseTexture", g_fDeltaTime * 1.5f));
 		break;
 
+	case Client::CUI::UIID_EFFECT:
+	{
+		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
+
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", m_SettingUIDesc.iNoiseTextureIndex));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", m_SettingUIDesc.iMaskTextureIndex));
+		FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", m_SettingUIDesc.iTextureIndex));
+
+		///FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_DiffuseTexture", 271));
+		///FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_NOISE, m_pShaderCom, "g_NoiseTexture", 381));
+		///FAILED_CHECK(pUtil->Bind_UtilTex_OnShader(CUtilityMgr::UTILTEX_MASK, m_pShaderCom, "g_SourTexture", 96));
+
+		_float2 vNoiseDir = _float2(0, 0.2f);
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("noisingdir", &vNoiseDir, sizeof(_float2)));
+		FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fTimer", &m_PassedTimer, sizeof(_float)));
+		
+	}
+		break;
 	case Client::CUI::UIID_END:
 		break;
 	default:
 		break;
 	}
+
+
 
 
 	//if (m_pUIName == TEXT("UI_Fade"))
@@ -261,6 +292,9 @@ HRESULT CUI::SetUp_Components()
 		FAILED_CHECK(m_pTextureCom->Change_TextureLayer(L"TaikoDrumUI"));
 		break;
 
+	case Client::CUI::UIID_EFFECT:
+		m_iPassIndex = 18;
+		break;
 	case Client::CUI::UIID_END:
 		break;
 	default:

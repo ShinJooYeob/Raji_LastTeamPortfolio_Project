@@ -437,6 +437,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_PlayerWeapon,
 	Prototype_Object_MiniGame_GoalCollider,
 	Prototype_Object_MiniGame_TempCollider,
+	Prototype_Object_PlayerIndicator,
 
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
@@ -847,7 +848,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_MiniGame_TempCollider:
 		return TEXT("Prototype_Object_MiniGame_TempCollider");
-		
+
+	case Prototype_Object_PlayerIndicator:
+		return TEXT("Prototype_Object_PlayerIndicator");
 		
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
@@ -1071,6 +1074,7 @@ enum LAYERID
 	Layer_PlayerSkill,
 	Layer_Bullet,
 	Layer_ClockBomb,
+	Layer_PlayerIndicator,
 
 	Layer_Monster,
 	Layer_Unique_Monster,
@@ -1214,8 +1218,9 @@ static const _tchar* Tag_Layer(LAYERID eTag)
 	case Layer_ParticleNoDead2:
 		return TEXT("Layer_ParticleNoDead2");
 		break;
-		
-		
+	case Layer_PlayerIndicator:
+		return TEXT("Layer_PlayerIndicator");
+		break;
 	case Layer_ClockBomb:
 		return TEXT("Layer_ClockBomb");
 		break;

@@ -42,6 +42,27 @@ _int CGearPuzzleTrigger::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
+	if (m_bClearChecker)
+	{
+		if (m_fPassedTime >= 0)
+		{
+
+			m_fPassedTime += (_float)fDeltaTime;
+
+			if (m_fPassedTime > 0.75f)
+			{
+				m_fPassedTime = -999999999.f;
+				GetSingle(CUtilityMgr)->Plus_SKillPoint(2);
+				Set_IsDead();
+				return 0;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_NPC, this, m_pColliderCom));
 
 	return _int();
@@ -110,6 +131,10 @@ void CGearPuzzleTrigger::CollisionTriger(CCollider * pMyCollider, _uint iMyColli
 			m_pMainCamera->Set_FocusTarget(pPlayer);
 			
 			pPuzzle->Set_PuzzleState(3);
+
+
+			m_bClearChecker = true;
+			m_fPassedTime = 0;
 		}
 	}
 }

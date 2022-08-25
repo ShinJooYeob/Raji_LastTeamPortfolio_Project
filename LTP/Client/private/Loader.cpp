@@ -77,6 +77,7 @@
 #include "PlayerWeapon_Shield.h"
 #include "PlayerWeapon_Chakra.h"
 #include "PlayerWeapon_Arrow.h"
+#include "PlayerIndicator.h"
 // Skill
 #include "ShellingSkillRange.h"
 #include "ShellingSkillAttackPoint.h"
@@ -416,6 +417,9 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 		TransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(TAG_MONSTER_BULLET(Prototype_Mesh_Monster_Bullet_Gadasura_Terrain), TransformMatrix);
+
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		GetSingle(CAssimpCreateMgr)->Load_Model_One_ByFBXName(L"ArrowDir.fbx", TransformMatrix);
 		/////////////////////////////////////
 
 
@@ -594,6 +598,7 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_ShellingArrow), CShellingArrow::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_PlayerSkill_SpearWave), CSpearWave::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_PlayerIndicator), CPlayerIndicator::Create(m_pDevice, m_pDeviceContext)));
 
 
 	//JJB
@@ -3424,9 +3429,9 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 
 #pragma region MapPrototype
 		_Matrix			TransformMatrix;
+		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
 
-		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_Vishnu_Statue.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_ElevatorRailing_Vertical_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockPlanks_01.fbx", TransformMatrix);

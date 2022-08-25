@@ -1261,7 +1261,7 @@ HRESULT CMonster_Tezabsura_Bomber::SetUp_Components()
 
 	CDissolve::DISSOLVEDESC DissolveDesc;
 	DissolveDesc.pModel = m_pModel;
-	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM;
+	DissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_WEIGHTW;
 	DissolveDesc.pShader = m_pShaderCom;
 	DissolveDesc.RampTextureIndex = 7;
 	FAILED_CHECK(Add_Component(m_eNowSceneNum, TAG_CP(Prototype_Dissolve), TAG_COM(Com_Dissolve), (CComponent**)&m_pDissolve, &DissolveDesc));

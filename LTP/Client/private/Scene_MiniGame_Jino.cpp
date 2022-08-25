@@ -602,7 +602,6 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 #ifndef _DEBUG
 
 
-
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
 	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);
@@ -619,7 +618,7 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_SHADOW, true);
 	pRenderer->Set_ShadowIntensive(0.35f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_GODRAY, false);
 	pRenderer->Set_SunSize(0.5f);
 	pRenderer->Set_GodrayLength(64.f);
 	pRenderer->Set_GodrayIntensity(0.1f);
@@ -627,20 +626,20 @@ HRESULT CScene_MiniGame_Jino::Ready_PostPorcessing()
 	pRenderer->Set_DistDecay(1.6f);
 	pRenderer->Set_MaxDeltaLen(0.006f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_LENSEFLARE, false);
 	_float Value = (1 - 0.98f) * 344.f + 16.f;
 	pRenderer->Set_LensfalreSupportSunSize(Value);
 	pRenderer->Set_LensefalreNoiseTexIndex(245);
 
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_BLOOM, false);
 	pRenderer->Set_BloomOverLuminceValue(1.0f);
 	pRenderer->Set_BloomBrightnessMul(2.5f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DOF, false);
 	pRenderer->Set_DofLength(45.f);
 
-	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, true);
+	pRenderer->OnOff_PostPorcessing_byParameter(POSTPROCESSING_DDFOG, false);
 	pRenderer->Set_FogColor(_float3(0.94921875f, 0.4296875f, 0.328125f));
 	pRenderer->Set_FogStartDist(0.1f);
 	pRenderer->Set_FogGlobalDensity(0.06f);

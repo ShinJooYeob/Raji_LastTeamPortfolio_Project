@@ -526,7 +526,6 @@ HRESULT CScene_Laboratory_Jino::Ready_PostPorcessing()
 #ifndef _DEBUG
 
 
-
 	LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 	m_pUtilMgr->Get_Renderer()->Set_SunAtPoint(_float3(1000.f, -128.f, 1000.f));
 	pLightDesc->vDiffuse = _float4(0.94140625f, 0.5703125f, 0.23046875f, 1.f);

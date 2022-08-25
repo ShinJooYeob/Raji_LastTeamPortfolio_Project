@@ -46,16 +46,6 @@ _int CPlayerWeapon_Bow::Update(_double fDeltaTime)
 
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
-	//if (g_pGameInstance->Get_DIKeyState(DIK_Z) & DIS_Down)
-	//{
-	//	m_pDissolveCom->Set_DissolveOn(false, 5.5f);
-
-	//}
-	//if (g_pGameInstance->Get_DIKeyState(DIK_X) & DIS_Down)
-	//{
-	//	m_pDissolveCom->Set_DissolveOn(true, 1.5f);
-	//}
-
 
 
 
@@ -125,7 +115,7 @@ _int CPlayerWeapon_Bow::LateUpdate(_double fDeltaTimer)
 	if (true == m_bActiveCollision)
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider_Ultimate));
 
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL_ATTACHED, this, m_pTransformCom, m_pShaderCom, m_pModel, &m_fAttachedMatrix, m_pDissolveCom));
 	m_fAttachedMatrix = m_fAttachedMatrix.TransposeXMatrix();
 
@@ -139,6 +129,9 @@ _int CPlayerWeapon_Bow::Render()
 {
 	if (__super::Render() < 0)		return -1;
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
+
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
 	CGameInstance* pInstance = GetSingle(CGameInstance);
@@ -149,7 +142,9 @@ _int CPlayerWeapon_Bow::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolveCom->Render(9));
+	FAILED_CHECK(m_pDissolveCom->Render(19));
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 	return _int();
 }
 
@@ -420,7 +415,7 @@ HRESULT CPlayerWeapon_Bow::SetUp_Components()
 
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;

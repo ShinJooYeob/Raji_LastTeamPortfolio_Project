@@ -409,6 +409,11 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 		PlayerNavi->FindCellIndex(m_pPlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
 		m_iBuildingIndex = tDesc.ObjMgrLaterIdx;
 	}
+
+
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, TAG_LAY(Layer_PlayerIndicator), TAG_OP(Prototype_Object_PlayerIndicator)));
+
+
 	return S_OK;
 }
 

@@ -91,7 +91,7 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LABORATORY_JINO), SCENEID::SCENE_LOADING));
+		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
 		return 0;
 	}
 
@@ -101,13 +101,6 @@ _int CScene_Stage5::Update(_double fDeltaTime)
 		FAILED_CHECK(GetSingle(CUtilityMgr)->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_C)&DIS_Down)
-	{
-
-		FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss),
-			TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(98.f, 34.360f, 322.568f)));
-
-	}
 
 	_float3 PlayerPos = (m_pPlayerTransform->Get_MatrixState_Float3(CTransform::STATE_POS));
 
@@ -309,6 +302,9 @@ HRESULT CScene_Stage5::Ready_Layer_Player(const _tchar * pLayerTag)
 	//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_RoseObj), TAG_OP(Prototype_Object_RajiMask), nullptr);
 	//g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Volcano), TAG_OP(Prototype_Object_RajiHand), nullptr);
 	
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_PlayerIndicator), TAG_OP(Prototype_Object_PlayerIndicator)));
+
+
 	return S_OK;
 }
 

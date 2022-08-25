@@ -76,7 +76,7 @@ _int CPlayerWeapon_Chakra::LateUpdate(_double fDeltaTimer)
 
 
 	FAILED_CHECK(m_pRendererCom->Add_ShadowGroup(CRenderer::SHADOW_ANIMMODEL, this,m_pTransformCom,m_pShaderCom,m_pModel));
-	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRENONBLEND, this));
 	FAILED_CHECK(m_pRendererCom->Add_TrailGroup(CRenderer::TRAIL_SWORD, m_pSwordTrail));
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pCollider));
 	return _int();
@@ -85,6 +85,9 @@ _int CPlayerWeapon_Chakra::LateUpdate(_double fDeltaTimer)
 _int CPlayerWeapon_Chakra::Render()
 {
 	if (__super::Render() < 0)		return -1;
+
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_Material")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_OccludedMaterial")));
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -95,8 +98,10 @@ _int CPlayerWeapon_Chakra::Render()
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolveCom->Render(13));
+	FAILED_CHECK(m_pDissolveCom->Render(17));
 
+	FAILED_CHECK(m_pRendererCom->End_RenderTarget(TEXT("MRT_OccludedMaterial")));
+	FAILED_CHECK(m_pRendererCom->Begin_RenderTarget(TEXT("MRT_Material")));
 	return _int();
 }
 
@@ -374,7 +379,7 @@ HRESULT CPlayerWeapon_Chakra::SetUp_Components()
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_SwordTrail), TAG_COM(Com_SwordTrail), (CComponent**)&m_pSwordTrail, &tSwordDesc));
 
 	CDissolve::DISSOLVEDESC	tDissolveDesc;
-	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED;
+	tDissolveDesc.eDissolveModelType = CDissolve::DISSOLVE_ANIM_ATTACHED_OLCD;
 	tDissolveDesc.pModel = m_pModel;
 	tDissolveDesc.pShader = m_pShaderCom;
 	tDissolveDesc.RampTextureIndex = 1;

@@ -284,7 +284,7 @@ public:
 
 
 
-	//_uint		Get_LensefalreNoiseTexIndex() { return m_iLensefalreNoiseTexIndex; }
+	_float4		Get_vOcdMaskColor() { return m_vOcdMaskColor; }
 	void		Set_vOcdMaskColor(_float4 vVector) { m_vOcdMaskColor = vVector; }
 	
 	PPDDESC		Get_PostProcessingData();
