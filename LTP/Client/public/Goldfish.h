@@ -71,7 +71,6 @@ private:
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
-	CCollider*			m_pAttackColliderCom = nullptr;
 
 	CTransform*			m_pPlayerTransformCom = nullptr;
 
