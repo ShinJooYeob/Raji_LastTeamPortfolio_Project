@@ -634,6 +634,9 @@
     <Filter Include="02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\02.GoalCollider">
       <UniqueIdentifier>{da264319-6364-486c-afe3-af5645d06664}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\99.UI\SpeechUI">
+      <UniqueIdentifier>{c46f2cd2-be8b-4a0a-b72b-1295ffa81d23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1350,6 +1353,9 @@
     <ClInclude Include="..\public\GaolCollider.h">
       <Filter>02.Scene\04.Scene_InGame\11.Scene_MiniGame_JJB\02.GoalCollider</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DonkeyKong_Bullet.h" />
+    <ClInclude Include="..\public\MiniGame_KongWeapon.h" />
+    <ClInclude Include="..\public\SpeechUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2035,6 +2041,9 @@
     <ClCompile Include="..\private\Vishnu_RollingEye.cpp">
       <Filter>01.GameObject\07.MapObject\02.StaticObject\Vishnu_RollingEye</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DonkeyKong_Bullet.cpp" />
+    <ClCompile Include="..\private\MiniGame_KongWeapon.cpp" />
+    <ClCompile Include="..\private\SpeechUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

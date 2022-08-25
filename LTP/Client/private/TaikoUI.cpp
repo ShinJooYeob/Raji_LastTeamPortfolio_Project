@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\TaikoUI.h"
 #include "UI.h"
+#include "Scene_MiniGame_JJB.h"
 
 CTaikoUI::CTaikoUI(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -32,24 +33,67 @@ _int CTaikoUI::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0)return -1;
 
-	if(m_StartTime)
+	if(m_bISStartTime)
 		m_TestTime += (_float)fDeltaTime;
 
-	for (auto& UI : m_vecBasicUI)
+	if (m_bIsShowGoodEffectTime)
 	{
-		if (UI->Get_UIName() == TEXT("Taiko_OutSideR"))
+		m_fShowGoodEffectUITime += (_float)fDeltaTime;
+		
+		if (m_fShowGoodEffectUITime > 0.15f)
 		{
-			UI->Set_Size(50.f, 70.f);
-			UI->Set_UIPosition(205.f, 338.f);
+			m_bIsShowGoodEffectTime = false;
+			m_fShowGoodEffectUITime = 0.f;
+
+			for (auto& UI : m_vecGoodEffectUI)
+				UI->Set_IsDraw(false);
 		}
 	}
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_T)&DIS_Down)
+	if (m_bIsShowResultt)
 	{
-		m_StartTime = true;
-		g_pGameInstance->PlayBGM(TEXT("sacuranbo.wav"));
+		m_fShowResultTime += (_float)fDeltaTime;
+
+		if (m_fShowResultTime > 2.f)
+		{
+			m_bIsShowResultt = false;
+			m_ResultUI->Set_UIPosition(640.f, 360.f);
+			m_fShowResultTime = 0.f;
+		}
+		else
+		{
+			_float PosY = g_pGameInstance->Easing(TYPE_BounceOut, -200.f, 360.f, m_fShowResultTime, 2.f);
+			m_ResultUI->Set_UIPosition(640.f, PosY);
+
+		}
 	}
 
+	if (m_bIsQuestUI)
+	{
+		m_fQuestTime += (_float)fDeltaTime;
+
+		if (m_fQuestTime > 1.f)
+		{
+			m_bIsQuestUI = false;
+			m_QuestUI->Set_UIPosition(1100.f, 210.f);
+			m_fQuestTime = 0.f;
+		}
+		else
+		{
+			_float PosX = g_pGameInstance->Easing(TYPE_Linear, 1380.f, 1100.f, m_fQuestTime, 1.f);
+			m_QuestUI->Set_UIPosition(PosX, 210.f);
+		}
+
+	}
+
+	if (m_bIsShowComboUIOn)
+	{
+		UseComboUI(fDeltaTime);
+	}
+	//if (g_pGameInstance->Get_DIKeyState(DIK_T)&DIS_Down)
+	//{
+	//	m_bISStartTime = true;
+	//}
 	if (g_pGameInstance->Get_DIKeyState(DIK_F)&DIS_Down)
 	{
 		for (auto& UI : m_vecButtonUI)
@@ -59,12 +103,10 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
-
-		m_iComboCount++;
-		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
-		wstring ttDebugLog;
-		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
-		OutputDebugStringW(ttDebugLog.c_str());
+		//string ttszLog = "Sec :" + to_string(m_TestTime) + "f,   TYPE_SMALLRED" + "\n";
+		//wstring ttDebugLog;
+		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		//OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_J)&DIS_Down)
@@ -76,11 +118,10 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
-		m_iComboCount++;
-		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
-		wstring ttDebugLog;
-		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
-		OutputDebugStringW(ttDebugLog.c_str());
+		//string ttszLog = "Sec :" + to_string(m_TestTime) + "f,   TYPE_SMALLRED" + "\n";
+		//wstring ttDebugLog;
+		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		//OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_D)&DIS_Down)
@@ -92,11 +133,10 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
-		m_iComboCount++;
-		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
-		wstring ttDebugLog;
-		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
-		OutputDebugStringW(ttDebugLog.c_str());
+		//string ttszLog = "Sec :" + to_string(m_TestTime) + "f,   TYPE_SMALLBLUE" + "\n";
+		//wstring ttDebugLog;
+		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		//OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_K)&DIS_Down)
@@ -108,21 +148,45 @@ _int CTaikoUI::Update(_double fDeltaTime)
 				UI->TimeDrawStart(0.1f);
 			}
 		}
-		m_iComboCount++;
-		string ttszLog = "Sec :" + to_string(m_TestTime) + "   Combo" + to_string(m_iComboCount) + "\n";
-		wstring ttDebugLog;
-		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
-		OutputDebugStringW(ttDebugLog.c_str());
+		//string ttszLog = "Sec :" + to_string(m_TestTime) + "f,   TYPE_SMALLBLUE" + "\n";
+		//wstring ttDebugLog;
+		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		//OutputDebugStringW(ttDebugLog.c_str());
+	}
+
+	if (g_pGameInstance->Get_DIKeyState(DIK_SPACE)&DIS_Down)
+	{
+		for (auto& UI : m_vecButtonUI)
+		{
+			if (UI->Get_UIName() == TEXT("Taiko_MidleL") || UI->Get_UIName() == TEXT("Taiko_MidleR"))
+			{
+				UI->TimeDrawStart(0.1f);
+			}
+		}
+		//string ttszLog = "Sec :" + to_string(m_TestTime) + "f,   TYPE_BIGRED" + "\n";
+		//wstring ttDebugLog;
+		//ttDebugLog.assign(ttszLog.begin(), ttszLog.end());
+		//OutputDebugStringW(ttDebugLog.c_str());
 	}
 
 	FAILED_CHECK(m_pBackGround->Update(fDeltaTime));
 	FAILED_CHECK(m_pNoteUI->Update(fDeltaTime));
+	FAILED_CHECK(m_StartTimeUI->Update(fDeltaTime));
+	FAILED_CHECK(m_QuestUI->Update(fDeltaTime));
+	FAILED_CHECK(m_ResultUI->Update(fDeltaTime));
 
 	for (auto& UI : m_vecBasicUI)
 		FAILED_CHECK(UI->Update(fDeltaTime));
 
 	for (auto& UI : m_vecButtonUI)
 		FAILED_CHECK(UI->Update(fDeltaTime));
+
+	for (auto& UI : m_vecComboUI)
+		FAILED_CHECK(UI->Update(fDeltaTime));
+
+	for (auto& UI : m_vecGoodEffectUI)
+		FAILED_CHECK(UI->Update(fDeltaTime));
+
 
 	return _int();
 }
@@ -150,6 +214,16 @@ _int CTaikoUI::Render()
 	for (auto& UI : m_vecButtonUI)
 		FAILED_CHECK(UI->Render());
 
+	FAILED_CHECK(m_StartTimeUI->Render());
+	FAILED_CHECK(m_QuestUI->Render());
+
+	for (auto& UI : m_vecComboUI)
+		FAILED_CHECK(UI->Render());
+
+	for (auto& UI : m_vecGoodEffectUI)
+		FAILED_CHECK(UI->Render());
+
+	FAILED_CHECK(m_ResultUI->Render());
 
 	return _int();
 }
@@ -159,6 +233,77 @@ _int CTaikoUI::LateRender()
 	if (__super::LateRender() < 0)		return -1;
 
 	return _int();
+}
+
+void CTaikoUI::Set_IsQuestUIStart()
+{
+	m_bIsQuestUI = true;
+}
+
+void CTaikoUI::Set_IsShowGoodEffectUI()
+{
+	m_bIsShowGoodEffectTime = true;
+	m_fShowGoodEffectUITime = 0.f;
+
+	for (auto& UI : m_vecGoodEffectUI)
+		UI->Set_IsDraw(true);
+}
+
+void CTaikoUI::Set_ShowResultUI(_int TextureIndex)
+{
+	m_bIsShowResultt = true;
+	m_fShowResultTime = 0.f;
+
+	m_ResultUI->Set_TextureIndex(TextureIndex);
+	m_ResultUI->Set_IsDraw(true);
+}
+
+void CTaikoUI::UseComboUI(_double fDeltaTime)
+{
+	m_fShowComboUITime += (_float)fDeltaTime;
+	_int iCombo = static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Get_ComboCount();
+
+	_int iHundred = iCombo / 100;
+	iCombo = iCombo % 100;
+	_int iTen = iCombo / 10;
+	iCombo = iCombo % 10;
+	_int iOne = iCombo;
+
+	if (m_fShowComboUITime > 1.f)
+	{
+		for (auto& UI : m_vecComboUI)
+			UI->Set_IsDraw(false);
+
+		m_fShowComboUITime = 0.f;
+		m_bIsShowComboUIOn = false;
+	}
+	else
+	{
+		for (auto& UI : m_vecComboUI)
+		{
+			UI->Set_IsDraw(true);
+
+			if (UI->Get_UIName() == TEXT("Taiko_ComboUI"))
+			{
+				_float SizeX = g_pGameInstance->Easing(TYPE_Linear, 125.f, 120.f, m_fShowComboUITime, 1.f);
+				_float SizeY = g_pGameInstance->Easing(TYPE_Linear, 50.f, 45.f, m_fShowComboUITime, 1.f);
+				UI->Set_Size(SizeX, SizeY);
+			}
+			else
+			{
+				_float SizeX = g_pGameInstance->Easing(TYPE_Linear, 35.f, 30.f, m_fShowComboUITime, 1.f);
+				_float SizeY = g_pGameInstance->Easing(TYPE_Linear, 45.f, 40.f, m_fShowComboUITime, 1.f);
+				UI->Set_Size(SizeX, SizeY);
+			}
+
+			if (UI->Get_UIName() == TEXT("Taiko_Combo100"))
+				UI->Set_TextureIndex(13 + iHundred);
+			else if (UI->Get_UIName() == TEXT("Taiko_Combo10"))
+				UI->Set_TextureIndex(13 + iTen);
+			else if(UI->Get_UIName() == TEXT("Taiko_Combo1"))
+				UI->Set_TextureIndex(13 + iOne);
+		}
+	}
 }
 
 HRESULT CTaikoUI::Ready_Layer_UI()
@@ -388,6 +533,227 @@ HRESULT CTaikoUI::Ready_Layer_UI()
 		m_vecButtonUI.push_back(UI);
 	}
 
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_StartTimeUI
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = true;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_StartTimeUI");
+		SettingUI.m_fSizeX = 100.f;
+		SettingUI.m_fSizeY = 100.f;
+		SettingUI.m_fX = 640.f;
+		SettingUI.m_fY = 360.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 16;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_StartTimeUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(m_StartTimeUI, E_FAIL);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_QuestUI
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = true;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_QuestUI");
+		SettingUI.m_fSizeX = 300.f;
+		SettingUI.m_fSizeY = 80.f;
+		SettingUI.m_fX = 1380.f;
+		SettingUI.m_fY = 210.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 25;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_QuestUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(m_QuestUI, E_FAIL);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_ComboUI
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_ComboUI");
+		SettingUI.m_fSizeX = 120.f;
+		SettingUI.m_fSizeY = 45.f;
+		SettingUI.m_fX = 310.f;
+		SettingUI.m_fY = 250.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 12;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecComboUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_Combo100
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_Combo100");
+		SettingUI.m_fSizeX = 30.f;
+		SettingUI.m_fSizeY = 40.f;
+		SettingUI.m_fX = 385.f;
+		SettingUI.m_fY = 250.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 13;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecComboUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_Combo10
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_Combo10");
+		SettingUI.m_fSizeX = 30.f;
+		SettingUI.m_fSizeY = 40.f;
+		SettingUI.m_fX = 410.f;
+		SettingUI.m_fY = 250.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 13;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecComboUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_Combo1
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_Combo1");
+		SettingUI.m_fSizeX = 30.f;
+		SettingUI.m_fSizeY = 40.f;
+		SettingUI.m_fX = 435.f;
+		SettingUI.m_fY = 250.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 13;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecComboUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_GoodEffect1
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_GoodEffect1");
+		SettingUI.m_fSizeX = 80.f;
+		SettingUI.m_fSizeY = 80.f;
+		SettingUI.m_fX = 323.5f;
+		SettingUI.m_fY = 347.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 26;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecGoodEffectUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_GoodEffect2
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_GoodEffect2");
+		SettingUI.m_fSizeX = 140.f;
+		SettingUI.m_fSizeY = 140.f;
+		SettingUI.m_fX = 323.5f;
+		SettingUI.m_fY = 347.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 27;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&UI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(UI, E_FAIL);
+		m_vecGoodEffectUI.push_back(UI);
+	}
+
+	{
+		CUI* UI = nullptr;
+		CUI::SETTING_UI SettingUI;
+		ZeroMemory(&SettingUI, sizeof(SettingUI));
+
+		//Taiko_ResultUI
+		SettingUI.bClick = false;
+		SettingUI.bMove = false;
+		SettingUI.bDraw = false;
+		SettingUI.bColl = false;
+		SettingUI.iLevelIndex = m_eNowSceneNum;
+		SettingUI.pUI_Name = TEXT("Taiko_ResultUI");
+		SettingUI.m_fSizeX = 500.f;
+		SettingUI.m_fSizeY = 180.f;
+		SettingUI.m_fX = 640.f;
+		SettingUI.m_fY = -200.f;
+		SettingUI.fAngle = 0.f;
+		SettingUI.iTextureIndex = 28;
+		SettingUI.eUIKindsID = CUI::UIID_MINIGAME_TAIKO;
+
+		pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_ResultUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_UI), &SettingUI);
+		NULL_CHECK_RETURN(m_ResultUI, E_FAIL);
+	}
 
 	return S_OK;
 }
@@ -427,6 +793,9 @@ void CTaikoUI::Free()
 
 	Safe_Release(m_pBackGround);
 	Safe_Release(m_pNoteUI);
+	Safe_Release(m_StartTimeUI);
+	Safe_Release(m_QuestUI);
+	Safe_Release(m_ResultUI);
 
 	for (auto& UI : m_vecBasicUI)
 		Safe_Release(UI);
@@ -434,6 +803,12 @@ void CTaikoUI::Free()
 	for (auto& UI : m_vecButtonUI)
 		Safe_Release(UI);
 
+	for (auto& UI : m_vecComboUI)
+		Safe_Release(UI);
+	for (auto& UI : m_vecGoodEffectUI)
+		Safe_Release(UI);
+
 	m_vecBasicUI.clear();
 	m_vecButtonUI.clear();
+	m_vecComboUI.clear();
 }

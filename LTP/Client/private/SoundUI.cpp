@@ -124,6 +124,8 @@ _int CSoundUI::Update(_double fDeltaTime)
 
 	if (pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
 	{
+		g_pGameInstance->PlaySoundW(L"JJB_Button_1.mp3", CHANNEL_EFFECT);
+
 		UIPosX = m_pBackBtn->Get_PosX();
 		UIPosY = m_pBackBtn->Get_PosY();
 		UISize = m_pBackBtn->Get_Size();

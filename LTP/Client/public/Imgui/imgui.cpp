@@ -12734,7 +12734,7 @@ void ImGui::DebugNodeFont(ImFont* font)
     SetNextItemWidth(GetFontSize() * 8);
     DragFloat("Font scale", &font->Scale, 0.005f, 0.3f, 2.0f, "%.1f");
     SameLine(); MetricsHelpMarker(
-        "Note than the default embedded font is NOT meant to be scaled.\n\n"
+        "ProduceTimingNote than the default embedded font is NOT meant to be scaled.\n\n"
         "Font are currently rendered into bitmaps at a given size at the time of building the atlas. "
         "You may oversample them to get some flexibility with scaling. "
         "You can also render at multiple sizes and select which one to use at runtime.\n\n"
@@ -12906,7 +12906,7 @@ void ImGui::DebugNodeWindow(ImGuiWindow* window, const char* label)
         return;
 
     if (window->MemoryCompacted)
-        TextDisabled("Note: some memory buffers have been compacted/freed.");
+        TextDisabled("ProduceTimingNote: some memory buffers have been compacted/freed.");
 
     ImGuiWindowFlags flags = window->Flags;
     DebugNodeDrawList(window, window->DrawList, "DrawList");

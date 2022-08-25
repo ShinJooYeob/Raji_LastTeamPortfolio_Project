@@ -62,6 +62,11 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_First_Btn"))
 				{
+					if (m_iButtonCollisionIndex != 1)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 1;
+					}
 					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
 
 					//UI->Set_IsRevolutionCCW(true);
@@ -73,6 +78,11 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_Stage_Btn"))
 				{
+					if (m_iButtonCollisionIndex != 2)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 2;
+					}
 					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
 					//UI->Set_IsRevolutionCCW(true);
 					//UI->Set_RevolutionGoalAngle(360.f);
@@ -83,6 +93,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Lobby_Exit_Btn"))
 				{
+					if (m_iButtonCollisionIndex != 3)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 3;
+					}
+
 					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
 					//UI->Set_IsRevolutionCCW(true);
 					//UI->Set_RevolutionGoalAngle(360.f);
@@ -111,6 +127,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_GetIn_Btn"))
 				{
+					if (m_iButtonCollisionIndex != 4)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 4;
+
+					}
 					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
 
 					//UI->Set_IsRevolutionCCW(true);
@@ -121,6 +143,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Return_Btn"))
 				{
+					if (m_iButtonCollisionIndex != 5)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 5;
+					}
+
 					UI->Set_3DScaled(_float3(2.1f, 0.6f, 1.f));
 					//UI->Set_IsRevolutionCCW(true);
 					//UI->Set_RevolutionGoalAngle(360.f);
@@ -130,6 +158,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn1"))
 				{
+					if (m_iButtonCollisionIndex != 6)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 6;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -137,6 +171,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn2"))
 				{
+					if (m_iButtonCollisionIndex != 7)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 7;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -144,6 +184,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn3"))
 				{
+					if (m_iButtonCollisionIndex != 8)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 8;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -151,6 +197,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn4"))
 				{
+					if (m_iButtonCollisionIndex != 9)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 9;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -158,6 +210,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn5"))
 				{
+					if (m_iButtonCollisionIndex != 10)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 10;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -165,6 +223,11 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn6"))
 				{
+					if (m_iButtonCollisionIndex != 11)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 11;
+					}
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -172,6 +235,12 @@ _int CLobbyUI::Update(_double fDeltaTime)
 			{
 				if (UI->Get_UIName() == TEXT("Stage_Btn7"))
 				{
+					if (m_iButtonCollisionIndex != 12)
+					{
+						g_pGameInstance->PlaySoundW(L"JJB_Button_0.mp3", CHANNEL_EFFECT);
+						m_iButtonCollisionIndex = 12;
+					}
+
 					UI->Set_3DScaled(_float3(1.8f, 0.4f, 1.f));
 				}
 			}
@@ -180,6 +249,8 @@ _int CLobbyUI::Update(_double fDeltaTime)
 
 	if (g_pGameInstance->Get_DIMouseButtonState(CInput_Device::MBS_LBUTTON) & DIS_Down)
 	{
+		g_pGameInstance->PlaySoundW(L"JJB_Button_1.mp3", CHANNEL_EFFECT);
+
 		string ttszLog = "MousePosX " + to_string(MousePos.x) +" " + "MousePosY" + to_string(MousePos.y) + "\n";
 		wstring ttDebugLog;
 		ttDebugLog.assign(ttszLog.begin(), ttszLog.end());

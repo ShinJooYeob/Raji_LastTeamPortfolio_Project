@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Taiko_Monster.h"
+#include "Scene_MiniGame_JJB.h"
 
 CTaiko_Monster::CTaiko_Monster(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -45,15 +46,14 @@ HRESULT CTaiko_Monster::Initialize_Clone(void * pArg)
 
 _int CTaiko_Monster::Update(_double dDeltaTime)
 {
-	if (__super::Update(dDeltaTime) < 0)return -1;
-
-	if(NoteDesc.bIsUse == false)
+	if (NoteDesc.bIsUse == false)
 		return _int();
 
+	if (__super::Update(dDeltaTime) < 0)return -1;
 
-	m_pTransformCom->Turn_CCW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime * 0.5f);
+	m_pTransformCom->Turn_CW(XMVectorSet(0.f, 0.f, 1.f, 0.f), dDeltaTime);
 
-	m_PosX -= (_float)dDeltaTime * 10.f;
+	m_PosX -= (_float)dDeltaTime * 19.f;
 
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(m_PosX, m_vPos.y, m_vPos.z));\
 
@@ -85,10 +85,10 @@ _int CTaiko_Monster::Update(_double dDeltaTime)
 
 _int CTaiko_Monster::LateUpdate(_double dDeltaTime)
 {
-	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
-
 	if (NoteDesc.bIsUse == false)
 		return _int();
+
+	if (__super::LateUpdate(dDeltaTime) < 0)return -1;
 
 	m_fRenderSortValue = -2.f;
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this));
@@ -100,12 +100,11 @@ _int CTaiko_Monster::LateUpdate(_double dDeltaTime)
 
 _int CTaiko_Monster::Render()
 {
-	if (__super::Render() < 0)
-		return -1;
-
 	if (NoteDesc.bIsUse == false)
 		return _int();
 
+	if (__super::Render() < 0)
+		return -1;
 
 	NULL_CHECK_RETURN(m_pModel, E_FAIL);
 
@@ -113,10 +112,18 @@ _int CTaiko_Monster::Render()
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ViewMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_VIEW), sizeof(_float4x4)));
 	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_ProjMatrix", &pInstance->Get_Transform_Float4x4_TP(PLM_PROJ), sizeof(_float4x4)));
 
+	_float Color = 0.3f;
+	FAILED_CHECK(m_pShaderCom->Set_RawValue("g_fDeltaTime", &Color, sizeof(_float)));
+
 
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
-	FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
+	if (NoteDesc.NotePosType == CTaiko_Monster::NOTEPOS_IN)
+	{
+		FAILED_CHECK(m_pDissolve->Render(18));
+	}
+	else
+		FAILED_CHECK(m_pDissolve->Render(3)); //디졸브 내부에서 밑의 머테리얼을 찾아주고 있음
 
 
 	return _int();
@@ -217,7 +224,7 @@ HRESULT CTaiko_Monster::SetUp_Collider()
 	{
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(3.f, 3.f, 3.f);
+		ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -226,7 +233,7 @@ HRESULT CTaiko_Monster::SetUp_Collider()
 	{
 		COLLIDERDESC			ColliderDesc;
 		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
-		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vScale = _float3(2.5f, 2.5f, 2.5f);
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
@@ -250,8 +257,42 @@ HRESULT CTaiko_Monster::Update_Collider(_double dDeltaTime)
 
 	}
 
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	if(m_bIsCollisionOn)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pColliderCom));
+	
 	return S_OK;
+}
+
+void CTaiko_Monster::UseON()
+{
+	NoteDesc.bIsUse = true;
+	m_bIsCollisionOn = true;
+	InitializeMonster();
+}
+
+void CTaiko_Monster::UseOFF()
+{
+	NoteDesc.bIsUse = false;
+	m_bIsCollisionOn = false;
+	/*InitializeMonster();*/
+
+	if (NoteDesc.NoteType == CTaiko_Monster::NOTE_SMALL && NoteDesc.NotePosType == CTaiko_Monster::NOTEPOS_IN)
+	{
+		static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Push_NoteSmallRedMonsterLsit(this);
+	}
+	else if (NoteDesc.NoteType == CTaiko_Monster::NOTE_BIG && NoteDesc.NotePosType == CTaiko_Monster::NOTEPOS_IN)
+	{
+		static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Push_NoteBigRedMonsterLsit(this);
+	}
+	else if (NoteDesc.NoteType == CTaiko_Monster::NOTE_SMALL && NoteDesc.NotePosType == CTaiko_Monster::NOTEPOS_OUT)
+	{
+		static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Push_NoteSmallBlueMonsterLsit(this);
+	}
+	else if (NoteDesc.NoteType == CTaiko_Monster::NOTE_BIG && NoteDesc.NotePosType == CTaiko_Monster::NOTEPOS_OUT)
+	{
+		static_cast<CScene_MiniGame_JJB*>(g_pGameInstance->Get_NowScene())->Push_NoteBigBlueMonsterLsit(this);
+	}
+
 }
 
 CTaiko_Monster * CTaiko_Monster::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)

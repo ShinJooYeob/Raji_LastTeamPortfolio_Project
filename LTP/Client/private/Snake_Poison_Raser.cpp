@@ -187,6 +187,11 @@ _int CSnake_Poison_Raser::LateRender()
 
 void CSnake_Poison_Raser::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex, CGameObject * pConflictedObj, CCollider * pConflictedCollider, _uint iConflictedObjColliderIndex, CollisionTypeID eConflictedObjCollisionType)
 {
+	if (CollisionTypeID::CollisionType_Player == eConflictedObjCollisionType)
+	{
+		pConflictedObj->Take_Damage(this, 1.f, XMVectorSet(0.f, 0.f, 0.f, 0.f), false, 0.f);
+		pConflictedCollider->Set_Conflicted(1.f);
+	}
 }
 
 void CSnake_Poison_Raser::Start_BeamEffect()
