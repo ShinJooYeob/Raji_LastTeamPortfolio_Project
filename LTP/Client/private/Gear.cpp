@@ -48,8 +48,6 @@ _int CGear::Update(_double dDeltaTime)
 	if (__super::Update(dDeltaTime) < 0)
 		return -1;
 
-
-
 	if (m_bTurnOn == true)
 	{
 		switch (m_GearStateDesc.iTurnDirection)
@@ -57,16 +55,53 @@ _int CGear::Update(_double dDeltaTime)
 		case 0:
 		{
 			m_pTransformCom->Turn_CW(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltaTime);
+			//if (m_iSoundIndex == 0)
+			//{
+			//	//g_pGameInstance->Play3D_Sound(TEXT("EH_Cog_Large.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+			//	g_pGameInstance->PlaySound(TEXT("EH_Cog_Large.wav"), CHANNELID::CHANNEL_PLAYER, 0.5f);
+			//	m_iSoundIndex++;
+			//}
 			break;
 		}
 		case 1:
 		{
 			m_pTransformCom->Turn_CCW(XMVectorSet(1.f, 0.f, 0.f, 0.f), dDeltaTime);
+			//if (m_iSoundIndex == 0)
+			//{
+			//	//g_pGameInstance->Play3D_Sound(TEXT("EH_Cog_Large.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
+			//	g_pGameInstance->PlaySound(TEXT("EH_Cog_Large.wav"), CHANNELID::CHANNEL_PLAYER, 0.5f);
+			//	m_iSoundIndex++;
+			//}
 			break;
 		}
 		default:
 			break;
 		}
+	}
+
+	if (m_bCollsion == true)
+	{
+		if (m_bTurnOn == true)
+		{
+			if (m_iSoundIndex == 0)
+			{
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_Cog_Large.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_Metallic_Cog.wav"), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
+				m_iSoundIndex++;
+			}
+		}else
+		{
+			if (m_iSoundIndex == 0)
+			{
+				//g_pGameInstance->Play3D_Sound(TEXT("EH_Cog_Large.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.3f);
+				g_pGameInstance->PlaySound(TEXT("EH_M1_434.mp3"), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
+				m_iSoundIndex++;
+			}
+		}
+	}
+	else if (m_bCollsion == false && m_bTurnOn == false &&m_iSoundIndex == 1)
+	{
+		m_iSoundIndex = 0;
 	}
 
 

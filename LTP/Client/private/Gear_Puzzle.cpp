@@ -527,7 +527,7 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 			if (m_pGear[i-1]->Get_TurnOn() == true)
 				m_pGear[i]->Set_TurnOn(true);
 		}
-		else {
+		else if(fMinDistance + 0.5 <= fMaxDistance){
 			m_pGear[i]->Set_TurnOn(false);
 
 		}
@@ -541,6 +541,11 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 		}
 		m_pGear[CGear::GEARTYPE_8]->Set_TurnOn(true);
 		m_iTriggerOn = CGear_Puzzle::GEAR_SUCCESS;
+		if (m_iSoundIndex == 0)
+		{
+			g_pGameInstance->PlaySound(TEXT("EH_Fort_Gate_Open.wav"), CHANNELID::CHANNEL_MAPOBJECT, 0.7f);
+			m_iSoundIndex++;
+		}
 	}
 	/*else if (m_pGear[CGear::GEARTYPE_8]->Get_TurnOn() == false)
 	{
@@ -552,6 +557,21 @@ HRESULT CGear_Puzzle::Mini_Collision(_double dDeltaTime)
 
 HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 {
+	m_dSoundTime += dDeltaTime;
+	if (g_pGameInstance->Get_DIKeyState(DIK_LEFT) & DIS_Press ||
+		g_pGameInstance->Get_DIKeyState(DIK_RIGHT) & DIS_Press||
+		g_pGameInstance->Get_DIKeyState(DIK_UP) & DIS_Press||
+		g_pGameInstance->Get_DIKeyState(DIK_DOWN) & DIS_Press)
+	{
+		if (m_GearNumber >= 1 && m_GearNumber <= 5)
+		{
+			if (m_dSoundTime > 1.2)
+			{
+				g_pGameInstance->PlaySound(TEXT("EH_GearMoving.ogg"), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
+				m_dSoundTime = 0;
+			}
+		}
+	}
 	if (g_pGameInstance->Get_DIKeyState(DIK_Y) & DIS_Down)
 	{
 		if (m_GearNumber > 1)
@@ -564,6 +584,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			m_GearNumber = 1;
 			m_pGear[m_GearNumber]->Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1, 0.5f, 1, 1));
 		}
+		g_pGameInstance->PlaySound(TEXT("EH_M1_287.mp3"), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_H) & DIS_Down)
@@ -578,6 +599,7 @@ HRESULT CGear_Puzzle::KeyboardInput(_double dDeltaTime)
 			m_GearNumber = 5;
 			m_pGear[m_GearNumber]->Set_LimLight_N_Emissive(_float4(1.f, 0.f, 0.f, 1.f), _float4(1, 0.5f, 1, 1));
 		}
+		g_pGameInstance->PlaySound(TEXT("EH_M1_287.mp3"), CHANNELID::CHANNEL_MAPOBJECT, 0.3f);
 	}
 
 	switch (m_GearNumber)

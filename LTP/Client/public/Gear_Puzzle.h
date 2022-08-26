@@ -61,6 +61,8 @@ private:
 	_float3				m_fPushDir;
 	_uint				m_iCurrentGearNumber = 1;
 
+	_double				m_dSoundTime = 0;
+	_uint				m_iSoundIndex = 0;
 
 public:
 	static CGear_Puzzle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
