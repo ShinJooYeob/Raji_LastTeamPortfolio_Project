@@ -67,7 +67,11 @@ public:
 	}
 
 	void				Set_DeadMeshparticle();
-
+	void				Set_Particle(INSTPARTICLEDESC particledesc)
+	{
+		m_DescParticle = particledesc;
+		m_bIsParticle = true;
+	}
 
 private:
 	HRESULT				SetUp_Components();
@@ -87,7 +91,7 @@ private:
 	MESHLIGHTDATA			mLightDesc;
 
 
-	_double					m_CurTime_Duration = 0.f;
+	_float					m_CurTime_Duration = 0.f;
 	_float3					m_vRotAxis = _float3(0, 1, 0);
 	_float3					m_vLookAxis = _float3(0, 0, 1);
 	_float3					m_vMoveDir = _float3(0, 0, 1);
@@ -111,6 +115,10 @@ private:
 	CModel*					m_pModel = nullptr;
 	CTransform*				m_pTransformCom = nullptr;
 
+	// Particle
+	INSTPARTICLEDESC		m_DescParticle;
+	bool					m_bIsParticle = false;
+	bool					m_bIsParticle_Create = false;
 
 public:
 	static CNonInstanceMeshEffect_TT_Fix*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

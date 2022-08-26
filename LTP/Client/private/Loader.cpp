@@ -521,8 +521,18 @@ HRESULT CLoader::Load_Scene_Loby(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Reorgeaskil04_stone1_7);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Box_Basic);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Statue_Female_ReBirth_Body);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Lotus_01_flower);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GT_Cyinder_01);
+
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose01);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose02);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose03);
+		//STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose04);
+
 		
 
+		
 		// Bullet
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Vayusura_Leader);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Monster_Bullet_Tezabsura_Minion);
@@ -1901,7 +1911,7 @@ HRESULT CLoader::Load_Scene_Edit(_bool * _IsClientQuit, CRITICAL_SECTION * _CriS
 //	for (_uint i = 0; i < SCENE_END; i++)
 //		FAILED_CHECK(Load_MapMesh(SCENEID(i)));
 
-	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE6));
+//	FAILED_CHECK(Load_MapMesh(SCENEID::SCENE_STAGE6));
 
 	
 #pragma endregion
@@ -3228,6 +3238,7 @@ HRESULT CLoader::Load_MapMesh(SCENEID eID)
 #pragma region STATICMESH
 		TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 		CAssimpCreateMgr* pAssimpCreateMgr = GetSingle(CAssimpCreateMgr);
+		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_F_PlatFORM_03.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_DoorWay_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_ENV_CC_DockPlatform_01.fbx", TransformMatrix);
 		pAssimpCreateMgr->Load_Model_One_ByFBXName(L"SM_PRP_CC_DockStairs_01.fbx", TransformMatrix);

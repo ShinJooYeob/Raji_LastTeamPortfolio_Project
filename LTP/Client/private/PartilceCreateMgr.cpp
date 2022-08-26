@@ -2,6 +2,7 @@
 #include "..\public\PartilceCreateMgr.h"
 #include "..\public\NonInstanceMeshEffect_TT.h"
 #include "..\public\NonInstanceMeshEffect_TT_Fix.h"
+#include "..\public\Camera_Main.h"
 
 #include "Player.h"
 
@@ -92,7 +93,10 @@ CPartilceCreateMgr::CPartilceCreateMgr()
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Sphere_Plane_01);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ky_rock07);
 		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ControlPointMatch_Square_02);
-		STATIC_EFFECTLOAD(SM_Box_Basic);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_Box_Basic);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_GT_Cyinder_01);
+		STATIC_EFFECTLOAD(Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose01);
+
 		
 
 		// Bullet
@@ -231,23 +235,24 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 			//	desc.AlphaBlendON = true;
 			//	desc.vEmissive_SBB = _float3(1, 0, 0);
 
-			GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
+		//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
 
 
 		}
 		{
-			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_FireMask_2_png,
 				0,
-				0.5f,
-				_float4(0.25f, 0.86f, 1.0f, 1),
-				_float4(0.25f, 0.86f, 1.0f, 0.8f),
-				1,
-				_float3(0.8f),
+				0.8f,
+				_float4(0.75f, 0.26f, 0.05f, 1),
+				_float4(0.95f, 0.13f, 0.2f, 0.5f),
+				0,
 				_float3(1.0f),
+				_float3(0.1f),
 				1);
 
-			desctex.vEmissive_SBB = _float3(1, 0.1f, 0.5f);
-			desctex.Particle_Power = 0.5f;
+			desctex.vEmissive_SBB = _float3(1, 0.5f, 0.0f);
+			desctex.Particle_Power = 4.0f;
+			// desctex.iTextureLayerIndex = ;
 
 			desctex.vFixedPosition =
 				m_pTransformCom->Get_WorldMatrix().r[3]
@@ -256,46 +261,45 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 			//	desctex.AlphaBlendON = true;
 			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
 
-		//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
-
-
+			//	GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
 		}
+
 		{
-			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::TEXTURE_EFFECTJ_Bow_ArrowHit2,
-				0,
-				1.0f,
-				_float4(0.25f, 0.86f, 1.0f, 1),
-				_float4(0.25f, 0.86f, 1.0f, 1.0f),
+			
+			INSTPARTICLEDESC desctex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+				2,
+				0.4f,
+				_float4(0.04f, 0.78f, 0.98f, 1.0f),
+				_float4(0.04f, 0.78f, 0.98f, 1.0f),
 				1,
 				_float3(0.2f),
-				_float3(0.3f),
+				_float3(0.1f),
 				1);
 
-			desctex.eParticleTypeID = InstanceEffect_Straight;
-			desctex.eInstanceCount = Prototype_VIBuffer_Point_Instance_128;
+			desctex.Particle_Power = 7.0f;
 
-			desctex.vEmissive_SBB = _float3(1.0f, 0.1f, 0.1f);
-			desctex.Particle_Power = 3.0f;
-			desctex.vPowerDirection = _float3(0, 0, 1);
 
-			_float val = 5;
-			desctex.ParticleStartRandomPosMin = _float3(-val, 0, -val);
-			desctex.ParticleStartRandomPosMax = _float3(val, 0, val);
+		//	desctex = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_WaterFallParticle_1"));
+		//	desctex = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_0"));
+		//	desctex = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FountainParticle_1"));
+		//	desctex = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_Rain_0"));
 
-			desctex.FollowingTarget = m_pTransformCom;
-			desctex.iFollowingDir = FollowingDir_Up;
+		//	desctex.TotalParticleTime = 1.0f;
+		//	desctex.EachParticleLifeTime = 3.0f;
 
-			//desctex.vFixedPosition =
-			//	m_pTransformCom->Get_WorldMatrix().r[3]
-			//	+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
+
+			desctex.vFixedPosition =
+				m_pTransformCom->Get_WorldMatrix().r[3]
+				+ m_pTransformCom->Get_WorldMatrix().r[1] * 2.0f;
 
 			//	desctex.AlphaBlendON = true;
 			//	desctex.vEmissive_SBB = _float3(1, 0, 0);
 
-			// GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
-
-
+			GETPARTICLE->Create_Texture_Effect_Desc(desctex, m_eNowSceneNum);
 		}
+
+		
+
 
 	}
 
@@ -336,34 +340,127 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 	if (KEYDOWN(DIK_B))
 	{
 		// MESH Effect
-
-		
 		_float3 FixPos = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+		_uint id = g_pGameInstance->Get_NowSceneNum();
 
-	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST0, FixPos);
-	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST1, FixPos);
-	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST2, FixPos);
+		//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST0, FixPos);
+		//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST1, FixPos);
+		//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_TEST2, FixPos);
 
-		GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_SphereLight, FixPos);
-		GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_BoxBar, FixPos);
+		// _float3(10.0f, 10.0f, 10.0f);
+		wstring tt = L"\nPOSITION: _float3(" + to_wstring(FixPos.x) + L"f, " +
+			to_wstring(FixPos.y) + L"f, " +
+			to_wstring(FixPos.z) + L"f)" +
+			L"\n";
+		OutputDebugStringW(tt.c_str());
 
-	//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_STAGE1_Cash0, FixPos);
-		
-		
-//	 Mesh Effect
-//	GETPARTICLE->Create_MeshEffectDesc_Hard();
+
+		NONINSTNESHEFTDESC desc1;
+		MESHADDDATA desc2;
+		MESHLIGHTDATA desc3;
+
+
+	//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+	//	GETPARTICLE->Create_MeshEffectDesc_MAP(id ,desc1, desc2, FixPos, desc3);
+
+	//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset0, desc1, desc2, desc3);
+	//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+
+	//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset1, desc1, desc2, desc3);
+	//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+		{
+			// FixPos = (_float3(460.5f, 13.5f, 149.0f));
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 3.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 275;
+			desc1.vSize = desc1.vSize.XMVector()*1.2f;
+		//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+		}
+
+		//GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset2, desc1, desc2, desc3);
+		//desc1.fMaxTime_Duration = 1.0f;
+		//desc2.DealyTime = 0.1f;
+
+		//desc1.vPosition = _float3(0, -0.1f, 0);
+		//desc1.vSize = _float3(0.35f, 0.25f, 0.35f);
+
+		//GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+
+		//GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset4, desc1, desc2, desc3);
+		//desc1.fMaxTime_Duration = 3.0f;
+		//desc2.DealyTime = 0.1f;
+		//desc1.vLookDir = _float3(0, 0, 1);
+		//GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+
+	//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_BoxBar, desc1, desc2, desc3);
+	//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+		// GETPARTICLE->GetMeshEffect_Fix();
+
+
+	//	 Mesh Effect
+	//	GETPARTICLE->Create_MeshEffectDesc_Hard();
 
 	// Texture Particle Effect
-//	GETPARTICLE->Get_EffectSetting_Tex();
-//	GETPARTICLE->Create_Texture_Effect_Desc();
+	//	GETPARTICLE->Get_EffectSetting_Tex();
+	//	GETPARTICLE->Create_Texture_Effect_Desc();
 
 	// Mesh Particle Effect
-//	GETPARTICLE->Get_EffectSetting_Mesh();
-//	GETPARTICLE->Create_MeshInst_DESC();
+	//	GETPARTICLE->Get_EffectSetting_Mesh();
+	//	GETPARTICLE->Create_MeshInst_DESC();
 
-
+		
 
 	}
+
+
+	if (KEYDOWN(DIK_H))
+	{
+		// 해당 영역에 보냄
+
+		CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(g_pGameInstance->Get_NowSceneNum(), TAG_LAY(Layer_Player)));
+		NULL_CHECK_BREAK(pPlayer);
+		CTransform* PlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
+		CNavigation* PlayerNavi = (CNavigation*)pPlayer->Get_Component(TAG_COM(Com_Navaigation));
+
+
+		// pick pos
+		POINT ptMouse;
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+		_Vector vCursorPos = XMVectorSet(
+			(_float(ptMouse.x) / (g_iWinCX * 0.5f)) - 1.f,
+			(_float(ptMouse.y) / -(g_iWinCY * 0.5f)) + 1.f,
+			0, 1.f);
+
+		_Matrix InvProjMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_PROJ));
+		_Matrix InvViewMat = XMMatrixInverse(nullptr, GetSingle(CGameInstance)->Get_Transform_Matrix(PLM_VIEW));
+
+		_Vector vRayDir = XMVector4Transform(vCursorPos, InvProjMat) - XMVectorSet(0, 0, 0, 1);
+
+		vRayDir = XMVector3TransformNormal(vRayDir, InvViewMat);
+
+
+		_Vector vCamPos = GETUTIL->Get_MainCamera()->Get_Camera_Transform()->Get_MatrixState(CTransform::STATE_POS);
+		_Vector vOldPos = vCamPos;
+		_Vector vNewPos;
+		vNewPos = vOldPos + vRayDir;
+
+		static_cast<CTransform*>(pPlayer->Get_Component(TAG_COM(Com_Transform)))->Set_MatrixState(CTransform::STATE_POS, vNewPos);
+		PlayerNavi->FindCellIndex(PlayerTransform->Get_MatrixState(CTransform::TransformState::STATE_POS));
+
+	}
+
 
 #endif // _DEBUG
 
@@ -576,10 +673,10 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc(NONINSTNESHEFTDESC desc, MESHA
 	return S_OK;
 }
 
-HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_MAP(NONINSTNESHEFTDESC desc, MESHADDDATA desc2,_float3 pos, MESHLIGHTDATA desc3)
+HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_MAP(_uint SceneId, NONINSTNESHEFTDESC desc, MESHADDDATA desc2,_float3 pos, MESHLIGHTDATA desc3)
 {
 
-	_uint SceneNum = GetSingle(CGameInstance)->Get_NowSceneNum();
+	_uint SceneNum = SceneId;
 	CGameObject* obj = g_pGameInstance->Add_GameObject_GetObject(SceneNum, 
 		TAG_LAY(Layer_PlayerEffect), TAG_OP(Prototype_NonInstanceMeshEffect_TT_Fix), &desc);
 	NULL_CHECK_BREAK(obj);
@@ -680,7 +777,7 @@ HRESULT CPartilceCreateMgr::Create_MeshEffectDesc_Hard(E_MESH_EFFECTJ type, CTra
 }
 
 
-CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos(E_MESH_EFFECTJ type, _float3 Pos)
+bool CPartilceCreateMgr::Get_MeshEffectDesc_Map_FreeSet(E_MESH_EFFECTJ type, NONINSTNESHEFTDESC& desc1, MESHADDDATA& desc2, MESHLIGHTDATA& desc3)
 {
 	mPreMeshEffect_Fix = nullptr;
 
@@ -691,13 +788,12 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 	}
 
 	NONINSTNESHEFTDESC	MeshDesc;
-	MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
 	MESHADDDATA			AddDesc;
 	MESHLIGHTDATA		LightDesc;
+	_float3 Pos = _float3(0, 0, 0);
+	MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
 
-	// RANDOM
-	static bool bRandomVal = true;
-	bRandomVal = !bRandomVal;
+#pragma region TEST
 
 
 	if (type == MESHEFFECT_MAP_TEST0)
@@ -707,10 +803,6 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.eMeshType = Prototype_Mesh_SM_GT_SphereHarf;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_ky_sphere_dist_wind;
 		MeshDesc.eMeshType = Prototype_Mesh_SM_Sphere_RPG;
-		
-			
-			
-
 
 		// Time
 		MeshDesc.fMaxTime_Duration = 3.0f;
@@ -779,7 +871,6 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
 	}
 
 	if (type == MESHEFFECT_MAP_TEST1)
@@ -855,7 +946,6 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
 
 	}
 
@@ -937,9 +1027,11 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
 
 	}
+#pragma endregion TEST
+
+	// Freeset OBJ Effect 수정하면서 배치 진행
 
 	if (type == MESHEFFECT_MAP_OBJ_SphereLight)
 	{
@@ -952,10 +1044,10 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		AddDesc.bAfterApperTime = false;
 
 		// Tex
-		MeshDesc.iDiffuseTextureIndex = 271;
 		MeshDesc.iDiffuseTextureIndex = 394;
 		MeshDesc.iDiffuseTextureIndex = NODIFF;
 		MeshDesc.iDiffuseTextureIndex = 275;
+		MeshDesc.iDiffuseTextureIndex = 271;
 		MeshDesc.MaskTextureIndex = NONNMASK;
 		MeshDesc.NoiseTextureIndex = NONNOISE;
 
@@ -975,8 +1067,8 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		// Transform_Base
 		// LocalPos
 		MeshDesc.vLookDir = _float3(0, 0, 1);
-		MeshDesc.vPosition = _float3(-0.0f, 1.5f, 0.0f);
-		MeshDesc.vSize = _float3(0.35f);
+		MeshDesc.vPosition = _float3(-0.0f, 2.0f, 0.0f);
+		MeshDesc.vSize = _float3(0.15f);
 
 
 		// Move
@@ -1006,7 +1098,7 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		LightDesc.bEmsiive = true;
 		LightDesc.bRim = true;
 		LightDesc.Ambiant = 0.5f;
-		_float Time = 1.5f;
+		_float Time = 2.0f;
 		LightDesc.SpeedTime_Rim = Time;
 		LightDesc.SpeedTime_Emsive = Time;
 
@@ -1015,8 +1107,7 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
-
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+		
 	}
 
 	if (type == MESHEFFECT_MAP_OBJ_BoxBar)
@@ -1094,10 +1185,9 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
 	}
 
-	if (type == MESHEFFECT_MAP_STAGE1_Cash0)
+	if (type == MESHEFFECT_MAP_OBJ_Bull)
 	{
 		// light
 		MeshDesc.eMeshType = Prototype_Mesh_SM_ENV_DT_Bull;
@@ -1170,17 +1260,490 @@ CNonInstanceMeshEffect_TT_Fix* CPartilceCreateMgr::Create_MeshEffectDesc_Map_Pos
 	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
 		MeshDesc.m_iPassIndex = 18; // DisCard
 	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+	}
 
-		Create_MeshEffectDesc_MAP(MeshDesc, AddDesc, Pos, LightDesc);
+
+	if (type == MESHEFFECT_MAP_OBJ_Lotas)
+	{
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Lotus_01_flower;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 394;
+		MeshDesc.iDiffuseTextureIndex = NODIFF;
+		MeshDesc.iDiffuseTextureIndex = 275;
+		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 0.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 1, 1, 0.0f);
+		MeshDesc.vLimLight = _float4(0.3f, 0.3f, 0.3f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(-0.0f, 0.7f, 0.0f);
+		MeshDesc.vSize = _float3(0.45f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Up;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 90);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 1.0f;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.5f;
+		_float Time = 2.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+	}
+
+
+	if (type == MESHEFFECT_MAP_OBJ_Freeset0)
+	{
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_Statue_Female_ReBirth_Body;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 394;
+		MeshDesc.iDiffuseTextureIndex = 275;
+		MeshDesc.iDiffuseTextureIndex = NODIFF;
+		MeshDesc.iDiffuseTextureIndex = NONNOISE;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 0.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.3f, 0, 0, 0.0f);
+		MeshDesc.vLimLight = _float4(0.57f, 0.33f, 0.15f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+		MeshDesc.vEmissive = _float4(1,0.1f,1,1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vPosition = _float3(-0.0f, 3.0f, 0.0f);
+		MeshDesc.vSize = _float3(10.0f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		MeshDesc.vLookDir = _float3(0, 0, -1);
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.LookRotSpeed = 0;
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.1f;
+		_float Time = 2.5f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+	}
+
+	if (type == MESHEFFECT_MAP_OBJ_Freeset1)
+	{
+
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_doomBvert;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 394;
+		MeshDesc.iDiffuseTextureIndex = NODIFF;
+		MeshDesc.iDiffuseTextureIndex = 275;
+		MeshDesc.iDiffuseTextureIndex = 271;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 0).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 0.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 1, 1, 0.0f);
+		MeshDesc.vLimLight = _float4(0.3f, 0.3f, 0.3f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(-0.0f, 0.0f, 0.0f);
+		MeshDesc.vSize = _float3(5.0f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.InitRot = _float3(0,0,0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.2f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+	}
+
+	if (type == MESHEFFECT_MAP_OBJ_Freeset2)
+	{
+
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_GT_Cyinder_01;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 1.0f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 365;
+		MeshDesc.iDiffuseTextureIndex = 278;
+		
+		MeshDesc.MaskTextureIndex = 57;
+		MeshDesc.MaskTextureIndex = 109;
+
+
+
+		MeshDesc.NoiseTextureIndex = 360;
+		MeshDesc.NoiseTextureIndex = 92;
+		MeshDesc.NoiseTextureIndex = 180;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, -1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 1.0f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 1, 1, 0.0f);
+		MeshDesc.vLimLight = _float4(0.3f, 0.3f, 0.3f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		MeshDesc.vPosition = _float3(0.0f, 4.0f, 0.0f); // 1
+		MeshDesc.vSize = _float3(0.5f, 0.3f, 0.5f); // 1
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.InitRot = _float3(0, 0, 0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = false;
+		LightDesc.bRim = false;
+		LightDesc.Ambiant = 0.2f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+		MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+	}
+	
+
+	if (type == MESHEFFECT_MAP_OBJ_Freeset3)
+	{
+
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_circle;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 5.0f;
+		MeshDesc.fAppearTime = 1.0f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 365;
+		MeshDesc.iDiffuseTextureIndex = 278;
+		MeshDesc.MaskTextureIndex = 57;
+		MeshDesc.NoiseTextureIndex = 360;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 0.1f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(1.0f, 1, 1, 0.0f);
+		MeshDesc.vLimLight = _float4(0.3f, 0.3f, 0.3f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+
+		MeshDesc.vPosition = _float3(0.0f, 6.0f, 0.0f); // 1
+		MeshDesc.vSize = _float3(10); // 1
+
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Look;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.InitRot = _float3(0, 0, 0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = false;
+		LightDesc.bRim = false;
+		LightDesc.Ambiant = 0.2f;
+		_float Time = 3.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+		MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+	//	MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
+
+	}
+
+
+	if (type == MESHEFFECT_MAP_OBJ_Freeset4)
+	{
+		
+		// light
+		MeshDesc.eMeshType = Prototype_Mesh_SM_ENV_DT_StatueFemale_Pose01;
+
+		// Time
+		MeshDesc.fMaxTime_Duration = 3.0f;
+		MeshDesc.fAppearTime = 0.5f;
+		AddDesc.bAfterApperTime = false;
+
+		// Tex
+		MeshDesc.iDiffuseTextureIndex = 394;
+		MeshDesc.iDiffuseTextureIndex = 275;
+		MeshDesc.iDiffuseTextureIndex = NODIFF;
+		MeshDesc.iDiffuseTextureIndex = NONNOISE;
+		MeshDesc.MaskTextureIndex = NONNMASK;
+		MeshDesc.NoiseTextureIndex = NONNOISE;
+
+
+		// Noise
+		MeshDesc.noisingdir = _float2(0, 1).Get_Nomalize();
+		MeshDesc.fDistortionNoisingPushPower = 10.0f;
+		MeshDesc.vColor = _float4(1, 1, 1, 1);
+		MeshDesc.fAlphaTestValue = 0.3f;
+
+		// Color
+		MeshDesc.vLimLight = _float4(0.3f, 0, 0, 0.0f);
+		MeshDesc.vLimLight = _float4(0.04f, 0.68f, 1.0f, 1.0f);
+		MeshDesc.vEmissive = _float4(1);
+		MeshDesc.vEmissive = _float4(1, 0.1f, 1, 1);
+
+
+		// Transform_Base
+		// LocalPos
+		MeshDesc.vPosition = _float3(-0.0f, 1.0f, 0.0f);
+		MeshDesc.vSize = _float3(1.0f);
+
+
+		// Move
+		MeshDesc.MoveDir = FollowingDir_Up;
+		AddDesc.AccMoveSpeed = 0.0f;
+
+		// Rot
+		MeshDesc.vLookDir = _float3(0, 0, 1);
+		AddDesc.LookRotAxis = FollowingDir_Look;
+		AddDesc.vAddDirectAngle = _float3(0, 0, 0);
+		AddDesc.InitRot = _float3(0);
+		MeshDesc.RotAxis = FollowingDir_Up;
+		AddDesc.AccRotSpeed = 0.0f;
+		AddDesc.LookRotSpeed = 0;
+
+		// Scale
+		AddDesc.AccScaleSpeed = 0.0f;
+		AddDesc.bLockScale[0] = false;
+		AddDesc.bLockScale[1] = false;
+		AddDesc.bLockScale[2] = false;
+
+
+		// Fix
+		AddDesc.FixFlag_Move = false;
+		AddDesc.FixFlag_Rot = false;
+		AddDesc.DealyTime = 0.1f;
+
+		LightDesc.bEmsiive = true;
+		LightDesc.bRim = true;
+		LightDesc.Ambiant = 0.1f;
+		_float Time = 4.0f;
+		LightDesc.SpeedTime_Rim = Time;
+		LightDesc.SpeedTime_Emsive = Time;
+
+		// Shader
+	//	MeshDesc.m_iPassIndex = 16; // 왜곡
+	//	MeshDesc.m_iPassIndex = 17; // 왜곡 등장
+		MeshDesc.m_iPassIndex = 18; // DisCard
+	//	MeshDesc.m_iPassIndex = 19; // 노이즈 등장
 
 	}
 
 
 
+	desc1 = MeshDesc;
+	desc2 = AddDesc;
+	desc3 = LightDesc;
 
-
-	NULL_CHECK_BREAK(mPreMeshEffect_Fix);
-	return mPreMeshEffect_Fix;
+	return true;
 }
 
 
@@ -9147,6 +9710,7 @@ HRESULT CPartilceCreateMgr::Ready_MapParticle_Stage(SCENEID id)
 
 // GETINSTANCE->Stop_ChannelSound(CHANNEL_MAPOBJECT);
 
+	// 각 맵의 Tex / Mesh Instance Effect
 
 	for (auto val : mListTexParticleMap[mCurrentScene])
 	{
@@ -9157,12 +9721,15 @@ HRESULT CPartilceCreateMgr::Ready_MapParticle_Stage(SCENEID id)
 	{
 		GetSingle(CUtilityMgr)->Create_MeshInstance(mCurrentScene, val);
 	}
+
+	// Soound
 	for (auto& val : mListSound3DMap[mCurrentScene])
 	{
 		val.mIsSoundPlay = false;
 	}
 
-	Create_MapMeshParticle(id);
+	// Map MeshhObject
+	Create_MapMeshParticle(mCurrentScene);
 
 
 	return S_OK;
@@ -9320,10 +9887,16 @@ _int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
 
 			if (mesheffect.mIsSoundPlay)
 			{
-				if (mesheffect.mRange + 5 < PlyDistance)
+				if (mesheffect.mRange+10 < PlyDistance)
 				{
 					// Sound Off
-					mesheffect.mIsSoundPlay = false;
+					g_pGameInstance->Stop_ChannelSound(CHANNELID::CHANNEL_MAPOBJECT);
+
+					for (auto& val : mListSound3DMap[mCurrentScene])
+					{
+						val.mIsSoundPlay = false;
+					}				
+				
 				}
 			}
 
@@ -9335,7 +9908,7 @@ _int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
 					mesheffect.mIsSoundPlay = true;
 
 					// PlaySound
-					PlaySound_Map(mesheffect.mFixpos, mesheffect.mSoundType);
+					PlaySound_Map(mesheffect.mFixpos, mesheffect.mSoundType, mesheffect.mVol);
 				}
 			}
 		}
@@ -9343,12 +9916,13 @@ _int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
 	return 0;
 }
 
-HRESULT CPartilceCreateMgr::AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType, _float Range )
+HRESULT CPartilceCreateMgr::AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType, _float vol,_float Range )
 {
 	MAPSOUND sound;
 	sound.mFixpos = worldpos;
 	sound.mSoundType = mSoundType;
 	sound.mRange = Range;
+	sound.mVol = vol;
 	mListSound3DMap[id].push_back(sound);
 	return S_OK;
 }
@@ -9365,6 +9939,9 @@ void CPartilceCreateMgr::PlaySound_Map(_float3  pos, E_PARTICLSOUND_TYPE type, _
 
 	case Client::UM_Env_Fire:
 		wstr = TEXT("UM_Env_Fire.ogg");
+		break;
+	case Client::UM_Env_Fire_bonefire:
+		wstr = TEXT("UM_Env_Fire_bonefire.ogg");
 		break;
 	case Client::UM_Env_Water_Cave:
 		wstr = TEXT("UM_Env_Water_Cave.ogg");
@@ -9383,32 +9960,598 @@ void CPartilceCreateMgr::PlaySound_Map(_float3  pos, E_PARTICLSOUND_TYPE type, _
 	g_pGameInstance->Play3D_Sound(
 		(TCHAR*)wstr.c_str(),
 		pos,
-		CHANNELID::CHANNEL_MAPOBJECT, 1.0f);
+		CHANNELID::CHANNEL_MAPOBJECT, vol);
 }
 
 void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 {
 	_float3 FixPos = _float3(-999, -999, -999);
+	NONINSTNESHEFTDESC desc1;
+	MESHADDDATA desc2;
+	MESHLIGHTDATA desc3;
+
+	_uint count = 0;
 
 	switch (id)
 	{
 
 	case SCENE_STAGE1:
 	{
-		//	FixPos = _float3();
-		//	GETPARTICLE->Create_MeshEffectDesc_Map_Pos(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_SphereLight, FixPos);
+		list<_float3> listFloat3_NomalLight;
+
+
+		listFloat3_NomalLight.push_back(_float3(58.639412f, 34.096962f, 47.311424f));
+		listFloat3_NomalLight.push_back(_float3(58.588211f, 34.096603f, 52.187607f));
+	//	listFloat3_NomalLight.push_back(_float3(78.068604f, 33.403080f, 50.104527f));
+
+		listFloat3_NomalLight.push_back(_float3(63.581612f, 32.160011f, 43.371586f));
+	//	listFloat3_NomalLight.push_back(_float3(76.306778f, 32.160011f, 57.359707f));
+		listFloat3_NomalLight.push_back(_float3(63.697540f, 32.160007f, 57.658871f));
+		listFloat3_NomalLight.push_back(_float3(128.296295f, 33.799999f, 45.668304f));
+		listFloat3_NomalLight.push_back(_float3(136.963242f, 33.799999f, 45.711121f));
+		listFloat3_NomalLight.push_back(_float3(146.675217f, 33.799999f, 46.061680f));
+		listFloat3_NomalLight.push_back(_float3(152.966187f, 33.799999f, 66.874329f));
+
+	//	list<_float3> listFloat3_DownLight;
+
+
+		// 다른 느낌으로 교체
+		listFloat3_NomalLight.push_back(_float3(238.355499f, 21.240009f, 176.354553f));
+		listFloat3_NomalLight.push_back(_float3(248.099197f, 21.240009f, 176.378082f));
+		listFloat3_NomalLight.push_back(_float3(253.676987f, 18.900009f, 173.714569f));
+		listFloat3_NomalLight.push_back(_float3(260.460571f, 18.900009f, 173.714569f));
+		listFloat3_NomalLight.push_back(_float3(275.256653f, 22.850010f, 172.504914f));
+		listFloat3_NomalLight.push_back(_float3(288.565094f, 22.850010f, 172.504914f));
+		listFloat3_NomalLight.push_back(_float3(299.868561f, 22.850010f, 172.504914f));
+		listFloat3_NomalLight.push_back(_float3(308.263000f, 22.850010f, 172.504914f));
+		listFloat3_NomalLight.push_back(_float3(310.254395f, 44.150013f, 263.728302f));
+		listFloat3_NomalLight.push_back(_float3(320.024963f, 44.150013f, 263.973053f));
+		listFloat3_NomalLight.push_back(_float3(299.426697f, 38.750011f, 213.826035f));
+		listFloat3_NomalLight.push_back(_float3(303.848389f, 38.750011f, 217.508209f));
+		listFloat3_NomalLight.push_back(_float3(338.354218f, 43.600010f, 262.804962f));
+		listFloat3_NomalLight.push_back(_float3(338.336151f, 43.600010f, 268.335358f));
+
+
+		//for (_float3 pos : listFloat3_NomalLight)
+		//{
+		//	FixPos = pos;
+
+		//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+		//	desc1.fMaxTime_Duration = 9999.0f;
+		//	desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+
+		//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+		//	GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_BoxBar, desc1, desc2, desc3);
+		//	//	desc1.iDiffuseTextureIndex = 0;
+		//	desc1.fMaxTime_Duration = 9999.0f;
+		//	GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		//}
+
+		for (_float3 pos : listFloat3_NomalLight)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		}
+
+		{
+			FixPos = _float3(78.068604f, 33.403080f, 50.104527f); // 혀
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc1.iDiffuseTextureIndex = 276;
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		}
+
+
+		listFloat3_NomalLight.clear();
+		
+		
 
 	}
 	break;
 	case SCENE_STAGE2:
+	{
+		list<_float3> listFloat3;
+
+		listFloat3.push_back(_float3(474.500646f, 7.311449f, 91.291466f));
+		listFloat3.push_back(_float3(474.500409f, 7.261961f, 85.622421f));
+		listFloat3.push_back(_float3(458.395782f, 13.650010f, 119.169800f));
+
+		//	Briage
+			listFloat3.push_back(_float3(460.2f, 13.8f, 149.0f));
+		//	listFloat3.push_back(_float3(444.670258f, 10.656261f, 159.772964f));
+		//	listFloat3.push_back(_float3(440.548309f, 4.600010f, 198.594711f));
+		//	listFloat3.push_back(_float3(430.246429f, 4.600010f, 211.354660f));
+		//	listFloat3.push_back(_float3(415.853699f, 4.600010f, 222.872742f));
+		listFloat3.push_back(_float3(399.194153f, 4.400010f, 223.655167f));
+
+		listFloat3.push_back(_float3(407.185669f, 4.400010f, 233.373367f));
+		listFloat3.push_back(_float3(404.093170f, 6.537241f, 259.133728f));
+		listFloat3.push_back(_float3(399.451324f, 6.496566f, 258.920837f));
+		listFloat3.push_back(_float3(386.009735f, 11.800004f, 305.576477f));
+		listFloat3.push_back(_float3(377.783661f, 11.800006f, 300.690399f));
+		listFloat3.push_back(_float3(374.133606f, 11.612940f, 320.554993f));
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 275;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		}
+
+		listFloat3.clear();
+
+		// dark	
+		listFloat3.push_back(_float3(383.272278f, 16.500010f, 354.304535f));
+		listFloat3.push_back(_float3(386.138580f, 16.500010f, 350.624939f));
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 275;
+			desc1.vSize = desc1.vSize.XMVector()*1.2f;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_FireMask_2_png,
+					9999.0f,
+					0.8f,
+					_float4(0.75f, 0.26f, 0.05f, 1),
+					_float4(0.95f, 0.13f, 0.2f, 0.5f),
+					1,
+					_float3(1.0f),
+					_float3(0.1f),
+					1);
+
+				texDesc.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
+				texDesc.Particle_Power = 4.0f;
+
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+		}
+		listFloat3.clear();
+
+
+
+		// Fire Mesh														
+		listFloat3.push_back(_float3(594.999634f, 21.800009f, 408.885498f));
+		listFloat3.push_back(_float3(590.230042f, 21.800009f, 416.497437f));
+		listFloat3.push_back(_float3(584.636230f, 21.800009f, 413.633392f));
+		listFloat3.push_back(_float3(589.038147f, 21.800009f, 406.860748f));
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 275;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_FireMask_2_png,
+					9999.0f,
+					0.8f,
+					_float4(0.75f, 0.26f, 0.05f, 1),
+					_float4(0.95f, 0.13f, 0.2f, 0.5f),
+					0,
+					_float3(1.0f),
+					_float3(0.1f),
+					1);
+
+				texDesc.vEmissive_SBB = _float3(1, 0.5f, 0.5f);
+				texDesc.Particle_Power = 4.0f;
+
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+		}
+
+		listFloat3.clear();
+
+		{
+			FixPos = _float3(483.217959f, 7.100010f, 116.793f); // 여신상
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset0, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, 1.0f, 0.0f);
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		}		
+
+
+	}
 		break;
 	case SCENE_STAGE3:
+
+	{
+		list<_float3> listFloat3;
+
+		for (_uint i = 104; i < 210; i+=7)
+		{
+			_float zpos = _float(i);
+			listFloat3.push_front(_float3(207.612289f, 96.400009f,zpos));
+			listFloat3.push_front(_float3(96.927811f, 96.400009f, zpos) );
+		}
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+			FixPos.y -= 6.5f;
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, 0, 0.0f);
+			desc1.vSize = _float3(3.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 278;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+		}
+
+		listFloat3.clear();
+	}
+
+
+
 		break;
 	case SCENE_STAGE4:
 		break;
 	case SCENE_STAGE5:
 		break;
-	case SCENE_STAGE6:
+	case SCENE_STAGE6: // STAGE 6 
+
+	{
+		list<_float3> listFloat3;
+
+
+		//fire
+		listFloat3.push_back(_float3(7.957f,53.3f, 9.123f));
+		listFloat3.push_back(_float3(11.5f, 53.3f, 9.123f));
+		listFloat3.push_back(_float3(22.5f, 53.3f, 9.0f));
+		listFloat3.push_back(_float3(25.2f, 53.3f, 9.0f));
+
+		
+		for (_float3 pos : listFloat3)
+		{
+			count++;
+
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.vSize = _float3(0.01f);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.vEmissive = _float3(0);
+			desc1.iDiffuseTextureIndex = 365;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_FireMask_2_png,
+					9999.0f,
+					0.8f,
+					_float4(0.78f, 0.35f, 0.1f, 1),
+					_float4(0, 0, 0, 0.3f),
+					1,
+					_float3(0.7f),
+					_float3(0.1f),
+					1);
+
+				if (count == 1 || count == 4)
+				{
+					texDesc.TargetColor = _float4(0.68f, 0.55f, 0.2f, 1);
+
+				}
+
+				texDesc.vEmissive_SBB = _float3(1, 0.8f, 0.0f);
+				texDesc.Particle_Power = 3.0f;
+
+				texDesc.iNoiseTextureIndex = 360;
+				texDesc.iMaskingTextureIndex = 106;
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+
+		}
+		listFloat3.clear();
+
+
+		listFloat3.push_back(_float3(22.247766f, 50.000000f, 23.085331f));
+		listFloat3.push_back(_float3(13.913488f, 50.000000f, 23.085331f));
+		listFloat3.push_back(_float3(59.685730f, 67.530006f, 75.403770f));
+		listFloat3.push_back(_float3(67.879105f, 67.530006f, 75.403770f));
+
+
+
+		listFloat3.push_back(_float3(96.381218f, 45.000011f, 74.160652f));
+		listFloat3.push_back(_float3(82.843170f, 45.000011f, 74.245422f));
+		listFloat3.push_back(_float3(109.301048f, 43.050011f, 73.086113f));
+		listFloat3.push_back(_float3(108.924980f, 43.050011f, 55.893261f));
+
+		listFloat3.push_back(_float3(112.721992f, 43.050011f, 74.876572f));
+		listFloat3.push_back(_float3(105.345367f, 43.050011f, 74.876572f));
+		listFloat3.push_back(_float3(105.345367f, 43.050011f, 49.274857f));
+		listFloat3.push_back(_float3(112.721992f, 43.050011f, 49.356396f));
+
+		listFloat3.push_back(_float3(143.656448f, 44.600010f, 58.098022f));
+		listFloat3.push_back(_float3(143.577911f, 44.600010f, 62.294209f));
+		listFloat3.push_back(_float3(140.214310f, 44.600010f, 58.031128f));
+		listFloat3.push_back(_float3(140.252289f, 44.600010f, 62.757294f));
+		listFloat3.push_back(_float3(172.994125f, 44.600010f, 118.799599f));
+		listFloat3.push_back(_float3(167.615372f, 44.600010f, 118.722282f));
+
+
+		listFloat3.push_back(_float3(103.320984f, 32.200001f, 288.545959f));
+		listFloat3.push_back(_float3(89.704994f, 32.200001f, 288.571747f));
+		listFloat3.push_back(_float3(80.716476f, 32.000011f, 308.908661f));
+		listFloat3.push_back(_float3(57.225475f, 32.000011f, 234.781067f));
+		listFloat3.push_back(_float3(57.545902f, 32.000011f, 248.421188f));
+		listFloat3.push_back(_float3(71.133125f, 32.065060f, 321.413269f));
+		listFloat3.push_back(_float3(58.152012f, 32.065975f, 321.413269f));
+
+		
+
+		
+
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, -1.1f, 0.0f);
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			desc2.AccRotSpeed = 0.0001f;
+			desc1.iDiffuseTextureIndex = 365;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow,
+					9999.0f,
+					1.0f,
+					_float4(1),
+					_float4(0),
+					1,
+					_float3(0.2f),
+					_float3(0.01f),
+					1);
+
+				texDesc.eParticleTypeID = InstanceEffect_Ball;
+				texDesc.eInstanceCount = Prototype_VIBuffer_Point_Instance_16;
+				texDesc.ParticleStartRandomPosMin = _float3(-0.3f,1,-0.3f);
+				texDesc.ParticleStartRandomPosMax = _float3(0.3f,1, 0.3f);
+				texDesc.vEmissive_SBB = _float3(1, 0.4f, 0.0f);
+				texDesc.Particle_Power = 3.0f;
+
+			//	texDesc.iNoiseTextureIndex = 360;
+			//	texDesc.iMaskingTextureIndex = 106;
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+		}
+		listFloat3.clear();
+
+
+		// fotaion
+
+	//	151.909 / 7.225 362.594
+	//	152.167 7.404 392.032
+	
+		listFloat3.push_back(_float3(151.909f, 7.325f, 362.594f));
+		listFloat3.push_back(_float3(152.167f, 7.504f, 392.032f));
+
+
+		for (_float3 pos : listFloat3)
+		{
+			FixPos = pos;
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset2, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc2.DealyTime = 0.1f;
+
+			desc1.vPosition = _float3(0, -0.1f, 0);
+			desc1.vSize = _float3(0.35f, 0.25f, 0.35f);
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset3, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc2.DealyTime = 0.1f;
+
+			desc1.vPosition = _float3(0, 1.25f, 0);
+			desc1.vSize = _float3(6.0f);
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+			
+			{
+				INSTPARTICLEDESC texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					9999.f,
+					0.3f,
+					_float4(0.04f, 0.78f, 0.98f, 1.0f),
+					_float4(0.04f, 0.78f, 0.98f, 0.8f),
+					1,
+					_float3(0.2f),
+					_float3(0.1f),
+					1);
+
+				texDesc.ParticleStartRandomPosMin = _float3(0,0,0);
+				texDesc.ParticleStartRandomPosMax = _float3(0,0,0);
+				texDesc.Particle_Power = 3.0f;
+
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+		}
+
+		listFloat3.clear();
+
+
+		// Door
+		listFloat3.push_back(_float3(107.620811f, 3.450010f, 445.574219f));
+		listFloat3.push_back(_float3(111.792023f, 3.450010f, 445.574219f));
+		
+		count = 0;
+
+		for (_float3 pos : listFloat3)
+		{
+			count++;
+
+			FixPos = pos;
+		
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset4, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc2.DealyTime = 0.1f;
+			if (count == 1)
+				desc1.vLookDir = _float3(1, 0, 1);
+			if (count == 2)
+				desc1.vLookDir = _float3(-1, 0, 1);
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			//{
+			//	auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow2,
+			//		9999.0f,
+			//		0.3f,
+			//		_float4(0.75f, 0.25f, 0.15f, 1),
+			//		_float4(1, 0.1f, 0, 0.1f),
+			//		1,
+			//		_float3(0.4f),
+			//		_float3(0.1f),
+			//		1);
+
+			//	texDesc.iTextureLayerIndex = 15;
+			//	texDesc.vEmissive_SBB = _float3(1, 0.4f, 0.0f);
+			//	//	texDesc.Particle_Power = 3.0f;
+
+			//	GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			//}
+
+		}
+		
+
+		listFloat3.clear();
+
+
+
+		// one
+
+		// 시간있으면 추가
+//		listFloat3.push_back(_float3(181.994354f, 32.450012f, 287.644196f)); // new Mesh
+
+		{
+			FixPos = (_float3(170.167926f, 41.050011f, 177.772952f));
+
+			// MESHEFFECT_MAP_OBJ_Freeset2
+			// MESHEFFECT_MAP_OBJ_Freeset3
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset2, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			desc1.vPosition = _float3(0, 0.5f, 0.0f);//2
+			desc1.vSize = _float3(0.9f, 0.7f, 0.9f); // 2
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset3, desc1, desc2, desc3);
+
+			desc1.fMaxTime_Duration = 9999.0f;
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			desc1.vPosition = _float3(0, 4.5f, 0.0f); // 2
+			desc1.vSize = _float3(14.0f); // 2
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			desc1.vPosition = _float3(0.0f, 0.8f, 0.0f); // 3
+			desc1.vSize = _float3(25.0f); // 3
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				INSTPARTICLEDESC texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Dust_2_FounTain,
+					9999.f,
+					0.4f,
+					_float4(0.04f, 0.78f, 0.98f, 1.0f),
+					_float4(0.04f, 0.78f, 0.98f, 0.8f),
+					1,
+					_float3(0.5f),
+					_float3(0.2f),
+					1);
+
+				texDesc.Particle_Power = 8.0f;
+
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+			}
+		}
+
+
+		{
+			FixPos = _float3(41.784278f, 73.228539f, 23.181898f); // 여신상
+
+			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset0, desc1, desc2, desc3);
+			desc1.fMaxTime_Duration = 9999.0f;
+			desc1.vPosition = _float3(-0.0f, 1.0f, 0.0f);
+			desc1.vSize = _float3(2.5f);
+
+			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+
+			{
+				auto texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_Spawn3_Imagepng_Snow2,
+					9999.0f,
+					0,
+					_float4(0.35f, 0.25f, 0.8f, 1),
+					_float4(1, 1, 1, 0.3f),
+					1,
+					_float3(0.7f),
+					_float3(0.1f),
+					0);
+
+				texDesc.vEmissive_SBB = _float3(1, 0.4f, 0.0f);
+				//	texDesc.Particle_Power = 3.0f;
+
+				GetMeshEffect_Fix()->Set_Particle(texDesc);
+
+			}
+
+		}
+
+
+	}
+
 		break;
 	case SCENE_STAGE7:
 		break;
@@ -9424,6 +10567,11 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 	INSTPARTICLEDESC texDesc;
 	INSTMESHDESC	 meshDesc;
 
+	for (auto& cc : mListTexParticleMap)
+	{
+		cc.clear();
+	}
+
 #pragma region SCENE_STAGE1
  
 	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage1_FireParticle_0"));
@@ -9431,7 +10579,7 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 
 	texDesc.vFixedPosition = _float3(32.2f, 42.8f, 65.4f);
 	mListTexParticleMap[SCENE_STAGE1].push_back(texDesc);
-	AddSoundDesc(SCENE_STAGE1,texDesc.vFixedPosition, UM_Env_Fire);
+	AddSoundDesc(SCENE_STAGE1,texDesc.vFixedPosition, UM_Env_Fire,0.4f);
 
 //	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE1, texDesc);
 
@@ -9495,12 +10643,36 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 
 #pragma region SCENE_STAGE2
 
+	// 모닥불
 	texDesc = GetSingle(CUtilityMgr)->Get_TextureParticleDesc(TEXT("Jino_Stage2_CampFireParticle_1"));
 	texDesc.FollowingTarget = nullptr;
 	texDesc.vFixedPosition = _float3(395.f, 4.400f, 227.5f);
 	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
-	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire_bonefire);
 
+
+	{
+		texDesc = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::Um_FireMask_2_png,
+			9999.0f,
+			0.8f,
+			_float4(0.75f, 0.26f, 0.05f, 1),
+			_float4(0.95f, 0.13f, 0.2f, 0.5f),
+			0,
+			_float3(1.0f),
+			_float3(0.1f),
+			1);
+
+		texDesc.vEmissive_SBB = _float3(1, 0.5f, 0.0f);
+		texDesc.Particle_Power = 4.0f;
+		texDesc.TargetColor = _float4(0.97f, 0.25f, 0.01f, 0.5f);
+		texDesc.TargetColor2 = _float4(0.97f, 0.25f, 0.01f, 0.1f);
+		// desctex.iTextureLayerIndex = ;
+		texDesc.vFixedPosition = _float3(395.f, 4.400f, 227.5f);
+
+		mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
+		AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, PARTICLSOUND_TYPE_NONE);
+
+	}
 //	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
 
 
@@ -9536,7 +10708,7 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 	texDesc.FollowingTarget = nullptr;
 	texDesc.vFixedPosition = _float3(568.f, 24.300f, 403.5f);
 	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
-	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire, 0.4f);
 
 //	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
 
@@ -9544,7 +10716,10 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 	texDesc.FollowingTarget = nullptr;
 	texDesc.vFixedPosition = _float3(573.5f, 24.000f, 395.3f);
 	mListTexParticleMap[SCENE_STAGE2].push_back(texDesc);
-	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire);
+	AddSoundDesc(SCENE_STAGE2, texDesc.vFixedPosition, UM_Env_Fire, 0.4f);
+
+	AddSoundDesc(SCENE_STAGE2, _float3(383.272278f, 16.500010f, 354.304535f), UM_Env_Fire, 0.2f);
+	AddSoundDesc(SCENE_STAGE2, _float3(594.999634f, 21.800009f, 408.885498f), UM_Env_Fire, 0.2f);
 
 //	GetSingle(CUtilityMgr)->Create_TextureInstance(SCENE_STAGE2, texDesc);
 
@@ -9552,6 +10727,7 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 
 
 #pragma region SCENE_STAGE3
+
 #pragma endregion SCENE_STAGE3
 
 
@@ -9564,6 +10740,14 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 
 
 #pragma region SCENE_STAGE6
+
+	// Only Sound
+
+	AddSoundDesc(SCENE_STAGE6, _float3(170.167926f, 41.050011f, 177.772952f), UM_Env_Water_Foutain, 0.5f,3);
+	AddSoundDesc(SCENE_STAGE6, _float3(151.909f, 7.325f, 362.594f), UM_Env_Water_Foutain, 0.1f,3);
+	AddSoundDesc(SCENE_STAGE6, _float3(152.167f, 7.504f, 392.032f), UM_Env_Water_Foutain, 0.1f,3);
+
+
 #pragma endregion SCENE_STAGE6
 
 

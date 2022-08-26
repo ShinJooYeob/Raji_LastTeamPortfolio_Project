@@ -1809,6 +1809,9 @@ _int CImguiMgr::Update_DebugWnd_MapEffect(_double fDeltaTime)
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), "NEW_INITPARTICLEDATA");
 	if (ImGui::Button("ALL_RELOAD"))
 	{
+		GETPARTICLE->ReadyParticle_ALL_Stages();
+
+
 
 	}
 	if (ImGui::Button("STAGE1"))

@@ -33,11 +33,12 @@ HRESULT CNonInstanceMeshEffect_TT_Fix::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(SetUp_Components());
 	mIsInit = false;
-
+	m_bIsParticle = false;
+	m_bIsParticle_Create = false;
 	m_pTransformCom->LookDir(mMeshDesc.vLookDir.XMVector());
 	m_pTransformCom->Scaled_All(mMeshDesc.vSize);
 	
-	
+	m_CurTime_Duration = 0;
 
 	// RotAxis ROTDIR
 	switch (mMeshDesc.RotAxis)
@@ -82,8 +83,6 @@ HRESULT CNonInstanceMeshEffect_TT_Fix::Initialize_Clone(void * pArg)
 _int CNonInstanceMeshEffect_TT_Fix::Update(_double fDeltaTime)
 {
 	if (__super::Update(fDeltaTime) < 0) return -1;
-	
-	
 
 	if (mIsInit == false)
 	{
@@ -103,9 +102,9 @@ _int CNonInstanceMeshEffect_TT_Fix::Update(_double fDeltaTime)
 
 	bool isUpdatecheck = IsLife(fDeltaTime);
 
-	_Sfloat3 scale = m_pTransformCom->Get_Scale();
-	if (scale.x <= 0.001f || scale.y <= 0.001f || scale.z <= 0.001f)
-		isUpdatecheck = false;
+	//_Sfloat3 scale = m_pTransformCom->Get_Scale();
+	//if (scale.x <= 0.001f || scale.y <= 0.001f || scale.z <= 0.001f)
+	//	isUpdatecheck = false;
 
 	if (isUpdatecheck == false)
 	{
@@ -133,14 +132,44 @@ _int CNonInstanceMeshEffect_TT_Fix::LateUpdate(_double fDeltaTimer)
 {
 	if (__super::LateUpdate(fDeltaTimer) < 0) return -1;
 
-	if (mMeshDesc.m_iPassIndex > 17)
+	// Frustum
+	
+	bool isRenderer = g_pGameInstance->IsNeedToRender(m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS),mMeshDesc.vSize.x * 5);
+
+	if (m_bIsParticle)
 	{
-		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		if (isRenderer)
+		{
+			if (m_bIsParticle_Create == false)
+			{
+				// CreateParticle
+				m_pTransformCom->Set_IsOwnerDead(false);
+				m_bIsParticle_Create = true;
+				m_DescParticle.FollowingTarget = m_pTransformCom;
+				m_DescParticle.iFollowingDir = FollowingDir_Up;
+				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_DescParticle);
+			}
+		}
+
+		else
+		{
+			m_bIsParticle_Create = false;
+			m_pTransformCom->Set_IsOwnerDead(true);
+		}
 	}
-	else
+
+	if (isRenderer)
 	{
-		FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
+		if (mMeshDesc.m_iPassIndex > 17)
+		{
+			FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
+		}
+		else
+		{
+			FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this));
+		}
 	}
+
 
 	return _int();
 }
@@ -260,10 +289,11 @@ HRESULT CNonInstanceMeshEffect_TT_Fix::SetUp_Components()
 
 bool CNonInstanceMeshEffect_TT_Fix::IsLife(_double Timer)
 {
-	m_CurTime_Duration += Timer;
+
+	m_CurTime_Duration += (_float)Timer;
 
 	// Timer
-	if (m_CurTime_Duration >= (_double)mMeshDesc.fMaxTime_Duration)
+	if (m_CurTime_Duration >= mMeshDesc.fMaxTime_Duration)
 	{
 		return false;
 	}
@@ -404,11 +434,10 @@ bool CNonInstanceMeshEffect_TT_Fix::Update_Rot(_double Timer)
 				break;
 			}
 
-			m_pTransformCom->LookDir(m_vLookAxis.XMVector());
+			m_pTransformCom->LookDir(mMeshDesc.vLookDir.XMVector());
 
 			if (mAddDesc.LookRotSpeed == 0)
 			{
-				
 
 			}
 			else
@@ -420,6 +449,11 @@ bool CNonInstanceMeshEffect_TT_Fix::Update_Rot(_double Timer)
 				if (mAddDesc.vAddDirectAngle.z != 0)
 					m_pTransformCom->Turn_Direct(Look, XMConvertToRadians(mAddDesc.vAddDirectAngle.z));
 			}
+
+
+
+		
+
 
 		}
 		else

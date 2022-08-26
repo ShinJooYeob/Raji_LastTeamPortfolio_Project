@@ -51,7 +51,6 @@ _int CStaticInstanceMapObject::LateUpdate(_double fDeltaTime)
 	CGameInstance* pInstance = GetSingle(CGameInstance);
 
 
-
 	_uint iVectorIndex = 0;
 	_bool	bIsAllObjectFrustumCutted = false;
 

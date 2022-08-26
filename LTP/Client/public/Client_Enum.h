@@ -9086,22 +9086,22 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("SM_Hedgerow_Corner_01.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_01:
-		return TEXT("SM_lillypad_01.fbx");
+		return TEXT("SM_Lotus_01.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_01_flower:
-		return TEXT("SM_lillypad_02.fbx");
+		return TEXT("SM_Lotus_01_flower.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_01_stem:
 		return TEXT("SM_Lillypad_02_A.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_bud_01:
-		return TEXT("SM_Lillypad_02_B.fbx");
+		return TEXT("SM_Lotus_bud_01.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_bud_main_01:
-		return TEXT("SM_Lillypad_02_C.fbx");
+		return TEXT("SM_Lotus_bud_main_01.fbx");
 		break;
 	case Prototype_Mesh_SM_Lotus_Pink:
-		return TEXT("SM_Lillypad_02_D.fbx");
+		return TEXT("SM_Lotus_Pink.fbx");
 		break;
 	case Prototype_Mesh_SM_MERGED_PRESET_Ivy1_BP_6:
 		return TEXT("SM_lillypad_03.fbx");
@@ -9830,7 +9830,7 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		return TEXT("SM_Root_02.fbx");
 		break;
 	case Prototype_Mesh_SM_Statue_Female_ReBirth_Body:
-		return TEXT("SM_Root_03.fbx");
+		return TEXT("SM_Statue_Female_ReBirth_Body.fbx");
 		break;
 	case Prototype_Mesh_SM_Statue_Female_ReBirth_Feet:
 		return TEXT("SM_Roots_01.fbx");

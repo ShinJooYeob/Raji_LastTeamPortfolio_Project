@@ -64,6 +64,8 @@ HRESULT CScene_Stage5::Initialize()
 
 	FAILED_CHECK(Ready_CinematicCamAction());
 
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE5));
+
 	Play_Scene_BGM();
 
 	return S_OK;
