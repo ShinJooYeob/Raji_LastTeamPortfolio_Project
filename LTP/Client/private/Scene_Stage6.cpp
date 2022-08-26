@@ -53,20 +53,16 @@ HRESULT CScene_Stage6::Initialize()
 	// #RICK 병합시 수정
 
 	//EH
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
-
-	///////////////////////////////!@#$@#!$
-	//FAILED_CHECK(Ready_TriggerObject(L"Stage6_Goldfish_Trigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
-	////
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_9.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
-	////////////////////////////!@#$@$
+	FAILED_CHECK(Ready_TriggerObject(L"Stage6_Goldfish_Trigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_TriggerObject(L"Stage6_InstanceMonsterTrigger.dat", SCENE_STAGE6, TAG_LAY(Layer_ColTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_1.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_2.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_3.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_4.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_5.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_6.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_8.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
+	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_9.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 
 	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage6_MonsterTrigger_7.dat", SCENE_STAGE6, TAG_LAY(Layer_BatchMonsterTrigger)));
 	
@@ -355,12 +351,12 @@ HRESULT CScene_Stage6::Ready_Layer_Player(const _tchar * pLayerTag)
 	// 65.279f, 2.043f, 325.343f
 	//_float3(151.975f, -22.4f, 377.3486f)	//Gear_Puzzle
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f))); //Gear
+	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(151.975f, -22.4f, 377.3486f))); //Gear
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(66.5f,67.5f,63.5f))); //Goldfish 1
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(172.526f, 46.1f, 136.589f))); //Goldfish 2
 	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(96.901f, 32.45f, 277.769f))); //Goldfish 3
 
-	//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f))); //Real Position
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE6, pLayerTag, TAG_OP(Prototype_Player), &_float3(14.375f, 18.8f, 4.519f))); //Real Position
 
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE6, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
