@@ -11,6 +11,7 @@ public:
 		GADASURA_TERRAIN_BULLET,
 		NONTEXTURE_SPHERE,
 		NONTEXTURE_OBB,
+		STRAIGHT_OBB,
 		MONSTER_TEXUTRE_BULLET_END
 	};
 public:
@@ -70,6 +71,7 @@ private: //Monster Skill
 	HRESULT	Gadasura_Terrain_Bullet(_double dDeltaTime);
 	HRESULT	Nontexture_Sphere(_double dDeltaTime);
 	HRESULT	Nontexture_Obb(_double dDeltaTime);
+	HRESULT	Straight_Obb(_double dDeltaTime);
 
 private://Paticle
 	HRESULT Gadasura_Terrain_Particle();

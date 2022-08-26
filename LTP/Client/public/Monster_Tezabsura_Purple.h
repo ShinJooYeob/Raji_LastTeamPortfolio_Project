@@ -102,7 +102,7 @@ private:
 	_float				m_fDistance = 0;
 	_bool				m_bLookAtOn = true; //LookAt On/Off
 
-	_float3				m_TempLook;
+	_float3				m_fTempLook;
 
 	_uint				m_iBoolOnce = 0;
 
