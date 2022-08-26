@@ -41,8 +41,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
-//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
+	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 #endif
 		// Partilce
@@ -1171,8 +1171,8 @@ HRESULT CMonster_Tezabsura_Purple::SetUp_Components()
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	HpDesc.m_Dimensions = 1.2f;
-	m_fMaxHP = 15.f;
+	HpDesc.m_Dimensions = 1.f;
+	m_fMaxHP = 18.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
