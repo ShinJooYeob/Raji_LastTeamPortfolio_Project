@@ -9887,7 +9887,7 @@ _int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
 
 			if (mesheffect.mIsSoundPlay)
 			{
-				if (mesheffect.mRange+10 < PlyDistance)
+				if (mesheffect.mRangeOff < PlyDistance)
 				{
 					// Sound Off
 					g_pGameInstance->Stop_ChannelSound(CHANNELID::CHANNEL_MAPOBJECT);
@@ -9916,12 +9916,13 @@ _int CPartilceCreateMgr::Update_MapEffect_Sound(_double timer)
 	return 0;
 }
 
-HRESULT CPartilceCreateMgr::AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType, _float vol,_float Range )
+HRESULT CPartilceCreateMgr::AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType, _float vol, _float Range, _float RangeMax)
 {
 	MAPSOUND sound;
 	sound.mFixpos = worldpos;
 	sound.mSoundType = mSoundType;
 	sound.mRange = Range;
+	sound.mRangeOff = RangeMax;
 	sound.mVol = vol;
 	mListSound3DMap[id].push_back(sound);
 	return S_OK;
@@ -9948,6 +9949,11 @@ void CPartilceCreateMgr::PlaySound_Map(_float3  pos, E_PARTICLSOUND_TYPE type, _
 		break;
 	case Client::UM_Env_Water_Wet:
 		wstr = TEXT("UM_Env_Water_Wet.ogg");
+
+	case Client::UM_Env_Water_Foutain1:
+		wstr = TEXT("UM_Env_Water_Foutain1.ogg");
+	case Client::UM_Env_Water_Foutain2:
+		wstr = TEXT("UM_Env_Water_Foutain2.ogg");
 		break;
 
 	default:
@@ -10203,8 +10209,12 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 			listFloat3.push_front(_float3(96.927811f, 96.400009f, zpos) );
 		}
 
+		_uint cc = 0;
+		_bool bRed = true;
+
 		for (_float3 pos : listFloat3)
 		{
+
 			FixPos = pos;
 			FixPos.y -= 6.5f;
 			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Lotas, desc1, desc2, desc3);
@@ -10213,7 +10223,20 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 			desc1.vSize = _float3(3.0f);
 			desc2.DealyTime = GETUTIL->RandomFloat(0.1f, 2);
 			desc2.AccRotSpeed = 0.0001f;
-			desc1.iDiffuseTextureIndex = 278;
+
+			if (cc >= 2)
+			{
+				bRed = !bRed;
+				cc = 0;
+			}
+			cc++;
+
+			if(bRed)
+				desc1.iDiffuseTextureIndex = 401;
+			else
+				desc1.iDiffuseTextureIndex = 278;
+
+
 			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
 
 		}
@@ -10743,9 +10766,9 @@ HRESULT CPartilceCreateMgr::ReadyParticle_ALL_Stages()
 
 	// Only Sound
 
-	AddSoundDesc(SCENE_STAGE6, _float3(170.167926f, 41.050011f, 177.772952f), UM_Env_Water_Foutain, 0.5f,3);
-	AddSoundDesc(SCENE_STAGE6, _float3(151.909f, 7.325f, 362.594f), UM_Env_Water_Foutain, 0.1f,3);
-	AddSoundDesc(SCENE_STAGE6, _float3(152.167f, 7.504f, 392.032f), UM_Env_Water_Foutain, 0.1f,3);
+	AddSoundDesc(SCENE_STAGE6, _float3(170.167926f, 41.050011f, 177.772952f), UM_Env_Water_Foutain1, 0.7f,15.0f,17.0f);
+	AddSoundDesc(SCENE_STAGE6, _float3(151.909f, 7.325f, 362.594f), UM_Env_Water_Foutain2, 0.5f, 5.0f,11);
+	AddSoundDesc(SCENE_STAGE6, _float3(152.167f, 7.504f, 392.032f), UM_Env_Water_Foutain2, 0.5f, 5.0f,11);
 
 
 #pragma endregion SCENE_STAGE6

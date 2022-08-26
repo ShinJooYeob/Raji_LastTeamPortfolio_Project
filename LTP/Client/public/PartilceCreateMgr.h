@@ -83,7 +83,8 @@ enum E_PARTICLSOUND_TYPE
 	UM_Env_Fire_bonefire,
 	UM_Env_Water_Cave,
 	UM_Env_Water_Wet,
-	UM_Env_Water_Foutain,
+	UM_Env_Water_Foutain1,
+	UM_Env_Water_Foutain2,
 
 	PARTICLSOUND_TYPE_END,
 
@@ -107,6 +108,7 @@ typedef struct tag_MapSound
 	E_PARTICLSOUND_TYPE mSoundType = PARTICLSOUND_TYPE_END;
 	_float3				mFixpos = _float3(0);
 	_float				mRange = 10; // 
+	_float				mRangeOff = 11; // 
 	_float				mVol = 1.0f; // 
 	_bool				mIsSoundPlay = false;
 }MAPSOUND;
@@ -643,7 +645,7 @@ private:
 //	_int					Update_MapEffect(_double timer);
 	_int					Update_MapEffect_Sound(_double timer);
 	
-	HRESULT					AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType ,_float vol = 1.0f, _float Range = 10);
+	HRESULT					AddSoundDesc(SCENEID id, _float3 worldpos, E_PARTICLSOUND_TYPE mSoundType ,_float vol = 1.0f, _float Range = 10, _float RangeMax = 20);
 	void					PlaySound_Map(_float3  pos , E_PARTICLSOUND_TYPE type,_float vol = 1.0f);
 	void					Create_MapMeshParticle(SCENEID id);
 
