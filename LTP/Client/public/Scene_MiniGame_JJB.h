@@ -87,6 +87,10 @@ private:
 	_float                  m_fReadyTime = 3.5f;
 	_float                  m_fEndTime = 3.f;
 
+	//³¡
+	_bool					m_GameRealEnd = false;
+	_bool					m_Fail = false;
+	_bool					m_Win = false;
 private:
 	class CCamera_Main*            m_pMainCam = nullptr;
 	CUtilityMgr*               m_pUtilMgr = nullptr;

@@ -394,12 +394,10 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	/////////스킬공격
 	if (!m_bIsAttack && m_fSkillCoolTime <= 0 && !m_bIsHit && m_fHP > 0)
 	{
-			_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
-			m_bIsAttack = true;
+		_int iRandom = (_int)GetSingle(CUtilityMgr)->RandomFloat(0, 3.9f);
+		m_bIsAttack = true;
 
-		//iRandom = mOnlyPattern; // DEBUG
-		iRandom = 3;
-		switch (iRandom)
+		switch (m_iSkillNum)
 		{
 		case SKILL_SPEAR:
 		{
@@ -461,6 +459,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		break;
 
 		}
+		++m_iSkillNum;
+		if (m_iSkillNum > 3)
+			m_iSkillNum = 0;
 	}
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_M)& DIS_Down)

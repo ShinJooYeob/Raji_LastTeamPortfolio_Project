@@ -289,6 +289,7 @@ void CChiedtuan_2Page_Weapon::Set_Attack(_double fDeltaTime)
 
 			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
 
+			g_pGameInstance->Play3D_Sound(L"JJB_2PageAttac.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 			m_bIsInitialPosDessolve = true;
 			m_pDissolveCom->Set_DissolveOn(false, 1.f);
@@ -544,11 +545,13 @@ void CChiedtuan_2Page_Weapon::VolcanoAttack(_double fDeltaTime)
 
 	if (m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS).y < PlayerTransfom->Get_MatrixState_Float3(CTransform::STATE_POS).y)
 	{
+		g_pGameInstance->Play3D_Sound(L"JJB_2PageAttac.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+
 		m_vPlayerPos.y += 1.f;
 		m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vPlayerPos);
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_Volcano), TAG_OP(Prototype_Object_Boss_Volcano), &m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-
+		g_pGameInstance->Play3D_Sound(L"JJB_Volcano.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 		Set_WeaponPosition();
 
 		m_bIsInitialPosDessolve = true;

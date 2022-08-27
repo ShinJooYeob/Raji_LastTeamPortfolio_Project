@@ -195,7 +195,7 @@ HRESULT CGaolCollider::SetUp_Components()
 	ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
 	if (m_GoalColliderDesc.ColliderType == CGaolCollider::COLLIDER_GOOD)
 	{
-		ColliderDesc.vScale = _float3(0.5f);//2.8f
+		ColliderDesc.vScale = _float3(2.f);//2.8f
 		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		ColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));

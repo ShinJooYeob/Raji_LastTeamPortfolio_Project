@@ -112,6 +112,7 @@ private:
 	vector<NONINSTNESHEFTDESC>								m_vecNonInstMeshDesc;
 
 	_bool								m_bInstanceMonsterDieSwitch = false;
+	_int								m_iSkillNum = 0;
 
 
 private:

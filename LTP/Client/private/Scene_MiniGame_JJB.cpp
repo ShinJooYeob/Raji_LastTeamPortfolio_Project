@@ -38,16 +38,14 @@ HRESULT CScene_MiniGame_JJB::Initialize()
 
 _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 {
+	/*if (m_GameRealEnd)
+		return _int();*/
+
 	m_pMainCam->Ortho_OnOff(true, 30.f);
 
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
-	if (m_bIsResult)
-		m_bIsResult = true;
-
-	if (m_bIsGameEnd)
-		m_bIsGameEnd = true;
 
 	if (m_bIsSceneChange)
 	{
@@ -58,14 +56,14 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 			m_bIsSceneChange = false;
 			m_fChangeWaitingTime = 0.f;
 
-
+			//m_GameRealEnd = true;
 			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
 			FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
 			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
 		}
 	}
 
-	if (m_fReadyTime > 0 && m_bIsStartBGM == false && m_bIsGameEnd == false)
+	if (m_bIsStartBGM == false && m_fReadyTime > 0 && m_bIsGameEnd == false)
 	{
 		m_fReadyTime -= (_float)fDeltaTime;
 
@@ -124,15 +122,15 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 		m_AccumulateTime += (_float)fDeltaTime;
 	}
 
-	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
-	{
-		CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
+	//if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
+	//{
+	//	CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
 
 
-		FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-		FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
-		return 0;
-	}
+	//	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+	//	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
+	//	return 0;
+	//}
 
 
 	if (m_iSceneStartChecker <= SceneChangeCopyFrame && CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
@@ -140,22 +138,6 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredTexture());
 		FAILED_CHECK(m_pUtilMgr->Get_Renderer()->Copy_LastDeferredToToonShadingTexture(1.f, true));
 	}
-
-	/*if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
-	{
-
-	CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
-
-	FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
-	FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_LOBY), SCENEID::SCENE_LOADING));
-	return 0;
-	}*/
-
-	//if (g_pGameInstance->Get_DIKeyState(DIK_T)&DIS_Down)
-	//{
-	//   m_StartBGM = true;
-	//   g_pGameInstance->PlayBGM(TEXT("sacuranbo.wav"));
-	//}
 
 	if (m_iVecCount < m_vecNoteTimings.size() && m_bIsStartBGM)
 		ProduceTimingNote();
@@ -189,15 +171,17 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 	if (m_bIsResult)
 	{
 		m_bIsResult = false;
-		if (m_iMaxCombo >= 70)
+		if (m_iMaxCombo >= 70 && m_Fail == false)
 		{
+			m_Win = true;
 			g_pGameInstance->PlaySoundW(L"Taiko_clear_pt_1P.wav", CHANNEL_EFFECT);
 
 		}
-		/*else
+		else if (m_iMaxCombo < 70 && m_Win == false)
 		{
+			m_Fail = true;
 			g_pGameInstance->PlaySoundW(L"Taiko_fail1_1P.wav", CHANNEL_EFFECT);
-		}*/
+		}
 	}
 
 	return _int();
