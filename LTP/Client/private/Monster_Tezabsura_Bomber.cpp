@@ -1262,8 +1262,8 @@ HRESULT CMonster_Tezabsura_Bomber::SetUp_Components()
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	HpDesc.m_Dimensions = 1.2f;
-	m_fMaxHP = 15.f;
+	HpDesc.m_Dimensions = 1.f;
+	m_fMaxHP = 18.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 

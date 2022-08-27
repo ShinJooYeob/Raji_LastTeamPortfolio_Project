@@ -47,7 +47,7 @@ private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_EtcInfo();
 
-	GOLDFISH_INFO				m_Batch_InfoDesc;
+	GOLDFISH_INFO					m_Batch_InfoDesc;
 	_bool							m_bOnceSwitch = false;
 
 	CTransform*						m_pPlayerTransform = nullptr;

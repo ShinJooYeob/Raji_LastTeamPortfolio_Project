@@ -59,6 +59,8 @@ private:
 	_bool				m_bTurnOn = false;
 	_bool				m_bCollsion = false;
 
+	_uint				m_iSoundIndex = 0;
+
 public:
 	static CGear* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);
 	virtual CGameObject* Clone(void* pArg);

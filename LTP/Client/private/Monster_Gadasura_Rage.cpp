@@ -40,10 +40,8 @@ HRESULT CMonster_Gadasura_Rage::Initialize_Clone(void * pArg)
 
 
 	//////////////////testPosition
-//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(216.357f, 29.2f, 188.583f));
-	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
-	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
-//	m_pTransformCom->LookAtExceptY(m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS));
+	//m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); // Stage2
+	//m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	//////////////////////////////
 
 	// Particle
@@ -1112,7 +1110,7 @@ HRESULT CMonster_Gadasura_Rage::SetUp_Components()
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 	HpDesc.m_Dimensions = 1.5f;
-	m_fMaxHP = 15.f;
+	m_fMaxHP = 25.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 

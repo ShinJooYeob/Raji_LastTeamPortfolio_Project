@@ -241,7 +241,6 @@ HRESULT CGoldfish::SetUp_Info()
 		m_pModelInstance[i] = pModelInstance;
 	}
 
-
 	_int	iNumber = 0;
 	_double	dpercent = 0.24;
 
@@ -355,17 +354,6 @@ HRESULT CGoldfish::SetUp_Components()
 
 	FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Shader_VTXANIMINST), TAG_COM(Com_Shader), (CComponent**)&m_pShaderCom));
 
-
-	//FAILED_CHECK(Add_Component(SCENE_STATIC, TAG_CP(Prototype_Collider2), TAG_COM(Com_Collider), (CComponent**)&m_pAttackColliderCom));
-	m_pAttackColliderCom = (CCollider*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Collider));
-
-	COLLIDERDESC			AttackColliderDesc;
-	ZeroMemory(&AttackColliderDesc, sizeof(COLLIDERDESC));
-	AttackColliderDesc.vScale = _float3(30.f);
-	AttackColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	AttackColliderDesc.vPosition = _float4(0.f, 0.f, 0.f, 1);
-	FAILED_CHECK(m_pAttackColliderCom->Add_ColliderBuffer(COLLIDER_SPHERE, &AttackColliderDesc));
-
 	SetUp_Info();
 
 
@@ -391,29 +379,139 @@ HRESULT CGoldfish::Instance_Route()
 	{
 	case 0:
 	{
-		m_fRoute[0][0] = _float3(15.f,50.f,10.f);
-		m_fRoute[0][1] = _float3(10.f,55.f,5.f);
-		m_fRoute[0][2] = _float3(20.f,60.f,15.f);
+		m_fRoute[0][0] = _float3(122.f,38.f,71.f);
+		m_fRoute[0][1] = _float3(131.f,39.f,78.f);
+		m_fRoute[0][2] = _float3(147.f,40.f,78.f);
 
-		m_fRoute[1][0] = _float3(12.f, 55.f, 10.f);
-		m_fRoute[1][1] = _float3(14.f, 57.f, 5.f);
-		m_fRoute[1][2] = _float3(24.f, 70.f, 15.f);
+		m_fRoute[1][0] = _float3(180.f, 38.f, 71.f);
+		m_fRoute[1][1] = _float3(169.f, 38.f, 72.f);
+		m_fRoute[1][2] = _float3(152.f, 39.f, 75.f);
 
-		m_fRoute[2][0] = _float3(14.f, 60.f, 10.f);
-		m_fRoute[2][1] = _float3(16.f, 65.f, 5.f);
-		m_fRoute[2][2] = _float3(28.f, 50.f, 15.f);
+		m_fRoute[2][0] = _float3(119.f, 38.f, 80.f);
+		m_fRoute[2][1] = _float3(144.f, 39.f, 80.f);
+		m_fRoute[2][2] = _float3(148.f, 39.f, 96.f);
 
-		m_fRoute[3][0] = _float3(18.f, 50.f, 10.f);
-		m_fRoute[3][1] = _float3(28.f, 55.f, 5.f);
-		m_fRoute[3][2] = _float3(38.f, 50.f, 15.f);
+		m_fRoute[3][0] = _float3(180.f, 39.f, 102.f);
+		m_fRoute[3][1] = _float3(177.f, 40.f, 95.f);
+		m_fRoute[3][2] = _float3(161.f, 40.f, 95.f);
 
-	/*	m_fRoute[1][0] = _float3();
-		m_fRoute[1][1] = _float3();
-		m_fRoute[1][2] = _float3();
+		m_fRoute[4][0] = _float3(157.f, 39.f, 79.f);
+		m_fRoute[4][1] = _float3(153.f, 38.f, 92.f);
+		m_fRoute[4][2] = _float3(144.f, 39.f, 95.f);
+		break;
+	}
+	case 1:
+	{
+		m_fRoute[0][0] = _float3(211.f, 22.f, 185.f);
+		m_fRoute[0][1] = _float3(170.f, 22.f, 192.f);
+		m_fRoute[0][2] = _float3(132.f, 22.f, 192.f);
 
-		m_fRoute[2][0] = _float3();
-		m_fRoute[2][1] = _float3();
-		m_fRoute[2][2] = _float3();*/
+		m_fRoute[1][0] = _float3(219.f, 23.f, 198.f);
+		m_fRoute[1][1] = _float3(194.f, 23.f, 227.f);
+		m_fRoute[1][2] = _float3(206.f, 23.f, 256.f);
+
+		m_fRoute[2][0] = _float3(214.f, 22.f, 226.f);
+		m_fRoute[2][1] = _float3(150.f, 20.f, 240.f);
+		m_fRoute[2][2] = _float3(118.f, 23.f, 228.f);
+
+		m_fRoute[3][0] = _float3(220.f, 23.f, 196.f);
+		m_fRoute[3][1] = _float3(177.f, 23.f, 227.f);
+		m_fRoute[3][2] = _float3(152.f, 23.f, 227.f);
+
+		m_fRoute[4][0] = _float3(200.f, 23.f, 242.f);
+		m_fRoute[4][1] = _float3(195.f, 23.f, 200.f);
+		m_fRoute[4][2] = _float3(180.f, 23.f, 190.f);
+		break;
+	}case 2:
+	{
+		m_fRoute[0][0] = _float3(146.f, 23.f, 250.f);
+		m_fRoute[0][1] = _float3(104.f, 23.f, 246.f);
+		m_fRoute[0][2] = _float3(100.f, 23.f, 216.f);
+
+		m_fRoute[1][0] = _float3(111.f, 23.f, 193.f);
+		m_fRoute[1][1] = _float3(142.f, 23.f, 208.f);
+		m_fRoute[1][2] = _float3(160.f, 23.f, 235.f);
+
+		m_fRoute[2][0] = _float3(143.f, 23.f, 185.f);
+		m_fRoute[2][1] = _float3(143.f, 23.f, 229.f);
+		m_fRoute[2][2] = _float3(112.f, 23.f, 210.f);
+
+		m_fRoute[3][0] = _float3(124.f, 23.f, 225.f);
+		m_fRoute[3][1] = _float3(205.f, 23.f, 225.f);
+		m_fRoute[3][2] = _float3(188.f, 23.f, 239.f);
+
+		m_fRoute[4][0] = _float3(132.f, 23.f, 257.f);
+		m_fRoute[4][1] = _float3(92.f, 23.f, 258.f);
+		m_fRoute[4][2] = _float3(99.f, 23.f, 225.f);
+		break;
+	}
+	case 3:
+	{
+		m_fRoute[0][0] = _float3(150.f, 22.f, 263.f);
+		m_fRoute[0][1] = _float3(126.f, 22.f, 257.f);
+		m_fRoute[0][2] = _float3(105.f, 22.f, 238.f);
+
+		m_fRoute[1][0] = _float3(83.f, 21.f, 262.f);
+		m_fRoute[1][1] = _float3(101.f, 22.f, 247.f);
+		m_fRoute[1][2] = _float3(145.f, 22.f, 250.f);
+
+		m_fRoute[2][0] = _float3(141.f, 22.f, 264.f);
+		m_fRoute[2][1] = _float3(124.f, 22.f, 246.f);
+		m_fRoute[2][2] = _float3(100.f, 23.f, 257.f);
+
+		m_fRoute[3][0] = _float3(105.f, 23.f, 240.f);
+		m_fRoute[3][1] = _float3(131.f, 23.f, 240.f);
+		m_fRoute[3][2] = _float3(152.f, 23.f, 250.f);
+
+		m_fRoute[4][0] = _float3(147.f, 23.f, 289.f);
+		m_fRoute[4][1] = _float3(118.f, 23.f, 290.f);
+		m_fRoute[4][2] = _float3(121.f, 23.f, 253.f);
+		break;
+	}
+	case 4:
+	{
+		m_fRoute[0][0] = _float3(107.f, -0.5f, 342.f);
+		m_fRoute[0][1] = _float3(146.f, -1.f, 382.f);
+		m_fRoute[0][2] = _float3(110.f, -0.5f, 413.f);
+
+		m_fRoute[1][0] = _float3(191.f, -0.1f, 369.f);
+		m_fRoute[1][1] = _float3(141.f, -0.3f, 369.f);
+		m_fRoute[1][2] = _float3(146.f, -0.5f, 428.f);
+
+		m_fRoute[2][0] = _float3(115.f, -0.3f, 403.f);
+		m_fRoute[2][1] = _float3(133.f, -0.3f, 375.f);
+		m_fRoute[2][2] = _float3(129.f, -0.3f, 354.f);
+
+		m_fRoute[3][0] = _float3(77.f, -1.f, 354.f);
+		m_fRoute[3][1] = _float3(113.f,-0.2f, 361.f);
+		m_fRoute[3][2] = _float3(113.f,-0.5f, 389.f);
+
+		m_fRoute[4][0] = _float3(140.f, -0.3f, 363.f);
+		m_fRoute[4][1] = _float3(106.f, -0.3f, 337.f);
+		m_fRoute[4][2] = _float3(104.f, -0.3f, 314.f);
+		break;
+	}
+	case 5:
+	{
+		m_fRoute[0][0] = _float3(198.f, -0.2f, 337.f);
+		m_fRoute[0][1] = _float3(198.f, -0.2f, 401.f);
+		m_fRoute[0][2] = _float3(186.f, -0.2f, 386.f);
+
+		m_fRoute[1][0] = _float3(125.f, -0.2f, 386.f);
+		m_fRoute[1][1] = _float3(173.f, -0.5f, 386.f);
+		m_fRoute[1][2] = _float3(194.f, -0.8f, 368.f);
+
+		m_fRoute[2][0] = _float3(144.f, -0.2f, 328.f);
+		m_fRoute[2][1] = _float3(167.f, -0.5f, 360.f);
+		m_fRoute[2][2] = _float3(167.f, -0.8f, 396.f);
+
+		m_fRoute[3][0] = _float3(140.f, -0.2f, 448.f);
+		m_fRoute[3][1] = _float3(140.f, -0.5f, 428.f);
+		m_fRoute[3][2] = _float3(148.f, -1.f, 409.f);
+	
+		m_fRoute[4][0] = _float3(152.f, -1.f, 400.f);
+		m_fRoute[4][1] = _float3(136.f, -0.5f, 387.f);
+		m_fRoute[4][2] = _float3(120.f, -0.2f, 409.f);
 		break;
 	}
 	default:
@@ -463,7 +561,6 @@ void CGoldfish::Free()
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pAttackColliderCom);
 
 	for (_int i = 0; i < ANIM_END; i++)
 	{

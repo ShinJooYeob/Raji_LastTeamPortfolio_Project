@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Monster_Tezabsura_Purple.h"
 #include "Monster_Bullet_Universal.h"
+#include "Monster_Texture_Bullet.h"
 #include "HpUI.h"
 
 CMonster_Tezabsura_Purple::CMonster_Tezabsura_Purple(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -41,8 +42,8 @@ HRESULT CMonster_Tezabsura_Purple::Initialize_Clone(void * pArg)
 
 #ifdef _DEBUG
 	//////////////////testPosition
-//	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
-//	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
+	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(493.f, 7.100010f, 103.571f)); //Stage2
+	m_pNavigationCom->FindCellIndex(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS));
 	///////////////////
 #endif
 		// Partilce
@@ -499,7 +500,7 @@ HRESULT CMonster_Tezabsura_Purple::Once_AnimMotion(_double dDeltaTime)
 	if (KEYPRESS(DIK_B))
 		m_iOncePattern = 2;
 #endif // _DEBUG
-
+	m_iOncePattern = 30;
 	switch (m_iOncePattern)
 	{
 	case 0:
@@ -1171,8 +1172,8 @@ HRESULT CMonster_Tezabsura_Purple::SetUp_Components()
 	HpDesc.m_HPType = CHpUI::HP_MONSTER;
 	HpDesc.m_pObjcect = this;
 	HpDesc.m_vPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
-	HpDesc.m_Dimensions = 1.2f;
-	m_fMaxHP = 15.f;
+	HpDesc.m_Dimensions = 1.f;
+	m_fMaxHP = 18.f;
 	m_fHP = m_fMaxHP;
 	g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pHPUI), m_eNowSceneNum, TAG_OP(Prototype_Object_UI_HpUI), &HpDesc);
 
@@ -1432,6 +1433,12 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 				m_bLookAtOn = false;
 				m_pTransformCom->Move_Forward(dDeltaTime * 1.5, m_pNavigationCom);
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_pNavigationCom->Get_NaviPosition(m_pTransformCom->Get_MatrixState(CTransform::STATE_POS)));
+
+				if (m_iAdjMovedIndex == 0)
+				{
+					m_fTempLook = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_LOOK);
+					m_iAdjMovedIndex++;
+				}
 			}
 			if (m_iSoundIndex == 0 && PlayRate >= 0.4285)
 			{
@@ -1442,45 +1449,60 @@ HRESULT CMonster_Tezabsura_Purple::Adjust_AnimMovedTransform(_double dDeltaTime)
 
 			if (m_EffectAdjust == 0&& PlayRate >= 0.6)
 			{
+				INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
+					0.05f,
+					0.63f,
+					_float4(1),
+					_float4(1, 1, 1, 0.5f),
+					0,
+					_float3(1.5f),
+					_float3(0.8f),
+					1);
+				testTex.eParticleTypeID = InstanceEffect_Fountain;
+				testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
+				//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
+				testTex.ePassID = InstancePass_MaskingNoising_Bright;
+
+
+				_float Val = 0.2f;
+				testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
+				testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
+				testTex.Particle_Power = 3;
+
+				testTex.iTextureLayerIndex = 3;
+				testTex.iMaskingTextureIndex = 100;
+
+				//testTex.TempBuffer_1.y = 0;
+				testTex.TempBuffer_1.y = 1;
+
+				//	testTex.m_fAlphaTestValue = 0.5f;
+
+				testTex.FollowingTarget = m_pTransformCom;
+				testTex.iFollowingDir = FollowingDir_Up;
+				testTex.vPowerDirection = _float3(0, 1, 0);
+				testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
+				GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
+
+				//EH
+				CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC Monster_Texture_BulletDesc;
+
+				ZeroMemory(&Monster_Texture_BulletDesc, sizeof(CMonster_Texture_Bullet::MONSTER_TEXTURE_BULLETDESC));
+				Monster_Texture_BulletDesc.iBulletTextureNumber = CMonster_Texture_Bullet::STRAIGHT_OBB;
+				Monster_Texture_BulletDesc.fSpeedPerSec = 10;
+				Monster_Texture_BulletDesc.fScale = _float3(1.f, 1.f, 2.f);
+
+				Monster_Texture_BulletDesc.fLook = m_fTempLook;
+
+				Monster_Texture_BulletDesc.Object_Transform = m_pTransformCom;
+				Monster_Texture_BulletDesc.fPositioning = _float3(0.f, 1.f, 0.f);
+				Monster_Texture_BulletDesc.Object = this;
+
+				Monster_Texture_BulletDesc.dDuration = 0.5;
+
+				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_MonsterBullet), TAG_OP(Prototype_Object_Monster_Texture_Bullet), &Monster_Texture_BulletDesc));
+
+				//
 				m_EffectAdjust++;
-
-				{
-					INSTPARTICLEDESC testTex = GETPARTICLE->Get_EffectSetting_Tex(CPartilceCreateMgr::E_TEXTURE_EFFECTJ::Um_FireMask_3,
-						0.05f,
-						0.63f,
-						_float4(1),
-						_float4(1, 1, 1, 0.5f),
-						0,
-						_float3(1.5f),
-						_float3(0.8f),
-						1);
-					testTex.eParticleTypeID = InstanceEffect_Fountain;
-					testTex.eInstanceCount = Prototype_VIBuffer_Point_Instance_32;
-					//	testTex.ePassID = InstancePass_MaskingNoising_Bright;
-					testTex.ePassID = InstancePass_MaskingNoising_Bright;
-
-
-					_float Val = 0.2f;
-					testTex.ParticleStartRandomPosMin = _float3(-Val, 0, -Val);
-					testTex.ParticleStartRandomPosMax = _float3(Val, 1, Val);
-					testTex.Particle_Power = 3;
-
-					testTex.iTextureLayerIndex = 3;
-					testTex.iMaskingTextureIndex = 100;
-
-					//testTex.TempBuffer_1.y = 0;
-					testTex.TempBuffer_1.y = 1;
-
-					//	testTex.m_fAlphaTestValue = 0.5f;
-
-					testTex.FollowingTarget = m_pTransformCom;
-					testTex.iFollowingDir = FollowingDir_Up;
-					testTex.vPowerDirection = _float3(0, 1, 0);
-					testTex.SubPowerRandomRange_RUL = _float3(-1, 3, -1);
-					GETPARTICLE->Create_Texture_Effect_Desc(testTex, m_eNowSceneNum);
-
-				}
-
 
 			}
 			if (m_EffectAdjust == 1&& PlayRate >= 0.7)

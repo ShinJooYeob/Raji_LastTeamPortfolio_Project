@@ -66,7 +66,6 @@ HRESULT CPlayer::Initialize_Clone(void * pArg)
 
 	FAILED_CHECK(Ready_ParticleDesc());
 
-
 	return S_OK;
 }
 

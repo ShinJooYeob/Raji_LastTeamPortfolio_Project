@@ -8254,8 +8254,8 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 
 		Make_VerticalSpacing(2);
 
-		ImGui::Text("VertexList"); ImGui::SameLine(200.f, 1.f); ImGui::Text("CellList");
-
+		ImGui::Text("VertexList"); ImGui::SameLine(200.f, 1.f); ImGui::Text("CellList"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 0, 0, 1), "Pick: %d", m_iCellListCount + 1);
 
 		if (ImGui::BeginListBox("", ImVec2(150.f, 70.f)))
 		{
