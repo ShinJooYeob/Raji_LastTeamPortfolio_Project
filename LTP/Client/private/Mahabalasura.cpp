@@ -1056,6 +1056,14 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 			m_iCutSceneStep = 2;
 			m_fDelayTime = 4.5f;
 			g_pGameInstance->Play3D_Sound(L"JJB_MrM_Intro.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 4.f;
+			SpeechDesc.Text = L"그래서, 네가 그의 누나인가?";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 		}
 		else if (2 == m_iCutSceneStep)
 		{

@@ -8,6 +8,7 @@
 #include "Elevator.h"
 #include "Golu.h"
 #include "PathArrow.h"
+#include "SpeechUI.h"
 
 // #SCENE STAGE RAMDA
 
@@ -170,10 +171,62 @@ void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
 	{
 		m_fPlayGoluSoundDelay = 10.f;
 
-		_int iSelectSoundFileIndex = rand() % 10;
+		_int iSelectSoundFileIndex = rand() % 4;
 		_tchar pSoundFile[MAXLEN] = TEXT("");
 		swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
 		g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
+
+		switch (iSelectSoundFileIndex)
+		{
+		case 0:
+		{
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.LlveingTime = 3.5f;
+			SpeechDesc.Text = L"내가 살아서 누나를 다시 볼 수 있을까?";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
+			break;
+		}
+		case 1:
+		{
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.LlveingTime = 6.f;
+			SpeechDesc.Text = L"이제 시간이 없어... 제발.. 난 누나가 필요해";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
+			break;
+		}
+		case 2:
+		{
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.LlveingTime = 8.4f;
+			SpeechDesc.Text = L"누나, 난 여기에 있어, 빨리 와줘";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
+			break;
+		}
+		case 3:
+		{
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			 
+			SpeechDesc.LlveingTime = 6.f;
+			SpeechDesc.Text = L"누나 나는 누나가 올때까지 버틸 수 없을거같아..";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
+			break;
+		}
+		}
 	}
 }
 

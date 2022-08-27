@@ -2,6 +2,7 @@
 #include "..\public\MahaHead.h"
 #include "Player.h"
 #include "Camera_Main.h"
+#include "SpeechUI.h"
 
 CMahaHead::CMahaHead(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	: CGameObject(pDevice, pDeviceContext)
@@ -66,6 +67,12 @@ _int CMahaHead::Update(_double fDeltaTime)
 			m_iCurState = 3;
 			m_fDelayTime = 5.f;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_MrM_Intro_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 3.680f;
+			SpeechDesc.Text = L"음? 날벌레 한마리가 숨어들었구나...";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 		}
 
 	}
@@ -134,6 +141,12 @@ _int CMahaHead::Update(_double fDeltaTime)
 		GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(55.f, 2.f, 0.2f, false);
 		m_iCurState = 7;
 		m_fDelayTime = 4.f;
+
+		CSpeechUI::SPEECHFONTDESC SpeechDesc;
+		SpeechDesc.LlveingTime = 2.680f;
+		SpeechDesc.Text = L"날벌레가 여기에 있었군";
+		SpeechDesc.vFontScale = _float2(0.4f);
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 	}
 		break;
 	case 7:
@@ -169,6 +182,12 @@ _int CMahaHead::Update(_double fDeltaTime)
 			g_pGameInstance->Play3D_Sound(TEXT("JJB_Chieftain_Naration_8.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.2f, false);
 			m_bPlayOnceSound = true;
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 4.580f;
+			SpeechDesc.Text = L"너의 연약한 몸뚱이를 한입에 먹어주지.";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 		}
 		else if (0.f >= m_fDelayTime)
 		{
@@ -200,6 +219,13 @@ _int CMahaHead::Update(_double fDeltaTime)
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Rangda_Voice_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(56.f, 2.f, 0.2f, false);
 			m_bPlayOnceSound = true;
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 6.2f;
+			SpeechDesc.Text = L"헤헤헤.. 너무 빨리 죽으면 안된다고?";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 		}
 		else if (0.f >= m_fDelayTime)
 		{
@@ -219,6 +245,12 @@ _int CMahaHead::Update(_double fDeltaTime)
 		{
 			g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_3.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 			m_bPlayOnceSound = true;
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 5.2f;
+			SpeechDesc.Text = L"공포가 너의 피부에 스며들것이다";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 		}
 
 		m_fDelayTime -= (_float)fDeltaTime;
