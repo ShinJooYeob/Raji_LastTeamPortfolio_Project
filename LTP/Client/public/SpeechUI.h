@@ -10,9 +10,9 @@ public:
 	{
 		_tchar*		Text = nullptr;
 		_float		LlveingTime = 0.f;
-		_float2		TextPos;
+		_float2		TextPos = _float2( 40.f, 660.f);
 		_float4		vColor = _float4(1);
-		_float2		vFontScale = _float2(1);
+		_float2		vFontScale = _float2(0.35f);
 
 	}SPEECHFONTDESC;
 private:
@@ -38,7 +38,7 @@ private:
 
 	SPEECHFONTDESC	m_FonstDesc;
 
-	FONTSDESC		m_SkillNameFont;
+	FONTSDESC		m_NameFont;
 
 private:
 	HRESULT SetUp_Components();

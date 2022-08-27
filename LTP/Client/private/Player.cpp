@@ -26,6 +26,7 @@
 
 #include "Scene.h"
 #include "Scene_Stage5.h"
+#include "SpeechUI.h"
 
 //#define NotOnNavi
 
@@ -1123,16 +1124,35 @@ HRESULT CPlayer::Update_State_Sleep(_double fDeltaTime)
 		if (false == m_bOncePlaySound && 0.02f <= fAnimRate && 0.2f > fAnimRate)
 		{
 			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_0.wav", CHANNEL_PLAYER);
+
 			m_bOncePlaySound = true;
 		}
 		else if (true == m_bOncePlaySound && 0.2f <= fAnimRate && 0.6f > fAnimRate)
 		{
 			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_1.wav", CHANNEL_PLAYER);
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.LlveingTime = 3.280f;
+			SpeechDesc.Text = L"아 여긴 어디지?";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 			m_bOncePlaySound = false;
 		}
 		else if (false == m_bOncePlaySound && 0.6f <= fAnimRate)
 		{
 			g_pGameInstance->PlaySoundW(L"Jino_Raji_Start_Voice_2.wav", CHANNEL_PLAYER);
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.LlveingTime = 4.f;
+			SpeechDesc.Text = L"아 맞다 골루! 골루 어디있어!!??";
+			SpeechDesc.vFontScale = _float2(0.4f);
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 			m_bOncePlaySound = true;
 		}
 		else if (fAnimRate > 0.97f)

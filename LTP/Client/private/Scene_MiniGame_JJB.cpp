@@ -43,21 +43,31 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0)
 		return -1;
 
+	if (m_bIsResult)
+		m_bIsResult = true;
+
+	if (m_bIsGameEnd)
+		m_bIsGameEnd = true;
+
+	if (m_bIsSceneChange)
+	{
+		m_fChangeWaitingTime += (_float)fDeltaTime;
+
+		if (m_fChangeWaitingTime > 3.f)
+		{
+			m_bIsSceneChange = false;
+			m_fChangeWaitingTime = 0.f;
+
+
+			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_RHYTHM);
+			FAILED_CHECK(m_pUtilMgr->Clear_RenderGroup_forSceneChange());
+			FAILED_CHECK(g_pGameInstance->Scene_Change(CScene_Loading::Create(m_pDevice, m_pDeviceContext, SCENEID::SCENE_STAGE2), SCENEID::SCENE_LOADING));
+		}
+	}
+
 	if (m_fReadyTime > 0 && m_bIsStartBGM == false && m_bIsGameEnd == false)
 	{
 		m_fReadyTime -= (_float)fDeltaTime;
-
-		if (m_bIsSceneChange)
-		{
-			m_fChangeWaitingTime += (_float)fDeltaTime;
-
-			if (m_fChangeWaitingTime > 5.f)
-			{
-				m_bIsSceneChange = false;
-				m_fChangeWaitingTime = 0.f;
-				//여기서 하심 됨
-			}
-		}
 
 		if (m_fReadyTime <= 0)
 		{
@@ -150,7 +160,7 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 	if (m_iVecCount < m_vecNoteTimings.size() && m_bIsStartBGM)
 		ProduceTimingNote();
 
-	if (m_iVecCount >= m_vecNoteTimings.size() && m_bIsGameEnd == false && 10 == m_NoteBigRedMonsterList.size())
+	if (m_iVecCount >= m_vecNoteTimings.size() && m_bIsGameEnd == false && 7 == m_NoteBigRedMonsterList.size())
 	{
 		g_pGameInstance->Stop_AllChannel();
 
@@ -166,7 +176,7 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 
 		if (m_fEndTime <= 0.f)
 		{
-			m_fEndTime = 0.f;
+			m_fEndTime = -1.f;
 			m_bIsResult = true;
 			m_bIsSceneChange = true;
 			if (m_iMaxCombo > 70)
@@ -184,10 +194,10 @@ _int CScene_MiniGame_JJB::Update(_double fDeltaTime)
 			g_pGameInstance->PlaySoundW(L"Taiko_clear_pt_1P.wav", CHANNEL_EFFECT);
 
 		}
-		else
+		/*else
 		{
 			g_pGameInstance->PlaySoundW(L"Taiko_fail1_1P.wav", CHANNEL_EFFECT);
-		}
+		}*/
 	}
 
 	return _int();
@@ -698,7 +708,7 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CTaiko_Monster::NOTEDESC NoteMonsterDesc;
 
-	for (_int i = 0; i < 30; ++i)
+	for (_int i = 0; i < 20; ++i)
 	{
 		NoteMonsterDesc.NoteType = CTaiko_Monster::NOTE_SMALL;
 		NoteMonsterDesc.NotePosType = CTaiko_Monster::NOTEPOS_IN;
@@ -710,7 +720,7 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_Monster(const _tchar * pLayerTag)
 		m_NoteSmallRedMonsterList.push_back(Monster);
 	}
 
-	for (_int i = 0; i < 10; ++i)
+	for (_int i = 0; i < 7; ++i)
 	{
 		NoteMonsterDesc.NoteType = CTaiko_Monster::NOTE_BIG;
 		NoteMonsterDesc.NotePosType = CTaiko_Monster::NOTEPOS_IN;
@@ -722,7 +732,7 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_Monster(const _tchar * pLayerTag)
 		m_NoteBigRedMonsterList.push_back(Monster);
 	}
 
-	for (_int i = 0; i < 20; ++i)
+	for (_int i = 0; i < 15; ++i)
 	{
 		NoteMonsterDesc.NoteType = CTaiko_Monster::NOTE_SMALL;
 		NoteMonsterDesc.NotePosType = CTaiko_Monster::NOTEPOS_OUT;
@@ -734,7 +744,7 @@ HRESULT CScene_MiniGame_JJB::Ready_Layer_Monster(const _tchar * pLayerTag)
 		m_NoteSmallBlueMonsterList.push_back(Monster);
 	}
 
-	for (_int i = 0; i < 10; ++i)
+	for (_int i = 0; i < 1; ++i)
 	{
 		NoteMonsterDesc.NoteType = CTaiko_Monster::NOTE_BIG;
 		NoteMonsterDesc.NotePosType = CTaiko_Monster::NOTEPOS_OUT;

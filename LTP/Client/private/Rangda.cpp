@@ -5,6 +5,7 @@
 #include "Camera_Main.h"
 #include "Scene_Stage3.h"
 #include "PathArrow.h"
+#include "SpeechUI.h"
 
 #include "InstanceMonsterBatchTrigger.h"
 
@@ -246,10 +247,56 @@ _int CRangda::Update(_double fDeltaTime)
 	//스킬 공격
 	else if (m_fSkillCoolTime <= 0 && !m_bIsAttack && !m_bIsHit)
 	{
-		_int iRandom = rand() % 11;
+		_int iRandom = rand() % 9;
 
 		wstring teampString;
 		teampString = L"JJB_Narration" + to_wstring(iRandom) + L".wav";
+
+		CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+		SpeechDesc.vFontScale = _float2(0.35f);
+
+		switch (iRandom)
+		{
+		case 0:
+			SpeechDesc.LlveingTime = 15.f;
+			SpeechDesc.Text = L"전에 너를 가뿐하게 두들겨 준적이 있지 이번에도 그렇게 해주겠어!";
+			break;
+		case 1:
+			SpeechDesc.LlveingTime = 21.f;
+			SpeechDesc.Text = L"누가 네게 이런 무기를 쥐어줬지?? 왠지 비슈누의 냄새가 나는군.";
+			break;
+		case 2:
+			SpeechDesc.LlveingTime = 16.f;
+			SpeechDesc.Text = L"나랑 이렇게 대적한놈이 없었는데 너는 누구냐! 전에 만난적이 있나!?";
+			break;
+		case 3:
+			SpeechDesc.LlveingTime = 19.f;
+			SpeechDesc.Text = L"으흐흐,누가 나의 봉화 불을 킨 바보는 누구인가?";
+			break;
+		case 4:
+			SpeechDesc.LlveingTime = 16.f;
+			SpeechDesc.Text = L"그러니까 네가 그 침입자란 말이지? 그래 그 신나는 모험은 여기까지다!";
+			break;
+		case 5:
+			SpeechDesc.LlveingTime = 14.f;
+			SpeechDesc.Text = L"감히 내 심기를 건드리다니.. 이제 죽음을 맛볼 차례다!";
+			break;
+		case 6:
+			SpeechDesc.LlveingTime = 8.f;
+			SpeechDesc.Text = L"내가 꼭 너의 살점을 발라주겠다.";
+			break;
+		case 7:
+			SpeechDesc.LlveingTime = 12.f;
+			SpeechDesc.Text = L"내가 너의 심장과 폐로 스프를 만들어주지.";
+			break;
+		case 8:
+			SpeechDesc.LlveingTime = 12.f;
+			SpeechDesc.Text = L"누구인가 나를 깨운 작은 벌레 침략자는!";
+			break;
+		}
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
@@ -1059,6 +1106,14 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				wstring teampString;
 				teampString = L"JJB_Rangda_Get_Hit_0" + to_wstring(iRandom) + L".wav";
 
+				CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+				SpeechDesc.vFontScale = _float2(0.35f);
+				SpeechDesc.LlveingTime = 2.f;
+				SpeechDesc.Text = L"으아아악!";
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				++m_iAdjMovedIndex;
@@ -1070,6 +1125,40 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				wstring teampString;
 				teampString = L"JJB_Hit_narration" + to_wstring(iRandom) + L".wav";
+
+				CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+				SpeechDesc.vFontScale = _float2(0.35f);
+
+				switch (iRandom)
+				{
+				case 0:
+					SpeechDesc.LlveingTime = 8.f;
+					SpeechDesc.Text = L"너..죄를 죽음으로 지불해라 작은인간아";
+					break;
+				case 1:
+					SpeechDesc.LlveingTime = 8.f;
+					SpeechDesc.Text = L"감히 나를 거역하다니!!!";
+					break;
+				case 2:
+					SpeechDesc.LlveingTime = 9.f;
+					SpeechDesc.Text = L"어서 머리를 박고 조아리지 못하는가.";
+					break;
+				case 3:
+					SpeechDesc.LlveingTime = 9.f;
+					SpeechDesc.Text = L"감히 위대하신 랑다님을 거역하다니!!";
+					break;
+				case 4:
+					SpeechDesc.LlveingTime = 7.f;
+					SpeechDesc.Text = L"아악! 반드시 널 죽여주마";
+					break;
+				case 5:
+					SpeechDesc.LlveingTime = 8.f;
+					SpeechDesc.Text = L"으악! 뱃 속을 끄집어내서... 깃발처럼 걸어 놓겠다.";
+					break;
+				}
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 

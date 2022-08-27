@@ -21,6 +21,7 @@
 #include "PhysX/Collider_PhysX_Joint.h"
 #include "HpUI.h"
 #include "UI.h"
+#include "SpeechUI.h"
 //#include "LoadingUI.h"
 
 #ifdef _DEBUG
@@ -507,6 +508,7 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	//JJB
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_HpUI),		CHpUI::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_UI_UI),		 CUI::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Obeect_Speech),		CSpeechUI::Create(m_pDevice, m_pDeviceContext)));
 
 
 	//

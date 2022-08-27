@@ -93,7 +93,7 @@ private:
 	CTransform*			m_pTextureParticleTransform1 = nullptr;
 	CTransform*			m_pTextureParticleTransform2 = nullptr;
 
-	_float				m_fNarrationTime = 10.f;
+	_float				m_fNarrationTime = 15.f;
 	_float3				m_StartAnimPos;
 	_float3				m_AttackAnimPos;
 	vector<NONINSTNESHEFTDESC>		m_vecJYMeshNonInst;
