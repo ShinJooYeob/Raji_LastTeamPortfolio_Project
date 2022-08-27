@@ -300,8 +300,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 		{
 			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
 			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_MINIGAME1);
 		}
 		break;
 	}
@@ -327,7 +326,7 @@ HRESULT CUI_Texture_Universal::UI_Text(_double dDeltaTime)
 		{
 			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_VAMPIRESURVIAL);
 			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_MINIGAME1);
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE1);
 		}
 		break;
 	}
