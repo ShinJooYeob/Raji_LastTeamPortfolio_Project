@@ -10078,11 +10078,14 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 		listFloat3.push_back(_float3(458.395782f, 13.650010f, 119.169800f));
 
 		//	Briage
+
 		//	listFloat3.push_back(_float3(460.2f, 13.8f, 149.0f));
 		//	listFloat3.push_back(_float3(444.670258f, 10.656261f, 159.772964f));
 		//	listFloat3.push_back(_float3(440.548309f, 4.600010f, 198.594711f));
 		//	listFloat3.push_back(_float3(430.246429f, 4.600010f, 211.354660f));
 		//	listFloat3.push_back(_float3(415.853699f, 4.600010f, 222.872742f));
+
+
 		listFloat3.push_back(_float3(399.194153f, 4.400010f, 223.655167f));
 
 		listFloat3.push_back(_float3(407.185669f, 4.400010f, 233.373367f));
