@@ -39,7 +39,9 @@ HRESULT CScene_Minigame_PM::Initialize()
 	FAILED_CHECK(Ready_PostPorcessing());
 
 	m_pMainCam->Ortho_OnOff(true, 30.f);
-	g_pGameInstance->PlayBGM(TEXT("PM_BGM.wav"), 0,  1.f);
+
+	g_pGameInstance->Stop_AllChannel();
+	g_pGameInstance->PlayBGM(TEXT("PM_BGM.wav"), 0, 1.f);
 
 	return S_OK;
 }
@@ -55,6 +57,13 @@ _int CScene_Minigame_PM::Update(_double fDeltaTime)
 
 	if (m_bIsNeedToSceneChange)
 		return Change_to_NextScene();
+
+	//if (!m_bSoundPlayer&& m_fSceneStartTimer > 1.5f)
+	//{
+	//	m_bSoundPlayer = true;
+	//	g_pGameInstance->PlayBGM(TEXT("PM_BGM.wav"), 0, 1.f);
+	//}
+
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_RETURN)&DIS_Down)
 	{

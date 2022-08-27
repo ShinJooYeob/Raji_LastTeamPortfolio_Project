@@ -415,6 +415,26 @@ void CUI::TimeDraw(_double TimeDelta)
 	}
 }
 
+UIDESC CUI::Apply_Rect_To_MemberValue(FLOATRECT tRect)
+{
+
+	FLOATRECT m_UIRect;
+
+	m_UIRect = tRect;
+
+
+	m_fSizeX = m_UIRect.right - m_UIRect.left;
+	m_fSizeY = m_UIRect.bottom - m_UIRect.top;
+	m_fX = m_UIRect.left + m_fSizeX * 0.5f;
+	m_fY = m_UIRect.top + m_fSizeY * 0.5f;
+
+	Update_Rect();
+
+
+
+	return UIDESC();
+}
+
 void CUI::SetUp_UIInfo(SETTING_UI & pStruct)
 {
 	m_fX = pStruct.m_fX;

@@ -16,6 +16,7 @@ HINSTANCE		g_hInst;                                // 현재 인스턴스입니다.
 _double			g_fDeltaTime;
 CGameInstance*	g_pGameInstance = nullptr;
 _bool			g_bIsShowFPS = false;
+_bool			g_bShowMouse = false;
 
 
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.

@@ -135,6 +135,9 @@ public:
 	
 	void			TimeDraw(_double TimeDelta);
 
+
+	UIDESC Apply_Rect_To_MemberValue(FLOATRECT tRect);
+
 private:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;

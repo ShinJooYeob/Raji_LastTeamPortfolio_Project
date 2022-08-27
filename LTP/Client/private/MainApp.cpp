@@ -67,7 +67,7 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"VinerFonts", L"../bin/Resources/Fonts/Reenie.spritefont"));
 	FAILED_CHECK(g_pGameInstance->Add_Font(L"JunguFonts", L"../bin/Resources/Fonts/JunguGaShikidna.spritefont"));
-
+	FAILED_CHECK(Ready_MouseCursor());
 	return S_OK;
 }
 
@@ -81,6 +81,7 @@ _int CMainApp::Update(_double fDeltaTime)
 
 
 	g_fDeltaTime = fDeltaTime * m_SlowTimes;
+	FAILED_CHECK(Update_Mouse());
 
 
 	if (g_pGameInstance->Get_DIKeyState(DIK_M) & DIS_Down)
@@ -200,6 +201,135 @@ _bool CMainApp::Get_IsSlowed()
 }
 
 
+HRESULT CMainApp::Ready_MouseCursor()
+{
+	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_Mouse),
+		CTexture::Create(m_pDevice, m_pDeviceContext, L"Mouse.txt")));
+
+	CGameInstance*	pInstance = g_pGameInstance;
+
+	CUI::SETTING_UI SettingUI;
+
+	SettingUI.bClick = false;
+	SettingUI.bMove = false;
+	SettingUI.bDraw = true;
+	SettingUI.bColl = false;
+	SettingUI.iLevelIndex = SCENE_STATIC;
+	SettingUI.pUI_Name = TEXT("Skill_JB_Texture_63_Bow");
+	SettingUI.m_fSizeX = 79.f;
+	SettingUI.m_fSizeY = 102.f;
+	SettingUI.m_fX = 642.f;
+	SettingUI.m_fY = 201.f;
+	SettingUI.fAngle = 0.f;
+	SettingUI.iTextureIndex = 0;
+
+
+	FAILED_CHECK(pInstance->Add_GameObject_Out_of_Manager((CGameObject**)(&m_pMouseCursor), SCENE_STATIC, TAG_OP(Prototype_Object_UI_UI), &SettingUI));
+	NULL_CHECK_RETURN(m_pMouseCursor, E_FAIL);
+
+	FAILED_CHECK(m_pMouseCursor->Change_Component_by_NewAssign(SCENE_STATIC, TAG_CP(Prototype_Texture_Mouse), TAG_COM(Com_UI)));
+	//FAILED_CHECK(m_pMouseCursor->Change_TextureLayer(L"Mouse"));
+
+	m_pMouseCursor->Set_PassIndex(1);
+	m_pMouseCursor->Set_IsDraw(true);
+
+	POINT ptMouse;
+	GetCursorPos(&ptMouse);
+	ScreenToClient(g_hWnd, &ptMouse);
+
+
+	FLOATRECT tUIDesc;
+
+	tUIDesc.left = _float(ptMouse.x);
+	tUIDesc.top = _float(ptMouse.y);
+	tUIDesc.right = tUIDesc.left + 28;
+	tUIDesc.bottom = tUIDesc.top + 56;
+
+	m_pMouseCursor->Apply_Rect_To_MemberValue(tUIDesc);
+	//m_pMouseCursor->Set_DrawingValueIsUIDesc(false);
+	//FAILED_CHECK(m_pMouseCursor->Apply_Rect_To_Transform());
+
+	m_pMouseCursor->Set_RenderSortValue(_float((FLT_MAX)));
+
+	ShowCursor(false);
+
+	RECT rt;
+	GetClientRect(g_hWnd, &rt);
+	POINT p1, p2;
+	p1.x = rt.left;
+	p1.y = rt.top;
+	p2.x = rt.right;
+	p2.y = rt.bottom;
+
+	ClientToScreen(g_hWnd, &p1);
+	ClientToScreen(g_hWnd, &p2);
+
+	rt.left = p1.x;
+	rt.top = p1.y;
+	rt.right = p2.x;
+	rt.bottom = p2.y;
+
+	ClipCursor(&rt);
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Update_Mouse()
+{
+	if (g_pGameInstance->Get_DIKeyState(DIK_TAB)&DIS_Down)
+	{
+		g_bShowMouse = !g_bShowMouse;
+		m_pMouseCursor->Set_IsDraw(g_bShowMouse);
+
+		if (!g_bShowMouse)
+		{
+			RECT rt;
+			GetClientRect(g_hWnd, &rt);
+			POINT p1, p2;
+			p1.x = rt.left;
+			p1.y = rt.top;
+			p2.x = rt.right;
+			p2.y = rt.bottom;
+
+			ClientToScreen(g_hWnd, &p1);
+			ClientToScreen(g_hWnd, &p2);
+
+			rt.left = p1.x;
+			rt.top = p1.y;
+			rt.right = p2.x;
+			rt.bottom = p2.y;
+
+			ClipCursor(&rt);
+
+		}
+		else
+		{
+			ClipCursor(NULL);
+		}
+	}
+
+	if (g_bShowMouse)
+	{
+
+		POINT ptMouse;
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+
+		FLOATRECT tUIDesc;
+
+		tUIDesc.left = _float(ptMouse.x);
+		tUIDesc.top = _float(ptMouse.y);
+		tUIDesc.right = tUIDesc.left + 28;
+		tUIDesc.bottom = tUIDesc.top + 56;
+
+		m_pMouseCursor->Apply_Rect_To_MemberValue(tUIDesc);
+
+		FAILED_CHECK(m_pComRenderer->Add_RenderGroup(CRenderer::RENDER_UI, m_pMouseCursor));
+	}
+
+	return S_OK;
+}
 
 HRESULT CMainApp::Scene_Change(SCENEID eSceneID)
 {
@@ -434,6 +564,9 @@ FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Texture_MingameBuildingTex),
 		CTexture::Create(m_pDevice, m_pDeviceContext, L"MiniGameBuilding.txt")));
 
+
+
+
 	//TestEffect.txt;
 
 	FAILED_CHECK(m_pGameInstance->Add_Component_Prototype(SCENEID::SCENE_STATIC, TAG_CP(Prototype_Collider),
@@ -542,8 +675,9 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
-	GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging();
+	Safe_Release(m_pMouseCursor);
 
+	GetSingle(CUtilityMgr)->Get_Renderer()->Clear_RenderGroup_forSceneChaging();
 	m_pGameInstance->Get_NowScene()->Free();
 
 #ifdef _DEBUG

@@ -45,6 +45,7 @@ private:
 	CUtilityMgr*					m_pUtilMgr = nullptr;
 	CTransform*						m_pGoluTransform = nullptr;
 
+	_bool							m_bSoundPlayer = false;
 
 
 public:

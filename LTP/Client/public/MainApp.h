@@ -31,6 +31,7 @@ private:
 
 	CGameInstance*			m_pGameInstance = nullptr;
 	CRenderer*				m_pComRenderer = nullptr;
+	class CUI*				m_pMouseCursor = nullptr;
 
 #ifdef _DEBUG
 	class CImguiMgr*				m_pImguiMgr = nullptr;
@@ -55,6 +56,8 @@ private:
 	HRESULT Ready_Static_Component_Prototype();
 	HRESULT Ready_Static_GameObject_Prototype();
 
+	HRESULT Ready_MouseCursor();
+	HRESULT Update_Mouse();
 
 public:
 	static CMainApp* Create();

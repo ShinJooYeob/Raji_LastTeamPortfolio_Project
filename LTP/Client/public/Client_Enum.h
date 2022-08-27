@@ -3708,7 +3708,7 @@ enum COMPONENTPROTOTYPEID
 	Prototype_Texture_LobyScene,
 	Prototype_Texture_SettingScene,
 	Prototype_Texture_MskTex,
-	Prototype_Texture_PauseUI,
+		Prototype_Texture_Mouse,
 	Prototype_Texture_TestEffect,
 	Prototype_Texture_ChiedTianFlame,
 	Prototype_Texture_HPUI,
@@ -10502,8 +10502,8 @@ static const _tchar* Tag_Component_Prototype(COMPONENTPROTOTYPEID eTag)
 		case Prototype_Texture_InstanceParticleTex:
 			return TEXT("Prototype_Texture_InstanceParticleTex");
 			break;
-		case Prototype_Texture_PauseUI:
-			return TEXT("Prototype_Texture_PauseUI");
+		case Prototype_Texture_Mouse:
+			return TEXT("Prototype_Texture_Mouse");
 			break;
 
 		case Prototype_Texture_TestEffect:
