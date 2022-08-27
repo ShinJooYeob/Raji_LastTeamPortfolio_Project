@@ -8,6 +8,8 @@
 #include "Player.h"
 #include "ParticleCollider.h"
 #include "Particle_ColliderInOut.h"
+#include "SpeechUI.h"
+
 
 #include "InstanceMonsterBatchTrigger.h"
 
@@ -219,6 +221,67 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 		wstring teampString;
 		teampString = L"JJB_Chieftain_Naration_" + to_wstring(iRandom) + L".wav";
+
+		CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+		SpeechDesc.vFontScale = _float2(0.35f);
+
+		switch (iRandom)
+		{
+		case 0:
+			SpeechDesc.LlveingTime = 7.f;
+			SpeechDesc.Text = L"움직이지마라 널 부셔버리게";
+			break;
+		case 1:
+			SpeechDesc.LlveingTime = 4.f;
+			SpeechDesc.Text = L"지금 나한테 대적할려하는건가 작은 인간이여.";
+			break;
+		case 2:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"이렇게 힘쓸 가치도 없어 저 더러운 녀석에겐";
+			break;
+		case 3:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"나에게 싸울 용기가 있긴한가?";
+			break;
+		case 4:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"너의 뼈를 부셔주지!!";
+			break;
+		case 5:
+			SpeechDesc.LlveingTime = 6.f;
+			SpeechDesc.Text = L"너를 다른 생물로 만들어지";
+			break;
+		case 6:
+			SpeechDesc.LlveingTime = 10.f;
+			SpeechDesc.Text = L"이런 멍청한놈 왜 니까짓게 나한테 대적을 하지??";
+			break;
+		case 7:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"넌 여기 잘못왔어 멈춰.";
+			break;
+		case 8:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"너의 배와 한쪽 눈을 한입에 먹어주지.";
+			break;
+
+		case 9:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"멈춰. 이 더러운 생물아.";
+			break;
+
+		case 10:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"마주하라 그리고 두려워 해라.";
+			break;
+
+		case 11:
+			SpeechDesc.LlveingTime = 4.f;
+			SpeechDesc.Text = L"너를 꼭 부셔주마!!";
+			break;
+		}
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
@@ -941,6 +1004,28 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 
 			wstring teampString;
 			teampString = L"JJB_Chieftain_Intro100%_" + to_wstring(iRandom) + L".wav";
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.vFontScale = _float2(0.35f);
+
+			switch (iRandom)
+			{
+			case 1:
+				SpeechDesc.LlveingTime = 8.f;
+				SpeechDesc.Text = L"인간 크크크.. 지금 나랑 대적한다는건가?";
+				break;
+			case 2:
+				SpeechDesc.LlveingTime = 8.f;
+				SpeechDesc.Text = L"너는 멍청이군 내가 너를 찌부려트려주마!";
+				break;
+			case 3:
+				SpeechDesc.LlveingTime = 4.f;
+				SpeechDesc.Text = L"나랑 싸울생각인가 이 벌레놈아.";
+				break;
+			}
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 			m_bOnceSwitch = true;
@@ -2566,8 +2651,6 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (!m_ActivateSecondPage)
 			{
-
-
 				if (m_iAdjMovedIndex == 0 && PlayRate < 0.2926829268)
 				{
 					m_bIsLookAt = false;

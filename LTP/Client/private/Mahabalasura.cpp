@@ -15,6 +15,8 @@
 #include "ParticleCollider.h"
 #include "Particle_ColliderInOut.h"
 
+#include "SpeechUI.h"
+
 #include "Scene_Stage5.h"
 
 CMahabalasura::CMahabalasura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
@@ -230,6 +232,52 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		wstring teampString;
 		teampString = L"JJB_Naration_" + to_wstring(iRandom) + L".wav";
 
+		CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+		SpeechDesc.vFontScale = _float2(0.35f);
+
+		switch (iRandom)
+		{
+		case 0:
+			SpeechDesc.LlveingTime = 3.f;
+			SpeechDesc.Text = L"너도 저 노예들처럼 돼라.";
+			break;
+		case 1:
+			SpeechDesc.LlveingTime = 5.f;
+			SpeechDesc.Text = L"내가 널 살려주면 또 같은일을 하겠지.";
+			break;
+		case 2:
+			SpeechDesc.LlveingTime = 3.f;
+			SpeechDesc.Text = L"너는 날 막을 수 없다.";
+			break;
+		case 3:
+			SpeechDesc.LlveingTime = 3.f;
+			SpeechDesc.Text = L"너가 나의 시간을 낭비하게 했구나.";
+			break;
+		case 4:
+			SpeechDesc.LlveingTime = 3.f;
+			SpeechDesc.Text = L"넌 나를 죽일수없어. 너는";
+			break;
+		case 5:
+			SpeechDesc.LlveingTime = 3.;
+			SpeechDesc.Text = L"그만하면 충분해 이 작은 인간아.";
+			break;
+		case 6:
+			SpeechDesc.LlveingTime = 3.f;
+			SpeechDesc.Text = L"집에가라 너한테 쓸 시간은 없다.";
+			break;
+		case 7:
+			SpeechDesc.LlveingTime = 2.f;
+			SpeechDesc.Text = L"왜 저항하려 하는거지?";
+			break;
+		case 8:
+			SpeechDesc.LlveingTime = 2.f;
+			SpeechDesc.Text = L"그냥 가만히 있어라.";
+			break;
+		}
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 	}
@@ -290,6 +338,28 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			wstring teampString;
 			teampString = L"JJB_MrM_Hurt_" + to_wstring(iRandom) + L".wav";
 
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+			SpeechDesc.vFontScale = _float2(0.35f);
+
+			switch (iRandom)
+			{
+			case 0:
+				SpeechDesc.LlveingTime = 6.f;
+				SpeechDesc.Text = L"나는 나의 정의를 실현 시킬려는것 뿐이다!!. 오직! 나의 꿈을!";
+				break;
+			case 1:
+				SpeechDesc.LlveingTime = 3.f;
+				SpeechDesc.Text = L"넌 날 다치게 할수 없어!";
+				break;
+			case 2:
+				SpeechDesc.LlveingTime = 3.f;
+				SpeechDesc.Text = L"나..나는 이해 할수가 없다.";
+				break;			
+			}
+
+			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 			m_bIsHit = false;
@@ -328,7 +398,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 			m_bIsAttack = true;
 
 		//iRandom = mOnlyPattern; // DEBUG
-		//iRandom = 3;
+		iRandom = 3;
 		switch (iRandom)
 		{
 		case SKILL_SPEAR:
@@ -383,6 +453,9 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 		case SKILL_COPY:
 		{
+			m_bIsTeleport = true;
+			m_bIsTeleportSound = false;
+			m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.721f, 34.260f, 323.105f));
 			m_pModel->Change_AnimIndex_ReturnTo(7, 0);
 		}
 		break;
@@ -1246,9 +1319,6 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				if (m_iAdjMovedIndex == 0)
 				{
-
-
-
 					if (Get_NowHP() <= m_fMaxHP/2.f)
 					{
 						m_bIsTeleport = true;
@@ -1636,12 +1706,35 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 		case 7:
 		{
-			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1)
+			if (m_iAdjMovedIndex == 0 && PlayRate > 0)
 			{
+				++m_iAdjMovedIndex;
+			}
+			if (m_iAdjMovedIndex == 1 && PlayRate > 0.1)
+			{
+
 				_int iRandom = rand() % 2 + 1;
 
 				wstring teampString;
 				teampString = L"JJB_MrM_Make_clone_" + to_wstring(iRandom) + L".wav";
+
+				CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+				SpeechDesc.vFontScale = _float2(0.35f);
+
+				switch (iRandom)
+				{
+				case 1:
+					SpeechDesc.LlveingTime = 3.f;
+					SpeechDesc.Text = L"그림자들이 나를 그곳으로 데려다 줄것이다.";
+					break;
+				case 2:
+					SpeechDesc.LlveingTime = 3.f;
+					SpeechDesc.Text = L"그림자들아 나와라.";
+					break;
+				}
+
+				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
@@ -1650,20 +1743,24 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				++m_iAdjMovedIndex;
 			}
 
-			if (m_iAdjMovedIndex == 1 && PlayRate > 0.112676056)
+			if (m_iAdjMovedIndex == 2 && PlayRate > 0.112676056)
 			{
 				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Claw.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
+			/*if (m_iAdjMovedIndex == 3 && PlayRate > 0.50f)
+			{
+				m_bIsTeleport = true;
+				m_bIsTeleportSound = false;
+				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.721f, 34.260f, 323.105f));
+				++m_iAdjMovedIndex;
+			}*/
 			
-			if (m_iAdjMovedIndex == 2 && PlayRate > 0.5076923f)
+			if (m_iAdjMovedIndex == 3 && PlayRate > 0.5076923f)
 			{
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_CopyBoss"), TAG_OP(Prototype_Object_Boss_MahabalasuraCopy)));
 				//CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_CopyBoss"));
-
-				m_bIsTeleport = true;
-				m_bIsTeleportSound = false;
 				m_bIsCopySkill = true;
 
 				++m_iAdjMovedIndex;

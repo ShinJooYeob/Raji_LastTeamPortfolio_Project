@@ -2,6 +2,7 @@
 #include "..\public\Snake.h"
 #include "Player.h"
 #include "Snake_Poison_Raser.h"
+#include "SpeechUI.h"
 
 // JH
 #include "Camera_Main.h"
@@ -99,7 +100,8 @@ HRESULT CSnake::Initialize_Clone(void * pArg)
 	m_pModel->Change_AnimIndex(0);
 	m_iCurCutSceneState = -1;
 	// 150.f			// 220.f
-	//
+
+	m_fNarrationTime = 15.f;
 	return S_OK;
 }
 
@@ -153,16 +155,38 @@ _int CSnake::Update(_double fDeltaTime)
 	if (m_pModel->Get_NowAnimIndex() == 1)
 		m_fRotTime += (_float)fDeltaTime;
 
-	if (m_bIsAtackMoveStart)
-		m_fNarrationTime -= (_float)fDeltaTime;
+	/*if (m_bIsAtackMoveStart)*/
+	m_fNarrationTime -= (_float)fDeltaTime;
 
-	if (m_fNarrationTime <= 0 && !m_bIsAttack)
+	if (m_fNarrationTime <= 0 /*&& !m_bIsAttack*/)
 	{
-		m_fNarrationTime = 10.f;
+		m_fNarrationTime = 15.f;
 		_int iRandom = rand() % 3 + 1;
 
 		wstring teampString;
 		teampString = L"JJB_Naga_" + to_wstring(iRandom) + L".wav";
+
+		CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+		SpeechDesc.vFontScale = _float2(0.35f);
+
+		switch (iRandom)
+		{
+		case 1:
+			SpeechDesc.LlveingTime = 9.f;
+			SpeechDesc.Text = L"쉬이이.. 누가 이 돌들 사이를 빠져 나갔는가? 이방인이로구나";
+			break;
+		case 2:
+			SpeechDesc.LlveingTime = 11.f;
+			SpeechDesc.Text = L"니가 저지른 수많은 죽음과 처참한 만행과 셀수없는 살육을 보라.";
+			break;
+		case 3:
+			SpeechDesc.LlveingTime = 6.f;
+			SpeechDesc.Text = L"나의 공포를 너의 피부로 느껴봐라";
+			break;
+		}
+
+		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 	}
@@ -1362,9 +1386,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate > 0.10055865921787709f  && m_iAdjMovedIndex == 1)
 			{
-
-
-
+				g_pGameInstance->Play3D_Sound(L"JJB_Dragon8.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 				m_pRaserObj->Start_BeamEffect();
 				m_iAdjMovedIndex++;
 			}
@@ -1409,6 +1431,8 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate > 0.86592178770 && PlayRate <= 0.95)
 			{
+				g_pGameInstance->Stop_ChannelSound(CHANNEL_MONSTER);
+
 				_float fAngle = g_pGameInstance->Easing(TYPE_SinInOut, 0, 90.f, (_float)PlayRate - 0.86592178770f, 0.0840782123f);
 				m_pTransformCom->Rotation_CW(XMVectorSet(0, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle));
 

@@ -705,7 +705,7 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 	tSpearWaveDesc.fStartPos.y += 1.8f;
 	tSpearWaveDesc.iDir = 3;
 
-	for (_uint i = 0; i < InstanceCount; i++)
+	for (_uint i = 0; i < 20; i++)
 	{
 		{
 			ITVED tDesc;
@@ -723,9 +723,14 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 			tDesc.pTransform->Set_MoveSpeed(1.5f);
 
 			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
-			_float3 BossPos = BossTransform->Get_MatrixState(CTransform::STATE_POS);
+			_float3 BossPos = _float3(101.721f, 34.260f, 323.105f);
 
-			tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 10.5f) + BossPos.x, BossPos.y, GetSingle(CUtilityMgr)->RandomFloat(-10.5f, 8.5f) + BossPos.z));
+			_float Angle = (_float)i*(360.f / 20);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&BossPos) + (Mat.r[2] * 15.f);
+
+			tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(Pos));
 			//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
 			
 			
@@ -781,6 +786,212 @@ HRESULT CCopyMahabalasura::SetUp_Components()
 			
 
 			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead),	TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc));
+			tDesc.pSpearWaveEffect = (CMahabalasura_SpearWave*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(tDesc.pSpearWaveEffect, E_FAIL);
+
+			m_vecInstancedTransform.push_back(tDesc);
+		}
+		//Attack충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.3f, 1.6f, 1);
+		FAILED_CHECK(m_pAttackCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pAttackCollider->Set_ParantBuffer();
+
+		//피격 충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+	}
+
+	for (_uint i = 0; i < 20; i++)
+	{
+		{
+			ITVED tDesc;
+
+			tDesc.bIsDead = false;
+			tDesc.bLimLightIsUp = (rand() % 2) ? true : false;
+			tDesc.vLimLight = _float4(LimLightColor, 0);
+			tDesc.vLimLight.w = pUtil->RandomFloat(0, 1);
+			tDesc.vEmissive = _float4(1, 0.5f, 1, 0);
+			tDesc.fPassedTime = 0;
+
+			tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
+
+			tDesc.pTransform->Set_MoveSpeed(1.5f);
+
+			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
+			_float3 BossPos = _float3(101.721f, 34.260f, 323.105f);
+
+			_float Angle = (_float)i*(360.f / 20);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&BossPos) + (Mat.r[2] * 25.f);
+
+			tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(Pos));
+			//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+			CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+			ColliderDesc.ColliderType = COLLIDER_OBB;
+			ColliderDesc.ColliderDesc.vScale = _float3(20.5f, 20.5f, 450.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 90.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			CParticleCollider* pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_1ParticleColliders.push_back(pParticleCollider);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+			Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			ColliderDesc.ColliderType = COLLIDER_SPHERE;
+			ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_2ParticleColliders.push_back(pParticleCollider);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc));
+			tDesc.pSpearWaveEffect = (CMahabalasura_SpearWave*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(tDesc.pSpearWaveEffect, E_FAIL);
+
+			m_vecInstancedTransform.push_back(tDesc);
+		}
+		//Attack충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(2.f, 2.f, 2.f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.3f, 1.6f, 1);
+		FAILED_CHECK(m_pAttackCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pAttackCollider->Set_ParantBuffer();
+
+		//피격 충돌체
+		ZeroMemory(&ColliderDesc, sizeof(COLLIDERDESC));
+		ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+		ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1);
+		FAILED_CHECK(m_pCollider->Add_ColliderBuffer(COLLIDER_SPHERE, &ColliderDesc));
+		m_pCollider->Set_ParantBuffer();
+	}
+
+	for (_uint i = 0; i < 24; i++)
+	{
+		{
+			ITVED tDesc;
+
+			tDesc.bIsDead = false;
+			tDesc.bLimLightIsUp = (rand() % 2) ? true : false;
+			tDesc.vLimLight = _float4(LimLightColor, 0);
+			tDesc.vLimLight.w = pUtil->RandomFloat(0, 1);
+			tDesc.vEmissive = _float4(1, 0.5f, 1, 0);
+			tDesc.fPassedTime = 0;
+
+			tDesc.pTransform = (CTransform*)g_pGameInstance->Clone_Component(SCENE_STATIC, TAG_CP(Prototype_Transform));
+			NULL_CHECK_RETURN(tDesc.pTransform, E_FAIL);
+
+			tDesc.pTransform->Set_MoveSpeed(1.5f);
+
+			CTransform* BossTransform = (CTransform*)m_pBossObj->Get_Component(TAG_COM(Com_Transform));
+			_float3 BossPos = _float3(101.721f, 34.260f, 323.105f);
+
+			_float Angle = (_float)i*(360.f / 24);
+
+			_Matrix Mat = XMMatrixRotationY(XMConvertToRadians(Angle));
+			_float3 Pos = XMLoadFloat3(&BossPos) + (Mat.r[2] * 35.f);
+
+			tDesc.pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(Pos));
+			//pTransform->Set_MatrixState(CTransform::STATE_POS, _float3(rand()& 6+1 * iTemp, BossPos.y, rand() & 6 + 1 * iTemp));
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[0]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+			CGameObject* Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			CTransform* Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			CParticleCollider::SETTINGCOLLIDER ColliderDesc;
+			ColliderDesc.ColliderType = COLLIDER_OBB;
+			ColliderDesc.ColliderDesc.vScale = _float3(20.5f, 20.5f, 450.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 90.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			CParticleCollider* pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_1ParticleColliders.push_back(pParticleCollider);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[1]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_NonInstanceMeshEffect), &m_vecNonInstMeshDesc[2]));
+			pNonEffect = (CNonInstanceMeshEffect*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
+			NULL_CHECK_RETURN(pNonEffect, E_FAIL);
+			tDesc.vecEffect.push_back(pNonEffect);
+
+			Obj = g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead));
+			Transform = (CTransform*)Obj->Get_Component(TAG_COM(Com_Transform));
+
+			ColliderDesc.ColliderType = COLLIDER_SPHERE;
+			ColliderDesc.ColliderDesc.vScale = _float3(3.5f, 3.5f, 3.5f);
+			ColliderDesc.ColliderDesc.vRotation = _float4(0.f, 0.f, 0.f, 1.f);
+			ColliderDesc.ColliderDesc.vPosition = _float4(0.f, 1.f, 0.f, 1.f);
+			ColliderDesc.pTargetTransform = Transform;
+
+			pParticleCollider = nullptr;
+			g_pGameInstance->Add_GameObject_Out_of_Manager((CGameObject**)&pParticleCollider, m_eNowSceneNum, TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
+			m_pSwing_2ParticleColliders.push_back(pParticleCollider);
+
+
+			FAILED_CHECK(pInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead), TAG_OP(Prototype_Object_Boss_MahabalasuraSpearWave), &tSpearWaveDesc));
 			tDesc.pSpearWaveEffect = (CMahabalasura_SpearWave*)(pInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_ParticleNoDead)));
 			NULL_CHECK_RETURN(tDesc.pSpearWaveEffect, E_FAIL);
 

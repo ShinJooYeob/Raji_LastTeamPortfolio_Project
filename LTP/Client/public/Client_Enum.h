@@ -440,6 +440,7 @@ enum OBJECTPROTOTYPEID
 	Prototype_Object_MiniGame_TempCollider,
 	Prototype_Object_PlayerIndicator,
 	Prototype_Object_Goldfish,
+	Prototype_Obeect_Speech,
 
 	//EH_Static_MapObject
 	Prototype_Object_Map_Gear_Puzzle,
@@ -861,6 +862,9 @@ static const _tchar* Tag_Object_Prototype(OBJECTPROTOTYPEID eTag)
 
 	case Prototype_Object_Goldfish:
 		return TEXT("Prototype_Object_Goldfish");
+
+	case Prototype_Obeect_Speech:
+		return TEXT("Prototype_Obeect_Speech");
 		
 	case Prototype_Object_Map_Gear_Puzzle:
 		return TEXT("Prototype_Object_Map_Gear_Puzzle");
