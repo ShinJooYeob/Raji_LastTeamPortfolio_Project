@@ -8,6 +8,8 @@
 
 IMPLEMENT_SINGLETON(CPartilceCreateMgr);
 
+// #define _DEBUGH
+
 // #define RIMCOLOR(x,x,x);
 
 CPartilceCreateMgr::CPartilceCreateMgr()
@@ -180,6 +182,7 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 {
 
 #ifdef _DEBUG
+#ifdef _DEBUGH
 
 	if (
 		mCurrentScene != SCENE_STAGE1 &&
@@ -461,7 +464,7 @@ _int CPartilceCreateMgr::Update_DebugParticle(_double Timer)
 
 	}
 
-
+#endif // _DEBUGH
 #endif // _DEBUG
 
 	return _int();
@@ -10075,11 +10078,14 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 		listFloat3.push_back(_float3(458.395782f, 13.650010f, 119.169800f));
 
 		//	Briage
-			listFloat3.push_back(_float3(460.2f, 13.8f, 149.0f));
+
+		//	listFloat3.push_back(_float3(460.2f, 13.8f, 149.0f));
 		//	listFloat3.push_back(_float3(444.670258f, 10.656261f, 159.772964f));
 		//	listFloat3.push_back(_float3(440.548309f, 4.600010f, 198.594711f));
 		//	listFloat3.push_back(_float3(430.246429f, 4.600010f, 211.354660f));
 		//	listFloat3.push_back(_float3(415.853699f, 4.600010f, 222.872742f));
+
+
 		listFloat3.push_back(_float3(399.194153f, 4.400010f, 223.655167f));
 
 		listFloat3.push_back(_float3(407.185669f, 4.400010f, 233.373367f));
@@ -10184,15 +10190,15 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 
 		listFloat3.clear();
 
-		{
-			FixPos = _float3(483.217959f, 7.100010f, 116.793f); // 여신상
-
-			GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset0, desc1, desc2, desc3);
-			desc1.fMaxTime_Duration = 9999.0f;
-			desc1.vPosition = _float3(-0.0f, 1.0f, 0.0f);
-
-			GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
-		}		
+		//	{
+		//		FixPos = _float3(483.217959f, 7.100010f, 116.793f); // 여신상
+		//
+		//		GETPARTICLE->Get_MeshEffectDesc_Map_FreeSet(CPartilceCreateMgr::MESHEFFECT_MAP_OBJ_Freeset0, desc1, desc2, desc3);
+		//		desc1.fMaxTime_Duration = 9999.0f;
+		//		desc1.vPosition = _float3(-0.0f, 1.0f, 0.0f);
+		//
+		//		GETPARTICLE->Create_MeshEffectDesc_MAP(id, desc1, desc2, FixPos, desc3);
+		//	}		
 
 
 	}
@@ -10258,10 +10264,10 @@ void CPartilceCreateMgr::Create_MapMeshParticle(SCENEID id)
 
 
 		//fire
-		listFloat3.push_back(_float3(7.957f,53.3f, 9.123f));
-		listFloat3.push_back(_float3(11.5f, 53.3f, 9.123f));
-		listFloat3.push_back(_float3(22.5f, 53.3f, 9.0f));
-		listFloat3.push_back(_float3(25.2f, 53.3f, 9.0f));
+	//	listFloat3.push_back(_float3(7.957f,53.3f, 9.123f));
+	//	listFloat3.push_back(_float3(11.5f, 53.3f, 9.123f));
+	//	listFloat3.push_back(_float3(22.5f, 53.3f, 9.0f));
+	//	listFloat3.push_back(_float3(25.2f, 53.3f, 9.0f));
 
 		
 		for (_float3 pos : listFloat3)
