@@ -865,7 +865,7 @@ void CChiedtian::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderIndex
 
 _float CChiedtian::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _fVector vDamageDir, _bool bKnockback, _float fKnockbackPower)
 {
-	m_fHP -= fDamageAmount;
+	m_fHP -= 1.f;// fDamageAmount;
 
 	m_pHPUI->Set_ADD_HitCount();
 
