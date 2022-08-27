@@ -105,6 +105,15 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 				_float Timer = m_fSceneChangingTimer - 5.f;
 
 				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, 0), _float4(Timer, 0.01f, 1.f, 0));
+
+				_float PassedTimer = max(min(6.f - m_fSceneChangingTimer,1.f), 0);
+
+				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
+
+				pLightDesc->vDiffuse = _float4(g_pGameInstance->Easing_Vector(TYPE_SinInOut,_float3(1.f),TargetDiffuse, PassedTimer,1.f),1.f);
+				pLightDesc->vAmbient = _float4(g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(1.f), TargetAmbient, PassedTimer, 1.f), 1.f);
+				pLightDesc->vSpecular = _float4(g_pGameInstance->Easing_Vector(TYPE_SinInOut, _float3(0.234375f), TargetSpeculer, PassedTimer, 1.f), 1.f);
+
 			}
 
 			if (m_fSceneChangingTimer <= 1)
@@ -128,6 +137,7 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 
 			static _float3	vDiffuse;
 			static _float3	vAmbient;
+			static _float3	vSpeculer;
 			static _float	TargetValue;
 
 			if (m_fSceneChangingTimer > 3)
@@ -138,7 +148,7 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 				vDiffuse = pLightDesc->vDiffuse;
 				vAmbient = pLightDesc->vAmbient;
-
+				vSpeculer = pLightDesc->vSpecular;
 			}
 			else if (m_fSceneChangingTimer > 2)
 			{
@@ -147,11 +157,13 @@ _int CMiniGameBuilding::Update(_double fDeltaTime)
 
 				_float3 fDifValue = g_pGameInstance->Easing_Vector(TYPE_SinInOut, vDiffuse, _float3(1.f), Timer, 1.f);
 				_float3 fAmbValue = g_pGameInstance->Easing_Vector(TYPE_SinInOut, vAmbient, _float3(1.f), Timer, 1.f);
+				_float3 fSpeculer = g_pGameInstance->Easing_Vector(TYPE_SinInOut, vSpeculer, _float3(0.234375f), Timer, 1.f);
 				_float fValue = g_pGameInstance->Easing(TYPE_SinInOut, TargetValue, 0.f, Timer, 1.f);
 
 				LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 				pLightDesc->vDiffuse = fDifValue;
 				pLightDesc->vAmbient = fAmbValue;
+				pLightDesc->vSpecular = fSpeculer;
 
 				Set_LimLight_N_Emissive(_float4(0.9453125f, 0.40234375f, 0.16015625f, fValue), _float4(Timer, 0.01f, 1.f, 0));
 			}
@@ -389,9 +401,17 @@ HRESULT CMiniGameBuilding::Start_ReverseSceneChanging_CamAct()
 
 	if (pCam->CamActionStart(tAct))
 	{
+		LIGHTDESC* pLightDesc = g_pGameInstance->Get_LightDesc(tagLightDesc::TYPE_DIRECTIONAL, 0);
 
 
 
+		TargetDiffuse = pLightDesc->vDiffuse;
+		TargetAmbient = pLightDesc->vAmbient;
+		TargetSpeculer = pLightDesc->vSpecular;
+
+		pLightDesc->vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		pLightDesc->vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+		pLightDesc->vSpecular = _float4(0.234375f, 0.234375f, 0.234375f, 1.f);
 
 		m_fSceneChangingTimer = 6;
 		m_bIsReverseChange = true;

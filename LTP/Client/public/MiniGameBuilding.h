@@ -64,6 +64,10 @@ private:
 	_bool				m_bIsReverseChange = false;
 	SCENEID				m_eTargetScene = SCENE_LOBY;
 
+	_float3				TargetDiffuse = _float3(1.f);
+	_float3				TargetAmbient = _float3(1.f);
+	_float3				TargetSpeculer = _float3(0.234375f);
+
 	_bool			bRadiation = true;
 	_bool			bRealOff = false;
 	_float			fTargetValue = 0;
