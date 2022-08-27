@@ -351,7 +351,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			if (ParticleTimer > 0.2f)
 			{
 				ParticleTimer = 0;
-
+				g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 
 				CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 				INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
@@ -612,7 +612,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 			for (_int i = 0; i < m_pSubWeapons.size(); ++i)
 				m_pSubWeapons[i]->Set_IsAttackState(false);
-
+			m_iTest = 0;
 			m_bMiddlepointPos = true;
 			m_pModel->Change_AnimIndex(10);
 			m_bIsLookAt = true;
@@ -754,7 +754,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			//특정 스킬 다시하기
 			//iRandom = 0;
 
-			switch (iRandom)
+			switch (m_iTest)
 			{
 			case SECONDPAGEATTACK_SPIN:
 			{
@@ -769,6 +769,11 @@ _int CChiedtian::Update(_double fDeltaTime)
 				m_bISVolcanoAttackStart = true;
 			}
 			break;
+
+			++m_iTest;
+
+			if (m_iTest > 1)
+				m_iTest = 0;
 
 			}
 		}
@@ -2055,7 +2060,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-						
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2107,7 +2112,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2154,7 +2159,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2590,7 +2595,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		}
 		break;
 
-		case 9://SpinAttackAnim
+		case 9://0
 		{
 			m_bIsAtaackAimEnd = false;
 
