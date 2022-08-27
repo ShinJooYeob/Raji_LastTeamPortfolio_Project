@@ -412,7 +412,11 @@ _float CPlayer::Take_Damage(CGameObject * pTargetObject, _float fDamageAmount, _
 		_Vector DamageDir = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 		if (0.f == XMVectorGetX(XMVector3Length(vDamageDir)))
 		{
-			DamageDir = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+			DamageDir = XMVectorSet(0.f, 1.f, -1.f, 0.f);
+		}
+		else
+		{
+			DamageDir = vDamageDir;
 		}
 
 		CUtilityMgr* pUtil = GetSingle(CUtilityMgr);
@@ -519,6 +523,10 @@ _float CPlayer::Take_Damage_Instance(CGameObject * pTargetObject, _float fDamage
 		if (0.f == XMVectorGetX(XMVector3Length(vDamageDir)))
 		{
 			DamageDir = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		}
+		else
+		{
+			DamageDir = vDamageDir;
 		}
 
 		_int iSelectSoundFileIndex = rand() % 2;
@@ -745,8 +753,8 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	{
 	case WEAPON_SPEAR:
 	{
-		/*if (100.f > GetSingle(CUtilityMgr)->Get_SpearSkillPersent())
-			return;*/
+		if (100.f > GetSingle(CUtilityMgr)->Get_SpearSkillPersent())
+			return;
 
 		m_pModel->Change_AnimIndex(SPEAR_ANIM_ULTIMATE, 0.1f, true);
 
@@ -764,16 +772,16 @@ void CPlayer::Set_State_UltimateSkillStart(_double fDeltaTime)
 	}
 	break;
 	case WEAPON_BOW:
-		/*if (100.f > GetSingle(CUtilityMgr)->Get_BowSkillPersent())
-			return;*/
+		if (100.f > GetSingle(CUtilityMgr)->Get_BowSkillPersent())
+			return;
 
 		m_pModel->Change_AnimIndex(BOW_ANIM_ULTIMATE, 0.1f, true);
 		GetSingle(CUtilityMgr)->ResetBowPersent();
 		break;
 	case WEAPON_SWORD:
 	{
-		//if (100.f > GetSingle(CUtilityMgr)->Get_SwordshieldSkillPersent())
-		//	return;
+		if (100.f > GetSingle(CUtilityMgr)->Get_SwordshieldSkillPersent())
+			return;
 
 		GetSingle(CUtilityMgr)->ResetSwordshieldPersent();
 		m_pModel->Change_AnimIndex(SWORD_ANIM_ULTIMATE, 0.1f, true);
@@ -4818,7 +4826,7 @@ void CPlayer::Attack_Bow(_double fDeltaTime)
 			else if (0.277f < fAnimPlayRate)
 			{
 				m_fAnimSpeed = 3.f;
-				if (0.9f < fAnimPlayRate)
+				if (0.86f < fAnimPlayRate)
 				{
 					m_fAnimSpeed = 1.5f;
 					m_pModel->Set_BlockAnim(false);
@@ -6806,8 +6814,13 @@ void CPlayer::Spear_Ultimate(_double fDeltaTime)
 		
 		if (m_fMaxHP > Get_NowHP())
 		{ 
-			Add_NowHP(1.f);
-			m_pHPUI->Set_ADD_HitCount(-1);
+			Add_NowHP(3.f);
+			m_pHPUI->Set_ADD_HitCount(-3);
+			if (m_fMaxHP < Get_NowHP())
+			{
+				m_fHP = 9.f;
+				m_pHPUI->Set_HitCount(0);
+			}
 		}
 	}
 }
@@ -6967,9 +6980,15 @@ void CPlayer::Bow_Ultimate(_double fDeltaTime)
 	{
 		if (m_fMaxHP > Get_NowHP())
 		{
-			Add_NowHP(1.f);
-			m_pHPUI->Set_ADD_HitCount(-1);
+			Add_NowHP(3.f);
+			m_pHPUI->Set_ADD_HitCount(-3);
+			if (m_fMaxHP < Get_NowHP())
+			{
+				m_fHP = 9.f;
+				m_pHPUI->Set_HitCount(0);
+			}
 		}
+
 		Set_State_IdleStart(fDeltaTime);
 		m_bAnimChangeSwitch = false;
 	}
@@ -7401,8 +7420,13 @@ void CPlayer::Sword_Ultimate(_double fDeltaTime)
 	{
 		if (m_fMaxHP > Get_NowHP())
 		{
-			Add_NowHP(1.f);
-			m_pHPUI->Set_ADD_HitCount(-1);
+			Add_NowHP(3.f);
+			m_pHPUI->Set_ADD_HitCount(-3);
+			if (m_fMaxHP < Get_NowHP())
+			{
+				m_fHP = 9.f;
+				m_pHPUI->Set_HitCount(0);
+			}
 		}
 
 		m_bAnimChangeSwitch = false;
@@ -8374,11 +8398,11 @@ void CPlayer::Targeting_Search()
 
 	if (false == m_bPlayBattleSound)
 	{
-		/*_int iSelectSoundFileIndex = rand() % 4;
+		_int iSelectSoundFileIndex = rand() % 5;
 		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_Battle_5.wav"), iSelectSoundFileIndex);*/
-		g_pGameInstance->PlayBGM(L"Jino_Battle_5.wav");
+		swprintf_s(pSoundFile, TEXT("BGM_FIGHT_%d.ogg"), iSelectSoundFileIndex);
 
+		g_pGameInstance->PlayBGM(pSoundFile, 0, 0.7f);
 		m_bPlayBattleSound = true;
 	}
 }
