@@ -47,7 +47,6 @@ HRESULT CMiniGame_KongGolu::Initialize_Clone(void * pArg)
 
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, -1.f, 0.f));
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, XMVectorSet(38.513f, 46.53f, 39.5f, 1.f));
-
 	return S_OK;
 }
 
@@ -75,7 +74,7 @@ _int CMiniGame_KongGolu::Update(_double dDeltaTime)
 				CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_DONKINGKONG);
 
 				GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange();
-				g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE3);
+				g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE6);
 
 				m_bIsClear = true;
 			}

@@ -65,7 +65,7 @@ private:
 
 private:
 	_bool				m_bSoundIndex = 0;
-	_bool				m_bIsClear;
+	_bool				m_bIsClear = false;
 
 public:
 	static CMiniGame_KongGolu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, void* pArg = nullptr);

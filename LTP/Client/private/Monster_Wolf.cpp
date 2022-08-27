@@ -684,14 +684,14 @@ HRESULT CMonster_Wolf::Adjust_AnimMovedTransform(_double dDeltatime)
 				
 				m_vecInstancedTransform[i].pTransform->Move_Up(dDeltatime * fY * 10);
 
-				if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.5)
+				if (m_vecInstancedTransform[i].iSwtichIndex == 0 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.44 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() <= 0.5)
 				{
 					m_bAttackOn = true;
 					m_pAttackColliderCom->Set_ParantBuffer(0, i + 1);
 
 					m_vecInstancedTransform[i].iSwtichIndex++;
 				}
-				else if (m_vecInstancedTransform[i].iSwtichIndex == 2 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.62)
+				else if (m_vecInstancedTransform[i].iSwtichIndex == 1 && m_pModel[m_vecInstancedTransform[i].iAnimType]->Get_PlayRate() >= 0.62)
 				{
 
 					m_bAttackOn = false;
