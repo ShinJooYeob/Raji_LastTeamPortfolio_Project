@@ -47,7 +47,8 @@ HRESULT CScene_Stage4::Initialize()
 
 	FAILED_CHECK(Ready_PostPorcessing());
 
-	
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE4));
+
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
 
 	return S_OK;

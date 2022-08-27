@@ -652,6 +652,9 @@
     <Filter Include="01.GameObject\99.UI\SpeechUI">
       <UniqueIdentifier>{c46f2cd2-be8b-4a0a-b72b-1295ffa81d23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\08.Effect\00.NonInstanceMeshEffect\NonInstanceMeshEffect_TT">
+      <UniqueIdentifier>{c3730aad-7c50-42ff-aa45-5f34704352c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -1096,7 +1099,6 @@
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ParticleCreater.h" />
-    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h" />
     <ClInclude Include="..\public\MonsterBatchTrigger.h" />
     <ClInclude Include="..\public\SkillUI.h">
       <Filter>01.GameObject\99.UI\SkillUI</Filter>
@@ -1386,6 +1388,12 @@
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SpeechUI.h" />
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT.h">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect\NonInstanceMeshEffect_TT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT_Fix.h">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect\NonInstanceMeshEffect_TT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1802,7 +1810,6 @@
       <Filter>01.GameObject\08.Effect\03.ParticleMgr</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ParticleCreater.cpp" />
-    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp" />
     <ClCompile Include="..\private\MonsterBatchTrigger.cpp" />
     <ClCompile Include="..\private\SkillUI.cpp">
       <Filter>01.GameObject\99.UI\SkillUI</Filter>
@@ -2089,6 +2096,12 @@
       <Filter>01.GameObject\98.TriggerObject\16.GoldfishTrigger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SpeechUI.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT.cpp">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect\NonInstanceMeshEffect_TT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT_Fix.cpp">
+      <Filter>01.GameObject\08.Effect\00.NonInstanceMeshEffect\NonInstanceMeshEffect_TT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

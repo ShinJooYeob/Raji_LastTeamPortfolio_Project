@@ -11,6 +11,8 @@
 #include "MeshEffect.h"
 #include "NonInstanceMeshEffect.h"
 #include "NonInstanceMeshEffect_TT.h"
+#include "NonInstanceMeshEffect_TT_Fix.h"
+
 #include "PartilceCreateMgr.h"
 #include "MiniGameBuilding.h"
 
@@ -495,6 +497,7 @@ HRESULT CMainApp::Ready_Static_GameObject_Prototype()
 	
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect), CNonInstanceMeshEffect::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect_TT), CNonInstanceMeshEffect_TT::Create(m_pDevice, m_pDeviceContext)));
+	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_NonInstanceMeshEffect_TT_Fix), CNonInstanceMeshEffect_TT_Fix::Create(m_pDevice, m_pDeviceContext)));
 	FAILED_CHECK(m_pGameInstance->Add_GameObject_Prototype(TAG_OP(Prototype_Object_MiniGameBuilding), CMiniGameBuilding::Create(m_pDevice, m_pDeviceContext)));
 
 

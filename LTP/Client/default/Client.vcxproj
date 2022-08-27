@@ -210,6 +210,7 @@
     <ClInclude Include="..\public\GrovetenderDeadZone.h" />
     <ClInclude Include="..\public\JumpingMonkey.h" />
     <ClInclude Include="..\public\KongRajiTrigger.h" />
+    <ClInclude Include="..\public\NonInstanceMeshEffect_TT_Fix.h" />
     <ClInclude Include="..\public\PlayerIndicator.h" />
     <ClInclude Include="..\public\SpeechUI.h" />
     <ClInclude Include="..\public\Vishnu_RollingEye.h" />
@@ -415,6 +416,7 @@
     <ClCompile Include="..\private\GrovetenderDeadZone.cpp" />
     <ClCompile Include="..\private\JumpingMonkey.cpp" />
     <ClCompile Include="..\private\KongRajiTrigger.cpp" />
+    <ClCompile Include="..\private\NonInstanceMeshEffect_TT_Fix.cpp" />
     <ClCompile Include="..\private\PlayerIndicator.cpp" />
     <ClCompile Include="..\private\SpeechUI.cpp" />
     <ClCompile Include="..\private\Vishnu_RollingEye.cpp" />

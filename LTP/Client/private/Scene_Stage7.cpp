@@ -60,7 +60,8 @@ HRESULT CScene_Stage7::Initialize()
 	GetSingle(CUtilityMgr)->Get_Renderer()->Set_SunAtPoint(_float3(128.f, -64.f, 256.f));
 
 	FAILED_CHECK(Ready_Layer_UI(TAG_LAY(Layer_UI)));
-	
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE7));
+
 	m_eNextScene = SCENE_STAGE6;
 
 	Play_Scene_BGM();

@@ -2788,6 +2788,7 @@ HRESULT CScene_Edit::Widget_BatchedObjectList(_double fDeltatime)
 
 		Make_VerticalSpacing(2);
 
+
 		if (ImGui::Button("Delete Object", ImVec2(-FLT_MIN, 0.0f)) && m_iBatchedVecIndex)
 		{
 
@@ -8256,6 +8257,8 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 
 		ImGui::Text("VertexList"); ImGui::SameLine(200.f, 1.f); ImGui::Text("CellList"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(1, 0, 0, 1), "Pick: %d", m_iCellListCount + 1);
+		//ImGui::TextColored(ImVec4(1,0,0,1), "Pick: %d", m_iCellListCount+1);
+
 
 		if (ImGui::BeginListBox("", ImVec2(150.f, 70.f)))
 		{
@@ -8285,6 +8288,7 @@ HRESULT CScene_Edit::Widget_CreateDeleteHeightMap(_double fDeltatime)
 				const bool is_selected = (m_iCellListCount == n);
 				if (ImGui::Selectable(m_vCellNames[n], is_selected))
 				{
+
 					m_iCellListCount = n;
 
 				}

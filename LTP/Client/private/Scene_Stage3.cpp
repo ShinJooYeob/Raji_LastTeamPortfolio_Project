@@ -45,6 +45,7 @@ HRESULT CScene_Stage3::Initialize()
 	//
 	
 
+	FAILED_CHECK(GETPARTICLE->Ready_MapParticle_Stage(SCENE_STAGE3));
 
 
 
