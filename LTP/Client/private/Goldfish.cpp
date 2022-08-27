@@ -470,48 +470,48 @@ HRESULT CGoldfish::Instance_Route()
 	}
 	case 4:
 	{
-		m_fRoute[0][0] = _float3(107.f, -0.5f, 342.f);
-		m_fRoute[0][1] = _float3(146.f, -1.f, 382.f);
-		m_fRoute[0][2] = _float3(110.f, -0.5f, 413.f);
+		m_fRoute[0][0] = _float3(107.f, -1.5f, 342.f);
+		m_fRoute[0][1] = _float3(146.f, -2.f, 382.f);
+		m_fRoute[0][2] = _float3(110.f, -1.5f, 413.f);
 
-		m_fRoute[1][0] = _float3(191.f, -0.1f, 369.f);
-		m_fRoute[1][1] = _float3(141.f, -0.3f, 369.f);
-		m_fRoute[1][2] = _float3(146.f, -0.5f, 428.f);
+		m_fRoute[1][0] = _float3(191.f, -1.1f, 369.f);
+		m_fRoute[1][1] = _float3(141.f, -1.3f, 369.f);
+		m_fRoute[1][2] = _float3(146.f, -1.5f, 428.f);
 
-		m_fRoute[2][0] = _float3(115.f, -0.3f, 403.f);
-		m_fRoute[2][1] = _float3(133.f, -0.3f, 375.f);
-		m_fRoute[2][2] = _float3(129.f, -0.3f, 354.f);
+		m_fRoute[2][0] = _float3(115.f, -1.3f, 403.f);
+		m_fRoute[2][1] = _float3(133.f, -1.3f, 375.f);
+		m_fRoute[2][2] = _float3(129.f, -1.3f, 354.f);
 
-		m_fRoute[3][0] = _float3(77.f, -1.f, 354.f);
-		m_fRoute[3][1] = _float3(113.f,-0.2f, 361.f);
-		m_fRoute[3][2] = _float3(113.f,-0.5f, 389.f);
+		m_fRoute[3][0] = _float3(77.f, -2.f, 354.f);
+		m_fRoute[3][1] = _float3(113.f,-1.2f, 361.f);
+		m_fRoute[3][2] = _float3(113.f,-1.5f, 389.f);
 
-		m_fRoute[4][0] = _float3(140.f, -0.3f, 363.f);
-		m_fRoute[4][1] = _float3(106.f, -0.3f, 337.f);
-		m_fRoute[4][2] = _float3(104.f, -0.3f, 314.f);
+		m_fRoute[4][0] = _float3(140.f, -1.3f, 363.f);
+		m_fRoute[4][1] = _float3(106.f, -1.3f, 337.f);
+		m_fRoute[4][2] = _float3(104.f, -1.3f, 314.f);
 		break;
 	}
 	case 5:
 	{
-		m_fRoute[0][0] = _float3(198.f, -0.2f, 337.f);
-		m_fRoute[0][1] = _float3(198.f, -0.2f, 401.f);
-		m_fRoute[0][2] = _float3(186.f, -0.2f, 386.f);
+		m_fRoute[0][0] = _float3(198.f, -1.2f, 337.f);
+		m_fRoute[0][1] = _float3(198.f, -1.2f, 401.f);
+		m_fRoute[0][2] = _float3(186.f, -1.2f, 386.f);
 
-		m_fRoute[1][0] = _float3(125.f, -0.2f, 386.f);
-		m_fRoute[1][1] = _float3(173.f, -0.5f, 386.f);
-		m_fRoute[1][2] = _float3(194.f, -0.8f, 368.f);
+		m_fRoute[1][0] = _float3(125.f, -1.2f, 386.f);
+		m_fRoute[1][1] = _float3(173.f, -1.5f, 386.f);
+		m_fRoute[1][2] = _float3(194.f, -1.8f, 368.f);
 
-		m_fRoute[2][0] = _float3(144.f, -0.2f, 328.f);
-		m_fRoute[2][1] = _float3(167.f, -0.5f, 360.f);
-		m_fRoute[2][2] = _float3(167.f, -0.8f, 396.f);
+		m_fRoute[2][0] = _float3(144.f, -1.2f, 328.f);
+		m_fRoute[2][1] = _float3(167.f, -1.5f, 360.f);
+		m_fRoute[2][2] = _float3(167.f, -1.8f, 396.f);
 
-		m_fRoute[3][0] = _float3(140.f, -0.2f, 448.f);
-		m_fRoute[3][1] = _float3(140.f, -0.5f, 428.f);
-		m_fRoute[3][2] = _float3(148.f, -1.f, 409.f);
+		m_fRoute[3][0] = _float3(140.f, -1.2f, 448.f);
+		m_fRoute[3][1] = _float3(140.f, -1.5f, 428.f);
+		m_fRoute[3][2] = _float3(148.f, -2.f, 409.f);
 	
-		m_fRoute[4][0] = _float3(152.f, -1.f, 400.f);
-		m_fRoute[4][1] = _float3(136.f, -0.5f, 387.f);
-		m_fRoute[4][2] = _float3(120.f, -0.2f, 409.f);
+		m_fRoute[4][0] = _float3(152.f, -2.f, 400.f);
+		m_fRoute[4][1] = _float3(136.f, -1.5f, 387.f);
+		m_fRoute[4][2] = _float3(120.f, -1.2f, 409.f);
 		break;
 	}
 	default:

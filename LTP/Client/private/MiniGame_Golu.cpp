@@ -1040,7 +1040,8 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 		{
 		case 1:
 		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger4.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+			//FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
 			m_iNextRoundNumber++;
 			break;
