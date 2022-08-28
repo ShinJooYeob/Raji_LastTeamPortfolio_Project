@@ -189,7 +189,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 											 //testMesh.vFixedPosition = pos;
 
 											 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -243,7 +245,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -297,7 +301,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -351,7 +357,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -405,7 +413,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -459,7 +469,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -513,7 +525,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -567,7 +581,9 @@ void CGolu_Bullet::CollisionTriger(CCollider * pMyCollider, _uint iMyColliderInd
 												 //testMesh.vFixedPosition = pos;
 
 												 //위치지정
-				ParticleMesh.FollowingTarget = m_pTransformCom;
+				ParticleMesh.FollowingTarget = nullptr;
+				ParticleMesh.vFixedPosition = m_pTransformCom->Get_MatrixState_Float3(CTransform::STATE_POS);
+				//ParticleMesh.FollowingTarget = m_pTransformCom;
 				ParticleMesh.iFollowingDir = FollowingDir_Up;
 
 				GETPARTICLE->Create_MeshInst_DESC(ParticleMesh, m_eNowSceneNum);
@@ -902,6 +918,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 
 		{
 			NONINSTNESHEFTDESC tNIMEDesc;
+			ZeroMemory(&tNIMEDesc,sizeof(NONINSTNESHEFTDESC));
 
 			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado;
 			tNIMEDesc.fAppearTime = 0.5f;
@@ -931,6 +948,7 @@ HRESULT CGolu_Bullet::Tornado(_double dDeltaTime)
 		}
 		{
 			NONINSTNESHEFTDESC tNIMEDesc;
+			ZeroMemory(&tNIMEDesc, sizeof(NONINSTNESHEFTDESC));
 
 			tNIMEDesc.eMeshType = Prototype_Mesh_Tornado2;
 			tNIMEDesc.fAppearTime = 0.5f;

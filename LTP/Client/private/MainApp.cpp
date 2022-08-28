@@ -249,7 +249,7 @@ HRESULT CMainApp::Ready_MouseCursor()
 	//m_pMouseCursor->Set_DrawingValueIsUIDesc(false);
 	//FAILED_CHECK(m_pMouseCursor->Apply_Rect_To_Transform());
 
-	m_pMouseCursor->Set_RenderSortValue(_float((FLT_MAX)));
+	m_pMouseCursor->Set_RenderSortValue(_float(-(FLT_MAX)));
 
 	ShowCursor(false);
 
@@ -281,7 +281,7 @@ HRESULT CMainApp::Update_Mouse()
 		g_bShowMouse = !g_bShowMouse;
 		m_pMouseCursor->Set_IsDraw(g_bShowMouse);
 
-		if (!g_bShowMouse)
+		if (g_bShowMouse)
 		{
 			RECT rt;
 			GetClientRect(g_hWnd, &rt);

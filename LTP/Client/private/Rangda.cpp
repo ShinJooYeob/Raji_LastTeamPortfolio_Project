@@ -198,7 +198,7 @@ _int CRangda::Update(_double fDeltaTime)
 			m_pModel->Change_AnimIndex_UntilNReturn(2, 3, 0);
 		else if (m_fHP <= 0)
 		{
-			m_pModel->Change_AnimIndex_ReturnTo(2, 1);
+			m_pModel->Change_AnimIndex(1);
 
 			// JH
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_FocusTarget(this);
@@ -259,46 +259,46 @@ _int CRangda::Update(_double fDeltaTime)
 		switch (iRandom)
 		{
 		case 0:
-			SpeechDesc.LlveingTime = 15.f;
+			SpeechDesc.LlveingTime = 13.f;
 			SpeechDesc.Text = L"전에 너를 가뿐하게 두들겨 준적이 있지 이번에도 그렇게 해주겠어!";
 			break;
 		case 1:
-			SpeechDesc.LlveingTime = 21.f;
+			SpeechDesc.LlveingTime = 18.f;
 			SpeechDesc.Text = L"누가 네게 이런 무기를 쥐어줬지?? 왠지 비슈누의 냄새가 나는군.";
 			break;
 		case 2:
-			SpeechDesc.LlveingTime = 16.f;
+			SpeechDesc.LlveingTime = 13.f;
 			SpeechDesc.Text = L"나랑 이렇게 대적한놈이 없었는데 너는 누구냐! 전에 만난적이 있나!?";
 			break;
 		case 3:
-			SpeechDesc.LlveingTime = 19.f;
+			SpeechDesc.LlveingTime = 11.f;
 			SpeechDesc.Text = L"으흐흐,누가 나의 봉화 불을 킨 바보는 누구인가?";
 			break;
 		case 4:
-			SpeechDesc.LlveingTime = 16.f;
+			SpeechDesc.LlveingTime = 11.f;
 			SpeechDesc.Text = L"그러니까 네가 그 침입자란 말이지? 그래 그 신나는 모험은 여기까지다!";
 			break;
 		case 5:
-			SpeechDesc.LlveingTime = 14.f;
+			SpeechDesc.LlveingTime = 11.f;
 			SpeechDesc.Text = L"감히 내 심기를 건드리다니.. 이제 죽음을 맛볼 차례다!";
 			break;
 		case 6:
-			SpeechDesc.LlveingTime = 8.f;
+			SpeechDesc.LlveingTime = 5.f;
 			SpeechDesc.Text = L"내가 꼭 너의 살점을 발라주겠다.";
 			break;
 		case 7:
-			SpeechDesc.LlveingTime = 12.f;
+			SpeechDesc.LlveingTime = 7.f;
 			SpeechDesc.Text = L"내가 너의 심장과 폐로 스프를 만들어주지.";
 			break;
 		case 8:
-			SpeechDesc.LlveingTime = 12.f;
+			SpeechDesc.LlveingTime = 8.f;
 			SpeechDesc.Text = L"누구인가 나를 깨운 작은 벌레 침략자는!";
 			break;
 		}
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 		m_bIsAttack = true;
 
@@ -352,7 +352,7 @@ _int CRangda::Update(_double fDeltaTime)
 		if (m_bInstanceMonsterDieSwitch == false)
 		{
 			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
-			//pMonsterBatchTrigger->Set_MonsterAllDie(true);
+			pMonsterBatchTrigger->Set_MonsterAllDie(true);
 			m_bInstanceMonsterDieSwitch = true;
 		}
 		m_pDissolve->Set_DissolveOn(false, 9.4f);
@@ -1082,20 +1082,27 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				if (PlayRate > 0 && m_iAdjMovedIndex == 0 && m_fHP <= 0)
 				{
-					g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Dead.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					CSpeechUI::SPEECHFONTDESC SpeechDesc;
+
+					SpeechDesc.vFontScale = _float2(0.35f);
+					SpeechDesc.LlveingTime = 6.f;
+					SpeechDesc.Text = L"어..어떻게 이럴수가 있지? 말 도 안돼!!!";
+					g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+					g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Dead.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+					m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_vStartPos);
 
 					++m_iAdjMovedIndex;
 				}
-
-				if (PlayRate > 0.666666666666 && m_iAdjMovedIndex == 1 && m_fHP <= 0)
-				{
-					g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Scream_01.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
-
-					++m_iAdjMovedIndex;
-				}
-
-				m_iAdjMovedIndex++;
 			}
+
+			if (PlayRate > 0.666666666666 && m_iAdjMovedIndex == 1 && m_fHP <= 0)
+			{
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Rangda_Scream_01.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
+
+				++m_iAdjMovedIndex;
+			}
+
 			break;
 		case 2:
 		{
@@ -1114,7 +1121,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 				++m_iAdjMovedIndex;
 			}
@@ -1127,6 +1134,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 				teampString = L"JJB_Hit_narration" + to_wstring(iRandom) + L".wav";
 
 				CSpeechUI::SPEECHFONTDESC SpeechDesc;
+				SpeechDesc.TextPos = _float2(40.f, 60.f);
 
 				SpeechDesc.vFontScale = _float2(0.35f);
 
@@ -1160,7 +1168,7 @@ HRESULT CRangda::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 				++m_iAdjMovedIndex;
 			}

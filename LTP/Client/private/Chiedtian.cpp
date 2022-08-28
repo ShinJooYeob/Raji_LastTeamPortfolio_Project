@@ -283,7 +283,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_UI, 1.f);
 
 	}
 	if (m_fHP <= 0)
@@ -351,7 +351,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			if (ParticleTimer > 0.2f)
 			{
 				ParticleTimer = 0;
-				g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 				CUtilityMgr*	pUtil = GetSingle(CUtilityMgr);
 				INSTPARTICLEDESC tDesc = pUtil->Get_TextureParticleDesc(L"JY_TextureEft_17");
@@ -489,7 +489,7 @@ _int CChiedtian::Update(_double fDeltaTime)
 			m_pModel->Change_AnimIndex(1, 0.8f);
 
 			g_pGameInstance->Stop_ChannelSound(CHANNEL_MONSTER);
-			g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind_End.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind_End.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 		}
 
@@ -769,13 +769,12 @@ _int CChiedtian::Update(_double fDeltaTime)
 				m_bISVolcanoAttackStart = true;
 			}
 			break;
+			}
 
 			++m_iTest;
 
 			if (m_iTest > 1)
 				m_iTest = 0;
-
-			}
 		}
 
 	}
@@ -1032,7 +1031,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_UI, 1.f);
 			m_bOnceSwitch = true;
 		}
 		else if (0.045f <= fAnimPlayRate && 0.75f > fAnimPlayRate)
@@ -1073,13 +1072,13 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 
 				if (0.512f <= fAnimPlayRate && 0.566f > fAnimPlayRate && true == m_bOncePlaySound)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 					m_bOncePlaySound = false;
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
 				}
 				else if (0.566f <= fAnimPlayRate && false == m_bOncePlaySound)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 					m_bOncePlaySound = true;
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
 				}
@@ -1119,7 +1118,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 
 				if (0.275f <= fAnimPlayRate && false == m_bOncePlaySound)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 					m_bOncePlaySound = true;
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
 				}
@@ -1138,13 +1137,13 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 
 				if (0.094f <= fAnimPlayRate && 0.174f > fAnimPlayRate  && false == m_bOncePlaySound)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 					m_bOncePlaySound = true;
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
 				}
 				else if (0.174f <= fAnimPlayRate && true == m_bOncePlaySound)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 					m_bOncePlaySound = false;
 					GetSingle(CUtilityMgr)->Get_MainCamera()->Start_CameraShaking_Fov(57.f, 1.f, 0.2f, false);
 				}
@@ -1173,7 +1172,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 		{
 			Set_Dissolve_InOut(false);
 			m_bOnceSwitch = false;
-			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 		}
 		else if (false == m_bOnceSwitch && 0.512f <= fAnimPlayRate)
 		{
@@ -1193,7 +1192,7 @@ void CChiedtian::Update_Direction(_double fDeltaTime)
 		if (true == m_bOncePlaySound && 0.6f <= fAnimPlayRate)
 		{
 			m_bOncePlaySound = false;
-			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+			g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 1.f);
 
 
 
@@ -1986,13 +1985,13 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.1612903225)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.5483870967)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 		}
@@ -2019,7 +2018,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.1960784313)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Himeko_Attack_2.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 					m_iAdjMovedIndex++;
 				}
 				else if (m_iAdjMovedIndex == 1 && PlayRate < 0.254901960784313f)
@@ -2060,7 +2059,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2112,7 +2111,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2159,7 +2158,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 						g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TAG_LAY(Layer_ParticleCollider),
 							TAG_OP(Prototype_Object_ParticleCollider), &ColliderDesc);
 
-						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+						g_pGameInstance->Play3D_Sound(L"JJB_Boom.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 						pUtil->Create_TextureInstance(m_eNowSceneNum, tDesc);
 					}
 
@@ -2480,7 +2479,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				if (m_iAdjMovedIndex == 0 && PlayRate > 0.0526315)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SwordSound.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SwordSound.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 					CChiedtuan_Weapon::WEAPOPNDESC WeaponDesc;
 
@@ -2618,7 +2617,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				if (m_iAdjMovedIndex == 0)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chief_Tornedo_Wind.mp3", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 					m_iAdjMovedIndex++;
 				}
 			}
@@ -2664,7 +2663,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 					m_vecNonInstMeshDesc[7].vPosition =m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);
 
@@ -2702,7 +2701,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 
 					
 
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 					m_bIsLookAt = false;
 					m_iAdjMovedIndex++;
 				}
@@ -2762,7 +2761,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				}
 				if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
 				{
-					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+					g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 					if (!m_bIs2PageOnceJump)
 					{
 						//JH
@@ -2816,32 +2815,32 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			//무기없애기
 			if (PlayRate > 0.0411392 && m_iAdjMovedIndex == 0)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_SkullMace_Fire_Swing_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				m_bIsMainWeaponOff = true;
 				++m_iAdjMovedIndex;
 			}
 
 			if (PlayRate > 0.167721518 && m_iAdjMovedIndex == 1)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Ignite.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Ignite.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex; 
 			}
 
 			if (PlayRate > 0.205696202531 && m_iAdjMovedIndex == 2)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
 			if (PlayRate > 0.43354430379 && m_iAdjMovedIndex == 3)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
 			if (PlayRate > 0.5601265822 && m_iAdjMovedIndex == 4)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start_Long.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_BoneBreak_Start_Long.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
@@ -2863,7 +2862,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 		
 			if (m_iAdjMovedIndex == 0 && PlayRate > 0.14285714)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Loop.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Flamethrower_Loop.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 
 				m_vecTexInstDesc[0].vFixedPosition = m_vecTexInstDesc[1].vFixedPosition
@@ -2883,7 +2882,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 
 
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_01.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
@@ -2900,7 +2899,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 				GetSingle(CUtilityMgr)->Create_TextureInstance(m_eNowSceneNum, m_vecTexInstDesc[1]);
 
 
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Footstep_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				++m_iAdjMovedIndex;
 			}
 
@@ -2983,7 +2982,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 1 && PlayRate > 0.34146341)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Attack_Grunt_02.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 
 				m_iAdjMovedIndex++;
 			}
@@ -3001,7 +3000,7 @@ HRESULT CChiedtian::Adjust_AnimMovedTransform(_double fDeltatime)
 			}
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.63414634146)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->Play3D_Sound(L"JJB_Chieftain_Jump_Heavy.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_EFFECT, 0.7f);
 				m_bIsLookAt = false;
 				m_iAdjMovedIndex++;
 			}

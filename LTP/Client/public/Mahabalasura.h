@@ -82,6 +82,7 @@ private:
 
 	//COPY
 	_bool									m_bIsCopySkill = false;
+	_bool									m_bIsNarasion = true;
 
 	//TELEPORT
 	_bool									m_bIsStartTeleport = true;

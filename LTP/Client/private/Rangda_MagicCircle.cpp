@@ -118,7 +118,7 @@ HRESULT CRangda_MagicCircle::Initialize_Clone(void * pArg)
 	m_fAlpha = 0.00001f;
 
 
-	g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Spell_02.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+	g_pGameInstance->Play3D_Sound(TEXT("JJB_Rangda_Spell_02.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_SUBEFFECT, 0.7f);
 
 	m_vecJYTextureParticleDesc[0].vFixedPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) + XMVectorSet(0, 0.25f,0,0);
 	m_vecJYNonInstMeshDesc[0].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);

@@ -37,13 +37,13 @@ HRESULT CGraphicUI::Initialize_Clone(void * pArg)
 
 	m_OptionName_DOF.fAngle = 0.f;
 	m_OptionName_DOF.szString = L"Depth Of Field";
-	m_OptionName_DOF.vPosition = _float2(425.f, 290.f);
+	m_OptionName_DOF.vPosition = _float2(396.f, 290.f);
 	m_OptionName_DOF.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	m_OptionName_DOF.vFontScale = _float2(0.5f);
 
 	m_OptionName_DDFOG.fAngle = 0.f;
 	m_OptionName_DDFOG.szString = L"Fog";
-	m_OptionName_DDFOG.vPosition = _float2(425.f, 340.f);
+	m_OptionName_DDFOG.vPosition = _float2(439.f, 340.f);
 	m_OptionName_DDFOG.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	m_OptionName_DDFOG.vFontScale = _float2(0.5f);
 
@@ -138,7 +138,7 @@ HRESULT CGraphicUI::Initialize_Clone(void * pArg)
 
 	m_BtnBack.fAngle = 0.f;
 	m_BtnBack.szString = L"Back";
-	m_BtnBack.vPosition = _float2(590.f, 550.f);
+	m_BtnBack.vPosition = _float2(605.f, 550.f);
 	m_BtnBack.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	m_BtnBack.vFontScale = _float2(0.8f);
 

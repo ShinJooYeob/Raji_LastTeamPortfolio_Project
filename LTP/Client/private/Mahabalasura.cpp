@@ -105,7 +105,7 @@ HRESULT CMahabalasura::Initialize_Clone(void * pArg)
 	}
 
 	// JH
-	m_fMaxHP = 100.f;
+	m_fMaxHP = 50.f;
 	m_fHP = m_fMaxHP;
 	//
 
@@ -223,7 +223,10 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 	m_fNarrationTime -= (_float)fDeltaTime;
 
-	if (m_fNarrationTime <= 0)
+	if (m_bIsCopySkill == false)
+		m_bIsNarasion = true;
+
+	if (m_fNarrationTime <= 0 && !m_bIsHit && m_bIsNarasion && m_fHP > 0)
 	{
 		m_fNarrationTime = 12.f;
 
@@ -278,7 +281,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 	}
 
@@ -333,6 +336,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 		}
 		else if(m_fHP > 0)
 		{
+			m_fNarrationTime = 8.f;
 			_int iRandom = rand() % 2;
 
 			wstring teampString;
@@ -360,7 +364,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 			g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-			g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+			g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 			m_bIsHit = false;
 			m_bIsAttack = true;
@@ -479,7 +483,8 @@ _int CMahabalasura::Update(_double fDeltaTime)
 	for (_uint i = 0; i < iNumCollider; i++)
 		m_pCollider->Update_Transform(i, m_vecAttachedDesc[i].Caculate_AttachedBoneMatrix_BlenderFixed());
 
-	FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
+	if(!m_bIsCopySkill)
+		FAILED_CHECK(g_pGameInstance->Add_CollisionGroup(CollisionType_Monster, this, m_pCollider));
 
 
 	m_pSpear->Update(fDeltaTime);
@@ -497,7 +502,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 
 	if (m_bIsDissolveStart)
 	{
-		if (m_bInstanceMonsterDieSwitch == false)
+		/*if (m_bInstanceMonsterDieSwitch == false)
 		{
 			CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
 			if (nullptr != pMonsterBatchTrigger)
@@ -505,7 +510,7 @@ _int CMahabalasura::Update(_double fDeltaTime)
 				pMonsterBatchTrigger->Set_MonsterAllDie(true);
 			}
 			m_bInstanceMonsterDieSwitch = true;
-		}
+		}*/
 		m_pDissolveCom->Set_DissolveOn(false, 6.4f);
 	}
 
@@ -596,6 +601,15 @@ _float CMahabalasura::Take_Damage(CGameObject * pTargetObject, _float fDamageAmo
 
 	m_pHPUI->Set_ADD_HitCount();
 
+	if (0.f >= m_fHP && m_bInstanceMonsterDieSwitch == false)
+	{
+		CInstanceMonsterBatchTrigger* pMonsterBatchTrigger = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TAG_LAY(Layer_InstanceMonsterTrigger)));
+		if (nullptr != pMonsterBatchTrigger)
+		{
+			pMonsterBatchTrigger->Set_MonsterAllDie(true);
+		}
+		m_bInstanceMonsterDieSwitch = true;
+	}
 	return _float();
 }
 
@@ -1056,7 +1070,7 @@ void CMahabalasura::Update_Direction(_double fDeltaTime)
 			m_fAttachCamPos.z -= 4.f;
 			m_iCutSceneStep = 2;
 			m_fDelayTime = 4.5f;
-			g_pGameInstance->Play3D_Sound(L"JJB_MrM_Intro.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+			g_pGameInstance->PlaySoundW(L"JJB_MrM_Intro.wav", CHANNELID::CHANNEL_MONSTER, 1.f);
 
 			CSpeechUI::SPEECHFONTDESC SpeechDesc;
 			SpeechDesc.LlveingTime = 4.f;
@@ -1107,6 +1121,13 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 			g_pGameInstance->Stop_ChannelSound(CHANNEL_MONSTER);
 			g_pGameInstance->Play3D_Sound(L"Jino_MrM_Dead_0.wav", m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS), CHANNELID::CHANNEL_MONSTER, 1.f);
 			m_bOncePlaySound = true;
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 3.3f;
+			SpeechDesc.Text = L"아니야... 이럴리가 없어...";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			SpeechDesc.TextPos = _float2(40.f, 60.f);
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 		}
 		m_fDelayTime -= (_float)fDeltaTime;
 		if (0.f >= m_fDelayTime)
@@ -1175,6 +1196,13 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 		{
 			g_pGameInstance->Play3D_Sound(L"Jino_MrM_Dead_1.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
 			m_bOncePlaySound = true;
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 6.f;
+			SpeechDesc.Text = L"이렇게 끝낼수는 없어......";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+
 		}
 		if (0.f >= m_fDelayTime)
 		{
@@ -1198,7 +1226,7 @@ void CMahabalasura::Update_Dead(_double fDeltaTime)
 	m_fAttachCamPos = m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS);
 	m_fAttachCamPos.y += 2.f;
 	m_fAttachCamPos.z -= 4.f;
-	
+
 }
 
 HRESULT CMahabalasura::SetUp_Components()
@@ -1730,6 +1758,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 				CSpeechUI::SPEECHFONTDESC SpeechDesc;
 
 				SpeechDesc.vFontScale = _float2(0.35f);
+				SpeechDesc.TextPos = _float2(40.f, 60.f);
 
 				switch (iRandom)
 				{
@@ -1745,7 +1774,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-				g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 			//	Set_Play_MeshParticle(CPartilceCreateMgr::E_MESH_EFFECTJ::MESHEFFECT_BOSS_Mahabalasura_SKILLCOPY_0, m_pTextureParticleTransform);
 
@@ -1754,7 +1783,7 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (m_iAdjMovedIndex == 2 && PlayRate > 0.112676056)
 			{
-				g_pGameInstance->Play3D_Sound(L"JJB_MrM_Claw.wav", g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+				g_pGameInstance->PlaySoundW(L"JJB_MrM_Claw.wav",CHANNELID::CHANNEL_MONSTER, 1.f);
 				++m_iAdjMovedIndex;
 			}
 
@@ -1770,8 +1799,9 @@ HRESULT CMahabalasura::Adjust_AnimMovedTransform(_double fDeltatime)
 			{
 				FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_CopyBoss"), TAG_OP(Prototype_Object_Boss_MahabalasuraCopy)));
 				//CCopyMahabalasura* CopyBoss = (CCopyMahabalasura*)g_pGameInstance->Get_GameObject_By_LayerLastIndex(m_eNowSceneNum, TEXT("Layer_CopyBoss"));
+				m_bIsTeleport = true;
 				m_bIsCopySkill = true;
-
+				m_bIsNarasion = false;
 				++m_iAdjMovedIndex;
 			}
 

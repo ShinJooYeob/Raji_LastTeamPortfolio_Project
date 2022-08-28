@@ -80,6 +80,7 @@ private:
 	_float3				m_StartPos;
 	_Vector				m_vAngle;
 	_Vector				m_vMapAngle;
+	_int				m_NarasionIndex = 1;
 
 
 	_float		 m_fRedLight = 0.75f;

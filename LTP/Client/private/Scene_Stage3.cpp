@@ -167,19 +167,21 @@ void CScene_Stage3::Set_Change_NextScene()
 void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
 {
 	m_fPlayGoluSoundDelay -= (_float)fTimeDelta;
+	static _int iSelectSoundFileIndex = 0;
 	if (0.f >= m_fPlayGoluSoundDelay)
 	{
-		m_fPlayGoluSoundDelay = 10.f;
+		m_fPlayGoluSoundDelay = 9.f;
+		
 
-		_int iSelectSoundFileIndex = rand() % 4;
-		_tchar pSoundFile[MAXLEN] = TEXT("");
-		swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
-		g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
 
 		switch (iSelectSoundFileIndex)
 		{
 		case 0:
 		{
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
+
 			CSpeechUI::SPEECHFONTDESC SpeechDesc;
 
 			SpeechDesc.LlveingTime = 3.5f;
@@ -192,6 +194,10 @@ void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
 		}
 		case 1:
 		{
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
+
 			CSpeechUI::SPEECHFONTDESC SpeechDesc;
 
 			SpeechDesc.LlveingTime = 6.f;
@@ -204,6 +210,10 @@ void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
 		}
 		case 2:
 		{
+			_tchar pSoundFile[MAXLEN] = TEXT("");
+			swprintf_s(pSoundFile, TEXT("Jino_GoluSound_%d.wav"), iSelectSoundFileIndex);
+			g_pGameInstance->PlaySoundW(pSoundFile, Engine::CHANNELID::CHANNEL_MAPOBJECT, 1.f);
+
 			CSpeechUI::SPEECHFONTDESC SpeechDesc;
 
 			SpeechDesc.LlveingTime = 8.4f;
@@ -214,19 +224,20 @@ void CScene_Stage3::Play_GoluSound(_double fTimeDelta)
 
 			break;
 		}
-		case 3:
+		default:	
 		{
-			CSpeechUI::SPEECHFONTDESC SpeechDesc;
-			 
-			SpeechDesc.LlveingTime = 6.f;
-			SpeechDesc.Text = L"누나 나는 누나가 올때까지 버틸 수 없을거같아..";
-			SpeechDesc.vFontScale = _float2(0.4f);
-
-			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
+			//CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			//
+			//SpeechDesc.LlveingTime = 6.f;
+			//SpeechDesc.Text = L"누나 나는 누나가 올때까지 버틸 수 없을거같아..";
+			//SpeechDesc.vFontScale = _float2(0.4f);
+			//
+			//g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
 			break;
 		}
 		}
+		++iSelectSoundFileIndex;
 	}
 }
 

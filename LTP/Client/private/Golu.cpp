@@ -452,7 +452,7 @@ HRESULT CGolu::SetUp_Components()
 
 
 	CTransform::TRANSFORMDESC tDesc = {};
-	tDesc.fMovePerSec = 0.8f;
+	tDesc.fMovePerSec = 1.f;
 	tDesc.fRotationPerSec = XMConvertToRadians(60);
 	tDesc.fScalingPerSec = 1;
 	tDesc.vPivot = _float3(0, 0, 0);

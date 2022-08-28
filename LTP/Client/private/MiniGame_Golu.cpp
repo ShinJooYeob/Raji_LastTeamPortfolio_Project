@@ -1038,63 +1038,63 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 	{
 		switch (m_iNextRoundNumber)
 		{
+		//case 1:
+		//{
+		//	FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+		//	m_bNextRoundOn = false;
+		//	m_iNextRoundNumber++;
+		//	break;
+		//}
+		//case 2:
+		//{
+		//	FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger2.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+		//	m_bNextRoundOn = false;
+		//	m_iNextRoundNumber++;
+		//	break;
+		//}
+		//case 3:
+		//{
+		//	FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger3.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+		//	m_bNextRoundOn = false;
+		//	m_iNextRoundNumber++;
+		//	break;
+		//}
+		//case 4:
+		//{
+		//	FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger4.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
+		//	m_bNextRoundOn = false;
+		//	m_iNextRoundNumber++;
+		//	break;
+		//}
 		case 1:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger1.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 2:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger2.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 3:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger3.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 4:
-		{
-			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger4.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
-			m_bNextRoundOn = false;
-			m_iNextRoundNumber++;
-			break;
-		}
-		case 5:
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger5.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
 			m_iNextRoundNumber++;
 			break;
 		}
-		case 6:
+		case 2:
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger6.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
 			m_iNextRoundNumber++;
 			break;
 		}
-		case 7:
+		case 3:
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger7.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
 			m_iNextRoundNumber++;
 			break;
 		}
-		case 8:
+		case 4:
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger8.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
 			m_iNextRoundNumber ++; //End Round
 			break;
 		}
-		case 9:
+		case 5:
 		{
 			FAILED_CHECK(Ready_TriggerObject(L"Stage_MiniGame1_InstanceMonsterTrigger9.dat", SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 			m_bNextRoundOn = false;
@@ -1108,7 +1108,7 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 
 	CInstanceMonsterBatchTrigger* TriggerObject = static_cast<CInstanceMonsterBatchTrigger*>(g_pGameInstance->Get_GameObject_By_LayerLastIndex(SCENE_MINIGAME1, TAG_LAY(Layer_ColTrigger)));
 
-	if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber != 10)
+	if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber != 6)
 	{
 		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 
@@ -1125,7 +1125,7 @@ HRESULT CMiniGame_Golu::Ready_Round(_double dDeltaTime)
 
 		m_bTextOn = false;
 	}
-	else if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber == 10)
+	else if (m_bTextOn == true && TriggerObject == nullptr && m_iNextRoundNumber == 6)
 	{
 		CUI_Texture_Universal::UI_TEXTURE_UNIVERSALDESC UI_Texture_UniversalDesc;
 

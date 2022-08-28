@@ -160,17 +160,17 @@ _int CSnake::Update(_double fDeltaTime)
 
 	if (m_fNarrationTime <= 0 /*&& !m_bIsAttack*/)
 	{
-		m_fNarrationTime = 15.f;
-		_int iRandom = rand() % 3 + 1;
+		m_fNarrationTime = 25.f;
+		///_int iRandom = rand() % 3 + 1;
 
 		wstring teampString;
-		teampString = L"JJB_Naga_" + to_wstring(iRandom) + L".wav";
+		teampString = L"JJB_Naga_" + to_wstring(m_NarasionIndex) + L".wav";
 
 		CSpeechUI::SPEECHFONTDESC SpeechDesc;
 
 		SpeechDesc.vFontScale = _float2(0.35f);
 
-		switch (iRandom)
+		switch (m_NarasionIndex)
 		{
 		case 1:
 			SpeechDesc.LlveingTime = 9.f;
@@ -186,9 +186,14 @@ _int CSnake::Update(_double fDeltaTime)
 			break;
 		}
 
+		++m_NarasionIndex;
+
+		if (m_NarasionIndex > 3)
+			m_NarasionIndex = 1;
+
 		g_pGameInstance->Add_GameObject_To_Layer(m_eNowSceneNum, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 
-		g_pGameInstance->Play3D_Sound((_tchar*)teampString.c_str(), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 0.7f);
+		g_pGameInstance->PlaySoundW((_tchar*)teampString.c_str(), CHANNELID::CHANNEL_UI, 1.f);
 	}
 
 	_float3 PlayerPos = m_pPlayerTransform->Get_MatrixState(CTransform::STATE_POS);
@@ -973,13 +978,13 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 			//}
 			if (PlayRate > 0.2425 && m_iAdjMovedIndex == 0)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Wave_Snake_Hiss.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 			}
 
 			if (PlayRate > 0.6525 && m_iAdjMovedIndex == 1)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Wave_Snake_Hiss.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 			}
 
@@ -991,13 +996,13 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 		{
 			if (PlayRate > 0.2425 && m_iAdjMovedIndex == 0)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Wave_Snake_Hiss.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 			}
 
 			if (PlayRate > 0.6525 && m_iAdjMovedIndex == 1)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Wave_Snake_Hiss.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Wave_Snake_Hiss.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 			}
 
@@ -1164,7 +1169,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 			if (PlayRate > 0 && m_iAdjMovedIndex == 1)
 			{
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Snake_Hiss_Charge.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Snake_Hiss_Charge.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 
 
 				m_iAdjMovedIndex++;
@@ -1311,7 +1316,7 @@ HRESULT CSnake::Adjust_AnimMovedTransform(_double fDeltatime)
 
 				m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, m_StartAnimPos);
 
-				g_pGameInstance->Play3D_Sound(TEXT("JJB_Naga_1.wav"), g_pGameInstance->Get_TargetPostion_float4(PLV_CAMERA), CHANNELID::CHANNEL_MONSTER, 1.f);
+				g_pGameInstance->PlaySoundW(TEXT("JJB_Naga_1.wav"), CHANNELID::CHANNEL_MONSTER, 1.f);
 				m_iAdjMovedIndex++;
 
 

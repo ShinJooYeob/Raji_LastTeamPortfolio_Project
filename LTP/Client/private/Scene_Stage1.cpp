@@ -53,13 +53,13 @@ HRESULT CScene_Stage1::Initialize()
 	//EH
 	FAILED_CHECK(Ready_TriggerObject(L"Stage1_InstanceMonsterTrigger.dat", SCENE_STAGE1, TAG_LAY(Layer_ColTrigger)));
 
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_1.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_2.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_3.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_4.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_5.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_6.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
-	FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_7.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
+	//FAILED_CHECK(Ready_MonsterBatchTrigger(L"Stage1_MonsterTrigger_7.dat", SCENE_STAGE1, TAG_LAY(Layer_BatchMonsterTrigger)));
 	//
 
 	FAILED_CHECK(Ready_PostPorcessing());
@@ -264,13 +264,13 @@ HRESULT CScene_Stage1::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	// End Pos : _float3(350.722f, 41.092f, 268.068f)
 
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(31.773f, 37.5f, 64.801f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE1, pLayerTag, TAG_OP(Prototype_Player), &_float3(280.833f,44.15f,261.232f)));//31.773f, 37.5f, 64.801f)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE1, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);
 
 	if (CScene_Loading::m_iLoadingKinds == CScene_Loading::LOADINGKINDS_NORMAL)
 	{
-		static_cast<CPlayer*>(pPlayer)->Set_State_FirstStart();
+		//static_cast<CPlayer*>(pPlayer)->Set_State_FirstStart();
 		m_pPlayerTransform = (CTransform*)pPlayer->Get_Component(TAG_COM(Com_Transform));
 		NULL_CHECK_RETURN(m_pPlayerTransform, E_FAIL);
 

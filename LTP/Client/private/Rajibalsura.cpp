@@ -3,6 +3,7 @@
 #include "Camera_Main.h"
 #include "Scene_Loading.h"
 #include "Scene_Stage5.h"
+#include "SpeechUI.h"
 
 CRajibalsura::CRajibalsura(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -100,6 +101,12 @@ _int CRajibalsura::Update(_double fDeltaTime)
 			GetSingle(CUtilityMgr)->Get_MainCamera()->Set_CameraMode(CAM_MODE_FIX);
 			g_pGameInstance->PlaySoundW(L"Jino_MrM_Naration_3.wav", CHANNEL_MONSTER, 1.f);
 			m_pDissolveCom->Set_DissolveOn(false, 5.f);
+
+			CSpeechUI::SPEECHFONTDESC SpeechDesc;
+			SpeechDesc.LlveingTime = 3.5f;
+			SpeechDesc.Text = L"골루... 내가 지금 데리러 갈게";
+			SpeechDesc.vFontScale = _float2(0.4f);
+			g_pGameInstance->Add_GameObject_To_Layer(SCENE_STAGE3, TEXT("Layer_SpeechUI"), TAG_OP(Prototype_Obeect_Speech), &SpeechDesc);
 		}
 
 		_float3 fPos = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS);

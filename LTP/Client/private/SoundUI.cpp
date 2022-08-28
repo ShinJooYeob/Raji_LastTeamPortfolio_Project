@@ -72,8 +72,8 @@ HRESULT CSoundUI::Initialize_Clone(void * pArg)
 	m_SoundOptionName_BGM.vFontScale = _float2(0.5f);
 
 	m_BtnBack.fAngle = 0.f;
-	m_BtnBack.szString = L"BACK";
-	m_BtnBack.vPosition = _float2(590.f, 550.f);
+	m_BtnBack.szString = L"Back";
+	m_BtnBack.vPosition = _float2(605.f, 550.f);
 	m_BtnBack.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	m_BtnBack.vFontScale = _float2(0.8f);
 

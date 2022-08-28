@@ -3,7 +3,8 @@
 #include "PM_Monster.h"
 #include "PackMen.h"
 #include "Scene.h"
-
+#include "MiniGameBuilding.h"
+#include "Scene_Loading.h"
 
 CPM_Food::CPM_Food(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
@@ -344,8 +345,12 @@ HRESULT CPM_Food::Update_Food(_double dDeltaTime)
 
 		if (m_vecForRenderTransform.size() == 0)
 		{
-			////Å¬¸®¾î///////////////////////////////////////////////////////////////////////
-			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_LOBY);
+			CMiniGameBuilding::Copy_NowScreenToBuliding(CMiniGameBuilding::MINIGAME_PACKMAN);
+
+			 
+			FAILED_CHECK(GetSingle(CUtilityMgr)->Clear_RenderGroup_forSceneChange());
+			g_pGameInstance->Get_NowScene()->Set_SceneChanging(SCENE_STAGE6);
+			return 0;
 		}
 	}
 		break;

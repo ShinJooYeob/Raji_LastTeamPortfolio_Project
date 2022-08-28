@@ -76,8 +76,9 @@ _int CPlayer::Update(_double fDeltaTime)
 	if (__super::Update(fDeltaTime) < 0) return -1;
 
 	//m_pNavigationCom->Set_CurNavCellIndex(865);
-	if (g_pGameInstance->Get_DIKeyState(DIK_J) & DIS_Down)
+	if (g_pGameInstance->Get_DIKeyState(DIK_L) & DIS_Down)
 	{
+		GetSingle(CUtilityMgr)->Plus_SKillPoint(2);
 
 		//Set_State_IdleStart(fDeltaTime);
 		//FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE5, TAG_LAY(Layer_Boss), TAG_OP(Prototype_Object_Boss_Mahabalasura), &_float3(100.f, 34.350f, 322.283f)));
@@ -608,6 +609,8 @@ void CPlayer::Set_State_Ending()
 	m_pTransformCom->LookDir(XMVectorSet(0.f, 0.f, -1.f, 0.f));
 	m_fAnimSpeed = 0.5f;
 	m_pTransformCom->Set_MatrixState(CTransform::STATE_POS, _float3(101.f, 30.14f, 335.7f));
+
+	m_pPlayerWeapons[m_eCurWeapon - 1]->Dissolve_Out(0.5f);
 }
 
 void CPlayer::Set_State_FirstStart()
@@ -5376,8 +5379,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (false == m_bOncePlaySound && 0.2f < fAnimPlayRate)
 		{
 			m_bOncePlaySound = true;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 
 
@@ -5464,8 +5467,8 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (false == m_bOncePlaySound && 0.5f < fAnimPlayRate)
 		{
 			m_bOncePlaySound = true;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 
 		m_bOnNavigation = true;
@@ -5567,13 +5570,13 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (false == m_bOncePlaySound && 0.45f < fAnimPlayRate && m_pModel->Get_PlayRate() < 0.512f)
 		{
 			m_bOncePlaySound = true;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 		else if (true == m_bOncePlaySound && m_pModel->Get_PlayRate() >= 0.512f)
 		{
 			m_bOncePlaySound = false;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 
 
 			m_vecNonInstMeshDesc[12].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
@@ -5723,13 +5726,13 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		if (false == m_bOncePlaySound && 0.1f < fAnimPlayRate && m_pModel->Get_PlayRate() < 0.357f)
 		{
 			m_bOncePlaySound = true;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 		else if (true == m_bOncePlaySound && m_pModel->Get_PlayRate() >= 0.357f)
 		{
 			m_bOncePlaySound = false;
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 
 
 			m_vecNonInstMeshDesc[12].vPosition = m_pTransformCom->Get_MatrixState(CTransform::STATE_POS) +
@@ -5877,7 +5880,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_1.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 
 		m_bOnNavigation = true;
@@ -5974,7 +5977,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 
 		m_bOnNavigation = true;
@@ -6094,7 +6097,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 
 			static_cast<CPlayerWeapon_Sword*>(m_pPlayerWeapons[WEAPON_SWORD - 1])->Set_ShieldBashAttack(true);
 		}
@@ -6180,7 +6183,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 		}
 		else
 		{
@@ -6255,7 +6258,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 		}
 
 		m_bOnNavigation = true;
@@ -6376,7 +6379,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_0.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.3f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_Thunder_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.3f);
 		}
 
 
@@ -6478,7 +6481,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 			m_pMainCamera->Start_CameraShaking_Fov(57.f, 1.f, 0.1f, true);
 
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Shield_Throw_Elect.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 		}
 		else
 		{
@@ -6550,7 +6553,7 @@ void CPlayer::Attack_Sword(_double fDeltaTime)
 		{
 			m_bOncePlaySound = true;
 			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_Swing_2.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
-			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_PLAYER, 0.7f);
+			g_pGameInstance->Play3D_Sound(TEXT("Jino_Raji_Sword_PowerSwing_2_GroundHit.wav"), m_pTransformCom->Get_MatrixState(CTransform::STATE_POS), CHANNELID::CHANNEL_TEMP, 0.7f);
 		}
 
 
@@ -8786,10 +8789,6 @@ void CPlayer::DebugingCode()
 		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
 		{
 			m_pMainCamera->Set_CameraMode(CAM_MODE_NOMAL);
-		}
-		if (g_pGameInstance->Get_DIKeyState(DIK_PERIOD)&DIS_Down)
-		{
-			m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DOF);
 		}
 
 

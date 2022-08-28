@@ -178,9 +178,9 @@ void CScene_MiniGame_Jino::Spawn_Monster()
 		else if (2 == iSelected)
 		{
 			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 15.f, 0.f, 0.f));
-			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 16.f, 0.f, 0.f));
+			//Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 16.f, 0.f, 0.f));
 
-			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
+			//Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 20.f, 0.f, 0.f));
 
 			Pop_NormalMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_WALKER, _float3(XMVectorGetX(vPlayerPos) + 24.f, 0.f, 0.f));
 			Pop_JumpingMonkey(CMiniGame_Jino_Monster::EMONSTER_TYPE::TYPE_RUNNER, _float3(XMVectorGetX(vPlayerPos) + 25.f, 0.f, 0.f));
