@@ -564,7 +564,10 @@ HRESULT CCamera_Main::Start_CameraShaking_Dir_Thread(const CAMERASHAKEDIRDESC * 
 	if (true == bOnceShake)
 	{
 		if (true == m_bIsStartedShaking)
+		{
+			delete pCameraEffectDesc;
 			return S_FALSE;
+		}
 		else
 		{
 			pCameraEffectDesc->bOnceShake = true;

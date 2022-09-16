@@ -119,6 +119,8 @@ _bool CCell::isIn(_fVector vPosition, _int* pNeighborIndex, _int* iLineNumber)
 }
 
 #ifdef _DEBUG
+#endif // _DEBUG
+
 HRESULT CCell::Render(CVIBuffer_Triangle* pVIBuffer, CShader* pShader, _float4	vColor)
 {
 	pVIBuffer->Update(m_vPoints);
@@ -130,7 +132,6 @@ HRESULT CCell::Render(CVIBuffer_Triangle* pVIBuffer, CShader* pShader, _float4	v
 
 	return S_OK;
 }
-#endif // _DEBUG
 
 CCell * CCell::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, const _float3 * pPoints, _uint iIndex)
 {

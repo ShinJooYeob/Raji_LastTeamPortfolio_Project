@@ -35,9 +35,9 @@ public:
 	BoundingSphere*				Get_Sphere_Transform();
 	CColliderBuffer*			Get_Edit_ColliderBuffer();
 
-#ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;
+#ifdef _DEBUG
 #endif // _DEBUG
 
 private:

@@ -30,10 +30,11 @@ public:
 
 
 #ifdef _DEBUG
+#endif // _DEBUG
 public:
 	HRESULT Ready_DebugDesc(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Render_DebugBuffer(const _tchar* pMRTTag);
-#endif // _DEBUG
+
 
 
 private:
@@ -52,10 +53,10 @@ private:
 	ID3D11DepthStencilView*			m_pOriginalDSV = nullptr;
 
 #ifdef _DEBUG
+#endif // _DEBUG
 private:
 	class CVIBuffer_Rect*					m_pVIBuffer = nullptr;
 	class CShader*							m_pShader = nullptr;
-#endif // _DEBUG
 
 
 public:

@@ -441,7 +441,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 
 			if (m_LightningSkillPoint[2] <= 0)
 			{
-				m_pSkill_3->Set_TextureIndex(97);
+				m_pSkill_3->Set_TextureIndex(96);
 				m_pSkillGrass_3->Set_TextureIndex(134);
 				m_pSkill_3->Set_PassIndex(1);
 			}
@@ -821,7 +821,7 @@ _int CSkillUI::Update(_double fDeltaTime)
 
 					if (m_LightningSkillPoint[2] <= 0)
 					{
-						m_pSkill_3->Set_TextureIndex(97);
+						m_pSkill_3->Set_TextureIndex(96);
 						m_pSkill_3->Set_PassIndex(1);
 						m_pSkillGrass_3->Set_TextureIndex(134);
 					}

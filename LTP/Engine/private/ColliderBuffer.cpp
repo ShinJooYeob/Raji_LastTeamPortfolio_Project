@@ -18,10 +18,10 @@ CColliderBuffer::CColliderBuffer(ID3D11Device * pDevice, ID3D11DeviceContext * p
 CColliderBuffer::CColliderBuffer(const CColliderBuffer & rhs)
 	:m_pDevice(rhs.m_pDevice),
 #ifdef _DEBUG
+#endif // _DEBUG
 	m_pBasicEffect(rhs.m_pBasicEffect),
 	m_pBatch(rhs.m_pBatch),
 	m_pInputLayout(rhs.m_pInputLayout),
-#endif // _DEBUG
 	m_pDeviceContext(rhs.m_pDeviceContext),
 	m_eColliderType(rhs.m_eColliderType),
 	m_bIsClone(true),
@@ -29,8 +29,8 @@ CColliderBuffer::CColliderBuffer(const CColliderBuffer & rhs)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pDeviceContext);
-#ifdef _DEBUG
 	Safe_AddRef(m_pInputLayout);
+#ifdef _DEBUG
 #endif // _DEBUG
 
 	for (_uint i = 0; i < BOUNDING_END; ++i)
@@ -75,7 +75,6 @@ HRESULT CColliderBuffer::Initialize_Prototype(COLLIDERTYPE eType)
 	}
 
 
-#ifdef _DEBUG
 	m_pBasicEffect = new BasicEffect(m_pDevice);
 	m_pBasicEffect->SetVertexColorEnabled(true);
 
@@ -92,6 +91,7 @@ HRESULT CColliderBuffer::Initialize_Prototype(COLLIDERTYPE eType)
 	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pDeviceContext);
 	NULL_CHECK_RETURN(m_pBatch, E_FAIL);
 
+#ifdef _DEBUG
 #endif // _DEBUG
 
 
@@ -334,7 +334,6 @@ _float3 CColliderBuffer::Get_ColliderPosition()
 	return _float3();
 }
 
-#ifdef _DEBUG
 
 _int CColliderBuffer::Render()
 {
@@ -378,6 +377,7 @@ _int CColliderBuffer::Render()
 
 	return 0;
 }
+#ifdef _DEBUG
 #endif // _DEBUG
 
 _Matrix CColliderBuffer::Remove_Rotation(_fMatrix& TransformMatrix)
@@ -427,13 +427,13 @@ void CColliderBuffer::Free()
 		Safe_Delete(m_pSphere[i]);
 	}
 
-#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	if (!m_bIsClone)
 	{
 		Safe_Delete(m_pBasicEffect);
 		Safe_Delete(m_pBatch);
 	}
+#ifdef _DEBUG
 #endif // _DEBUG
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pDeviceContext);

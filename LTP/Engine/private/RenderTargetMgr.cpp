@@ -200,6 +200,8 @@ HRESULT CRenderTargetMgr::Clear_SpecificMRT(const _tchar * pMRTTag)
 
 
 #ifdef _DEBUG
+#endif // _DEBUG
+
 
 HRESULT CRenderTargetMgr::Ready_DebugDesc(const _tchar * pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
@@ -222,8 +224,6 @@ HRESULT CRenderTargetMgr::Render_DebugBuffer(const _tchar * pMRTTag)
 
 	return S_OK;
 }
-
-#endif // _DEBUG
 
 
 
@@ -249,10 +249,10 @@ list<CRenderTargetLayer*>* CRenderTargetMgr::Find_MRT(const _tchar * pMRTTag)
 void CRenderTargetMgr::Free()
 {
 #ifdef _DEBUG
+#endif // _DEBUG
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
-#endif // _DEBUG
 
 	for (auto& Pair : m_mapMRTGroup)
 	{

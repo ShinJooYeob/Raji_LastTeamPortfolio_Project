@@ -15,17 +15,17 @@ CNavigation::CNavigation(const CNavigation & rhs)
 	: CComponent(rhs)
 	, m_Cells(rhs.m_Cells)
 #ifdef _DEBUG
+#endif // _DEBUG
 	, m_pVIBuffer(rhs.m_pVIBuffer)
 	, m_pShader(rhs.m_pShader)
-#endif // _DEBUG
 {
 	for (auto& pCell : m_Cells)
 		Safe_AddRef(pCell);
 
 #ifdef _DEBUG
+#endif // _DEBUG
 	Safe_AddRef(m_pShader);
 	Safe_AddRef(m_pVIBuffer);
-#endif // _DEBUG
 }
 
 HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
@@ -63,6 +63,7 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
 		return E_FAIL;
 
 #ifdef _DEBUG
+#endif // _DEBUG
 	m_pVIBuffer = CVIBuffer_Triangle::Create(m_pDevice, m_pDeviceContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
@@ -71,7 +72,6 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNaviDataFilePath)
 	m_pShader = CShader::Create(m_pDevice, m_pDeviceContext, TEXT("Shader_Navigation.hlsl"), VTXCOL_DECLARATION::Elements, VTXCOL_DECLARATION::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
-#endif // _DEBUG
 
 	return S_OK;
 }
@@ -179,6 +179,7 @@ _bool CNavigation::Move_OnNavigation(_fVector vPosition, _Vector vDir, _Vector* 
 }
 
 #ifdef _DEBUG
+#endif // _DEBUG
 HRESULT CNavigation::Render(CTransform* pTransform)
 {
 	if (nullptr == m_pVIBuffer)
@@ -207,7 +208,6 @@ HRESULT CNavigation::Render(CTransform* pTransform)
 
 	return S_OK;
 }
-#endif // _DEBUG
 
 HRESULT CNavigation::SetUp_Neighbor()
 {
@@ -351,8 +351,8 @@ void CNavigation::Free()
 	m_Cells.clear();
 
 #ifdef _DEBUG
+#endif // _DEBUG
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
-#endif // _DEBUG
 }
 

@@ -97,13 +97,14 @@ _int CMonster_Wasp::LateUpdate(_double dDeltaTime)
 
 	FAILED_CHECK(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this));
 
-#ifdef _DEBUG
 
 	for (_uint i = 0; i < m_vecInstancedTransform.size(); i++)
 	{
 		FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_vecInstancedTransform[i].pCollider));
 	}
 	FAILED_CHECK(m_pRendererCom->Add_DebugGroup(m_pAttackColliderCom));
+
+#ifdef _DEBUG
 #endif
 
 	return _int();

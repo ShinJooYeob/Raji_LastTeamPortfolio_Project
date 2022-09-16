@@ -153,8 +153,6 @@ CColliderBuffer * CCollider::Get_Edit_ColliderBuffer()
 	return m_vecColliderBuffer[0];
 }
 
-#ifdef _DEBUG
-
 HRESULT CCollider::Render()
 {
 	for (auto& pColliderBuffer : m_vecColliderBuffer)
@@ -169,6 +167,8 @@ HRESULT CCollider::Render()
 
 	return 0;
 }
+#ifdef _DEBUG
+
 #endif // _DEBUG
 
 _bool CCollider::Inspect_ChildBuffer(_uint iBufferIndex, CCollider* pTargetCollider, _uint iTargetIndex, _uint2* pOutIndex)

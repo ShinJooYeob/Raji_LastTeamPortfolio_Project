@@ -216,6 +216,7 @@ HRESULT CSoundMgr::PlaySound(TCHAR * pSoundKey, CHANNELID eID, _float fLouderMul
 
 HRESULT CSoundMgr::PlayBGM(TCHAR * pSoundKey, _uint iBGMIndex ,_float fLouderMultiple)
 {
+	return S_FALSE;
 	//if (BGMChannelCount <= iBGMIndex)
 	//{
 	//	DEBUGBREAK;

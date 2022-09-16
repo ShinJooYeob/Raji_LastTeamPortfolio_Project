@@ -290,8 +290,8 @@ public:
 	
 	PPDDESC		Get_PostProcessingData();
 	void		Set_PostProcessingData(PPDDESC& tDesc);
+	HRESULT		Render_Debug();
 #ifdef _DEBUG
-	HRESULT Render_Debug();
 #endif // _DEBUG
 
 

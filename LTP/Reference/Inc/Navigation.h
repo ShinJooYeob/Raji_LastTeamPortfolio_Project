@@ -36,10 +36,10 @@ public:
 
 
 #ifdef _DEBUG
+#endif // _DEBUG
 public:
 
 	HRESULT Render(class CTransform* pTransform = nullptr);
-#endif // _DEBUG
 
 
 private:
@@ -47,11 +47,11 @@ private:
 	typedef vector<class CCell*>	CELLS;
 
 #ifdef _DEBUG
+#endif // _DEBUG
 private:
 	class CVIBuffer_Triangle*		m_pVIBuffer = nullptr;
 	class CShader*					m_pShader = nullptr;
 
-#endif // _DEBUG
 
 private:
 	/*네비메시를 사용하는 객체가 존재하고 있는 셀의 인덱스.*/

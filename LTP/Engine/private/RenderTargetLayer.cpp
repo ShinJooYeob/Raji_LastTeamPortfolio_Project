@@ -54,7 +54,6 @@ HRESULT CRenderTargetLayer::Clear()
 	return S_OK;
 }
 
-#ifdef _DEBUG
 
 HRESULT CRenderTargetLayer::Ready_DebugDesc(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
@@ -91,6 +90,7 @@ HRESULT CRenderTargetLayer::Render_DebugBuffer(CShader* pShader, CVIBuffer_Rect 
 	return S_OK;
 }
 
+#ifdef _DEBUG
 #endif // _DEBUG
 
 CRenderTargetLayer * CRenderTargetLayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, _uint iSizeX, _uint iSizeY,

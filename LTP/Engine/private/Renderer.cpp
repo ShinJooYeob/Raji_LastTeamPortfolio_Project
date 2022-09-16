@@ -29,7 +29,7 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 	Safe_AddRef(m_pGraphicDevice);
 	ZeroMemory(m_PostProcessingOn, sizeof(_bool) * POSTPROCESSING_END);
 }
-#define ShadowMapQuality 5
+#define ShadowMapQuality 8
 
 HRESULT CRenderer::Initialize_Prototype(void * pArg)
 {
@@ -592,10 +592,10 @@ HRESULT CRenderer::Render_RenderGroup(_double fDeltaTime)
 	FAILED_CHECK(Copy_DeferredToBackBuffer());
 	FAILED_CHECK(Render_UI());
 
-
-#ifdef _DEBUG
 	if (m_PostProcessingOn[POSTPROCESSING_DEBUGCOLLIDER])
 		FAILED_CHECK(Render_Debug());
+#ifdef _DEBUG
+
 	if (m_PostProcessingOn[POSTPROCESSING_DEBUGTARGET])
 		FAILED_CHECK(m_pRenderTargetMgr->Render_DebugBuffer(TEXT("MRT_DebugRender")));
 #endif
@@ -2327,8 +2327,8 @@ HRESULT CRenderer::Apply_OccludedMask()
 HRESULT CRenderer::Add_DebugRenderTarget(const _tchar * szTargetTag, _float fX, _float fY, _float fCX, _float fCY)
 {
 #ifdef _DEBUG
-	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(szTargetTag, fX, fY, fCX, fCY));
 #endif // _DEBUG
+	FAILED_CHECK(m_pRenderTargetMgr->Ready_DebugDesc(szTargetTag, fX, fY, fCX, fCY));
 
 	FAILED_CHECK(m_pRenderTargetMgr->Add_MRT(TEXT("MRT_DebugRender"), szTargetTag));
 
@@ -2703,9 +2703,6 @@ void CRenderer::Set_PostProcessingData(PPDDESC & tDesc)
 
 
 }
-
-#ifdef _DEBUG
-
 HRESULT CRenderer::Render_Debug()
 {
 	FAILED_CHECK(m_pShader->Apply(20));
@@ -2722,6 +2719,9 @@ HRESULT CRenderer::Render_Debug()
 
 	return S_OK;
 }
+#ifdef _DEBUG
+
+
 #endif // _DEBUG
 
 CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, void * pArg)

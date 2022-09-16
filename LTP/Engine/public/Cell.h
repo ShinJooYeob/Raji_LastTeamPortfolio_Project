@@ -52,9 +52,10 @@ public:
 	_bool isIn(_fVector vPosition, _int* pNeighborIndex, _int* iLineNumber);
 
 #ifdef _DEBUG
+#endif // _DEBUG
+
 public:
 	HRESULT Render(class CVIBuffer_Triangle* pVIBuffer, class CShader* pShader, _float4	vColor);
-#endif // _DEBUG
 
 
 private:

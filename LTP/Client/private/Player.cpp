@@ -31,6 +31,7 @@
 //#define NotOnNavi
 
 
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext)
 	:CGameObject(pDevice, pDeviceContext)
 {
@@ -287,9 +288,12 @@ _int CPlayer::Render()
 	FAILED_CHECK(m_pTransformCom->Bind_OnShader(m_pShaderCom, "g_WorldMatrix"));
 
 	FAILED_CHECK(m_pDissolveCom->Render(17));
-	 
+	
+	if (m_pRendererCom->Get_IsOnPostPorcessing(POSTPROCESSING_NAVIGATION))
+	{
+		m_pNavigationCom->Render(m_pTransformCom);
+	}
 #ifdef _DEBUG
-		//m_pNavigationCom->Render(m_pTransformCom); 
 	//	if (m_pHeadJoint)
 	//		m_pHeadJoint->Render();
 #endif // _DEBUG
@@ -8759,6 +8763,19 @@ _float3 CPlayer::Check_MousePicking()
 
 void CPlayer::DebugingCode()
 {
+	if (g_pGameInstance->Get_DIKeyState(DIK_F9)&DIS_Down)
+	{
+		m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_NAVIGATION);
+	}
+	if (g_pGameInstance->Get_DIKeyState(DIK_F8)&DIS_Down)
+	{
+		m_pRendererCom->OnOff_PostPorcessing(POSTPROCESSING_DEBUGCOLLIDER);
+	}
+
+	
+
+
+
 	// TEST CODE
 	//_uint iCurNavIndex = m_pNavigationCom->Get_CurNavCellIndex();
 	//_float test = m_pNavigationCom->Get_NaviHeight(m_pTransformCom->Get_MatrixState(CTransform::TransformState::STATE_POS));

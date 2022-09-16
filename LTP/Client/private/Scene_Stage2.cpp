@@ -280,7 +280,7 @@ HRESULT CScene_Stage2::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	// 456.433228f, 26.8234997f, 77.9790649f			Maybe DemonTree Pos
 	// 490.f, 7.100010f, 108.571f						Pre Start Pos
-	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(454.681f, 18.931f, 87.145f)));
+	FAILED_CHECK(g_pGameInstance->Add_GameObject_To_Layer(SCENEID::SCENE_STAGE2, pLayerTag, TAG_OP(Prototype_Player), &_float3(490.f, 7.100010f, 108.571f/*454.681f, 18.931f, 87.145f*/)));
 	CGameObject* pPlayer = (CPlayer*)(g_pGameInstance->Get_GameObject_By_LayerIndex(SCENE_STAGE2, TAG_LAY(Layer_Player)));
 	NULL_CHECK_RETURN(pPlayer, E_FAIL);	
 	

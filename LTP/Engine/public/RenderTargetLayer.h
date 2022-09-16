@@ -24,10 +24,10 @@ public:
 	HRESULT Clear();
 	_bool Get_IsAutoClearing() { return m_bAutoClearing; };
 
-#ifdef _DEBUG
 public:
 	HRESULT Ready_DebugDesc(_float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Render_DebugBuffer(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+#ifdef _DEBUG
 #endif // _DEBUG
 
 private:
@@ -41,11 +41,11 @@ private:
 	_float4					m_vClearColor;
 	_bool					m_bAutoClearing = true;
 
-#ifdef _DEBUG
 private:
 	_float4x4				m_WorldMatrix;
 	_float4x4				m_ViewMatrix;
 	_float4x4				m_ProjMatrix;
+#ifdef _DEBUG
 #endif // _DEBUG
 
 public:

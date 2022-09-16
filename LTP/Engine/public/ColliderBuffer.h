@@ -37,9 +37,9 @@ public:
 	BoundingSphere* Get_PointCollider() { return m_pSphere[BOUNDING_TRANSFORM]; }
 
 #ifdef _DEBUG
+#endif // _DEBUG
 public:
 	virtual _int Render();
-#endif // _DEBUG
 
 private:
 	BoundingBox*				m_pAABB[BOUNDING_END] = { nullptr };
@@ -51,11 +51,11 @@ private:
 	_bool						m_bIsConflicted = false;
 
 #ifdef _DEBUG
+#endif // _DEBUG
 private:
 	BasicEffect*									m_pBasicEffect = nullptr;
 	ID3D11InputLayout*								m_pInputLayout = nullptr;
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = nullptr;
-#endif // _DEBUG
 
 
 private:
